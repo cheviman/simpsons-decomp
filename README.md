@@ -19,7 +19,10 @@ As of 05-11-2026:
 - [x] A reference: the original programs on MAME's 053248 and Z80 cores, with MAME's K053260 and ymfm's YM2151,
       on a model of the board in C (`runtime/`): state and sound hashes per frame, the code it runs
 - [x] The reference's video: MAME's K052109, K053246/K053247 and K053251, a picture hash per frame
-- [ ] Control scripts that play the game through, compared frame by frame
+- [x] Control scripts that play the game through (`tests/controls/`, `tools/make_scenarios.py`): the attract mode,
+      the test mode's pages, games of one and four players, every stage and bonus game to its boss's end, and the
+      ending; 25 scenarios, 343,270 frames on the reference
+- [ ] The same scenarios compared frame by frame with the decompiled game
 - [ ] A frontend for the 053248 in the shared core: decoder, disassembler, static analysis
 - [ ] Every byte of both programs explained: code, described data or fill
 - [ ] The decompiled C of both programs, and the board's runtime

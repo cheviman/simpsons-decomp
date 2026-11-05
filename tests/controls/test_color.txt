@@ -1,0 +1,14 @@
+# The test mode's color check: the color check's bars, the attack button pressed in turn
+700 press service 10
+900 press down1 6
+960 press down1 6
+1020 press attack1 6
+1080 press attack1 6    # the next one, or the page's exit
+1200 press attack1 6    # the next one, or the page's exit
+1320 press attack1 6    # the next one, or the page's exit
+1440 press attack1 6    # the next one, or the page's exit
+1560 press attack1 6    # the next one, or the page's exit
+1680 press attack1 6    # the next one, or the page's exit
+1800 press attack1 6    # the next one, or the page's exit
+1920 press attack1 6    # the next one, or the page's exit
+2340 end

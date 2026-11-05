@@ -1,0 +1,7 @@
+# A one-player game: a coin and the start button, the story skipped, then Marge does nothing:
+# her lives run out, the continue countdown runs out (about frame 5700), and the attract mode
+# comes back
+700 press coin1
+760 press start1
+1600 press attack1 8    # the story skipped
+9000 end

@@ -1,0 +1,57 @@
+# The test mode's music check: the attack button plays the next music, 48 of them,
+# 240 frames each
+700 press service 10
+900 press down1 6
+960 press down1 6
+1020 press down1 6
+1080 press down1 6
+1140 press attack1 6
+1200 press attack1 4    # the next music
+1440 press attack1 4    # the next music
+1680 press attack1 4    # the next music
+1920 press attack1 4    # the next music
+2160 press attack1 4    # the next music
+2400 press attack1 4    # the next music
+2640 press attack1 4    # the next music
+2880 press attack1 4    # the next music
+3120 press attack1 4    # the next music
+3360 press attack1 4    # the next music
+3600 press attack1 4    # the next music
+3840 press attack1 4    # the next music
+4080 press attack1 4    # the next music
+4320 press attack1 4    # the next music
+4560 press attack1 4    # the next music
+4800 press attack1 4    # the next music
+5040 press attack1 4    # the next music
+5280 press attack1 4    # the next music
+5520 press attack1 4    # the next music
+5760 press attack1 4    # the next music
+6000 press attack1 4    # the next music
+6240 press attack1 4    # the next music
+6480 press attack1 4    # the next music
+6720 press attack1 4    # the next music
+6960 press attack1 4    # the next music
+7200 press attack1 4    # the next music
+7440 press attack1 4    # the next music
+7680 press attack1 4    # the next music
+7920 press attack1 4    # the next music
+8160 press attack1 4    # the next music
+8400 press attack1 4    # the next music
+8640 press attack1 4    # the next music
+8880 press attack1 4    # the next music
+9120 press attack1 4    # the next music
+9360 press attack1 4    # the next music
+9600 press attack1 4    # the next music
+9840 press attack1 4    # the next music
+10080 press attack1 4    # the next music
+10320 press attack1 4    # the next music
+10560 press attack1 4    # the next music
+10800 press attack1 4    # the next music
+11040 press attack1 4    # the next music
+11280 press attack1 4    # the next music
+11520 press attack1 4    # the next music
+11760 press attack1 4    # the next music
+12000 press attack1 4    # the next music
+12240 press attack1 4    # the next music
+12480 press attack1 4    # the next music
+13020 end

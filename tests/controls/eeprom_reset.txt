@@ -1,0 +1,5 @@
+# The test switch held from power-on: the EEPROM's settings back to the recommended ones
+# (EEP ROM TEST OK, RECOMMAND SET COMPLETE), then the switch let go
+0 hold service
+900 release service
+2400 end

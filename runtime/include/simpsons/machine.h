@@ -71,7 +71,7 @@ enum
 enum
 {
 	SIMPSONS_LEFT = 0x01, SIMPSONS_RIGHT = 0x02, SIMPSONS_UP = 0x04, SIMPSONS_DOWN = 0x08,
-	SIMPSONS_BUTTON1 = 0x10, SIMPSONS_BUTTON2 = 0x20, SIMPSONS_START = 0x80
+	SIMPSONS_ATTACK = 0x10, SIMPSONS_JUMP = 0x20, SIMPSONS_START = 0x80    /* (the test mode: SHOOT1, SHOOT2) */
 };
 #define SIMPSONS_TEST_SERVICE     0x01          /* 1F81: the test mode's switch, active low */
 #define SIMPSONS_TEST_IDLE        0xCF          /* its other bits (MAME's unknown ones read 1), the EEPROM's apart */

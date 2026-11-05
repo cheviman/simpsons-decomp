@@ -21,8 +21,9 @@
  *      hold INPUT / release INPUT      pressed / released until another event changes it
  *      poke ADDRESS VALUE              writes a byte through the bus (hexadecimal address and value)
  *      end                             the run ends with this frame
- *    INPUT: coin1-coin4, service (the test switch), and for players 1-4 leftN rightN upN downN b1N b2N startN
- *    (b1 and b2 are MAME's buttons 1 and 2)
+ *    INPUT: coin1-coin4, service (the test switch), and for players 1-4 leftN rightN upN downN attackN jumpN startN
+ *    (attack and jump are MAME's buttons 1 and 2, the test mode's SHOOT1 and SHOOT2; player 1 is Marge, 2 Homer,
+ *    3 Bart, 4 Lisa)
  */
 #ifndef SIMPSONS_SCRIPT_H
 #define SIMPSONS_SCRIPT_H

@@ -1,0 +1,41 @@
+# The test mode's coin and game options: each setting changed three times, then the factory
+# setting chosen (the EEPROM written)
+700 press service 10
+900 press down1 6
+960 press down1 6
+1020 press down1 6
+1080 press down1 6
+1140 press down1 6
+1200 press down1 6
+1260 press down1 6
+1320 press attack1 6
+1380 press right1 6    # the setting changed
+1440 press right1 6    # the setting changed
+1500 press right1 6    # the setting changed
+1560 press down1 6    # the next setting
+1620 press right1 6    # the setting changed
+1680 press right1 6    # the setting changed
+1740 press right1 6    # the setting changed
+1800 press down1 6    # the next setting
+1860 press right1 6    # the setting changed
+1920 press right1 6    # the setting changed
+1980 press right1 6    # the setting changed
+2040 press down1 6    # the next setting
+2100 press right1 6    # the setting changed
+2160 press right1 6    # the setting changed
+2220 press right1 6    # the setting changed
+2280 press down1 6    # the next setting
+2340 press right1 6    # the setting changed
+2400 press right1 6    # the setting changed
+2460 press right1 6    # the setting changed
+2520 press down1 6    # the next setting
+2580 press right1 6    # the setting changed
+2640 press right1 6    # the setting changed
+2700 press right1 6    # the setting changed
+2760 press down1 6    # the next setting
+2820 press right1 6    # the setting changed
+2880 press right1 6    # the setting changed
+2940 press right1 6    # the setting changed
+3000 press down1 6    # the next setting
+3060 press attack1 6    # the factory setting
+3660 end

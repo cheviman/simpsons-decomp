@@ -1,0 +1,40 @@
+# The test mode's I/O check: every input of the four players and the four coin slots pressed in
+# turn, then its exit
+700 press service 10
+900 press down1 6
+960 press down1 6
+1020 press down1 6
+1080 press attack1 6
+1140 press left1 8
+1155 press right1 8
+1170 press up1 8
+1185 press down1 8
+1200 press jump1 8
+1215 press start1 8
+1230 press left2 8
+1245 press right2 8
+1260 press up2 8
+1275 press down2 8
+1290 press attack2 8
+1305 press jump2 8
+1320 press start2 8
+1335 press left3 8
+1350 press right3 8
+1365 press up3 8
+1380 press down3 8
+1395 press attack3 8
+1410 press jump3 8
+1425 press start3 8
+1440 press left4 8
+1455 press right4 8
+1470 press up4 8
+1485 press down4 8
+1500 press attack4 8
+1515 press jump4 8
+1530 press start4 8
+1545 press coin1 8
+1560 press coin2 8
+1575 press coin3 8
+1590 press coin4 8
+1665 press attack1 6    # the page's exit
+2005 end

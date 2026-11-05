@@ -37,7 +37,11 @@ typedef struct control
 	uint8_t bit;
 } control;
 
-#define PLAYER_CONTROLS(n) 	{ "left" #n, n, SIMPSONS_LEFT }, { "right" #n, n, SIMPSONS_RIGHT }, { "up" #n, n, SIMPSONS_UP }, 	{ "down" #n, n, SIMPSONS_DOWN }, { "b1" #n, n, SIMPSONS_BUTTON1 }, { "b2" #n, n, SIMPSONS_BUTTON2 }, 	{ "start" #n, n, SIMPSONS_START }
+/* a player's controls: leftN rightN upN downN attackN jumpN startN */
+#define PLAYER_CONTROLS(n) \
+	{ "left" #n, n, SIMPSONS_LEFT }, { "right" #n, n, SIMPSONS_RIGHT }, { "up" #n, n, SIMPSONS_UP }, \
+	{ "down" #n, n, SIMPSONS_DOWN }, { "attack" #n, n, SIMPSONS_ATTACK }, { "jump" #n, n, SIMPSONS_JUMP }, \
+	{ "start" #n, n, SIMPSONS_START }
 
 static const control controls[] =
 {

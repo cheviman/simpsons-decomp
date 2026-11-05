@@ -1,0 +1,4 @@
+# The test mode's ROM check: the tile, sprite and sample ROMs read through their chips
+700 press service 10
+900 press attack1 6
+12960 end

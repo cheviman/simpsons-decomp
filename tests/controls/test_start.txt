@@ -1,0 +1,14 @@
+# The test mode's start button page: games with start buttons chosen, then its exit
+700 press service 10
+900 press down1 6
+960 press down1 6
+1020 press down1 6
+1080 press down1 6
+1140 press down1 6
+1200 press down1 6
+1260 press attack1 6
+1320 press down1 6    # with start buttons
+1380 press attack1 6
+1500 press down1 6
+1560 press attack1 6    # the page's exit
+1920 end

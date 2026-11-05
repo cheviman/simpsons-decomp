@@ -1,0 +1,13 @@
+# The test mode's screen check: the screen check's patterns, the attack button pressed in turn
+700 press service 10
+900 press down1 6
+960 press attack1 6
+1020 press attack1 6    # the next one, or the page's exit
+1140 press attack1 6    # the next one, or the page's exit
+1260 press attack1 6    # the next one, or the page's exit
+1380 press attack1 6    # the next one, or the page's exit
+1500 press attack1 6    # the next one, or the page's exit
+1620 press attack1 6    # the next one, or the page's exit
+1740 press attack1 6    # the next one, or the page's exit
+1860 press attack1 6    # the next one, or the page's exit
+2280 end
