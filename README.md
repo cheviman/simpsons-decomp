@@ -1,0 +1,41 @@
+# The Simpsons — decompilation
+
+A reconstruction of Konami's 1991 arcade game *The Simpsons* (a Konami 053248 main CPU, a 6809 with Konami's
+own opcodes, with a Z80 sound board) into platform-agnostic C, not an emulator, following the method of
+[segasonic-decomp](https://github.com/cheviman/segasonic-decomp),
+[outrunners-decomp](https://github.com/cheviman/outrunners-decomp) and
+[tmntarcade-decomp](https://github.com/cheviman/tmntarcade-decomp): both of the game's programs decompiled one
+function at a time into readable C, and checked frame by frame against MAME in state, picture and sound.
+
+**This repository contains no game data.** As with [n64decomp/sm64](https://github.com/n64decomp/sm64), you
+bring your own ROM set (MAME's `simpsons`) for everything else: the tools verify it, extract the assets, and
+you build your own executable, which runs from the assets and opens no ROM.
+
+## Status
+
+As of 05-11-2026:
+
+- [x] ROM set verification (MAME set `simpsons`, 4 Players World, set 1), by CRC32 and SHA-1 of every file
+- [x] A reference: the original programs on MAME's 053248 and Z80 cores, with MAME's K053260 and ymfm's YM2151,
+      on a model of the board in C (`runtime/`): state and sound hashes per frame, the code it runs
+- [x] The reference's video: MAME's K052109, K053246/K053247 and K053251, a picture hash per frame
+- [ ] Control scripts that play the game through, compared frame by frame
+- [ ] A frontend for the 053248 in the shared core: decoder, disassembler, static analysis
+- [ ] Every byte of both programs explained: code, described data or fill
+- [ ] The decompiled C of both programs, and the board's runtime
+- [ ] The assets in editable formats, loaded by name
+
+## Verifying your ROM set
+
+```bash
+git clone --recursive <this repository>
+py tools/verify_rom.py rom/simpsons.zip
+```
+
+The tools are shared with the other games through [arcade-decomp](https://github.com/cheviman/arcade-decomp),
+which `tools/core` holds as a git submodule.
+
+## Legal
+
+BSD 3-Clause License (see `LICENSE`). *The Simpsons* is a trademark of its owners; the game is Konami's. This
+repository holds no part of the game's ROMs.
