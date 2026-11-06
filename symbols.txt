@@ -1,0 +1,281 @@
+# The Simpsons (MAME set 'simpsons', 4 Players World, set 1) - 053248 program symbols
+#
+# Addresses and names only: no game data lives in this file.
+# Format:  ADDRESS  KIND  NAME  [LAYOUT]   [# comment]
+#   KIND: func = function entry, code = code label, data = data label
+# Addresses are places of the program: offsets in its 512 KB region (tools/simpsons_rom.py), as kref's traces
+# give them: a bank's code at bank x 2000 plus its address in the window (6000-7FFF), the fixed program (8000-FFFF)
+# at 078000-07FFFF.
+#
+# LAYOUT, for data tables that hold code addresses the analysis cannot see the length of
+# (tools/core/konami_cpu/analysis.py reads record=, code= and count=):
+#   record=N        the table is an array of N-byte records
+#   count=N         ... of N records
+#   code=A          every record holds a 16-bit code address (a CPU address, in the table's bank) at offset A
+# Sizes, offsets and counts are decimal.
+#
+# The analysis starts at the vectors (the reset at 86CE, the IRQ at 8F43, the FIRQ at 91B2) and finds the code
+# without traces, following what the registers and the bank hold into the tables of handlers; the lines here are
+# what it cannot work out, each with how it was found (kref --jumps: where a jump through a register went).
+
+# ======== tables of code addresses ========
+# two pairs of handler tables by an object's state (its field 2E), each followed by another table of code addresses
+# that the code names (LDY #$7A3A, LDY #$7F7C, handed to a routine as data): the analysis stops a table where the
+# code names data, but the state runs into the next table, whose first entry is the last state's
+# bank 1D's: 629A "LDY #$7A00", 6292 "JMP [A,Y]" (kref --jumps: 03A292 -> 03A5DF, entry 29, which is 7A3A's first)
+03BA00  data  bank_1d_states  record=2 count=30 code=0
+# bank 1E's: 76FD "LDY #$7F62", 7700 "JMP [A,Y]" (kref --jumps: 03D700 -> 03D88C, entry 13, which is 7F7C's first)
+03DF62  data  bank_1e_states  record=2 count=14 code=0
+
+# ======== the sprite engine's data (tools/data_walk.py walks what these lead to) ========
+# An object's animations (data_walk.py: animation sets): the bank they are in and the offset of the set's entry in
+# that bank's set index, the words at 6000 (079B08-079B1B: "LDB ,U+; STB <$0E; SETLN <$0E; LDB ,U", then 079B3E
+# "LDU #$6000; CLRA; LDU D,U")
+struct animation_set 02 rom
+field animation_set 00 bank u8
+field animation_set 01 index u8
+# by an object's kind (its field 04; 079B02): 00-7F here, 80-FF in animation_sets_high (bit 7 dropped): 079B08
+# "LDU #$E591", 079B21 "LDU #$E5BB"; the reads stop at 07E5B9 (kref --rom-reads, 079B11), and 07E66B, right after the
+# high ones, is the table 079E7F jumps through
+07E591  table  animation_sets[21]  animation_set
+07E5BB  table  animation_sets_high[88]  animation_set
+# the sprite under a player in the air (079DFE, a sprite of its own after the object's: field 5B's low 4 bits the
+# record, 079E0D "LDU #$E585", "ASLA; ASLA; LEAU A,U"): its attributes (079E19 "LDA ,U+") and its code (079E2B
+# "LDD ,U"); byte 3 nothing reads
+struct shadow_sprite 04 rom
+field shadow_sprite 00 attributes u8
+field shadow_sprite 01 code u16
+07E585  table  shadow_sprites[3]  shadow_sprite
+# a zoomed object's sprites (079CD4): their x and y from the object times a step by the object's zoom (its field 0A,
+# from 10: 079CE1-079CED; 079D06 "LDB #$1D; STB <$0E; SETLN <$0E", 079D10 "LDX $602A", 079D17 "LDX D,X", then LMUL):
+# the address of the steps in bank 1D's header, after its jumps, and the 240 steps (kref --rom-reads: 079D17 reads
+# 03BDE7-03BFC6)
+03A02A  table  zoom_steps_address[1]  u16
+03BDE7  table  zoom_steps[240]  u16
+
+# ======== the background maps (tools/data_walk.py: scene tables) ========
+# A tile layer of the K052109 the map engine draws (07C618 "LDX #$EC9D; ASLA; LDX A,X": layer A's, layer B's): where
+# its tiles are, the addresses of the variables its scroll is in, and its scene tables
+struct layer_map 12 rom
+# the layer's tile codes in the K052109 (07C621 "LDU ,X"; its colours 2000 below: 07C6C8 "STB #$-2000,U")
+field layer_map 00 tiles u16
+# the work RAM's variables, by address: its scroll (07C623 "LDD [#$02,X]", 07C633 "LDD [#$04,X]") and what the engine
+# adds to it (07C5A5 "ADDD [#$0A,X]", 07C636 "ADDD [#$0C,X]", 07C6A4 "ADDD [#$0E,X]")
+field layer_map 02 scroll_x u16
+field layer_map 04 scroll_y u16
+field layer_map 06 maps u16
+field layer_map 08 unk_08 u16
+field layer_map 0A offset_x u16
+field layer_map 0C offset_y u16
+field layer_map 0E offset_y2 u16
+field layer_map 10 maps_high u16
+07EC9D  table  layer_maps[2]  u16
+07ECA1  table  layers[2]  layer_map
+# by scene (direct page 75: 00-7F the first table, 80-FF the high one, bit 7 dropped), the address of a list of
+# 4-byte records by the scene's area (direct page 76): an address and its bank. Layer A's maps from its descriptor
+# (07C5B2 "LDY #$06,X", 07C5BA "LDY #$10,X", the descriptor ECA1 by 07C618 "LDX #$EC9D"), its tile blocks from
+# 07C8BD "LDY #$ECC9" / 07C8C5 "LDY #$ED29"; layer B's from ECB3 and 07C8F7 "LDY #$ECE9" / 07C8FF "LDY #$EDBB".
+# Each table ends where the first of its lists starts
+07ECC9  table  block_scenes_a[4]  u16
+07ECE9  table  block_scenes_b[4]  u16
+07ECF9  table  map_scenes_a[4]  u16
+07ED19  table  map_scenes_b[4]  u16
+07ED29  table  block_scenes_a_high[15]  u16
+07EDBB  table  block_scenes_b_high[15]  u16
+07EE41  table  map_scenes_a_high[15]  u16
+07EED3  table  map_scenes_b_high[15]  u16
+# the K052109's registers 1D80 and 1F00 by scene and area (07C931 "LDY #$EF55" / 07C939 "LDY #$EF63": 2-byte records)
+07EF55  table  layer_modes[4]  u16
+07EF63  table  layer_modes_high[15]  u16
+# 16 bytes by a tile block's second byte (07C6FA "LDX #$F67C"), copied a column at a time (07C70F)
+07F67C  table  block_tile_flags[1]  u8
+
+# ======== the palettes (tools/data_walk.py: palette sets, palette effects) ========
+# a load of palettes from bank 2D into the palette RAM (07BCEA "LDU ,Y", "LDX #$02,Y", "LDA #$04,Y", then 07BF51)
+struct palette_load 05 rom
+field palette_load 00 source u16
+field palette_load 02 destination u16
+field palette_load 04 palettes u8
+# the sets of 4 loads by a request's byte 2 (07BCCE "LDX #$E9CB", from 80 07BCD6 "LDX #$EAEB"; its byte 1 says which
+# loads): each table ends where its first set starts
+07E9CB  table  palette_sets[14]  u16
+07EAEB  table  palette_sets_high[19]  u16
+
+# ======== the stages' objects (tools/data_walk.py: spawn lists) ========
+# an object a stage puts in when its scroll reaches it (07C9B2-07CA4D, the list's place kept in direct page 73)
+struct spawn 08 rom
+# where along the stage (07C9DE "CMPD #$00,X" against the scroll plus 150); a record whose first byte is FF ends the list
+field spawn 00 x u16
+# its height, 8 pixels a step up from the floor line (07CA21 "LDB #$02,X; SEX; ASLDI #$03; NEGD")
+field spawn 02 y s8
+field spawn 03 depth u8
+# bits 2-3 the object list it goes into (07CA50, by object_list_sizes and object_lists), bit 7 from the right
+field spawn 04 flags u8
+field spawn 05 unk_05 u8
+# the stage's difficulty it takes (07C9E3 "CMPA <$6B": not put in above it)
+field spawn 06 level u8
+# the object's kind (07C9F5 "LDA #$07,X; STA #$01,U")
+field spawn 07 kind u8
+# by scene (07C96B "LDX #$EFBC; LDA <$67; ASLA; LDX [A,X]"): where in bank 1B the scene's list's address is
+07EFBC  table  spawn_list_places[12]  u16
+036000  table  spawn_lists[12]  u16
+# by direct page 61 (07C985 "LDU #$EFD4; LDB <$61; LDB B,U"), times 2 into 1886
+07EFD4  table  spawn_ranges[32]  u8
+# the object lists a spawn goes into, by its flags' bits 2-3 (07CA54 "LDU #$EFF4; LDA B,U", "LDU #$EFF8; LDU B,U"): how
+# many objects each holds and where it is
+07EFF4  table  object_list_sizes[4]  u8
+07EFF8  table  object_lists[4]  u16
+
+# ======== pictures of tiles (tools/data_walk.py: tile pictures) ========
+# where a picture of tiles goes (07C51C "LDU #$EFB5", "LDU A,U"; bit 7 of the number draws it blank): its bank
+# (07C52C "LDB ,U+"), the place in the tile RAM it starts at (07C536 "LDX ,U++"), the picture (07C538 "LDU ,U")
+struct tile_picture_place 05 rom
+field tile_picture_place 00 bank u8
+field tile_picture_place 01 tiles u16
+field tile_picture_place 03 picture u16
+07EFB5  table  tile_pictures[1]  u16
+
+# a line of a test mode page's menu (data_walk.py: test mode page), after the page's text and its 3 bytes
+struct test_menu_line 03 rom
+# where its cursor goes in the tile RAM (05E539 "LDX ,X"), what the line does (05E577 "LDA A,X"; 20 nothing)
+field test_menu_line 00 cursor u16
+field test_menu_line 02 action u8
+
+# ======== texts (tools/data_walk.py: test mode texts) ========
+# the test mode's texts by number (05E62E "LDU #$75BE", 05E632 "LDU A,U": "MANUAL TEST MENU"...) and the words they
+# put in, by their code less C7 (05E6E8 "LDU #$78F7"), in bank 2F; each table ends where its first text starts
+05F5BE  table  test_mode_texts[24]  u16
+05F8F7  table  test_mode_words[55]  u16
+
+# ======== bank 1A's flying object (tools/data_walk.py: object paths) ========
+# its handler by its field 02 (0352F3 "LDU #$7300; ASLB; JSR [B,U]"); its paths: 2-byte steps up to FFFF (035367)
+struct path_step 02 rom
+# the direction (made negative facing the other way, plus 40: 035382-035393) and the speed (035382 "STB <$F1")
+field path_step 00 direction s8
+field path_step 01 speed u8
+0359F3  data  object_1a_path        # 03532B "LDY #$79F3; STY #$2C,X"
+035D72  data  object_1a_dive_path   # 035434 "LDD #$7D72; STD #$2C,X"
+# by object_1a_path_choices (0353A7 "LDU #$79DC", by its field 50's low 3 bits): a path and the two counts it keeps
+# in fields 3B and 3A (0353B9 "LDU #$79E4", "LEAU A,U" 4 bytes a record), and by the same index a time (0353CC "LDU
+# #$79F0" into field 4F)
+struct path_start 04 rom
+field path_start 00 path u16
+field path_start 02 count_3b u8
+field path_start 03 count_3a u8
+0359DC  table  object_1a_path_choices[8]  u8
+0359E4  table  object_1a_path_starts[3]  path_start
+0359F0  table  object_1a_path_times[3]  u8
+
+# ======== the attract mode's demos (tools/data_walk.py: demo, demo inputs) ========
+# by direct page 5E (07A0A4 "LDX #$E6A1; LDA <$5E; ASLA; LDX A,X")
+struct demo 0C rom
+# the players who play it, a bit each (07A0AD "LDA ,X+; STA <$50")
+field demo 00 players u8
+# the frames it lasts (07A0B2 "LDD ,X++; STD $5800", counted down at 07A14C)
+field demo 01 frames u16
+field demo 03 step u8
+# the 4 players' inputs, in bank 2C (07A0F2 "LDU ,X++")
+field demo 04 inputs u16[4]
+07E6A1  table  demos[3]  u16
+# a step of a player's inputs: the controls and the frames they are held (07A17C, 07A192; 0 is 256)
+struct demo_input 02 rom
+field demo_input 00 controls u8
+field demo_input 01 frames u8
+
+# ======== the stories (tools/data_walk.py: story scripts) ========
+# the script an actor of the stories runs, by its field 30 (03E09D "LDY #$7078; LDY D,Y; STY #$2E,X"), in bank 1F; the
+# table ends where the scripts start (7150, the one most actors that do nothing share)
+03F078  table  story_scripts[108]  u16
+
+# ======== bank 15's object that puts in others (tools/data_walk.py: spawn lists) ========
+# by its kind (field 30: 02AD8F-02ADB4): a time (02AD8F "LDY #$79F1", into field 3D), its list of objects to put in
+# (02AD9A "LDY #$79FE"), and 4 next kinds by the players' number (02ADA3 "LDY #$7A18", "LDA A,Y" by direct page 57)
+02B9F1  table  object_15_times[13]  u8
+02B9FE  table  object_15_spawn_lists[13]  u16
+02BA18  table  object_15_next_kinds[52]  u8
+
+# ======== the test mode (bank 2F) ========
+# its palettes (05E05B-05E066: 8 times "LDX ,Y++" and BMOVE of 32 bytes from Y, from 05E05D "LDY #$7B6C")
+struct test_palette 22 rom
+field test_palette 00 destination u16
+field test_palette 02 colours u16[16]
+05FB6C  table  test_mode_palettes[8]  test_palette
+# the sound test's music, by its number (05E23E "LDA $5915; LDX #$68EF"... 05E2A0 "LDA $5916; LDX #$6799; LBRA
+# $6728": 05E728 "SUBA #$30; LEAX A,X; LEAX A,X; LDD ,X", the command 8680 sends): the numbers 00-2F take the 48
+# words before 6799 (kref --rom-reads: 05E72E reads 05E739-05E798)
+05E739  table  sound_test_music[48]  u16
+
+# ======== code nothing reaches ========
+# runs nothing calls, jumps or points at that decode as instructions to a return or a jump (the coverage: unknown
+# runs that decode to their end); each is code the game never runs, kept as it is
+020686  func  unused_020686    # Unused: nothing calls it (128 bytes up to "PULLS  X,PC")
+020707  func  unused_020707    # Unused: nothing calls it (39 bytes up to "PULLS  X,PC")
+020EA9  func  unused_020EA9    # Unused: nothing calls it (42 bytes up to "RTS")
+022748  func  unused_022748    # Unused: nothing calls it (15 bytes up to "RTS")
+02478C  func  unused_02478C    # Unused: nothing calls it (13 bytes up to "RTS")
+028096  func  unused_028096    # Unused: nothing calls it (9 bytes up to "LBRA   $705A")
+028AE0  func  unused_028AE0    # Unused: nothing calls it (22 bytes up to "LBRA   $859C")
+028BA3  func  unused_028BA3    # Unused: nothing calls it (1 bytes up to "RTS")
+028CE5  func  unused_028CE5    # Unused: nothing calls it (16 bytes up to "LBRA   $859C")
+02A0CD  func  unused_02A0CD    # Unused: nothing calls it (46 bytes up to "RTS")
+02E1A9  func  unused_02E1A9    # Unused: nothing calls it (72 bytes up to "RTS")
+0301D8  func  unused_0301D8    # Unused: nothing calls it (1 bytes up to "RTS")
+0303CE  func  unused_0303CE    # Unused: nothing calls it (15 bytes up to "RTS")
+03127A  func  unused_03127A    # Unused: nothing calls it (9 bytes up to "JMP    [A,U]")
+031540  func  unused_031540    # Unused: nothing calls it (1 bytes up to "RTS")
+032BE5  func  unused_032BE5    # Unused: nothing calls it (26 bytes up to "RTS")
+0350C7  func  unused_0350C7    # Unused: nothing calls it (1 bytes up to "RTS")
+039C56  func  unused_039C56    # Unused: nothing calls it (6 bytes up to "LBRA   $8680")
+03A252  func  unused_03A252    # Unused: nothing calls it (9 bytes up to "LBRA   $8617")
+03A269  func  unused_03A269    # Unused: nothing calls it (8 bytes up to "LBRA   $86BF")
+03A337  func  unused_03A337    # Unused: nothing calls it (1 bytes up to "RTS")
+03C0C0  func  unused_03C0C0    # Unused: nothing calls it (32 bytes up to "PULLS  Y,PC")
+03C2F3  func  unused_03C2F3    # Unused: nothing calls it (32 bytes up to "RTS")
+03D1BF  func  unused_03D1BF    # Unused: nothing calls it (1 bytes up to "RTS")
+03E00C  func  unused_03E00C    # Unused: nothing calls it (6 bytes up to "LBRA   $681E")
+03E02D  func  unused_03E02D    # Unused: nothing calls it (3 bytes up to "LBRA   $695E")
+03E045  func  unused_03E045    # Unused: nothing calls it (3 bytes up to "LBRA   $69AF")
+05E003  func  unused_05E003    # Unused: nothing calls it (3 bytes up to "LBRA   $6A57")
+05E704  func  unused_05E704    # Unused: nothing calls it (13 bytes up to "PULLS  U,PC")
+0785A2  func  unused_0785A2    # Unused: nothing calls it (3 bytes up to "LBRA   $D115")
+0785A8  func  unused_0785A8    # Unused: nothing calls it (3 bytes up to "LBRA   $945C")
+0785AE  func  unused_0785AE    # Unused: nothing calls it (3 bytes up to "LBRA   $D16D")
+0785D2  func  unused_0785D2    # Unused: nothing calls it (3 bytes up to "LBRA   $D2A2")
+0785E7  func  unused_0785E7    # Unused: nothing calls it (3 bytes up to "LBRA   $D450")
+0785ED  func  unused_0785ED    # Unused: nothing calls it (3 bytes up to "LBRA   $E18F")
+078614  func  unused_078614    # Unused: nothing calls it (3 bytes up to "LBRA   $CC8D")
+07861A  func  unused_07861A    # Unused: nothing calls it (3 bytes up to "LBRA   $CCA0")
+078629  func  unused_078629    # Unused: nothing calls it (3 bytes up to "LBRA   $D3D7")
+078641  func  unused_078641    # Unused: nothing calls it (3 bytes up to "LBRA   $CF5F")
+07864D  func  unused_07864D    # Unused: nothing calls it (3 bytes up to "LBRA   $CDAD")
+078668  func  unused_078668    # Unused: nothing calls it (3 bytes up to "LBRA   $CD90")
+07866E  func  unused_07866E    # Unused: nothing calls it (3 bytes up to "LBRA   $CCEF")
+07867A  func  unused_07867A    # Unused: nothing calls it (3 bytes up to "LBRA   $C10D")
+07A2D8  func  unused_07A2D8    # Unused: nothing calls it (19 bytes up to "RTS")
+07BAC6  func  unused_07BAC6    # Unused: nothing calls it (1 bytes up to "RTS")
+07C10D  func  unused_07C10D    # Unused: nothing calls it (45 bytes up to "PULLS  D,U,PC")
+07CC30  func  unused_07CC30    # Unused: nothing calls it (8 bytes up to "RTS")
+07CD90  func  unused_07CD90    # Unused: nothing calls it (67 bytes up to "RTS")
+07DDBD  func  unused_07DDBD    # Unused: nothing calls it (6 bytes up to "LBRA   $8680")
+
+# the empty slots of jump tables (an LBRA to 0000: no routine), at a bank's start or in the fixed program's (0785xx
+# on): nothing jumps through them
+struct vector 03 rom
+field vector 00 opcode u8
+field vector 01 offset s16
+0280BD  table  empty_vector_0280BD[1]  vector
+02C030  table  empty_vectors_02C030[2]  vector
+02C057  table  empty_vector_02C057[1]  vector
+032024  table  empty_vector_032024[1]  vector
+07865F  table  empty_vector_07865F[1]  vector
+078665  table  empty_vector_078665[1]  vector
+# a slot of the fixed program's jump table nothing jumps through, to a routine (07D47E) that dispatches by its object's
+# field 28 through tables at F65F and F661 that hold no code addresses there: left from the game's making, not code
+# the analysis can follow
+0785D8  table  unused_vector_0785D8[1]  vector
+# a list of spawns no table leads to, in bank 1A: 67 records like a stage's (x from 0148 to 0540), no end record
+0354C5  table  unused_spawn_list_0354C5[67]  spawn
+020ECD  func  unused_020ECD    # Unused: nothing calls it (6 bytes up to "RTS")
+025361  func  unused_025361    # Unused: nothing calls it (18 bytes up to the code after it)
+028099  func  unused_028099    # Unused: nothing calls it (6 bytes up to "LBRA   $705A")
+03E00F  func  unused_03E00F    # Unused: nothing calls it (3 bytes up to "LBRA   $681E")

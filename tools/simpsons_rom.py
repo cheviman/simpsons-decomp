@@ -46,6 +46,10 @@ PROGRAM_AREAS = [
     (0x040000, 0x060000),  # 072-j13.13c
     (0x060000, 0x080000),  # 072-j12.15c
 ]
+CODE_AREAS = PROGRAM_AREAS                      # (code in all four: the banks are spread over them)
+# a bank's end repeats, at the same offsets, what another bank holds there: the assembler's buffer, not cleared from
+# bank to bank (the core's coverage.py: fill)
+RESIDUE_BANK_SIZE = 0x2000
 PROGRAM_SIZE = 0x080000
 PROGRAM_BANK_SIZE = 0x2000
 FIXED_PROGRAM = (0x078000, 0x080000)            # what the CPU sees at 0x8000-0xFFFF
@@ -150,6 +154,28 @@ def build_sprites(rom):
 def build_samples(rom):
     """k053260 region (1.25 MB): the K053260's samples."""
     return bytes(rom["072-d05.1f"] + rom["072-d04.1d"])
+
+
+def canonical_address(address):
+    """A place of the program: its offset in the program region (what kref's traces and symbols.txt give: a bank's
+    window resolved), or None if it is not in the region."""
+    return address if 0 <= address < PROGRAM_SIZE else None
+
+
+class ProgramMemory:
+    """The program region by place (its offsets): anything outside it reads 0xFF. An instruction that runs past a
+    bank's end goes on in the next bank here, in the fixed program on the CPU: what needs the CPU's view takes it
+    from konami_cpu.analysis."""
+
+    def __init__(self, image):
+        self.image = image
+
+    def r8(self, address):
+        offset = canonical_address(address)
+        return self.image[offset] if offset is not None else 0xFF
+
+    def r16(self, address):
+        return (self.r8(address) << 8) | self.r8(address + 1)
 
 
 def build_eeprom(rom):

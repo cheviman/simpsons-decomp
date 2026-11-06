@@ -1,0 +1,104 @@
+# The Simpsons (MAME set 'simpsons') - Z80 sound program symbols
+#
+# Addresses and names only: no game data lives in this file. Format: ADDRESS KIND NAME [...] (see
+# tools/core/z80/analysis.py and tools/core/sound_coverage.py). Addresses are the Z80's, 0000-7FFF.
+
+# ======== the sound effects ========
+# the handler a sound effect's channel runs, by the effect's number, 01-38 (01BB "SLA C; LD B,0; LD HL,$1014; ADD
+# HL,BC", into the channel's word at 43; kref --sound-rom-reads: 01C3 reads 1016-1085), and the effect's priority
+# (01AC "LD HL,$1085; ADD HL,DE", compared with the channel's at 42: 01B0 reads 1086-10BD); entry 0 is no effect
+1014  jumps  effect_handlers  57  first=1
+1086  data   effect_priorities  u8[56]
+# the same for the effects 40-7F (02BD-02DD, 032F-033D: the table at 3570 and the priorities at 3630, from entry 40
+# on: 02D7 reads 35F0-366D, 0337 366E-366F, 02C4 3670-36AE)
+3570  jumps  effect_handlers_40  128  first=64
+3670  data   effect_priorities_40  u8[64]
+# and a third group (0270-027E: the table at 2E01, the priorities at 2E79 from 0261; 0278 reads 2E01-2E78, 0265
+# 2E79-2EB4: 60 of each)
+2E01  jumps  effect_handlers_2  60
+2E79  data   effect_priorities_2  u8[60]
+# 01E5 takes effects 00-3F through a table at 26FC and priorities at 2740, but both are the code there (26FC's words
+# 0C22 0CFC 1F28..., 2740 "DD 66 03..."): no command the game sends reaches it (kref --sound-rom-reads: nothing reads
+# them), a table of no entries
+26FC  jumps  unused_effect_handlers  0
+
+# ======== the music ========
+# a sequence's commands E0-FF (4659 "LD L,C; LD H,0; ADD HL,HL; LD DE,$44A6; ADD HL,DE", then 4665 "JP (HL)"): the table
+# the code indexes starts at 44A6, its entries from E0 on (kref --sound-rom-reads: 4661 reads 4666-46A4)
+44A6  jumps  music_commands  256  first=224
+4665  via    music_commands
+# an instrument's 16 routines, by the low 4 bits of a note (45FD "AND $0F; RLCA", 4604 "LD L,(IX+$28)", 460B "LD
+# A,(HL)", then 460F "CALL $0C33", which stores it at 43 in the channel): the table of the channel's instrument
+# (46BB "LD DE,$4E4E", its field 12 times 32: 46C9 "LD (IX+$28),L"); instrument 0's would be the code before 4E6E, and
+# each one's routine 0 is none (0000). kref --sound-rom-reads: 460B reads 4E70-4FCC (instruments 1-11)
+4E4E  jumps  instrument_routines  192  first=16  slot=43
+# two more instruments' routines before them, at 496C and 498C (16 each, routine 0 none): a channel's pointer at 28 is
+# 496C or 498C by a way the walk does not see (4E4E plus 32 times its field 12 never is); kref --sound-rom-reads: 460B
+# reads 4970, and the routines it leads to run (4A18...)
+496C  jumps  instrument_routines_low  32  slot=43
+# a song, by the command 80-AF (034E "CP $B0"): its header's address (0362 "LD DE,$5CB2", "ADD HL,HL": entries 80 on)
+# and the bank it is in (0355 "LD DE,$5D92", into FE00); kref --sound-rom-reads: 0366 reads 5DB2-5E11, 0359
+# 5E12-5E41 (tools/sound_data_walk.py walks the songs)
+5DB2  data   song_headers  u16[48]
+5E12  data   song_banks  u8[48]
+
+# ======== the YM2151 ========
+# which of the 4 operators an algorithm's carriers are, a bit each (0D80 "AND $07; ...; LD HL,$0DB8; ADD HL,BC",
+# shifted out by 0DA7 "SLA L": the operators whose volume the channel's adds to)
+0DB8  data   carrier_masks  u8[8]
+# the YM2151's key code by note (0E06 "LD HL,$0E10; ADD HL,BC", into register 28): 8 octaves of 12
+0E10  data   note_codes  u8[96]
+# a YM2151 patch (0C68: 0C76 "LD C,(HL)" its algorithm and feedback, then the operators' registers up to 0D22)
+struct fm_patch 19 rom
+field fm_patch 00 algorithm u8
+# a K053260 patch (0D2E: its sample, then two bytes into the channel's 46 and 47: 0D66, 0D6B)
+struct pcm_patch 03 rom
+field pcm_patch 00 sample u8
+field pcm_patch 01 unk_01 u8
+field pcm_patch 02 unk_02 u8
+# a sample of the K053260 (0D3B-0D4E "LD L,(HL); ...; ADD HL,HL x3; LD DE,$28E9; ADD HL,DE; LD BC,7; LDIR" into its
+# registers, and bit 0 of the 8th: 0D56)
+struct sample 08 rom
+field sample 00 registers u8[7]
+field sample 07 flags u8
+# the music's instruments (46E0-4704, by the command that sets one): an FM channel's patch (46E2 "LD HL,$5E42"), a
+# PCM channel's (46FA "LD HL,$63F4") and its transposition (46ED "LD HL,$642C"), into the channel's 19 and 26
+5E42  data   music_fm_patches  u16[54]  fm_patch
+63F4  data   music_pcm_patches  u16[28]  pcm_patch
+642C  data   music_pcm_transpositions  s16[28]
+28E9  data   samples  sample[163]
+# the pitches by note and octave (42FE "LD HL,$448B" for an FM channel, 4309 "LD HL,$4533" for a PCM one; then the
+# note's low nibble twice, its octave's offset and the transposition): kref --sound-rom-reads, 431E reads 44A5-45DB;
+# the FM table's first 13 words would be the code before 44A5, the PCM one runs up to the code at 45F5
+44A5  data   fm_pitches  u16[71]
+4533  data   pcm_pitches  u16[97]
+# a note's length by its high nibble (48DC "AND $F0; RRCA x3; ...; LD HL,$48FA; ADD HL,DE"): notes are 00-DF, 14 of
+# them (the code at 4916 follows)
+48FA  data   note_lengths  u16[14]
+# by an effect's level 1-7 (4198-41A5 "LD DE,$4166; ADD HL,DE" by twice the level: 41A5 reads 4168-4174; level 0
+# ends the effect first, 419A), two bytes, the first a volume (41A7 "CALL $0F7C")
+4168  data   effect_levels  u16[7]
+# the words two effects step through, one every 24 frames (1323-1330) or as their counter runs out (3793-379D), from
+# their channel's word at 00 (kref --sound-rom-reads: 1329 reads 12E1-12EF; 3767 36B9-36BC, its first two, 3799 the
+# rest, 36BD-3715)
+12E1  data   effect_steps_12e1  u16[8]
+36B9  data   effect_steps_36b9  u16[48]
+
+# ======== what nothing reaches ========
+# 6 bytes after the last routine before the 0xFF fill (D1 F8 54 6C 5A 5A): only the ROM check (0962) sums them,
+# with every other byte; and a 1A and zeros after the fill, up to the code the reset jumps to (0923): nothing reads them
+089D  fill   6
+08D6  fill   77
+# routines nothing calls (Unused: no call, jump or table leads to them)
+0F06  func   unused_0F06
+0FF2  func   unused_0FF2
+100D  func   unused_100D
+358A  func   unused_358A
+# a group of 4 effects no code takes: their handlers (2774, read by nothing) and the 4 bytes after them, like the
+# priorities of the other groups; each handler sets the patch before it (2799 "LD HL,$2780; CALL $0C68")
+2774  data   unused_effect_group  u16[4]
+277C  data   unused_effect_priorities  u8[4]
+2799  func   unused_effect_2799
+280E  func   unused_effect_280E
+2856  func   unused_effect_2856
+289F  func   unused_effect_289F

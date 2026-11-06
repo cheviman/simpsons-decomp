@@ -23,8 +23,15 @@ As of 05-11-2026:
       the test mode's pages, games of one and four players, every stage and bonus game to its boss's end, and the
       ending; 25 scenarios, 343,270 frames on the reference
 - [ ] The same scenarios compared frame by frame with the decompiled game
-- [ ] A frontend for the 053248 in the shared core: decoder, disassembler, static analysis
-- [ ] Every byte of both programs explained: code, described data or fill
+- [x] A decoder and disassembler for the 053248 in the shared core, the same text as MAME's at every offset of
+      every program bank and of every opcode with every postbyte
+- [x] The 053248's static analysis: all the code the scenarios run (42,668 places), found without traces, its
+      banks followed
+- [x] The Z80's static analysis: all the code the scenarios run (6,155 places), found without traces
+- [x] The Z80's program and banks explained, every byte: code, described data (its tables, the 48 songs' tracks,
+      the YM2151's and the K053260's patches) or fill
+- [ ] Every byte of the 053248's program explained (99.75% now: code, described data, or fill, the assembler's
+      leftovers between and after a bank's pieces among it)
 - [ ] The decompiled C of both programs, and the board's runtime
 - [ ] The assets in editable formats, loaded by name
 
