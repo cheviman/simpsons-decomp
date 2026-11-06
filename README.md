@@ -30,10 +30,13 @@ As of 05-11-2026:
 - [x] The Z80's static analysis: all the code the scenarios run (6,155 places), found without traces
 - [x] The Z80's program and banks explained, every byte: code, described data (its tables, the 48 songs' tracks,
       the YM2151's and the K053260's patches) or fill
-- [ ] Every byte of the 053248's program explained (99.75% now: code, described data, or fill, the assembler's
+- [ ] Every byte of the 053248's program explained (99.86% now: code, described data, or fill, the assembler's
       leftovers between and after a bank's pieces among it)
 - [ ] The decompiled C of both programs, and the board's runtime
-- [ ] The assets in editable formats, loaded by name
+- [x] The assets extracted by subject and checked byte for byte (`tools/extract_assets.py --check`): the sprites by
+      the objects whose animations show them, the tiles by the scenes whose maps show them, the K053260's samples
+      as WAV files, and every byte of data of both programs as text by name
+- [ ] The assets loaded by name by the decompiled game
 
 ## Verifying your ROM set
 
@@ -41,6 +44,17 @@ As of 05-11-2026:
 git clone --recursive <this repository>
 py tools/verify_rom.py rom/simpsons.zip
 ```
+
+## Extracting the assets
+
+```bash
+py tools/extract_assets.py rom/simpsons.zip
+py tools/extract_assets.py rom/simpsons.zip --check
+```
+
+The first writes `assets/` (never part of the repository): PNG sheets of the sprites and tiles by subject, WAV files
+of the samples, and the programs' data as text by name; the second rebuilds the graphics and sample ROM files and
+every data byte from them and compares them with your set's.
 
 The tools are shared with the other games through [arcade-decomp](https://github.com/cheviman/arcade-decomp),
 which `tools/core` holds as a git submodule.

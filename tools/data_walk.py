@@ -94,11 +94,21 @@ measure the walk):
   unreached animation  in a bank of animations, an animation no table leads to (left from the game's making): frames
                    as above, every sprite list in the bank, its end going back to itself or to an animation walked
                    (a frame of it, or its start), with its sprite lists
+  enemy behaviour  88 bytes (the fixed program's enemy routines, 07D3D7-07D662, read it from the object's field 2A:
+                   07D5C0 "LDU #$2A,X; LEAU #$28,U", 07D604 "LDU #$2A,X", by the object's state 8 bytes a state, and
+                   4 ranges of 12 bytes from 28 on, 07D3E9-07D3FD), at every place the code stores in the field
+                   (029808 "LDU #$7808; STU #$2A,X"...), and every one the tables in BEHAVIOUR_TABLES hold, a
+                   record's word at 2 (030137 "LDU #$79DA", 030154 "LDD #$02,U; STD #$2A,X")
+  text             a text the fixed program's printer takes in U (07936D, 079384, 07939B; through 0785A5, 0786B6,
+                   0786C8), at every place a call hands it: a place in the tile RAM (a word), a character a byte
+                   (the tile 30 below it: '@' a space), '/' and the next place, '#' its end (079371-079377)
   argument record  a record a routine takes in a register (ARGUMENT_RECORDS), at every place a call hands it (the
                    register's constants where the call is, the call made straight or through the fixed program's
                    jumps, 0785AB "LBRA $D132"), and the records its fields point at
   unreached map    in a bank of maps, a map no scene leads to: its strips' addresses right after them, the
                    strips as far apart as the first two, up to what starts next
+  more sprites     after a sprite list, up to 8 whole sprites that fill the gap to what starts next (lists no
+                   frame shows)
   unused blocks    after an array of tile blocks, the whole blocks up to what starts next (no map takes them), or to
                    the assembler's leftovers at the bank's end
   more hit boxes   right after a hit box, up to 8 whole boxes up to what starts next
@@ -191,6 +201,10 @@ PICTURE_HEADER = 3
 TEXT_TABLES = ("test_mode_texts", "test_mode_words")
 TEXT_PLACE, TEXT_END, TEXT_WORD = 0x30, 0xC0, 0xC7
 MAX_TEXT = 512
+# the fixed program's printer (07936D prints, 079384 clears, 07939B by a colour; U the text) and its characters
+FIXED_PRINTER = (0x07936D, 0x079384, 0x07939B)
+FIXED_TEXT_END, FIXED_TEXT_LINE = 0x23, 0x2F
+FIXED_TEXT_TABLES = ("game_texts",)
 MENU_HEADER = 3
 # the paths of bank 1A's objects: the ones the code loads (0353BE "LDD ,U" from object_1a_path_starts, 03532B "LDY
 # #$79F3", 035434 "LDD #$7D72")
@@ -215,6 +229,11 @@ STORY_LOOP = (0x667C, 0x667F)
 STORY_END = 0xFF
 MAX_SCRIPT = 0x400
 MAX_HANDLER = 400               # the instructions a handler is followed through, at most
+# an enemy's behaviour, the object field it is in (the fixed program's enemy routines read it from there)
+BEHAVIOUR = 88
+BEHAVIOUR_FIELD = 0x2A
+BEHAVIOUR_TABLES = ("object_18_behaviours",)
+STORES = {"stu": "U", "sty": "Y", "std": "D", "stx": "X"}
 # the routines that take a record in a register: (routine, register, bytes, kind, ((field, the routine whose record it
 # points at), ...)): an object's setup (07D132-07D14D: its kind and animation, its hit box, fields 1B and 27) and a hit
 # box (07D1B7-07D1C8: 4 words into fields 1C, 1F, 21, 23)
@@ -228,6 +247,7 @@ MAX_GENERIC = 0x1000            # an indexed table runs no further than this
 LOADS = ("ldx", "ldy", "ldu")
 BOX = 8
 MAX_MORE_BOXES = 8
+MAX_MORE_SPRITES = 8
 RESIDUE = 16                    # the bytes that must repeat another bank's for a loaded table to stop there
 FIXED_START_PLACE = konami_analysis.FIXED_START
 
@@ -253,7 +273,7 @@ def table_places():
 
 # what the walk reads from symbols.txt's table lines (the others it only claims)
 WALKED = SET_TABLES + tuple(name for pair in MAP_TABLES for name in pair) + MODE_TABLES + (BLOCK_FLAGS,) + PALETTE_SETS \
-    + SPAWN_LISTS + (TILE_PICTURES,) + TEXT_TABLES + PATH_STARTS + (DEMOS, STORY_SCRIPTS)
+    + SPAWN_LISTS + (TILE_PICTURES,) + TEXT_TABLES + FIXED_TEXT_TABLES + PATH_STARTS + (DEMOS, STORY_SCRIPTS) + BEHAVIOUR_TABLES
 
 
 class Walk:
@@ -271,6 +291,7 @@ class Walk:
         self.animations = set()
         self.lists = {}             # {sprite list place: sprites}
         self.maps = {}              # {map place: strips}
+        self.scene_records = {}     # {scene list place: its records (areas)}
         self.blocks = {}            # {tile blocks place: blocks}
         self.palette_sets = set()
         self.palette_list = set()
@@ -284,6 +305,7 @@ class Walk:
         self.loaded = {}            # {loaded table place: the instruction that loads it}
         self.scripts = set()
         self.arguments = set()
+        self.behaviours = set()
         self.residues = {}          # {place: whether the rest of its bank is the assembler's leftovers}
         self.tables_named = table_places()
         wanted = WALKED
@@ -488,6 +510,7 @@ class Walk:
 
     def background(self):
         lists, records = self.scene_lists()
+        self.scene_records = records
         wanted = {}                 # {(bank, cpu) of tile blocks: the blocks the maps take}
         for maps_name, blocks_name in MAP_TABLES:
             for maps_list, blocks_list in zip(lists[maps_name], lists[blocks_name]):
@@ -794,32 +817,68 @@ class Walk:
                     return None
         return frames, after
 
+    # ---- the enemies' behaviours ----
+
+    def enemy_behaviours(self):
+        states = self.instruction_states()
+        found = set()
+        for place, instruction in self.analysis.instructions.items():
+            register = STORES.get(instruction.mnemonic)
+            operand = instruction.operands[0] if instruction.operands else None
+            if register is None or operand.mode != "indexed" or operand.kind != "offset" or operand.reg != "X" \
+                    or operand.disp != BEHAVIOUR_FIELD:
+                continue
+            state = states.get(place, {})
+            for kind, value in konami_analysis.known(state.get(register)):
+                if kind == konami_analysis.CONSTANT:
+                    for bank in konami_analysis.banks_in(state):
+                        behaviour = place_of(bank, value)
+                        if behaviour is not None and behaviour not in self.analysis.owner:
+                            found.add(behaviour)
+        # (and the ones tables of records hold, by the records' word at 2: the field means something else to some
+        # objects, bank 15's spawner and bank 17's, so the tables are symbols.txt's)
+        for name in BEHAVIOUR_TABLES:
+            table, count, size = self.tables_named[name]
+            for index in range(count):
+                behaviour = place_of(bank_of(table), self.mem.r16(table + size * index + 2))
+                if behaviour is not None:
+                    found.add(behaviour)
+        for behaviour in sorted(found):
+            if self.claim(behaviour, behaviour + BEHAVIOUR, "enemy behaviour"):
+                self.behaviours.add(behaviour)
+
     # ---- the records routines take ----
 
-    def argument_records(self):
+    def call_arguments(self, registers):
+        """{routine: {(bank, cpu)}}: the constants the register 'registers' ({routine: register}) gives each routine
+        holds where a call or jump goes to it, straight or through the fixed program's jumps that only go on to it
+        (0785AB "LBRA $D132")"""
         dis = konami_analysis.dis
         states = self.instruction_states()
-        specs = {routine: (register, size, kind, pointers) for routine, register, size, kind, pointers in ARGUMENT_RECORDS}
-        # (a jump of the fixed program's that only goes on to the routine: 0785AB "LBRA $D132")
         through = {}
         for place, instruction in self.analysis.instructions.items():
             if instruction.flow == dis.FLOW_JUMP and instruction.target is not None:
                 target = place_of(bank_of(place), instruction.target)
-                if target in specs:
+                if target in registers:
                     through[place] = target
-        records = defaultdict(set)  # {routine: {(bank, cpu)}}
+        found = defaultdict(set)
         for place, instruction in self.analysis.instructions.items():
             if instruction.flow not in (dis.FLOW_CALL, dis.FLOW_JUMP) or instruction.target is None:
                 continue
             target = place_of(bank_of(place), instruction.target)
             routine = through.get(target, target)
-            if routine not in specs or place in through:
+            if routine not in registers or place in through:
                 continue
             state = states.get(place, {})
-            for kind, value in konami_analysis.known(state.get(specs[routine][0])):
+            for kind, value in konami_analysis.known(state.get(registers[routine])):
                 if kind == konami_analysis.CONSTANT:
                     for bank in konami_analysis.banks_in(state):
-                        records[routine].add((bank, value))
+                        found[routine].add((bank, value))
+        return found
+
+    def argument_records(self):
+        specs = {routine: (register, size, kind, pointers) for routine, register, size, kind, pointers in ARGUMENT_RECORDS}
+        records = self.call_arguments({routine: spec[0] for routine, spec in specs.items()})
         work = [(routine, bank, cpu) for routine, held in records.items() for bank, cpu in held]
         done = set()
         while work:
@@ -836,12 +895,45 @@ class Walk:
                 for field, pointed in pointers:
                     work.append((pointed, bank, self.word(bank, cpu + field)))
 
+    def fixed_texts(self):
+        """The texts the fixed program's printer takes in U (079384, 07936D, 07939B): a place in the tile RAM (a word),
+        its characters (the tile 30 below each), '/' and the next place, '#' its end"""
+        texts = {text for held in self.call_arguments({routine: "U" for routine in FIXED_PRINTER}).values()
+                 for text in held}
+        # (and the game's texts by number, 079311: "LDX $6021" in bank 12, "LDU B,X")
+        for name in FIXED_TEXT_TABLES:
+            table, count, _ = self.tables_named[name]
+            self.claim(table, table + 2 * count, "text table")
+            texts.update((bank_of(table), self.mem.r16(table + 2 * index)) for index in range(count))
+        for bank, cpu in sorted(texts):
+            at = cpu + 2
+            while at - cpu < MAX_TEXT:
+                code = self.byte(bank, at)
+                at += 1
+                if code == FIXED_TEXT_END:
+                    break
+                if code == FIXED_TEXT_LINE:
+                    at += 2
+            place = place_of(bank, cpu)
+            if place is not None and self.claim(place, place + at - cpu, "text"):
+                self.texts.add(place)
+
     def next_start(self, place, limit):
         """The first byte after 'place' that is claimed or code, or 'limit'"""
         stop = place + 1
         while stop < limit and stop not in self.owner and stop not in self.analysis.owner:
             stop += 1
         return stop
+
+    def more_sprite_lists(self):
+        """After a sprite list in a bank of animations, whole sprites up to what starts next (lists no frame shows)"""
+        for place, (stop, kind) in sorted(self.spans.items()):
+            if kind != "sprite list" or stop in self.owner or stop in self.analysis.owner:
+                continue
+            end = self.next_start(stop, (stop // 0x2000 + 1) * 0x2000)
+            # (a few, filling the gap to what starts next: a longer run is the assembler's leftovers as often)
+            if 0 < end - stop <= MAX_MORE_SPRITES * SPRITE and (end - stop) % SPRITE == 0                     and not self.same_elsewhere(stop, end):
+                self.claim(stop, end, "sprite list")
 
     def unreached_maps(self):
         banks = sorted({bank_of(place) for place in self.maps})
@@ -1037,6 +1129,19 @@ class Walk:
             if self.claim(place, stop, "loaded table"):
                 self.loaded[place] = loader
 
+    def same_elsewhere(self, first, stop):
+        """Are the bytes first..stop another bank's at the same offsets, where they are code or walked? (the
+        assembler's leftovers, which the coverage counts as fill)"""
+        image = self.analysis.image
+        offset = first % 0x2000
+        if offset + stop - first > 0x2000:
+            return False
+        for bank in range(len(image) // 0x2000):
+            other = bank * 0x2000 + offset
+            if other != first and image[other:other + stop - first] == image[first:stop]                     and any(byte in self.analysis.owner or byte in self.owner for byte in range(other, other + stop - first)):
+                return True
+        return False
+
     def residue_at(self, place):
         """Does the rest of the bank from 'place' (up to the 0xFF it ends with) repeat, at the same offsets, another
         bank's code or walked data? What the assembler's buffer kept from that bank (the coverage's residue), where no
@@ -1080,8 +1185,11 @@ class Walk:
         self.story_scripts()
         self.named_tables()
         self.argument_records()
+        self.fixed_texts()
+        self.enemy_behaviours()
         self.generic()
         self.unreached_animations()
+        self.more_sprite_lists()
         self.unreached_maps()
         self.unused_blocks()
         self.unused_palettes()

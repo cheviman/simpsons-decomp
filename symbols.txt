@@ -279,3 +279,136 @@ field vector 01 offset s16
 025361  func  unused_025361    # Unused: nothing calls it (18 bytes up to the code after it)
 028099  func  unused_028099    # Unused: nothing calls it (6 bytes up to "LBRA   $705A")
 03E00F  func  unused_03E00F    # Unused: nothing calls it (3 bytes up to "LBRA   $681E")
+
+# ======== the enemies (tools/data_walk.py: enemy behaviour) ========
+# an enemy's behaviour, 88 bytes: what the fixed program's enemy routines (07D3D7-07D662) read from the object's field
+# 2A: by its state (field 30) 8 bytes a state, 3 on (07D604-07D624: thresholds against a random number and the next
+# states), and from 28 on 4 ranges of 12 bytes (07D3E7-07D3FD: how far, the least and the most of field 2D)
+struct enemy_behaviour 58 rom
+field enemy_behaviour 00 states u8[40]
+field enemy_behaviour 28 ranges u8[48]
+# bank 18's enemy, by its state (field 30: 030137 "LDU #$79DA; LDA #$30,X; ASLA; ASLA; LEAU A,U"): its next state and
+# its flags (030141 "LDD ,U"), and its behaviour (030154 "LDD #$02,U; STD #$2A,X")
+struct behaviour_choice 04 rom
+field behaviour_choice 00 state u8
+field behaviour_choice 01 flags u8
+field behaviour_choice 02 behaviour u16
+0319DA  table  object_18_behaviours[5]  behaviour_choice
+
+# ======== the players ========
+# a player's record (07A0DE "LDU #$E819; LDA <$F0; ASLA; LDU A,U", by the player's number): the addresses of its
+# variables in the work RAM, which the code goes through ([#$15,U], [#$17,U], [#$04,U]: 07A0E7-07A10F), its bit
+# (06) and its initials (0B: MRG, HMR, BRT, LSA, the high score's)
+struct player 1B rom
+field player 00 variables_00 u16
+field player 02 variables_02 u16
+field player 04 lives u16
+field player 06 bit u8
+field player 07 variables_07 u16
+field player 09 variables_09 u16
+field player 0B initials u8[3]
+field player 0E number u8
+field player 0F variables_0f u16[6]
+07E819  table  player_records[4]  u16
+07E821  table  players[4]  player
+
+# ======== the players' gauges (bank 20) ========
+# a player's record for the gauges (040909 "LDX #$7294; ASLA; LDX A,X", by the player): the addresses of its
+# variables, read through ([#$12,X], [#$16,X], [#$02,X]), and places in the tile RAM
+struct gauge_player 18 rom
+field gauge_player 00 unk_00 u8
+field gauge_player 01 variables u16[11]
+field gauge_player 17 unk_17 u8
+041294  table  gauge_player_records[4]  u16
+04129C  table  gauge_players[4]  gauge_player
+# the two tiles, one above the other, of a gauge's step 1-8 (040A4C "LDY #$72FC; ASLA; LEAY A,Y": 0 draws 8D)
+0412FC  table  gauge_step_tiles[18]  u8
+# the test mode's characters, one a player (05EEB6 "LDU #$7D88", by the player): the address of the player's lives
+# (00), a kind and an animation (02), a place (04), a depth (06), its shadow's kind (08) and place (0A), the bit of its
+# start button (11)
+struct test_player 12 rom
+field test_player 00 lives u16
+field test_player 02 kind u8
+field test_player 03 animation u8
+field test_player 04 x u16
+field test_player 06 z u16
+field test_player 08 shadow_kind u16
+field test_player 0A shadow_x u16
+field test_player 0C unk_0c u8[5]
+field test_player 11 button u8
+05FD88  table  test_player_records[4]  u16
+05FD90  table  test_players[4]  test_player
+
+# ======== small tables of the stages' objects ========
+# bank 12's object puts others where these say, by number (02538A "LDU #$77BA", 8 bytes a record, 025398-0253BD): the
+# object's address in the work RAM (FFFF: the caller's), its kind and animation, its x and z (FFFF: as they are);
+# kref --rom-reads: 0257BA-025951, 51 records
+struct placement 08 rom
+field placement 00 object u16
+field placement 02 kind u16
+field placement 04 x u16
+field placement 06 z u16
+0257BA  table  object_12_placements[51]  placement
+# bank 1D's object's parts, by number (03B530 "LDY #$7D21", 8 bytes a record, 03B535-03B553): a speed, its y and z
+# from the object, its kind, its animation; kref --rom-reads: 03BD21-03BD96, 15 records
+struct part 08 rom
+field part 00 speed u8
+field part 01 dy s8
+field part 02 dz s8
+field part 03 kind u8
+field part 04 animation u16
+field part 06 unk_06 u16
+03BD21  table  object_1d_parts[15]  part
+# bank 1C's object's moves: the next by step (0388D4 "LDX #$7DEB; LDA B,X", negative goes back to 0), and 4 of 4 bytes
+# (0388E2 "LDX #$7DF7", 0388E7 "LDD ,X++; LDY ,X")
+039DEB  table  object_1c_move_steps[12]  u8
+039DF7  table  object_1c_moves[8]  u16
+# bank 16's object, by its kind (02D1C9 "LDU #$7E39", into field 47; 02D1D1 "LDU #$7E3F", 4 bytes a record: its pattern
+# into field 3E, its kind and animation), and the patterns, 16 steps from each, 5 bytes apart (02D326 "LDB A,Y" by
+# field 3C's low 4 bits)
+02DE39  table  object_16_flags[6]  u8
+struct pattern_start 04 rom
+field pattern_start 00 pattern u16
+field pattern_start 02 kind u8
+field pattern_start 03 animation u8
+02DE3F  table  object_16_kinds[6]  pattern_start
+02DE57  table  object_16_patterns[41]  u8
+
+# ======== the game's texts ========
+# by number (079311: bit 7 clears it instead, 079346), in bank 12 (07932D "LDX $6021": the table's address, which the
+# bank keeps at 6021; 079331 "LDU B,X"), printed by 07936D (an address in the tile RAM, the characters, '/' and the
+# next address, '#' the end): "INSERT COIN", the copyright... The table ends where its first text starts
+024021  table  game_texts_address[1]  u16
+0259E4  table  game_texts[19]  u16
+
+# code nothing the analysis follows reaches (runs that decode to a return or a jump at their end, or into code)
+020ECE  func  unreached_020ECE    # nothing the analysis follows reaches it (5 bytes, up to "RTS")
+02809C  func  unreached_02809C    # nothing the analysis follows reaches it (3 bytes, up to "LBRA   $705A")
+02CE07  func  unreached_02CE07    # nothing the analysis follows reaches it (37 bytes, up to "RTS")
+034023  func  unreached_034023    # nothing the analysis follows reaches it (83 bytes, up to "RTS")
+03829A  func  unreached_03829A    # nothing the analysis follows reaches it (29 bytes, up to "LBRA   $66B8")
+03A2A0  func  unreached_03A2A0    # nothing the analysis follows reaches it (9 bytes, up to "RTS")
+03A658  func  unreached_03A658    # nothing the analysis follows reaches it (6 bytes, up to "LBRA   $6680")
+03C332  func  unreached_03C332    # nothing the analysis follows reaches it (13 bytes, up to "RTS")
+03CCAA  func  unreached_03CCAA    # nothing the analysis follows reaches it (14 bytes, up to "CLRW   #$0F,X")
+05E0AE  func  unreached_05E0AE    # nothing the analysis follows reaches it (3 bytes, up to "RTS")
+05E9E0  func  unreached_05E9E0    # nothing the analysis follows reaches it (4 bytes, up to "BRA    $69E5")
+0785BD  func  unreached_0785BD    # nothing the analysis follows reaches it (2 bytes, up to "LBRA   $D216")
+07D7E3  func  unreached_07D7E3    # nothing the analysis follows reaches it (22 bytes, up to "RTS")
+02807E  table  empty_vectors_02807E[2]  vector
+0280B1  table  empty_vector_0280B1[1]  vector
+0785F6  table  empty_vector_0785F6[1]  vector
+# bank 1A's flying object's next state by its field 31 (034089 "LDU #$77BC", 0340B2 "LDU #$77C1"), and its levels: a row
+# of 5 by field 31 (03409B "LDU #$77C6; ASLA; LDU A,U"), a byte by direct page 57 (0340A7 "LDA A,U", into 188C)
+0357BC  table  object_1a_next_states[5]  u8
+0357C1  table  object_1a_states_after[5]  u8
+0357C6  table  object_1a_level_rows[5]  u16
+035754  table  object_1a_levels[20]  u8
+# after the spawn list nothing leads to, a record more like its (0356DD), places in the tile RAM (0356E5) and two texts
+# in the fixed printer's form (0356FE: spaces over two lines; 035744: T F V O), which nothing prints
+0356DD  table  unused_spawn_0356DD[1]  spawn
+0356E5  table  unused_tile_places[25]  u8
+0356FE  table  unused_text_0356FE[70]  u8
+035744  table  unused_text_035744[16]  u8
+02CE13  func  unreached_02CE13    # nothing the analysis follows reaches it (the handlers after unreached_02CE07)
+0382AF  func  unreached_0382AF    # nothing the analysis follows reaches it (after unreached_03829A)
