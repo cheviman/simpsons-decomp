@@ -26,6 +26,18 @@ its bytes back in order:
                                       addresses (animation tables, set indexes, text tables, maps...): the CPU's
                                       address of the place, in the piece's bank or the fixed program
     u16 1234                          a word no piece or code starts at
+    area REF BANK BYTE                a scene's map or tile blocks: their address in the bank the next byte gives
+    load REF PLACE COUNT              a palette set's load: palettes from bank 2D, where in the palette RAM, how many
+    setup KIND BOX 1B 27              an object's setup: its kind and animation, its hit box (in the setup's bank) and
+                                      the bytes for its fields 1B and 27
+    picture BANK PLACE REF            a tile picture's place: its bank, where in the tile RAM, the picture
+    demo PLAYERS FRAMES STEP REF...   a demo: its players and frames, the step it plays, each player's inputs (bank 2C)
+    s8 -3 +12 ... / s16 -300          signed bytes / words, decimal
+    step DX DY / loop BACK NEXT TIMES  an object path's step (2 bytes), and its end: FFFF, where it goes back to, the
+                                      path after it, how many times
+    record STRUCT VALUE...            a record of one of symbols.txt's tables, its fields in order (the bytes no field
+                                      names, u8): u8 and u16 in hex, s8 and s16 in decimal, a u16 that symbols.txt says
+                                      points at a structure as a ref
 
 files: data/<family>.txt, one a family of kinds, and data/layout.txt: each piece's name, place and length, for
 --check only.
@@ -39,18 +51,25 @@ FAMILIES = {
     "set index": "animations", "animation sets": "animations",
     "sprite list": "sprite_lists",
     "map": "maps", "map strip": "maps", "unreached map": "maps", "scene list": "maps", "scene table": "maps",
+    "layer mode list": "maps",
     "tile blocks": "tile_blocks", "unused blocks": "tile_blocks", "block tile flags": "tile_blocks",
+    "edge block": "tile_blocks", "map edge row": "maps",
     "palettes": "palettes", "unused palettes": "palettes", "palette sets": "palettes", "palette set table": "palettes",
     "palette effect": "palette_effects", "palette effects": "palette_effects",
-    "text": "texts", "text table": "texts", "test mode text": "texts", "test mode page": "texts",
+    "text": "texts", "text table": "texts", "profile text": "texts", "test mode text": "texts",
+    "test mode page": "texts",
     "tile picture": "screens", "tile picture place": "screens", "tile picture table": "screens",
     "spawn list": "spawns", "spawn list table": "spawns",
     "story script": "stories", "story script table": "stories",
     "object path": "objects", "path starts": "objects", "enemy behaviour": "objects", "object setup": "objects",
-    "hit box": "objects",
+    "hit box": "objects", "object start": "objects", "child object": "objects",
     "demo": "demos", "demo inputs": "demos", "demo table": "demos",
 }
 COLOUR = re.compile(r"#([0-9A-Fa-f]{6})(\+?)")
+STRUCT_LINE = re.compile(r"struct\s+(\w+)\s+([0-9A-Fa-f]+)\b")
+FIELD_LINE = re.compile(r"field\s+(\w+)\s+([0-9A-Fa-f]+)\s+\w+\s+([us](?:8|16))(?:\[([0-9A-Fa-f]*)\])?(?:\s+(\w+))?")
+TABLE_LINE = re.compile(r"([0-9A-Fa-f]{6})\s+table\s+\w+\[(\d+)\]\s+(\w+)(?:\s+(\w+))?")
+TYPE_SIZES = {"u8": 1, "s8": 1, "u16": 2, "s16": 2}
 TEXT = re.compile(r'"((?:[^"\\]|\\.)*)"')
 
 
@@ -114,7 +133,26 @@ def text_lines(data):
 
 # the kinds whose pieces are tables of CPU addresses, each in the piece's bank (or the fixed program)
 POINTER_KINDS = {"animation table", "set index", "palette effects", "text table", "spawn list table",
-                 "story script table", "map", "palette set table", "demo table", "tile picture table"}
+                 "story script table", "map", "palette set table", "demo table", "tile picture table", "scene table"}
+
+# the records whose fields name places: {kind: (line, record size, fields)}, a field "u8" or "u16" (hex) or ("ref",
+# where): a CPU address, of a place in the piece's bank (None), in a bank (an int), or in the bank a byte of the record
+# gives (("byte", offset))
+RECORD_LINES = {
+    "scene list": ("area", 4, (("ref", ("byte", 2)), "u8", "u8")),
+    "palette sets": ("load", 5, (("ref", 0x2D), "u16", "u8")),
+    "object setup": ("setup", 6, ("u16", ("ref", None), "u8", "u8")),
+    "tile picture place": ("picture", 5, ("u8", "u16", ("ref", ("byte", 0)))),
+    "demo": ("demo", 12, ("u8", "u16", "u8") + (("ref", 0x2C),) * 4),
+}
+LINE_FIELDS = {line: fields for line, _, fields in RECORD_LINES.values()}
+LINE_FIELDS["loop"] = (("ref", None), ("ref", None), "u8")
+# the walked kinds whose records are one of symbols.txt's structures
+KIND_STRUCTS = {"spawn list": "spawn", "hit box": "hit_box"}
+# the kinds the walk gives what it reads without knowing its shape: one of symbols.txt's tables there is written by
+# its type
+GENERIC_KINDS = {"named table", "loaded table", "indexed table", "value", "record", "constant table"}
+PATH_END = 0xFFFF
 
 
 def cpu_of(place):
@@ -131,9 +169,45 @@ def pointer_lines(data, place, resolve):
     return lines + (hex_lines(data[-1:]) if len(data) % 2 else [])
 
 
+def in_bank(word, bank):
+    """The place a CPU address names with 'bank' in the window (the fixed program's above 8000)"""
+    if word >= 0x8000:
+        return 0x78000 + word - 0x8000
+    if 0x6000 <= word < 0x8000:
+        return bank * 0x2000 + word - 0x6000
+    return None
+
+
+def record_lines(data, place, resolve, line, size, fields):
+    lines = []
+    whole = len(data) // size * size
+    for at in range(0, whole, size):
+        record, items, offset = data[at:at + size], [], 0
+        for field in fields:
+            if field == "u8":
+                items.append(f"{record[offset]:02X}")
+                offset += 1
+                continue
+            word = record[offset] << 8 | record[offset + 1]
+            offset += 2
+            name = None
+            if field != "u16":
+                where = field[1]
+                if where is None:
+                    target = target_of(word, place)
+                elif isinstance(where, int):
+                    target = in_bank(word, where)
+                else:
+                    target = in_bank(word, record[where[1]] & 0x3F)
+                name = resolve(target) if target is not None else None
+            items.append(name or f"{word:04X}")
+        lines.append(f"{line} " + " ".join(items))
+    return lines + hex_lines(data[whole:])
+
+
 FORMATS = {"sprite list": sprite_lines, "animation": animation_lines, "unreached animation": animation_lines,
            "palettes": colour_lines, "unused palettes": colour_lines,
-           "text": text_lines, "test mode text": text_lines, "test mode page": text_lines}
+           "text": text_lines, "test mode text": text_lines, "profile text": text_lines, "test mode page": text_lines}
 
 
 def word_of(item, places):
@@ -145,13 +219,29 @@ def word_of(item, places):
     return cpu_of(place + (int(offset, 16) if offset else 0))
 
 
-def parse_lines(lines, places=None):
-    """The bytes the typed lines give back ('places': {piece name: place}, for the refs)"""
+def parse_lines(lines, places=None, layouts=None):
+    """The bytes the typed lines give back ('places': {piece name: place}, for the refs; 'layouts': symbols.txt's
+    structures, for the records)"""
     out = bytearray()
     for line in lines:
         kind, _, rest = line.partition(" ")
         if kind == "u8":
             out += bytes(int(item, 16) for item in rest.split())
+        elif kind == "s8":
+            out += bytes(int(item) & 0xFF for item in rest.split())
+        elif kind == "s16":
+            word = int(rest) & 0xFFFF
+            out += bytes((word >> 8, word & 0xFF))
+        elif kind == "record":
+            struct, *items = rest.split()
+            for item, (value, _) in zip(items, layouts.structs[struct]):
+                if value == "u8":
+                    out.append(int(item, 16))
+                elif value == "s8":
+                    out.append(int(item) & 0xFF)
+                else:
+                    word = int(item) & 0xFFFF if value == "s16" else word_of(item, places)
+                    out += bytes((word >> 8, word & 0xFF))
         elif kind == "u16":
             word = int(rest, 16)
             out += bytes((word >> 8, word & 0xFF))
@@ -165,6 +255,17 @@ def parse_lines(lines, places=None):
             flags, argument, address = rest.split()
             word = word_of(address, places)
             out += bytes((int(flags, 16), int(argument, 16), word >> 8, word & 0xFF))
+        elif kind == "step":
+            out += bytes(int(item, 16) for item in rest.split())
+        elif kind in LINE_FIELDS:
+            if kind == "loop":
+                out += bytes((PATH_END >> 8, PATH_END & 0xFF))
+            for item, field in zip(rest.split(), LINE_FIELDS[kind]):
+                if field == "u8":
+                    out.append(int(item, 16))
+                else:
+                    word = word_of(item, places)
+                    out += bytes((word >> 8, word & 0xFF))
         elif kind == "colours":
             for match in COLOUR.finditer(rest):
                 red, green, blue = (int(match.group(1)[at:at + 2], 16) >> 3 for at in (0, 2, 4))
@@ -183,6 +284,120 @@ def parse_lines(lines, places=None):
         elif line.strip():
             raise SystemExit(f"data: a line no format reads: {line}")
     return bytes(out)
+
+
+# ---- symbols.txt's tables, by their types ----
+
+class Layouts:
+    """symbols.txt's structures and tables: each structure's values in byte order, [(type, points)] (the bytes no
+    field names, u8; a field at a place another field already covers, left out: it names the wider one's first
+    bytes), and {table place: (element type, count, points)}"""
+
+    def __init__(self, symbols_path):
+        lines = [line.split("#", 1)[0].strip() for line in symbols_path.read_text(encoding="utf-8").splitlines()]
+        sizes, fields = {}, {}
+        for line in lines:
+            match = STRUCT_LINE.match(line)
+            if match:
+                sizes[match.group(1)] = int(match.group(2), 16)
+            match = FIELD_LINE.match(line)
+            if match:
+                struct, offset, kind, count, points = match.groups()
+                count = int(count, 16) if count else 1
+                fields.setdefault(struct, []).append((int(offset, 16), kind, count, points))
+        self.structs = {}
+        for struct, size in sizes.items():
+            values, at = [], 0
+            for offset, kind, count, points in sorted(fields.get(struct, [])):
+                if offset < at:
+                    continue
+                values += [("u8", None)] * (offset - at)
+                values += [(kind, points)] * count
+                at = offset + TYPE_SIZES[kind] * count
+            if at > size:
+                continue    # (an array that goes on past the record's end: not one of these)
+            self.structs[struct] = values + [("u8", None)] * (size - at)
+        self.tables = {}
+        for line in lines:
+            match = TABLE_LINE.match(line)
+            if match:
+                place, count, kind, points = match.groups()
+                if kind in TYPE_SIZES or kind in self.structs:
+                    self.tables[int(place, 16)] = (kind, int(count), points)
+
+    def size(self, kind):
+        return TYPE_SIZES[kind] if kind in TYPE_SIZES else sum(TYPE_SIZES[value] for value, _ in self.structs[kind])
+
+
+def value_text(kind, data, at, points, place, resolve):
+    if kind == "u8":
+        return f"{data[at]:02X}"
+    if kind == "s8":
+        return f"{data[at] - 256 * (data[at] >= 0x80):+d}"
+    word = data[at] << 8 | data[at + 1]
+    if kind == "s16":
+        return f"{word - 0x10000 * (word >= 0x8000):+d}"
+    target = target_of(word, place) if points else None
+    return (resolve(target) if target is not None else None) or f"{word:04X}"
+
+
+def struct_lines(data, place, resolve, layouts, struct):
+    """Whole records of 'struct', then the rest in hex"""
+    size = layouts.size(struct)
+    whole = len(data) // size * size
+    lines = []
+    for first in range(0, whole, size):
+        items, at = [], first
+        for value, points in layouts.structs[struct]:
+            items.append(value_text(value, data, at, points, place, resolve))
+            at += TYPE_SIZES[value]
+        lines.append(f"record {struct} " + " ".join(items))
+    return lines + hex_lines(data[whole:])
+
+
+def path_lines(data, place, resolve):
+    """An object path: its steps, 2 bytes each, up to FFFF, then where it goes back to, the next path and how many
+    times (data_walk's object_paths)"""
+    lines, at = [], 0
+    while at + 2 <= len(data) and (data[at] << 8 | data[at + 1]) != PATH_END:
+        lines.append(f"step {data[at]:02X} {data[at + 1]:02X}")
+        at += 2
+    if at + 7 <= len(data):
+        items = []
+        for offset in (2, 4):
+            word = data[at + offset] << 8 | data[at + offset + 1]
+            target = target_of(word, place)
+            items.append((resolve(target) if target is not None else None) or f"{word:04X}")
+        lines.append(f"loop {items[0]} {items[1]} {data[at + 6]:02X}")
+        at += 7
+    return lines + hex_lines(data[at:])
+
+
+def table_lines(data, place, resolve, layouts):
+    """The lines of one of symbols.txt's tables, or None if the piece is not it whole"""
+    kind, count, points = layouts.tables[place]
+    if len(data) != layouts.size(kind) * count:
+        return None
+    if kind in ("u8", "s8"):
+        return [f"{kind} " + " ".join(value_text(kind, data, at, None, place, resolve)
+                                       for at in range(first, min(first + 16, len(data))))
+                for first in range(0, len(data), 16)]
+    if kind in ("u16", "s16"):
+        lines = []
+        for at in range(0, len(data), 2):
+            word = data[at] << 8 | data[at + 1]
+            target = target_of(word, place) if points and kind == "u16" else None
+            name = resolve(target) if target is not None else None
+            lines.append(f"ref {name}" if name else f"{kind} {value_text(kind, data, at, None, place, resolve)}")
+        return lines
+    lines, at = [], 0
+    for _ in range(count):
+        items = []
+        for value, points in layouts.structs[kind]:
+            items.append(value_text(value, data, at, points, place, resolve))
+            at += TYPE_SIZES[value]
+        lines.append(f"record {kind} " + " ".join(items))
+    return lines
 
 
 # ---- the pieces ----
@@ -215,7 +430,7 @@ def pieces(image, code, walked, described, fill, names):
     return found
 
 
-def export(image, code, walk_spans, described, fill, names, folder, names_of_code=()):
+def export(image, code, walk_spans, described, fill, names, folder, names_of_code=(), layouts=None):
     folder.mkdir(parents=True, exist_ok=True)
     walked = {}
     for first, (stop, kind) in walk_spans.items():
@@ -243,8 +458,18 @@ def export(image, code, walk_spans, described, fill, names, folder, names_of_cod
     layout = []
     for name, place, length, kind in found:
         data = image[place:place + length]
-        if kind in POINTER_KINDS:
+        typed = table_lines(data, place, resolve, layouts) \
+            if layouts is not None and place in layouts.tables and kind in GENERIC_KINDS else None
+        if typed is not None:
+            lines = typed
+        elif layouts is not None and kind in KIND_STRUCTS and KIND_STRUCTS[kind] in layouts.structs:
+            lines = struct_lines(data, place, resolve, layouts, KIND_STRUCTS[kind])
+        elif kind == "object path":
+            lines = path_lines(data, place, resolve)
+        elif kind in POINTER_KINDS:
             lines = pointer_lines(data, place, resolve)
+        elif kind in RECORD_LINES:
+            lines = record_lines(data, place, resolve, *RECORD_LINES[kind])
         elif kind in ("animation", "unreached animation"):
             lines = animation_lines(data, place, resolve)
         else:
@@ -258,7 +483,7 @@ def export(image, code, walk_spans, described, fill, names, folder, names_of_cod
     return len(found), {family: len(sections) for family, sections in by_family.items()}
 
 
-def build(folder, size):
+def build(folder, size, layouts=None):
     """The program's data bytes the files give back: {place: byte}"""
     places = {}
     for line in (folder / "layout.txt").read_text(encoding="ascii").splitlines():
@@ -272,7 +497,7 @@ def build(folder, size):
         for line in path.read_text(encoding="ascii").splitlines() + ["[end]"]:
             if line.startswith("["):
                 if name is not None:
-                    sections[name] = parse_lines(lines, places)
+                    sections[name] = parse_lines(lines, places, layouts)
                 name, lines = line[1:line.index("]")], []
             elif line.strip():
                 lines.append(line)

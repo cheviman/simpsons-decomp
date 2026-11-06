@@ -158,12 +158,14 @@ class Walk:
         PCM one when code starts within an FM one's length"""
         image = self.image
         for at in range(WINDOW - 6):
-            if image[at] == 0x21 and image[at + 3] in (0xCD, 0xC3)                     and image[at + 4] | image[at + 5] << 8 == SET_PATCH:
+            if image[at] == 0x21 and image[at + 3] in (0xCD, 0xC3) \
+                    and image[at + 4] | image[at + 5] << 8 == SET_PATCH:
                 patch = image[at + 1] | image[at + 2] << 8
                 size, kind = PATCH, "fm patch"
                 if any(byte in self.code or byte in self.described for byte in range(patch, patch + PATCH)):
                     size, kind = PCM_PATCH, "pcm patch"
-                if patch + size <= WINDOW and not any(byte in self.code for byte in range(patch, patch + size))                         and self.claim(patch, patch + size, kind):
+                if patch + size <= WINDOW and not any(byte in self.code for byte in range(patch, patch + size)) \
+                        and self.claim(patch, patch + size, kind):
                     self.patch_places.add(patch)
 
     def unreached_tracks(self):

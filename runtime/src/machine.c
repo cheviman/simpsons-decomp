@@ -354,7 +354,10 @@ uint8_t simpsons_read(uint16_t address)
 	switch (address)
 	{
 	case 0x1F80u: return simpsons_board.coins;
-	case 0x1F81u: return test_port();
+	case 0x1F81u:
+		if (simpsons_board.frame_timing)
+			simpsons_board.cycles += SIMPSONS_POLL_CYCLES;
+		return test_port();
 	case 0x1F90u: case 0x1F91u: case 0x1F92u: case 0x1F93u: return simpsons_board.players[address - 0x1F90u];
 	case 0x1FC4u:
 		/* the Z80's IRQ, held until it takes it */
@@ -365,6 +368,8 @@ uint8_t simpsons_read(uint16_t address)
 			simpsons_board.sound_irq();
 		return 0;
 	case 0x1FC6u: case 0x1FC7u:
+		if (simpsons_board.frame_timing)
+			simpsons_board.cycles += SIMPSONS_SOUND_POLL_CYCLES;
 		if (simpsons_board.sound_sync)
 			simpsons_board.sound_sync();
 		return simpsons_board.sound_ports[2u + (address & 1u)];
@@ -449,6 +454,9 @@ void simpsons_write(uint16_t address, uint8_t data)
 		control_write(data);
 		return;
 	case 0x1FC2u:
+		/* (frame timing: the EEPROM's lines take time, which the ER5911's start bit needs after CS goes up) */
+		if (simpsons_board.frame_timing)
+			simpsons_board.cycles += SIMPSONS_POLL_CYCLES;
 		eeprom_write(data);
 		return;
 	case 0x1FC6u: case 0x1FC7u:
@@ -505,6 +513,33 @@ void simpsons_dma_end(void)
 {
 	simpsons_board.dma_end_at = 0;
 	simpsons_board.firq = false;
+}
+
+void simpsons_frame_vblank(bool irq_masked)
+{
+	const uint64_t vblank = simpsons_board.frame * SIMPSONS_FRAME_CYCLES
+		+ (uint64_t)SIMPSONS_VBLANK_START * SIMPSONS_LINE_CYCLES;
+
+	if (simpsons_board.cycles < vblank)
+		simpsons_board.cycles = vblank;
+	simpsons_board.firq = simpsons_board.firq_due = false;
+	simpsons_vblank_start();
+	if (simpsons_board.dma_start_at)
+	{
+		simpsons_board.dma_start_at = simpsons_board.dma_end_at = 0;
+		if (simpsons_board.irq && !irq_masked)
+			simpsons_board.firq_due = true;
+		else
+			simpsons_board.firq = simpsons_board.firq_enabled;
+	}
+}
+
+void simpsons_firq_point(void)
+{
+	if (!simpsons_board.firq_due)
+		return;
+	simpsons_board.firq_due = false;
+	simpsons_board.firq = simpsons_board.firq_enabled;
 }
 
 static uint64_t hash_bytes(const void *data, size_t size, uint64_t hash)

@@ -36,6 +36,12 @@ RESET_BANK = 0                                  # the bank the board's reset sel
 # the direct page byte the program keeps the bank it chooses in (LDB #n; STB <$0E; SETLN <$0E: the CPU cannot read
 # its own lines back)
 BANK_SHADOW = 0x0E
+# The translation scaffold (tools/recompile.py: konami_cpu/translate.py), with frame timing
+# (runtime/include/simpsons/frame.h): where the program waits for its next frame (the main loop with no job, the boot
+# waiting for the FIRQ, then for the test switch to be let go), and where the IRQ handler takes the DMA's FIRQ
+TRANSLATOR = "konami_cpu.translate"
+FRAME_WAITS = (0x0789D1, 0x078817, 0x078882)
+FIRQ_POINT = 0x078F7A
 
 # The Z80 sound program (072-e03.6g: 0000-7FFF fixed, 16 KB banks at 8000-BFFF by FE00, which the Z80 only reads as
 # data; its RAM at F000): the reset (IM 1, then 0923), the interrupt (0038, from the 053248's read of 1FC4) and the

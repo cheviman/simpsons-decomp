@@ -129,6 +129,7 @@ runs, as the static analysis follows them: konami_cpu/analysis.py):
 The walk is right when every byte the engine's instructions read in the scenarios is in what it walked: with
 --reads (the reference's rom_reads.txt, kref --rom-reads) the report lists the ones that are not.
 """
+import bisect
 import re
 import sys
 from collections import Counter, defaultdict
@@ -205,6 +206,9 @@ MAX_TEXT = 512
 FIXED_PRINTER = (0x07936D, 0x079384, 0x07939B)
 FIXED_TEXT_END, FIXED_TEXT_LINE = 0x23, 0x2F
 FIXED_TEXT_TABLES = ("game_texts",)
+# the characters' profiles in the attract (bank 20's 04082C, "LDX #$7106; ASLA; LDX A,X")
+PROFILE_TEXTS = ("profile_texts",)
+PROFILE_LINE, PROFILE_END = 0xFE, 0xFF
 MENU_HEADER = 3
 # the paths of bank 1A's objects: the ones the code loads (0353BE "LDD ,U" from object_1a_path_starts, 03532B "LDY
 # #$79F3", 035434 "LDD #$7D72")
@@ -237,16 +241,27 @@ STORES = {"stu": "U", "sty": "Y", "std": "D", "stx": "X"}
 # the routines that take a record in a register: (routine, register, bytes, kind, ((field, the routine whose record it
 # points at), ...)): an object's setup (07D132-07D14D: its kind and animation, its hit box, fields 1B and 27) and a hit
 # box (07D1B7-07D1C8: 4 words into fields 1C, 1F, 21, 23)
+OBJECT_START = 10
 ARGUMENT_RECORDS = ((0x07D132, "U", 6, "object setup", ((2, 0x07D1B7),)),
-                    (0x07D1B7, "Y", 8, "hit box", ()))
+                    (0x07D1B7, "Y", 8, "hit box", ()),
+                    # (bank 13's 0277D6: an object in RAM to start, the two bytes of its 04 and 05, and its x, y and z)
+                    (0x0277D6, "U", OBJECT_START, "object start", ()),
+                    # (07CA8A and 07CA9E, through 07862C and 07862F: an object born at an offset from X's, its x, y
+                    # and z offsets (x mirrored if X faces left) and its kind; 07CA8A's, also its list and two bytes for
+                    # its 30 and 01)
+                    (0x07CA8A, "Y", 8, "child object", ()),
+                    (0x07CA9E, "Y", 6, "child object", ()))
 # what an instruction reads from memory, by its mnemonic: a byte or a word (BMOVE copies bytes from Y: an indexed table)
 READS_8 = {"lda", "ldb", "cmpa", "cmpb", "adda", "addb", "suba", "subb", "anda", "andb", "ora", "orb", "eora", "eorb",
            "bita", "bitb", "adca", "adcb", "sbca", "sbcb", "tst"}
 READS_16 = {"ldd", "ldx", "ldy", "ldu", "lds", "cmpd", "cmpx", "cmpy", "cmpu", "cmps", "addd", "subd", "tstw"}
 MAX_GENERIC = 0x1000            # an indexed table runs no further than this
+MAX_ENTRY_WORDS = 32            # the entries of a table of records' addresses a register is loaded from
+MAX_RECORD = 64                 # the longest record a table of records' addresses leads to
 LOADS = ("ldx", "ldy", "ldu")
 BOX = 8
-MAX_MORE_BOXES = 8
+MORE_RECORDS = {"hit box": BOX, "object start": OBJECT_START}
+MAX_MORE_RECORDS = 8
 MAX_MORE_SPRITES = 8
 RESIDUE = 16                    # the bytes that must repeat another bank's for a loaded table to stop there
 FIXED_START_PLACE = konami_analysis.FIXED_START
@@ -272,8 +287,9 @@ def table_places():
 
 
 # what the walk reads from symbols.txt's table lines (the others it only claims)
-WALKED = SET_TABLES + tuple(name for pair in MAP_TABLES for name in pair) + MODE_TABLES + (BLOCK_FLAGS,) + PALETTE_SETS \
-    + SPAWN_LISTS + (TILE_PICTURES,) + TEXT_TABLES + FIXED_TEXT_TABLES + PATH_STARTS + (DEMOS, STORY_SCRIPTS) + BEHAVIOUR_TABLES
+WALKED = SET_TABLES + tuple(name for pair in MAP_TABLES for name in pair) + MODE_TABLES + (BLOCK_FLAGS,) \
+    + PALETTE_SETS + SPAWN_LISTS + (TILE_PICTURES,) + TEXT_TABLES + FIXED_TEXT_TABLES + PROFILE_TEXTS + PATH_STARTS \
+    + (DEMOS, STORY_SCRIPTS) + BEHAVIOUR_TABLES
 
 
 class Walk:
@@ -291,6 +307,9 @@ class Walk:
         self.animations = set()
         self.lists = {}             # {sprite list place: sprites}
         self.maps = {}              # {map place: strips}
+        self.map_heights = {}       # {map place: its strips' bytes}
+        self.map_strips = {}        # {map place: [its strips' cpu addresses]}
+        self.map_blocks = set()     # {(map bank, map cpu, blocks bank, blocks cpu)} of every scene area
         self.scene_records = {}     # {scene list place: its records (areas)}
         self.blocks = {}            # {tile blocks place: blocks}
         self.palette_sets = set()
@@ -307,6 +326,8 @@ class Walk:
         self.arguments = set()
         self.behaviours = set()
         self.residues = {}          # {place: whether the rest of its bank is the assembler's leftovers}
+        self.code_tables = None     # the places of the analysis's tables of code, vectors and such (free())
+        self.generic_sources = {}   # {indexed table place: the first instruction that reads it} (generic())
         self.tables_named = table_places()
         wanted = WALKED
         missing = [name for name in wanted if name not in self.tables_named]
@@ -482,7 +503,7 @@ class Walk:
                         and place + record * count not in self.analysis.owner:
                     count += 1
                 records[place] = count
-                self.claim(place, place + record * count, "scene list")
+                self.claim(place, place + record * count, "layer mode list" if name in MODE_TABLES else "scene list")
         return lists, records
 
     def map(self, bank, cpu):
@@ -500,6 +521,8 @@ class Walk:
         if len(apart) > 1 or height % STRIP_ROW:
             self.problems.append(f"map at {place:06X}: strips {' '.join(f'{strip:04X}' for strip in strips)}")
         self.maps[place] = len(strips)
+        self.map_heights[place] = height
+        self.map_strips[place] = distinct
         self.claim(place, place + 2 * count, "map")
         cells = set()
         for strip in distinct:
@@ -520,6 +543,7 @@ class Walk:
                     if cells is None:
                         continue
                     blocks = (self.mem.r8(blocks_record + 2) & 0x3F, self.mem.r16(blocks_record))
+                    self.map_blocks.add((self.mem.r8(map_record + 2) & 0x3F, self.mem.r16(map_record)) + blocks)
                     wanted[blocks] = max([wanted.get(blocks, 0)] + [(cell & BLOCK_INDEX) + 1 for cell in cells])
         flags = 0
         for (bank, cpu), count in sorted(wanted.items()):
@@ -874,7 +898,30 @@ class Walk:
                 if kind == konami_analysis.CONSTANT:
                     for bank in konami_analysis.banks_in(state):
                         found[routine].add((bank, value))
+                elif kind == konami_analysis.WORD:
+                    found[routine].update(self.entry_words(*value))
         return found
+
+    def entry_words(self, address, length, offset, bank):
+        """{(bank, cpu)} of the words at 'offset' of a table's entries (a register the code loads from an entry, an
+        index it does not know: 02E533 "LDU #$7B7A; LDA #$30,X; ASLA; LDU A,U"), up to where the first of them starts
+        (the records follow their table), and no further than MAX_ENTRY_WORDS"""
+        table = place_of(bank, address)
+        if table is None:
+            return set()
+        words, stop = set(), None
+        for index in range(MAX_ENTRY_WORDS):
+            at = table + length * index
+            if stop is not None and at >= stop or at in self.analysis.owner or bank_of(at) != bank_of(table):
+                break
+            word = self.mem.r16(at + offset)
+            target = place_of(bank, word)
+            if target is None or not WINDOW <= word:
+                break
+            words.add((bank, word))
+            if target > table:
+                stop = target if stop is None else min(stop, target)
+        return words
 
     def argument_records(self):
         specs = {routine: (register, size, kind, pointers) for routine, register, size, kind, pointers in ARGUMENT_RECORDS}
@@ -918,6 +965,28 @@ class Walk:
             if place is not None and self.claim(place, place + at - cpu, "text"):
                 self.texts.add(place)
 
+    def profile_texts(self):
+        """The characters' profiles, a typewriter's (04082C): the RAM place of the count of characters out so far (a
+        word: one more a frame, 040866), the characters (the tile 30 below each), FE and the tile RAM place of the
+        next line, FF the end"""
+        for name in PROFILE_TEXTS:
+            table, count, _ = self.tables_named[name]
+            bank = bank_of(table)
+            self.claim(table, table + 2 * count, "text table")
+            for index in range(count):
+                cpu = self.mem.r16(table + 2 * index)
+                at = cpu + 2
+                while at - cpu < MAX_TEXT:
+                    code = self.byte(bank, at)
+                    at += 1
+                    if code == PROFILE_END:
+                        break
+                    if code == PROFILE_LINE:
+                        at += 2
+                place = place_of(bank, cpu)
+                if place is not None and self.claim(place, place + at - cpu, "profile text"):
+                    self.texts.add(place)
+
     def next_start(self, place, limit):
         """The first byte after 'place' that is claimed or code, or 'limit'"""
         stop = place + 1
@@ -926,13 +995,16 @@ class Walk:
         return stop
 
     def more_sprite_lists(self):
-        """After a sprite list in a bank of animations, whole sprites up to what starts next (lists no frame shows)"""
+        """After a sprite list or an animation in a bank of animations, whole sprites up to what starts next (lists no
+        frame shows: bank 24's 049716, 3 sprites between the animation 049706 and the list 049728)"""
         for place, (stop, kind) in sorted(self.spans.items()):
-            if kind != "sprite list" or stop in self.owner or stop in self.analysis.owner:
+            if kind not in ("sprite list", "animation", "unreached animation") or stop in self.owner \
+                    or stop in self.analysis.owner:
                 continue
             end = self.next_start(stop, (stop // 0x2000 + 1) * 0x2000)
             # (a few, filling the gap to what starts next: a longer run is the assembler's leftovers as often)
-            if 0 < end - stop <= MAX_MORE_SPRITES * SPRITE and (end - stop) % SPRITE == 0                     and not self.same_elsewhere(stop, end):
+            if 0 < end - stop <= MAX_MORE_SPRITES * SPRITE and (end - stop) % SPRITE == 0 \
+                    and not self.same_elsewhere(stop, end):
                 self.claim(stop, end, "sprite list")
 
     def unreached_maps(self):
@@ -972,14 +1044,60 @@ class Walk:
             if whole and self.claim(stop, stop + whole, "unused blocks"):
                 self.notes.append(f"tile blocks at {place:06X}: {whole // BLOCK} more blocks after the {count} the maps take")
 
-    def more_boxes(self):
-        """After a hit box, whole boxes up to what starts next (boxes kept together, which no call hands over)"""
+    def map_edges(self):
+        """What the map readers take past a map's edges, when the camera is past the stage's: the row below each
+        strip, and the blocks the cells at the edges name past the map's array. Below: the row reader (07C807) and
+        the column reader (07C744) read the row after a strip's last (bank 08's 011F96 after the strip 011F16, bank
+        02's 005FFA after 005EFA's 16 rows, up to the bank's end). Left: the map reader (07C5E5, LDY A,Y with A = -2)
+        takes the word before the map's first strip as a strip, and the column reader its last column. Bank 04's map
+        0099A2: the word before it, 0099A0 (the end of the blocks before), is B99F, code in the fixed program, whose
+        words name block 71 of 009AA6: 009FA4, in the assembler's leftovers at the bank's end. Only bytes no other
+        piece holds."""
+        for place, strips in sorted(self.map_strips.items()):
+            bank = bank_of(place)
+            for strip in strips:
+                first = place_of(bank, strip + self.map_heights[place])
+                stop = first
+                while stop < first + STRIP_ROW and bank_of(stop) == bank and stop not in self.owner \
+                        and stop not in self.analysis.owner:
+                    stop += 1
+                if stop > first:
+                    self.claim(first, stop, "map edge row")
+        for map_bank, map_cpu, blocks_bank, blocks_cpu in sorted(self.map_blocks):
+            map_place = place_of(map_bank, map_cpu)
+            blocks_place = place_of(blocks_bank, blocks_cpu)
+            if map_place not in self.maps or blocks_place not in self.blocks:
+                continue
+            count = self.blocks[blocks_place]
+            height = self.map_heights[map_place]
+            cells = [self.word(map_bank, strip + height + offset) for strip in self.map_strips[map_place]
+                     for offset in range(0, STRIP_ROW, 2) if strip + height + offset + 2 <= FIXED_CPU]
+            left = self.word(map_bank, map_cpu - 2)
+            if left >= WINDOW:
+                cells += [self.word(map_bank, left + STRIP_ROW - 2 + STRIP_ROW * row)
+                          for row in range(height // STRIP_ROW)]
+            for cell in cells:
+                index = cell & BLOCK_INDEX
+                cpu = blocks_cpu + BLOCK * index
+                if index < count or cpu + BLOCK > FIXED_CPU:
+                    continue
+                place = place_of(blocks_bank, cpu)
+                if any(at in self.owner or at in self.analysis.owner for at in range(place, place + BLOCK)):
+                    continue
+                self.claim(place, place + BLOCK, "edge block")
+                self.notes.append(f"tile blocks at {blocks_place:06X}: block {index} ({place:06X}), named by a cell "
+                                  f"past the edges of the map at {map_place:06X}")
+
+    def more_records(self):
+        """After a hit box or an object start, whole records of the kind up to what starts next (records kept with
+        the others, which no call hands over: bank 13's 027F93 and 027FA7 between the object starts it passes)"""
         for place, (stop, kind) in sorted(self.spans.items()):
-            if kind != "hit box" or stop in self.owner or stop in self.analysis.owner:
+            size = MORE_RECORDS.get(kind)
+            if size is None or stop in self.owner or stop in self.analysis.owner:
                 continue
             end = self.next_start(stop, (stop // 0x2000 + 1) * 0x2000)
-            if (end - stop) % BOX == 0 and 0 < end - stop <= MAX_MORE_BOXES * BOX and not self.residue_at(stop):
-                self.claim(stop, end, "hit box")
+            if (end - stop) % size == 0 and 0 < end - stop <= MAX_MORE_RECORDS * size and not self.residue_at(stop):
+                self.claim(stop, end, kind)
 
     def unused_palettes(self):
         start = PALETTE_BANK * 0x2000
@@ -1034,6 +1152,9 @@ class Walk:
         absolute = {}               # {place: width}
         fields = defaultdict(dict)  # {record place: {offset: width}}
         indexed = {}                # {table place: entry width}
+        entry_of = {}               # {place read by a constant index: {the table places indexed}}
+        spacing = {}                # {record place: how far apart the records a table leads to are}
+        constant_tables = {}        # {table place: (lowest, highest) offset its constant indexes read}
         for place, instruction in sorted(self.analysis.instructions.items()):
             if instruction.flow != konami_analysis.dis.FLOW_NORMAL:
                 continue
@@ -1066,10 +1187,29 @@ class Walk:
                     continue
                 if operand.reg not in konami_analysis.REGISTERS:
                     continue
-                for kind, value in known_kinds(state.get(operand.reg)):
-                    if kind != CONSTANT:
+                for kind, held in known_kinds(state.get(operand.reg)):
+                    if kind == CONSTANT:
+                        if place >= FIXED_START_PLACE and len(banks) > 1 and held < FIXED_CPU:
+                            # (the fixed program's routines the banks call with an address in their window: the state
+                            # merges the calls' values and banks, and no longer knows which goes with which; 07936D,
+                            # the printer, would take 7E53 in banks 11 and 12 too. The calls' walks take them:
+                            # fixed_texts)
+                            continue
+                        pairs = [(bank, held) for bank in banks]
+                    elif kind == konami_analysis.WORD:
+                        # (a register loaded from a table's entry: the records its entries lead to, bank 20's 040796
+                        # "LDY #$70E3; ASLB; LDY B,Y", then ,Y++ ,Y++ ,Y+; records evenly apart are that long, bank
+                        # 11's 7532 leads to 4 of 25 bytes whose fields read go up to 10)
+                        pairs = sorted(self.entry_words(*held))
+                        apart = {b - a for (_, a), (_, b) in zip(pairs, pairs[1:])}
+                        if len(pairs) > 1 and len(apart) == 1 and 0 < min(apart) <= MAX_RECORD:
+                            for bank, value in pairs:
+                                at = place_of(bank, value)
+                                if at is not None:
+                                    spacing[at] = max(min(apart), spacing.get(at, 0))
+                    else:
                         continue
-                    for bank in banks:
+                    for bank, value in pairs:
                         base = place_of(bank, value)
                         if base is None:
                             continue
@@ -1081,33 +1221,66 @@ class Walk:
                                     at = place_of(bank, (value + amount) & 0xFFFF)
                                     if at is not None:
                                         absolute[at] = max(read, absolute.get(at, 0))
+                                        entry_of.setdefault(at, set()).add(base)
+                                        low, high = constant_tables.get(base, (amount, amount + read))
+                                        constant_tables[base] = (min(low, amount), max(high, amount + read))
                             else:
                                 indexed[base] = max(read, indexed.get(base, 0))
+                                self.generic_sources.setdefault(base, place)
                         elif operand.kind in ("offset", "register"):
                             disp = operand.disp if operand.kind == "offset" else 0
                             if disp >= 0:
                                 fields[base][disp] = max(read, fields[base].get(disp, 0))
                         elif operand.kind in ("postinc", "postinc2", "predec", "predec2"):
-                            indexed[base] = max(read, indexed.get(base, 0))
-        for at, size in sorted(absolute.items()):
-            if self.free(at, at + size):
-                self.claim(at, at + size, "value")
+                            # (a cursor reads entries of any width: its table runs whole up to what starts next, bank
+                            # 20's 70E3 records of 5, read by ,Y++ ,Y++ ,Y+)
+                            indexed[base] = max(1, indexed.get(base, 0))
+                            self.generic_sources.setdefault(base, place)
+        # (a word an instruction reads at a fixed place, or by a constant index, inside a table another indexes is an
+        # entry of the table, not where something else starts: 0207CD reads 7C00's entries by A, 0209AE its entry 25
+        # by LDX [$7C32])
+        entries = {at for at, bases in entry_of.items() if bases & set(indexed)}
+        bases = sorted(indexed)
+        for at, size in absolute.items():
+            index = bisect.bisect_right(bases, at) - 1
+            base = bases[index] if index >= 0 else None
+            if base is not None and base < at < base + MAX_GENERIC and bank_of(base) == bank_of(at) \
+                    and size == indexed[base] and (at - base) % size == 0:
+                entries.add(at)
+        # (a table only constant indexes read is whole from the lowest to the highest, the entries no call reads
+        # between them too: bank 11's 7A55, "ASLA; LDD A,U" by 0 to 13 but 6)
+        for base, (low, high) in sorted(constant_tables.items()):
+            first, stop = base + low, base + high
+            if 0 <= low and len({at for at in entry_of if base in entry_of[at]}) > 1 \
+                    and bank_of(first) == bank_of(stop - 1) and self.free(first, stop):
+                self.claim(first, stop, "constant table")
         for base, read in sorted(fields.items()):
-            stop = base + max(offset + size for offset, size in read.items())
+            stop = base + max([offset + size for offset, size in read.items()] + [spacing.get(base, 0)])
             if self.free(base, stop):
                 self.claim(base, stop, "record")
-        starts = sorted(set(indexed) | self.analysis.named | set(self.spans))
+        for at, size in sorted(absolute.items()):
+            if at not in entries and self.free(at, at + size):
+                self.claim(at, at + size, "value")
+        starts = sorted((set(indexed) | self.analysis.named | set(self.spans)) - entries)
         for base, size in sorted(indexed.items()):
-            if base in self.owner or base in self.analysis.owner:
+            first = base
+            if base in self.owner and base + size not in self.owner and base + size not in self.analysis.owner:
+                # (its first entry the last of what comes before, which never is read as the table's: bank 1E's
+                # 7DA5, by the players in the game, 1 to 4, after the hit box at 7DA2)
+                first = base + size
+            if first in self.owner or first in self.analysis.owner:
                 continue
             following = next((start for start in starts if start > base), base + MAX_GENERIC)
-            stop = base
+            stop = first
             limit = min(following, base + MAX_GENERIC, (base // 0x2000 + 1) * 0x2000)
             while stop < limit and stop not in self.owner and stop not in self.analysis.owner:
                 stop += 1
-            length = (stop - base) // size * size
+            length = (stop - first) // size * size
             if length:
-                self.claim(base, base + length, "indexed table")
+                self.claim(first, first + length, "indexed table")
+        for at in sorted(entries):
+            if self.free(at, at + absolute[at]):
+                self.claim(at, at + absolute[at], "value")
 
     def loaded_tables(self):
         loads = {}
@@ -1124,7 +1297,8 @@ class Walk:
             limit = FIXED_START_PLACE + 0x8000 if place >= FIXED_START_PLACE else (place // 0x2000 + 1) * 0x2000
             following = next((start for start in starts if start > place), limit)
             stop = place + 1
-            while stop < min(following, limit) and stop not in self.owner and stop not in self.analysis.owner                     and not self.residue_at(stop):
+            while stop < min(following, limit) and stop not in self.owner and stop not in self.analysis.owner \
+                    and not self.residue_at(stop):
                 stop += 1
             if self.claim(place, stop, "loaded table"):
                 self.loaded[place] = loader
@@ -1138,7 +1312,8 @@ class Walk:
             return False
         for bank in range(len(image) // 0x2000):
             other = bank * 0x2000 + offset
-            if other != first and image[other:other + stop - first] == image[first:stop]                     and any(byte in self.analysis.owner or byte in self.owner for byte in range(other, other + stop - first)):
+            if other != first and image[other:other + stop - first] == image[first:stop] \
+                    and any(byte in self.analysis.owner or byte in self.owner for byte in range(other, other + stop - first)):
                 return True
         return False
 
@@ -1156,15 +1331,24 @@ class Walk:
                 offset = place % 0x2000
                 for bank in range(len(image) // 0x2000):
                     other = bank * 0x2000 + offset
-                    if other != place and image[other:other + end - place] == image[place:end]                             and any(byte in self.analysis.owner or byte in self.owner for byte in range(other, other + end - place)):
+                    if other != place and image[other:other + end - place] == image[place:end] \
+                            and any(byte in self.analysis.owner or byte in self.owner for byte in range(other, other + end - place)):
                         found = True
                         break
             self.residues[place] = found
         return self.residues[place]
 
+    def taken(self, place):
+        """Is 'place' walked, code, or in a table of code the analysis reads (or the vectors, or a table symbols.txt
+        describes)? (A table of data may start in one: bank 1D's 03BA3C is the last state of 03BA00's.)"""
+        if self.code_tables is None:
+            self.code_tables = {at for low, high in self.analysis.described for at in range(low, high)}
+        return place in self.owner or place in self.analysis.owner or place in self.code_tables
+
     def free(self, first, stop):
-        """No byte of first..stop walked yet, nor code"""
-        return not any(place in self.owner or place in self.analysis.owner for place in range(first, stop))
+        """No byte of first..stop taken (a handler a JMP [A,X] leads to starts with X still at the table: 020016's
+        7B80, whose n,X are not the table's)"""
+        return not any(self.taken(place) for place in range(first, stop))
 
     def named_tables(self):
         """The tables symbols.txt gives the length of that nothing else walks"""
@@ -1186,6 +1370,7 @@ class Walk:
         self.named_tables()
         self.argument_records()
         self.fixed_texts()
+        self.profile_texts()
         self.enemy_behaviours()
         self.generic()
         self.unreached_animations()
@@ -1193,8 +1378,9 @@ class Walk:
         self.unreached_maps()
         self.unused_blocks()
         self.unused_palettes()
-        self.more_boxes()
+        self.more_records()
         self.loaded_tables()
+        self.map_edges()
 
 
 def spans(analysis):

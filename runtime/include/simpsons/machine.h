@@ -20,7 +20,12 @@
  *
  *    Time: the caller advances simpsons_board.cycles as the CPU runs (the 053248's cycles, 12 MHz / 4), gives
  *    the present within a run through simpsons_board.now (the EEPROM's timing needs it), and calls the frame's
- *    events itself (tools/core/konami/reference/kref, to follow the real CPU's pace).
+ *    events itself (tools/core/konami/reference/kref, to follow the real CPU's pace). With frame timing
+ *    (simpsons/frame.h: kref --timing frames, the translated program) instructions take no time: the board moves
+ *    on to its next VBLANK where the program waits for one (simpsons_frame_vblank), and a read of a port the
+ *    program polls in a loop (1F81: the EEPROM's READY) or a write of the EEPROM's lines (1FC2: its start bit
+ *    must come after CS goes up) costs it SIMPSONS_POLL_CYCLES, and a read of the Z80's answers (1FC6-1FC7)
+ *    SIMPSONS_SOUND_POLL_CYCLES: the time the EEPROM and the Z80 go on in while the program waits for them.
  */
 #ifndef SIMPSONS_MACHINE_H
 #define SIMPSONS_MACHINE_H
@@ -41,6 +46,11 @@ extern "C" {
 /* The sprite DMA's FIRQ, after VBLANK starts: from 256 to 256 + 2048 ticks of 6 MHz (MAME's periodic_irq) */
 #define SIMPSONS_DMA_START_CYCLES 128u
 #define SIMPSONS_DMA_END_CYCLES   1152u
+/* Frame timing: what a read of a port the program polls costs, or a write of the EEPROM's lines (1F81, 1FC2), and
+   a read of the Z80's answers (1FC6, 1FC7): the boot asks the Z80 for its ROM's sum and waits 2000 reads at most
+   (078EB0), which the Z80 takes the time of the 053248's RAM test to work out on the real board */
+#define SIMPSONS_POLL_CYCLES      16u
+#define SIMPSONS_SOUND_POLL_CYCLES 1024u
 /* The ER5911 is busy 1750 us after a write (MAME's default write time) */
 #define SIMPSONS_EEPROM_WRITE_CYCLES 5250u
 
@@ -128,6 +138,8 @@ typedef struct
 	uint8_t control;               /* the last byte written to 1FC0 */
 	uint8_t eeprom_out;            /* the last byte written to 1FC2 */
 	uint64_t dma_start_at, dma_end_at;    /* the DMA's FIRQ, in cycles (0: none) */
+	bool frame_timing;             /* simpsons/frame.h: the board moves on where the program waits */
+	bool firq_due;                 /* frame timing: the DMA's FIRQ, held for the IRQ handler's FIRQ point */
 
 	/* K053260: the ports between the two CPUs (0-1 the 053248 writes, 2-3 the Z80) */
 	uint8_t sound_ports[4];
@@ -186,6 +198,14 @@ int32_t simpsons_program_offset(uint16_t address);
 void simpsons_vblank_start(void);
 void simpsons_dma_start(void);
 void simpsons_dma_end(void);
+
+/* Frame timing (simpsons/frame.h), at the program's wait: the time up to the next VBLANK, the VBLANK's events
+   (simpsons_vblank_start), the last frame's FIRQ dropped, and the sprite DMA's FIRQ at once, or, when the CPU
+   will take the IRQ ('irq_masked' false: its CC's I clear), held for the IRQ handler's FIRQ point
+   (simpsons_firq_point), where MAME's pace has it come: 128 cycles in, after the handler saved what the FIRQ
+   changes */
+void simpsons_frame_vblank(bool irq_masked);
+void simpsons_firq_point(void);
 
 /* A hash of the state the program keeps: work RAM, the RAM at 3000, palette, the video chips' memories and
    registers, the bank, the EEPROM */

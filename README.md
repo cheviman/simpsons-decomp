@@ -13,7 +13,7 @@ you build your own executable, which runs from the assets and opens no ROM.
 
 ## Status
 
-As of 05-11-2026:
+As of 06-11-2026:
 
 - [x] ROM set verification (MAME set `simpsons`, 4 Players World, set 1), by CRC32 and SHA-1 of every file
 - [x] A reference: the original programs on MAME's 053248 and Z80 cores, with MAME's K053260 and ymfm's YM2151,
@@ -27,15 +27,27 @@ As of 05-11-2026:
       every program bank and of every opcode with every postbyte
 - [x] The 053248's static analysis: all the code the scenarios run (42,668 places), found without traces, its
       banks followed
+- [x] The 053248's instructions lifted to the shared core's IR, checked against MAME's core: every opcode with every
+      second byte, and every instruction of the program, from random states, the same registers, flags and memory
+      accesses (305,100 states, 0 differences)
+- [x] Frame timing (`runtime/include/simpsons/frame.h`): the board moves on to its next frame where the program
+      waits for one, as on a board fast enough never to lag, the reference's default (`--timing cycles` for MAME's
+      pace)
+- [x] The 053248 program translated to C an instruction at a time (`tools/recompile.py`, the translation scaffold),
+      the same as the reference in every scenario, frame by frame, in state and picture (25 scenarios, 343,270
+      frames)
 - [x] The Z80's static analysis: all the code the scenarios run (6,155 places), found without traces
 - [x] The Z80's program and banks explained, every byte: code, described data (its tables, the 48 songs' tracks,
       the YM2151's and the K053260's patches) or fill
-- [ ] Every byte of the 053248's program explained (99.86% now: code, described data, or fill, the assembler's
-      leftovers between and after a bank's pieces among it)
+- [x] Every byte of the 053248's program explained: code (the unused routines among it), described data (what the
+      engines read, walked from where the code hands it over, and the tables `symbols.txt` names), or fill (the
+      assembler's leftovers between and after a bank's pieces)
 - [ ] The decompiled C of both programs, and the board's runtime
 - [x] The assets extracted by subject and checked byte for byte (`tools/extract_assets.py --check`): the sprites by
-      the objects whose animations show them, the tiles by the scenes whose maps show them, the K053260's samples
-      as WAV files, and every byte of data of both programs as text by name
+      the objects whose animations show them, the tiles by the stages whose maps show them, the K053260's samples
+      as WAV files, the music as Standard MIDI Files (a song a file, as the Z80's driver plays it), and every other
+      byte of data of both programs as text by name: the records by their fields, the addresses as the names of what
+      they point at
 - [ ] The assets loaded by name by the decompiled game
 
 ## Verifying your ROM set
@@ -53,8 +65,8 @@ py tools/extract_assets.py rom/simpsons.zip --check
 ```
 
 The first writes `assets/` (never part of the repository): PNG sheets of the sprites and tiles by subject, WAV files
-of the samples, and the programs' data as text by name; the second rebuilds the graphics and sample ROM files and
-every data byte from them and compares them with your set's.
+of the samples, MIDI files of the music, and the programs' data as text by name; the second rebuilds the graphics
+and sample ROM files and every data byte from them and compares them with your set's.
 
 The tools are shared with the other games through [arcade-decomp](https://github.com/cheviman/arcade-decomp),
 which `tools/core` holds as a git submodule.

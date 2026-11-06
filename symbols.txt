@@ -200,10 +200,12 @@ struct test_palette 22 rom
 field test_palette 00 destination u16
 field test_palette 02 colours u16[16]
 05FB6C  table  test_mode_palettes[8]  test_palette
-# the sound test's music, by its number (05E23E "LDA $5915; LDX #$68EF"... 05E2A0 "LDA $5916; LDX #$6799; LBRA
-# $6728": 05E728 "SUBA #$30; LEAX A,X; LEAX A,X; LDD ,X", the command 8680 sends): the numbers 00-2F take the 48
-# words before 6799 (kref --rom-reads: 05E72E reads 05E739-05E798)
-05E739  table  sound_test_music[48]  u16
+# the sound test's two lists, by the page's number, of the words 078680 queues for the Z80 (05E728 "SUBA #$30; LEAX
+# A,X; LEAX A,X; LDD ,X", X 30 entries past the list's start): the effects' (05E2A0 "LDA $5916; LDX #$6799", the
+# number 0-AA: 05E290 wraps it past AA) and the music's (05E23E "LDA $5915; LDX #$68EF", 0-30: 05E22E wraps it past
+# 30; the first, 0000, stops it). kref --rom-reads: 05E72E reads 05E739-05E798 and the music's
+05E739  table  sound_test_effects[171]  u16
+05E88F  table  sound_test_music[49]  u16
 
 # ======== code nothing reaches ========
 # runs nothing calls, jumps or points at that decode as instructions to a return or a jump (the coverage: unknown
@@ -269,10 +271,15 @@ field vector 01 offset s16
 032024  table  empty_vector_032024[1]  vector
 07865F  table  empty_vector_07865F[1]  vector
 078665  table  empty_vector_078665[1]  vector
+034000  table  empty_vectors_034000[2]  vector    # the first two slots of bank 1A's jump table
 # a slot of the fixed program's jump table nothing jumps through, to a routine (07D47E) that dispatches by its object's
-# field 28 through tables at F65F and F661 that hold no code addresses there: left from the game's making, not code
-# the analysis can follow
+# field 28 like the objects' dispatchers (07D484 "LDU #$F661; LDB A,U; STB <$0E; SETLN <$0E", 07D496 "LDU #$F65F;
+# ASLA; JMP [A,U]"), through tables that hold no code addresses there: F65F-F661 end a table of bytes, F662 starts
+# one of code addresses (DDC3, DDF3...). Left from the game's making: its jump goes nowhere
 0785D8  table  unused_vector_0785D8[1]  vector
+07D47E  func  unused_07D47E    # Unused: only the unused slot 0785D8 leads to it
+07D49A  code  unused_07D47E_dispatch  calls=unused_object_handlers
+07F65F  data  unused_object_handlers  record=2 count=0 code=0
 # a list of spawns no table leads to, in bank 1A: 67 records like a stage's (x from 0148 to 0540), no end record
 0354C5  table  unused_spawn_list_0354C5[67]  spawn
 020ECD  func  unused_020ECD    # Unused: nothing calls it (6 bytes up to "RTS")
@@ -292,7 +299,7 @@ field enemy_behaviour 28 ranges u8[48]
 struct behaviour_choice 04 rom
 field behaviour_choice 00 state u8
 field behaviour_choice 01 flags u8
-field behaviour_choice 02 behaviour u16
+field behaviour_choice 02 behaviour u16 enemy_behaviour
 0319DA  table  object_18_behaviours[5]  behaviour_choice
 
 # ======== the players ========
@@ -309,7 +316,7 @@ field player 09 variables_09 u16
 field player 0B initials u8[3]
 field player 0E number u8
 field player 0F variables_0f u16[6]
-07E819  table  player_records[4]  u16
+07E819  table  player_records[4]  u16 player
 07E821  table  players[4]  player
 
 # ======== the players' gauges (bank 20) ========
@@ -319,10 +326,25 @@ struct gauge_player 18 rom
 field gauge_player 00 unk_00 u8
 field gauge_player 01 variables u16[11]
 field gauge_player 17 unk_17 u8
-041294  table  gauge_player_records[4]  u16
+041294  table  gauge_player_records[4]  u16 gauge_player
 04129C  table  gauge_players[4]  gauge_player
 # the two tiles, one above the other, of a gauge's step 1-8 (040A4C "LDY #$72FC; ASLA; LEAY A,Y": 0 draws 8D)
 0412FC  table  gauge_step_tiles[18]  u8
+# the game's rank, direct page 61 (040C40, at most 1F): the sum of a base (040C65 "LDX #$7782; LDA <$14; LDA A,X",
+# entry 1 while direct page 11 is set), a term by the players in the game (040C7D "LDX #$7786; LDA <$57; DECA"),
+# one by scene (040CB7 "LDX #$778A; LDA <$67"), and a step that grows by one, up to 5, each time the frame count in
+# direct page 63 reaches the scene's time (040C8D "LDX #$7796": scene 11's is rank_frame_limits' first)
+041782  table  rank_base[4]  u8
+041786  table  rank_by_players[4]  u8
+04178A  table  rank_by_scene[12]  u8
+041796  table  rank_step_times[11]  u16
+# by scene, a count direct page 65 is compared with (040CC6), whose result nothing takes (BCS to the RTS that comes
+# next anyway). Scene 11's, stage 8's, is past the table's 11: 0417C2-041FFF are bank 21's 0437C2-043FFF, the
+# assembler's leftovers, and the game reads their first two bytes as it
+0417AC  table  rank_frame_limits[12]  u16
+# the characters' profiles in the attract, typed out one character a frame (04082C "LDX #$7106; ASLA; LDX A,X"):
+# Bart's, El Barto's, Homer's, Lisa's... the last one (726B) a picture of tiles 71-91; data_walk.py's profile_texts
+041106  table  profile_texts[9]  u16
 # the test mode's characters, one a player (05EEB6 "LDU #$7D88", by the player): the address of the player's lives
 # (00), a kind and an animation (02), a place (04), a depth (06), its shadow's kind (08) and place (0A), the bit of its
 # start button (11)
@@ -336,7 +358,7 @@ field test_player 08 shadow_kind u16
 field test_player 0A shadow_x u16
 field test_player 0C unk_0c u8[5]
 field test_player 11 button u8
-05FD88  table  test_player_records[4]  u16
+05FD88  table  test_player_records[4]  u16 test_player
 05FD90  table  test_players[4]  test_player
 
 # ======== small tables of the stages' objects ========
@@ -349,6 +371,32 @@ field placement 02 kind u16
 field placement 04 x u16
 field placement 06 z u16
 0257BA  table  object_12_placements[51]  placement
+# after them, 4 records nothing reads (no code names 7952-7961, no scenario reads them): a player's bit (1, 2, 4, 8)
+# and a kind and animation, none for the first (FFFF) and 3F15, 3F16, 3F17 (03E614 handles 3F14-3F17 apart)
+struct player_kind 04 rom
+field player_kind 00 bit u8
+field player_kind 01 kind u16
+field player_kind 03 unk_03 u8
+025952  table  unused_player_kinds_025952[4]  player_kind
+# bank 13's stage records, a slot each after the bank's jumps (6000-600B), 3 bytes like them: the record (into direct
+# page A4) and a 00. Each step's start in the fixed program reads its own (07A555 "LDX $600C", 07A794 "LDX $600F",
+# 07A8DF $6015... 07B08F $6021); the third, 6012, the second's 7AA9 again, none reads
+struct stage_slot 03 rom
+field stage_slot 00 record u16
+field stage_slot 02 unk_02 u8
+02600C  table  stage_slots[10]  stage_slot
+# bank 1A: 4 words after the object setup at 792E (0000, 0100, 0200, 0400) that nothing reads (no code names 7934, no
+# table holds it, no scenario reads it); shaped like 7926's just before, 4 entries of 2 bytes by direct page 58's low
+# 2 bits (034E55: a speed's high byte, into 0F, and field 3B)
+035934  table  unused_words_035934[4]  u16
+# a hit box no object setup points to, after bank 18's 7 (7EA0-7ED7, which 07D1B7 reads into an object's fields 1C,
+# 1F, 21 and 23): no code names 7ED8 and no scenario reads it
+struct hit_box 08 rom
+field hit_box 00 field_1c u16
+field hit_box 02 field_1f u16
+field hit_box 04 field_21 u16
+field hit_box 06 field_23 u16
+031ED8  table  unused_hit_box_031ED8[1]  hit_box
 # bank 1D's object's parts, by number (03B530 "LDY #$7D21", 8 bytes a record, 03B535-03B553): a speed, its y and z
 # from the object, its kind, its animation; kref --rom-reads: 03BD21-03BD96, 15 records
 struct part 08 rom
@@ -364,15 +412,30 @@ field part 06 unk_06 u16
 039DEB  table  object_1c_move_steps[12]  u8
 039DF7  table  object_1c_moves[8]  u16
 # bank 16's object, by its kind (02D1C9 "LDU #$7E39", into field 47; 02D1D1 "LDU #$7E3F", 4 bytes a record: its pattern
-# into field 3E, its kind and animation), and the patterns, 16 steps from each, 5 bytes apart (02D326 "LDB A,Y" by
-# field 3C's low 4 bits)
+# into field 3E, its kind and animation), and the patterns, 5 steps each (02D326 "LDB A,Y" by field 3C, which 02D209
+# sets to 5 and 02D319 counts down to 0); the child objects at 7E75 and 7E7D follow
 02DE39  table  object_16_flags[6]  u8
 struct pattern_start 04 rom
 field pattern_start 00 pattern u16
 field pattern_start 02 kind u8
 field pattern_start 03 animation u8
 02DE3F  table  object_16_kinds[6]  pattern_start
-02DE57  table  object_16_patterns[41]  u8
+02DE57  table  object_16_patterns[30]  u8
+# bank 1E's object's 11 parts (03C8F6), each born at an offset from it (03C925 through 07862C, a child object): the 3
+# bytes added to its x, y and z, one part after the other (03C8F6 "LDD #$7E2C; STD <$F8", 03C933 "LDY <$F8; LDB ,Y+":
+# a pointer kept in the direct page, which the walk does not follow); kref --rom-reads: 03DE2C-03DE4C. 12 of them:
+# the last (08 08 40, the pattern going on) no part reaches, 03C925 making 11 at most
+struct part_offset 03 rom
+field part_offset 00 dx s8
+field part_offset 01 dy s8
+field part_offset 02 dz s8
+03DE2C  table  object_1e_part_offsets[12]  part_offset
+
+# in bank 10, after the players' input records (7BD0-7BEB, 7 bytes each, by the table at 7BC8) and before the table
+# at 7C00: 10 words nothing reads (no code names 7BEC-7BFF, and no scenario reads them), shaped like the sound
+# commands 078680 queues at 4904 (a command and its byte, as 0209ED's 3F30 and 3F31 at 7BC4): effect 78 with 08, 09,
+# 0C, 0D, 18, then with 0A, 0B, 0E, 0F, 1A
+021BEC  table  unused_sound_commands_021BEC[10]  u16
 
 # ======== the game's texts ========
 # by number (079311: bit 7 clears it instead, 079346), in bank 12 (07932D "LDX $6021": the table's address, which the
@@ -411,4 +474,6 @@ field pattern_start 03 animation u8
 0356FE  table  unused_text_0356FE[70]  u8
 035744  table  unused_text_035744[16]  u8
 02CE13  func  unreached_02CE13    # nothing the analysis follows reaches it (the handlers after unreached_02CE07)
+02CE1C  func  unreached_02CE1C    # nothing the analysis follows reaches it (the handlers after unreached_02CE07)
+02CE25  func  unreached_02CE25    # nothing the analysis follows reaches it (the handlers after unreached_02CE07)
 0382AF  func  unreached_0382AF    # nothing the analysis follows reaches it (after unreached_03829A)

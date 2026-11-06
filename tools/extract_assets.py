@@ -19,12 +19,13 @@ Writes the assets the game loads (none of them goes into the repository):
             the character banks the scene's layer modes give), each tile in the first sheet that shows it; then
             the tiles nothing shows, by code. The same PNGs, 32 tiles a row. tiles.txt lists each sheet's codes.
   data/     the 053248 program's data, every piece by name, as text by subject (tools/data_assets.py)
-  sound_data/  the Z80 sound program's data and its banks' music, every piece by name, as text by subject
-            (tools/sound_data_assets.py: the songs' tracks a command a line, the patches, the driver's tables)
+  sound_data/  the Z80 sound program's data, every piece by name, as text by subject (tools/sound_data_assets.py:
+            the patches, the driver's tables), and its music as Standard MIDI Files, a song a file, in
+            sound_data/music (tools/sound_music.py; music.txt lists them)
   sounds/   the K053260's samples as WAV files, by the Z80 driver's sample table (tools/sound_assets.py), and the
             bytes no sample plays; samples.txt says where each goes.
 With --check, the tile, sprite and sample ROM files are rebuilt from the assets and compared with the set's, byte for byte,
-and the program's data bytes with the program's (nothing is written).
+and the programs' data bytes with the programs' (the sound program's music from the MIDI files; nothing is written).
 """
 import sys
 from collections import Counter
@@ -56,7 +57,8 @@ LAYER_PALETTES = 64             # the layers' (0800 on)
 SET_NAMES = {0x00: "marge", 0x01: "homer", 0x02: "bart", 0x03: "lisa", 0x04: "hit_sparks", 0x07: "hammer",
              0x09: "food", 0x0A: "marge_portrait", 0x0B: "homer_portrait", 0x0C: "bart_portrait",
              0x0D: "lisa_portrait", 0x0F: "police_car_and_doors", 0x11: "maggie", 0x14: "family", 0x80: "goon",
-             0x81: "fat_goon", 0x83: "goon_with_shovel", 0x84: "goon_with_hat", 0x86: "dog", 0x89: "squirrel",
+             0x81: "fat_goon", 0x82: "goon_with_umbrella", 0x83: "goon_with_shovel", 0x84: "goon_with_hat",
+             0x86: "dog", 0x89: "squirrel",
              0x8B: "bird", 0x8D: "lumberjack", 0x8F: "robot", 0x92: "football_player", 0x94: "wrestler",
              0x96: "clown_on_ball", 0x99: "clown_on_ball_2", 0x9B: "ghost", 0x9D: "krusty_balloon", 0x9F: "gorilla",
              0xA2: "bear", 0xAE: "hurry_up", 0xAF: "boulder", 0xB0: "speech_balloons", 0xB1: "speech_balloons_2",
@@ -64,6 +66,13 @@ SET_NAMES = {0x00: "marge", 0x01: "homer", 0x02: "bart", 0x03: "lisa", 0x04: "hi
              0xBE: "knight_3", 0xBF: "knight_4", 0xC0: "knight_5", 0xC1: "knight_6", 0xC2: "grim_reaper",
              0xC5: "dog_2", 0xC8: "pointing_hand", 0xCC: "burns_robot", 0xCD: "burns_robot_2", 0xCE: "burns_robot_3",
              0xD0: "bubbles_3", 0xD2: "burns_robot_4", 0xD3: "mr_burns", 0xD4: "burns_robot_5", 0xD5: "numbers"}
+# the background scenes by their number (direct page 75, which the stage's script sets: 80-FF the high tables), as kref's
+# RAM shows them with the step (4803) over the stage scenarios; 85 (the second story's) and 00-03 (the attract's) none
+# showed apart
+SCENE_NAMES = {0x80: "game_start", 0x81: "story_1", 0x82: "stage_1_downtown", 0x83: "bonus_1",
+               0x84: "stage_2_krustyland", 0x86: "stage_3_forest", 0x87: "stage_3_cemetery",
+               0x88: "stage_4_moes_street", 0x89: "stage_5_gorge", 0x8A: "stage_6_dreamland", 0x8B: "bonus_2",
+               0x8C: "stage_7_channel_6", 0x8D: "stage_8_power_plant", 0x8E: "ending"}
 TILE_FILES = ("072-b07.18h", "072-b06.16h")
 SPRITE_FILES = ("072-b08.3n", "072-b09.8n", "072-b10.12n", "072-b11.16l")
 SAMPLE_FILES = ("072-d05.1f", "072-d04.1d")
@@ -191,7 +200,8 @@ def tile_subjects(walk, image):
                     for tile in range(16):
                         codes.append(graphics.tile_code(image[at + 2 + tile], colour, banks))
                         palettes.append(colour >> 6)
-                subjects.append((f"scene_{number:02X}_area_{area}_layer_{layer}", codes,
+                scene_name = SCENE_NAMES.get(number, f"scene_{number:02X}")
+                subjects.append((f"{scene_name}_area_{area}_layer_{layer}", codes,
                                  LAYER_PALETTES + (Counter(palettes).most_common(1)[0][0] if palettes else 0)))
     return subjects
 
@@ -273,7 +283,7 @@ def main():
                 failures += not same
                 print(f"{name}: {'the same' if same else 'DIFFERENT'}")
         program = rom.build_program(found_set)
-        data = data_assets.build(out / "data", len(program))
+        data = data_assets.build(out / "data", len(program), data_assets.Layouts(ROOT / "symbols.txt"))
         wrong = sum(1 for place, byte in data.items() if program[place] != byte)
         failures += bool(wrong)
         print(f"the program's data: {len(data)} bytes, {'the same' if not wrong else f'{wrong} DIFFERENT'}")
@@ -314,7 +324,8 @@ def main():
     count, families = data_assets.export(image, set(analysis.owner), walk.spans,
                                          {place for place, kind in classes.items() if kind == coverage.DESCRIBED},
                                          {place for place, kind in classes.items() if kind == coverage.FILL}, names,
-                                         out / "data", set(analysis.instructions))
+                                         out / "data", set(analysis.instructions),
+                                         data_assets.Layouts(ROOT / "symbols.txt"))
     print(f"data: {count} pieces in {len(families)} files")
     sound = rom.build_sound(found_set)
     program = z80_analysis.load_program(sound, ROOT / "sound_symbols.txt")
