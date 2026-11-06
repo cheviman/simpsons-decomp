@@ -357,7 +357,7 @@ uint8_t simpsons_read(uint16_t address)
 		return game_program[place];
 	}
 	if (address >= 0x4000u)
-		return simpsons_board.work_ram[address - 0x4000u];
+		return *simpsons_work_ram_byte(address);
 	if (address >= 0x2000u)
 	{
 		if (simpsons_board.video_bank & 0x02u)
@@ -436,7 +436,7 @@ void simpsons_write(uint16_t address, uint8_t data)
 	}
 	if (address >= 0x4000u)
 	{
-		simpsons_board.work_ram[address - 0x4000u] = data;
+		*simpsons_work_ram_byte(address) = data;
 		return;
 	}
 	if (address >= 0x2000u)
@@ -580,8 +580,12 @@ uint64_t simpsons_state_hash(void)
 		board->sound_ports[3]
 	};
 	uint64_t hash = 0xcbf29ce484222325ull;
+	uint32_t address;
 
-	hash = hash_bytes(board->work_ram, sizeof(board->work_ram), hash);
+	/* (the work RAM in the order of its addresses, its stack left out) */
+	for (address = SIMPSONS_WORK_RAM; address < SIMPSONS_WORK_RAM + SIMPSONS_WORK_RAM_SIZE; address++)
+		if (address < SIMPSONS_STACK_LOW || address >= SIMPSONS_STACK_TOP)
+			hash = (hash ^ *simpsons_work_ram_byte((uint16_t)address)) * 0x100000001b3ull;
 	hash = hash_bytes(board->extra_ram, sizeof(board->extra_ram), hash);
 	hash = hash_bytes(board->palette, sizeof(board->palette), hash);
 	hash = hash_bytes(board->tile_ram, sizeof(board->tile_ram), hash);

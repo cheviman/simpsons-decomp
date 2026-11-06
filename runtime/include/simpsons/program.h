@@ -15,6 +15,7 @@
 #ifndef SIMPSONS_PROGRAM_H
 #define SIMPSONS_PROGRAM_H
 
+#include <stdbool.h>
 #include <stdint.h>
 
 #ifdef __cplusplus
@@ -32,6 +33,10 @@ extern void (*program_frame)(void);
 
 /* The interrupts the program took */
 uint32_t program_interrupts(void);
+
+/* Whether the CPU's CC masks the IRQ (its I), where the program waits for its next frame: the board then holds the
+   sprite DMA's FIRQ for the IRQ handler's FIRQ point (simpsons_frame_vblank) */
+bool program_irq_masked(void);
 
 #ifdef __cplusplus
 }

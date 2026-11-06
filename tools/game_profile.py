@@ -46,6 +46,20 @@ FIRQ_POINT = 0x078F7A
 # and where the game's code goes on after it. The boot's ROM test adds up the program's chips, which the game does not
 # have: the board gives the sums the program keeps for good chips.
 REPLACED_CODE = {0x078E68: ("sum_rom_bytes", 0x078E7A)}
+# The direct page: the boot sets it to 48 at 07871B (LDA #$48; PUSHS A; PULLS DP), before any instruction reads through
+# it, and nothing changes it after (an interrupt's RTI pulls the 48 it pushed): <$xx is the work RAM at 48xx
+DIRECT_PAGE = 0x48
+DIRECT_PAGE_SET = 0x07871B
+
+# The decompiled program (tools/decompile.py: konami_cpu/decompile.py; it runs on runtime/src/game_program.c): the
+# frame waits by name (simpsons/frame.h), and when src/ was first written
+DECOMPILER = "konami_cpu.decompile"
+FRAME_WAIT_NAMES = {0x89D1: "SIMPSONS_FRAME_WAIT", 0x8817: "SIMPSONS_BOOT_WAIT", 0x8882: "SIMPSONS_SWITCH_WAIT"}
+DECOMPILED = "06-11-2026"
+# The noise meter (tools/noise_report.py): the 053248's registers, which the C names its values after until a line
+# names them (a, b, d, x, y, u), and the names made of an address (sub_078E68, unused_020686) counted as such
+NOISE_REGISTERS = r"(?:[abdxyu]|r\d+)"
+ADDRESS_NAMES = True
 
 # The Z80 sound program (072-e03.6g: 0000-7FFF fixed, 16 KB banks at 8000-BFFF by FE00, which the Z80 only reads as
 # data; its RAM at F000): the reset (IM 1, then 0923), the interrupt (0038, from the 053248's read of 1FC4) and the

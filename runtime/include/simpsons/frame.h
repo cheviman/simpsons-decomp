@@ -41,16 +41,15 @@
 /* True when the instruction at 'pc' (the fixed program's) is a wait for the next frame that finds nothing to do */
 static inline bool simpsons_frame_idle(uint16_t pc)
 {
-	const uint8_t *ram = simpsons_board.work_ram;
 	if (pc == SIMPSONS_FRAME_WAIT)
 	{
-		const uint16_t queue = (uint16_t)(ram[SIMPSONS_JOB_QUEUE - SIMPSONS_WORK_RAM] << 8
-			| ram[SIMPSONS_JOB_QUEUE + 1u - SIMPSONS_WORK_RAM]);
+		const uint16_t queue = (uint16_t)(*simpsons_work_ram_byte(SIMPSONS_JOB_QUEUE) << 8
+			| *simpsons_work_ram_byte(SIMPSONS_JOB_QUEUE + 1u));
 		return queue >= SIMPSONS_WORK_RAM && queue < SIMPSONS_WORK_RAM + SIMPSONS_WORK_RAM_SIZE
-			&& (ram[queue - SIMPSONS_WORK_RAM] & 0x80u) != 0;
+			&& (*simpsons_work_ram_byte(queue) & 0x80u) != 0;
 	}
 	if (pc == SIMPSONS_BOOT_WAIT)
-		return ram[SIMPSONS_BOOT_FLAG - SIMPSONS_WORK_RAM] != 0;
+		return *simpsons_work_ram_byte(SIMPSONS_BOOT_FLAG) != 0;
 	if (pc == SIMPSONS_SWITCH_WAIT)
 		return (simpsons_board.test & SIMPSONS_TEST_SERVICE) == 0;
 	return false;

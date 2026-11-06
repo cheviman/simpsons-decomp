@@ -87,6 +87,43 @@ if(SIMPSONS_REFERENCE_TOOLS)
 	target_include_directories(konami_ops_check PRIVATE runtime/include)
 endif()
 
+# The game: the decompiled 053248 program (src/, tools/decompile.py; SIMPSONS_DECOMPILED_DIR picks another copy) on
+# its runtime (runtime/src/game_program.c: the frame, the bank, the interrupt mask and the interrupts, the tables it
+# reads by name from the assets), the board's code in place of the boot's ROM sum (runtime/src/board_game.c), the
+# game's own video and sound board, from its assets (runtime/src/game.c). simpsons_game_headless runs it with no
+# screen or sound (check_scenarios.py compares it with kref), simpsons in a window. It opens no ROM
+set(SIMPSONS_DECOMPILED_DIR ${CMAKE_SOURCE_DIR}/src CACHE PATH "The game's C (tools/decompile.py)")
+file(GLOB_RECURSE SIMPSONS_DECOMPILED CONFIGURE_DEPENDS ${SIMPSONS_DECOMPILED_DIR}/*.c)
+list(FILTER SIMPSONS_DECOMPILED EXCLUDE REGEX "/sound/[^/]*\\.c$")    # (the sound program's: simpsons_sound)
+if(SIMPSONS_DECOMPILED)
+	add_library(simpsons_game_program STATIC runtime/src/game_program.c runtime/src/konami_ops.c
+		runtime/src/board_game.c ${SIMPSONS_DECOMPILED})
+	target_include_directories(simpsons_game_program PUBLIC runtime/include PRIVATE ${SIMPSONS_DECOMPILED_DIR})
+	target_link_libraries(simpsons_game_program PUBLIC simpsons_runtime)
+	if(MSVC)
+		target_compile_options(simpsons_game_program PRIVATE /bigobj /wd4244 /wd4146 /wd4102)
+	else()
+		target_compile_options(simpsons_game_program PRIVATE -fno-strict-aliasing)
+	endif()
+	add_library(simpsons_game_decompiled STATIC runtime/src/game.c)
+	target_link_libraries(simpsons_game_decompiled PUBLIC simpsons_game_program simpsons_video simpsons_sound
+		simpsons_assets)
+	add_executable(simpsons_game_headless ports/headless/main.c)
+	target_link_libraries(simpsons_game_headless PRIVATE simpsons_game_decompiled)
+	if(MSVC)
+		# (the decompiled calls nest as the program's do; a jump to another function is a call that returns)
+		target_link_options(simpsons_game_headless PRIVATE /STACK:67108864)
+	endif()
+	# (the window takes the decompiled program once it is the same as the reference in every scenario; until then, the
+	# translation scaffold, unless asked)
+	option(SIMPSONS_WINDOW_DECOMPILED "The window runs the decompiled program, not the translation scaffold" OFF)
+	if(SIMPSONS_WINDOW_DECOMPILED)
+		set(SIMPSONS_WINDOW_PROGRAM simpsons_game_decompiled)
+	endif()
+else()
+	message(STATUS "No decompiled program in src/ (tools/decompile.py): no simpsons_game_headless")
+endif()
+
 # The game: the 053248 program translated to C an instruction at a time (the translation scaffold: tools/recompile.py
 # writes build/generated, from the player's ROM: never part of the repository) with the board's own code in place of
 # its ROM test, on the board model with frame timing, the game's own video and sound board, from its assets
@@ -107,9 +144,17 @@ if(SIMPSONS_GENERATED)
 		# (the translated calls nest as the program's do, and the code's locals are many)
 		target_link_options(simpsons_headless PRIVATE /STACK:67108864)
 	endif()
+	if(NOT SIMPSONS_WINDOW_PROGRAM)
+		set(SIMPSONS_WINDOW_PROGRAM simpsons_game)
+	endif()
+else()
+	message(STATUS "No generated program in build/generated (tools/recompile.py): no game")
+endif()
 
-	# The game in a window (ports/sdl2): SDL2 from the system, or on Windows the development package unpacked in
-	# build/downloads/sdl2, its library beside the executable
+# The game in a window (ports/sdl2): the translation scaffold, or the decompiled program with SIMPSONS_WINDOW_DECOMPILED
+# (SIMPSONS_WINDOW_PROGRAM); SDL2 from the system, or on Windows the development package unpacked in
+# build/downloads/sdl2, its library beside the executable
+if(SIMPSONS_WINDOW_PROGRAM)
 	set(SIMPSONS_SDL2_UNPACKED "")
 	if(WIN32)
 		file(GLOB SIMPSONS_SDL2_UNPACKED ${CMAKE_SOURCE_DIR}/build/downloads/sdl2/SDL2-*/cmake)
@@ -121,7 +166,7 @@ if(SIMPSONS_GENERATED)
 			list(APPEND SIMPSONS_SDL2 SDL2::SDL2main)
 		endif()
 		add_executable(simpsons WIN32 ports/sdl2/main.c)
-		target_link_libraries(simpsons PRIVATE simpsons_game ${SIMPSONS_SDL2})
+		target_link_libraries(simpsons PRIVATE ${SIMPSONS_WINDOW_PROGRAM} ${SIMPSONS_SDL2})
 		if(MSVC)
 			target_link_options(simpsons PRIVATE /STACK:67108864)
 		endif()
@@ -132,6 +177,4 @@ if(SIMPSONS_GENERATED)
 	else()
 		message(STATUS "No SDL2: the window port (simpsons) is not built")
 	endif()
-else()
-	message(STATUS "No generated program in build/generated (tools/recompile.py): no game")
 endif()

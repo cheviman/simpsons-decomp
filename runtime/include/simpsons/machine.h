@@ -56,6 +56,12 @@ extern "C" {
 
 #define SIMPSONS_WORK_RAM         0x4000u
 #define SIMPSONS_WORK_RAM_SIZE    0x2000       /* 4000-5FFF */
+/* The 053248's stack: the boot sets S to 5E00 (07870B) and nothing sets it again; the scenarios take it no lower
+   than SIMPSONS_STACK_LOW (kref --stack). Only the original's stack discipline writes there (the return addresses,
+   the registers it pushes, the interrupts' frames), which the decompiled program keeps in its own variables: the
+   state hash leaves it out */
+#define SIMPSONS_STACK_LOW        0x5D80u
+#define SIMPSONS_STACK_TOP        0x5E00u
 #define SIMPSONS_EXTRA_RAM_SIZE   0x1000       /* 3000-3FFF while the sprite RAM is in view */
 #define SIMPSONS_PALETTE_SIZE     0x1000       /* 0000-0FFF while in view: 2048 colors, xBGR 555, big endian */
 #define SIMPSONS_TILE_RAM_SIZE    0x6000       /* the K052109's (the board reaches 0000-3FFF of it) */
@@ -106,7 +112,7 @@ typedef struct
 
 typedef struct
 {
-	uint8_t work_ram[SIMPSONS_WORK_RAM_SIZE];
+	uint8_t work_ram[SIMPSONS_WORK_RAM_SIZE];    /* the other way round: simpsons_work_ram_at */
 	uint8_t extra_ram[SIMPSONS_EXTRA_RAM_SIZE];
 	uint8_t palette[SIMPSONS_PALETTE_SIZE];
 
@@ -182,6 +188,22 @@ typedef struct
 
 extern simpsons_machine simpsons_board;
 
+/* The work RAM's 'size' bytes from 'address' as the host has them: the board keeps the work RAM the other way round
+   (the byte at its last address first), so that a big-endian value of the 053248's of any width at any address is a
+   little-endian value of the host's there, which the decompiled program reads and writes as plain C variables
+   (game/support.h); the bus and the state hash see the bytes at their addresses */
+static inline void *simpsons_work_ram_at(uint16_t address, uint32_t size)
+{
+	return &simpsons_board.work_ram[SIMPSONS_WORK_RAM_SIZE - size - ((address - SIMPSONS_WORK_RAM)
+		& (SIMPSONS_WORK_RAM_SIZE - 1u))];
+}
+
+/* The work RAM's byte at 'address' */
+static inline uint8_t *simpsons_work_ram_byte(uint16_t address)
+{
+	return (uint8_t *)simpsons_work_ram_at(address, 1u);
+}
+
 /* The board after its reset, the inputs idle and the EEPROM as it leaves the factory (game/data.h's
    game_eeprom: MAME's default, without which the game boots upside down with an error) */
 void simpsons_reset(void);
@@ -210,8 +232,8 @@ void simpsons_dma_end(void);
 void simpsons_frame_vblank(bool irq_masked);
 void simpsons_firq_point(void);
 
-/* A hash of the state the program keeps: work RAM, the RAM at 3000, palette, the video chips' memories and
-   registers, the bank, the EEPROM */
+/* A hash of the state the program keeps: work RAM (but its stack, SIMPSONS_STACK_LOW to SIMPSONS_STACK_TOP), the
+   RAM at 3000, palette, the video chips' memories and registers, the bank, the EEPROM */
 uint64_t simpsons_state_hash(void);
 
 /* The Z80's memory map (MAME's z80_map): its program, the bank at 8000-BFFF, its RAM, the chips, FA00 (the

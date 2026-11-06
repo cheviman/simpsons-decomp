@@ -18,7 +18,6 @@
 
 #include "game/assets.h"
 #include "game/data.h"
-#include "konami/cpu.h"
 #include "simpsons/frame.h"
 #include "simpsons/machine.h"
 #include "simpsons/program.h"
@@ -36,7 +35,7 @@ static void frame(void)
 {
 	simpsons_video_vblank_end(g_draw ? &g_frame : NULL);
 	simpsons_video_vblank_start();
-	simpsons_frame_vblank(cpu.i != 0);
+	simpsons_frame_vblank(program_irq_masked());
 	if (game_frame_done)
 		game_frame_done();
 }

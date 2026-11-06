@@ -326,3 +326,8 @@ uint32_t program_interrupts(void)
 {
 	return cpu.interrupts;
 }
+
+bool program_irq_masked(void)
+{
+	return cpu.i != 0;
+}

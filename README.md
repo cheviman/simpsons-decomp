@@ -50,7 +50,9 @@ As of 06-11-2026:
 - [x] The game from its assets, in a window (`simpsons`, SDL2) or headless: it opens no ROM, and no executable holds
       any of it (`tools/rom_in_executables.py`); the same as the reference in all 25 scenarios in state, picture and
       sound
-- [ ] The 053248 program decompiled to readable C (it runs translated an instruction at a time for now)
+- [ ] The 053248 program decompiled to readable C: a first structured C in `src/` (`tools/decompile.py`, no goto),
+      the same as the reference in 12 of the 25 scenarios (the attract and test modes; not yet once play starts). The
+      game runs translated an instruction at a time for now
 - [x] The assets extracted by subject and checked byte for byte (`tools/extract_assets.py --check`): the sprites by
       the objects whose animations show them, the tiles by the stages whose maps show them, the K053260's samples
       as WAV files, the music as Standard MIDI Files (a song a file, as the Z80's driver plays it), and every other

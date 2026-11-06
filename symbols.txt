@@ -477,3 +477,39 @@ field part_offset 02 dz s8
 02CE1C  func  unreached_02CE1C    # nothing the analysis follows reaches it (the handlers after unreached_02CE07)
 02CE25  func  unreached_02CE25    # nothing the analysis follows reaches it (the handlers after unreached_02CE07)
 0382AF  func  unreached_0382AF    # nothing the analysis follows reaches it (after unreached_03829A)
+
+# ======== the decompiled program's files ========
+# where the C of the 053248's functions goes (tools/decompile.py: src/PATH.c): a file line takes the functions from
+# its place up to the next file line. Provisional, but for the boot and the interrupts: a file a bank, and the fixed
+# program a file each 2000 bytes, until the functions are sorted by subject
+020000  file  unsorted/bank_10    # bank 10's code
+022000  file  unsorted/bank_11    # bank 11's code
+024000  file  unsorted/bank_12    # bank 12's code
+026000  file  unsorted/bank_13    # bank 13's code
+028000  file  unsorted/bank_14    # bank 14's code
+02A000  file  unsorted/bank_15    # bank 15's code
+02C000  file  unsorted/bank_16    # bank 16's code
+02E000  file  unsorted/bank_17    # bank 17's code
+030000  file  unsorted/bank_18    # bank 18's code
+032000  file  unsorted/bank_19    # bank 19's code
+034000  file  unsorted/bank_1A    # bank 1A's code
+036000  file  unsorted/bank_1B    # bank 1B's code
+038000  file  unsorted/bank_1C    # bank 1C's code
+03A000  file  unsorted/bank_1D    # bank 1D's code
+03C000  file  unsorted/bank_1E    # bank 1E's code
+03E000  file  unsorted/bank_1F    # bank 1F's code
+040000  file  unsorted/bank_20    # bank 20's code
+05E000  file  unsorted/bank_2F    # bank 2F's code
+078000  file  unsorted/fixed_3C    # the fixed program's code, 078000-079FFF
+0786CE  file  system/boot    # the reset: the board set up, the RAM and ROM checks, the main loop that runs the jobs
+078F43  file  system/interrupts    # the IRQ's handler (the K052109's, at VBLANK: the inputs, the coin counters, the jobs) and the FIRQ's (the sprite DMA's)
+0791D8  file  unsorted/fixed_3C    # (the fixed program's code after the interrupts)
+07A000  file  unsorted/fixed_3D    # the fixed program's code, 07A000-07BFFF
+07C000  file  unsorted/fixed_3E    # the fixed program's code, 07C000-07DFFF
+07E000  file  unsorted/fixed_3F    # the fixed program's code, 07E000-07FFFF
+
+# ======== functions the board puts its own in place of ========
+# (runtime/replaced.txt, runtime/src/board_game.c)
+# 078E5B (a bank in the window) and 078E63 (the fixed program) run into it: "LDD <$FA; ADDB ,X+; ADCA #$00; STD <$FA;
+# LEAU -1,U; CMPU #$0000; BNE": the boot's RAM ROM CHECK adds up the program's chips, which the game does not have
+078E68  func  add_rom_bytes
