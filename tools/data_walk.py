@@ -168,6 +168,7 @@ SCENE_RECORD = 4
 MODE_RECORD = 2
 MAX_AREAS = 16
 STRIP_ROW = 16
+PROGRAM_END = place_of(None, 0xFFFF) + 1     # (the region's end: the fixed program's last byte, + 1)
 SCREEN_STRIP = 8 * STRIP_ROW
 MAX_STRIPS = 64
 BLOCK = 18
@@ -326,6 +327,7 @@ class Walk:
         self.arguments = set()
         self.behaviours = set()
         self.residues = {}          # {place: whether the rest of its bank is the assembler's leftovers}
+        self.code_reads = {}        # {first: (stop, kind)} code the engines read as data (code_read())
         self.code_tables = None     # the places of the analysis's tables of code, vectors and such (free())
         self.generic_sources = {}   # {indexed table place: the first instruction that reads it} (generic())
         self.tables_named = table_places()
@@ -333,6 +335,24 @@ class Walk:
         missing = [name for name in wanted if name not in self.tables_named]
         if missing:
             raise SystemExit("data_walk: symbols.txt names no " + ", ".join(missing))
+
+    def code_read(self, first, stop, kind):
+        """The code among the bytes first..stop, which an engine reads as data: runs of their own, over the code (the
+        game has no code bytes to read, so its assets hold these as data too)"""
+        place = first
+        while place < stop:
+            if place not in self.analysis.owner:
+                place += 1
+                continue
+            end = place
+            while end < stop and end in self.analysis.owner:
+                end += 1
+            known = [start for start, (last, _) in self.code_reads.items() if start <= end and last >= place]
+            low, high = min([place] + known), max([end] + [self.code_reads[start][0] for start in known])
+            for start in known:
+                del self.code_reads[start]
+            self.code_reads[low] = (high, kind)
+            place = end
 
     def claim(self, first, stop, kind):
         """The bytes first..stop are a 'kind'; False if they are code or something else already"""
@@ -1074,8 +1094,8 @@ class Walk:
                      for offset in range(0, STRIP_ROW, 2) if strip + height + offset + 2 <= FIXED_CPU]
             left = self.word(map_bank, map_cpu - 2)
             if left >= WINDOW:
-                cells += [self.word(map_bank, left + STRIP_ROW - 2 + STRIP_ROW * row)
-                          for row in range(height // STRIP_ROW)]
+                for row in range(height // STRIP_ROW):
+                    cells.append(self.word(map_bank, left + STRIP_ROW - 2 + STRIP_ROW * row))
             for cell in cells:
                 index = cell & BLOCK_INDEX
                 cpu = blocks_cpu + BLOCK * index
@@ -1087,6 +1107,29 @@ class Walk:
                 self.claim(place, place + BLOCK, "edge block")
                 self.notes.append(f"tile blocks at {blocks_place:06X}: block {index} ({place:06X}), named by a cell "
                                   f"past the edges of the map at {map_place:06X}")
+
+    def code_read_as_data(self):
+        """The fixed program's code the map engines read as data, which the game's assets give as data too (the game
+        has no code bytes to read). Past a map's edges the readers take strips its strip table does not hold: the
+        word before the table (07C5E5's LDY A,Y with A = -2) and the word after it, which is 0000 in 54 of the 55
+        maps: a strip in RAM, whose cells are whatever the RAM holds then (07C759 reads cells at 0002, 0012...). A
+        cell names any of 1024 blocks (bits 0-9) of its scene's block array, 18 bytes each, and the blocks past the
+        window's end are the fixed program's bytes (07C6C2, 07C6C6, 07C6DF, 07C6E3 read them as a block's colours,
+        tiles and flags): every block array's 1024 blocks, as far as they reach, and the whole of a strip the word
+        before or after a table puts in the fixed program (bank 04's map 0099A2: B99F; bank 07's 00FF5C: B6B6)."""
+        for map_bank, map_cpu, blocks_bank, blocks_cpu in sorted(self.map_blocks):
+            last = blocks_cpu + BLOCK * (BLOCK_INDEX + 1)
+            if last > FIXED_CPU:
+                first = place_of(None, max(blocks_cpu, FIXED_CPU))
+                self.code_read(first, min(first + last - max(blocks_cpu, FIXED_CPU), PROGRAM_END), "code read as tiles")
+            map_place = place_of(map_bank, map_cpu)
+            if map_place not in self.maps:
+                continue
+            for edge in (map_cpu - 2, map_cpu + 2 * len(self.map_strips[map_place])):
+                strip = self.word(map_bank, edge)
+                if strip >= FIXED_CPU:
+                    first = place_of(None, strip)
+                    self.code_read(first, min(first + self.map_heights[map_place], PROGRAM_END), "code read as a map")
 
     def more_records(self):
         """After a hit box or an object start, whole records of the kind up to what starts next (records kept with
@@ -1381,6 +1424,7 @@ class Walk:
         self.more_records()
         self.loaded_tables()
         self.map_edges()
+        self.code_read_as_data()
 
 
 def spans(analysis):
@@ -1433,6 +1477,24 @@ def report(walk, reads=None):
         total = set().union(*missed.values()) if missed else set()
         lines += ["", f"bytes the engines read in the scenarios that the walk did not reach: {len(total)}"]
         for pc, places in sorted(missed.items()):
+            ordered = sorted(places)
+            lines.append(f"  {pc:06X}  {len(ordered):6d}  {ordered[0]:06X}-{ordered[-1]:06X}")
+        # the code the engines read as data, against what the walk gives as such
+        given = set()
+        for first, (stop, _) in walk.code_reads.items():
+            given.update(range(first, stop))
+        code = set(walk.analysis.owner)
+        read_code = defaultdict(set)
+        for pc, read in reads.items():
+            if any(first <= pc < stop for first, stop in ENGINES):
+                for place in (read & code) - given:
+                    read_code[pc].add(place)
+        all_read = set().union(*(read & code for pc, read in reads.items()
+                                 if any(first <= pc < stop for first, stop in ENGINES)))
+        total = set().union(*read_code.values()) if read_code else set()
+        lines += ["", f"code the engines read as data in the scenarios: {len(all_read)} bytes; the walk gives "
+                      f"{len(given)} bytes of code as data, and misses {len(total)}"]
+        for pc, places in sorted(read_code.items()):
             ordered = sorted(places)
             lines.append(f"  {pc:06X}  {len(ordered):6d}  {ordered[0]:06X}-{ordered[-1]:06X}")
     lines += ["", f"problems: {len(walk.problems)}"] + [f"  {problem}" for problem in walk.problems]

@@ -20,6 +20,8 @@
 
 #include "game/data.h"
 
+#include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 simpsons_machine simpsons_board;
@@ -336,10 +338,24 @@ static uint8_t sprite_rom_read(uint16_t address)
 		| ((address & 1u) ^ 1u)) & (GAME_SPRITES_SIZE - 1u)];
 }
 
+/* A read of the program that the assets do not give (code): the game stops, saying where */
+static void program_not_given(int32_t place, uint16_t address)
+{
+	fprintf(stderr, "The game read %06X (%04X, bank %02X) in frame %llu: code, which its assets do not give\n",
+		(unsigned)place, address, simpsons_board.bank, (unsigned long long)simpsons_board.frame);
+	exit(4);
+}
+
 uint8_t simpsons_read(uint16_t address)
 {
 	if (address >= 0x6000u)
-		return game_program[simpsons_program_offset(address)];
+	{
+		const int32_t place = simpsons_program_offset(address);
+
+		if (simpsons_board.program_given && !simpsons_board.program_given[place])
+			program_not_given(place, address);
+		return game_program[place];
+	}
 	if (address >= 0x4000u)
 		return simpsons_board.work_ram[address - 0x4000u];
 	if (address >= 0x2000u)

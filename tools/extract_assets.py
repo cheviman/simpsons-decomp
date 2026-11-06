@@ -24,8 +24,11 @@ Writes the assets the game loads (none of them goes into the repository):
             sound_data/music (tools/sound_music.py; music.txt lists them)
   sounds/   the K053260's samples as WAV files, by the Z80 driver's sample table (tools/sound_assets.py), and the
             bytes no sample plays; samples.txt says where each goes.
+  eeprom.txt  the ER5911's 128 bytes as the board leaves the factory (simpsons.12c.nv: the settings the game starts
+            with; without them it boots upside down and reports the EEPROM bad), u8 lines in hex.
 With --check, the tile, sprite and sample ROM files are rebuilt from the assets and compared with the set's, byte for byte,
-and the programs' data bytes with the programs' (the sound program's music from the MIDI files; nothing is written).
+and the programs' data bytes with the programs' (the sound program's music from the MIDI files; nothing is written),
+and the EEPROM's with the set's.
 """
 import sys
 from collections import Counter
@@ -259,6 +262,24 @@ def split_words(region, lanes):
             for lane in range(lanes)]
 
 
+EEPROM_FILE = "eeprom.txt"
+
+
+def write_eeprom(path, data):
+    lines = ["# The ER5911 EEPROM's 128 bytes as the board leaves the factory (the game's settings at its first start)"]
+    lines += ["u8 " + " ".join(f"{byte:02X}" for byte in data[at:at + 16]) for at in range(0, len(data), 16)]
+    path.write_text("\n".join(lines) + "\n", encoding="ascii")
+
+
+def read_eeprom(path):
+    data = bytearray()
+    for line in path.read_text(encoding="ascii").splitlines():
+        line = line.split("#", 1)[0].split()
+        if line and line[0] == "u8":
+            data += bytes(int(item, 16) for item in line[1:])
+    return bytes(data)
+
+
 def main():
     arguments = sys.argv[1:]
     check = "--check" in arguments
@@ -283,7 +304,7 @@ def main():
                 failures += not same
                 print(f"{name}: {'the same' if same else 'DIFFERENT'}")
         program = rom.build_program(found_set)
-        data = data_assets.build(out / "data", len(program), data_assets.Layouts(ROOT / "symbols.txt"))
+        data = data_assets.build(out / "data", len(program))
         wrong = sum(1 for place, byte in data.items() if program[place] != byte)
         failures += bool(wrong)
         print(f"the program's data: {len(data)} bytes, {'the same' if not wrong else f'{wrong} DIFFERENT'}")
@@ -292,6 +313,9 @@ def main():
         wrong = sum(1 for place, byte in data.items() if sound[place] != byte)
         failures += bool(wrong)
         print(f"the sound program's data: {len(data)} bytes, {'the same' if not wrong else f'{wrong} DIFFERENT'}")
+        same = read_eeprom(out / EEPROM_FILE) == rom.build_eeprom(found_set)
+        failures += not same
+        print(f"the EEPROM: {'the same' if same else 'DIFFERENT'}")
         region = sound_assets.read(out / "sounds", len(rom.build_samples(found_set)))
         at = 0
         for name in SAMPLE_FILES:
@@ -325,7 +349,7 @@ def main():
                                          {place for place, kind in classes.items() if kind == coverage.DESCRIBED},
                                          {place for place, kind in classes.items() if kind == coverage.FILL}, names,
                                          out / "data", set(analysis.instructions),
-                                         data_assets.Layouts(ROOT / "symbols.txt"))
+                                         data_assets.Layouts(ROOT / "symbols.txt"), walk.code_reads)
     print(f"data: {count} pieces in {len(families)} files")
     sound = rom.build_sound(found_set)
     program = z80_analysis.load_program(sound, ROOT / "sound_symbols.txt")
@@ -335,6 +359,8 @@ def main():
     print(f"sound data: {count} pieces")
     samples, rest = sound_assets.write(rom.build_sound(found_set), rom.build_samples(found_set), out / "sounds")
     print(f"sounds: {samples} samples, {rest} pieces no sample plays")
+    write_eeprom(out / EEPROM_FILE, rom.build_eeprom(found_set))
+    print("eeprom: the factory settings")
     return 0
 
 

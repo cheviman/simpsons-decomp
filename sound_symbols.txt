@@ -1,7 +1,123 @@
-# The Simpsons (MAME set 'simpsons') - Z80 sound program symbols
+# The Simpsons (MAME set 'simpsons') - Z80 sound program symbols (072-e03.6g)
 #
 # Addresses and names only: no game data lives in this file. Format: ADDRESS KIND NAME [...] (see
 # tools/core/z80/analysis.py and tools/core/sound_coverage.py). Addresses are the Z80's, 0000-7FFF.
+#   func     a function entry (one nothing calls is decompiled too: code the entry points never reach)
+#   loop     the main loop's top, a function entry: where the program waits for the board (runtime/src/sound_cpu.c
+#            runs the main loop from there while the board's time is ahead)
+#   file     PATH: the functions from ADDRESS up to the next file line go to src/sound/PATH.c (the comment of a
+#            file's first line is its description)
+#   comment FUNCTION TEXT: what the C says above the function; register RN NAME: a register the whole program keeps
+#   (game_profile's SOUND_CONTEXT), a global variable in C; unread FUNCTION RN: the function reads RN before setting
+#   it only on a path the program never takes (it is no parameter)
+#
+# The driver (read from the listing, build/sound/listing.s): the 053248 writes a command and its argument to the
+# K053260's ports (1FC6-1FC7, which the Z80 reads at FC00-FC01) and raises the Z80's IRQ by reading 1FC4; the Z80
+# takes it only in the main loop's four NOPs with interrupts on (sound_command, 0038): F0-FF the self test's answers
+# (FC02-FC03) and the reset, 3F and 7F with the argument, the rest a sound and the argument's count of the ones after
+# it (start_sound): 00 stops everything, 01-38 an FM effect, 40-7E a PCM effect, 80-AF a song, C0-EF a song after a
+# fade. The main loop waits for the YM2151's timer B (some 2 ms), then runs 12 channel records of 50h bytes from F003:
+# 8 for the YM2151's channels (chip channel +40 0-7) and 4 for the K053260's voices (8-B), each through the handler it
+# keeps at +43 (run_channel, JP (HL) at 0C21) after the music's tick (music_tick); +41 is the sound a record plays
+# (bit 7: music), +42 its priority. A PCM voice is keyed on after a HALT that waits for the K053260's NMI (key_on).
+
+# ======== the driver ========
+0000  file  main  # the reset and its self test, the commands from the 053248, the main loop
+0000  func  sound_reset
+comment sound_reset the reset: IM 1, SP F800, the RAM test (55 then AA over F000-F7FF; bit 0 of self_test_failures), then check_rom
+0038  func  sound_command
+comment sound_command IM 1: the 053248's command (FC00, unless F000-F001 holds one: nothing sets it) and its argument (FC01): F0-FF the self test's answers and the reset, 3F a PCM effect of the third group by the argument, 7F the argument to a playing effect 7F, the rest start_sound for the command and the argument's count after it
+0066  func  nmi_return
+comment nmi_return the NMI's handler (the K053260's SH1, armed by FA00): RETN, which only ends key_on's HALT
+0099  func  start_sound
+comment start_sound a command 00-EF: 00 stops all, 01-38 an FM effect, 3C-3F the group of no table, 40-7E a PCM effect, 80-AF a song, C0-EF a song after the playing one fades out
+00B2  func  stop_all_channels
+comment stop_all_channels command 00: stop_channel_unless_kept on all 12 records
+0106  func  stop_music
+comment stop_music the music off on all 12 records (stop_music_channel), the fade cleared: at the fade's end
+016B  func  stop_channel_unless_kept
+comment stop_channel_unless_kept stop_channel unless the record's priority is C0 or more
+034E  func  start_song
+comment start_song a song 80-AF: its bank (song_banks) to FE00, its header (song_headers), every record's track from it (start_music_channel), the fade cleared
+03CF  func  start_music_channel
+comment start_music_channel the record's track from the song header at HL (start_music_track), HL past it
+095C  func  check_rom
+comment check_rom the ROM test: adds up 0000-7FFF and the banks 2-7 into program_rom_sum and compares it with 072E (bit 1 of self_test_failures), then sound_main (the game has no ROM to add up: runtime/sound_replaced.txt)
+09FB  func  sound_main
+comment sound_main RAM cleared, the K053260 set up (its voices' registers, keys, mode), every record's chip channel and the PCM voices' registers and key bits, then the YM2151's timer and the main loop
+0B28  func  self_test_failed
+comment self_test_failed the RAM test failed: forever a delay and four NOPs with interrupts on (commands come in, and fail again)
+0B3D  loop  sound_main_loop
+comment sound_main_loop waits for the YM2151's timer B; restarts it; runs the 8 FM records and the 4 PCM ones; the fade between songs; then four NOPs with interrupts on (the command comes in), the command again if F002 says so (nothing sets it), the pass count
+0BF3  func  run_pcm_channel
+comment run_pcm_channel a PCM record's: one pass in 16 (its own, by its chip channel), unless its voice plays, the volume moves (+48 by +47) before run_channel
+0C18  func  run_channel
+comment run_channel the music's tick on the record, then the handler it keeps at +43
+0C22  file  chips  # the records' handlers and the chips: the YM2151's registers, patches, volumes, pitches, keys, LFO and pan; the K053260's voices
+0C22  func  stop_channel
+comment stop_channel key off, the fastest release, the record's sound and priority 0, its handler channel_idle
+0C33  func  set_channel_handler
+comment set_channel_handler HL into the record's handler (+43)
+0C39  func  channel_idle
+comment channel_idle a free record's handler: RET
+0C3A  func  write_fm_channel_register
+comment write_fm_channel_register YM2151 register B plus the record's chip channel (+40) = C
+0C3F  func  write_fm_register
+comment write_fm_register YM2151 register B = C, each write after the busy flag (F801 bit 7) clears
+0C56  func  restart_frame_timer
+comment restart_frame_timer YM2151 timer B (register 12 = F9) restarted and its flag cleared (register 14): the main loop's tick
+0C68  func  load_patch
+comment load_patch the patch at HL into the record's chip channel: an FM one's 25 bytes (algorithm, the operators' registers), or a PCM one's sample and two bytes
+0D72  func  set_volume
+comment set_volume A into the record's volume (+45), then update_volume
+0D75  func  update_volume
+comment update_volume the volume to the chip: an FM channel's carriers' total levels (carrier_masks by the algorithm), a PCM voice's volume register
+0DA7  func  write_operator_level
+comment write_operator_level an FM operator's total level, with the record's volume added when it is a carrier
+0DE8  func  set_pitch
+comment set_pitch HL to the record's channel: an FM one's key fraction and key code (note_codes), a PCM voice's pitch registers
+0E7B  func  key_on
+comment key_on an FM channel's operators on (register 08); a PCM voice keyed off, FA00 armed, HALT until the K053260's NMI, then keyed on, its volume back to full
+0EBE  func  key_off
+comment key_off an FM channel's operators off (register 08); a PCM voice's key bit cleared
+0EDD  func  fast_release
+comment fast_release an FM channel's operators' release at their fastest (E0-F8 = FF); a PCM record's volume down to 7F
+0F06  func  unused_0F06
+comment unused_0F06 Unused: the FM channel's release rates back from +4B-+4E
+0F2C  func  set_lfo_pm_depth
+comment set_lfo_pm_depth YM2151 register 19 with bit 7: the LFO's phase modulation depth
+0F34  func  set_lfo_am_depth
+comment set_lfo_am_depth YM2151 register 19 without bit 7: the LFO's amplitude modulation depth
+0F3C  func  set_channel_pm_sensitivity
+comment set_channel_pm_sensitivity an FM channel's PMS (register 38 bits 4-6), kept in +4F
+0F58  func  set_channel_am_sensitivity
+comment set_channel_am_sensitivity an FM channel's AMS (register 38 bits 0-1), kept in +4F
+0F70  func  set_lfo_frequency
+comment set_lfo_frequency YM2151 register 18: the LFO's frequency
+0F76  func  set_lfo_waveform
+comment set_lfo_waveform YM2151 register 1B: the LFO's waveform
+0F7C  func  set_pan
+comment set_pan an FM channel's left and right (register 20 bits 6-7, kept in +46); a PCM voice's pan (FC2C-FC2D, kept in F3C5-F3C6)
+0FE5  func  noise_off
+comment noise_off on FM channel 7: the noise off (register 0F = 0)
+0FF2  func  unused_0FF2
+comment unused_0FF2 Unused: on FM channel 7, the noise on at frequency A (register 0F)
+1000  func  pcm_voice_playing
+comment pcm_voice_playing a PCM record's voice's bit of the K053260's status (FC29); nothing for an FM record
+100D  func  unused_100D
+comment unused_100D Unused: the next byte at the pointer F3C8 (0100 on: the program's own bytes)
+
+# the self test's results, which the commands F1-F7 hand to the 053248: failures (bit 0 the RAM, 0958; bit 1 the program
+# ROM, 09F8; bits 2 and 3 the sample ROMs, 0783 and 0831), the program ROM's sum (09E6-09ED, 072E on good chips) and the
+# two sample ROMs' sums (0771-0778 and 081F-0826)
+register a_alt self_test_failures
+register bc_alt program_rom_sum
+register de_alt sample_rom_1_sum
+register hl_alt sample_rom_2_sum
+# the lowest priority channel's record goes to HL from the first channel on (019C, 02B0, 0251, 0310: any priority is at
+# most FF), so HL is never read as it came in (01A6, 02BA, 025B, 031A)
+unread sound_command hl
+unread start_sound hl
 
 # ======== the sound effects ========
 # the handler a sound effect's channel runs, by the effect's number, 01-38 (01BB "SLA C; LD B,0; LD HL,$1014; ADD
@@ -17,9 +133,10 @@
 # 2E79-2EB4: 60 of each)
 2E01  jumps  effect_handlers_2  60
 2E79  data   effect_priorities_2  u8[60]
-# 01E5 takes effects 00-3F through a table at 26FC and priorities at 2740, but both are the code there (26FC's words
-# 0C22 0CFC 1F28..., 2740 "DD 66 03..."): no command the game sends reaches it (kref --sound-rom-reads: nothing reads
-# them), a table of no entries
+# start_sound takes the commands 3C-3E at 01E5 (sound_command takes 3F first, 0083): a handler at 26FC plus twice the
+# command and a priority at 2740 plus the command (01F0, 0205), which are unused_effect_group and
+# unused_effect_priorities below; the table from 26FC is the code there (26FC's words 0C22 0CFC 1F28...) up to them, a
+# table of no entries here. No command the game sends reaches it (kref --sound-rom-reads: nothing reads them)
 26FC  jumps  unused_effect_handlers  0
 
 # ======== the music ========
@@ -90,15 +207,793 @@ field sample 07 flags u8
 089D  fill   6
 08D6  fill   77
 # routines nothing calls (Unused: no call, jump or table leads to them)
-0F06  func   unused_0F06
-0FF2  func   unused_0FF2
-100D  func   unused_100D
 358A  func   unused_358A
-# a group of 4 effects no code takes: their handlers (2774, read by nothing) and the 4 bytes after them, like the
-# priorities of the other groups; each handler sets the patch before it (2799 "LD HL,$2780; CALL $0C68")
+# a group of 4 FM effects on channel 7 (the record F233) no command the game sends reaches: their handlers (2774:
+# commands 3C-3F, of which 3C-3E would reach them, 01E5) and their priorities after them (277C); each handler sets the
+# patch before it (2799 "LD HL,$2780; CALL $0C68")
 2774  data   unused_effect_group  u16[4]
 277C  data   unused_effect_priorities  u8[4]
 2799  func   unused_effect_2799
 280E  func   unused_effect_280E
 2856  func   unused_effect_2856
 289F  func   unused_effect_289F
+
+# ======== the driver's variables ========
+# (ADDRESS var NAME TYPE: in the Z80's RAM; the 12 channel records are F003-F3C2, 50h bytes each)
+# a command and its argument sound_command takes instead of the ports' when not 0 (0068 "LD BC,($F000)"), and a flag
+# that makes the main loop run sound_command again (0BDE): only the RAM's clearing writes them (09FB)
+F000  var  held_command  u16
+F002  var  command_held  u8
+# the K053260's registers the program keeps a copy of, to change a voice's bits: its keys (FC28: load_patch 0D2E,
+# key_on 0E92, the reset 0A45), its loop and KADPCM bits (FC2A: load_patch 0D50-0D61), its pans (FC2C-FC2D: set_pan
+# 0FAB-0FDE, two voices each)
+F3C3  var  pcm_keys  u8
+F3C4  var  pcm_loops  u8
+F3C5  var  pcm_pans_1  u8
+F3C6  var  pcm_pans_2  u8
+# the PCM voices keyed on (key_on 0EA1 sets the voice's bit, key_off 0ED6 clears it): run_pcm_channel moves only a
+# free voice's volume (0BFE), key_on does nothing to a keyed one (0E8B)
+F3C7  var  pcm_keyed  u8
+# where unused_100D reads its next byte (the reset sets 0100: 0B14)
+F3C8  var  byte_pointer  u16
+# the fade between songs (start_sound's C0-EF, 0458-0466; command FD, 088F): on (1), the attenuation it adds to the
+# music's volume (set_music_volume 494B), every so many passes (F3CC, counted down in F3CD) one more; at 30 the next song
+# starts (0BCC-0BD5), at 7F the music stops (0BC7); F3CF counts down a fade of another kind (0BA7), which nothing starts
+F3CA  var  fade  u8
+F3CB  var  fade_attenuation  u8
+F3CC  var  fade_period  u8
+F3CD  var  fade_timer  u8
+F3CE  var  fade_next_song  u8
+F3CF  var  fade_hold  u8
+# the main loop's passes (0BEC), which spread the music's ticks (music_tick 428E, one pass in 8 a record) and the PCM
+# records' volume steps (run_pcm_channel 0BF3, one pass in 16) over the records
+F3D0  var  pass_count  u8
+# counted up by command F8 (088A), read by nothing
+F3D1  var  command_f8_count  u8
+
+# ======== the tables the C reads by name ========
+# (ADDRESS table NAME TYPE: the game loads the asset piece of that name.) Three are indexed by the sound's number from
+# well before their first element: the priorities of the effects 40-7F (02C0 "LD HL,$3630; ADD HL,DE", 0320), of the
+# unused group 3C-3E (01F0 "LD HL,$2740") and the songs' banks (0355 "LD DE,$5D92"): their bases are tables of their
+# own, by the sound (the elements before the sounds' first are the code and data there, never read)
+3630  table  effect_priorities_40_by_sound  u8
+2740  table  unused_effect_priorities_by_sound  u8
+5D92  table  song_banks_by_sound  u8
+1016  table  effect_handlers  u16
+1086  table  effect_priorities  u8
+2774  table  unused_effect_group  u16
+277C  table  unused_effect_priorities  u8
+2E01  table  effect_handlers_2  u16
+2E79  table  effect_priorities_2  u8
+35F0  table  effect_handlers_40  u16
+3670  table  effect_priorities_40  u8
+0DB8  table  carrier_masks  u8
+0E10  table  note_codes  u8
+4168  table  effect_levels  u16
+44A5  table  fm_pitches  u16
+4533  table  pcm_pitches  u16
+48FA  table  note_lengths  u16
+5DB2  table  song_headers  u16
+5E12  table  song_banks  u8
+5E42  table  music_fm_patches  u16
+63F4  table  music_pcm_patches  u16
+642C  table  music_pcm_transpositions  s16
+28E9  table  samples  u8
+
+# ======== the music's functions ========
+41AE  file  music  # the music: a song's tracks, their notes and commands, the pitch envelope, the gate, the fade's volume
+41AE  func  start_music_track
+comment start_music_track the record's music from its start: the song A (+10), its state (+11-+3D) cleared, the track at DE (+3E); a music sound on the record is stopped
+4278  func  stop_music_channel
+comment stop_music_channel no song on the record (+10); a music sound on it stopped
+4284  func  music_channel_song
+comment music_channel_song the record's song (+10), its flags
+4289  func  music_tick
+comment music_tick a record's music, one pass in 8 (its own): the tempo (+13) added to +3A, at each carry the track's next step: a note (its length, a drum routine, the patch, volume and pan, the pitch, key on, the pitch envelope), a rest, an octave, or a command E0-FF (music_commands)
+436A  func  music_pitch_envelope_1
+comment music_pitch_envelope_1 a note's pitch envelope, segment 1: every +24 passes the pitch by +1D, +1E times
+43A7  func  music_pitch_envelope_2
+comment music_pitch_envelope_2 segment 2: by +1F, +20 times
+43E4  func  music_pitch_envelope_3
+comment music_pitch_envelope_3 segment 3: by +21, +22 times
+4421  func  music_pitch_envelope_4
+comment music_pitch_envelope_4 segment 4: by +23, then music_note_tick
+4458  func  music_note_tick
+comment music_note_tick a music note's handler: the LFO's ramp (+2E, +2F into the PMS and AMS), the fade's volume, and key off when the note's gate time (+3C) runs out
+48DC  func  add_note_length
+comment add_note_length the length of the note's high nibble (note_lengths) into the track's time (+3A)
+4916  func  set_note_gate
+comment set_note_gate the note's gate time (+3C): the gate ratio (+14) of the time left
+4947  func  update_music_volume
+comment update_music_volume set_music_volume with the record's music volume (+17)
+494A  func  set_music_volume
+comment set_music_volume A plus the fade (F3CB) as the record's volume (at most 7F)
+4957  func  next_track_byte
+comment next_track_byte the track's next byte (+3E)
+4966  func  drum_done
+comment drum_done the record's handler channel_idle, the note left ringing: a drum routine's end
+
+# ======== the effects' and the drums' steps ========
+# Every effect and every drum routine is a chain of handlers: each runs on its record one main loop pass at a time
+# and sets the next one with set_channel_handler (the record's +43), until the last stops the channel (stop_channel)
+# or leaves the note ringing (drum_done). The first of a chain is named by the table that starts it: fm_effect_NN
+# (effect_handlers[NN], command NN), pcm_effect_NN (effect_handlers_40[NN], command NN), pcm_effect_3f_NN
+# (effect_handlers_2[NN], command 3F with the argument NN), pcm_drum_K_N (instrument_routines: kit K, note N) and
+# fm_drum_K_N (instrument_routines_low); the rest by the chain they belong to (the first that reaches them) and what
+# each does, found from the driver routines it reaches (directly or through the chain's own helpers):
+#   note        loads a patch (load_patch) and plays it;       retrigger  keys the channel off and on again (key_on)
+#   wait_sample waits for the PCM voice to end (pcm_voice_playing), then ends;  slide  moves the pitch a step at a time
+#   pitch       sets a pitch;  transpose  moves the kept pitch without setting it;  fade  changes the volume
+#   modulate    the pan or the LFO;  hold  counts down, then ends the sound;  end  ends the sound
+#   delay       counts down, then goes on;  setup  sets the record's counters and goes on to the next
+#   and for a helper the chain calls: move_pitch (adds DE to the pitch and sets it), set_pitch, set_volume, play,
+#   update. A second step of the same kind in one chain is NAME_2, and so on.
+10D7  file  fm_effects  # the FM effects (commands 01-38), each a chain of handlers its record runs one pass at a time
+10D7  func  fm_effect_02
+10E1  func  fm_effect_02_delay
+10E5  func  fm_effect_01
+1108  func  fm_effect_01_retrigger
+1131  func  fm_effect_01_pitch
+1149  func  fm_effect_01_move_pitch
+1176  func  fm_effect_04
+1180  func  fm_effect_04_delay
+1184  func  fm_effect_03
+11AB  func  fm_effect_03_pitch
+11C6  func  fm_effect_03_move_pitch
+11EF  func  fm_effect_06
+1201  func  fm_effect_06_delay
+1208  func  fm_effect_05
+120C  func  fm_effect_05_note
+1216  func  fm_effect_05_retrigger
+122F  func  fm_effect_05_slide
+127E  func  fm_effect_07
+12A2  func  fm_effect_07_slide
+12F1  func  fm_effect_09
+12FB  func  fm_effect_09_delay
+12FF  func  fm_effect_08
+1318  func  fm_effect_08_retrigger
+134A  func  fm_effect_08_hold
+136A  func  fm_effect_0d
+1374  func  fm_effect_0d_delay
+1378  func  fm_effect_0c
+139B  func  fm_effect_0c_retrigger
+13AB  func  fm_effect_0c_retrigger_2
+13CB  func  fm_effect_0c_hold
+13D2  func  fm_effect_0c_move_pitch
+1405  func  fm_effect_0e
+1428  func  fm_effect_0e_pitch
+1439  func  fm_effect_0e_pitch_2
+1440  func  fm_effect_0e_slide
+145D  func  fm_effect_0e_pitch_3
+146D  func  fm_effect_0e_move_pitch
+14A5  func  fm_effect_0f
+14C8  func  fm_effect_0f_slide
+1522  func  fm_effect_10
+1545  func  fm_effect_10_slide
+159F  func  fm_effect_11
+15C3  func  fm_effect_11_pitch
+15DC  func  fm_effect_11_move_pitch
+1610  func  fm_effect_12
+1633  func  fm_effect_12_delay
+1651  func  fm_effect_12_slide
+1698  func  fm_effect_13
+16BF  func  fm_effect_13_slide
+1705  func  fm_effect_13_slide_2
+173C  func  fm_effect_13_slide_3
+1787  func  fm_effect_14
+17AD  func  fm_effect_14_slide
+17F4  func  fm_effect_14_slide_2
+184C  func  fm_effect_15
+1869  func  fm_effect_15_note
+189B  func  fm_effect_15_slide
+18D8  func  fm_effect_17
+18E7  func  fm_effect_17_delay
+18EB  func  fm_effect_16
+1912  func  fm_effect_16_pitch
+192D  func  fm_effect_16_move_pitch
+1956  func  fm_effect_18
+1975  func  fm_effect_18_slide
+19B2  func  fm_effect_19
+19C0  func  fm_effect_19_retrigger
+19D9  func  fm_effect_19_slide
+1A28  func  fm_effect_1a
+1A32  func  fm_effect_1a_retrigger
+1A4B  func  fm_effect_1a_slide
+1A8F  func  fm_effect_1b
+1AAE  func  fm_effect_1b_pitch
+1ABF  func  fm_effect_1b_pitch_2
+1AC9  func  fm_effect_1b_move_pitch
+1B01  func  fm_effect_1c
+1B24  func  fm_effect_1c_pitch
+1B35  func  fm_effect_1c_pitch_2
+1B3C  func  fm_effect_1c_slide
+1B59  func  fm_effect_1c_pitch_3
+1B69  func  fm_effect_1c_move_pitch
+1BA1  func  fm_effect_1d
+1BC0  func  fm_effect_1d_pitch
+1BCB  func  fm_effect_1d_pitch_2
+1BE1  func  fm_effect_1d_pitch_3
+1BF1  func  fm_effect_1d_move_pitch
+1C29  func  fm_effect_1e
+1C48  func  fm_effect_1e_slide
+1C85  func  fm_effect_1f
+1C9E  func  fm_effect_1f_retrigger
+1CBD  func  fm_effect_1f_end
+1CE9  func  fm_effect_20
+1D08  func  fm_effect_20_pitch
+1D19  func  fm_effect_20_pitch_2
+1D23  func  fm_effect_20_move_pitch
+1D5B  func  fm_effect_21
+1D79  func  fm_effect_21_end
+1DA5  func  fm_effect_22
+1DC8  func  fm_effect_22_slide
+1E0C  func  fm_effect_23
+1E16  func  fm_effect_23_retrigger
+1E2F  func  fm_effect_23_slide
+1E73  func  fm_effect_24
+1E96  func  fm_effect_24_retrigger
+1EC7  func  fm_effect_24_hold
+1EE7  func  fm_effect_25
+1EF1  func  fm_effect_25_note
+1F18  func  fm_effect_25_retrigger
+1F49  func  fm_effect_25_hold
+1F69  func  fm_effect_26
+1F82  func  fm_effect_26_transpose
+1F9C  func  fm_effect_26_slide
+1FBA  func  fm_effect_26_pitch
+1FC7  func  fm_effect_26_move_pitch
+1FF7  func  fm_effect_27
+201A  func  fm_effect_27_retrigger
+204B  func  fm_effect_27_hold
+206B  func  fm_effect_28
+208E  func  fm_effect_28_slide
+20E4  func  fm_effect_29
+2103  func  fm_effect_29_pitch
+210E  func  fm_effect_29_setup
+2118  func  fm_effect_29_slide
+2138  func  fm_effect_29_move_pitch
+2165  func  fm_effect_2b
+216F  func  fm_effect_2b_delay
+2173  func  fm_effect_2a
+2196  func  fm_effect_2a_retrigger
+21A6  func  fm_effect_2a_retrigger_2
+21C6  func  fm_effect_2a_hold
+21CD  func  fm_effect_2a_move_pitch
+2200  func  fm_effect_2c
+220A  func  fm_effect_2c_retrigger
+2227  func  fm_effect_2c_delay
+2248  func  fm_effect_2c_hold
+2264  func  fm_effect_2c_transpose
+2274  func  fm_effect_2c_setup
+227A  func  fm_effect_2c_slide
+22A1  func  fm_effect_2d
+22AB  func  fm_effect_2d_note
+22B9  func  fm_effect_2d_retrigger
+22D6  func  fm_effect_2d_delay
+22F7  func  fm_effect_2d_hold
+2313  func  fm_effect_2d_transpose
+2323  func  fm_effect_2d_setup
+2329  func  fm_effect_2d_slide
+2350  func  fm_effect_2e
+235A  func  fm_effect_2e_note
+2368  func  fm_effect_2e_retrigger
+2385  func  fm_effect_2e_delay
+23A6  func  fm_effect_2e_hold
+23C2  func  fm_effect_2e_transpose
+23D2  func  fm_effect_2e_setup
+23D8  func  fm_effect_2e_slide
+23FF  func  fm_effect_2f
+240D  func  fm_effect_2f_retrigger
+2426  func  fm_effect_2f_slide
+2475  func  fm_effect_32
+247F  func  fm_effect_32_delay
+2483  func  fm_effect_31
+248D  func  fm_effect_31_delay
+2491  func  fm_effect_30
+249B  func  fm_effect_30_retrigger
+24B8  func  fm_effect_30_retrigger_2
+2501  func  fm_effect_33
+250B  func  fm_effect_33_retrigger
+2528  func  fm_effect_33_retrigger_2
+2571  func  fm_effect_34
+257B  func  fm_effect_34_setup
+257F  func  fm_effect_34_retrigger
+2598  func  fm_effect_34_slide
+25DA  func  fm_effect_35
+25E4  func  fm_effect_35_note
+25F2  func  fm_effect_35_setup
+25F6  func  fm_effect_35_retrigger
+260F  func  fm_effect_35_slide
+2651  func  fm_effect_36
+265B  func  fm_effect_36_retrigger
+2674  func  fm_effect_36_slide
+26AD  func  fm_effect_37
+26B7  func  fm_effect_37_retrigger
+26D4  func  fm_effect_37_slide
+2717  func  fm_effect_38
+2725  func  fm_effect_38_retrigger
+273E  func  fm_effect_38_slide
+27C0  func  unused_effect_2799_slide
+2829  func  unused_effect_280E_hold
+2873  func  unused_effect_2856_end
+28BC  func  unused_effect_289F_step
+28D2  func  unused_effect_289F_end
+28D9  func  unused_effect_289F_update
+2EB8  file  pcm_effects  # the PCM effects (commands 40-7E, and 3F by its argument): samples of the K053260
+2EB8  func  pcm_effect_3f_00
+2ECC  func  pcm_effect_3f_00_wait_sample
+2ED6  func  pcm_effect_3f_01
+2EEA  func  pcm_effect_3f_01_wait_sample
+2EF4  func  pcm_effect_3f_02
+2F08  func  pcm_effect_3f_02_wait_sample
+2F12  func  pcm_effect_3f_03
+2F26  func  pcm_effect_3f_03_wait_sample
+2F30  func  pcm_effect_3f_04
+2F44  func  pcm_effect_3f_04_wait_sample
+2F4E  func  pcm_effect_3f_05
+2F62  func  pcm_effect_3f_05_wait_sample
+2F6C  func  pcm_effect_3f_06
+2F80  func  pcm_effect_3f_06_wait_sample
+2F8A  func  pcm_effect_3f_07
+2F9E  func  pcm_effect_3f_07_wait_sample
+2FA8  func  pcm_effect_3f_08
+2FBC  func  pcm_effect_3f_08_wait_sample
+2FC6  func  pcm_effect_3f_09
+2FDA  func  pcm_effect_3f_09_wait_sample
+2FE4  func  pcm_effect_3f_0a
+2FF8  func  pcm_effect_3f_0a_wait_sample
+3002  func  pcm_effect_3f_0b
+3016  func  pcm_effect_3f_0b_wait_sample
+3020  func  pcm_effect_3f_0c
+3034  func  pcm_effect_3f_0c_wait_sample
+303E  func  pcm_effect_3f_0d
+3052  func  pcm_effect_3f_0d_wait_sample
+305C  func  pcm_effect_3f_0e
+3070  func  pcm_effect_3f_0e_wait_sample
+307A  func  pcm_effect_3f_0f
+308E  func  pcm_effect_3f_0f_wait_sample
+3098  func  pcm_effect_3f_10
+30AC  func  pcm_effect_3f_10_wait_sample
+30B6  func  pcm_effect_3f_11
+30CA  func  pcm_effect_3f_11_wait_sample
+30D4  func  pcm_effect_3f_12
+30E8  func  pcm_effect_3f_12_wait_sample
+30F2  func  pcm_effect_3f_13
+3106  func  pcm_effect_3f_13_wait_sample
+3110  func  pcm_effect_3f_14
+3124  func  pcm_effect_3f_14_wait_sample
+312E  func  pcm_effect_3f_15
+3142  func  pcm_effect_3f_15_wait_sample
+314C  func  pcm_effect_3f_16
+3160  func  pcm_effect_3f_16_wait_sample
+316A  func  pcm_effect_3f_17
+317E  func  pcm_effect_3f_17_wait_sample
+3188  func  pcm_effect_3f_18
+319C  func  pcm_effect_3f_18_wait_sample
+31A6  func  pcm_effect_3f_19
+31BA  func  pcm_effect_3f_19_wait_sample
+31C4  func  pcm_effect_3f_1a
+31D8  func  pcm_effect_3f_1a_wait_sample
+31E2  func  pcm_effect_3f_1b
+31F6  func  pcm_effect_3f_1b_wait_sample
+3200  func  pcm_effect_3f_1c
+3214  func  pcm_effect_3f_1c_wait_sample
+321E  func  pcm_effect_3f_1d
+3232  func  pcm_effect_3f_1d_wait_sample
+323C  func  pcm_effect_3f_1e
+3250  func  pcm_effect_3f_1e_wait_sample
+325A  func  pcm_effect_3f_1f
+326E  func  pcm_effect_3f_1f_wait_sample
+3278  func  pcm_effect_3f_20
+328C  func  pcm_effect_3f_20_wait_sample
+3296  func  pcm_effect_3f_21
+32AA  func  pcm_effect_3f_21_wait_sample
+32B4  func  pcm_effect_3f_22
+32C8  func  pcm_effect_3f_22_wait_sample
+32D2  func  pcm_effect_3f_23
+32E6  func  pcm_effect_3f_23_wait_sample
+32F0  func  pcm_effect_3f_24
+3304  func  pcm_effect_3f_24_wait_sample
+330E  func  pcm_effect_3f_25
+3322  func  pcm_effect_3f_25_wait_sample
+332C  func  pcm_effect_3f_26
+3340  func  pcm_effect_3f_26_wait_sample
+334A  func  pcm_effect_3f_27
+335E  func  pcm_effect_3f_27_wait_sample
+3368  func  pcm_effect_3f_28
+337C  func  pcm_effect_3f_28_wait_sample
+3386  func  pcm_effect_3f_29
+339A  func  pcm_effect_3f_29_wait_sample
+33A4  func  pcm_effect_3f_2a
+33B8  func  pcm_effect_3f_2a_wait_sample
+33C2  func  pcm_effect_3f_2b
+33D6  func  pcm_effect_3f_2b_wait_sample
+33E0  func  pcm_effect_3f_2c
+33FA  func  pcm_effect_3f_2c_wait_sample
+3404  func  pcm_effect_3f_2d
+341E  func  pcm_effect_3f_2d_wait_sample
+3428  func  pcm_effect_3f_2e
+3442  func  pcm_effect_3f_2e_wait_sample
+3449  func  pcm_effect_3f_2f
+344F  func  pcm_effect_3f_30
+3469  func  pcm_effect_3f_30_wait_sample
+3473  func  pcm_effect_3f_31
+348D  func  pcm_effect_3f_31_wait_sample
+3497  func  pcm_effect_3f_32
+34B1  func  pcm_effect_3f_32_wait_sample
+34BB  func  pcm_effect_3f_33
+34D5  func  pcm_effect_3f_33_wait_sample
+34DF  func  pcm_effect_3f_34
+34F9  func  pcm_effect_3f_34_wait_sample
+3503  func  pcm_effect_3f_35
+351D  func  pcm_effect_3f_35_wait_sample
+3527  func  pcm_effect_3f_36
+3541  func  pcm_effect_3f_36_wait_sample
+354B  func  pcm_effect_3f_37
+3565  func  pcm_effect_3f_37_wait_sample
+356F  func  pcm_effect_3f_38
+3583  func  pcm_effect_3f_38_wait_sample
+3599  func  pcm_effect_3f_39
+35AD  func  pcm_effect_3f_39_wait_sample
+35B7  func  pcm_effect_3f_3a
+35CB  func  pcm_effect_3f_3a_wait_sample
+35D5  func  pcm_effect_3f_3b
+35E9  func  pcm_effect_3f_3b_wait_sample
+3719  func  pcm_effect_42
+372A  func  pcm_effect_41
+373B  func  pcm_effect_40
+3749  func  pcm_effect_42_setup
+375D  func  pcm_effect_42_retrigger
+378F  func  pcm_effect_42_setup_2
+37B2  func  pcm_effect_42_update
+37C5  func  pcm_effect_43
+37D9  func  pcm_effect_43_wait_sample
+37E3  func  pcm_effect_44
+37F7  func  pcm_effect_44_wait_sample
+3801  func  pcm_effect_45
+3815  func  pcm_effect_45_wait_sample
+381F  func  pcm_effect_46
+3837  func  pcm_effect_46_retrigger
+384A  func  pcm_effect_47
+385E  func  pcm_effect_47_wait_sample
+3868  func  pcm_effect_48
+387C  func  pcm_effect_48_wait_sample
+3886  func  pcm_effect_49
+389A  func  pcm_effect_49_wait_sample
+38A4  func  pcm_effect_4a
+38B8  func  pcm_effect_4a_wait_sample
+38C2  func  pcm_effect_4b
+38D6  func  pcm_effect_4b_wait_sample
+38E0  func  pcm_effect_4c
+38F4  func  pcm_effect_4c_wait_sample
+38FE  func  pcm_effect_4d
+3912  func  pcm_effect_4d_wait_sample
+391C  func  pcm_effect_4e
+3930  func  pcm_effect_4e_wait_sample
+393A  func  pcm_effect_4f
+394E  func  pcm_effect_4f_wait_sample
+3958  func  pcm_effect_50
+397E  func  pcm_effect_50_fade
+399A  func  pcm_effect_50_wait_sample
+39A4  func  pcm_effect_51
+39BE  func  pcm_effect_51_wait_sample
+39C8  func  pcm_effect_52
+39E6  func  pcm_effect_52_delay
+39F7  func  pcm_effect_52_hold
+3A01  func  pcm_effect_53
+3A15  func  pcm_effect_53_wait_sample
+3A1F  func  pcm_effect_54
+3A3A  func  pcm_effect_54_modulate
+3A57  func  pcm_effect_54_wait_sample
+3A61  func  pcm_effect_55
+3A7B  func  pcm_effect_55_wait_sample
+3A85  func  pcm_effect_56
+3AA4  func  pcm_effect_56_retrigger
+3ABE  func  pcm_effect_56_retrigger_2
+3AD8  func  pcm_effect_56_wait_sample
+3AE5  func  pcm_effect_57
+3B08  func  pcm_effect_57_retrigger
+3B2A  func  pcm_effect_57_note
+3B48  func  pcm_effect_57_wait_sample
+3B4F  func  pcm_effect_57_update
+3B62  func  pcm_effect_58
+3B80  func  pcm_effect_58_retrigger
+3B93  func  pcm_effect_59
+3BA7  func  pcm_effect_59_wait_sample
+3BB1  func  pcm_effect_5a
+3BC5  func  pcm_effect_5a_wait_sample
+3BCF  func  pcm_effect_5b
+3BE6  func  pcm_effect_5b_wait_sample
+3BF0  func  pcm_effect_5c
+3C0E  func  pcm_effect_5c_delay
+3C1F  func  pcm_effect_5c_hold
+3C29  func  pcm_effect_5d
+3C41  func  pcm_effect_5d_delay
+3C52  func  pcm_effect_5d_hold
+3C5C  func  pcm_effect_5e
+3C70  func  pcm_effect_5e_wait_sample
+3C7A  func  pcm_effect_5f
+3C8E  func  pcm_effect_5f_wait_sample
+3C98  func  pcm_effect_60
+3CAC  func  pcm_effect_60_wait_sample
+3CB6  func  pcm_effect_61
+3CCA  func  pcm_effect_61_wait_sample
+3CD4  func  pcm_effect_62
+3CE8  func  pcm_effect_62_wait_sample
+3CF2  func  pcm_effect_63
+3D06  func  pcm_effect_63_wait_sample
+3D10  func  pcm_effect_64
+3D24  func  pcm_effect_64_wait_sample
+3D2E  func  pcm_effect_65
+3D42  func  pcm_effect_65_wait_sample
+3D4C  func  pcm_effect_66
+3D60  func  pcm_effect_66_wait_sample
+3D6A  func  pcm_effect_67
+3D7E  func  pcm_effect_67_wait_sample
+3D88  func  pcm_effect_68
+3D9C  func  pcm_effect_68_wait_sample
+3DA6  func  pcm_effect_69
+3DBA  func  pcm_effect_69_wait_sample
+3DC4  func  pcm_effect_6a
+3DD8  func  pcm_effect_6a_wait_sample
+3DE2  func  pcm_effect_6b
+3DF6  func  pcm_effect_6b_wait_sample
+3E00  func  pcm_effect_6c
+3E14  func  pcm_effect_6c_wait_sample
+3E1E  func  pcm_effect_6d
+3E32  func  pcm_effect_6d_wait_sample
+3E3C  func  pcm_effect_6e
+3E50  func  pcm_effect_6e_wait_sample
+3E5A  func  pcm_effect_6f
+3E6E  func  pcm_effect_6f_wait_sample
+3E78  func  pcm_effect_70
+3E8C  func  pcm_effect_70_wait_sample
+3E96  func  pcm_effect_71
+3EAA  func  pcm_effect_71_wait_sample
+3EB4  func  pcm_effect_72
+3EC8  func  pcm_effect_72_wait_sample
+3ED2  func  pcm_effect_73
+3EE6  func  pcm_effect_73_wait_sample
+3EF0  func  pcm_effect_74
+3F04  func  pcm_effect_74_wait_sample
+3F0E  func  pcm_effect_75
+3F22  func  pcm_effect_75_wait_sample
+3F2C  func  pcm_effect_76
+3F40  func  pcm_effect_76_wait_sample
+3F4A  func  pcm_effect_77
+3F62  func  pcm_effect_77_delay
+3F73  func  pcm_effect_77_hold
+3F7A  func  pcm_effect_78
+3F80  func  pcm_effect_79
+3F94  func  pcm_effect_79_wait_sample
+3F9E  func  pcm_effect_7a
+3FBE  func  pcm_effect_7a_retrigger
+3FE6  func  pcm_effect_7a_retrigger_2
+4007  func  pcm_effect_7a_retrigger_3
+4024  func  pcm_effect_7a_retrigger_4
+4031  func  pcm_effect_7b
+4045  func  pcm_effect_7b_wait_sample
+404F  func  pcm_effect_7c
+406F  func  pcm_effect_7c_retrigger
+4097  func  pcm_effect_7c_retrigger_2
+40B8  func  pcm_effect_7c_retrigger_3
+40D5  func  pcm_effect_7c_retrigger_4
+40E2  func  pcm_effect_7d
+40F6  func  pcm_effect_7d_wait_sample
+4100  func  pcm_effect_7e
+411D  func  pcm_effect_7e_retrigger
+413E  func  pcm_effect_7e_retrigger_2
+415B  func  pcm_effect_7e_retrigger_3
+4176  func  pcm_effect_7f
+4188  func  pcm_effect_7f_retrigger
+4194  func  pcm_effect_7f_set_volume
+49C5  file  drums  # the drum routines: a music note's low nibble on a channel with a drum kit (+12) runs one
+49C5  func  fm_drum_1_1
+49E4  func  fm_drum_1_1_slide
+4A18  func  fm_drum_1_2
+4A31  func  fm_drum_1_2_hold
+4A51  func  fm_drum_1_3
+4A6A  func  fm_drum_1_3_hold
+4A8A  func  fm_drum_1_4
+4AA3  func  fm_drum_1_4_hold
+4AC3  func  fm_drum_1_5
+4AE7  func  fm_drum_1_5_slide
+4B26  func  fm_drum_1_6
+4B4A  func  fm_drum_1_6_slide
+4B89  func  fm_drum_1_7
+4BAD  func  fm_drum_1_7_slide
+4BEC  func  fm_drum_1_8
+4C10  func  fm_drum_1_8_slide
+4C36  func  fm_drum_1_9
+4C52  func  fm_drum_2_1
+4C58  func  fm_drum_2_1_setup
+4C5C  func  fm_drum_2_1_retrigger
+4C75  func  fm_drum_2_1_slide
+4CB1  func  fm_drum_2_2
+4CB7  func  fm_drum_2_2_setup
+4CBB  func  fm_drum_2_2_retrigger
+4CD4  func  fm_drum_2_2_slide
+4D10  func  fm_drum_2_3
+4D16  func  fm_drum_2_3_retrigger
+4D2F  func  fm_drum_2_3_slide
+4D62  func  fm_drum_2_4
+4D78  func  fm_drum_2_4_retrigger
+4D8D  func  fm_drum_2_4_slide
+4DCF  func  fm_drum_2_4_update
+4DE2  func  fm_drum_2_4_update_2
+4DE5  func  fm_drum_2_4_transpose
+4DF8  func  fm_drum_2_4_update_3
+4E04  func  fm_drum_2_4_update_4
+4E27  func  fm_drum_2_5
+4E2D  func  fm_drum_2_5_retrigger
+4E4A  func  fm_drum_2_5_slide
+4E6B  func  fm_drum_2_6
+4FD1  func  pcm_drum_1_1
+4FE5  func  pcm_drum_1_2
+4FF9  func  pcm_drum_1_3
+5013  func  pcm_drum_1_4
+502D  func  pcm_drum_1_5
+5047  func  pcm_drum_1_6
+5061  func  pcm_drum_1_7
+5075  func  pcm_drum_1_8
+5089  func  pcm_drum_1_9
+509D  func  pcm_drum_1_a
+50B7  func  pcm_drum_1_b
+50CB  func  pcm_drum_1_b_note
+50DE  func  pcm_drum_1_b_note_2
+50F7  func  pcm_drum_1_c
+5101  func  pcm_drum_1_c_note
+5119  func  pcm_drum_1_c_note_2
+512C  func  pcm_drum_1_c_note_3
+513C  func  pcm_drum_1_d
+5142  func  pcm_drum_1_f
+5156  func  pcm_drum_2_1
+516A  func  pcm_drum_2_2
+517E  func  pcm_drum_2_3
+5198  func  pcm_drum_2_4
+51B2  func  pcm_drum_2_5
+51CC  func  pcm_drum_2_6
+51E6  func  pcm_drum_2_7
+51FA  func  pcm_drum_2_8
+520E  func  pcm_drum_2_9
+5222  func  pcm_drum_2_a
+5236  func  pcm_drum_2_b
+524A  func  pcm_drum_2_c
+525E  func  pcm_drum_2_d
+5272  func  pcm_drum_2_e
+5286  func  pcm_drum_2_f
+529A  func  pcm_drum_3_1
+52AE  func  pcm_drum_3_2
+52C2  func  pcm_drum_3_3
+52DC  func  pcm_drum_3_4
+52F6  func  pcm_drum_3_5
+5310  func  pcm_drum_3_6
+532A  func  pcm_drum_3_7
+533E  func  pcm_drum_3_8
+5352  func  pcm_drum_3_9
+5366  func  pcm_drum_3_a
+537A  func  pcm_drum_3_b
+538E  func  pcm_drum_3_c
+53A2  func  pcm_drum_3_d
+53B6  func  pcm_drum_3_e
+53CA  func  pcm_drum_3_f
+53DE  func  pcm_drum_4_1
+53F2  func  pcm_drum_4_2
+5406  func  pcm_drum_4_3
+541A  func  pcm_drum_4_4
+5434  func  pcm_drum_4_5
+544E  func  pcm_drum_4_6
+5468  func  pcm_drum_4_7
+547C  func  pcm_drum_4_8
+5490  func  pcm_drum_4_9
+54A4  func  pcm_drum_4_a
+54B8  func  pcm_drum_4_b
+54CC  func  pcm_drum_4_c
+54E0  func  pcm_drum_4_d
+54F4  func  pcm_drum_4_e
+5508  func  pcm_drum_4_f
+551C  func  pcm_drum_5_1
+5530  func  pcm_drum_5_2
+5544  func  pcm_drum_5_3
+555E  func  pcm_drum_5_4
+5578  func  pcm_drum_5_5
+5592  func  pcm_drum_5_6
+55AC  func  pcm_drum_5_7
+55C0  func  pcm_drum_5_8
+55D4  func  pcm_drum_5_9
+55E8  func  pcm_drum_5_a
+55FC  func  pcm_drum_5_b
+5610  func  pcm_drum_5_c
+5624  func  pcm_drum_5_d
+5638  func  pcm_drum_5_e
+564C  func  pcm_drum_5_f
+5660  func  pcm_drum_6_1
+5674  func  pcm_drum_6_2
+5688  func  pcm_drum_6_3
+56A2  func  pcm_drum_6_4
+56BC  func  pcm_drum_6_5
+56D6  func  pcm_drum_6_6
+56F0  func  pcm_drum_6_7
+5704  func  pcm_drum_6_8
+5718  func  pcm_drum_6_9
+572C  func  pcm_drum_6_a
+5740  func  pcm_drum_6_b
+5754  func  pcm_drum_6_c
+5768  func  pcm_drum_6_d
+577C  func  pcm_drum_6_e
+5790  func  pcm_drum_6_f
+57A4  func  pcm_drum_7_1
+57B8  func  pcm_drum_7_2
+57CC  func  pcm_drum_7_3
+57E0  func  pcm_drum_7_4
+57FA  func  pcm_drum_7_5
+5814  func  pcm_drum_7_6
+582E  func  pcm_drum_7_7
+5842  func  pcm_drum_7_8
+5856  func  pcm_drum_7_9
+586A  func  pcm_drum_7_a
+587E  func  pcm_drum_7_b
+5892  func  pcm_drum_7_c
+58A6  func  pcm_drum_7_d
+58BA  func  pcm_drum_7_e
+58CE  func  pcm_drum_7_f
+58E2  func  pcm_drum_8_1
+58F6  func  pcm_drum_8_2
+590A  func  pcm_drum_8_3
+5924  func  pcm_drum_8_4
+593E  func  pcm_drum_8_5
+5958  func  pcm_drum_8_6
+5972  func  pcm_drum_8_7
+5986  func  pcm_drum_8_8
+599A  func  pcm_drum_8_9
+59AE  func  pcm_drum_8_a
+59C2  func  pcm_drum_8_b
+59D6  func  pcm_drum_8_c
+59EA  func  pcm_drum_8_d
+59FE  func  pcm_drum_8_e
+5A12  func  pcm_drum_8_f
+5A26  func  pcm_drum_9_1
+5A3A  func  pcm_drum_9_2
+5A4E  func  pcm_drum_9_3
+5A62  func  pcm_drum_9_4
+5A76  func  pcm_drum_9_5
+5A8A  func  pcm_drum_9_6
+5A9E  func  pcm_drum_9_7
+5AB2  func  pcm_drum_9_8
+5AC6  func  pcm_drum_9_9
+5ADA  func  pcm_drum_9_a
+5AEE  func  pcm_drum_9_b
+5B02  func  pcm_drum_9_c
+5B16  func  pcm_drum_9_d
+5B27  func  pcm_drum_9_e
+5B2D  func  pcm_drum_a_1
+5B41  func  pcm_drum_a_2
+5B55  func  pcm_drum_a_3
+5B6F  func  pcm_drum_a_4
+5B89  func  pcm_drum_a_5
+5BA3  func  pcm_drum_a_6
+5BBD  func  pcm_drum_a_7
+5BD1  func  pcm_drum_a_8
+5BE5  func  pcm_drum_a_9
+5BF9  func  pcm_drum_a_a
+5C0D  func  pcm_drum_a_b
+5C21  func  pcm_drum_a_c
+5C35  func  pcm_drum_a_d
+5C49  func  pcm_drum_a_e
+5C5D  func  pcm_drum_a_f
+5C71  func  pcm_drum_b_1
+5C85  func  pcm_drum_b_2
+5C99  func  pcm_drum_b_3
+5CB3  func  pcm_drum_b_4
+5CCD  func  pcm_drum_b_5
+5CE7  func  pcm_drum_b_6
+5D01  func  pcm_drum_b_7
+5D15  func  pcm_drum_b_8
+5D29  func  pcm_drum_b_9
+5D3D  func  pcm_drum_b_a
+5D51  func  pcm_drum_b_b
+5D65  func  pcm_drum_b_c
+5D79  func  pcm_drum_b_d
+5D8D  func  pcm_drum_b_e
+5DA1  func  pcm_drum_b_f
+2799  file  unused_effects  # a group of four FM effects no command reaches (unused_effect_group)

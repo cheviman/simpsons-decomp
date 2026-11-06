@@ -39,8 +39,10 @@ its bytes back in order:
                                       names, u8): u8 and u16 in hex, s8 and s16 in decimal, a u16 that symbols.txt says
                                       points at a structure as a ref
 
-files: data/<family>.txt, one a family of kinds, and data/layout.txt: each piece's name, place and length, for
---check only.
+files: data/<family>.txt, one a family of kinds (code_read.txt: the fixed program's code the map engines read as
+tiles or as a map past a map's edges, tools/data_walk.py's code_read_as_data: data too, for the game has no code); data/structures.txt, the structures the record lines name (a
+structure a line: its name and its values' types in byte order, u8 s8 u16 s16), so that the files read back without
+symbols.txt; and data/layout.txt: each piece's name, place and length, for --check only.
 """
 import re
 from collections import defaultdict
@@ -328,6 +330,28 @@ class Layouts:
     def size(self, kind):
         return TYPE_SIZES[kind] if kind in TYPE_SIZES else sum(TYPE_SIZES[value] for value, _ in self.structs[kind])
 
+    @classmethod
+    def written(cls, folder):
+        """The structures data/structures.txt gives (their values' types only: what reading the files back needs)"""
+        layouts = cls.__new__(cls)
+        layouts.structs, layouts.tables = {}, {}
+        for line in (folder / STRUCTURES).read_text(encoding="ascii").splitlines():
+            line = line.split("#", 1)[0].split()
+            if line:
+                layouts.structs[line[0]] = [(kind, None) for kind in line[1:]]
+        return layouts
+
+
+STRUCTURES = "structures.txt"
+
+
+def write_structures(folder, layouts, used):
+    """data/structures.txt: the structures the record lines name"""
+    lines = ["# The structures the record lines of these files name: a structure a line, its values' types in byte",
+             "# order (u8 and u16 hex, s8 and s16 decimal; a u16 may be a ref)"]
+    lines += [" ".join([name] + [kind for kind, _ in layouts.structs[name]]) for name in sorted(used)]
+    (folder / STRUCTURES).write_text("\n".join(lines) + "\n", encoding="ascii")
+
 
 def value_text(kind, data, at, points, place, resolve):
     if kind == "u8":
@@ -430,7 +454,7 @@ def pieces(image, code, walked, described, fill, names):
     return found
 
 
-def export(image, code, walk_spans, described, fill, names, folder, names_of_code=(), layouts=None):
+def export(image, code, walk_spans, described, fill, names, folder, names_of_code=(), layouts=None, code_reads=None):
     folder.mkdir(parents=True, exist_ok=True)
     walked = {}
     for first, (stop, kind) in walk_spans.items():
@@ -456,6 +480,7 @@ def export(image, code, walk_spans, described, fill, names, folder, names_of_cod
     instruction_starts = set(names_of_code)
     by_family = defaultdict(list)
     layout = []
+    used = set()
     for name, place, length, kind in found:
         data = image[place:place + length]
         typed = table_lines(data, place, resolve, layouts) \
@@ -477,21 +502,31 @@ def export(image, code, walk_spans, described, fill, names, folder, names_of_cod
         family = FAMILIES.get(kind, "fill" if kind == "fill" else "unknown" if kind == "unknown" else "tables")
         by_family[family].append(f"[{name}] {kind}\n" + "\n".join(lines))
         layout.append(f"{name} {place:06X} {length} {family}")
+        used.update(line.split()[1] for line in lines if line.startswith("record "))
+    # the code the engines read as data (tools/data_walk.py's code_read_as_data): pieces of their own, over the code
+    for place, (stop, kind) in sorted((code_reads or {}).items()):
+        name = f"{kind.replace(' ', '_')}_{place:06X}"
+        by_family["code_read"].append(f"[{name}] {kind}\n" + "\n".join(hex_lines(image[place:stop])))
+        layout.append(f"{name} {place:06X} {stop - place} code_read")
     for family, sections in by_family.items():
         (folder / f"{family}.txt").write_text("\n\n".join(sections) + "\n", encoding="ascii")
     (folder / "layout.txt").write_text("\n".join(layout) + "\n", encoding="ascii")
+    write_structures(folder, layouts, used)
     return len(found), {family: len(sections) for family, sections in by_family.items()}
 
 
 def build(folder, size, layouts=None):
-    """The program's data bytes the files give back: {place: byte}"""
+    """The program's data bytes the files give back: {place: byte} (the record lines by data/structures.txt unless
+    'layouts' is given)"""
+    if layouts is None and (folder / STRUCTURES).exists():
+        layouts = Layouts.written(folder)
     places = {}
     for line in (folder / "layout.txt").read_text(encoding="ascii").splitlines():
         name, place, _, _ = line.split()
         places[name] = int(place, 16)
     sections = {}
     for path in folder.glob("*.txt"):
-        if path.name == "layout.txt":
+        if path.name in ("layout.txt", STRUCTURES):
             continue
         name, lines = None, []
         for line in path.read_text(encoding="ascii").splitlines() + ["[end]"]:

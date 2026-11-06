@@ -42,13 +42,22 @@ As of 06-11-2026:
 - [x] Every byte of the 053248's program explained: code (the unused routines among it), described data (what the
       engines read, walked from where the code hands it over, and the tables `symbols.txt` names), or fill (the
       assembler's leftovers between and after a bank's pieces)
-- [ ] The decompiled C of both programs, and the board's runtime
+- [x] The board's runtime in C, checked against MAME's frame by frame in all 25 scenarios: the video (the K052109,
+      the K053246/K053247, the K053251 and the palette, pixel for pixel), the sound chips (the YM2151 and the K053260,
+      sample for sample) and the board's own code in place of the boot's ROM test
+- [x] The Z80 sound program decompiled to readable C (`src/sound/`, `tools/decompile_sound.py`), on a timing model the
+      reference keeps too (`kref --sound-timing`): the same samples and RAM in every scenario
+- [x] The game from its assets, in a window (`simpsons`, SDL2) or headless: it opens no ROM, and no executable holds
+      any of it (`tools/rom_in_executables.py`); the same as the reference in all 25 scenarios in state, picture and
+      sound
+- [ ] The 053248 program decompiled to readable C (it runs translated an instruction at a time for now)
 - [x] The assets extracted by subject and checked byte for byte (`tools/extract_assets.py --check`): the sprites by
       the objects whose animations show them, the tiles by the stages whose maps show them, the K053260's samples
       as WAV files, the music as Standard MIDI Files (a song a file, as the Z80's driver plays it), and every other
       byte of data of both programs as text by name: the records by their fields, the addresses as the names of what
       they point at
-- [ ] The assets loaded by name by the decompiled game
+- [x] The assets loaded back in C byte for byte (`kref --assets-check`), the factory EEPROM among them
+- [ ] The assets read by name by the decompiled 053248 program
 
 ## Verifying your ROM set
 

@@ -164,6 +164,9 @@ typedef struct
 	uint64_t (*now)(void);
 	/* A development aid: called with every write the 053248 makes on the bus */
 	void (*write_watch)(uint16_t address, uint8_t data);
+	/* The bytes of game_program the game's assets give (NULL: the ROM set's, all of them): a read of any other, which
+	   only the original's code holds, is a mistake of the game's, and stops it */
+	const uint8_t *program_given;
 	uint32_t coin_counters[2];
 	uint32_t watchdog_resets;
 	uint32_t unmapped_writes;      /* to the program's ROM (the reset writes 7C00) */
