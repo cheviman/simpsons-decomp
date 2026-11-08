@@ -3,7 +3,7 @@
  *    Description: the FM effects (commands 01-38), each a chain of handlers its record runs one pass at a time
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    06-11-2026
+ *    Modified:    07-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the Z80 sound program decompiled into C by

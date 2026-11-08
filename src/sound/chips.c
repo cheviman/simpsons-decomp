@@ -3,7 +3,7 @@
  *    Description: the records' handlers and the chips: the YM2151's registers, patches, volumes, pitches, keys, LFO and pan; the K053260's voices
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    06-11-2026
+ *    Modified:    07-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the Z80 sound program decompiled into C by
@@ -93,7 +93,7 @@ void restart_frame_timer(void)
 void load_patch(uint16_t hl, uint16_t ix)
 {
 	uint8_t a = 0, c = 0;
-	uint16_t bc = 0, hl_2 = 0;
+	uint16_t bc = 0, hl_2 = 0, sample_entry = 0;
 	uint16_t saved_hl = 0;
 
 	z80_block(36);
@@ -104,10 +104,10 @@ void load_patch(uint16_t hl, uint16_t ix)
 		pcm_keys = a;
 		z80_write8(PCM_FC28, a);
 		saved_hl = hl;
-		hl_2 = z80_read8(hl) * 2u * 2u * 2u + samples_ADDRESS;
-		move_block(hl_2, z80_read16((uint16_t)(ix + 0x4Au)), 7u, 1u);
+		sample_entry = z80_read8(hl) * 2u * 2u * 2u + samples_ADDRESS;
+		move_block(sample_entry, z80_read16((uint16_t)(ix + 0x4Au)), 7u, 1u);
 		a = pcm_loops & z80_read8((uint16_t)(ix + 0x4Eu));
-		if (SOUND_ROM8(hl_2 + 7u) & 1u)
+		if (SAMPLE(sample_entry)->flags & 1u)
 		{
 			z80_block(19);
 			a |= z80_read8((uint16_t)(ix + 0x4Fu));

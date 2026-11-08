@@ -3,7 +3,7 @@
  *    Description: prototypes of the game's functions
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    06-11-2026
+ *    Modified:    07-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -462,7 +462,7 @@ void sub_0263E7(void);
 void sub_0263E8(uint16_t u);
 void sub_026409(void);
 uint16_t sub_026413(uint16_t u);
-void sub_026483(uint16_t x);
+void sub_026483(uint16_t scroll);
 void sub_0264AB(uint16_t *p_x, uint16_t *p_u);
 void sub_0264BC(void);
 uint16_t sub_0264BD(uint16_t x);
@@ -2930,10 +2930,10 @@ void sub_040709(uint16_t u);
 void sub_040758(uint16_t u);
 uint16_t sub_04076D(uint16_t x, uint16_t u);
 void sub_04078D(uint16_t x, uint16_t d);
-void sub_04079E(uint16_t x, uint16_t y, uint16_t d);
+void sub_04079E(uint16_t x, uint16_t move, uint16_t d);
 void sub_0407CA(uint16_t x);
 void sub_0407E0(uint16_t x, uint16_t d);
-void sub_0407EC(uint16_t x, uint16_t y);
+void sub_0407EC(uint16_t x, uint16_t move);
 void sub_04080C(void);
 void sub_04080D(uint16_t *p_x, uint16_t *p_u);
 void sub_04082C(uint16_t d);
@@ -3446,8 +3446,8 @@ uint16_t sub_07BC78(uint16_t d);
 uint16_t sub_07BC8B(uint16_t y, uint16_t d);
 void sub_07BCBA(uint16_t u, uint16_t *p_y, uint16_t *p_d);
 void sub_07BD01(uint16_t u, uint16_t *p_y, uint16_t *p_d);
-void sub_07BD51(uint16_t u, uint16_t *p_x, uint16_t *p_y, uint16_t *p_d);
-void sub_07BD6C(uint16_t u, uint16_t *p_x, uint16_t *p_y, uint16_t *p_d, uint32_t *p_carry);
+void sub_07BD51(uint16_t u, uint16_t *p_step, uint16_t *p_y, uint16_t *p_d);
+void sub_07BD6C(uint16_t u, uint16_t *p_step, uint16_t *p_y, uint16_t *p_d, uint32_t *p_carry);
 void sub_07BDA8(uint16_t *p_x, uint16_t *p_y, uint16_t *p_u, uint16_t *p_d, uint32_t *p_left_caller, uint32_t *p_carry);
 uint32_t sub_07BDB0(uint16_t u);
 void sub_07BDB4(uint16_t u, uint16_t *p_x, uint32_t *p_carry);

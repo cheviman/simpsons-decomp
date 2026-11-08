@@ -3,7 +3,7 @@
  *    Description: the game's variables, tables, board registers and structures
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    06-11-2026
+ *    Modified:    07-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -719,216 +719,222 @@
 #define unk_5D09 RAM8(unk_5D09_ADDRESS)
 
 /* the program's data the code reads by name, which the game loads from its assets (src/table.c) */
-#define indexed_table_021BC4_ADDRESS 0x7BC4u    /* 021BC4: bank 10 */
-extern const void *indexed_table_021BC4_data;
-#define indexed_table_021BC4 ((const uint16_t *)indexed_table_021BC4_data)
-#define indexed_table_021BC8_ADDRESS 0x7BC8u    /* 021BC8: bank 10 */
-extern const void *indexed_table_021BC8_data;
-#define indexed_table_021BC8 ((const uint16_t *)indexed_table_021BC8_data)
+#define bonus_intro_sounds_ADDRESS 0x7BC4u    /* 021BC4: bank 10 */
+extern const void *bonus_intro_sounds_data;
+#define bonus_intro_sounds ((const uint16_t *)bonus_intro_sounds_data)
+#define bonus_1_player_records_ADDRESS 0x7BC8u    /* 021BC8: bank 10 */
+extern const void *bonus_1_player_records_data;
+#define bonus_1_player_records ((const uint16_t *)bonus_1_player_records_data)
 #define unused_sound_commands_021BEC_ADDRESS 0x7BECu    /* 021BEC: bank 10 */
 extern const void *unused_sound_commands_021BEC_data;
 #define unused_sound_commands_021BEC ((const uint16_t *)unused_sound_commands_021BEC_data)
-#define indexed_table_021C00_ADDRESS 0x7C00u    /* 021C00: bank 10 */
-extern const void *indexed_table_021C00_data;
-#define indexed_table_021C00 ((const uint16_t *)indexed_table_021C00_data)
-#define rom_021C32_ADDRESS 0x7C32u    /* 021C32: bank 10 */
-extern const void *rom_021C32_data;
-#define rom_021C32 (*(const uint16_t *)rom_021C32_data)
-#define indexed_table_021D28_ADDRESS 0x7D28u    /* 021D28: bank 10 */
-extern const void *indexed_table_021D28_data;
-#define indexed_table_021D28 ((const uint8_t *)indexed_table_021D28_data)
-#define indexed_table_021D44_ADDRESS 0x7D44u    /* 021D44: bank 10 */
-extern const void *indexed_table_021D44_data;
-#define indexed_table_021D44 ((const uint8_t *)indexed_table_021D44_data)
-#define indexed_table_021D4D_ADDRESS 0x7D4Du    /* 021D4D: bank 10 */
-extern const void *indexed_table_021D4D_data;
-#define indexed_table_021D4D ((const uint8_t *)indexed_table_021D4D_data)
-#define indexed_table_021D55_ADDRESS 0x7D55u    /* 021D55: bank 10 */
-extern const void *indexed_table_021D55_data;
-#define indexed_table_021D55 ((const uint8_t *)indexed_table_021D55_data)
-#define loaded_table_021D5D_ADDRESS 0x7D5Du    /* 021D5D: bank 10 */
-extern const void *loaded_table_021D5D_data;
-#define loaded_table_021D5D ((const uint8_t *)loaded_table_021D5D_data)
-#define indexed_table_021D71_ADDRESS 0x7D71u    /* 021D71: bank 10 */
-extern const void *indexed_table_021D71_data;
-#define indexed_table_021D71 ((const uint16_t *)indexed_table_021D71_data)
-#define indexed_table_021D7D_ADDRESS 0x7D7Du    /* 021D7D: bank 10 */
-extern const void *indexed_table_021D7D_data;
-#define indexed_table_021D7D ((const uint16_t *)indexed_table_021D7D_data)
-#define indexed_table_021D9C_ADDRESS 0x7D9Cu    /* 021D9C: bank 10 */
-extern const void *indexed_table_021D9C_data;
-#define indexed_table_021D9C ((const uint8_t *)indexed_table_021D9C_data)
-#define indexed_table_021E71_ADDRESS 0x7E71u    /* 021E71: bank 10 */
-extern const void *indexed_table_021E71_data;
-#define indexed_table_021E71 ((const uint8_t *)indexed_table_021E71_data)
-#define indexed_table_021E75_ADDRESS 0x7E75u    /* 021E75: bank 10 */
-extern const void *indexed_table_021E75_data;
-#define indexed_table_021E75 ((const uint8_t *)indexed_table_021E75_data)
-#define constant_table_021E79_ADDRESS 0x7E79u    /* 021E79: bank 10 */
-extern const void *constant_table_021E79_data;
-#define constant_table_021E79 ((const uint16_t *)constant_table_021E79_data)
-#define indexed_table_021EB9_ADDRESS 0x7EB9u    /* 021EB9: bank 10 */
-extern const void *indexed_table_021EB9_data;
-#define indexed_table_021EB9 ((const uint8_t *)indexed_table_021EB9_data)
-#define indexed_table_021EC9_ADDRESS 0x7EC9u    /* 021EC9: bank 10 */
-extern const void *indexed_table_021EC9_data;
-#define indexed_table_021EC9 ((const uint8_t *)indexed_table_021EC9_data)
-#define indexed_table_021ECD_ADDRESS 0x7ECDu    /* 021ECD: bank 10 */
-extern const void *indexed_table_021ECD_data;
-#define indexed_table_021ECD ((const uint8_t *)indexed_table_021ECD_data)
-#define indexed_table_021ED1_ADDRESS 0x7ED1u    /* 021ED1: bank 10 */
-extern const void *indexed_table_021ED1_data;
-#define indexed_table_021ED1 ((const uint8_t *)indexed_table_021ED1_data)
-#define indexed_table_023532_ADDRESS 0x7532u    /* 023532: bank 11 */
-extern const void *indexed_table_023532_data;
-#define indexed_table_023532 ((const uint16_t *)indexed_table_023532_data)
-#define indexed_table_02359E_ADDRESS 0x759Eu    /* 02359E: bank 11 */
-extern const void *indexed_table_02359E_data;
-#define indexed_table_02359E ((const uint8_t *)indexed_table_02359E_data)
-#define indexed_table_0235AE_ADDRESS 0x75AEu    /* 0235AE: bank 11 */
-extern const void *indexed_table_0235AE_data;
-#define indexed_table_0235AE ((const uint16_t *)indexed_table_0235AE_data)
-#define indexed_table_02367B_ADDRESS 0x767Bu    /* 02367B: bank 11 */
-extern const void *indexed_table_02367B_data;
-#define indexed_table_02367B ((const uint16_t *)indexed_table_02367B_data)
-#define rom_023694_ADDRESS 0x7694u    /* 023694: bank 11 */
-extern const void *rom_023694_data;
-#define rom_023694 (*(const uint8_t *)rom_023694_data)
-#define indexed_table_023695_ADDRESS 0x7695u    /* 023695: bank 11 */
-extern const void *indexed_table_023695_data;
-#define indexed_table_023695 ((const uint8_t *)indexed_table_023695_data)
-#define indexed_table_0236F8_ADDRESS 0x76F8u    /* 0236F8: bank 11 */
-extern const void *indexed_table_0236F8_data;
-#define indexed_table_0236F8 ((const uint16_t *)indexed_table_0236F8_data)
-#define indexed_table_023736_ADDRESS 0x7736u    /* 023736: bank 11 */
-extern const void *indexed_table_023736_data;
-#define indexed_table_023736 ((const uint16_t *)indexed_table_023736_data)
-#define indexed_table_0238B2_ADDRESS 0x78B2u    /* 0238B2: bank 11 */
-extern const void *indexed_table_0238B2_data;
-#define indexed_table_0238B2 ((const uint16_t *)indexed_table_0238B2_data)
-#define indexed_table_023A4D_ADDRESS 0x7A4Du    /* 023A4D: bank 11 */
-extern const void *indexed_table_023A4D_data;
-#define indexed_table_023A4D ((const uint8_t *)indexed_table_023A4D_data)
-#define indexed_table_023A51_ADDRESS 0x7A51u    /* 023A51: bank 11 */
-extern const void *indexed_table_023A51_data;
-#define indexed_table_023A51 ((const uint8_t *)indexed_table_023A51_data)
-#define constant_table_023A55_ADDRESS 0x7A55u    /* 023A55: bank 11 */
-extern const void *constant_table_023A55_data;
-#define constant_table_023A55 ((const uint16_t *)constant_table_023A55_data)
-#define indexed_table_023AA1_ADDRESS 0x7AA1u    /* 023AA1: bank 11 */
-extern const void *indexed_table_023AA1_data;
-#define indexed_table_023AA1 ((const uint8_t *)indexed_table_023AA1_data)
-#define indexed_table_023AA5_ADDRESS 0x7AA5u    /* 023AA5: bank 11 */
-extern const void *indexed_table_023AA5_data;
-#define indexed_table_023AA5 ((const uint8_t *)indexed_table_023AA5_data)
-#define indexed_table_023AA9_ADDRESS 0x7AA9u    /* 023AA9: bank 11 */
-extern const void *indexed_table_023AA9_data;
-#define indexed_table_023AA9 ((const uint8_t *)indexed_table_023AA9_data)
-#define indexed_table_023AB9_ADDRESS 0x7AB9u    /* 023AB9: bank 11 */
-extern const void *indexed_table_023AB9_data;
-#define indexed_table_023AB9 ((const uint16_t *)indexed_table_023AB9_data)
-#define indexed_table_023B09_ADDRESS 0x7B09u    /* 023B09: bank 11 */
-extern const void *indexed_table_023B09_data;
-#define indexed_table_023B09 ((const uint16_t *)indexed_table_023B09_data)
+#define bonus_placements_ADDRESS 0x7C00u    /* 021C00: bank 10 */
+extern const void *bonus_placements_data;
+#define bonus_placements ((const uint16_t *)bonus_placements_data)
+#define bonus_2_side_object_x_offsets_ADDRESS 0x7D28u    /* 021D28: bank 10 */
+extern const void *bonus_2_side_object_x_offsets_data;
+#define bonus_2_side_object_x_offsets ((const int8_t *)bonus_2_side_object_x_offsets_data)
+#define bonus_2_shake_x_offsets_ADDRESS 0x7D44u    /* 021D44: bank 10 */
+extern const void *bonus_2_shake_x_offsets_data;
+#define bonus_2_shake_x_offsets ((const int8_t *)bonus_2_shake_x_offsets_data)
+#define bonus_2_squash_zooms_x_ADDRESS 0x7D4Du    /* 021D4D: bank 10 */
+extern const void *bonus_2_squash_zooms_x_data;
+#define bonus_2_squash_zooms_x ((const uint8_t *)bonus_2_squash_zooms_x_data)
+#define bonus_2_squash_zooms_y_ADDRESS 0x7D55u    /* 021D55: bank 10 */
+extern const void *bonus_2_squash_zooms_y_data;
+#define bonus_2_squash_zooms_y ((const uint8_t *)bonus_2_squash_zooms_y_data)
+#define bonus_2_level_object_x_moves_ADDRESS 0x7D5Du    /* 021D5D: bank 10 */
+extern const void *bonus_2_level_object_x_moves_data;
+#define bonus_2_level_object_x_moves ((const int8_t *)bonus_2_level_object_x_moves_data)
+#define bonus_2_player_x_ADDRESS 0x7D7Du    /* 021D7D: bank 10 */
+extern const void *bonus_2_player_x_data;
+#define bonus_2_player_x ((const uint16_t *)bonus_2_player_x_data)
+#define bonus_results_hop_speeds_ADDRESS 0x7D9Cu    /* 021D9C: bank 10 */
+extern const void *bonus_results_hop_speeds_data;
+#define bonus_results_hop_speeds ((const int8_t *)bonus_results_hop_speeds_data)
+#define wrestler_beaten_health_by_players_ADDRESS 0x7E71u    /* 021E71: bank 10 */
+extern const void *wrestler_beaten_health_by_players_data;
+#define wrestler_beaten_health_by_players ((const uint8_t *)wrestler_beaten_health_by_players_data)
+#define wrestler_gauge_piece_health_by_players_ADDRESS 0x7E75u    /* 021E75: bank 10 */
+extern const void *wrestler_gauge_piece_health_by_players_data;
+#define wrestler_gauge_piece_health_by_players ((const uint8_t *)wrestler_gauge_piece_health_by_players_data)
+#define wrestler_animations_ADDRESS 0x7E79u    /* 021E79: bank 10 */
+extern const void *wrestler_animations_data;
+#define wrestler_animations ((const uint16_t *)wrestler_animations_data)
+#define wrestler_jump_chances_by_rank_ADDRESS 0x7EB9u    /* 021EB9: bank 10 */
+extern const void *wrestler_jump_chances_by_rank_data;
+#define wrestler_jump_chances_by_rank ((const uint8_t *)wrestler_jump_chances_by_rank_data)
+#define wrestler_quick_attack_chances_by_players_ADDRESS 0x7EC9u    /* 021EC9: bank 10 */
+extern const void *wrestler_quick_attack_chances_by_players_data;
+#define wrestler_quick_attack_chances_by_players ((const uint8_t *)wrestler_quick_attack_chances_by_players_data)
+#define wrestler_guard_chances_by_players_ADDRESS 0x7ECDu    /* 021ECD: bank 10 */
+extern const void *wrestler_guard_chances_by_players_data;
+#define wrestler_guard_chances_by_players ((const uint8_t *)wrestler_guard_chances_by_players_data)
+#define wrestler_speeds_by_rank_ADDRESS 0x7ED1u    /* 021ED1: bank 10 */
+extern const void *wrestler_speeds_by_rank_data;
+#define wrestler_speeds_by_rank ((const uint8_t *)wrestler_speeds_by_rank_data)
+#define player_score_addresses_ADDRESS 0x7516u    /* 023516: bank 11 */
+extern const void *player_score_addresses_data;
+#define player_score_addresses ((const uint16_t *)player_score_addresses_data)
+#define name_entry_player_records_ADDRESS 0x7532u    /* 023532: bank 11 */
+extern const void *name_entry_player_records_data;
+#define name_entry_player_records ((const uint16_t *)name_entry_player_records_data)
+#define name_entry_cursor_zooms_ADDRESS 0x759Eu    /* 02359E: bank 11 */
+extern const void *name_entry_cursor_zooms_data;
+#define name_entry_cursor_zooms ((const uint8_t *)name_entry_cursor_zooms_data)
+#define name_entry_pictures_ADDRESS 0x75AEu    /* 0235AE: bank 11 */
+extern const void *name_entry_pictures_data;
+#define name_entry_pictures ((const uint16_t *)name_entry_pictures_data)
+#define name_entry_picture_blocks_ADDRESS 0x75BEu    /* 0235BE: bank 11 */
+extern const void *name_entry_picture_blocks_data;
+#define name_entry_picture_blocks ((const uint8_t *)name_entry_picture_blocks_data)
+#define sprite_font_code_high_ADDRESS 0x7694u    /* 023694: bank 11 */
+extern const void *sprite_font_code_high_data;
+#define sprite_font_code_high ((const uint8_t *)sprite_font_code_high_data)
+#define sprite_font_codes_ADDRESS 0x7695u    /* 023695: bank 11 */
+extern const void *sprite_font_codes_data;
+#define sprite_font_codes ((const uint8_t *)sprite_font_codes_data)
+#define high_score_icons_ADDRESS 0x76E6u    /* 0236E6: bank 11 */
+extern const void *high_score_icons_data;
+#define high_score_icons ((const uint8_t *)high_score_icons_data)
+#define ending_family_waits_ADDRESS 0x76F8u    /* 0236F8: bank 11 */
+extern const void *ending_family_waits_data;
+#define ending_family_waits ((const uint16_t *)ending_family_waits_data)
+#define staff_roll_titles_ADDRESS 0x7736u    /* 023736: bank 11 */
+extern const void *staff_roll_titles_data;
+#define staff_roll_titles ((const uint16_t *)staff_roll_titles_data)
+#define staff_roll_names_ADDRESS 0x78B2u    /* 0238B2: bank 11 */
+extern const void *staff_roll_names_data;
+#define staff_roll_names ((const uint16_t *)staff_roll_names_data)
+#define stage_7_boss_beaten_health_by_players_ADDRESS 0x7A4Du    /* 023A4D: bank 11 */
+extern const void *stage_7_boss_beaten_health_by_players_data;
+#define stage_7_boss_beaten_health_by_players ((const uint8_t *)stage_7_boss_beaten_health_by_players_data)
+#define stage_7_boss_gauge_piece_health_by_players_ADDRESS 0x7A51u    /* 023A51: bank 11 */
+extern const void *stage_7_boss_gauge_piece_health_by_players_data;
+#define stage_7_boss_gauge_piece_health_by_players ((const uint8_t *)stage_7_boss_gauge_piece_health_by_players_data)
+#define stage_7_boss_animations_ADDRESS 0x7A55u    /* 023A55: bank 11 */
+extern const void *stage_7_boss_animations_data;
+#define stage_7_boss_animations ((const uint16_t *)stage_7_boss_animations_data)
+#define stage_7_boss_charge_waits_by_players_ADDRESS 0x7A99u    /* 023A99: bank 11 */
+extern const void *stage_7_boss_charge_waits_by_players_data;
+#define stage_7_boss_charge_waits_by_players ((const uint16_t *)stage_7_boss_charge_waits_by_players_data)
+#define stage_7_boss_quick_attack_chances_by_players_ADDRESS 0x7AA1u    /* 023AA1: bank 11 */
+extern const void *stage_7_boss_quick_attack_chances_by_players_data;
+#define stage_7_boss_quick_attack_chances_by_players ((const uint8_t *)stage_7_boss_quick_attack_chances_by_players_data)
+#define stage_7_boss_jump_away_chances_by_players_ADDRESS 0x7AA5u    /* 023AA5: bank 11 */
+extern const void *stage_7_boss_jump_away_chances_by_players_data;
+#define stage_7_boss_jump_away_chances_by_players ((const uint8_t *)stage_7_boss_jump_away_chances_by_players_data)
+#define stage_7_boss_speeds_by_rank_ADDRESS 0x7AA9u    /* 023AA9: bank 11 */
+extern const void *stage_7_boss_speeds_by_rank_data;
+#define stage_7_boss_speeds_by_rank ((const uint8_t *)stage_7_boss_speeds_by_rank_data)
+#define stage_7_boss_helper_attack_times_by_rank_ADDRESS 0x7AB9u    /* 023AB9: bank 11 */
+extern const void *stage_7_boss_helper_attack_times_by_rank_data;
+#define stage_7_boss_helper_attack_times_by_rank ((const uint16_t *)stage_7_boss_helper_attack_times_by_rank_data)
+#define stage_7_boss_helper_speeds_ADDRESS 0x7B09u    /* 023B09: bank 11 */
+extern const void *stage_7_boss_helper_speeds_data;
+#define stage_7_boss_helper_speeds ((const uint16_t *)stage_7_boss_helper_speeds_data)
+#define stage_7_boss_helper_distances_ADDRESS 0x7B15u    /* 023B15: bank 11 */
+extern const void *stage_7_boss_helper_distances_data;
+#define stage_7_boss_helper_distances ((const uint16_t *)stage_7_boss_helper_distances_data)
 #define game_texts_address_ADDRESS 0x6021u    /* 024021: bank 12 */
 extern const void *game_texts_address_data;
 #define game_texts_address ((const uint16_t *)game_texts_address_data)
-#define indexed_table_025962_ADDRESS 0x7962u    /* 025962: bank 12 */
-extern const void *indexed_table_025962_data;
-#define indexed_table_025962 ((const uint8_t *)indexed_table_025962_data)
-#define constant_table_02597A_ADDRESS 0x797Au    /* 02597A: bank 12 */
-extern const void *constant_table_02597A_data;
-#define constant_table_02597A ((const uint16_t *)constant_table_02597A_data)
+#define stage_end_exit_waits_ADDRESS 0x7962u    /* 025962: bank 12 */
+extern const void *stage_end_exit_waits_data;
+#define stage_end_exit_waits ((const uint8_t *)stage_end_exit_waits_data)
+#define absent_player_blanks_ADDRESS 0x797Au    /* 02597A: bank 12 */
+extern const void *absent_player_blanks_data;
+#define absent_player_blanks ((const uint16_t *)absent_player_blanks_data)
+#define wave_cosines_ADDRESS 0x79A4u    /* 0259A4: bank 12 */
+extern const void *wave_cosines_data;
+#define wave_cosines ((const uint8_t *)wave_cosines_data)
 #define game_texts_ADDRESS 0x79E4u    /* 0259E4: bank 12 */
 extern const void *game_texts_data;
 #define game_texts ((const uint16_t *)game_texts_data)
-#define indexed_table_027A10_ADDRESS 0x7A10u    /* 027A10: bank 13 */
-extern const void *indexed_table_027A10_data;
-#define indexed_table_027A10 ((const uint8_t *)indexed_table_027A10_data)
-#define indexed_table_027A37_ADDRESS 0x7A37u    /* 027A37: bank 13 */
-extern const void *indexed_table_027A37_data;
-#define indexed_table_027A37 ((const uint16_t *)indexed_table_027A37_data)
-#define indexed_table_027CAE_ADDRESS 0x7CAEu    /* 027CAE: bank 13 */
-extern const void *indexed_table_027CAE_data;
-#define indexed_table_027CAE ((const uint8_t *)indexed_table_027CAE_data)
-#define indexed_table_027CB2_ADDRESS 0x7CB2u    /* 027CB2: bank 13 */
-extern const void *indexed_table_027CB2_data;
-#define indexed_table_027CB2 ((const uint8_t *)indexed_table_027CB2_data)
-#define indexed_table_027CB6_ADDRESS 0x7CB6u    /* 027CB6: bank 13 */
-extern const void *indexed_table_027CB6_data;
-#define indexed_table_027CB6 ((const uint16_t *)indexed_table_027CB6_data)
-#define indexed_table_027D00_ADDRESS 0x7D00u    /* 027D00: bank 13 */
-extern const void *indexed_table_027D00_data;
-#define indexed_table_027D00 ((const uint8_t *)indexed_table_027D00_data)
-#define indexed_table_027D04_ADDRESS 0x7D04u    /* 027D04: bank 13 */
-extern const void *indexed_table_027D04_data;
-#define indexed_table_027D04 ((const uint8_t *)indexed_table_027D04_data)
-#define indexed_table_027D08_ADDRESS 0x7D08u    /* 027D08: bank 13 */
-extern const void *indexed_table_027D08_data;
-#define indexed_table_027D08 ((const uint8_t *)indexed_table_027D08_data)
-#define indexed_table_027D18_ADDRESS 0x7D18u    /* 027D18: bank 13 */
-extern const void *indexed_table_027D18_data;
-#define indexed_table_027D18 ((const uint8_t *)indexed_table_027D18_data)
-#define indexed_table_027D28_ADDRESS 0x7D28u    /* 027D28: bank 13 */
-extern const void *indexed_table_027D28_data;
-#define indexed_table_027D28 ((const uint16_t *)indexed_table_027D28_data)
-#define indexed_table_029A72_ADDRESS 0x7A72u    /* 029A72: bank 14 */
-extern const void *indexed_table_029A72_data;
-#define indexed_table_029A72 ((const uint16_t *)indexed_table_029A72_data)
-#define indexed_table_029B16_ADDRESS 0x7B16u    /* 029B16: bank 14 */
-extern const void *indexed_table_029B16_data;
-#define indexed_table_029B16 ((const uint16_t *)indexed_table_029B16_data)
-#define indexed_table_029BC8_ADDRESS 0x7BC8u    /* 029BC8: bank 14 */
-extern const void *indexed_table_029BC8_data;
-#define indexed_table_029BC8 ((const uint16_t *)indexed_table_029BC8_data)
-#define indexed_table_029BE0_ADDRESS 0x7BE0u    /* 029BE0: bank 14 */
-extern const void *indexed_table_029BE0_data;
-#define indexed_table_029BE0 ((const uint16_t *)indexed_table_029BE0_data)
-#define indexed_table_029C2E_ADDRESS 0x7C2Eu    /* 029C2E: bank 14 */
-extern const void *indexed_table_029C2E_data;
-#define indexed_table_029C2E ((const uint8_t *)indexed_table_029C2E_data)
-#define indexed_table_029C7A_ADDRESS 0x7C7Au    /* 029C7A: bank 14 */
-extern const void *indexed_table_029C7A_data;
-#define indexed_table_029C7A ((const uint8_t *)indexed_table_029C7A_data)
-#define indexed_table_029CA3_ADDRESS 0x7CA3u    /* 029CA3: bank 14 */
-extern const void *indexed_table_029CA3_data;
-#define indexed_table_029CA3 ((const uint8_t *)indexed_table_029CA3_data)
-#define indexed_table_029CD3_ADDRESS 0x7CD3u    /* 029CD3: bank 14 */
-extern const void *indexed_table_029CD3_data;
-#define indexed_table_029CD3 ((const uint8_t *)indexed_table_029CD3_data)
-#define indexed_table_029EE5_ADDRESS 0x7EE5u    /* 029EE5: bank 14 */
-extern const void *indexed_table_029EE5_data;
-#define indexed_table_029EE5 ((const uint8_t *)indexed_table_029EE5_data)
-#define indexed_table_029EF4_ADDRESS 0x7EF4u    /* 029EF4: bank 14 */
-extern const void *indexed_table_029EF4_data;
-#define indexed_table_029EF4 ((const uint8_t *)indexed_table_029EF4_data)
-#define indexed_table_029F9B_ADDRESS 0x7F9Bu    /* 029F9B: bank 14 */
-extern const void *indexed_table_029F9B_data;
-#define indexed_table_029F9B ((const uint16_t *)indexed_table_029F9B_data)
-#define indexed_table_029FAF_ADDRESS 0x7FAFu    /* 029FAF: bank 14 */
-extern const void *indexed_table_029FAF_data;
-#define indexed_table_029FAF ((const uint16_t *)indexed_table_029FAF_data)
-#define indexed_table_029FC3_ADDRESS 0x7FC3u    /* 029FC3: bank 14 */
-extern const void *indexed_table_029FC3_data;
-#define indexed_table_029FC3 ((const uint16_t *)indexed_table_029FC3_data)
-#define indexed_table_02B84A_ADDRESS 0x784Au    /* 02B84A: bank 15 */
-extern const void *indexed_table_02B84A_data;
-#define indexed_table_02B84A ((const uint16_t *)indexed_table_02B84A_data)
-#define indexed_table_02B890_ADDRESS 0x7890u    /* 02B890: bank 15 */
-extern const void *indexed_table_02B890_data;
-#define indexed_table_02B890 ((const uint16_t *)indexed_table_02B890_data)
-#define indexed_table_02B974_ADDRESS 0x7974u    /* 02B974: bank 15 */
-extern const void *indexed_table_02B974_data;
-#define indexed_table_02B974 ((const uint8_t *)indexed_table_02B974_data)
-#define indexed_table_02B995_ADDRESS 0x7995u    /* 02B995: bank 15 */
-extern const void *indexed_table_02B995_data;
-#define indexed_table_02B995 ((const uint8_t *)indexed_table_02B995_data)
-#define indexed_table_02B9A5_ADDRESS 0x79A5u    /* 02B9A5: bank 15 */
-extern const void *indexed_table_02B9A5_data;
-#define indexed_table_02B9A5 ((const uint16_t *)indexed_table_02B9A5_data)
-#define indexed_table_02B9B9_ADDRESS 0x79B9u    /* 02B9B9: bank 15 */
-extern const void *indexed_table_02B9B9_data;
-#define indexed_table_02B9B9 ((const uint16_t *)indexed_table_02B9B9_data)
+#define screen_shake_lengths_ADDRESS 0x7A10u    /* 027A10: bank 13 */
+extern const void *screen_shake_lengths_data;
+#define screen_shake_lengths ((const uint8_t *)screen_shake_lengths_data)
+#define layer_scroll_records_ADDRESS 0x7A37u    /* 027A37: bank 13 */
+extern const void *layer_scroll_records_data;
+#define layer_scroll_records ((const uint16_t *)layer_scroll_records_data)
+#define stage_records_ADDRESS 0x7A7Bu    /* 027A7B: bank 13 */
+extern const void *stage_records_data;
+#define stage_records ((const uint8_t *)stage_records_data)
+#define krusty_balloon_beaten_health_by_players_ADDRESS 0x7CAEu    /* 027CAE: bank 13 */
+extern const void *krusty_balloon_beaten_health_by_players_data;
+#define krusty_balloon_beaten_health_by_players ((const uint8_t *)krusty_balloon_beaten_health_by_players_data)
+#define krusty_balloon_gauge_piece_health_by_players_ADDRESS 0x7CB2u    /* 027CB2: bank 13 */
+extern const void *krusty_balloon_gauge_piece_health_by_players_data;
+#define krusty_balloon_gauge_piece_health_by_players ((const uint8_t *)krusty_balloon_gauge_piece_health_by_players_data)
+#define krusty_balloon_animations_ADDRESS 0x7CB6u    /* 027CB6: bank 13 */
+extern const void *krusty_balloon_animations_data;
+#define krusty_balloon_animations ((const uint16_t *)krusty_balloon_animations_data)
+#define krusty_balloon_hit_limits_by_players_ADDRESS 0x7D00u    /* 027D00: bank 13 */
+extern const void *krusty_balloon_hit_limits_by_players_data;
+#define krusty_balloon_hit_limits_by_players ((const uint8_t *)krusty_balloon_hit_limits_by_players_data)
+#define krusty_balloon_quick_attack_chances_by_players_ADDRESS 0x7D04u    /* 027D04: bank 13 */
+extern const void *krusty_balloon_quick_attack_chances_by_players_data;
+#define krusty_balloon_quick_attack_chances_by_players ((const uint8_t *)krusty_balloon_quick_attack_chances_by_players_data)
+#define krusty_balloon_fly_off_chances_by_rank_ADDRESS 0x7D08u    /* 027D08: bank 13 */
+extern const void *krusty_balloon_fly_off_chances_by_rank_data;
+#define krusty_balloon_fly_off_chances_by_rank ((const uint8_t *)krusty_balloon_fly_off_chances_by_rank_data)
+#define krusty_balloon_speeds_by_rank_ADDRESS 0x7D18u    /* 027D18: bank 13 */
+extern const void *krusty_balloon_speeds_by_rank_data;
+#define krusty_balloon_speeds_by_rank ((const uint8_t *)krusty_balloon_speeds_by_rank_data)
+#define krusty_balloon_throw_z_speeds_ADDRESS 0x7D28u    /* 027D28: bank 13 */
+extern const void *krusty_balloon_throw_z_speeds_data;
+#define krusty_balloon_throw_z_speeds ((const uint16_t *)krusty_balloon_throw_z_speeds_data)
+#define goon_from_back_xs_ADDRESS 0x7A72u    /* 029A72: bank 14 */
+extern const void *goon_from_back_xs_data;
+#define goon_from_back_xs ((const uint16_t *)goon_from_back_xs_data)
+#define goon_drop_xs_ADDRESS 0x7BC8u    /* 029BC8: bank 14 */
+extern const void *goon_drop_xs_data;
+#define goon_drop_xs ((const uint16_t *)goon_drop_xs_data)
+#define umbrella_goon_xs_ADDRESS 0x7BE0u    /* 029BE0: bank 14 */
+extern const void *umbrella_goon_xs_data;
+#define umbrella_goon_xs ((const uint16_t *)umbrella_goon_xs_data)
+#define unused_goon_waits_by_rank_ADDRESS 0x7C2Eu    /* 029C2E: bank 14 */
+extern const void *unused_goon_waits_by_rank_data;
+#define unused_goon_waits_by_rank ((const uint8_t *)unused_goon_waits_by_rank_data)
+#define goon_strike_waits_by_players_ADDRESS 0x7C7Au    /* 029C7A: bank 14 */
+extern const void *goon_strike_waits_by_players_data;
+#define goon_strike_waits_by_players ((const uint8_t *)goon_strike_waits_by_players_data)
+#define goon_jump_attack_chances_by_rank_ADDRESS 0x7CA3u    /* 029CA3: bank 14 */
+extern const void *goon_jump_attack_chances_by_rank_data;
+#define goon_jump_attack_chances_by_rank ((const uint8_t *)goon_jump_attack_chances_by_rank_data)
+#define goon_hold_animations_ADDRESS 0x7CD3u    /* 029CD3: bank 14 */
+extern const void *goon_hold_animations_data;
+#define goon_hold_animations ((const uint8_t *)goon_hold_animations_data)
+#define shovel_goon_close_strike_waits_by_players_ADDRESS 0x7EE5u    /* 029EE5: bank 14 */
+extern const void *shovel_goon_close_strike_waits_by_players_data;
+#define shovel_goon_close_strike_waits_by_players ((const uint8_t *)shovel_goon_close_strike_waits_by_players_data)
+#define shovel_goon_far_strike_waits_by_players_ADDRESS 0x7EF4u    /* 029EF4: bank 14 */
+extern const void *shovel_goon_far_strike_waits_by_players_data;
+#define shovel_goon_far_strike_waits_by_players ((const uint8_t *)shovel_goon_far_strike_waits_by_players_data)
+#define goon_jump_in_xs_ADDRESS 0x7F9Bu    /* 029F9B: bank 14 */
+extern const void *goon_jump_in_xs_data;
+#define goon_jump_in_xs ((const uint16_t *)goon_jump_in_xs_data)
+#define goon_from_below_xs_ADDRESS 0x7FAFu    /* 029FAF: bank 14 */
+extern const void *goon_from_below_xs_data;
+#define goon_from_below_xs ((const uint16_t *)goon_from_below_xs_data)
+#define cemetery_umbrella_goon_xs_ADDRESS 0x7FC3u    /* 029FC3: bank 14 */
+extern const void *cemetery_umbrella_goon_xs_data;
+#define cemetery_umbrella_goon_xs ((const uint16_t *)cemetery_umbrella_goon_xs_data)
+#define fat_goon_from_back_xs_ADDRESS 0x7890u    /* 02B890: bank 15 */
+extern const void *fat_goon_from_back_xs_data;
+#define fat_goon_from_back_xs ((const uint16_t *)fat_goon_from_back_xs_data)
+#define fat_goon_strike_waits_by_players_ADDRESS 0x7974u    /* 02B974: bank 15 */
+extern const void *fat_goon_strike_waits_by_players_data;
+#define fat_goon_strike_waits_by_players ((const uint8_t *)fat_goon_strike_waits_by_players_data)
+#define fat_goon_hold_animations_ADDRESS 0x7995u    /* 02B995: bank 15 */
+extern const void *fat_goon_hold_animations_data;
+#define fat_goon_hold_animations ((const uint8_t *)fat_goon_hold_animations_data)
+#define fat_goon_jump_in_xs_ADDRESS 0x79A5u    /* 02B9A5: bank 15 */
+extern const void *fat_goon_jump_in_xs_data;
+#define fat_goon_jump_in_xs ((const uint16_t *)fat_goon_jump_in_xs_data)
+#define fat_goon_from_below_xs_ADDRESS 0x79B9u    /* 02B9B9: bank 15 */
+extern const void *fat_goon_from_below_xs_data;
+#define fat_goon_from_below_xs ((const uint16_t *)fat_goon_from_below_xs_data)
 #define object_15_times_ADDRESS 0x79F1u    /* 02B9F1: bank 15 */
 extern const void *object_15_times_data;
 #define object_15_times ((const uint8_t *)object_15_times_data)
@@ -938,180 +944,186 @@ extern const void *object_15_spawn_lists_data;
 #define object_15_next_kinds_ADDRESS 0x7A18u    /* 02BA18: bank 15 */
 extern const void *object_15_next_kinds_data;
 #define object_15_next_kinds ((const uint8_t *)object_15_next_kinds_data)
-#define indexed_table_02DB58_ADDRESS 0x7B58u    /* 02DB58: bank 16 */
-extern const void *indexed_table_02DB58_data;
-#define indexed_table_02DB58 ((const uint16_t *)indexed_table_02DB58_data)
-#define loaded_table_02DB68_ADDRESS 0x7B68u    /* 02DB68: bank 16 */
-extern const void *loaded_table_02DB68_data;
-#define loaded_table_02DB68 ((const uint8_t *)loaded_table_02DB68_data)
-#define indexed_table_02DBF2_ADDRESS 0x7BF2u    /* 02DBF2: bank 16 */
-extern const void *indexed_table_02DBF2_data;
-#define indexed_table_02DBF2 ((const uint8_t *)indexed_table_02DBF2_data)
-#define indexed_table_02DC3E_ADDRESS 0x7C3Eu    /* 02DC3E: bank 16 */
-extern const void *indexed_table_02DC3E_data;
-#define indexed_table_02DC3E ((const uint16_t *)indexed_table_02DC3E_data)
-#define indexed_table_02DD83_ADDRESS 0x7D83u    /* 02DD83: bank 16 */
-extern const void *indexed_table_02DD83_data;
-#define indexed_table_02DD83 ((const uint16_t *)indexed_table_02DD83_data)
-#define indexed_table_02DDB1_ADDRESS 0x7DB1u    /* 02DDB1: bank 16 */
-extern const void *indexed_table_02DDB1_data;
-#define indexed_table_02DDB1 ((const uint8_t *)indexed_table_02DDB1_data)
+#define krustyland_door_releases_ADDRESS 0x7DCEu    /* 02BDCE: bank 15 */
+extern const void *krustyland_door_releases_data;
+#define krustyland_door_releases ((const uint8_t *)krustyland_door_releases_data)
+#define cemetery_obstacle_xs_ADDRESS 0x7B58u    /* 02DB58: bank 16 */
+extern const void *cemetery_obstacle_xs_data;
+#define cemetery_obstacle_xs ((const uint16_t *)cemetery_obstacle_xs_data)
+#define cemetery_obstacle_food_ADDRESS 0x7B68u    /* 02DB68: bank 16 */
+extern const void *cemetery_obstacle_food_data;
+#define cemetery_obstacle_food ((const uint8_t *)cemetery_obstacle_food_data)
+#define kind_10_floor_edge_flags_ADDRESS 0x7BF2u    /* 02DBF2: bank 16 */
+extern const void *kind_10_floor_edge_flags_data;
+#define kind_10_floor_edge_flags ((const uint8_t *)kind_10_floor_edge_flags_data)
+#define police_car_door_lists_ADDRESS 0x7C3Eu    /* 02DC3E: bank 16 */
+extern const void *police_car_door_lists_data;
+#define police_car_door_lists ((const uint16_t *)police_car_door_lists_data)
+#define police_car_door_releases_ADDRESS 0x7C46u    /* 02DC46: bank 16 */
+extern const void *police_car_door_releases_data;
+#define police_car_door_releases ((const uint8_t *)police_car_door_releases_data)
+#define player_objects_ADDRESS 0x7D83u    /* 02DD83: bank 16 */
+extern const void *player_objects_data;
+#define player_objects ((const uint16_t *)player_objects_data)
+#define obstacle_heights_ADDRESS 0x7DB1u    /* 02DDB1: bank 16 */
+extern const void *obstacle_heights_data;
+#define obstacle_heights ((const uint8_t *)obstacle_heights_data)
 #define object_16_flags_ADDRESS 0x7E39u    /* 02DE39: bank 16 */
 extern const void *object_16_flags_data;
 #define object_16_flags ((const uint8_t *)object_16_flags_data)
 #define object_16_patterns_ADDRESS 0x7E57u    /* 02DE57: bank 16 */
 extern const void *object_16_patterns_data;
 #define object_16_patterns ((const uint8_t *)object_16_patterns_data)
-#define indexed_table_02DF05_ADDRESS 0x7F05u    /* 02DF05: bank 16 */
-extern const void *indexed_table_02DF05_data;
-#define indexed_table_02DF05 ((const uint16_t *)indexed_table_02DF05_data)
-#define rom_02DFA1_ADDRESS 0x7FA1u    /* 02DFA1: bank 16 */
-extern const void *rom_02DFA1_data;
-#define rom_02DFA1 ((const uint16_t *)rom_02DFA1_data)
-#define indexed_table_02FA70_ADDRESS 0x7A70u    /* 02FA70: bank 17 */
-extern const void *indexed_table_02FA70_data;
-#define indexed_table_02FA70 ((const uint16_t *)indexed_table_02FA70_data)
-#define indexed_table_02FA9C_ADDRESS 0x7A9Cu    /* 02FA9C: bank 17 */
-extern const void *indexed_table_02FA9C_data;
-#define indexed_table_02FA9C ((const uint16_t *)indexed_table_02FA9C_data)
-#define indexed_table_02FACE_ADDRESS 0x7ACEu    /* 02FACE: bank 17 */
-extern const void *indexed_table_02FACE_data;
-#define indexed_table_02FACE ((const uint8_t *)indexed_table_02FACE_data)
-#define indexed_table_02FB00_ADDRESS 0x7B00u    /* 02FB00: bank 17 */
-extern const void *indexed_table_02FB00_data;
-#define indexed_table_02FB00 ((const uint16_t *)indexed_table_02FB00_data)
-#define indexed_table_02FB28_ADDRESS 0x7B28u    /* 02FB28: bank 17 */
-extern const void *indexed_table_02FB28_data;
-#define indexed_table_02FB28 ((const uint16_t *)indexed_table_02FB28_data)
-#define indexed_table_02FB7A_ADDRESS 0x7B7Au    /* 02FB7A: bank 17 */
-extern const void *indexed_table_02FB7A_data;
-#define indexed_table_02FB7A ((const uint16_t *)indexed_table_02FB7A_data)
-#define indexed_table_02FB92_ADDRESS 0x7B92u    /* 02FB92: bank 17 */
-extern const void *indexed_table_02FB92_data;
-#define indexed_table_02FB92 ((const uint16_t *)indexed_table_02FB92_data)
-#define indexed_table_02FBB8_ADDRESS 0x7BB8u    /* 02FBB8: bank 17 */
-extern const void *indexed_table_02FBB8_data;
-#define indexed_table_02FBB8 ((const uint8_t *)indexed_table_02FBB8_data)
-#define indexed_table_02FC9F_ADDRESS 0x7C9Fu    /* 02FC9F: bank 17 */
-extern const void *indexed_table_02FC9F_data;
-#define indexed_table_02FC9F ((const uint8_t *)indexed_table_02FC9F_data)
-#define indexed_table_02FDA2_ADDRESS 0x7DA2u    /* 02FDA2: bank 17 */
-extern const void *indexed_table_02FDA2_data;
-#define indexed_table_02FDA2 ((const uint8_t *)indexed_table_02FDA2_data)
-#define indexed_table_02FE87_ADDRESS 0x7E87u    /* 02FE87: bank 17 */
-extern const void *indexed_table_02FE87_data;
-#define indexed_table_02FE87 ((const uint8_t *)indexed_table_02FE87_data)
-#define indexed_table_02FE8F_ADDRESS 0x7E8Fu    /* 02FE8F: bank 17 */
-extern const void *indexed_table_02FE8F_data;
-#define indexed_table_02FE8F ((const uint8_t *)indexed_table_02FE8F_data)
-#define indexed_table_02FF3B_ADDRESS 0x7F3Bu    /* 02FF3B: bank 17 */
-extern const void *indexed_table_02FF3B_data;
-#define indexed_table_02FF3B ((const uint8_t *)indexed_table_02FF3B_data)
-#define indexed_table_031AF8_ADDRESS 0x7AF8u    /* 031AF8: bank 18 */
-extern const void *indexed_table_031AF8_data;
-#define indexed_table_031AF8 ((const uint16_t *)indexed_table_031AF8_data)
-#define indexed_table_031B0A_ADDRESS 0x7B0Au    /* 031B0A: bank 18 */
-extern const void *indexed_table_031B0A_data;
-#define indexed_table_031B0A ((const uint8_t *)indexed_table_031B0A_data)
-#define indexed_table_031C0C_ADDRESS 0x7C0Cu    /* 031C0C: bank 18 */
-extern const void *indexed_table_031C0C_data;
-#define indexed_table_031C0C ((const uint8_t *)indexed_table_031C0C_data)
-#define indexed_table_031C5D_ADDRESS 0x7C5Du    /* 031C5D: bank 18 */
-extern const void *indexed_table_031C5D_data;
-#define indexed_table_031C5D ((const uint16_t *)indexed_table_031C5D_data)
-#define loaded_table_031D51_ADDRESS 0x7D51u    /* 031D51: bank 18 */
-extern const void *loaded_table_031D51_data;
-#define loaded_table_031D51 ((const uint16_t *)loaded_table_031D51_data)
-#define indexed_table_031DA1_ADDRESS 0x7DA1u    /* 031DA1: bank 18 */
-extern const void *indexed_table_031DA1_data;
-#define indexed_table_031DA1 ((const uint8_t *)indexed_table_031DA1_data)
-#define indexed_table_031DA8_ADDRESS 0x7DA8u    /* 031DA8: bank 18 */
-extern const void *indexed_table_031DA8_data;
-#define indexed_table_031DA8 ((const uint8_t *)indexed_table_031DA8_data)
-#define indexed_table_031DAF_ADDRESS 0x7DAFu    /* 031DAF: bank 18 */
-extern const void *indexed_table_031DAF_data;
-#define indexed_table_031DAF ((const uint8_t *)indexed_table_031DAF_data)
-#define indexed_table_031DB6_ADDRESS 0x7DB6u    /* 031DB6: bank 18 */
-extern const void *indexed_table_031DB6_data;
-#define indexed_table_031DB6 ((const uint16_t *)indexed_table_031DB6_data)
-#define indexed_table_031DD8_ADDRESS 0x7DD8u    /* 031DD8: bank 18 */
-extern const void *indexed_table_031DD8_data;
-#define indexed_table_031DD8 ((const uint8_t *)indexed_table_031DD8_data)
-#define indexed_table_031DDC_ADDRESS 0x7DDCu    /* 031DDC: bank 18 */
-extern const void *indexed_table_031DDC_data;
-#define indexed_table_031DDC ((const uint8_t *)indexed_table_031DDC_data)
-#define indexed_table_031E1C_ADDRESS 0x7E1Cu    /* 031E1C: bank 18 */
-extern const void *indexed_table_031E1C_data;
-#define indexed_table_031E1C ((const uint8_t *)indexed_table_031E1C_data)
-#define indexed_table_031F7A_ADDRESS 0x7F7Au    /* 031F7A: bank 18 */
-extern const void *indexed_table_031F7A_data;
-#define indexed_table_031F7A ((const uint8_t *)indexed_table_031F7A_data)
-#define indexed_table_033A72_ADDRESS 0x7A72u    /* 033A72: bank 19 */
-extern const void *indexed_table_033A72_data;
-#define indexed_table_033A72 ((const uint8_t *)indexed_table_033A72_data)
-#define indexed_table_033AB5_ADDRESS 0x7AB5u    /* 033AB5: bank 19 */
-extern const void *indexed_table_033AB5_data;
-#define indexed_table_033AB5 ((const uint8_t *)indexed_table_033AB5_data)
-#define indexed_table_033BCC_ADDRESS 0x7BCCu    /* 033BCC: bank 19 */
-extern const void *indexed_table_033BCC_data;
-#define indexed_table_033BCC ((const uint8_t *)indexed_table_033BCC_data)
-#define indexed_table_033C16_ADDRESS 0x7C16u    /* 033C16: bank 19 */
-extern const void *indexed_table_033C16_data;
-#define indexed_table_033C16 ((const uint16_t *)indexed_table_033C16_data)
-#define indexed_table_033C3C_ADDRESS 0x7C3Cu    /* 033C3C: bank 19 */
-extern const void *indexed_table_033C3C_data;
-#define indexed_table_033C3C ((const uint16_t *)indexed_table_033C3C_data)
-#define indexed_table_033C76_ADDRESS 0x7C76u    /* 033C76: bank 19 */
-extern const void *indexed_table_033C76_data;
-#define indexed_table_033C76 ((const uint16_t *)indexed_table_033C76_data)
-#define indexed_table_033CB8_ADDRESS 0x7CB8u    /* 033CB8: bank 19 */
-extern const void *indexed_table_033CB8_data;
-#define indexed_table_033CB8 ((const uint8_t *)indexed_table_033CB8_data)
-#define indexed_table_033CC0_ADDRESS 0x7CC0u    /* 033CC0: bank 19 */
-extern const void *indexed_table_033CC0_data;
-#define indexed_table_033CC0 ((const uint8_t *)indexed_table_033CC0_data)
-#define indexed_table_033D22_ADDRESS 0x7D22u    /* 033D22: bank 19 */
-extern const void *indexed_table_033D22_data;
-#define indexed_table_033D22 ((const uint8_t *)indexed_table_033D22_data)
-#define indexed_table_033E32_ADDRESS 0x7E32u    /* 033E32: bank 19 */
-extern const void *indexed_table_033E32_data;
-#define indexed_table_033E32 ((const uint16_t *)indexed_table_033E32_data)
-#define indexed_table_033E86_ADDRESS 0x7E86u    /* 033E86: bank 19 */
-extern const void *indexed_table_033E86_data;
-#define indexed_table_033E86 ((const uint8_t *)indexed_table_033E86_data)
-#define indexed_table_033E8D_ADDRESS 0x7E8Du    /* 033E8D: bank 19 */
-extern const void *indexed_table_033E8D_data;
-#define indexed_table_033E8D ((const uint8_t *)indexed_table_033E8D_data)
-#define indexed_table_033E94_ADDRESS 0x7E94u    /* 033E94: bank 19 */
-extern const void *indexed_table_033E94_data;
-#define indexed_table_033E94 ((const uint8_t *)indexed_table_033E94_data)
-#define indexed_table_033E9B_ADDRESS 0x7E9Bu    /* 033E9B: bank 19 */
-extern const void *indexed_table_033E9B_data;
-#define indexed_table_033E9B ((const uint16_t *)indexed_table_033E9B_data)
-#define indexed_table_033EA9_ADDRESS 0x7EA9u    /* 033EA9: bank 19 */
-extern const void *indexed_table_033EA9_data;
-#define indexed_table_033EA9 ((const uint16_t *)indexed_table_033EA9_data)
-#define indexed_table_033EC7_ADDRESS 0x7EC7u    /* 033EC7: bank 19 */
-extern const void *indexed_table_033EC7_data;
-#define indexed_table_033EC7 ((const uint16_t *)indexed_table_033EC7_data)
-#define indexed_table_033EEF_ADDRESS 0x7EEFu    /* 033EEF: bank 19 */
-extern const void *indexed_table_033EEF_data;
-#define indexed_table_033EEF ((const uint16_t *)indexed_table_033EEF_data)
-#define indexed_table_033F0D_ADDRESS 0x7F0Du    /* 033F0D: bank 19 */
-extern const void *indexed_table_033F0D_data;
-#define indexed_table_033F0D ((const uint8_t *)indexed_table_033F0D_data)
-#define indexed_table_033F11_ADDRESS 0x7F11u    /* 033F11: bank 19 */
-extern const void *indexed_table_033F11_data;
-#define indexed_table_033F11 ((const uint8_t *)indexed_table_033F11_data)
-#define indexed_table_033F51_ADDRESS 0x7F51u    /* 033F51: bank 19 */
-extern const void *indexed_table_033F51_data;
-#define indexed_table_033F51 ((const uint8_t *)indexed_table_033F51_data)
-#define indexed_table_033FE3_ADDRESS 0x7FE3u    /* 033FE3: bank 19 */
-extern const void *indexed_table_033FE3_data;
-#define indexed_table_033FE3 ((const uint8_t *)indexed_table_033FE3_data)
-#define indexed_table_033FE9_ADDRESS 0x7FE9u    /* 033FE9: bank 19 */
-extern const void *indexed_table_033FE9_data;
-#define indexed_table_033FE9 ((const uint16_t *)indexed_table_033FE9_data)
+#define rising_scenery_camera_xs_ADDRESS 0x7FA1u    /* 02DFA1: bank 16 */
+extern const void *rising_scenery_camera_xs_data;
+#define rising_scenery_camera_xs ((const uint16_t *)rising_scenery_camera_xs_data)
+#define item_setups_ADDRESS 0x7A70u    /* 02FA70: bank 17 */
+extern const void *item_setups_data;
+#define item_setups ((const uint16_t *)item_setups_data)
+#define food_move_choices_ADDRESS 0x7A9Cu    /* 02FA9C: bank 17 */
+extern const void *food_move_choices_data;
+#define food_move_choices ((const uint16_t *)food_move_choices_data)
+#define food_hit_kinds_ADDRESS 0x7ACEu    /* 02FACE: bank 17 */
+extern const void *food_hit_kinds_data;
+#define food_hit_kinds ((const uint8_t *)food_hit_kinds_data)
+#define kind_a5_partners_ADDRESS 0x7B00u    /* 02FB00: bank 17 */
+extern const void *kind_a5_partners_data;
+#define kind_a5_partners ((const uint16_t *)kind_a5_partners_data)
+#define kind_a5_food_drops_ADDRESS 0x7B28u    /* 02FB28: bank 17 */
+extern const void *kind_a5_food_drops_data;
+#define kind_a5_food_drops ((const uint16_t *)kind_a5_food_drops_data)
+#define item_carrier_setups_ADDRESS 0x7B7Au    /* 02FB7A: bank 17 */
+extern const void *item_carrier_setups_data;
+#define item_carrier_setups ((const uint16_t *)item_carrier_setups_data)
+#define item_carrier_items_ADDRESS 0x7B92u    /* 02FB92: bank 17 */
+extern const void *item_carrier_items_data;
+#define item_carrier_items ((const uint16_t *)item_carrier_items_data)
+#define carried_item_kinds_ADDRESS 0x7BB8u    /* 02FBB8: bank 17 */
+extern const void *carried_item_kinds_data;
+#define carried_item_kinds ((const uint8_t *)carried_item_kinds_data)
+#define kind_b3_damage_animations_ADDRESS 0x7C9Fu    /* 02FC9F: bank 17 */
+extern const void *kind_b3_damage_animations_data;
+#define kind_b3_damage_animations ((const uint8_t *)kind_b3_damage_animations_data)
+#define krustyland_child_limits_by_players_ADDRESS 0x7DA2u    /* 02FDA2: bank 17 */
+extern const void *krustyland_child_limits_by_players_data;
+#define krustyland_child_limits_by_players ((const uint8_t *)krustyland_child_limits_by_players_data)
+#define kind_88_attributes_by_health_ADDRESS 0x7DFFu    /* 02FDFF: bank 17 */
+extern const void *kind_88_attributes_by_health_data;
+#define kind_88_attributes_by_health ((const uint8_t *)kind_88_attributes_by_health_data)
+#define clown_on_ball_pause_waits_by_rank_ADDRESS 0x7E87u    /* 02FE87: bank 17 */
+extern const void *clown_on_ball_pause_waits_by_rank_data;
+#define clown_on_ball_pause_waits_by_rank ((const uint8_t *)clown_on_ball_pause_waits_by_rank_data)
+#define orbit_cosines_ADDRESS 0x7E8Fu    /* 02FE8F: bank 17 */
+extern const void *orbit_cosines_data;
+#define orbit_cosines ((const uint8_t *)orbit_cosines_data)
+#define kind_b2_idle_animations_ADDRESS 0x7F3Bu    /* 02FF3B: bank 17 */
+extern const void *kind_b2_idle_animations_data;
+#define kind_b2_idle_animations ((const uint8_t *)kind_b2_idle_animations_data)
+#define random_figure_poses_ADDRESS 0x7FB9u    /* 02FFB9: bank 17 */
+extern const void *random_figure_poses_data;
+#define random_figure_poses ((const uint8_t *)random_figure_poses_data)
+#define kind_97_hold_animations_ADDRESS 0x7B0Au    /* 031B0A: bank 18 */
+extern const void *kind_97_hold_animations_data;
+#define kind_97_hold_animations ((const uint8_t *)kind_97_hold_animations_data)
+#define lumberjack_pause_loops_by_players_ADDRESS 0x7C0Cu    /* 031C0C: bank 18 */
+extern const void *lumberjack_pause_loops_by_players_data;
+#define lumberjack_pause_loops_by_players ((const uint8_t *)lumberjack_pause_loops_by_players_data)
+#define gorilla_leap_speeds_ADDRESS 0x7C5Du    /* 031C5D: bank 18 */
+extern const void *gorilla_leap_speeds_data;
+#define gorilla_leap_speeds ((const uint16_t *)gorilla_leap_speeds_data)
+#define kind_c7_sweep_ways_ADDRESS 0x7DA1u    /* 031DA1: bank 18 */
+extern const void *kind_c7_sweep_ways_data;
+#define kind_c7_sweep_ways ((const uint8_t *)kind_c7_sweep_ways_data)
+#define kind_c7_headings_ADDRESS 0x7DA8u    /* 031DA8: bank 18 */
+extern const void *kind_c7_headings_data;
+#define kind_c7_headings ((const uint8_t *)kind_c7_headings_data)
+#define kind_c7_sweep_rates_ADDRESS 0x7DAFu    /* 031DAF: bank 18 */
+extern const void *kind_c7_sweep_rates_data;
+#define kind_c7_sweep_rates ((const uint8_t *)kind_c7_sweep_rates_data)
+#define kind_c7_start_x_ADDRESS 0x7DB6u    /* 031DB6: bank 18 */
+extern const void *kind_c7_start_x_data;
+#define kind_c7_start_x ((const uint16_t *)kind_c7_start_x_data)
+#define kind_c7_hurt_shakes_ADDRESS 0x7DD8u    /* 031DD8: bank 18 */
+extern const void *kind_c7_hurt_shakes_data;
+#define kind_c7_hurt_shakes ((const uint8_t *)kind_c7_hurt_shakes_data)
+#define kind_c7_bob_up_ADDRESS 0x7DDCu    /* 031DDC: bank 18 */
+extern const void *kind_c7_bob_up_data;
+#define kind_c7_bob_up ((const uint8_t *)kind_c7_bob_up_data)
+#define kind_c7_bob_down_ADDRESS 0x7DFCu    /* 031DFC: bank 18 */
+extern const void *kind_c7_bob_down_data;
+#define kind_c7_bob_down ((const int8_t *)kind_c7_bob_down_data)
+#define kind_c7_shot_waits_ADDRESS 0x7E1Cu    /* 031E1C: bank 18 */
+extern const void *kind_c7_shot_waits_data;
+#define kind_c7_shot_waits ((const uint8_t *)kind_c7_shot_waits_data)
+#define kind_8c_animations_ADDRESS 0x7F7Au    /* 031F7A: bank 18 */
+extern const void *kind_8c_animations_data;
+#define kind_8c_animations ((const uint8_t *)kind_8c_animations_data)
+#define kind_a1_entrance_steps_ADDRESS 0x7A72u    /* 033A72: bank 19 */
+extern const void *kind_a1_entrance_steps_data;
+#define kind_a1_entrance_steps ((const uint8_t *)kind_a1_entrance_steps_data)
+#define kind_a1_attack_delays_by_players_ADDRESS 0x7AB5u    /* 033AB5: bank 19 */
+extern const void *kind_a1_attack_delays_by_players_data;
+#define kind_a1_attack_delays_by_players ((const uint8_t *)kind_a1_attack_delays_by_players_data)
+#define hit_spark_times_ADDRESS 0x7BCCu    /* 033BCC: bank 19 */
+extern const void *hit_spark_times_data;
+#define hit_spark_times ((const uint8_t *)hit_spark_times_data)
+#define robot_sparks_by_frame_9d_ADDRESS 0x7C16u    /* 033C16: bank 19 */
+extern const void *robot_sparks_by_frame_9d_data;
+#define robot_sparks_by_frame_9d ((const uint16_t *)robot_sparks_by_frame_9d_data)
+#define robot_sparks_by_frame_92_ADDRESS 0x7C3Cu    /* 033C3C: bank 19 */
+extern const void *robot_sparks_by_frame_92_data;
+#define robot_sparks_by_frame_92 ((const uint16_t *)robot_sparks_by_frame_92_data)
+#define robot_sparks_by_frame_91_ADDRESS 0x7C76u    /* 033C76: bank 19 */
+extern const void *robot_sparks_by_frame_91_data;
+#define robot_sparks_by_frame_91 ((const uint16_t *)robot_sparks_by_frame_91_data)
+#define robot_actions_after_hit_ADDRESS 0x7CB8u    /* 033CB8: bank 19 */
+extern const void *robot_actions_after_hit_data;
+#define robot_actions_after_hit ((const uint8_t *)robot_actions_after_hit_data)
+#define robot_status_after_hit_ADDRESS 0x7CC0u    /* 033CC0: bank 19 */
+extern const void *robot_status_after_hit_data;
+#define robot_status_after_hit ((const uint8_t *)robot_status_after_hit_data)
+#define robot_part_zooms_ADDRESS 0x7D22u    /* 033D22: bank 19 */
+extern const void *robot_part_zooms_data;
+#define robot_part_zooms ((const uint8_t *)robot_part_zooms_data)
+#define kind_b8_sweep_ways_ADDRESS 0x7E86u    /* 033E86: bank 19 */
+extern const void *kind_b8_sweep_ways_data;
+#define kind_b8_sweep_ways ((const uint8_t *)kind_b8_sweep_ways_data)
+#define kind_b8_headings_ADDRESS 0x7E8Du    /* 033E8D: bank 19 */
+extern const void *kind_b8_headings_data;
+#define kind_b8_headings ((const uint8_t *)kind_b8_headings_data)
+#define kind_b8_sweep_rates_ADDRESS 0x7E94u    /* 033E94: bank 19 */
+extern const void *kind_b8_sweep_rates_data;
+#define kind_b8_sweep_rates ((const uint8_t *)kind_b8_sweep_rates_data)
+#define kind_b8_descent_slowdowns_ADDRESS 0x7E9Bu    /* 033E9B: bank 19 */
+extern const void *kind_b8_descent_slowdowns_data;
+#define kind_b8_descent_slowdowns ((const uint16_t *)kind_b8_descent_slowdowns_data)
+#define kind_b8_descent_y_speeds_ADDRESS 0x7EA9u    /* 033EA9: bank 19 */
+extern const void *kind_b8_descent_y_speeds_data;
+#define kind_b8_descent_y_speeds ((const int16_t *)kind_b8_descent_y_speeds_data)
+#define kind_b8_volley_shots_ADDRESS 0x7EC7u    /* 033EC7: bank 19 */
+extern const void *kind_b8_volley_shots_data;
+#define kind_b8_volley_shots ((const uint16_t *)kind_b8_volley_shots_data)
+#define kind_b8_single_shots_ADDRESS 0x7EEFu    /* 033EEF: bank 19 */
+extern const void *kind_b8_single_shots_data;
+#define kind_b8_single_shots ((const uint16_t *)kind_b8_single_shots_data)
+#define kind_b8_hurt_shakes_ADDRESS 0x7F0Du    /* 033F0D: bank 19 */
+extern const void *kind_b8_hurt_shakes_data;
+#define kind_b8_hurt_shakes ((const uint8_t *)kind_b8_hurt_shakes_data)
+#define kind_b8_bob_up_ADDRESS 0x7F11u    /* 033F11: bank 19 */
+extern const void *kind_b8_bob_up_data;
+#define kind_b8_bob_up ((const uint8_t *)kind_b8_bob_up_data)
+#define kind_b8_bob_down_ADDRESS 0x7F31u    /* 033F31: bank 19 */
+extern const void *kind_b8_bob_down_data;
+#define kind_b8_bob_down ((const int8_t *)kind_b8_bob_down_data)
+#define kind_b8_shot_waits_ADDRESS 0x7F51u    /* 033F51: bank 19 */
+extern const void *kind_b8_shot_waits_data;
+#define kind_b8_shot_waits ((const uint8_t *)kind_b8_shot_waits_data)
+#define kind_b8_shot_animations_ADDRESS 0x7FE3u    /* 033FE3: bank 19 */
+extern const void *kind_b8_shot_animations_data;
+#define kind_b8_shot_animations ((const uint8_t *)kind_b8_shot_animations_data)
+#define kind_b8_shot_speeds_ADDRESS 0x7FE9u    /* 033FE9: bank 19 */
+extern const void *kind_b8_shot_speeds_data;
+#define kind_b8_shot_speeds ((const uint16_t *)kind_b8_shot_speeds_data)
 #define unused_tile_places_ADDRESS 0x76E5u    /* 0356E5: bank 1A */
 extern const void *unused_tile_places_data;
 #define unused_tile_places ((const uint8_t *)unused_tile_places_data)
@@ -1133,210 +1145,234 @@ extern const void *object_1a_states_after_data;
 #define object_1a_level_rows_ADDRESS 0x77C6u    /* 0357C6: bank 1A */
 extern const void *object_1a_level_rows_data;
 #define object_1a_level_rows ((const uint16_t *)object_1a_level_rows_data)
-#define indexed_table_0357FE_ADDRESS 0x77FEu    /* 0357FE: bank 1A */
-extern const void *indexed_table_0357FE_data;
-#define indexed_table_0357FE ((const uint8_t *)indexed_table_0357FE_data)
-#define indexed_table_03582A_ADDRESS 0x782Au    /* 03582A: bank 1A */
-extern const void *indexed_table_03582A_data;
-#define indexed_table_03582A ((const uint8_t *)indexed_table_03582A_data)
-#define indexed_table_035832_ADDRESS 0x7832u    /* 035832: bank 1A */
-extern const void *indexed_table_035832_data;
-#define indexed_table_035832 ((const uint8_t *)indexed_table_035832_data)
-#define indexed_table_03583A_ADDRESS 0x783Au    /* 03583A: bank 1A */
-extern const void *indexed_table_03583A_data;
-#define indexed_table_03583A ((const uint8_t *)indexed_table_03583A_data)
-#define indexed_table_03584E_ADDRESS 0x784Eu    /* 03584E: bank 1A */
-extern const void *indexed_table_03584E_data;
-#define indexed_table_03584E ((const uint8_t *)indexed_table_03584E_data)
-#define indexed_table_03585E_ADDRESS 0x785Eu    /* 03585E: bank 1A */
-extern const void *indexed_table_03585E_data;
-#define indexed_table_03585E ((const uint8_t *)indexed_table_03585E_data)
-#define indexed_table_0358A0_ADDRESS 0x78A0u    /* 0358A0: bank 1A */
-extern const void *indexed_table_0358A0_data;
-#define indexed_table_0358A0 ((const uint8_t *)indexed_table_0358A0_data)
-#define indexed_table_0358C8_ADDRESS 0x78C8u    /* 0358C8: bank 1A */
-extern const void *indexed_table_0358C8_data;
-#define indexed_table_0358C8 ((const uint8_t *)indexed_table_0358C8_data)
-#define indexed_table_0358EC_ADDRESS 0x78ECu    /* 0358EC: bank 1A */
-extern const void *indexed_table_0358EC_data;
-#define indexed_table_0358EC ((const uint16_t *)indexed_table_0358EC_data)
+#define object_1a_chase_leg_times_ADDRESS 0x77FEu    /* 0357FE: bank 1A */
+extern const void *object_1a_chase_leg_times_data;
+#define object_1a_chase_leg_times ((const uint8_t *)object_1a_chase_leg_times_data)
+#define object_1a_bounce_animations_ADDRESS 0x782Au    /* 03582A: bank 1A */
+extern const void *object_1a_bounce_animations_data;
+#define object_1a_bounce_animations ((const uint8_t *)object_1a_bounce_animations_data)
+#define object_1a_pose_times_ADDRESS 0x7832u    /* 035832: bank 1A */
+extern const void *object_1a_pose_times_data;
+#define object_1a_pose_times ((const uint8_t *)object_1a_pose_times_data)
+#define object_1a_pose_animations_ADDRESS 0x783Au    /* 03583A: bank 1A */
+extern const void *object_1a_pose_animations_data;
+#define object_1a_pose_animations ((const uint8_t *)object_1a_pose_animations_data)
+#define object_1a_leap_speeds_ADDRESS 0x784Eu    /* 03584E: bank 1A */
+extern const void *object_1a_leap_speeds_data;
+#define object_1a_leap_speeds ((const uint8_t *)object_1a_leap_speeds_data)
+#define object_1a_leap_heights_ADDRESS 0x785Eu    /* 03585E: bank 1A */
+extern const void *object_1a_leap_heights_data;
+#define object_1a_leap_heights ((const uint8_t *)object_1a_leap_heights_data)
+#define object_1a_repeat_animations_ADDRESS 0x78A0u    /* 0358A0: bank 1A */
+extern const void *object_1a_repeat_animations_data;
+#define object_1a_repeat_animations ((const uint8_t *)object_1a_repeat_animations_data)
+#define object_1a_approach_times_ADDRESS 0x78C8u    /* 0358C8: bank 1A */
+extern const void *object_1a_approach_times_data;
+#define object_1a_approach_times ((const uint8_t *)object_1a_approach_times_data)
+#define object_1a_released_objects_ADDRESS 0x78ECu    /* 0358EC: bank 1A */
+extern const void *object_1a_released_objects_data;
+#define object_1a_released_objects ((const uint16_t *)object_1a_released_objects_data)
 #define unused_words_035934_ADDRESS 0x7934u    /* 035934: bank 1A */
 extern const void *unused_words_035934_data;
 #define unused_words_035934 ((const uint16_t *)unused_words_035934_data)
-#define loaded_table_0359A6_ADDRESS 0x79A6u    /* 0359A6: bank 1A */
-extern const void *loaded_table_0359A6_data;
-#define loaded_table_0359A6 ((const uint16_t *)loaded_table_0359A6_data)
 #define object_1a_path_choices_ADDRESS 0x79DCu    /* 0359DC: bank 1A */
 extern const void *object_1a_path_choices_data;
 #define object_1a_path_choices ((const uint8_t *)object_1a_path_choices_data)
 #define object_1a_path_times_ADDRESS 0x79F0u    /* 0359F0: bank 1A */
 extern const void *object_1a_path_times_data;
 #define object_1a_path_times ((const uint8_t *)object_1a_path_times_data)
-#define indexed_table_035FA3_ADDRESS 0x7FA3u    /* 035FA3: bank 1A */
-extern const void *indexed_table_035FA3_data;
-#define indexed_table_035FA3 ((const uint8_t *)indexed_table_035FA3_data)
+#define object_1a_sines_ADDRESS 0x7FA3u    /* 035FA3: bank 1A */
+extern const void *object_1a_sines_data;
+#define object_1a_sines ((const uint8_t *)object_1a_sines_data)
 #define spawn_lists_ADDRESS 0x6000u    /* 036000: bank 1B */
 extern const void *spawn_lists_data;
 #define spawn_lists ((const uint16_t *)spawn_lists_data)
-#define indexed_table_036454_ADDRESS 0x6454u    /* 036454: bank 1B */
-extern const void *indexed_table_036454_data;
-#define indexed_table_036454 ((const uint16_t *)indexed_table_036454_data)
-#define indexed_table_039DD5_ADDRESS 0x7DD5u    /* 039DD5: bank 1C */
-extern const void *indexed_table_039DD5_data;
-#define indexed_table_039DD5 ((const uint8_t *)indexed_table_039DD5_data)
+#define door_spawn_lists_ADDRESS 0x6454u    /* 036454: bank 1B */
+extern const void *door_spawn_lists_data;
+#define door_spawn_lists ((const uint16_t *)door_spawn_lists_data)
+#define door_spawns_end_ADDRESS 0x6473u    /* 036473: bank 1B */
+extern const void *door_spawns_end_data;
+#define door_spawns_end ((const uint8_t *)door_spawns_end_data)
+#define team_move_attack_lengths_ADDRESS 0x7DD5u    /* 039DD5: bank 1C */
+extern const void *team_move_attack_lengths_data;
+#define team_move_attack_lengths ((const uint8_t *)team_move_attack_lengths_data)
 #define object_1c_move_steps_ADDRESS 0x7DEBu    /* 039DEB: bank 1C */
 extern const void *object_1c_move_steps_data;
 #define object_1c_move_steps ((const uint8_t *)object_1c_move_steps_data)
-#define object_1c_moves_ADDRESS 0x7DF7u    /* 039DF7: bank 1C */
-extern const void *object_1c_moves_data;
-#define object_1c_moves ((const uint16_t *)object_1c_moves_data)
-#define indexed_table_039E3D_ADDRESS 0x7E3Du    /* 039E3D: bank 1C */
-extern const void *indexed_table_039E3D_data;
-#define indexed_table_039E3D ((const uint8_t *)indexed_table_039E3D_data)
-#define indexed_table_039EAD_ADDRESS 0x7EADu    /* 039EAD: bank 1C */
-extern const void *indexed_table_039EAD_data;
-#define indexed_table_039EAD ((const uint8_t *)indexed_table_039EAD_data)
-#define indexed_table_039F21_ADDRESS 0x7F21u    /* 039F21: bank 1C */
-extern const void *indexed_table_039F21_data;
-#define indexed_table_039F21 ((const uint16_t *)indexed_table_039F21_data)
-#define indexed_table_039F99_ADDRESS 0x7F99u    /* 039F99: bank 1C */
-extern const void *indexed_table_039F99_data;
-#define indexed_table_039F99 ((const uint16_t *)indexed_table_039F99_data)
-#define indexed_table_039FD1_ADDRESS 0x7FD1u    /* 039FD1: bank 1C */
-extern const void *indexed_table_039FD1_data;
-#define indexed_table_039FD1 ((const uint8_t *)indexed_table_039FD1_data)
+#define team_move_animation_offsets_ADDRESS 0x7E3Du    /* 039E3D: bank 1C */
+extern const void *team_move_animation_offsets_data;
+#define team_move_animation_offsets ((const uint8_t *)team_move_animation_offsets_data)
+#define pickup_vitality_ADDRESS 0x7EADu    /* 039EAD: bank 1C */
+extern const void *pickup_vitality_data;
+#define pickup_vitality ((const uint8_t *)pickup_vitality_data)
+#define team_move_box_widths_ADDRESS 0x7FD1u    /* 039FD1: bank 1C */
+extern const void *team_move_box_widths_data;
+#define team_move_box_widths ((const uint8_t *)team_move_box_widths_data)
 #define zoom_steps_address_ADDRESS 0x602Au    /* 03A02A: bank 1D */
 extern const void *zoom_steps_address_data;
 #define zoom_steps_address ((const uint16_t *)zoom_steps_address_data)
-#define indexed_table_03BAA5_ADDRESS 0x7AA5u    /* 03BAA5: bank 1D */
-extern const void *indexed_table_03BAA5_data;
-#define indexed_table_03BAA5 ((const uint8_t *)indexed_table_03BAA5_data)
-#define indexed_table_03BAA9_ADDRESS 0x7AA9u    /* 03BAA9: bank 1D */
-extern const void *indexed_table_03BAA9_data;
-#define indexed_table_03BAA9 ((const uint8_t *)indexed_table_03BAA9_data)
-#define indexed_table_03BAAD_ADDRESS 0x7AADu    /* 03BAAD: bank 1D */
-extern const void *indexed_table_03BAAD_data;
-#define indexed_table_03BAAD ((const uint8_t *)indexed_table_03BAAD_data)
-#define value_03BAB1_ADDRESS 0x7AB1u    /* 03BAB1: bank 1D */
-extern const void *value_03BAB1_data;
-#define value_03BAB1 (*(const uint16_t *)value_03BAB1_data)
-#define indexed_table_03BAB5_ADDRESS 0x7AB5u    /* 03BAB5: bank 1D */
-extern const void *indexed_table_03BAB5_data;
-#define indexed_table_03BAB5 ((const uint8_t *)indexed_table_03BAB5_data)
-#define indexed_table_03BAB9_ADDRESS 0x7AB9u    /* 03BAB9: bank 1D */
-extern const void *indexed_table_03BAB9_data;
-#define indexed_table_03BAB9 ((const uint8_t *)indexed_table_03BAB9_data)
-#define indexed_table_03BAC1_ADDRESS 0x7AC1u    /* 03BAC1: bank 1D */
-extern const void *indexed_table_03BAC1_data;
-#define indexed_table_03BAC1 ((const uint8_t *)indexed_table_03BAC1_data)
-#define indexed_table_03BAC5_ADDRESS 0x7AC5u    /* 03BAC5: bank 1D */
-extern const void *indexed_table_03BAC5_data;
-#define indexed_table_03BAC5 ((const uint8_t *)indexed_table_03BAC5_data)
-#define indexed_table_03BAC9_ADDRESS 0x7AC9u    /* 03BAC9: bank 1D */
-extern const void *indexed_table_03BAC9_data;
-#define indexed_table_03BAC9 ((const uint8_t *)indexed_table_03BAC9_data)
-#define indexed_table_03BACD_ADDRESS 0x7ACDu    /* 03BACD: bank 1D */
-extern const void *indexed_table_03BACD_data;
-#define indexed_table_03BACD ((const uint8_t *)indexed_table_03BACD_data)
-#define indexed_table_03BAD1_ADDRESS 0x7AD1u    /* 03BAD1: bank 1D */
-extern const void *indexed_table_03BAD1_data;
-#define indexed_table_03BAD1 ((const uint8_t *)indexed_table_03BAD1_data)
-#define indexed_table_03BB5A_ADDRESS 0x7B5Au    /* 03BB5A: bank 1D */
-extern const void *indexed_table_03BB5A_data;
-#define indexed_table_03BB5A ((const uint8_t *)indexed_table_03BB5A_data)
-#define indexed_table_03BB76_ADDRESS 0x7B76u    /* 03BB76: bank 1D */
-extern const void *indexed_table_03BB76_data;
-#define indexed_table_03BB76 ((const uint16_t *)indexed_table_03BB76_data)
-#define indexed_table_03BB80_ADDRESS 0x7B80u    /* 03BB80: bank 1D */
-extern const void *indexed_table_03BB80_data;
-#define indexed_table_03BB80 ((const uint8_t *)indexed_table_03BB80_data)
-#define indexed_table_03BB85_ADDRESS 0x7B85u    /* 03BB85: bank 1D */
-extern const void *indexed_table_03BB85_data;
-#define indexed_table_03BB85 ((const uint16_t *)indexed_table_03BB85_data)
-#define indexed_table_03BBA3_ADDRESS 0x7BA3u    /* 03BBA3: bank 1D */
-extern const void *indexed_table_03BBA3_data;
-#define indexed_table_03BBA3 ((const uint8_t *)indexed_table_03BBA3_data)
-#define indexed_table_03BBA7_ADDRESS 0x7BA7u    /* 03BBA7: bank 1D */
-extern const void *indexed_table_03BBA7_data;
-#define indexed_table_03BBA7 ((const uint16_t *)indexed_table_03BBA7_data)
-#define indexed_table_03BBC7_ADDRESS 0x7BC7u    /* 03BBC7: bank 1D */
-extern const void *indexed_table_03BBC7_data;
-#define indexed_table_03BBC7 ((const uint16_t *)indexed_table_03BBC7_data)
-#define indexed_table_03BBE7_ADDRESS 0x7BE7u    /* 03BBE7: bank 1D */
-extern const void *indexed_table_03BBE7_data;
-#define indexed_table_03BBE7 ((const uint16_t *)indexed_table_03BBE7_data)
-#define indexed_table_03BBF9_ADDRESS 0x7BF9u    /* 03BBF9: bank 1D */
-extern const void *indexed_table_03BBF9_data;
-#define indexed_table_03BBF9 ((const uint16_t *)indexed_table_03BBF9_data)
-#define indexed_table_03BC65_ADDRESS 0x7C65u    /* 03BC65: bank 1D */
-extern const void *indexed_table_03BC65_data;
-#define indexed_table_03BC65 ((const uint16_t *)indexed_table_03BC65_data)
-#define indexed_table_03BCD7_ADDRESS 0x7CD7u    /* 03BCD7: bank 1D */
-extern const void *indexed_table_03BCD7_data;
-#define indexed_table_03BCD7 ((const uint16_t *)indexed_table_03BCD7_data)
+#define stage_8_boss_stop_throwing_chances_by_players_ADDRESS 0x7AA5u    /* 03BAA5: bank 1D */
+extern const void *stage_8_boss_stop_throwing_chances_by_players_data;
+#define stage_8_boss_stop_throwing_chances_by_players ((const uint8_t *)stage_8_boss_stop_throwing_chances_by_players_data)
+#define stage_8_boss_bombs_by_players_ADDRESS 0x7AA9u    /* 03BAA9: bank 1D */
+extern const void *stage_8_boss_bombs_by_players_data;
+#define stage_8_boss_bombs_by_players ((const uint8_t *)stage_8_boss_bombs_by_players_data)
+#define stage_8_boss_run_speeds_by_players_ADDRESS 0x7AADu    /* 03BAAD: bank 1D */
+extern const void *stage_8_boss_run_speeds_by_players_data;
+#define stage_8_boss_run_speeds_by_players ((const uint8_t *)stage_8_boss_run_speeds_by_players_data)
+#define stage_8_boss_hit_limits_address_ADDRESS 0x7AB1u    /* 03BAB1: bank 1D */
+extern const void *stage_8_boss_hit_limits_address_data;
+#define stage_8_boss_hit_limits_address ((const uint16_t *)stage_8_boss_hit_limits_address_data)
+#define stage_8_boss_invulnerable_times_by_players_ADDRESS 0x7AB5u    /* 03BAB5: bank 1D */
+extern const void *stage_8_boss_invulnerable_times_by_players_data;
+#define stage_8_boss_invulnerable_times_by_players ((const uint8_t *)stage_8_boss_invulnerable_times_by_players_data)
+#define stage_8_boss_run_skip_attack_chances_by_players_ADDRESS 0x7AB9u    /* 03BAB9: bank 1D */
+extern const void *stage_8_boss_run_skip_attack_chances_by_players_data;
+#define stage_8_boss_run_skip_attack_chances_by_players ((const uint8_t *)stage_8_boss_run_skip_attack_chances_by_players_data)
+#define stage_8_boss_beaten_healths_by_players_ADDRESS 0x7ABDu    /* 03BABD: bank 1D */
+extern const void *stage_8_boss_beaten_healths_by_players_data;
+#define stage_8_boss_beaten_healths_by_players ((const uint8_t *)stage_8_boss_beaten_healths_by_players_data)
+#define stage_8_boss_retreat_speeds_by_players_ADDRESS 0x7AC1u    /* 03BAC1: bank 1D */
+extern const void *stage_8_boss_retreat_speeds_by_players_data;
+#define stage_8_boss_retreat_speeds_by_players ((const uint8_t *)stage_8_boss_retreat_speeds_by_players_data)
+#define stage_8_boss_walk_speeds_by_players_ADDRESS 0x7AC5u    /* 03BAC5: bank 1D */
+extern const void *stage_8_boss_walk_speeds_by_players_data;
+#define stage_8_boss_walk_speeds_by_players ((const uint8_t *)stage_8_boss_walk_speeds_by_players_data)
+#define stage_8_boss_jump_speeds_by_players_ADDRESS 0x7AC9u    /* 03BAC9: bank 1D */
+extern const void *stage_8_boss_jump_speeds_by_players_data;
+#define stage_8_boss_jump_speeds_by_players ((const uint8_t *)stage_8_boss_jump_speeds_by_players_data)
+#define stage_8_boss_dash_speeds_by_players_ADDRESS 0x7ACDu    /* 03BACD: bank 1D */
+extern const void *stage_8_boss_dash_speeds_by_players_data;
+#define stage_8_boss_dash_speeds_by_players ((const uint8_t *)stage_8_boss_dash_speeds_by_players_data)
+#define stage_8_boss_jump_bomb_player_limits_ADDRESS 0x7AD1u    /* 03BAD1: bank 1D */
+extern const void *stage_8_boss_jump_bomb_player_limits_data;
+#define stage_8_boss_jump_bomb_player_limits ((const uint8_t *)stage_8_boss_jump_bomb_player_limits_data)
+#define burns_robot_volleys_by_players_ADDRESS 0x7B5Au    /* 03BB5A: bank 1D */
+extern const void *burns_robot_volleys_by_players_data;
+#define burns_robot_volleys_by_players ((const uint8_t *)burns_robot_volleys_by_players_data)
+#define burns_robot_shot_y_speeds_ADDRESS 0x7B76u    /* 03BB76: bank 1D */
+extern const void *burns_robot_shot_y_speeds_data;
+#define burns_robot_shot_y_speeds ((const int16_t *)burns_robot_shot_y_speeds_data)
+#define burns_robot_healths_ADDRESS 0x7B80u    /* 03BB80: bank 1D */
+extern const void *burns_robot_healths_data;
+#define burns_robot_healths ((const uint8_t *)burns_robot_healths_data)
+#define burns_robot_beaten_healths_ADDRESS 0x7B85u    /* 03BB85: bank 1D */
+extern const void *burns_robot_beaten_healths_data;
+#define burns_robot_beaten_healths ((const uint16_t *)burns_robot_beaten_healths_data)
+#define burns_robot_form_0_beaten_healths_ADDRESS 0x7B8Fu    /* 03BB8F: bank 1D */
+extern const void *burns_robot_form_0_beaten_healths_data;
+#define burns_robot_form_0_beaten_healths ((const uint8_t *)burns_robot_form_0_beaten_healths_data)
+#define burns_robot_form_1_beaten_healths_ADDRESS 0x7B93u    /* 03BB93: bank 1D */
+extern const void *burns_robot_form_1_beaten_healths_data;
+#define burns_robot_form_1_beaten_healths ((const uint8_t *)burns_robot_form_1_beaten_healths_data)
+#define burns_robot_form_2_beaten_healths_ADDRESS 0x7B97u    /* 03BB97: bank 1D */
+extern const void *burns_robot_form_2_beaten_healths_data;
+#define burns_robot_form_2_beaten_healths ((const uint8_t *)burns_robot_form_2_beaten_healths_data)
+#define burns_robot_form_3_beaten_healths_ADDRESS 0x7B9Bu    /* 03BB9B: bank 1D */
+extern const void *burns_robot_form_3_beaten_healths_data;
+#define burns_robot_form_3_beaten_healths ((const uint8_t *)burns_robot_form_3_beaten_healths_data)
+#define burns_robot_form_4_beaten_healths_ADDRESS 0x7B9Fu    /* 03BB9F: bank 1D */
+extern const void *burns_robot_form_4_beaten_healths_data;
+#define burns_robot_form_4_beaten_healths ((const uint8_t *)burns_robot_form_4_beaten_healths_data)
+#define burns_robot_second_attack_chances_by_players_ADDRESS 0x7BA3u    /* 03BBA3: bank 1D */
+extern const void *burns_robot_second_attack_chances_by_players_data;
+#define burns_robot_second_attack_chances_by_players ((const uint8_t *)burns_robot_second_attack_chances_by_players_data)
+#define burns_robot_shot_times_ADDRESS 0x7BA7u    /* 03BBA7: bank 1D */
+extern const void *burns_robot_shot_times_data;
+#define burns_robot_shot_times ((const uint16_t *)burns_robot_shot_times_data)
+#define burns_robot_held_part_times_ADDRESS 0x7BC7u    /* 03BBC7: bank 1D */
+extern const void *burns_robot_held_part_times_data;
+#define burns_robot_held_part_times ((const uint16_t *)burns_robot_held_part_times_data)
+#define burns_robot_quick_attack_chances_ADDRESS 0x7BE7u    /* 03BBE7: bank 1D */
+extern const void *burns_robot_quick_attack_chances_data;
+#define burns_robot_quick_attack_chances ((const uint16_t *)burns_robot_quick_attack_chances_data)
+#define burns_robot_quick_attack_chances_forms_0_to_3_ADDRESS 0x7BF1u    /* 03BBF1: bank 1D */
+extern const void *burns_robot_quick_attack_chances_forms_0_to_3_data;
+#define burns_robot_quick_attack_chances_forms_0_to_3 ((const uint8_t *)burns_robot_quick_attack_chances_forms_0_to_3_data)
+#define burns_robot_quick_attack_chances_form_4_ADDRESS 0x7BF5u    /* 03BBF5: bank 1D */
+extern const void *burns_robot_quick_attack_chances_form_4_data;
+#define burns_robot_quick_attack_chances_form_4 ((const uint8_t *)burns_robot_quick_attack_chances_form_4_data)
+#define burns_robot_animations_ADDRESS 0x7BF9u    /* 03BBF9: bank 1D */
+extern const void *burns_robot_animations_data;
+#define burns_robot_animations ((const uint16_t *)burns_robot_animations_data)
+#define burns_robot_hit_boxes_ADDRESS 0x7C65u    /* 03BC65: bank 1D */
+extern const void *burns_robot_hit_boxes_data;
+#define burns_robot_hit_boxes ((const uint16_t *)burns_robot_hit_boxes_data)
+#define burns_robot_walk_speeds_ADDRESS 0x7CD7u    /* 03BCD7: bank 1D */
+extern const void *burns_robot_walk_speeds_data;
+#define burns_robot_walk_speeds ((const uint16_t *)burns_robot_walk_speeds_data)
+#define burns_robot_walk_speeds_form_0_ADDRESS 0x7CE1u    /* 03BCE1: bank 1D */
+extern const void *burns_robot_walk_speeds_form_0_data;
+#define burns_robot_walk_speeds_form_0 ((const uint8_t *)burns_robot_walk_speeds_form_0_data)
+#define burns_robot_walk_speeds_form_1_ADDRESS 0x7CF1u    /* 03BCF1: bank 1D */
+extern const void *burns_robot_walk_speeds_form_1_data;
+#define burns_robot_walk_speeds_form_1 ((const uint8_t *)burns_robot_walk_speeds_form_1_data)
+#define burns_robot_walk_speeds_forms_2_3_ADDRESS 0x7D01u    /* 03BD01: bank 1D */
+extern const void *burns_robot_walk_speeds_forms_2_3_data;
+#define burns_robot_walk_speeds_forms_2_3 ((const uint8_t *)burns_robot_walk_speeds_forms_2_3_data)
+#define burns_robot_walk_speeds_form_4_ADDRESS 0x7D11u    /* 03BD11: bank 1D */
+extern const void *burns_robot_walk_speeds_form_4_data;
+#define burns_robot_walk_speeds_form_4 ((const uint8_t *)burns_robot_walk_speeds_form_4_data)
 #define zoom_steps_ADDRESS 0x7DE7u    /* 03BDE7: bank 1D */
 extern const void *zoom_steps_data;
 #define zoom_steps ((const uint16_t *)zoom_steps_data)
-#define indexed_table_03D8B5_ADDRESS 0x78B5u    /* 03D8B5: bank 1E */
-extern const void *indexed_table_03D8B5_data;
-#define indexed_table_03D8B5 ((const uint16_t *)indexed_table_03D8B5_data)
-#define rom_03DDA5_ADDRESS 0x7DA5u    /* 03DDA5: bank 1E */
-extern const void *rom_03DDA5_data;
-#define rom_03DDA5 ((const uint8_t *)rom_03DDA5_data)
-#define indexed_table_03DDAA_ADDRESS 0x7DAAu    /* 03DDAA: bank 1E */
-extern const void *indexed_table_03DDAA_data;
-#define indexed_table_03DDAA ((const uint8_t *)indexed_table_03DDAA_data)
-#define rom_03DE63_ADDRESS 0x7E63u    /* 03DE63: bank 1E */
-extern const void *rom_03DE63_data;
-#define rom_03DE63 ((const uint8_t *)rom_03DE63_data)
-#define indexed_table_03DE80_ADDRESS 0x7E80u    /* 03DE80: bank 1E */
-extern const void *indexed_table_03DE80_data;
-#define indexed_table_03DE80 ((const uint16_t *)indexed_table_03DE80_data)
-#define rom_03DF35_ADDRESS 0x7F35u    /* 03DF35: bank 1E */
-extern const void *rom_03DF35_data;
-#define rom_03DF35 ((const uint8_t *)rom_03DF35_data)
-#define indexed_table_03DF39_ADDRESS 0x7F39u    /* 03DF39: bank 1E */
-extern const void *indexed_table_03DF39_data;
-#define indexed_table_03DF39 ((const uint8_t *)indexed_table_03DF39_data)
+#define scripted_object_scripts_ADDRESS 0x78B5u    /* 03D8B5: bank 1E */
+extern const void *scripted_object_scripts_data;
+#define scripted_object_scripts ((const uint16_t *)scripted_object_scripts_data)
+#define scripted_object_script_bytes_ADDRESS 0x78C9u    /* 03D8C9: bank 1E */
+extern const void *scripted_object_script_bytes_data;
+#define scripted_object_script_bytes ((const uint8_t *)scripted_object_script_bytes_data)
+#define football_player_attack_delays_by_players_ADDRESS 0x7DA6u    /* 03DDA6: bank 1E */
+extern const void *football_player_attack_delays_by_players_data;
+#define football_player_attack_delays_by_players ((const uint8_t *)football_player_attack_delays_by_players_data)
+#define football_player_speed_ranges_by_rank_ADDRESS 0x7DAAu    /* 03DDAA: bank 1E */
+extern const void *football_player_speed_ranges_by_rank_data;
+#define football_player_speed_ranges_by_rank ((const int8_t *)football_player_speed_ranges_by_rank_data)
+#define bear_attack_delays_by_players_ADDRESS 0x7E64u    /* 03DE64: bank 1E */
+extern const void *bear_attack_delays_by_players_data;
+#define bear_attack_delays_by_players ((const uint8_t *)bear_attack_delays_by_players_data)
+#define bear_charge_speeds_by_rank_ADDRESS 0x7E80u    /* 03DE80: bank 1E */
+extern const void *bear_charge_speeds_by_rank_data;
+#define bear_charge_speeds_by_rank ((const uint16_t *)bear_charge_speeds_by_rank_data)
+#define stage_3_boss_slow_attack_chances_by_players_ADDRESS 0x7F36u    /* 03DF36: bank 1E */
+extern const void *stage_3_boss_slow_attack_chances_by_players_data;
+#define stage_3_boss_slow_attack_chances_by_players ((const uint8_t *)stage_3_boss_slow_attack_chances_by_players_data)
+#define stage_3_boss_follow_up_chances_by_players_ADDRESS 0x7F39u    /* 03DF39: bank 1E */
+extern const void *stage_3_boss_follow_up_chances_by_players_data;
+#define stage_3_boss_follow_up_chances_by_players ((const uint8_t *)stage_3_boss_follow_up_chances_by_players_data)
 #define story_scripts_ADDRESS 0x7078u    /* 03F078: bank 1F */
 extern const void *story_scripts_data;
 #define story_scripts ((const uint16_t *)story_scripts_data)
-#define indexed_table_03FE77_ADDRESS 0x7E77u    /* 03FE77: bank 1F */
-extern const void *indexed_table_03FE77_data;
-#define indexed_table_03FE77 ((const uint8_t *)indexed_table_03FE77_data)
-#define indexed_table_03FE7B_ADDRESS 0x7E7Bu    /* 03FE7B: bank 1F */
-extern const void *indexed_table_03FE7B_data;
-#define indexed_table_03FE7B ((const uint8_t *)indexed_table_03FE7B_data)
-#define indexed_table_03FE7F_ADDRESS 0x7E7Fu    /* 03FE7F: bank 1F */
-extern const void *indexed_table_03FE7F_data;
-#define indexed_table_03FE7F ((const uint8_t *)indexed_table_03FE7F_data)
-#define indexed_table_03FE84_ADDRESS 0x7E84u    /* 03FE84: bank 1F */
-extern const void *indexed_table_03FE84_data;
-#define indexed_table_03FE84 ((const uint8_t *)indexed_table_03FE84_data)
-#define indexed_table_03FE94_ADDRESS 0x7E94u    /* 03FE94: bank 1F */
-extern const void *indexed_table_03FE94_data;
-#define indexed_table_03FE94 ((const uint8_t *)indexed_table_03FE94_data)
-#define indexed_table_0410E3_ADDRESS 0x70E3u    /* 0410E3: bank 20 */
-extern const void *indexed_table_0410E3_data;
-#define indexed_table_0410E3 ((const uint16_t *)indexed_table_0410E3_data)
+#define player_overhead_heights_ADDRESS 0x7E77u    /* 03FE77: bank 1F */
+extern const void *player_overhead_heights_data;
+#define player_overhead_heights ((const uint8_t *)player_overhead_heights_data)
+#define player_throw_heights_ADDRESS 0x7E7Bu    /* 03FE7B: bank 1F */
+extern const void *player_throw_heights_data;
+#define player_throw_heights ((const uint8_t *)player_throw_heights_data)
+#define player_balloon_animations_ADDRESS 0x7E7Fu    /* 03FE7F: bank 1F */
+extern const void *player_balloon_animations_data;
+#define player_balloon_animations ((const uint8_t *)player_balloon_animations_data)
+#define pair_balloon_players_ADDRESS 0x7E84u    /* 03FE84: bank 1F */
+extern const void *pair_balloon_players_data;
+#define pair_balloon_players ((const uint8_t *)pair_balloon_players_data)
+#define player_state_classes_ADDRESS 0x7E94u    /* 03FE94: bank 1F */
+extern const void *player_state_classes_data;
+#define player_state_classes ((const int8_t *)player_state_classes_data)
+#define profile_moves_ADDRESS 0x70E3u    /* 0410E3: bank 20 */
+extern const void *profile_moves_data;
+#define profile_moves ((const uint16_t *)profile_moves_data)
 #define profile_texts_ADDRESS 0x7106u    /* 041106: bank 20 */
 extern const void *profile_texts_data;
 #define profile_texts ((const uint16_t *)profile_texts_data)
 #define gauge_player_records_ADDRESS 0x7294u    /* 041294: bank 20 */
 extern const void *gauge_player_records_data;
 #define gauge_player_records ((const uint16_t *)gauge_player_records_data)
-#define gauge_step_tiles_ADDRESS 0x72FCu    /* 0412FC: bank 20 */
-extern const void *gauge_step_tiles_data;
-#define gauge_step_tiles ((const uint8_t *)gauge_step_tiles_data)
-#define indexed_table_04130E_ADDRESS 0x730Eu    /* 04130E: bank 20 */
-extern const void *indexed_table_04130E_data;
-#define indexed_table_04130E ((const uint8_t *)indexed_table_04130E_data)
-#define indexed_table_041316_ADDRESS 0x7316u    /* 041316: bank 20 */
-extern const void *indexed_table_041316_data;
-#define indexed_table_041316 ((const uint16_t *)indexed_table_041316_data)
-#define indexed_table_0413F1_ADDRESS 0x73F1u    /* 0413F1: bank 20 */
-extern const void *indexed_table_0413F1_data;
-#define indexed_table_0413F1 ((const uint16_t *)indexed_table_0413F1_data)
+#define gauge_pictures_ADDRESS 0x7316u    /* 041316: bank 20 */
+extern const void *gauge_pictures_data;
+#define gauge_pictures ((const uint16_t *)gauge_pictures_data)
+#define continue_digit_pictures_ADDRESS 0x73F1u    /* 0413F1: bank 20 */
+extern const void *continue_digit_pictures_data;
+#define continue_digit_pictures ((const uint16_t *)continue_digit_pictures_data)
 #define rank_base_ADDRESS 0x7782u    /* 041782: bank 20 */
 extern const void *rank_base_data;
 #define rank_base ((const uint8_t *)rank_base_data)
@@ -1352,54 +1388,57 @@ extern const void *rank_step_times_data;
 #define rank_frame_limits_ADDRESS 0x77ACu    /* 0417AC: bank 20 */
 extern const void *rank_frame_limits_data;
 #define rank_frame_limits ((const uint16_t *)rank_frame_limits_data)
-#define indexed_table_05E502_ADDRESS 0x6502u    /* 05E502: bank 2F */
-extern const void *indexed_table_05E502_data;
-#define indexed_table_05E502 ((const uint8_t *)indexed_table_05E502_data)
+#define palette_effects_ADDRESS 0x6000u    /* 05C000: bank 2E */
+extern const void *palette_effects_data;
+#define palette_effects ((const uint16_t *)palette_effects_data)
+#define test_menu_cursor_steps_ADDRESS 0x6502u    /* 05E502: bank 2F */
+extern const void *test_menu_cursor_steps_data;
+#define test_menu_cursor_steps ((const int8_t *)test_menu_cursor_steps_data)
 #define sound_test_effects_ADDRESS 0x6739u    /* 05E739: bank 2F */
 extern const void *sound_test_effects_data;
 #define sound_test_effects ((const uint16_t *)sound_test_effects_data)
 #define sound_test_music_ADDRESS 0x688Fu    /* 05E88F: bank 2F */
 extern const void *sound_test_music_data;
 #define sound_test_music ((const uint16_t *)sound_test_music_data)
-#define indexed_table_05F5AE_ADDRESS 0x75AEu    /* 05F5AE: bank 2F */
-extern const void *indexed_table_05F5AE_data;
-#define indexed_table_05F5AE ((const uint8_t *)indexed_table_05F5AE_data)
+#define test_mode_hex_digit_tiles_ADDRESS 0x75AEu    /* 05F5AE: bank 2F */
+extern const void *test_mode_hex_digit_tiles_data;
+#define test_mode_hex_digit_tiles ((const uint8_t *)test_mode_hex_digit_tiles_data)
 #define test_mode_texts_ADDRESS 0x75BEu    /* 05F5BE: bank 2F */
 extern const void *test_mode_texts_data;
 #define test_mode_texts ((const uint16_t *)test_mode_texts_data)
 #define test_mode_words_ADDRESS 0x78F7u    /* 05F8F7: bank 2F */
 extern const void *test_mode_words_data;
 #define test_mode_words ((const uint16_t *)test_mode_words_data)
-#define rom_05FA5D_ADDRESS 0x7A5Du    /* 05FA5D: bank 2F */
-extern const void *rom_05FA5D_data;
-#define rom_05FA5D ((const uint8_t *)rom_05FA5D_data)
-#define rom_05FA6F_ADDRESS 0x7A6Fu    /* 05FA6F: bank 2F */
-extern const void *rom_05FA6F_data;
-#define rom_05FA6F ((const uint8_t *)rom_05FA6F_data)
-#define indexed_table_05FCA7_ADDRESS 0x7CA7u    /* 05FCA7: bank 2F */
-extern const void *indexed_table_05FCA7_data;
-#define indexed_table_05FCA7 (*(const uint8_t *)indexed_table_05FCA7_data)
-#define indexed_table_05FCB6_ADDRESS 0x7CB6u    /* 05FCB6: bank 2F */
-extern const void *indexed_table_05FCB6_data;
-#define indexed_table_05FCB6 (*(const uint8_t *)indexed_table_05FCB6_data)
-#define indexed_table_05FCCB_ADDRESS 0x7CCBu    /* 05FCCB: bank 2F */
-extern const void *indexed_table_05FCCB_data;
-#define indexed_table_05FCCB (*(const uint8_t *)indexed_table_05FCCB_data)
-#define indexed_table_05FD5C_ADDRESS 0x7D5Cu    /* 05FD5C: bank 2F */
-extern const void *indexed_table_05FD5C_data;
-#define indexed_table_05FD5C ((const uint16_t *)indexed_table_05FD5C_data)
-#define indexed_table_05FD68_ADDRESS 0x7D68u    /* 05FD68: bank 2F */
-extern const void *indexed_table_05FD68_data;
-#define indexed_table_05FD68 ((const uint16_t *)indexed_table_05FD68_data)
-#define indexed_table_05FD74_ADDRESS 0x7D74u    /* 05FD74: bank 2F */
-extern const void *indexed_table_05FD74_data;
-#define indexed_table_05FD74 ((const uint8_t *)indexed_table_05FD74_data)
+#define coin_setting_coin_digits_ADDRESS 0x7A5Cu    /* 05FA5C: bank 2F */
+extern const void *coin_setting_coin_digits_data;
+#define coin_setting_coin_digits ((const uint8_t *)coin_setting_coin_digits_data)
+#define coin_setting_credit_digits_ADDRESS 0x7A6Eu    /* 05FA6E: bank 2F */
+extern const void *coin_setting_credit_digits_data;
+#define coin_setting_credit_digits ((const uint8_t *)coin_setting_credit_digits_data)
+#define eeprom_address_signals_ADDRESS 0x7CA7u    /* 05FCA7: bank 2F */
+extern const void *eeprom_address_signals_data;
+#define eeprom_address_signals ((const uint8_t *)eeprom_address_signals_data)
+#define eeprom_data_signals_ADDRESS 0x7CB6u    /* 05FCB6: bank 2F */
+extern const void *eeprom_data_signals_data;
+#define eeprom_data_signals ((const uint8_t *)eeprom_data_signals_data)
+#define eeprom_wait_signal_ADDRESS 0x7CCBu    /* 05FCCB: bank 2F */
+extern const void *eeprom_wait_signal_data;
+#define eeprom_wait_signal ((const uint8_t *)eeprom_wait_signal_data)
+#define graphics_rom_sums_ADDRESS 0x7D5Cu    /* 05FD5C: bank 2F */
+extern const void *graphics_rom_sums_data;
+#define graphics_rom_sums ((const uint16_t *)graphics_rom_sums_data)
+#define graphics_rom_result_places_ADDRESS 0x7D68u    /* 05FD68: bank 2F */
+extern const void *graphics_rom_result_places_data;
+#define graphics_rom_result_places ((const uint16_t *)graphics_rom_result_places_data)
+#define sprite_rom_read_banks_ADDRESS 0x7D74u    /* 05FD74: bank 2F */
+extern const void *sprite_rom_read_banks_data;
+#define sprite_rom_read_banks ((const uint8_t *)sprite_rom_read_banks_data)
 #define test_player_records_ADDRESS 0x7D88u    /* 05FD88: bank 2F */
 extern const void *test_player_records_data;
 #define test_player_records ((const uint16_t *)test_player_records_data)
-#define indexed_table_07BADA_ADDRESS 0xBADAu    /* 07BADA: the fixed program */
-extern const void *indexed_table_07BADA_data;
-#define indexed_table_07BADA ((const uint16_t *)indexed_table_07BADA_data)
+#define palette_request_handlers_ADDRESS 0xBADAu    /* 07BADA: the fixed program */
+extern const void *palette_request_handlers_data;
+#define palette_request_handlers ((const uint16_t *)palette_request_handlers_data)
 #define rom_07E000_ADDRESS 0xE000u    /* 07E000: the fixed program */
 extern const void *rom_07E000_data;
 #define rom_07E000 ((const uint8_t *)rom_07E000_data)
@@ -1415,42 +1454,42 @@ extern const void *rom_07E040_data;
 #define rom_07E041_ADDRESS 0xE041u    /* 07E041: the fixed program */
 extern const void *rom_07E041_data;
 #define rom_07E041 ((const uint8_t *)rom_07E041_data)
-#define indexed_table_07E3EB_ADDRESS 0xE3EBu    /* 07E3EB: the fixed program */
-extern const void *indexed_table_07E3EB_data;
-#define indexed_table_07E3EB ((const uint8_t *)indexed_table_07E3EB_data)
-#define value_07E423_ADDRESS 0xE423u    /* 07E423: the fixed program */
-extern const void *value_07E423_data;
-#define value_07E423 (*(const uint16_t *)value_07E423_data)
-#define value_07E425_ADDRESS 0xE425u    /* 07E425: the fixed program */
-extern const void *value_07E425_data;
-#define value_07E425 (*(const uint16_t *)value_07E425_data)
-#define value_07E427_ADDRESS 0xE427u    /* 07E427: the fixed program */
-extern const void *value_07E427_data;
-#define value_07E427 (*(const uint16_t *)value_07E427_data)
-#define value_07E429_ADDRESS 0xE429u    /* 07E429: the fixed program */
-extern const void *value_07E429_data;
-#define value_07E429 (*(const uint16_t *)value_07E429_data)
-#define indexed_table_07E435_ADDRESS 0xE435u    /* 07E435: the fixed program */
-extern const void *indexed_table_07E435_data;
-#define indexed_table_07E435 ((const uint8_t *)indexed_table_07E435_data)
-#define indexed_table_07E449_ADDRESS 0xE449u    /* 07E449: the fixed program */
-extern const void *indexed_table_07E449_data;
-#define indexed_table_07E449 ((const uint16_t *)indexed_table_07E449_data)
-#define indexed_table_07E526_ADDRESS 0xE526u    /* 07E526: the fixed program */
-extern const void *indexed_table_07E526_data;
-#define indexed_table_07E526 ((const uint16_t *)indexed_table_07E526_data)
-#define indexed_table_07E574_ADDRESS 0xE574u    /* 07E574: the fixed program */
-extern const void *indexed_table_07E574_data;
-#define indexed_table_07E574 ((const uint8_t *)indexed_table_07E574_data)
+#define coinages_ADDRESS 0xE3EBu    /* 07E3EB: the fixed program */
+extern const void *coinages_data;
+#define coinages ((const uint8_t *)coinages_data)
+#define rom_13c_sum_ADDRESS 0xE423u    /* 07E423: the fixed program */
+extern const void *rom_13c_sum_data;
+#define rom_13c_sum ((const uint16_t *)rom_13c_sum_data)
+#define rom_15c_sum_ADDRESS 0xE425u    /* 07E425: the fixed program */
+extern const void *rom_15c_sum_data;
+#define rom_15c_sum ((const uint16_t *)rom_15c_sum_data)
+#define rom_16c_sum_ADDRESS 0xE427u    /* 07E427: the fixed program */
+extern const void *rom_16c_sum_data;
+#define rom_16c_sum ((const uint16_t *)rom_16c_sum_data)
+#define rom_17c_sum_ADDRESS 0xE429u    /* 07E429: the fixed program */
+extern const void *rom_17c_sum_data;
+#define rom_17c_sum ((const uint16_t *)rom_17c_sum_data)
+#define hex_digit_tiles_ADDRESS 0xE435u    /* 07E435: the fixed program */
+extern const void *hex_digit_tiles_data;
+#define hex_digit_tiles ((const uint8_t *)hex_digit_tiles_data)
+#define player_presses_ADDRESS 0xE449u    /* 07E449: the fixed program */
+extern const void *player_presses_data;
+#define player_presses ((const uint16_t *)player_presses_data)
+#define hurt_effect_rows_ADDRESS 0xE526u    /* 07E526: the fixed program */
+extern const void *hurt_effect_rows_data;
+#define hurt_effect_rows ((const uint16_t *)hurt_effect_rows_data)
+#define step_sprite_priorities_ADDRESS 0xE574u    /* 07E574: the fixed program */
+extern const void *step_sprite_priorities_data;
+#define step_sprite_priorities ((const uint8_t *)step_sprite_priorities_data)
 #define demos_ADDRESS 0xE6A1u    /* 07E6A1: the fixed program */
 extern const void *demos_data;
 #define demos ((const uint16_t *)demos_data)
 #define player_records_ADDRESS 0xE819u    /* 07E819: the fixed program */
 extern const void *player_records_data;
 #define player_records ((const uint16_t *)player_records_data)
-#define indexed_table_07E88D_ADDRESS 0xE88Du    /* 07E88D: the fixed program */
-extern const void *indexed_table_07E88D_data;
-#define indexed_table_07E88D ((const uint8_t *)indexed_table_07E88D_data)
+#define step_scenes_ADDRESS 0xE88Du    /* 07E88D: the fixed program */
+extern const void *step_scenes_data;
+#define step_scenes ((const uint8_t *)step_scenes_data)
 #define palette_sets_ADDRESS 0xE9CBu    /* 07E9CB: the fixed program */
 extern const void *palette_sets_data;
 #define palette_sets ((const uint16_t *)palette_sets_data)
@@ -1505,42 +1544,51 @@ extern const void *object_list_sizes_data;
 #define object_lists_ADDRESS 0xEFF8u    /* 07EFF8: the fixed program */
 extern const void *object_lists_data;
 #define object_lists ((const uint16_t *)object_lists_data)
-#define indexed_table_07F000_ADDRESS 0xF000u    /* 07F000: the fixed program */
-extern const void *indexed_table_07F000_data;
-#define indexed_table_07F000 ((const uint8_t *)indexed_table_07F000_data)
-#define indexed_table_07F008_ADDRESS 0xF008u    /* 07F008: the fixed program */
-extern const void *indexed_table_07F008_data;
-#define indexed_table_07F008 ((const uint8_t *)indexed_table_07F008_data)
-#define indexed_table_07F014_ADDRESS 0xF014u    /* 07F014: the fixed program */
-extern const void *indexed_table_07F014_data;
-#define indexed_table_07F014 ((const uint8_t *)indexed_table_07F014_data)
-#define loaded_table_07F031_ADDRESS 0xF031u    /* 07F031: the fixed program */
-extern const void *loaded_table_07F031_data;
-#define loaded_table_07F031 ((const uint8_t *)loaded_table_07F031_data)
-#define rom_07F0E3_ADDRESS 0xF0E3u    /* 07F0E3: the fixed program */
-extern const void *rom_07F0E3_data;
-#define rom_07F0E3 ((const uint8_t *)rom_07F0E3_data)
-#define indexed_table_07F124_ADDRESS 0xF124u    /* 07F124: the fixed program */
-extern const void *indexed_table_07F124_data;
-#define indexed_table_07F124 ((const uint8_t *)indexed_table_07F124_data)
-#define indexed_table_07F387_ADDRESS 0xF387u    /* 07F387: the fixed program */
-extern const void *indexed_table_07F387_data;
-#define indexed_table_07F387 ((const uint8_t *)indexed_table_07F387_data)
-#define indexed_table_07F4B0_ADDRESS 0xF4B0u    /* 07F4B0: the fixed program */
-extern const void *indexed_table_07F4B0_data;
-#define indexed_table_07F4B0 ((const uint8_t *)indexed_table_07F4B0_data)
-#define indexed_table_07F54C_ADDRESS 0xF54Cu    /* 07F54C: the fixed program */
-extern const void *indexed_table_07F54C_data;
-#define indexed_table_07F54C ((const uint8_t *)indexed_table_07F54C_data)
-#define indexed_table_07F581_ADDRESS 0xF581u    /* 07F581: the fixed program */
-extern const void *indexed_table_07F581_data;
-#define indexed_table_07F581 ((const uint8_t *)indexed_table_07F581_data)
-#define indexed_table_07F620_ADDRESS 0xF620u    /* 07F620: the fixed program */
-extern const void *indexed_table_07F620_data;
-#define indexed_table_07F620 ((const uint8_t *)indexed_table_07F620_data)
-#define indexed_table_07F661_ADDRESS 0xF661u    /* 07F661: the fixed program */
-extern const void *indexed_table_07F661_data;
-#define indexed_table_07F661 ((const uint8_t *)indexed_table_07F661_data)
+#define enemy_limits_by_difficulty_ADDRESS 0xF000u    /* 07F000: the fixed program */
+extern const void *enemy_limits_by_difficulty_data;
+#define enemy_limits_by_difficulty ((const uint8_t *)enemy_limits_by_difficulty_data)
+#define extra_enemies_by_scene_ADDRESS 0xF008u    /* 07F008: the fixed program */
+extern const void *extra_enemies_by_scene_data;
+#define extra_enemies_by_scene ((const uint8_t *)extra_enemies_by_scene_data)
+#define cemetery_enemy_limits_by_players_ADDRESS 0xF014u    /* 07F014: the fixed program */
+extern const void *cemetery_enemy_limits_by_players_data;
+#define cemetery_enemy_limits_by_players ((const uint8_t *)cemetery_enemy_limits_by_players_data)
+#define attackers_per_player_ADDRESS 0xF031u    /* 07F031: the fixed program */
+extern const void *attackers_per_player_data;
+#define attackers_per_player ((const uint8_t *)attackers_per_player_data)
+#define sines_ADDRESS 0xF061u    /* 07F061: the fixed program */
+extern const void *sines_data;
+#define sines ((const uint8_t *)sines_data)
+#define sines_20_ADDRESS 0xF0A2u    /* 07F0A2: the fixed program */
+extern const void *sines_20_data;
+#define sines_20 ((const uint8_t *)sines_20_data)
+#define arctangents_ADDRESS 0xF0E3u    /* 07F0E3: the fixed program */
+extern const void *arctangents_data;
+#define arctangents ((const uint8_t *)arctangents_data)
+#define climb_speeds_ADDRESS 0xF124u    /* 07F124: the fixed program */
+extern const void *climb_speeds_data;
+#define climb_speeds ((const uint8_t *)climb_speeds_data)
+#define hit_animations_ADDRESS 0xF2ACu    /* 07F2AC: the fixed program */
+extern const void *hit_animations_data;
+#define hit_animations ((const uint8_t *)hit_animations_data)
+#define enemy_banks_ADDRESS 0xF387u    /* 07F387: the fixed program */
+extern const void *enemy_banks_data;
+#define enemy_banks ((const uint8_t *)enemy_banks_data)
+#define object_list_1_banks_ADDRESS 0xF4B0u    /* 07F4B0: the fixed program */
+extern const void *object_list_1_banks_data;
+#define object_list_1_banks ((const uint8_t *)object_list_1_banks_data)
+#define child_object_banks_ADDRESS 0xF54Cu    /* 07F54C: the fixed program */
+extern const void *child_object_banks_data;
+#define child_object_banks ((const uint8_t *)child_object_banks_data)
+#define stage_event_banks_ADDRESS 0xF581u    /* 07F581: the fixed program */
+extern const void *stage_event_banks_data;
+#define stage_event_banks ((const uint8_t *)stage_event_banks_data)
+#define action_banks_ADDRESS 0xF620u    /* 07F620: the fixed program */
+extern const void *action_banks_data;
+#define action_banks ((const uint8_t *)action_banks_data)
+#define unused_object_banks_ADDRESS 0xF661u    /* 07F661: the fixed program */
+extern const void *unused_object_banks_data;
+#define unused_object_banks ((const uint8_t *)unused_object_banks_data)
 #define block_tile_flags_ADDRESS 0xF67Cu    /* 07F67C: the fixed program */
 extern const void *block_tile_flags_data;
 #define block_tile_flags ((const uint8_t *)block_tile_flags_data)
@@ -1562,9 +1610,9 @@ extern const void *rom_07FFF8_data;
 #define rom_07FFFD_ADDRESS 0xFFFDu    /* 07FFFD: the fixed program */
 extern const void *rom_07FFFD_data;
 #define rom_07FFFD ((const uint8_t *)rom_07FFFD_data)
-#define rom_07FFFE_ADDRESS 0xFFFEu    /* 07FFFE: the fixed program */
-extern const void *rom_07FFFE_data;
-#define rom_07FFFE ((const uint16_t *)rom_07FFFE_data)
+#define reset_vector_ADDRESS 0xFFFEu    /* 07FFFE: the fixed program */
+extern const void *reset_vector_data;
+#define reset_vector ((const uint16_t *)reset_vector_data)
 
 /* the board's registers (read and written through the bus) */
 #define VIDEO_0000 0x0000u
@@ -2089,38 +2137,6 @@ extern const void *rom_07FFFE_data;
 #define loaded_table_021BB2_ADDRESS 0x7BB2u    /* 021BB2 */
 #define loaded_table_021BB6_ADDRESS 0x7BB6u    /* 021BB6 */
 #define loaded_table_021BBE_ADDRESS 0x7BBEu    /* 021BBE */
-#define record_021BD0_ADDRESS 0x7BD0u    /* 021BD0 */
-#define record_021BD7_ADDRESS 0x7BD7u    /* 021BD7 */
-#define record_021BDE_ADDRESS 0x7BDEu    /* 021BDE */
-#define record_021BE5_ADDRESS 0x7BE5u    /* 021BE5 */
-#define indexed_table_021C38_ADDRESS 0x7C38u    /* 021C38 */
-#define indexed_table_021C40_ADDRESS 0x7C40u    /* 021C40 */
-#define indexed_table_021C48_ADDRESS 0x7C48u    /* 021C48 */
-#define indexed_table_021C50_ADDRESS 0x7C50u    /* 021C50 */
-#define indexed_table_021C58_ADDRESS 0x7C58u    /* 021C58 */
-#define indexed_table_021C60_ADDRESS 0x7C60u    /* 021C60 */
-#define indexed_table_021C68_ADDRESS 0x7C68u    /* 021C68 */
-#define indexed_table_021C70_ADDRESS 0x7C70u    /* 021C70 */
-#define indexed_table_021C78_ADDRESS 0x7C78u    /* 021C78 */
-#define indexed_table_021C80_ADDRESS 0x7C80u    /* 021C80 */
-#define indexed_table_021C88_ADDRESS 0x7C88u    /* 021C88 */
-#define indexed_table_021C90_ADDRESS 0x7C90u    /* 021C90 */
-#define indexed_table_021C98_ADDRESS 0x7C98u    /* 021C98 */
-#define indexed_table_021CA0_ADDRESS 0x7CA0u    /* 021CA0 */
-#define indexed_table_021CA8_ADDRESS 0x7CA8u    /* 021CA8 */
-#define indexed_table_021CB0_ADDRESS 0x7CB0u    /* 021CB0 */
-#define indexed_table_021CB8_ADDRESS 0x7CB8u    /* 021CB8 */
-#define indexed_table_021CC0_ADDRESS 0x7CC0u    /* 021CC0 */
-#define indexed_table_021CC8_ADDRESS 0x7CC8u    /* 021CC8 */
-#define indexed_table_021CD0_ADDRESS 0x7CD0u    /* 021CD0 */
-#define indexed_table_021CD8_ADDRESS 0x7CD8u    /* 021CD8 */
-#define indexed_table_021CE0_ADDRESS 0x7CE0u    /* 021CE0 */
-#define indexed_table_021CE8_ADDRESS 0x7CE8u    /* 021CE8 */
-#define indexed_table_021CF0_ADDRESS 0x7CF0u    /* 021CF0 */
-#define indexed_table_021CF8_ADDRESS 0x7CF8u    /* 021CF8 */
-#define indexed_table_021D00_ADDRESS 0x7D00u    /* 021D00 */
-#define indexed_table_021D08_ADDRESS 0x7D08u    /* 021D08 */
-#define indexed_table_021D10_ADDRESS 0x7D10u    /* 021D10 */
 #define loaded_table_021D18_ADDRESS 0x7D18u    /* 021D18 */
 #define loaded_table_021D2C_ADDRESS 0x7D2Cu    /* 021D2C */
 #define loaded_table_021D8D_ADDRESS 0x7D8Du    /* 021D8D */
@@ -2137,37 +2153,13 @@ extern const void *rom_07FFFE_data;
 #define loaded_table_021E63_ADDRESS 0x7E63u    /* 021E63 */
 #define loaded_table_021E65_ADDRESS 0x7E65u    /* 021E65 */
 #define loaded_table_021E6D_ADDRESS 0x7E6Du    /* 021E6D */
-#define indexed_table_021E99_ADDRESS 0x7E99u    /* 021E99 */
-#define indexed_table_021E9B_ADDRESS 0x7E9Bu    /* 021E9B */
-#define indexed_table_021E9D_ADDRESS 0x7E9Du    /* 021E9D */
-#define indexed_table_021E9F_ADDRESS 0x7E9Fu    /* 021E9F */
-#define indexed_table_021EA1_ADDRESS 0x7EA1u    /* 021EA1 */
-#define indexed_table_021EA3_ADDRESS 0x7EA3u    /* 021EA3 */
-#define indexed_table_021EA5_ADDRESS 0x7EA5u    /* 021EA5 */
-#define indexed_table_021EA7_ADDRESS 0x7EA7u    /* 021EA7 */
-#define indexed_table_021EA9_ADDRESS 0x7EA9u    /* 021EA9 */
-#define indexed_table_021EAB_ADDRESS 0x7EABu    /* 021EAB */
-#define indexed_table_021EAD_ADDRESS 0x7EADu    /* 021EAD */
-#define indexed_table_021EAF_ADDRESS 0x7EAFu    /* 021EAF */
-#define indexed_table_021EB1_ADDRESS 0x7EB1u    /* 021EB1 */
-#define indexed_table_021EB3_ADDRESS 0x7EB3u    /* 021EB3 */
-#define indexed_table_021EB5_ADDRESS 0x7EB5u    /* 021EB5 */
-#define indexed_table_021EB7_ADDRESS 0x7EB7u    /* 021EB7 */
 #define loaded_table_021EE1_ADDRESS 0x7EE1u    /* 021EE1 */
 #define fill_021EE5_ADDRESS 0x7EE5u    /* 021EE5 */
 #define fill_0231FF_ADDRESS 0x71FFu    /* 0231FF */
 #define loaded_table_023510_ADDRESS 0x7510u    /* 023510 */
-#define indexed_table_023516_ADDRESS 0x7516u    /* 023516 */
-#define loaded_table_02351E_ADDRESS 0x751Eu    /* 02351E */
-#define record_02353A_ADDRESS 0x753Au    /* 02353A */
-#define record_023553_ADDRESS 0x7553u    /* 023553 */
-#define record_02356C_ADDRESS 0x756Cu    /* 02356C */
-#define record_023585_ADDRESS 0x7585u    /* 023585 */
 #define fill_02367A_ADDRESS 0x767Au    /* 02367A */
 #define loaded_table_023683_ADDRESS 0x7683u    /* 023683 */
-#define indexed_table_0236E6_ADDRESS 0x76E6u    /* 0236E6 */
 #define loaded_table_0236EA_ADDRESS 0x76EAu    /* 0236EA */
-#define loaded_table_023706_ADDRESS 0x7706u    /* 023706 */
 #define text_023766_ADDRESS 0x7766u    /* 023766 */
 #define text_023769_ADDRESS 0x7769u    /* 023769 */
 #define text_023779_ADDRESS 0x7779u    /* 023779 */
@@ -2218,25 +2210,10 @@ extern const void *rom_07FFFE_data;
 #define loaded_table_023A3D_ADDRESS 0x7A3Du    /* 023A3D */
 #define loaded_table_023A43_ADDRESS 0x7A43u    /* 023A43 */
 #define loaded_table_023A47_ADDRESS 0x7A47u    /* 023A47 */
-#define indexed_table_023A71_ADDRESS 0x7A71u    /* 023A71 */
-#define indexed_table_023A73_ADDRESS 0x7A73u    /* 023A73 */
-#define indexed_table_023A75_ADDRESS 0x7A75u    /* 023A75 */
-#define indexed_table_023A77_ADDRESS 0x7A77u    /* 023A77 */
-#define indexed_table_023A79_ADDRESS 0x7A79u    /* 023A79 */
-#define indexed_table_023A7B_ADDRESS 0x7A7Bu    /* 023A7B */
-#define indexed_table_023A7D_ADDRESS 0x7A7Du    /* 023A7D */
-#define indexed_table_023A7F_ADDRESS 0x7A7Fu    /* 023A7F */
-#define indexed_table_023A81_ADDRESS 0x7A81u    /* 023A81 */
-#define indexed_table_023A83_ADDRESS 0x7A83u    /* 023A83 */
-#define indexed_table_023A85_ADDRESS 0x7A85u    /* 023A85 */
-#define indexed_table_023A87_ADDRESS 0x7A87u    /* 023A87 */
-#define loaded_table_023A99_ADDRESS 0x7A99u    /* 023A99 */
-#define loaded_table_023AD9_ADDRESS 0x7AD9u    /* 023AD9 */
 #define child_object_023AE9_ADDRESS 0x7AE9u    /* 023AE9 */
 #define loaded_table_023AF1_ADDRESS 0x7AF1u    /* 023AF1 */
 #define loaded_table_023B01_ADDRESS 0x7B01u    /* 023B01 */
 #define loaded_table_023B05_ADDRESS 0x7B05u    /* 023B05 */
-#define loaded_table_023B15_ADDRESS 0x7B15u    /* 023B15 */
 #define fill_023B21_ADDRESS 0x7B21u    /* 023B21 */
 #define fill_024023_ADDRESS 0x6023u    /* 024023 */
 #define fill_025558_ADDRESS 0x7558u    /* 025558 */
@@ -2259,7 +2236,6 @@ extern const void *rom_07FFFE_data;
 #define loaded_table_0257A2_ADDRESS 0x77A2u    /* 0257A2 */
 #define loaded_table_0257AA_ADDRESS 0x77AAu    /* 0257AA */
 #define loaded_table_0257B2_ADDRESS 0x77B2u    /* 0257B2 */
-#define loaded_table_025966_ADDRESS 0x7966u    /* 025966 */
 #define indexed_table_02597E_ADDRESS 0x797Eu    /* 02597E */
 #define indexed_table_02597F_ADDRESS 0x797Fu    /* 02597F */
 #define indexed_table_025980_ADDRESS 0x7980u    /* 025980 */
@@ -2272,7 +2248,6 @@ extern const void *rom_07FFFE_data;
 #define indexed_table_02598E_ADDRESS 0x798Eu    /* 02598E */
 #define loaded_table_025996_ADDRESS 0x7996u    /* 025996 */
 #define loaded_table_02599C_ADDRESS 0x799Cu    /* 02599C */
-#define indexed_table_0259A4_ADDRESS 0x79A4u    /* 0259A4 */
 #define text_025A0A_ADDRESS 0x7A0Au    /* 025A0A */
 #define text_025A30_ADDRESS 0x7A30u    /* 025A30 */
 #define text_025B05_ADDRESS 0x7B05u    /* 025B05 */
@@ -2302,16 +2277,12 @@ extern const void *rom_07FFFE_data;
 #define loaded_table_0279F2_ADDRESS 0x79F2u    /* 0279F2 */
 #define loaded_table_0279F6_ADDRESS 0x79F6u    /* 0279F6 */
 #define loaded_table_0279FA_ADDRESS 0x79FAu    /* 0279FA */
-#define loaded_table_027A00_ADDRESS 0x7A00u    /* 027A00 */
 #define loaded_table_027A13_ADDRESS 0x7A13u    /* 027A13 */
 #define loaded_table_027A1D_ADDRESS 0x7A1Du    /* 027A1D */
 #define loaded_table_027A27_ADDRESS 0x7A27u    /* 027A27 */
 #define loaded_table_027A2F_ADDRESS 0x7A2Fu    /* 027A2F */
-#define record_027A3B_ADDRESS 0x7A3Bu    /* 027A3B */
-#define record_027A3F_ADDRESS 0x7A3Fu    /* 027A3F */
 #define loaded_table_027A43_ADDRESS 0x7A43u    /* 027A43 */
 #define loaded_table_027A53_ADDRESS 0x7A53u    /* 027A53 */
-#define loaded_table_027A5B_ADDRESS 0x7A5Bu    /* 027A5B */
 #define loaded_table_027C64_ADDRESS 0x7C64u    /* 027C64 */
 #define loaded_table_027C70_ADDRESS 0x7C70u    /* 027C70 */
 #define loaded_table_027C78_ADDRESS 0x7C78u    /* 027C78 */
@@ -2322,30 +2293,7 @@ extern const void *rom_07FFFE_data;
 #define loaded_table_027C9C_ADDRESS 0x7C9Cu    /* 027C9C */
 #define loaded_table_027CA2_ADDRESS 0x7CA2u    /* 027CA2 */
 #define loaded_table_027CAA_ADDRESS 0x7CAAu    /* 027CAA */
-#define indexed_table_027CD0_ADDRESS 0x7CD0u    /* 027CD0 */
-#define indexed_table_027CD2_ADDRESS 0x7CD2u    /* 027CD2 */
-#define indexed_table_027CD4_ADDRESS 0x7CD4u    /* 027CD4 */
-#define indexed_table_027CD6_ADDRESS 0x7CD6u    /* 027CD6 */
-#define indexed_table_027CD8_ADDRESS 0x7CD8u    /* 027CD8 */
-#define indexed_table_027CDA_ADDRESS 0x7CDAu    /* 027CDA */
-#define indexed_table_027CDC_ADDRESS 0x7CDCu    /* 027CDC */
-#define indexed_table_027CDE_ADDRESS 0x7CDEu    /* 027CDE */
-#define indexed_table_027CE0_ADDRESS 0x7CE0u    /* 027CE0 */
-#define indexed_table_027CE2_ADDRESS 0x7CE2u    /* 027CE2 */
-#define indexed_table_027CE4_ADDRESS 0x7CE4u    /* 027CE4 */
-#define indexed_table_027CE6_ADDRESS 0x7CE6u    /* 027CE6 */
-#define indexed_table_027CE8_ADDRESS 0x7CE8u    /* 027CE8 */
-#define indexed_table_027CEA_ADDRESS 0x7CEAu    /* 027CEA */
-#define indexed_table_027CEC_ADDRESS 0x7CECu    /* 027CEC */
-#define indexed_table_027CEE_ADDRESS 0x7CEEu    /* 027CEE */
-#define indexed_table_027CF0_ADDRESS 0x7CF0u    /* 027CF0 */
-#define indexed_table_027CF2_ADDRESS 0x7CF2u    /* 027CF2 */
-#define indexed_table_027CF4_ADDRESS 0x7CF4u    /* 027CF4 */
-#define indexed_table_027CF6_ADDRESS 0x7CF6u    /* 027CF6 */
-#define indexed_table_027CF8_ADDRESS 0x7CF8u    /* 027CF8 */
-#define indexed_table_027CFA_ADDRESS 0x7CFAu    /* 027CFA */
-#define indexed_table_027CFC_ADDRESS 0x7CFCu    /* 027CFC */
-#define indexed_table_027CFE_ADDRESS 0x7CFEu    /* 027CFE */
+#define described_027D38_ADDRESS 0x7D38u    /* 027D38 */
 #define loaded_table_027D3A_ADDRESS 0x7D3Au    /* 027D3A */
 #define loaded_table_027D42_ADDRESS 0x7D42u    /* 027D42 */
 #define loaded_table_027D5A_ADDRESS 0x7D5Au    /* 027D5A */
@@ -2364,7 +2312,6 @@ extern const void *rom_07FFFE_data;
 #define text_027E27_ADDRESS 0x7E27u    /* 027E27 */
 #define text_027E3D_ADDRESS 0x7E3Du    /* 027E3D */
 #define text_027E53_ADDRESS 0x7E53u    /* 027E53 */
-#define loaded_table_027E81_ADDRESS 0x7E81u    /* 027E81 */
 #define loaded_table_027ED1_ADDRESS 0x7ED1u    /* 027ED1 */
 #define loaded_table_027EDD_ADDRESS 0x7EDDu    /* 027EDD */
 #define loaded_table_027EE3_ADDRESS 0x7EE3u    /* 027EE3 */
@@ -2448,7 +2395,6 @@ extern const void *rom_07FFFE_data;
 #define loaded_table_0299DC_ADDRESS 0x79DCu    /* 0299DC */
 #define loaded_table_0299E8_ADDRESS 0x79E8u    /* 0299E8 */
 #define child_object_0299EC_ADDRESS 0x79ECu    /* 0299EC */
-#define loaded_table_0299F4_ADDRESS 0x79F4u    /* 0299F4 */
 #define loaded_table_029A14_ADDRESS 0x7A14u    /* 029A14 */
 #define loaded_table_029A20_ADDRESS 0x7A20u    /* 029A20 */
 #define loaded_table_029A28_ADDRESS 0x7A28u    /* 029A28 */
@@ -2460,14 +2406,11 @@ extern const void *rom_07FFFE_data;
 #define loaded_table_029A60_ADDRESS 0x7A60u    /* 029A60 */
 #define loaded_table_029A6C_ADDRESS 0x7A6Cu    /* 029A6C */
 #define loaded_table_029A7A_ADDRESS 0x7A7Au    /* 029A7A */
-#define loaded_table_029A86_ADDRESS 0x7A86u    /* 029A86 */
 #define loaded_table_029A92_ADDRESS 0x7A92u    /* 029A92 */
 #define loaded_table_029A9C_ADDRESS 0x7A9Cu    /* 029A9C */
 #define object_setup_029AA8_ADDRESS 0x7AA8u    /* 029AA8 */
-#define loaded_table_029AAE_ADDRESS 0x7AAEu    /* 029AAE */
 #define loaded_table_029ABE_ADDRESS 0x7ABEu    /* 029ABE */
 #define loaded_table_029AC6_ADDRESS 0x7AC6u    /* 029AC6 */
-#define loaded_table_029AD2_ADDRESS 0x7AD2u    /* 029AD2 */
 #define loaded_table_029AE2_ADDRESS 0x7AE2u    /* 029AE2 */
 #define loaded_table_029AE8_ADDRESS 0x7AE8u    /* 029AE8 */
 #define loaded_table_029AF4_ADDRESS 0x7AF4u    /* 029AF4 */
@@ -2478,13 +2421,10 @@ extern const void *rom_07FFFE_data;
 #define loaded_table_029B48_ADDRESS 0x7B48u    /* 029B48 */
 #define loaded_table_029B50_ADDRESS 0x7B50u    /* 029B50 */
 #define loaded_table_029B5C_ADDRESS 0x7B5Cu    /* 029B5C */
-#define loaded_table_029B68_ADDRESS 0x7B68u    /* 029B68 */
 #define loaded_table_029B6C_ADDRESS 0x7B6Cu    /* 029B6C */
 #define loaded_table_029B72_ADDRESS 0x7B72u    /* 029B72 */
-#define loaded_table_029B7E_ADDRESS 0x7B7Eu    /* 029B7E */
 #define loaded_table_029B86_ADDRESS 0x7B86u    /* 029B86 */
 #define loaded_table_029B8C_ADDRESS 0x7B8Cu    /* 029B8C */
-#define loaded_table_029B98_ADDRESS 0x7B98u    /* 029B98 */
 #define loaded_table_029BB0_ADDRESS 0x7BB0u    /* 029BB0 */
 #define loaded_table_029BBC_ADDRESS 0x7BBCu    /* 029BBC */
 #define loaded_table_029BCC_ADDRESS 0x7BCCu    /* 029BCC */
@@ -2578,7 +2518,6 @@ extern const void *rom_07FFFE_data;
 #define loaded_table_02B7F8_ADDRESS 0x77F8u    /* 02B7F8 */
 #define loaded_table_02B804_ADDRESS 0x7804u    /* 02B804 */
 #define loaded_table_02B810_ADDRESS 0x7810u    /* 02B810 */
-#define loaded_table_02B822_ADDRESS 0x7822u    /* 02B822 */
 #define loaded_table_02B82A_ADDRESS 0x782Au    /* 02B82A */
 #define loaded_table_02B836_ADDRESS 0x7836u    /* 02B836 */
 #define loaded_table_02B83E_ADDRESS 0x783Eu    /* 02B83E */
@@ -2591,12 +2530,10 @@ extern const void *rom_07FFFE_data;
 #define loaded_table_02B8A4_ADDRESS 0x78A4u    /* 02B8A4 */
 #define child_object_02B8AC_ADDRESS 0x78ACu    /* 02B8AC */
 #define loaded_table_02B8B4_ADDRESS 0x78B4u    /* 02B8B4 */
-#define loaded_table_02B8C0_ADDRESS 0x78C0u    /* 02B8C0 */
 #define loaded_table_02B8D0_ADDRESS 0x78D0u    /* 02B8D0 */
 #define loaded_table_02B8D6_ADDRESS 0x78D6u    /* 02B8D6 */
 #define loaded_table_02B8E2_ADDRESS 0x78E2u    /* 02B8E2 */
 #define child_object_02B8E6_ADDRESS 0x78E6u    /* 02B8E6 */
-#define loaded_table_02B8EE_ADDRESS 0x78EEu    /* 02B8EE */
 #define loaded_table_02B8F6_ADDRESS 0x78F6u    /* 02B8F6 */
 #define object_setup_02B8FE_ADDRESS 0x78FEu    /* 02B8FE */
 #define hit_box_02B904_ADDRESS 0x7904u    /* 02B904 */
@@ -2650,13 +2587,11 @@ extern const void *rom_07FFFE_data;
 #define child_object_02BDA8_ADDRESS 0x7DA8u    /* 02BDA8 */
 #define loaded_table_02BDB0_ADDRESS 0x7DB0u    /* 02BDB0 */
 #define object_setup_02BDBC_ADDRESS 0x7DBCu    /* 02BDBC */
-#define loaded_table_02BDC2_ADDRESS 0x7DC2u    /* 02BDC2 */
 #define loaded_table_02BDFD_ADDRESS 0x7DFDu    /* 02BDFD */
 #define child_object_02BE0B_ADDRESS 0x7E0Bu    /* 02BE0B */
 #define object_setup_02BE13_ADDRESS 0x7E13u    /* 02BE13 */
 #define loaded_table_02BE19_ADDRESS 0x7E19u    /* 02BE19 */
 #define object_setup_02BE1D_ADDRESS 0x7E1Du    /* 02BE1D */
-#define loaded_table_02BE23_ADDRESS 0x7E23u    /* 02BE23 */
 #define loaded_table_02BE53_ADDRESS 0x7E53u    /* 02BE53 */
 #define object_setup_02BE57_ADDRESS 0x7E57u    /* 02BE57 */
 #define loaded_table_02BE5D_ADDRESS 0x7E5Du    /* 02BE5D */
@@ -2666,9 +2601,8 @@ extern const void *rom_07FFFE_data;
 #define object_setup_02BE79_ADDRESS 0x7E79u    /* 02BE79 */
 #define loaded_table_02BE7F_ADDRESS 0x7E7Fu    /* 02BE7F */
 #define object_setup_02BE83_ADDRESS 0x7E83u    /* 02BE83 */
-#define loaded_table_02BE89_ADDRESS 0x7E89u    /* 02BE89 */
 #define hit_box_02BE99_ADDRESS 0x7E99u    /* 02BE99 */
-#define hit_box_02BEA1_ADDRESS 0x7EA1u    /* 02BEA1 */
+#define loaded_table_02BEA1_ADDRESS 0x7EA1u    /* 02BEA1 */
 #define object_setup_02BED1_ADDRESS 0x7ED1u    /* 02BED1 */
 #define hit_box_02BED7_ADDRESS 0x7ED7u    /* 02BED7 */
 #define loaded_table_02BEDF_ADDRESS 0x7EDFu    /* 02BEDF */
@@ -2685,7 +2619,6 @@ extern const void *rom_07FFFE_data;
 #define loaded_table_02BF51_ADDRESS 0x7F51u    /* 02BF51 */
 #define loaded_table_02BF5D_ADDRESS 0x7F5Du    /* 02BF5D */
 #define object_setup_02BF63_ADDRESS 0x7F63u    /* 02BF63 */
-#define loaded_table_02BF69_ADDRESS 0x7F69u    /* 02BF69 */
 #define fill_02BF71_ADDRESS 0x7F71u    /* 02BF71 */
 #define fill_02DA14_ADDRESS 0x7A14u    /* 02DA14 */
 #define hit_box_02DA98_ADDRESS 0x7A98u    /* 02DA98 */
@@ -2722,12 +2655,9 @@ extern const void *rom_07FFFE_data;
 #define object_setup_02DBDC_ADDRESS 0x7BDCu    /* 02DBDC */
 #define loaded_table_02DBE2_ADDRESS 0x7BE2u    /* 02DBE2 */
 #define object_setup_02DBEC_ADDRESS 0x7BECu    /* 02DBEC */
-#define record_02DC12_ADDRESS 0x7C12u    /* 02DC12 */
-#define record_02DC18_ADDRESS 0x7C18u    /* 02DC18 */
 #define loaded_table_02DC1E_ADDRESS 0x7C1Eu    /* 02DC1E */
 #define object_setup_02DC28_ADDRESS 0x7C28u    /* 02DC28 */
-#define loaded_table_02DC2E_ADDRESS 0x7C2Eu    /* 02DC2E */
-#define described_02DC70_ADDRESS 0x7C70u    /* 02DC70 */
+#define described_02DC6D_ADDRESS 0x7C6Du    /* 02DC6D */
 #define loaded_table_02DC71_ADDRESS 0x7C71u    /* 02DC71 */
 #define loaded_table_02DC83_ADDRESS 0x7C83u    /* 02DC83 */
 #define object_setup_02DC91_ADDRESS 0x7C91u    /* 02DC91 */
@@ -2767,7 +2697,6 @@ extern const void *rom_07FFFE_data;
 #define object_setup_02DDDF_ADDRESS 0x7DDFu    /* 02DDDF */
 #define loaded_table_02DDE5_ADDRESS 0x7DE5u    /* 02DDE5 */
 #define object_setup_02DDEF_ADDRESS 0x7DEFu    /* 02DDEF */
-#define loaded_table_02DDF5_ADDRESS 0x7DF5u    /* 02DDF5 */
 #define loaded_table_02DE05_ADDRESS 0x7E05u    /* 02DE05 */
 #define object_setup_02DE0B_ADDRESS 0x7E0Bu    /* 02DE0B */
 #define loaded_table_02DE11_ADDRESS 0x7E11u    /* 02DE11 */
@@ -2781,7 +2710,6 @@ extern const void *rom_07FFFE_data;
 #define child_object_02DE7D_ADDRESS 0x7E7Du    /* 02DE7D */
 #define child_object_02DE85_ADDRESS 0x7E85u    /* 02DE85 */
 #define child_object_02DE8D_ADDRESS 0x7E8Du    /* 02DE8D */
-#define loaded_table_02DE95_ADDRESS 0x7E95u    /* 02DE95 */
 #define object_setup_02DEAD_ADDRESS 0x7EADu    /* 02DEAD */
 #define loaded_table_02DEB3_ADDRESS 0x7EB3u    /* 02DEB3 */
 #define loaded_table_02DEBD_ADDRESS 0x7EBDu    /* 02DEBD */
@@ -2792,7 +2720,6 @@ extern const void *rom_07FFFE_data;
 #define described_02DEDD_ADDRESS 0x7EDDu    /* 02DEDD */
 #define loaded_table_02DEE1_ADDRESS 0x7EE1u    /* 02DEE1 */
 #define loaded_table_02DEF1_ADDRESS 0x7EF1u    /* 02DEF1 */
-#define loaded_table_02DEF9_ADDRESS 0x7EF9u    /* 02DEF9 */
 #define object_setup_02DF0B_ADDRESS 0x7F0Bu    /* 02DF0B */
 #define described_02DF11_ADDRESS 0x7F11u    /* 02DF11 */
 #define loaded_table_02DF15_ADDRESS 0x7F15u    /* 02DF15 */
@@ -2800,7 +2727,6 @@ extern const void *rom_07FFFE_data;
 #define described_02DF2B_ADDRESS 0x7F2Bu    /* 02DF2B */
 #define loaded_table_02DF2F_ADDRESS 0x7F2Fu    /* 02DF2F */
 #define object_setup_02DF41_ADDRESS 0x7F41u    /* 02DF41 */
-#define loaded_table_02DF47_ADDRESS 0x7F47u    /* 02DF47 */
 #define loaded_table_02DF67_ADDRESS 0x7F67u    /* 02DF67 */
 #define hit_box_02DF6D_ADDRESS 0x7F6Du    /* 02DF6D */
 #define hit_box_02DF75_ADDRESS 0x7F75u    /* 02DF75 */
@@ -2837,7 +2763,6 @@ extern const void *rom_07FFFE_data;
 #define hit_box_02FA00_ADDRESS 0x7A00u    /* 02FA00 */
 #define loaded_table_02FA08_ADDRESS 0x7A08u    /* 02FA08 */
 #define object_setup_02FA0C_ADDRESS 0x7A0Cu    /* 02FA0C */
-#define loaded_table_02FA12_ADDRESS 0x7A12u    /* 02FA12 */
 #define loaded_table_02FA3A_ADDRESS 0x7A3Au    /* 02FA3A */
 #define hit_box_02FA40_ADDRESS 0x7A40u    /* 02FA40 */
 #define hit_box_02FA48_ADDRESS 0x7A48u    /* 02FA48 */
@@ -2852,10 +2777,6 @@ extern const void *rom_07FFFE_data;
 #define object_setup_02FA82_ADDRESS 0x7A82u    /* 02FA82 */
 #define loaded_table_02FA88_ADDRESS 0x7A88u    /* 02FA88 */
 #define object_setup_02FA96_ADDRESS 0x7A96u    /* 02FA96 */
-#define record_02FAA4_ADDRESS 0x7AA4u    /* 02FAA4 */
-#define record_02FAAC_ADDRESS 0x7AACu    /* 02FAAC */
-#define record_02FAB4_ADDRESS 0x7AB4u    /* 02FAB4 */
-#define record_02FABC_ADDRESS 0x7ABCu    /* 02FABC */
 #define loaded_table_02FAC4_ADDRESS 0x7AC4u    /* 02FAC4 */
 #define object_setup_02FADE_ADDRESS 0x7ADEu    /* 02FADE */
 #define loaded_table_02FAE4_ADDRESS 0x7AE4u    /* 02FAE4 */
@@ -2882,15 +2803,12 @@ extern const void *rom_07FFFE_data;
 #define loaded_table_02FBB0_ADDRESS 0x7BB0u    /* 02FBB0 */
 #define hit_box_02FBBB_ADDRESS 0x7BBBu    /* 02FBBB */
 #define hit_box_02FBC3_ADDRESS 0x7BC3u    /* 02FBC3 */
-#define record_02FBD3_ADDRESS 0x7BD3u    /* 02FBD3 */
-#define record_02FBD6_ADDRESS 0x7BD6u    /* 02FBD6 */
 #define object_setup_02FBD9_ADDRESS 0x7BD9u    /* 02FBD9 */
 #define hit_box_02FBDF_ADDRESS 0x7BDFu    /* 02FBDF */
 #define hit_box_02FBE7_ADDRESS 0x7BE7u    /* 02FBE7 */
 #define enemy_behaviour_02FBEF_ADDRESS 0x7BEFu    /* 02FBEF */
 #define loaded_table_02FC47_ADDRESS 0x7C47u    /* 02FC47 */
 #define object_setup_02FC53_ADDRESS 0x7C53u    /* 02FC53 */
-#define loaded_table_02FC59_ADDRESS 0x7C59u    /* 02FC59 */
 #define loaded_table_02FC65_ADDRESS 0x7C65u    /* 02FC65 */
 #define loaded_table_02FC6D_ADDRESS 0x7C6Du    /* 02FC6D */
 #define child_object_02FC73_ADDRESS 0x7C73u    /* 02FC73 */
@@ -2921,7 +2839,6 @@ extern const void *rom_07FFFE_data;
 #define loaded_table_02FDDD_ADDRESS 0x7DDDu    /* 02FDDD */
 #define child_object_02FDF3_ADDRESS 0x7DF3u    /* 02FDF3 */
 #define loaded_table_02FDF9_ADDRESS 0x7DF9u    /* 02FDF9 */
-#define constant_table_02FDFF_ADDRESS 0x7DFFu    /* 02FDFF */
 #define object_setup_02FE01_ADDRESS 0x7E01u    /* 02FE01 */
 #define loaded_table_02FE07_ADDRESS 0x7E07u    /* 02FE07 */
 #define loaded_table_02FE0F_ADDRESS 0x7E0Fu    /* 02FE0F */
@@ -2935,7 +2852,6 @@ extern const void *rom_07FFFE_data;
 #define object_setup_02FE53_ADDRESS 0x7E53u    /* 02FE53 */
 #define loaded_table_02FE59_ADDRESS 0x7E59u    /* 02FE59 */
 #define object_setup_02FE65_ADDRESS 0x7E65u    /* 02FE65 */
-#define loaded_table_02FE6B_ADDRESS 0x7E6Bu    /* 02FE6B */
 #define loaded_table_02FE73_ADDRESS 0x7E73u    /* 02FE73 */
 #define loaded_table_02FE77_ADDRESS 0x7E77u    /* 02FE77 */
 #define loaded_table_02FE7B_ADDRESS 0x7E7Bu    /* 02FE7B */
@@ -2957,11 +2873,9 @@ extern const void *rom_07FFFE_data;
 #define object_setup_02FF49_ADDRESS 0x7F49u    /* 02FF49 */
 #define loaded_table_02FF4F_ADDRESS 0x7F4Fu    /* 02FF4F */
 #define object_setup_02FF65_ADDRESS 0x7F65u    /* 02FF65 */
-#define loaded_table_02FF6B_ADDRESS 0x7F6Bu    /* 02FF6B */
-#define loaded_table_02FF8B_ADDRESS 0x7F8Bu    /* 02FF8B */
 #define loaded_table_02FFA3_ADDRESS 0x7FA3u    /* 02FFA3 */
 #define object_setup_02FFA7_ADDRESS 0x7FA7u    /* 02FFA7 */
-#define loaded_table_02FFAD_ADDRESS 0x7FADu    /* 02FFAD */
+#define described_02FFC5_ADDRESS 0x7FC5u    /* 02FFC5 */
 #define loaded_table_02FFC9_ADDRESS 0x7FC9u    /* 02FFC9 */
 #define object_setup_02FFD5_ADDRESS 0x7FD5u    /* 02FFD5 */
 #define fill_02FFDB_ADDRESS 0x7FDBu    /* 02FFDB */
@@ -2981,7 +2895,6 @@ extern const void *rom_07FFFE_data;
 #define loaded_table_031974_ADDRESS 0x7974u    /* 031974 */
 #define loaded_table_03197E_ADDRESS 0x797Eu    /* 03197E */
 #define object_setup_031982_ADDRESS 0x7982u    /* 031982 */
-#define loaded_table_031988_ADDRESS 0x7988u    /* 031988 */
 #define loaded_table_0319C8_ADDRESS 0x79C8u    /* 0319C8 */
 #define object_setup_0319D4_ADDRESS 0x79D4u    /* 0319D4 */
 #define loaded_table_0319EE_ADDRESS 0x79EEu    /* 0319EE */
@@ -2991,9 +2904,7 @@ extern const void *rom_07FFFE_data;
 #define loaded_table_031A1A_ADDRESS 0x7A1Au    /* 031A1A */
 #define loaded_table_031A26_ADDRESS 0x7A26u    /* 031A26 */
 #define object_setup_031A2A_ADDRESS 0x7A2Au    /* 031A2A */
-#define loaded_table_031A30_ADDRESS 0x7A30u    /* 031A30 */
 #define loaded_table_031A38_ADDRESS 0x7A38u    /* 031A38 */
-#define loaded_table_031A56_ADDRESS 0x7A56u    /* 031A56 */
 #define object_setup_031A72_ADDRESS 0x7A72u    /* 031A72 */
 #define hit_box_031A78_ADDRESS 0x7A78u    /* 031A78 */
 #define hit_box_031A80_ADDRESS 0x7A80u    /* 031A80 */
@@ -3016,7 +2927,6 @@ extern const void *rom_07FFFE_data;
 #define loaded_table_031C11_ADDRESS 0x7C11u    /* 031C11 */
 #define object_setup_031C1D_ADDRESS 0x7C1Du    /* 031C1D */
 #define loaded_table_031C23_ADDRESS 0x7C23u    /* 031C23 */
-#define loaded_table_031C3B_ADDRESS 0x7C3Bu    /* 031C3B */
 #define loaded_table_031C4F_ADDRESS 0x7C4Fu    /* 031C4F */
 #define loaded_table_031C57_ADDRESS 0x7C57u    /* 031C57 */
 #define loaded_table_031C6B_ADDRESS 0x7C6Bu    /* 031C6B */
@@ -3028,7 +2938,6 @@ extern const void *rom_07FFFE_data;
 #define loaded_table_031CE5_ADDRESS 0x7CE5u    /* 031CE5 */
 #define child_object_031CE9_ADDRESS 0x7CE9u    /* 031CE9 */
 #define object_setup_031CF1_ADDRESS 0x7CF1u    /* 031CF1 */
-#define loaded_table_031CF7_ADDRESS 0x7CF7u    /* 031CF7 */
 #define loaded_table_031D37_ADDRESS 0x7D37u    /* 031D37 */
 #define loaded_table_031D71_ADDRESS 0x7D71u    /* 031D71 */
 #define hit_box_031D77_ADDRESS 0x7D77u    /* 031D77 */
@@ -3041,9 +2950,6 @@ extern const void *rom_07FFFE_data;
 #define loaded_table_031DC8_ADDRESS 0x7DC8u    /* 031DC8 */
 #define loaded_table_031DCE_ADDRESS 0x7DCEu    /* 031DCE */
 #define loaded_table_031DD2_ADDRESS 0x7DD2u    /* 031DD2 */
-#define indexed_table_031DFC_ADDRESS 0x7DFCu    /* 031DFC */
-#define loaded_table_031E20_ADDRESS 0x7E20u    /* 031E20 */
-#define loaded_table_031E60_ADDRESS 0x7E60u    /* 031E60 */
 #define hit_box_031EA0_ADDRESS 0x7EA0u    /* 031EA0 */
 #define hit_box_031EA8_ADDRESS 0x7EA8u    /* 031EA8 */
 #define hit_box_031EB0_ADDRESS 0x7EB0u    /* 031EB0 */
@@ -3067,7 +2973,6 @@ extern const void *rom_07FFFE_data;
 #define loaded_table_031F30_ADDRESS 0x7F30u    /* 031F30 */
 #define object_setup_031F44_ADDRESS 0x7F44u    /* 031F44 */
 #define loaded_table_031F4A_ADDRESS 0x7F4Au    /* 031F4A */
-#define loaded_table_031F52_ADDRESS 0x7F52u    /* 031F52 */
 #define object_setup_031F58_ADDRESS 0x7F58u    /* 031F58 */
 #define described_031F5E_ADDRESS 0x7F5Eu    /* 031F5E */
 #define loaded_table_031F64_ADDRESS 0x7F64u    /* 031F64 */
@@ -3117,7 +3022,6 @@ extern const void *rom_07FFFE_data;
 #define hit_box_033AE8_ADDRESS 0x7AE8u    /* 033AE8 */
 #define object_setup_033B00_ADDRESS 0x7B00u    /* 033B00 */
 #define loaded_table_033B06_ADDRESS 0x7B06u    /* 033B06 */
-#define loaded_table_033B10_ADDRESS 0x7B10u    /* 033B10 */
 #define hit_box_033B30_ADDRESS 0x7B30u    /* 033B30 */
 #define hit_box_033B38_ADDRESS 0x7B38u    /* 033B38 */
 #define hit_box_033B40_ADDRESS 0x7B40u    /* 033B40 */
@@ -3157,7 +3061,6 @@ extern const void *rom_07FFFE_data;
 #define child_object_033D80_ADDRESS 0x7D80u    /* 033D80 */
 #define loaded_table_033D88_ADDRESS 0x7D88u    /* 033D88 */
 #define object_setup_033D90_ADDRESS 0x7D90u    /* 033D90 */
-#define loaded_table_033D96_ADDRESS 0x7D96u    /* 033D96 */
 #define hit_box_033D9E_ADDRESS 0x7D9Eu    /* 033D9E */
 #define hit_box_033DA6_ADDRESS 0x7DA6u    /* 033DA6 */
 #define hit_box_033DAE_ADDRESS 0x7DAEu    /* 033DAE */
@@ -3184,8 +3087,6 @@ extern const void *rom_07FFFE_data;
 #define child_object_033EFB_ADDRESS 0x7EFBu    /* 033EFB */
 #define loaded_table_033F03_ADDRESS 0x7F03u    /* 033F03 */
 #define loaded_table_033F07_ADDRESS 0x7F07u    /* 033F07 */
-#define indexed_table_033F31_ADDRESS 0x7F31u    /* 033F31 */
-#define loaded_table_033F55_ADDRESS 0x7F55u    /* 033F55 */
 #define loaded_table_033FD5_ADDRESS 0x7FD5u    /* 033FD5 */
 #define object_setup_033FDD_ADDRESS 0x7FDDu    /* 033FDD */
 #define fill_033FFF_ADDRESS 0x7FFFu    /* 033FFF */
@@ -3228,7 +3129,6 @@ extern const void *rom_07FFFE_data;
 #define child_object_035904_ADDRESS 0x7904u    /* 035904 */
 #define child_object_03590C_ADDRESS 0x790Cu    /* 03590C */
 #define loaded_table_035914_ADDRESS 0x7914u    /* 035914 */
-#define loaded_table_035926_ADDRESS 0x7926u    /* 035926 */
 #define object_setup_03592E_ADDRESS 0x792Eu    /* 03592E */
 #define child_object_03593C_ADDRESS 0x793Cu    /* 03593C */
 #define loaded_table_035944_ADDRESS 0x7944u    /* 035944 */
@@ -3272,7 +3172,6 @@ extern const void *rom_07FFFE_data;
 #define object_setup_03644E_ADDRESS 0x644Eu    /* 03644E */
 #define loaded_table_036474_ADDRESS 0x6474u    /* 036474 */
 #define object_setup_036482_ADDRESS 0x6482u    /* 036482 */
-#define loaded_table_036488_ADDRESS 0x6488u    /* 036488 */
 #define indexed_table_036498_ADDRESS 0x6498u    /* 036498 */
 #define indexed_table_0364A0_ADDRESS 0x64A0u    /* 0364A0 */
 #define indexed_table_0364B3_ADDRESS 0x64B3u    /* 0364B3 */
@@ -3280,14 +3179,12 @@ extern const void *rom_07FFFE_data;
 #define indexed_table_0364D9_ADDRESS 0x64D9u    /* 0364D9 */
 #define loaded_table_0364EC_ADDRESS 0x64ECu    /* 0364EC */
 #define object_setup_0364F8_ADDRESS 0x64F8u    /* 0364F8 */
-#define loaded_table_0364FE_ADDRESS 0x64FEu    /* 0364FE */
 #define indexed_table_03650A_ADDRESS 0x650Au    /* 03650A */
 #define indexed_table_036512_ADDRESS 0x6512u    /* 036512 */
 #define indexed_table_03651C_ADDRESS 0x651Cu    /* 03651C */
 #define indexed_table_036526_ADDRESS 0x6526u    /* 036526 */
 #define loaded_table_036539_ADDRESS 0x6539u    /* 036539 */
 #define object_setup_036547_ADDRESS 0x6547u    /* 036547 */
-#define loaded_table_03654D_ADDRESS 0x654Du    /* 03654D */
 #define indexed_table_03655D_ADDRESS 0x655Du    /* 03655D */
 #define indexed_table_036565_ADDRESS 0x6565u    /* 036565 */
 #define indexed_table_036577_ADDRESS 0x6577u    /* 036577 */
@@ -3333,7 +3230,6 @@ extern const void *rom_07FFFE_data;
 #define fill_03A924_ADDRESS 0x6924u    /* 03A924 */
 #define fill_03B9E3_ADDRESS 0x79E3u    /* 03B9E3 */
 #define bank_1d_states_ADDRESS 0x7A00u    /* 03BA00 */
-#define indexed_table_03BA3A_ADDRESS 0x7A3Au    /* 03BA3A */
 #define child_object_03BA78_ADDRESS 0x7A78u    /* 03BA78 */
 #define child_object_03BA7E_ADDRESS 0x7A7Eu    /* 03BA7E */
 #define child_object_03BA84_ADDRESS 0x7A84u    /* 03BA84 */
@@ -3344,7 +3240,6 @@ extern const void *rom_07FFFE_data;
 #define record_03BA9A_ADDRESS 0x7A9Au    /* 03BA9A */
 #define loaded_table_03BA9C_ADDRESS 0x7A9Cu    /* 03BA9C */
 #define fill_03BAB3_ADDRESS 0x7AB3u    /* 03BAB3 */
-#define indexed_table_03BABD_ADDRESS 0x7ABDu    /* 03BABD */
 #define loaded_table_03BAD6_ADDRESS 0x7AD6u    /* 03BAD6 */
 #define indexed_table_03BADE_ADDRESS 0x7ADEu    /* 03BADE */
 #define record_03BAE0_ADDRESS 0x7AE0u    /* 03BAE0 */
@@ -3363,27 +3258,6 @@ extern const void *rom_07FFFE_data;
 #define loaded_table_03BB66_ADDRESS 0x7B66u    /* 03BB66 */
 #define loaded_table_03BB6E_ADDRESS 0x7B6Eu    /* 03BB6E */
 #define loaded_table_03BB7C_ADDRESS 0x7B7Cu    /* 03BB7C */
-#define indexed_table_03BB8F_ADDRESS 0x7B8Fu    /* 03BB8F */
-#define indexed_table_03BB93_ADDRESS 0x7B93u    /* 03BB93 */
-#define indexed_table_03BB97_ADDRESS 0x7B97u    /* 03BB97 */
-#define indexed_table_03BB9B_ADDRESS 0x7B9Bu    /* 03BB9B */
-#define indexed_table_03BB9F_ADDRESS 0x7B9Fu    /* 03BB9F */
-#define indexed_table_03BBF1_ADDRESS 0x7BF1u    /* 03BBF1 */
-#define indexed_table_03BBF5_ADDRESS 0x7BF5u    /* 03BBF5 */
-#define indexed_table_03BC87_ADDRESS 0x7C87u    /* 03BC87 */
-#define indexed_table_03BC8F_ADDRESS 0x7C8Fu    /* 03BC8F */
-#define indexed_table_03BC97_ADDRESS 0x7C97u    /* 03BC97 */
-#define indexed_table_03BC9F_ADDRESS 0x7C9Fu    /* 03BC9F */
-#define indexed_table_03BCA7_ADDRESS 0x7CA7u    /* 03BCA7 */
-#define indexed_table_03BCAF_ADDRESS 0x7CAFu    /* 03BCAF */
-#define indexed_table_03BCB7_ADDRESS 0x7CB7u    /* 03BCB7 */
-#define indexed_table_03BCBF_ADDRESS 0x7CBFu    /* 03BCBF */
-#define indexed_table_03BCC7_ADDRESS 0x7CC7u    /* 03BCC7 */
-#define indexed_table_03BCCF_ADDRESS 0x7CCFu    /* 03BCCF */
-#define indexed_table_03BCE1_ADDRESS 0x7CE1u    /* 03BCE1 */
-#define indexed_table_03BCF1_ADDRESS 0x7CF1u    /* 03BCF1 */
-#define indexed_table_03BD01_ADDRESS 0x7D01u    /* 03BD01 */
-#define indexed_table_03BD11_ADDRESS 0x7D11u    /* 03BD11 */
 #define loaded_table_03BD99_ADDRESS 0x7D99u    /* 03BD99 */
 #define loaded_table_03BDA1_ADDRESS 0x7DA1u    /* 03BDA1 */
 #define loaded_table_03BDA5_ADDRESS 0x7DA5u    /* 03BDA5 */
@@ -3398,7 +3272,6 @@ extern const void *rom_07FFFE_data;
 #define child_object_03DD9A_ADDRESS 0x7D9Au    /* 03DD9A */
 #define indexed_table_03DDA2_ADDRESS 0x7DA2u    /* 03DDA2 */
 #define record_03DDA4_ADDRESS 0x7DA4u    /* 03DDA4 */
-#define indexed_table_03DDA6_ADDRESS 0x7DA6u    /* 03DDA6 */
 #define indexed_table_03DDB9_ADDRESS 0x7DB9u    /* 03DDB9 */
 #define indexed_table_03DDBD_ADDRESS 0x7DBDu    /* 03DDBD */
 #define child_object_03DDC2_ADDRESS 0x7DC2u    /* 03DDC2 */
@@ -3407,7 +3280,6 @@ extern const void *rom_07FFFE_data;
 #define record_03DDD0_ADDRESS 0x7DD0u    /* 03DDD0 */
 #define indexed_table_03DDD2_ADDRESS 0x7DD2u    /* 03DDD2 */
 #define record_03DDD4_ADDRESS 0x7DD4u    /* 03DDD4 */
-#define loaded_table_03DDD6_ADDRESS 0x7DD6u    /* 03DDD6 */
 #define child_object_03DDE6_ADDRESS 0x7DE6u    /* 03DDE6 */
 #define loaded_table_03DDEC_ADDRESS 0x7DECu    /* 03DDEC */
 #define child_object_03DE14_ADDRESS 0x7E14u    /* 03DE14 */
@@ -3417,14 +3289,12 @@ extern const void *rom_07FFFE_data;
 #define record_03DE52_ADDRESS 0x7E52u    /* 03DE52 */
 #define child_object_03DE54_ADDRESS 0x7E54u    /* 03DE54 */
 #define child_object_03DE5C_ADDRESS 0x7E5Cu    /* 03DE5C */
-#define indexed_table_03DE64_ADDRESS 0x7E64u    /* 03DE64 */
 #define indexed_table_03DE67_ADDRESS 0x7E67u    /* 03DE67 */
 #define indexed_table_03DE6B_ADDRESS 0x7E6Bu    /* 03DE6B */
 #define indexed_table_03DE70_ADDRESS 0x7E70u    /* 03DE70 */
 #define indexed_table_03DE90_ADDRESS 0x7E90u    /* 03DE90 */
 #define record_03DE92_ADDRESS 0x7E92u    /* 03DE92 */
 #define child_object_03DE94_ADDRESS 0x7E94u    /* 03DE94 */
-#define loaded_table_03DE9C_ADDRESS 0x7E9Cu    /* 03DE9C */
 #define loaded_table_03DECC_ADDRESS 0x7ECCu    /* 03DECC */
 #define loaded_table_03DEDC_ADDRESS 0x7EDCu    /* 03DEDC */
 #define child_object_03DF08_ADDRESS 0x7F08u    /* 03DF08 */
@@ -3445,13 +3315,10 @@ extern const void *rom_07FFFE_data;
 #define record_03DF30_ADDRESS 0x7F30u    /* 03DF30 */
 #define indexed_table_03DF32_ADDRESS 0x7F32u    /* 03DF32 */
 #define record_03DF34_ADDRESS 0x7F34u    /* 03DF34 */
-#define indexed_table_03DF36_ADDRESS 0x7F36u    /* 03DF36 */
 #define indexed_table_03DF3D_ADDRESS 0x7F3Du    /* 03DF3D */
 #define indexed_table_03DF42_ADDRESS 0x7F42u    /* 03DF42 */
 #define indexed_table_03DF52_ADDRESS 0x7F52u    /* 03DF52 */
 #define bank_1e_states_ADDRESS 0x7F62u    /* 03DF62 */
-#define loaded_table_03DF7C_ADDRESS 0x7F7Cu    /* 03DF7C */
-#define constant_table_03DF80_ADDRESS 0x7F80u    /* 03DF80 */
 #define indexed_table_03DF9A_ADDRESS 0x7F9Au    /* 03DF9A */
 #define record_03DF9C_ADDRESS 0x7F9Cu    /* 03DF9C */
 #define indexed_table_03DF9E_ADDRESS 0x7F9Eu    /* 03DF9E */
@@ -3529,11 +3396,6 @@ extern const void *rom_07FFFE_data;
 #define loaded_table_0410C5_ADDRESS 0x70C5u    /* 0410C5 */
 #define loaded_table_0410CF_ADDRESS 0x70CFu    /* 0410CF */
 #define loaded_table_0410D9_ADDRESS 0x70D9u    /* 0410D9 */
-#define indexed_table_0410ED_ADDRESS 0x70EDu    /* 0410ED */
-#define indexed_table_0410F2_ADDRESS 0x70F2u    /* 0410F2 */
-#define indexed_table_0410F7_ADDRESS 0x70F7u    /* 0410F7 */
-#define indexed_table_0410FC_ADDRESS 0x70FCu    /* 0410FC */
-#define indexed_table_041101_ADDRESS 0x7101u    /* 041101 */
 #define profile_text_041118_ADDRESS 0x7118u    /* 041118 */
 #define profile_text_04114A_ADDRESS 0x714Au    /* 04114A */
 #define profile_text_041170_ADDRESS 0x7170u    /* 041170 */
@@ -3567,7 +3429,6 @@ extern const void *rom_07FFFE_data;
 #define indexed_table_0416A3_ADDRESS 0x76A3u    /* 0416A3 */
 #define indexed_table_0416F4_ADDRESS 0x76F4u    /* 0416F4 */
 #define indexed_table_041745_ADDRESS 0x7745u    /* 041745 */
-#define loaded_table_04174E_ADDRESS 0x774Eu    /* 04174E */
 #define loaded_table_04177A_ADDRESS 0x777Au    /* 04177A */
 #define fill_0417C4_ADDRESS 0x77C4u    /* 0417C4 */
 #define set_index_042000_ADDRESS 0x6000u    /* 042000 */
@@ -6773,7 +6634,6 @@ extern const void *rom_07FFFE_data;
 #define palettes_05BFA0_ADDRESS 0x7FA0u    /* 05BFA0 */
 #define palettes_05BFC0_ADDRESS 0x7FC0u    /* 05BFC0 */
 #define fill_05BFE0_ADDRESS 0x7FE0u    /* 05BFE0 */
-#define palette_effects_05C000_ADDRESS 0x6000u    /* 05C000 */
 #define palette_effect_05C092_ADDRESS 0x6092u    /* 05C092 */
 #define palette_effect_05C0D7_ADDRESS 0x60D7u    /* 05C0D7 */
 #define palette_effect_05C11B_ADDRESS 0x611Bu    /* 05C11B */
@@ -6903,8 +6763,6 @@ extern const void *rom_07FFFE_data;
 #define test_mode_text_05FA2B_ADDRESS 0x7A2Bu    /* 05FA2B */
 #define test_mode_text_05FA42_ADDRESS 0x7A42u    /* 05FA42 */
 #define test_mode_text_05FA4F_ADDRESS 0x7A4Fu    /* 05FA4F */
-#define test_mode_text_05FA5C_ADDRESS 0x7A5Cu    /* 05FA5C */
-#define test_mode_text_05FA6E_ADDRESS 0x7A6Eu    /* 05FA6E */
 #define test_mode_text_05FA80_ADDRESS 0x7A80u    /* 05FA80 */
 #define test_mode_text_05FA8A_ADDRESS 0x7A8Au    /* 05FA8A */
 #define test_mode_text_05FA8F_ADDRESS 0x7A8Fu    /* 05FA8F */
@@ -6949,7 +6807,7 @@ extern const void *rom_07FFFE_data;
 #define loaded_table_05FD42_ADDRESS 0x7D42u    /* 05FD42 */
 #define loaded_table_05FD78_ADDRESS 0x7D78u    /* 05FD78 */
 #define loaded_table_05FD7C_ADDRESS 0x7D7Cu    /* 05FD7C */
-#define loaded_table_05FDD8_ADDRESS 0x7DD8u    /* 05FDD8 */
+#define fill_05FDE8_ADDRESS 0x7DE8u    /* 05FDE8 */
 #define set_index_060000_ADDRESS 0x6000u    /* 060000 */
 #define animation_table_060008_ADDRESS 0x6008u    /* 060008 */
 #define animation_060108_ADDRESS 0x6108u    /* 060108 */
@@ -11642,7 +11500,6 @@ extern const void *rom_07FFFE_data;
 #define loaded_table_07E41B_ADDRESS 0xE41Bu    /* 07E41B */
 #define loaded_table_07E42B_ADDRESS 0xE42Bu    /* 07E42B */
 #define loaded_table_07E431_ADDRESS 0xE431u    /* 07E431 */
-#define loaded_table_07E445_ADDRESS 0xE445u    /* 07E445 */
 #define indexed_table_07E530_ADDRESS 0xE530u    /* 07E530 */
 #define indexed_table_07E53C_ADDRESS 0xE53Cu    /* 07E53C */
 #define indexed_table_07E548_ADDRESS 0xE548u    /* 07E548 */
@@ -11678,7 +11535,6 @@ extern const void *rom_07FFFE_data;
 #define loaded_table_07E7C1_ADDRESS 0xE7C1u    /* 07E7C1 */
 #define loaded_table_07E7C7_ADDRESS 0xE7C7u    /* 07E7C7 */
 #define loaded_table_07E7CD_ADDRESS 0xE7CDu    /* 07E7CD */
-#define loaded_table_07E7D3_ADDRESS 0xE7D3u    /* 07E7D3 */
 #define loaded_table_07E803_ADDRESS 0xE803u    /* 07E803 */
 #define loaded_table_07E80F_ADDRESS 0xE80Fu    /* 07E80F */
 #define indexed_table_07E89D_ADDRESS 0xE89Du    /* 07E89D */
@@ -11686,8 +11542,6 @@ extern const void *rom_07FFFE_data;
 #define loaded_table_07E971_ADDRESS 0xE971u    /* 07E971 */
 #define loaded_table_07E975_ADDRESS 0xE975u    /* 07E975 */
 #define loaded_table_07E97B_ADDRESS 0xE97Bu    /* 07E97B */
-#define loaded_table_07E97F_ADDRESS 0xE97Fu    /* 07E97F */
-#define loaded_table_07E9BB_ADDRESS 0xE9BBu    /* 07E9BB */
 #define palette_sets_07E9E7_ADDRESS 0xE9E7u    /* 07E9E7 */
 #define palette_sets_07E9FB_ADDRESS 0xE9FBu    /* 07E9FB */
 #define palette_sets_07EA0F_ADDRESS 0xEA0Fu    /* 07EA0F */
@@ -11809,8 +11663,6 @@ extern const void *rom_07FFFE_data;
 #define layer_mode_list_07EFB3_ADDRESS 0xEFB3u    /* 07EFB3 */
 #define tile_picture_place_07EFB7_ADDRESS 0xEFB7u    /* 07EFB7 */
 #define loaded_table_07F019_ADDRESS 0xF019u    /* 07F019 */
-#define indexed_table_07F061_ADDRESS 0xF061u    /* 07F061 */
-#define indexed_table_07F0A2_ADDRESS 0xF0A2u    /* 07F0A2 */
 #define loaded_table_07F134_ADDRESS 0xF134u    /* 07F134 */
 #define hit_box_07F13C_ADDRESS 0xF13Cu    /* 07F13C */
 #define enemy_behaviour_07F144_ADDRESS 0xF144u    /* 07F144 */
@@ -11856,7 +11708,6 @@ extern const void *rom_07FFFE_data;
 #define object_setup_07F290_ADDRESS 0xF290u    /* 07F290 */
 #define loaded_table_07F296_ADDRESS 0xF296u    /* 07F296 */
 #define loaded_table_07F29E_ADDRESS 0xF29Eu    /* 07F29E */
-#define indexed_table_07F2AC_ADDRESS 0xF2ACu    /* 07F2AC */
 #define loaded_table_07F2EC_ADDRESS 0xF2ECu    /* 07F2EC */
 #define loaded_table_07F40D_ADDRESS 0xF40Du    /* 07F40D */
 #define loaded_table_07F4F4_ADDRESS 0xF4F4u    /* 07F4F4 */
@@ -11890,7 +11741,7 @@ struct layer_map
 	uint16_t offset_y2;
 	uint16_t offset_y;
 	uint16_t offset_x;
-	uint16_t unk_08;
+	uint16_t last_scroll_y;
 	uint16_t maps;
 	uint16_t scroll_y;
 	uint16_t scroll_x;
@@ -11908,7 +11759,7 @@ struct spawn
 {
 	uint8_t kind;
 	uint8_t level;
-	uint8_t unk_05;
+	uint8_t state;
 	uint8_t flags;
 	uint8_t depth;
 	int8_t y;
@@ -11939,15 +11790,6 @@ struct path_start
 	uint8_t count_3a;
 	uint8_t count_3b;
 	uint16_t path;
-};
-
-struct demo
-{
-	uint8_t pad_00[0x6];
-	uint16_t inputs;
-	uint8_t step;
-	uint16_t frames;
-	uint8_t players;
 };
 
 struct demo_input
@@ -11984,34 +11826,34 @@ struct behaviour_choice
 	uint8_t state;
 };
 
-struct player
-{
-	uint8_t pad_00[0xA];
-	uint16_t variables_0f;
-	uint8_t number;
-	uint8_t pad_0D[0x2];
-	uint8_t initials;
-	uint16_t variables_09;
-	uint16_t variables_07;
-	uint8_t bit;
-	uint16_t lives;
-	uint16_t variables_02;
-	uint16_t variables_00;
-};
-
 struct gauge_player
 {
-	uint8_t unk_17;
-	uint8_t pad_01[0x14];
-	uint16_t variables;
-	uint8_t unk_00;
+	union
+	{
+		uint16_t status;
+		uint8_t unk_17;
+	};
+	uint16_t score_tiles;
+	uint16_t score;
+	uint8_t unused_11;
+	uint8_t unused_10;
+	uint16_t gauge_tiles;
+	uint16_t health;
+	uint16_t continue_tiles;
+	uint16_t lives_tiles;
+	uint16_t lives;
+	uint16_t unused_04;
+	uint16_t counters;
+	uint8_t number;
+	uint8_t bit;
 };
 
 struct test_player
 {
 	uint8_t button;
-	uint8_t pad_01[0x4];
-	uint8_t unk_0c;
+	uint16_t sound;
+	uint16_t palette_effect;
+	uint8_t palette_set;
 	uint16_t shadow_x;
 	uint16_t shadow_kind;
 	uint16_t z;
@@ -12052,12 +11894,13 @@ struct hit_box
 
 struct part
 {
-	uint16_t unk_06;
-	uint16_t animation;
+	uint16_t unused;
+	uint8_t animation;
 	uint8_t kind;
+	uint8_t type;
 	int8_t dz;
 	int8_t dy;
-	uint8_t speed;
+	uint8_t dx;
 };
 
 struct pattern_start
@@ -12074,6 +11917,651 @@ struct part_offset
 	int8_t dx;
 };
 
+struct bonus_player
+{
+	uint16_t object;
+	uint16_t controls_pressed;
+	uint8_t bit;
+	uint16_t presses;
+};
+
+struct xz_offset
+{
+	int8_t dz;
+	int8_t dx;
+};
+
+struct name_entry_player
+{
+	uint8_t colour;
+	uint16_t score_y;
+	uint16_t score_x;
+	uint16_t place_y;
+	uint16_t place_x;
+	uint16_t repeat_wait;
+	uint16_t tiles;
+	uint16_t controls_held;
+	uint16_t score;
+	uint16_t initials;
+	uint16_t controls_pressed;
+	uint16_t high_score_entry;
+	uint16_t sprites;
+};
+
+struct place_suffix
+{
+	uint8_t second;
+	uint8_t first;
+};
+
+struct name_entry_block
+{
+	uint8_t colour;
+	uint8_t height;
+	uint8_t width;
+	uint16_t tiles;
+};
+
+struct name_entry_column
+{
+	uint8_t palette;
+	uint8_t column;
+};
+
+struct helper_start
+{
+	uint8_t slot;
+	uint16_t x;
+	uint8_t animation;
+};
+
+struct exit_speed
+{
+	uint16_t y_speed;
+	uint16_t x_speed;
+};
+
+struct player_blank
+{
+	uint16_t lisa_place;
+	uint16_t bart_place;
+	uint16_t homer_place;
+	uint16_t marge_place;
+	uint8_t colour;
+	uint8_t tile;
+	uint8_t height;
+	uint8_t width;
+};
+
+struct shake_step
+{
+	uint8_t fraction;
+	int8_t pixels;
+};
+
+struct layer_scroll
+{
+	uint16_t y;
+	uint16_t x;
+};
+
+struct layer_offset_step
+{
+	uint16_t offset_y;
+	uint16_t until;
+};
+
+struct goon_entrance
+{
+	uint8_t attributes;
+	uint8_t wait;
+};
+
+struct descent_start
+{
+	int16_t x_speed;
+	uint16_t x;
+};
+
+struct waiting_hat_goon_start
+{
+	uint8_t flags;
+	uint8_t attributes;
+	uint16_t trigger_x;
+};
+
+struct goon_walk_in_start
+{
+	uint8_t floor_wait;
+	uint8_t wait;
+	uint8_t trigger_x;
+	uint8_t flags;
+};
+
+struct delayed_start
+{
+	uint8_t speed;
+	uint8_t direction;
+	uint8_t floor_wait;
+	uint8_t wait;
+};
+
+struct goon_side_entry
+{
+	uint8_t floor_wait;
+	uint8_t attributes;
+};
+
+struct goon_run_in_start
+{
+	uint8_t floor_wait;
+	uint8_t trigger_x;
+};
+
+struct hat_goon_jump_in_start
+{
+	uint8_t unused;
+	uint8_t wait;
+	uint16_t trigger_x;
+};
+
+struct fat_goon_drop_route
+{
+	uint8_t unused;
+	uint8_t wait;
+	uint8_t floor;
+	uint8_t next_step;
+};
+
+struct timed_spawn
+{
+	uint8_t type;
+	uint8_t state;
+	uint8_t flags;
+	uint8_t players;
+	uint8_t z;
+	uint8_t y;
+	uint8_t x;
+	uint8_t time;
+};
+
+struct door_release
+{
+	uint8_t wait;
+	uint8_t players;
+};
+
+struct krustyland_door
+{
+	uint16_t releases;
+	uint8_t trigger_x;
+	uint8_t wait;
+};
+
+struct prop
+{
+	uint8_t leave_x;
+	uint8_t attributes;
+	uint8_t animation;
+	uint8_t kind;
+};
+
+struct kind_d1_fling
+{
+	int16_t z_speed;
+	int16_t x_speed;
+};
+
+struct cemetery_piece
+{
+	uint8_t unused;
+	uint8_t animation;
+	int16_t z;
+};
+
+struct police_car_arrival
+{
+	uint8_t kind;
+	uint8_t frames;
+	int16_t x_speed;
+};
+
+struct police_car_door
+{
+	uint8_t releases;
+	uint8_t wait;
+	uint8_t trigger_x;
+	uint8_t players;
+};
+
+struct car_door_release
+{
+	uint8_t type;
+	uint8_t state;
+	uint8_t flags;
+	uint8_t dz;
+	int16_t dy;
+	int16_t dx;
+	uint8_t players;
+};
+
+struct floor_column
+{
+	uint8_t row_5;
+	uint8_t row_4;
+	uint8_t row_3;
+	uint8_t row_2;
+	uint8_t row_1;
+	uint8_t row_0;
+};
+
+struct boulder_drop
+{
+	uint8_t unused;
+	uint8_t wait;
+	uint8_t floor;
+	uint8_t bounces;
+};
+
+struct object_16_animation_run
+{
+	uint8_t fourth;
+	uint8_t third;
+	uint8_t second;
+	uint8_t first;
+};
+
+struct running_animal
+{
+	uint8_t quiet;
+	uint8_t attributes;
+	uint8_t animation;
+	uint8_t kind;
+};
+
+struct running_animal_timing
+{
+	uint8_t fast;
+	uint8_t wait;
+};
+
+struct obstacle_drop
+{
+	uint16_t x;
+	uint8_t wait;
+	uint8_t animation;
+};
+
+struct looping_scenery_move
+{
+	uint8_t attributes;
+	uint8_t animation;
+	int16_t x_speed;
+};
+
+struct food_move
+{
+	int16_t z_speed;
+	int16_t x_speed;
+	uint16_t gravity;
+	uint8_t hit_kind;
+	uint8_t animation;
+};
+
+struct bystander_animation_set
+{
+	uint8_t fleeing;
+	uint8_t startled;
+	uint8_t waiting;
+};
+
+struct bystander
+{
+	uint16_t animations;
+	uint8_t place;
+	uint8_t kind;
+};
+
+struct kind_90_start
+{
+	uint8_t throws;
+	uint8_t wait;
+	uint16_t x;
+};
+
+struct clown_pose
+{
+	uint8_t attributes;
+	uint8_t animation;
+};
+
+struct kind_a0_entry
+{
+	uint8_t unused;
+	uint8_t frames;
+	uint16_t x;
+	int16_t x_speed;
+	int16_t z_speed;
+};
+
+struct kind_a0_launch
+{
+	uint16_t parent_x;
+	int16_t z_speed;
+	int16_t y_speed;
+	int16_t x_speed;
+};
+
+struct random_pose_figure
+{
+	uint16_t poses;
+	uint8_t attributes;
+	uint8_t kind;
+};
+
+struct child_object
+{
+	uint8_t type;
+	uint8_t state;
+	uint8_t list;
+	uint8_t dz;
+	int16_t dy;
+	int16_t dx;
+};
+
+struct velocity
+{
+	int16_t y_speed;
+	int16_t x_speed;
+};
+
+struct timed_move
+{
+	uint8_t animation;
+	uint8_t direction;
+	uint8_t travel;
+	uint8_t delay;
+};
+
+struct drop_start
+{
+	uint8_t mode;
+	uint8_t unused;
+	int16_t x_offset;
+};
+
+struct appearance
+{
+	uint8_t unused;
+	uint8_t step;
+	uint8_t flags;
+	uint8_t wait;
+};
+
+struct timed_spot
+{
+	uint8_t x;
+	uint8_t wait;
+};
+
+struct gorilla_entrance
+{
+	uint8_t animation;
+	uint8_t step;
+	uint8_t x;
+	uint8_t flags;
+};
+
+struct knight_entrance
+{
+	uint8_t x;
+	uint8_t kind;
+	uint8_t entrance_kind;
+	uint8_t wait;
+};
+
+struct knight_entrance_style
+{
+	uint8_t slowdown;
+	uint8_t step;
+};
+
+struct pose
+{
+	uint8_t animation;
+	uint8_t flags;
+};
+
+struct robot_piece
+{
+	uint8_t direction;
+	uint8_t animation;
+	uint8_t wait;
+	uint8_t rise;
+};
+
+struct kind_12_part
+{
+	uint8_t height;
+	uint8_t unused;
+	uint8_t wait;
+	uint8_t parent_step;
+};
+
+struct timed_step
+{
+	uint8_t step;
+	uint8_t wait;
+};
+
+struct launch
+{
+	uint8_t time;
+	uint8_t speed;
+};
+
+struct chain_link
+{
+	int8_t box_y_offset;
+	uint8_t animation;
+};
+
+struct door_spawn
+{
+	uint8_t type;
+	uint8_t state;
+	uint8_t list;
+	uint8_t dz;
+	int16_t dy;
+	int16_t dx;
+	uint8_t players;
+};
+
+struct door_opening
+{
+	uint8_t list;
+	uint8_t wait;
+	uint16_t x;
+};
+
+struct player_move
+{
+	uint16_t hit;
+	uint8_t animation;
+	uint8_t state;
+};
+
+struct attack_box
+{
+	int8_t x_offset;
+	uint8_t width;
+};
+
+struct team_move
+{
+	uint8_t facing_second_left;
+	uint8_t facing_second_right;
+	uint16_t sound;
+	uint8_t second_object;
+	uint8_t direction;
+	uint8_t first_object;
+	uint8_t move;
+};
+
+struct state_start
+{
+	uint8_t animation;
+	uint8_t wait;
+};
+
+struct line_piece
+{
+	int8_t dx;
+	uint8_t animation;
+};
+
+struct part_flight
+{
+	uint8_t speed_z;
+	int8_t speed_y;
+	int16_t speed_x;
+};
+
+struct profile_move
+{
+	uint8_t frames;
+	int16_t speed_y;
+	int16_t speed_x;
+};
+
+struct gauge_column
+{
+	uint8_t colour;
+	uint8_t column;
+};
+
+struct big_digit
+{
+	uint8_t unused;
+	uint8_t bottom;
+	uint8_t top;
+	uint8_t attribute;
+};
+
+struct gauge_step
+{
+	uint8_t bottom;
+	uint8_t top;
+};
+
+struct portrait_area
+{
+	uint8_t unused;
+	uint8_t colour;
+	uint16_t tiles;
+};
+
+struct player
+{
+	uint16_t play_status;
+	uint16_t state;
+	uint16_t object_kind;
+	uint16_t object_life;
+	uint16_t controls;
+	uint16_t life;
+	uint8_t number;
+	uint8_t initial_3;
+	uint8_t initial_2;
+	uint8_t initial_1;
+	uint16_t score;
+	uint16_t countdown;
+	uint8_t bit;
+	uint16_t lives;
+	uint16_t credit_given;
+	uint16_t pressed;
+};
+
+struct score_addition
+{
+	uint8_t low;
+	uint8_t high;
+};
+
+struct demo
+{
+	uint16_t lisa_inputs;
+	uint16_t bart_inputs;
+	uint16_t homer_inputs;
+	uint16_t marge_inputs;
+	uint8_t step;
+	uint16_t frames;
+	uint8_t players;
+};
+
+struct scene_routine
+{
+	uint8_t spare;
+	uint16_t routine;
+	uint8_t bank;
+};
+
+struct palette_effect
+{
+	uint8_t delay;
+	uint8_t extra_colours;
+	uint8_t spare;
+	uint8_t stop;
+};
+
+struct palette_effect_step
+{
+	uint16_t colour;
+	uint16_t address;
+};
+
+struct fade_range
+{
+	uint8_t spare;
+	uint16_t address;
+	uint8_t colours;
+};
+
+struct palette_clear
+{
+	uint16_t address;
+	uint16_t extra_bytes;
+};
+
+struct hurt_effect_row
+{
+	uint16_t all_left;
+	uint16_t four_fifths_left;
+	uint16_t three_fifths_left;
+	uint16_t two_fifths_left;
+	uint16_t fifth_left;
+	uint16_t normal;
+};
+
+struct scene_area
+{
+	uint8_t spare;
+	uint8_t bank;
+	uint16_t address;
+};
+
+struct layer_mode
+{
+	uint8_t tile_banks_23;
+	uint8_t tile_banks_01;
+};
+
+struct tile_picture
+{
+	uint8_t colour;
+	uint8_t height;
+	uint8_t width;
+};
+
 #pragma pack(pop)
 
 _Static_assert(sizeof(struct animation_set) == 0x2, "struct animation_set has the size of the program ROM's records");
@@ -12085,13 +12573,11 @@ _Static_assert(sizeof(struct tile_picture_place) == 0x5, "struct tile_picture_pl
 _Static_assert(sizeof(struct test_menu_line) == 0x3, "struct test_menu_line has the size of the program ROM's records");
 _Static_assert(sizeof(struct path_step) == 0x2, "struct path_step has the size of the program ROM's records");
 _Static_assert(sizeof(struct path_start) == 0x4, "struct path_start has the size of the program ROM's records");
-_Static_assert(sizeof(struct demo) == 0xC, "struct demo has the size of the program ROM's records");
 _Static_assert(sizeof(struct demo_input) == 0x2, "struct demo_input has the size of the program ROM's records");
 _Static_assert(sizeof(struct test_palette) == 0x22, "struct test_palette has the size of the program ROM's records");
 _Static_assert(sizeof(struct vector) == 0x3, "struct vector has the size of the program ROM's records");
 _Static_assert(sizeof(struct enemy_behaviour) == 0x58, "struct enemy_behaviour has the size of the program ROM's records");
 _Static_assert(sizeof(struct behaviour_choice) == 0x4, "struct behaviour_choice has the size of the program ROM's records");
-_Static_assert(sizeof(struct player) == 0x1B, "struct player has the size of the program ROM's records");
 _Static_assert(sizeof(struct gauge_player) == 0x18, "struct gauge_player has the size of the program ROM's records");
 _Static_assert(sizeof(struct test_player) == 0x12, "struct test_player has the size of the program ROM's records");
 _Static_assert(sizeof(struct placement) == 0x8, "struct placement has the size of the program ROM's records");
@@ -12101,6 +12587,91 @@ _Static_assert(sizeof(struct hit_box) == 0x8, "struct hit_box has the size of th
 _Static_assert(sizeof(struct part) == 0x8, "struct part has the size of the program ROM's records");
 _Static_assert(sizeof(struct pattern_start) == 0x4, "struct pattern_start has the size of the program ROM's records");
 _Static_assert(sizeof(struct part_offset) == 0x3, "struct part_offset has the size of the program ROM's records");
+_Static_assert(sizeof(struct bonus_player) == 0x7, "struct bonus_player has the size of the program ROM's records");
+_Static_assert(sizeof(struct xz_offset) == 0x2, "struct xz_offset has the size of the program ROM's records");
+_Static_assert(sizeof(struct name_entry_player) == 0x19, "struct name_entry_player has the size of the program ROM's records");
+_Static_assert(sizeof(struct place_suffix) == 0x2, "struct place_suffix has the size of the program ROM's records");
+_Static_assert(sizeof(struct name_entry_block) == 0x5, "struct name_entry_block has the size of the program ROM's records");
+_Static_assert(sizeof(struct name_entry_column) == 0x2, "struct name_entry_column has the size of the program ROM's records");
+_Static_assert(sizeof(struct helper_start) == 0x4, "struct helper_start has the size of the program ROM's records");
+_Static_assert(sizeof(struct exit_speed) == 0x4, "struct exit_speed has the size of the program ROM's records");
+_Static_assert(sizeof(struct player_blank) == 0xC, "struct player_blank has the size of the program ROM's records");
+_Static_assert(sizeof(struct shake_step) == 0x2, "struct shake_step has the size of the program ROM's records");
+_Static_assert(sizeof(struct layer_scroll) == 0x4, "struct layer_scroll has the size of the program ROM's records");
+_Static_assert(sizeof(struct layer_offset_step) == 0x4, "struct layer_offset_step has the size of the program ROM's records");
+_Static_assert(sizeof(struct goon_entrance) == 0x2, "struct goon_entrance has the size of the program ROM's records");
+_Static_assert(sizeof(struct descent_start) == 0x4, "struct descent_start has the size of the program ROM's records");
+_Static_assert(sizeof(struct waiting_hat_goon_start) == 0x4, "struct waiting_hat_goon_start has the size of the program ROM's records");
+_Static_assert(sizeof(struct goon_walk_in_start) == 0x4, "struct goon_walk_in_start has the size of the program ROM's records");
+_Static_assert(sizeof(struct delayed_start) == 0x4, "struct delayed_start has the size of the program ROM's records");
+_Static_assert(sizeof(struct goon_side_entry) == 0x2, "struct goon_side_entry has the size of the program ROM's records");
+_Static_assert(sizeof(struct goon_run_in_start) == 0x2, "struct goon_run_in_start has the size of the program ROM's records");
+_Static_assert(sizeof(struct hat_goon_jump_in_start) == 0x4, "struct hat_goon_jump_in_start has the size of the program ROM's records");
+_Static_assert(sizeof(struct fat_goon_drop_route) == 0x4, "struct fat_goon_drop_route has the size of the program ROM's records");
+_Static_assert(sizeof(struct timed_spawn) == 0x8, "struct timed_spawn has the size of the program ROM's records");
+_Static_assert(sizeof(struct door_release) == 0x2, "struct door_release has the size of the program ROM's records");
+_Static_assert(sizeof(struct krustyland_door) == 0x4, "struct krustyland_door has the size of the program ROM's records");
+_Static_assert(sizeof(struct prop) == 0x4, "struct prop has the size of the program ROM's records");
+_Static_assert(sizeof(struct kind_d1_fling) == 0x4, "struct kind_d1_fling has the size of the program ROM's records");
+_Static_assert(sizeof(struct cemetery_piece) == 0x4, "struct cemetery_piece has the size of the program ROM's records");
+_Static_assert(sizeof(struct police_car_arrival) == 0x4, "struct police_car_arrival has the size of the program ROM's records");
+_Static_assert(sizeof(struct police_car_door) == 0x4, "struct police_car_door has the size of the program ROM's records");
+_Static_assert(sizeof(struct car_door_release) == 0x9, "struct car_door_release has the size of the program ROM's records");
+_Static_assert(sizeof(struct floor_column) == 0x6, "struct floor_column has the size of the program ROM's records");
+_Static_assert(sizeof(struct boulder_drop) == 0x4, "struct boulder_drop has the size of the program ROM's records");
+_Static_assert(sizeof(struct object_16_animation_run) == 0x4, "struct object_16_animation_run has the size of the program ROM's records");
+_Static_assert(sizeof(struct running_animal) == 0x4, "struct running_animal has the size of the program ROM's records");
+_Static_assert(sizeof(struct running_animal_timing) == 0x2, "struct running_animal_timing has the size of the program ROM's records");
+_Static_assert(sizeof(struct obstacle_drop) == 0x4, "struct obstacle_drop has the size of the program ROM's records");
+_Static_assert(sizeof(struct looping_scenery_move) == 0x4, "struct looping_scenery_move has the size of the program ROM's records");
+_Static_assert(sizeof(struct food_move) == 0x8, "struct food_move has the size of the program ROM's records");
+_Static_assert(sizeof(struct bystander_animation_set) == 0x3, "struct bystander_animation_set has the size of the program ROM's records");
+_Static_assert(sizeof(struct bystander) == 0x4, "struct bystander has the size of the program ROM's records");
+_Static_assert(sizeof(struct kind_90_start) == 0x4, "struct kind_90_start has the size of the program ROM's records");
+_Static_assert(sizeof(struct clown_pose) == 0x2, "struct clown_pose has the size of the program ROM's records");
+_Static_assert(sizeof(struct kind_a0_entry) == 0x8, "struct kind_a0_entry has the size of the program ROM's records");
+_Static_assert(sizeof(struct kind_a0_launch) == 0x8, "struct kind_a0_launch has the size of the program ROM's records");
+_Static_assert(sizeof(struct random_pose_figure) == 0x4, "struct random_pose_figure has the size of the program ROM's records");
+_Static_assert(sizeof(struct child_object) == 0x8, "struct child_object has the size of the program ROM's records");
+_Static_assert(sizeof(struct velocity) == 0x4, "struct velocity has the size of the program ROM's records");
+_Static_assert(sizeof(struct timed_move) == 0x4, "struct timed_move has the size of the program ROM's records");
+_Static_assert(sizeof(struct drop_start) == 0x4, "struct drop_start has the size of the program ROM's records");
+_Static_assert(sizeof(struct appearance) == 0x4, "struct appearance has the size of the program ROM's records");
+_Static_assert(sizeof(struct timed_spot) == 0x2, "struct timed_spot has the size of the program ROM's records");
+_Static_assert(sizeof(struct gorilla_entrance) == 0x4, "struct gorilla_entrance has the size of the program ROM's records");
+_Static_assert(sizeof(struct knight_entrance) == 0x4, "struct knight_entrance has the size of the program ROM's records");
+_Static_assert(sizeof(struct knight_entrance_style) == 0x2, "struct knight_entrance_style has the size of the program ROM's records");
+_Static_assert(sizeof(struct pose) == 0x2, "struct pose has the size of the program ROM's records");
+_Static_assert(sizeof(struct robot_piece) == 0x4, "struct robot_piece has the size of the program ROM's records");
+_Static_assert(sizeof(struct kind_12_part) == 0x4, "struct kind_12_part has the size of the program ROM's records");
+_Static_assert(sizeof(struct timed_step) == 0x2, "struct timed_step has the size of the program ROM's records");
+_Static_assert(sizeof(struct launch) == 0x2, "struct launch has the size of the program ROM's records");
+_Static_assert(sizeof(struct chain_link) == 0x2, "struct chain_link has the size of the program ROM's records");
+_Static_assert(sizeof(struct door_spawn) == 0x9, "struct door_spawn has the size of the program ROM's records");
+_Static_assert(sizeof(struct door_opening) == 0x4, "struct door_opening has the size of the program ROM's records");
+_Static_assert(sizeof(struct player_move) == 0x4, "struct player_move has the size of the program ROM's records");
+_Static_assert(sizeof(struct attack_box) == 0x2, "struct attack_box has the size of the program ROM's records");
+_Static_assert(sizeof(struct team_move) == 0x8, "struct team_move has the size of the program ROM's records");
+_Static_assert(sizeof(struct state_start) == 0x2, "struct state_start has the size of the program ROM's records");
+_Static_assert(sizeof(struct line_piece) == 0x2, "struct line_piece has the size of the program ROM's records");
+_Static_assert(sizeof(struct part_flight) == 0x4, "struct part_flight has the size of the program ROM's records");
+_Static_assert(sizeof(struct profile_move) == 0x5, "struct profile_move has the size of the program ROM's records");
+_Static_assert(sizeof(struct gauge_column) == 0x2, "struct gauge_column has the size of the program ROM's records");
+_Static_assert(sizeof(struct big_digit) == 0x4, "struct big_digit has the size of the program ROM's records");
+_Static_assert(sizeof(struct gauge_step) == 0x2, "struct gauge_step has the size of the program ROM's records");
+_Static_assert(sizeof(struct portrait_area) == 0x4, "struct portrait_area has the size of the program ROM's records");
+_Static_assert(sizeof(struct player) == 0x1B, "struct player has the size of the program ROM's records");
+_Static_assert(sizeof(struct score_addition) == 0x2, "struct score_addition has the size of the program ROM's records");
+_Static_assert(sizeof(struct demo) == 0xC, "struct demo has the size of the program ROM's records");
+_Static_assert(sizeof(struct scene_routine) == 0x4, "struct scene_routine has the size of the program ROM's records");
+_Static_assert(sizeof(struct palette_effect) == 0x4, "struct palette_effect has the size of the program ROM's records");
+_Static_assert(sizeof(struct palette_effect_step) == 0x4, "struct palette_effect_step has the size of the program ROM's records");
+_Static_assert(sizeof(struct fade_range) == 0x4, "struct fade_range has the size of the program ROM's records");
+_Static_assert(sizeof(struct palette_clear) == 0x4, "struct palette_clear has the size of the program ROM's records");
+_Static_assert(sizeof(struct hurt_effect_row) == 0xC, "struct hurt_effect_row has the size of the program ROM's records");
+_Static_assert(sizeof(struct scene_area) == 0x4, "struct scene_area has the size of the program ROM's records");
+_Static_assert(sizeof(struct layer_mode) == 0x2, "struct layer_mode has the size of the program ROM's records");
+_Static_assert(sizeof(struct tile_picture) == 0x3, "struct tile_picture has the size of the program ROM's records");
 
 #define ANIMATION_SET(address) ((const struct animation_set *)data_record((address), sizeof(struct animation_set)))
 #define SHADOW_SPRITE(address) ((const struct shadow_sprite *)data_record((address), sizeof(struct shadow_sprite)))
@@ -12111,13 +12682,11 @@ _Static_assert(sizeof(struct part_offset) == 0x3, "struct part_offset has the si
 #define TEST_MENU_LINE(address) ((const struct test_menu_line *)data_record((address), sizeof(struct test_menu_line)))
 #define PATH_STEP(address) ((const struct path_step *)data_record((address), sizeof(struct path_step)))
 #define PATH_START(address) ((const struct path_start *)data_record((address), sizeof(struct path_start)))
-#define DEMO(address) ((const struct demo *)data_record((address), sizeof(struct demo)))
 #define DEMO_INPUT(address) ((const struct demo_input *)data_record((address), sizeof(struct demo_input)))
 #define TEST_PALETTE(address) ((const struct test_palette *)data_record((address), sizeof(struct test_palette)))
 #define VECTOR(address) ((const struct vector *)data_record((address), sizeof(struct vector)))
 #define ENEMY_BEHAVIOUR(address) ((const struct enemy_behaviour *)data_record((address), sizeof(struct enemy_behaviour)))
 #define BEHAVIOUR_CHOICE(address) ((const struct behaviour_choice *)data_record((address), sizeof(struct behaviour_choice)))
-#define PLAYER(address) ((const struct player *)data_record((address), sizeof(struct player)))
 #define GAUGE_PLAYER(address) ((const struct gauge_player *)data_record((address), sizeof(struct gauge_player)))
 #define TEST_PLAYER(address) ((const struct test_player *)data_record((address), sizeof(struct test_player)))
 #define PLACEMENT(address) ((const struct placement *)data_record((address), sizeof(struct placement)))
@@ -12127,17 +12696,219 @@ _Static_assert(sizeof(struct part_offset) == 0x3, "struct part_offset has the si
 #define PART(address) ((const struct part *)data_record((address), sizeof(struct part)))
 #define PATTERN_START(address) ((const struct pattern_start *)data_record((address), sizeof(struct pattern_start)))
 #define PART_OFFSET(address) ((const struct part_offset *)data_record((address), sizeof(struct part_offset)))
+#define BONUS_PLAYER(address) ((const struct bonus_player *)data_record((address), sizeof(struct bonus_player)))
+#define XZ_OFFSET(address) ((const struct xz_offset *)data_record((address), sizeof(struct xz_offset)))
+#define NAME_ENTRY_PLAYER(address) ((const struct name_entry_player *)data_record((address), sizeof(struct name_entry_player)))
+#define SCORE_ADDRESS(address) (*(const uint16_t *)data_record((address), 2))
+#define SCORE_ADDRESS_8(address) (*(const uint8_t *)data_record((address), 1))
+#define SCORE_ADDRESS_32(address) (*(const uint32_t *)data_record((address), 4))
+#define PLACE_SUFFIX(address) ((const struct place_suffix *)data_record((address), sizeof(struct place_suffix)))
+#define NAME_ENTRY_BLOCK(address) ((const struct name_entry_block *)data_record((address), sizeof(struct name_entry_block)))
+#define NAME_ENTRY_COLUMN(address) ((const struct name_entry_column *)data_record((address), sizeof(struct name_entry_column)))
+#define HIGH_SCORE_ICON(address) (*(const uint8_t *)data_record((address), 1))
+#define HIGH_SCORE_ICON_16(address) (*(const uint16_t *)data_record((address), 2))
+#define HIGH_SCORE_ICON_32(address) (*(const uint32_t *)data_record((address), 4))
+#define CHARGE_WAIT(address) (*(const uint16_t *)data_record((address), 2))
+#define CHARGE_WAIT_8(address) (*(const uint8_t *)data_record((address), 1))
+#define CHARGE_WAIT_32(address) (*(const uint32_t *)data_record((address), 4))
+#define HELPER_START(address) ((const struct helper_start *)data_record((address), sizeof(struct helper_start)))
+#define HELPER_DISTANCE(address) (*(const uint16_t *)data_record((address), 2))
+#define HELPER_DISTANCE_8(address) (*(const uint8_t *)data_record((address), 1))
+#define HELPER_DISTANCE_32(address) (*(const uint32_t *)data_record((address), 4))
+#define GAME_TEXT_ENTRY(address) (*(const uint16_t *)data_record((address), 2))
+#define GAME_TEXT_ENTRY_8(address) (*(const uint8_t *)data_record((address), 1))
+#define GAME_TEXT_ENTRY_32(address) (*(const uint32_t *)data_record((address), 4))
+#define EXIT_SPEED(address) ((const struct exit_speed *)data_record((address), sizeof(struct exit_speed)))
+#define PLAYER_BLANK(address) ((const struct player_blank *)data_record((address), sizeof(struct player_blank)))
+#define WAVE_COSINE(address) (*(const uint8_t *)data_record((address), 1))
+#define WAVE_COSINE_16(address) (*(const uint16_t *)data_record((address), 2))
+#define WAVE_COSINE_32(address) (*(const uint32_t *)data_record((address), 4))
+#define SHAKE_STEP(address) ((const struct shake_step *)data_record((address), sizeof(struct shake_step)))
+#define LAYER_SCROLL(address) ((const struct layer_scroll *)data_record((address), sizeof(struct layer_scroll)))
+#define LAYER_OFFSET_STEP(address) ((const struct layer_offset_step *)data_record((address), sizeof(struct layer_offset_step)))
+#define LAYER_STEP_WORD(address) (*(const uint16_t *)data_record((address), 2))
+#define LAYER_STEP_WORD_8(address) (*(const uint8_t *)data_record((address), 1))
+#define LAYER_STEP_WORD_32(address) (*(const uint32_t *)data_record((address), 4))
+#define GOON_ENTRANCE(address) ((const struct goon_entrance *)data_record((address), sizeof(struct goon_entrance)))
+#define DESCENT_START(address) ((const struct descent_start *)data_record((address), sizeof(struct descent_start)))
+#define WAITING_HAT_GOON_START(address) ((const struct waiting_hat_goon_start *)data_record((address), sizeof(struct waiting_hat_goon_start)))
+#define GOON_WALK_IN_START(address) ((const struct goon_walk_in_start *)data_record((address), sizeof(struct goon_walk_in_start)))
+#define DELAYED_START(address) ((const struct delayed_start *)data_record((address), sizeof(struct delayed_start)))
+#define GOON_SIDE_ENTRY(address) ((const struct goon_side_entry *)data_record((address), sizeof(struct goon_side_entry)))
+#define GOON_RUN_IN_START(address) ((const struct goon_run_in_start *)data_record((address), sizeof(struct goon_run_in_start)))
+#define HAT_GOON_JUMP_IN_START(address) ((const struct hat_goon_jump_in_start *)data_record((address), sizeof(struct hat_goon_jump_in_start)))
+#define FAT_GOON_DROP_ROUTE(address) ((const struct fat_goon_drop_route *)data_record((address), sizeof(struct fat_goon_drop_route)))
+#define TIMED_SPAWN(address) ((const struct timed_spawn *)data_record((address), sizeof(struct timed_spawn)))
+#define DOOR_RELEASE(address) ((const struct door_release *)data_record((address), sizeof(struct door_release)))
+#define KRUSTYLAND_DOOR(address) ((const struct krustyland_door *)data_record((address), sizeof(struct krustyland_door)))
+#define PROP(address) ((const struct prop *)data_record((address), sizeof(struct prop)))
+#define KIND_D1_FLING(address) ((const struct kind_d1_fling *)data_record((address), sizeof(struct kind_d1_fling)))
+#define CEMETERY_PIECE(address) ((const struct cemetery_piece *)data_record((address), sizeof(struct cemetery_piece)))
+#define POLICE_CAR_ARRIVAL(address) ((const struct police_car_arrival *)data_record((address), sizeof(struct police_car_arrival)))
+#define POLICE_CAR_DOOR(address) ((const struct police_car_door *)data_record((address), sizeof(struct police_car_door)))
+#define CAR_DOOR_RELEASE(address) ((const struct car_door_release *)data_record((address), sizeof(struct car_door_release)))
+#define FLOOR_COLUMN(address) ((const struct floor_column *)data_record((address), sizeof(struct floor_column)))
+#define BOULDER_DROP(address) ((const struct boulder_drop *)data_record((address), sizeof(struct boulder_drop)))
+#define OBJECT_16_ANIMATION_RUN(address) ((const struct object_16_animation_run *)data_record((address), sizeof(struct object_16_animation_run)))
+#define RUNNING_ANIMAL(address) ((const struct running_animal *)data_record((address), sizeof(struct running_animal)))
+#define RUNNING_ANIMAL_TIMING(address) ((const struct running_animal_timing *)data_record((address), sizeof(struct running_animal_timing)))
+#define OBSTACLE_DROP(address) ((const struct obstacle_drop *)data_record((address), sizeof(struct obstacle_drop)))
+#define LOOPING_SCENERY_MOVE(address) ((const struct looping_scenery_move *)data_record((address), sizeof(struct looping_scenery_move)))
+#define FOOD_MOVE(address) ((const struct food_move *)data_record((address), sizeof(struct food_move)))
+#define BYSTANDER_ANIMATION_SET(address) ((const struct bystander_animation_set *)data_record((address), sizeof(struct bystander_animation_set)))
+#define BYSTANDER(address) ((const struct bystander *)data_record((address), sizeof(struct bystander)))
+#define KIND_90_START(address) ((const struct kind_90_start *)data_record((address), sizeof(struct kind_90_start)))
+#define KIND_88_ATTRIBUTES(address) (*(const uint8_t *)data_record((address), 1))
+#define KIND_88_ATTRIBUTES_16(address) (*(const uint16_t *)data_record((address), 2))
+#define KIND_88_ATTRIBUTES_32(address) (*(const uint32_t *)data_record((address), 4))
+#define CLOWN_POSE(address) ((const struct clown_pose *)data_record((address), sizeof(struct clown_pose)))
+#define KIND_A0_ENTRY(address) ((const struct kind_a0_entry *)data_record((address), sizeof(struct kind_a0_entry)))
+#define KIND_A0_LAUNCH(address) ((const struct kind_a0_launch *)data_record((address), sizeof(struct kind_a0_launch)))
+#define RANDOM_POSE_FIGURE(address) ((const struct random_pose_figure *)data_record((address), sizeof(struct random_pose_figure)))
+#define CHILD_OBJECT(address) ((const struct child_object *)data_record((address), sizeof(struct child_object)))
+#define VELOCITY(address) ((const struct velocity *)data_record((address), sizeof(struct velocity)))
+#define BOB_HEIGHT(address) (*(const int8_t *)data_record((address), 1))
+#define BOB_HEIGHT_16(address) (*(const uint16_t *)data_record((address), 2))
+#define BOB_HEIGHT_32(address) (*(const uint32_t *)data_record((address), 4))
+#define TIMED_MOVE(address) ((const struct timed_move *)data_record((address), sizeof(struct timed_move)))
+#define DROP_START(address) ((const struct drop_start *)data_record((address), sizeof(struct drop_start)))
+#define APPEARANCE(address) ((const struct appearance *)data_record((address), sizeof(struct appearance)))
+#define TIMED_SPOT(address) ((const struct timed_spot *)data_record((address), sizeof(struct timed_spot)))
+#define GORILLA_ENTRANCE(address) ((const struct gorilla_entrance *)data_record((address), sizeof(struct gorilla_entrance)))
+#define KNIGHT_ENTRANCE(address) ((const struct knight_entrance *)data_record((address), sizeof(struct knight_entrance)))
+#define KNIGHT_ENTRANCE_STYLE(address) ((const struct knight_entrance_style *)data_record((address), sizeof(struct knight_entrance_style)))
+#define POSE(address) ((const struct pose *)data_record((address), sizeof(struct pose)))
+#define ROBOT_PIECE(address) ((const struct robot_piece *)data_record((address), sizeof(struct robot_piece)))
+#define KIND_12_PART(address) ((const struct kind_12_part *)data_record((address), sizeof(struct kind_12_part)))
+#define TIMED_STEP(address) ((const struct timed_step *)data_record((address), sizeof(struct timed_step)))
+#define OBJECT_1A_LEVEL(address) (*(const uint8_t *)data_record((address), 1))
+#define OBJECT_1A_LEVEL_16(address) (*(const uint16_t *)data_record((address), 2))
+#define OBJECT_1A_LEVEL_32(address) (*(const uint32_t *)data_record((address), 4))
+#define LAUNCH(address) ((const struct launch *)data_record((address), sizeof(struct launch)))
+#define CHAIN_LINK(address) ((const struct chain_link *)data_record((address), sizeof(struct chain_link)))
+#define DOOR_SPAWN(address) ((const struct door_spawn *)data_record((address), sizeof(struct door_spawn)))
+#define DOOR_OPENING(address) ((const struct door_opening *)data_record((address), sizeof(struct door_opening)))
+#define PLAYER_MOVE(address) ((const struct player_move *)data_record((address), sizeof(struct player_move)))
+#define ATTACK_BOX(address) ((const struct attack_box *)data_record((address), sizeof(struct attack_box)))
+#define TEAM_MOVE(address) ((const struct team_move *)data_record((address), sizeof(struct team_move)))
+#define SECOND_OBJECT_FACING(address) (*(const uint8_t *)data_record((address), 1))
+#define SECOND_OBJECT_FACING_16(address) (*(const uint16_t *)data_record((address), 2))
+#define SECOND_OBJECT_FACING_32(address) (*(const uint32_t *)data_record((address), 4))
+#define STATE_START(address) ((const struct state_start *)data_record((address), sizeof(struct state_start)))
+#define BEATEN_HEALTH(address) (*(const uint8_t *)data_record((address), 1))
+#define BEATEN_HEALTH_16(address) (*(const uint16_t *)data_record((address), 2))
+#define BEATEN_HEALTH_32(address) (*(const uint32_t *)data_record((address), 4))
+#define QUICK_ATTACK_CHANCE(address) (*(const uint8_t *)data_record((address), 1))
+#define QUICK_ATTACK_CHANCE_16(address) (*(const uint16_t *)data_record((address), 2))
+#define QUICK_ATTACK_CHANCE_32(address) (*(const uint32_t *)data_record((address), 4))
+#define WALK_SPEED(address) (*(const uint8_t *)data_record((address), 1))
+#define WALK_SPEED_16(address) (*(const uint16_t *)data_record((address), 2))
+#define WALK_SPEED_32(address) (*(const uint32_t *)data_record((address), 4))
+#define LINE_PIECE(address) ((const struct line_piece *)data_record((address), sizeof(struct line_piece)))
+#define PART_FLIGHT(address) ((const struct part_flight *)data_record((address), sizeof(struct part_flight)))
+#define PROFILE_MOVE(address) ((const struct profile_move *)data_record((address), sizeof(struct profile_move)))
+#define GAUGE_COLUMN(address) ((const struct gauge_column *)data_record((address), sizeof(struct gauge_column)))
+#define BIG_DIGIT(address) ((const struct big_digit *)data_record((address), sizeof(struct big_digit)))
+#define GAUGE_STEP(address) ((const struct gauge_step *)data_record((address), sizeof(struct gauge_step)))
+#define RANK_AMOUNT(address) (*(const uint8_t *)data_record((address), 1))
+#define RANK_AMOUNT_16(address) (*(const uint16_t *)data_record((address), 2))
+#define RANK_AMOUNT_32(address) (*(const uint32_t *)data_record((address), 4))
+#define PORTRAIT_AREA(address) ((const struct portrait_area *)data_record((address), sizeof(struct portrait_area)))
+#define SOUND_TEST_COMMAND(address) (*(const uint16_t *)data_record((address), 2))
+#define SOUND_TEST_COMMAND_8(address) (*(const uint8_t *)data_record((address), 1))
+#define SOUND_TEST_COMMAND_32(address) (*(const uint32_t *)data_record((address), 4))
+#define PLAYER(address) ((const struct player *)data_record((address), sizeof(struct player)))
+#define SCORE_ADDITION(address) ((const struct score_addition *)data_record((address), sizeof(struct score_addition)))
+#define DEMO(address) ((const struct demo *)data_record((address), sizeof(struct demo)))
+#define SCENE_ROUTINE(address) ((const struct scene_routine *)data_record((address), sizeof(struct scene_routine)))
+#define PALETTE_EFFECT(address) ((const struct palette_effect *)data_record((address), sizeof(struct palette_effect)))
+#define PALETTE_EFFECT_STEP(address) ((const struct palette_effect_step *)data_record((address), sizeof(struct palette_effect_step)))
+#define PALETTE_SET(address) (*(const uint16_t *)data_record((address), 2))
+#define PALETTE_SET_8(address) (*(const uint8_t *)data_record((address), 1))
+#define PALETTE_SET_32(address) (*(const uint32_t *)data_record((address), 4))
+#define FADE_RANGE(address) ((const struct fade_range *)data_record((address), sizeof(struct fade_range)))
+#define PALETTE_CLEAR(address) ((const struct palette_clear *)data_record((address), sizeof(struct palette_clear)))
+#define HURT_EFFECT_ROW(address) ((const struct hurt_effect_row *)data_record((address), sizeof(struct hurt_effect_row)))
+#define ANIMATION_SET_INDEX(address) (*(const uint16_t *)data_record((address), 2))
+#define ANIMATION_SET_INDEX_8(address) (*(const uint8_t *)data_record((address), 1))
+#define ANIMATION_SET_INDEX_32(address) (*(const uint32_t *)data_record((address), 4))
+#define ANIMATION_TABLE(address) (*(const uint16_t *)data_record((address), 2))
+#define ANIMATION_TABLE_8(address) (*(const uint8_t *)data_record((address), 1))
+#define ANIMATION_TABLE_32(address) (*(const uint32_t *)data_record((address), 4))
+#define SCENE_AREA(address) ((const struct scene_area *)data_record((address), sizeof(struct scene_area)))
+#define SCENE_AREA_LIST(address) (*(const uint16_t *)data_record((address), 2))
+#define SCENE_AREA_LIST_8(address) (*(const uint8_t *)data_record((address), 1))
+#define SCENE_AREA_LIST_32(address) (*(const uint32_t *)data_record((address), 4))
+#define LAYER_MODE(address) ((const struct layer_mode *)data_record((address), sizeof(struct layer_mode)))
+#define LAYER_MODE_LIST(address) (*(const uint16_t *)data_record((address), 2))
+#define LAYER_MODE_LIST_8(address) (*(const uint8_t *)data_record((address), 1))
+#define LAYER_MODE_LIST_32(address) (*(const uint32_t *)data_record((address), 4))
+#define TILE_PICTURE(address) ((const struct tile_picture *)data_record((address), sizeof(struct tile_picture)))
+#define TILE_PICTURE_ENTRY(address) (*(const uint16_t *)data_record((address), 2))
+#define TILE_PICTURE_ENTRY_8(address) (*(const uint8_t *)data_record((address), 1))
+#define TILE_PICTURE_ENTRY_32(address) (*(const uint32_t *)data_record((address), 4))
+#define HIT_ANIMATION(address) (*(const uint8_t *)data_record((address), 1))
+#define HIT_ANIMATION_16(address) (*(const uint16_t *)data_record((address), 2))
+#define HIT_ANIMATION_32(address) (*(const uint32_t *)data_record((address), 4))
 
 /* the program ROM's tables of records, by name: name[i].field */
+#define bonus_1_players_ADDRESS 0x7BD0u    /* 021BD0 */
+extern const void *bonus_1_players_data;
+#define bonus_1_players ((const struct bonus_player *)(bonus_1_players_data))
+#define bonus_placement_records_ADDRESS 0x7C38u    /* 021C38 */
+extern const void *bonus_placement_records_data;
+#define bonus_placement_records ((const struct placement *)(bonus_placement_records_data))
+#define bonus_2_level_object_offsets_ADDRESS 0x7D71u    /* 021D71 */
+extern const void *bonus_2_level_object_offsets_data;
+#define bonus_2_level_object_offsets ((const struct xz_offset *)(bonus_2_level_object_offsets_data))
+#define wrestler_hit_boxes_ADDRESS 0x7E99u    /* 021E99 */
+extern const void *wrestler_hit_boxes_data;
+#define wrestler_hit_boxes ((const struct hit_box *)(wrestler_hit_boxes_data))
+#define place_suffixes_ADDRESS 0x751Eu    /* 02351E */
+extern const void *place_suffixes_data;
+#define place_suffixes ((const struct place_suffix *)(place_suffixes_data))
+#define name_entry_players_ADDRESS 0x753Au    /* 02353A */
+extern const void *name_entry_players_data;
+#define name_entry_players ((const struct name_entry_player *)(name_entry_players_data))
+#define name_entry_columns_ADDRESS 0x767Bu    /* 02367B */
+extern const void *name_entry_columns_data;
+#define name_entry_columns ((const struct name_entry_column *)(name_entry_columns_data))
+#define ending_placements_ADDRESS 0x7706u    /* 023706 */
+extern const void *ending_placements_data;
+#define ending_placements ((const struct placement *)(ending_placements_data))
+#define stage_7_boss_hit_boxes_ADDRESS 0x7A71u    /* 023A71 */
+extern const void *stage_7_boss_hit_boxes_data;
+#define stage_7_boss_hit_boxes ((const struct hit_box *)(stage_7_boss_hit_boxes_data))
+#define stage_7_boss_helper_starts_ADDRESS 0x7AD9u    /* 023AD9 */
+extern const void *stage_7_boss_helper_starts_data;
+#define stage_7_boss_helper_starts ((const struct helper_start *)(stage_7_boss_helper_starts_data))
 #define object_12_placements_ADDRESS 0x77BAu    /* 0257BA */
 extern const void *object_12_placements_data;
 #define object_12_placements ((const struct placement *)(object_12_placements_data))
 #define unused_player_kinds_025952_ADDRESS 0x7952u    /* 025952 */
 extern const void *unused_player_kinds_025952_data;
 #define unused_player_kinds_025952 ((const struct player_kind *)(unused_player_kinds_025952_data))
+#define stage_end_exit_speeds_ADDRESS 0x7966u    /* 025966 */
+extern const void *stage_end_exit_speeds_data;
+#define stage_end_exit_speeds ((const struct exit_speed *)(stage_end_exit_speeds_data))
 #define stage_slots_ADDRESS 0x600Cu    /* 02600C */
 extern const void *stage_slots_data;
 #define stage_slots ((const struct stage_slot *)(stage_slots_data))
+#define screen_shake_steps_ADDRESS 0x7A00u    /* 027A00 */
+extern const void *screen_shake_steps_data;
+#define screen_shake_steps ((const struct shake_step *)(screen_shake_steps_data))
+#define layer_scrolls_ADDRESS 0x7A3Bu    /* 027A3B */
+extern const void *layer_scrolls_data;
+#define layer_scrolls ((const struct layer_scroll *)(layer_scrolls_data))
+#define stage_3_part_2_layer_offsets_ADDRESS 0x7A5Bu    /* 027A5B */
+extern const void *stage_3_part_2_layer_offsets_data;
+#define stage_3_part_2_layer_offsets ((const struct layer_offset_step *)(stage_3_part_2_layer_offsets_data))
+#define krusty_balloon_hit_boxes_ADDRESS 0x7CD0u    /* 027CD0 */
+extern const void *krusty_balloon_hit_boxes_data;
+#define krusty_balloon_hit_boxes ((const struct hit_box *)(krusty_balloon_hit_boxes_data))
+#define stage_title_placements_ADDRESS 0x7E81u    /* 027E81 */
+extern const void *stage_title_placements_data;
+#define stage_title_placements ((const struct placement *)(stage_title_placements_data))
 #define empty_vectors_02807E_ADDRESS 0x607Eu    /* 02807E */
 extern const void *empty_vectors_02807E_data;
 #define empty_vectors_02807E ((const struct vector *)(empty_vectors_02807E_data))
@@ -12147,24 +12918,168 @@ extern const void *empty_vector_0280B1_data;
 #define empty_vector_0280BD_ADDRESS 0x60BDu    /* 0280BD */
 extern const void *empty_vector_0280BD_data;
 #define empty_vector_0280BD ((const struct vector *)(empty_vector_0280BD_data))
+#define goon_descent_starts_ADDRESS 0x79F4u    /* 0299F4 */
+extern const void *goon_descent_starts_data;
+#define goon_descent_starts ((const struct descent_start *)(goon_descent_starts_data))
+#define waiting_hat_goon_starts_ADDRESS 0x7A86u    /* 029A86 */
+extern const void *waiting_hat_goon_starts_data;
+#define waiting_hat_goon_starts ((const struct waiting_hat_goon_start *)(waiting_hat_goon_starts_data))
+#define goon_walk_in_starts_ADDRESS 0x7AAEu    /* 029AAE */
+extern const void *goon_walk_in_starts_data;
+#define goon_walk_in_starts ((const struct goon_walk_in_start *)(goon_walk_in_starts_data))
+#define delayed_goon_starts_ADDRESS 0x7AD2u    /* 029AD2 */
+extern const void *delayed_goon_starts_data;
+#define delayed_goon_starts ((const struct delayed_start *)(delayed_goon_starts_data))
+#define goon_entrances_ADDRESS 0x7B16u    /* 029B16 */
+extern const void *goon_entrances_data;
+#define goon_entrances ((const struct goon_entrance *)(goon_entrances_data))
+#define goon_side_entries_ADDRESS 0x7B68u    /* 029B68 */
+extern const void *goon_side_entries_data;
+#define goon_side_entries ((const struct goon_side_entry *)(goon_side_entries_data))
+#define goon_run_in_starts_ADDRESS 0x7B7Eu    /* 029B7E */
+extern const void *goon_run_in_starts_data;
+#define goon_run_in_starts ((const struct goon_run_in_start *)(goon_run_in_starts_data))
+#define hat_goon_jump_in_starts_ADDRESS 0x7B98u    /* 029B98 */
+extern const void *hat_goon_jump_in_starts_data;
+#define hat_goon_jump_in_starts ((const struct hat_goon_jump_in_start *)(hat_goon_jump_in_starts_data))
+#define fat_goon_drop_routes_ADDRESS 0x7822u    /* 02B822 */
+extern const void *fat_goon_drop_routes_data;
+#define fat_goon_drop_routes ((const struct fat_goon_drop_route *)(fat_goon_drop_routes_data))
+#define fat_goon_entrances_ADDRESS 0x784Au    /* 02B84A */
+extern const void *fat_goon_entrances_data;
+#define fat_goon_entrances ((const struct goon_entrance *)(fat_goon_entrances_data))
+#define delayed_fat_goon_starts_ADDRESS 0x78C0u    /* 02B8C0 */
+extern const void *delayed_fat_goon_starts_data;
+#define delayed_fat_goon_starts ((const struct delayed_start *)(delayed_fat_goon_starts_data))
+#define fat_goon_descent_starts_ADDRESS 0x78EEu    /* 02B8EE */
+extern const void *fat_goon_descent_starts_data;
+#define fat_goon_descent_starts ((const struct descent_start *)(fat_goon_descent_starts_data))
+#define krustyland_doors_ADDRESS 0x7DC2u    /* 02BDC2 */
+extern const void *krustyland_doors_data;
+#define krustyland_doors ((const struct krustyland_door *)(krustyland_doors_data))
+#define props_ADDRESS 0x7E23u    /* 02BE23 */
+extern const void *props_data;
+#define props ((const struct prop *)(props_data))
+#define kind_d1_flings_ADDRESS 0x7E89u    /* 02BE89 */
+extern const void *kind_d1_flings_data;
+#define kind_d1_flings ((const struct kind_d1_fling *)(kind_d1_flings_data))
+#define cemetery_pieces_ADDRESS 0x7EA5u    /* 02BEA5 */
+extern const void *cemetery_pieces_data;
+#define cemetery_pieces ((const struct cemetery_piece *)(cemetery_pieces_data))
+#define police_car_arrivals_ADDRESS 0x7F69u    /* 02BF69 */
+extern const void *police_car_arrivals_data;
+#define police_car_arrivals ((const struct police_car_arrival *)(police_car_arrivals_data))
 #define empty_vectors_02C030_ADDRESS 0x6030u    /* 02C030 */
 extern const void *empty_vectors_02C030_data;
 #define empty_vectors_02C030 ((const struct vector *)(empty_vectors_02C030_data))
 #define empty_vector_02C057_ADDRESS 0x6057u    /* 02C057 */
 extern const void *empty_vector_02C057_data;
 #define empty_vector_02C057 ((const struct vector *)(empty_vector_02C057_data))
+#define kind_10_edge_floor_cells_ADDRESS 0x7C12u    /* 02DC12 */
+extern const void *kind_10_edge_floor_cells_data;
+#define kind_10_edge_floor_cells ((const struct floor_column *)(kind_10_edge_floor_cells_data))
+#define kind_10_floor_cells_ADDRESS 0x7C18u    /* 02DC18 */
+extern const void *kind_10_floor_cells_data;
+#define kind_10_floor_cells ((const struct floor_column *)(kind_10_floor_cells_data))
+#define police_car_doors_ADDRESS 0x7C2Eu    /* 02DC2E */
+extern const void *police_car_doors_data;
+#define police_car_doors ((const struct police_car_door *)(police_car_doors_data))
+#define boulder_drops_ADDRESS 0x7DF5u    /* 02DDF5 */
+extern const void *boulder_drops_data;
+#define boulder_drops ((const struct boulder_drop *)(boulder_drops_data))
 #define object_16_kinds_ADDRESS 0x7E3Fu    /* 02DE3F */
 extern const void *object_16_kinds_data;
 #define object_16_kinds ((const struct pattern_start *)(object_16_kinds_data))
+#define object_16_animation_runs_ADDRESS 0x7E95u    /* 02DE95 */
+extern const void *object_16_animation_runs_data;
+#define object_16_animation_runs ((const struct object_16_animation_run *)(object_16_animation_runs_data))
+#define running_animals_ADDRESS 0x7EF9u    /* 02DEF9 */
+extern const void *running_animals_data;
+#define running_animals ((const struct running_animal *)(running_animals_data))
+#define running_animal_timings_ADDRESS 0x7F05u    /* 02DF05 */
+extern const void *running_animal_timings_data;
+#define running_animal_timings ((const struct running_animal_timing *)(running_animal_timings_data))
+#define dreamland_obstacle_drops_ADDRESS 0x7F47u    /* 02DF47 */
+extern const void *dreamland_obstacle_drops_data;
+#define dreamland_obstacle_drops ((const struct obstacle_drop *)(dreamland_obstacle_drops_data))
+#define looping_scenery_moves_ADDRESS 0x7A12u    /* 02FA12 */
+extern const void *looping_scenery_moves_data;
+#define looping_scenery_moves ((const struct looping_scenery_move *)(looping_scenery_moves_data))
+#define food_moves_ADDRESS 0x7AA4u    /* 02FAA4 */
+extern const void *food_moves_data;
+#define food_moves ((const struct food_move *)(food_moves_data))
+#define bystanders_ADDRESS 0x7BCBu    /* 02FBCB */
+extern const void *bystanders_data;
+#define bystanders ((const struct bystander *)(bystanders_data))
+#define bystander_animation_sets_ADDRESS 0x7BD3u    /* 02FBD3 */
+extern const void *bystander_animation_sets_data;
+#define bystander_animation_sets ((const struct bystander_animation_set *)(bystander_animation_sets_data))
+#define kind_90_starts_ADDRESS 0x7C59u    /* 02FC59 */
+extern const void *kind_90_starts_data;
+#define kind_90_starts ((const struct kind_90_start *)(kind_90_starts_data))
+#define clown_on_ball_poses_ADDRESS 0x7E6Bu    /* 02FE6B */
+extern const void *clown_on_ball_poses_data;
+#define clown_on_ball_poses ((const struct clown_pose *)(clown_on_ball_poses_data))
+#define kind_a0_entries_ADDRESS 0x7F6Bu    /* 02FF6B */
+extern const void *kind_a0_entries_data;
+#define kind_a0_entries ((const struct kind_a0_entry *)(kind_a0_entries_data))
+#define kind_a0_launches_ADDRESS 0x7F8Bu    /* 02FF8B */
+extern const void *kind_a0_launches_data;
+#define kind_a0_launches ((const struct kind_a0_launch *)(kind_a0_launches_data))
+#define random_pose_figures_ADDRESS 0x7FADu    /* 02FFAD */
+extern const void *random_pose_figures_data;
+#define random_pose_figures ((const struct random_pose_figure *)(random_pose_figures_data))
+#define kind_97_timed_moves_ADDRESS 0x7988u    /* 031988 */
+extern const void *kind_97_timed_moves_data;
+#define kind_97_timed_moves ((const struct timed_move *)(kind_97_timed_moves_data))
 #define object_18_behaviours_ADDRESS 0x79DAu    /* 0319DA */
 extern const void *object_18_behaviours_data;
 #define object_18_behaviours ((const struct behaviour_choice *)(object_18_behaviours_data))
+#define kind_9a_drop_starts_ADDRESS 0x7A30u    /* 031A30 */
+extern const void *kind_9a_drop_starts_data;
+#define kind_9a_drop_starts ((const struct drop_start *)(kind_9a_drop_starts_data))
+#define kind_91_appearances_ADDRESS 0x7A56u    /* 031A56 */
+extern const void *kind_91_appearances_data;
+#define kind_91_appearances ((const struct appearance *)(kind_91_appearances_data))
+#define kind_97_entrances_ADDRESS 0x7AF8u    /* 031AF8 */
+extern const void *kind_97_entrances_data;
+#define kind_97_entrances ((const struct timed_spot *)(kind_97_entrances_data))
+#define gorilla_entrances_ADDRESS 0x7C3Bu    /* 031C3B */
+extern const void *gorilla_entrances_data;
+#define gorilla_entrances ((const struct gorilla_entrance *)(gorilla_entrances_data))
+#define knight_entrances_ADDRESS 0x7CF7u    /* 031CF7 */
+extern const void *knight_entrances_data;
+#define knight_entrances ((const struct knight_entrance *)(knight_entrances_data))
+#define knight_entrance_styles_ADDRESS 0x7D51u    /* 031D51 */
+extern const void *knight_entrance_styles_data;
+#define knight_entrance_styles ((const struct knight_entrance_style *)(knight_entrance_styles_data))
+#define kind_c7_slow_velocities_ADDRESS 0x7E20u    /* 031E20 */
+extern const void *kind_c7_slow_velocities_data;
+#define kind_c7_slow_velocities ((const struct velocity *)(kind_c7_slow_velocities_data))
+#define kind_c7_fast_velocities_ADDRESS 0x7E60u    /* 031E60 */
+extern const void *kind_c7_fast_velocities_data;
+#define kind_c7_fast_velocities ((const struct velocity *)(kind_c7_fast_velocities_data))
 #define unused_hit_box_031ED8_ADDRESS 0x7ED8u    /* 031ED8 */
 extern const void *unused_hit_box_031ED8_data;
 #define unused_hit_box_031ED8 ((const struct hit_box *)(unused_hit_box_031ED8_data))
+#define kind_8e_poses_ADDRESS 0x7F52u    /* 031F52 */
+extern const void *kind_8e_poses_data;
+#define kind_8e_poses ((const struct pose *)(kind_8e_poses_data))
 #define empty_vector_032024_ADDRESS 0x6024u    /* 032024 */
 extern const void *empty_vector_032024_data;
 #define empty_vector_032024 ((const struct vector *)(empty_vector_032024_data))
+#define robot_pieces_ADDRESS 0x7B10u    /* 033B10 */
+extern const void *robot_pieces_data;
+#define robot_pieces ((const struct robot_piece *)(robot_pieces_data))
+#define kind_12_parts_ADDRESS 0x7D96u    /* 033D96 */
+extern const void *kind_12_parts_data;
+#define kind_12_parts ((const struct kind_12_part *)(kind_12_parts_data))
+#define kind_b7_entrances_ADDRESS 0x7E32u    /* 033E32 */
+extern const void *kind_b7_entrances_data;
+#define kind_b7_entrances ((const struct timed_step *)(kind_b7_entrances_data))
+#define kind_b8_velocities_ADDRESS 0x7F55u    /* 033F55 */
+extern const void *kind_b8_velocities_data;
+#define kind_b8_velocities ((const struct velocity *)(kind_b8_velocities_data))
 #define empty_vectors_034000_ADDRESS 0x6000u    /* 034000 */
 extern const void *empty_vectors_034000_data;
 #define empty_vectors_034000 ((const struct vector *)(empty_vectors_034000_data))
@@ -12174,24 +13089,84 @@ extern const void *unused_spawn_list_0354C5_data;
 #define unused_spawn_0356DD_ADDRESS 0x76DDu    /* 0356DD */
 extern const void *unused_spawn_0356DD_data;
 #define unused_spawn_0356DD ((const struct spawn *)(unused_spawn_0356DD_data))
+#define object_1a_launches_ADDRESS 0x7926u    /* 035926 */
+extern const void *object_1a_launches_data;
+#define object_1a_launches ((const struct launch *)(object_1a_launches_data))
+#define object_1a_chain_links_ADDRESS 0x79A6u    /* 0359A6 */
+extern const void *object_1a_chain_links_data;
+#define object_1a_chain_links ((const struct chain_link *)(object_1a_chain_links_data))
 #define object_1a_path_starts_ADDRESS 0x79E4u    /* 0359E4 */
 extern const void *object_1a_path_starts_data;
 #define object_1a_path_starts ((const struct path_start *)(object_1a_path_starts_data))
+#define door_spawns_ADDRESS 0x6458u    /* 036458 */
+extern const void *door_spawns_data;
+#define door_spawns ((const struct door_spawn *)(door_spawns_data))
+#define kind_12_door_openings_ADDRESS 0x6488u    /* 036488 */
+extern const void *kind_12_door_openings_data;
+#define kind_12_door_openings ((const struct door_opening *)(kind_12_door_openings_data))
+#define kind_10_door_openings_ADDRESS 0x64FEu    /* 0364FE */
+extern const void *kind_10_door_openings_data;
+#define kind_10_door_openings ((const struct door_opening *)(kind_10_door_openings_data))
+#define kind_0f_door_openings_ADDRESS 0x654Du    /* 03654D */
+extern const void *kind_0f_door_openings_data;
+#define kind_0f_door_openings ((const struct door_opening *)(kind_0f_door_openings_data))
+#define object_1c_moves_ADDRESS 0x7DF7u    /* 039DF7 */
+extern const void *object_1c_moves_data;
+#define object_1c_moves ((const struct player_move *)(object_1c_moves_data))
+#define team_moves_ADDRESS 0x7EB1u    /* 039EB1 */
+extern const void *team_moves_data;
+#define team_moves ((const struct team_move *)(team_moves_data))
+#define player_walk_velocities_ADDRESS 0x7F21u    /* 039F21 */
+extern const void *player_walk_velocities_data;
+#define player_walk_velocities ((const struct velocity *)(player_walk_velocities_data))
+#define player_attack_boxes_ADDRESS 0x7F99u    /* 039F99 */
+extern const void *player_attack_boxes_data;
+#define player_attack_boxes ((const struct attack_box *)(player_attack_boxes_data))
+#define stage_8_boss_state_starts_ADDRESS 0x7A3Au    /* 03BA3A */
+extern const void *stage_8_boss_state_starts_data;
+#define stage_8_boss_state_starts ((const struct state_start *)(stage_8_boss_state_starts_data))
+#define burns_robot_boxes_ADDRESS 0x7C87u    /* 03BC87 */
+extern const void *burns_robot_boxes_data;
+#define burns_robot_boxes ((const struct hit_box *)(burns_robot_boxes_data))
 #define object_1d_parts_ADDRESS 0x7D21u    /* 03BD21 */
 extern const void *object_1d_parts_data;
 #define object_1d_parts ((const struct part *)(object_1d_parts_data))
+#define football_player_line_pieces_ADDRESS 0x7DD6u    /* 03DDD6 */
+extern const void *football_player_line_pieces_data;
+#define football_player_line_pieces ((const struct line_piece *)(football_player_line_pieces_data))
 #define object_1e_part_offsets_ADDRESS 0x7E2Cu    /* 03DE2C */
 extern const void *object_1e_part_offsets_data;
 #define object_1e_part_offsets ((const struct part_offset *)(object_1e_part_offsets_data))
+#define bear_part_flights_ADDRESS 0x7E9Cu    /* 03DE9C */
+extern const void *bear_part_flights_data;
+#define bear_part_flights ((const struct part_flight *)(bear_part_flights_data))
+#define object_f9_state_starts_ADDRESS 0x7F7Cu    /* 03DF7C */
+extern const void *object_f9_state_starts_data;
+#define object_f9_state_starts ((const struct state_start *)(object_f9_state_starts_data))
+#define profile_move_records_ADDRESS 0x70EDu    /* 0410ED */
+extern const void *profile_move_records_data;
+#define profile_move_records ((const struct profile_move *)(profile_move_records_data))
 #define gauge_players_ADDRESS 0x729Cu    /* 04129C */
 extern const void *gauge_players_data;
 #define gauge_players ((const struct gauge_player *)(gauge_players_data))
+#define gauge_step_tiles_ADDRESS 0x72FCu    /* 0412FC */
+extern const void *gauge_step_tiles_data;
+#define gauge_step_tiles ((const struct gauge_step *)(gauge_step_tiles_data))
+#define gauge_player_columns_ADDRESS 0x730Eu    /* 04130E */
+extern const void *gauge_player_columns_data;
+#define gauge_player_columns ((const struct gauge_column *)(gauge_player_columns_data))
+#define big_digits_ADDRESS 0x774Eu    /* 04174E */
+extern const void *big_digits_data;
+#define big_digits ((const struct big_digit *)(big_digits_data))
 #define test_mode_palettes_ADDRESS 0x7B6Cu    /* 05FB6C */
 extern const void *test_mode_palettes_data;
 #define test_mode_palettes ((const struct test_palette *)(test_mode_palettes_data))
 #define test_players_ADDRESS 0x7D90u    /* 05FD90 */
 extern const void *test_players_data;
 #define test_players ((const struct test_player *)(test_players_data))
+#define portrait_areas_ADDRESS 0x7DD8u    /* 05FDD8 */
+extern const void *portrait_areas_data;
+#define portrait_areas ((const struct portrait_area *)(portrait_areas_data))
 #define unused_vector_0785D8_ADDRESS 0x85D8u    /* 0785D8 */
 extern const void *unused_vector_0785D8_data;
 #define unused_vector_0785D8 ((const struct vector *)(unused_vector_0785D8_data))
@@ -12204,6 +13179,9 @@ extern const void *empty_vector_07865F_data;
 #define empty_vector_078665_ADDRESS 0x8665u    /* 078665 */
 extern const void *empty_vector_078665_data;
 #define empty_vector_078665 ((const struct vector *)(empty_vector_078665_data))
+#define score_additions_ADDRESS 0xE445u    /* 07E445 */
+extern const void *score_additions_data;
+#define score_additions ((const struct score_addition *)(score_additions_data))
 #define shadow_sprites_ADDRESS 0xE585u    /* 07E585 */
 extern const void *shadow_sprites_data;
 #define shadow_sprites ((const struct shadow_sprite *)(shadow_sprites_data))
@@ -12213,9 +13191,18 @@ extern const void *animation_sets_data;
 #define animation_sets_high_ADDRESS 0xE5BBu    /* 07E5BB */
 extern const void *animation_sets_high_data;
 #define animation_sets_high ((const struct animation_set *)(animation_sets_high_data))
-#define players_ADDRESS 0xE821u    /* 07E821 */
-extern const void *players_data;
-#define players ((const struct player *)(players_data))
+#define scene_routines_ADDRESS 0xE7D3u    /* 07E7D3 */
+extern const void *scene_routines_data;
+#define scene_routines ((const struct scene_routine *)(scene_routines_data))
+#define player_variable_records_ADDRESS 0xE821u    /* 07E821 */
+extern const void *player_variable_records_data;
+#define player_variable_records ((const struct player *)(player_variable_records_data))
+#define fade_ranges_ADDRESS 0xE97Fu    /* 07E97F */
+extern const void *fade_ranges_data;
+#define fade_ranges ((const struct fade_range *)(fade_ranges_data))
+#define palette_clears_ADDRESS 0xE9BBu    /* 07E9BB */
+extern const void *palette_clears_data;
+#define palette_clears ((const struct palette_clear *)(palette_clears_data))
 #define layers_ADDRESS 0xECA1u    /* 07ECA1 */
 extern const void *layers_data;
 #define layers ((const struct layer_map *)(layers_data))

@@ -3,7 +3,7 @@
  *    Description: the drum routines: a music note's low nibble on a channel with a drum kit (+12) runs one
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    06-11-2026
+ *    Modified:    07-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the Z80 sound program decompiled into C by
@@ -3536,7 +3536,7 @@ void pcm_drum_b_4(uint16_t ix)
 	uint16_t hl = 0;
 
 	z80_block(27);
-	hl = 0x5CB0u;
+	hl = pcm_drum_b_4_patch_ADDRESS;
 	load_patch(hl, ix);
 	z80_block(27);
 	hl = 0xF20u;

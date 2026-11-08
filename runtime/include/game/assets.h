@@ -10,10 +10,10 @@
  *    license:BSD-3-Clause
  *    What the game reads at start instead of the ROM set (runtime/src/assets.c): the tiles and the sprites (PNG
  *    sheets) into the video chips' memories, as the chips read them; the samples (WAV) into the K053260's; and
- *    the data of both programs (text pieces by name, the sound program's music from the songs' MIDI files)
- *    where their layouts put them; and the factory EEPROM (eeprom.txt). The programs' code is not in the assets
- *    (it is C): its bytes are left 0 (but the code the 053248's map engines read as tiles, which the data gives
- *    too), as the sound region's 8000-FFFF (no chip there).
+ *    the data of both programs (text pieces by name, the sound program's music from the songs' MIDI files), kept
+ *    as its pieces by the places the programs know them by; and the factory EEPROM (eeprom.txt). The programs'
+ *    code is not in the assets (it is C): no piece is there (but the code the 053248's map engines read as tiles,
+ *    which the data gives too).
  *    The data's 'record' lines are by the structures data/structures.txt gives (their values' types): the
  *    assets read back on their own.
  */
@@ -40,7 +40,9 @@ typedef enum
 } game_assets_region;
 
 /* Where a region's bytes go: 'memory', the region's size (game_assets_size), and 'given', the same size or
-   NULL: a 1 at every byte an asset gives */
+   NULL: a 1 at every byte an asset gives. The programs' data (GAME_ASSETS_PROGRAM, GAME_ASSETS_SOUND) may have no
+   memory: the game keeps it as its pieces only (game_assets_program_at, game_assets_sound_at), never in an image of
+   the ROM's regions; the tools that check the assets against the ROM set ask for the regions */
 typedef struct
 {
 	uint8_t *memory;
@@ -57,6 +59,12 @@ const char *game_assets_load_into(const char *folder, const game_assets_memory i
 /* The same into game/data.h's regions (game_program, game_sound, game_tiles, game_sprites, game_samples,
    game_eeprom) */
 const char *game_assets_load(const char *folder);
+
+/* The programs' data the last load gave, by the place a program knows it by (its region's offset: the 053248's
+   000000-07FFFF, a bank's window resolved; the Z80's 00000-27FFF): the byte's piece from there on, or NULL where the
+   assets give nothing (the program's code) */
+const uint8_t *game_assets_program_at(uint32_t place);
+const uint8_t *game_assets_sound_at(uint32_t place);
 
 #ifdef __cplusplus
 }

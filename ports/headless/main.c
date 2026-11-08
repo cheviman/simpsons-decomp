@@ -10,13 +10,15 @@
  *    license:BSD-3-Clause
  *    Usage: simpsons_headless [--frames N] [--hashes FILE] [--video-hashes FILE] [--sound-hashes FILE]
  *                             [--sound-wav FILE] [--script FILE] [--service] [--assets FOLDER]
+ *                             [--dump FRAME ... --dump-dir DIR]
  *    The game (runtime/src/game.c: the program on the board, its own video and sound board) from its assets
  *    (--assets, assets/ by default); it opens no ROM. It runs with frame timing, as kref --timing frames does
  *    (simpsons/frame.h): the script is applied when each VBLANK starts, and the hashes are kref's ("FRAME HASH":
  *    simpsons_state_hash, the frame's pixels with --video-hashes, the sound board's samples and RAM with
  *    --sound-hashes, as kref --sound-timing makes them), so the two compare line by line. --sound-wav writes the
  *    sound the ports play (game_audio: stereo, 16 bits), as kref --sound-wav writes the reference's. --service
- *    holds the test switch from the start.
+ *    holds the test switch from the start. --dump writes the board's memories at the end of those frames into
+ *    --dump-dir's folder (FRAME_work_ram.bin, FRAME_palette.bin...), as kref --dump writes the reference's.
  */
 #include "game/game.h"
 #include "simpsons/machine.h"
@@ -31,9 +33,13 @@
 #include <string.h>
 
 #define USAGE "Usage: simpsons_headless [--frames N] [--hashes FILE] [--video-hashes FILE] [--sound-hashes FILE]" \
-	" [--sound-wav FILE] [--script FILE] [--service] [--assets FOLDER]\n"
+	" [--sound-wav FILE] [--script FILE] [--service] [--assets FOLDER] [--dump FRAME ... --dump-dir DIR]\n"
+#define DUMPS_MAX 64
 
 static uint64_t g_frames = 600;
+static uint64_t g_dumps[DUMPS_MAX];
+static int g_dump_count;
+static const char *g_dump_dir = ".";
 static FILE *g_hashes;
 static FILE *g_video_hashes;
 static FILE *g_sound_hashes;
@@ -100,6 +106,40 @@ static void finish(void)
 	exit(0);
 }
 
+/* The board's memories at the end of a frame, a file each, as kref --dump writes them (the work RAM in the order
+   of its addresses: the board keeps it the other way round) */
+static void dump_memories(uint64_t frame)
+{
+	static uint8_t work_ram[SIMPSONS_WORK_RAM_SIZE];
+	const struct { const char *name; const uint8_t *data; size_t size; } memories[] = {
+		{ "work_ram", work_ram, sizeof(work_ram) },
+		{ "extra_ram", simpsons_board.extra_ram, sizeof(simpsons_board.extra_ram) },
+		{ "palette", simpsons_board.palette, sizeof(simpsons_board.palette) },
+		{ "tile_ram", simpsons_board.tile_ram, sizeof(simpsons_board.tile_ram) },
+		{ "sprite_ram", simpsons_board.sprite_ram, sizeof(simpsons_board.sprite_ram) },
+		{ "object_ram", simpsons_board.object_ram, sizeof(simpsons_board.object_ram) },
+		{ "eeprom", simpsons_board.eeprom.data, sizeof(simpsons_board.eeprom.data) },
+	};
+
+	for (uint32_t offset = 0; offset < SIMPSONS_WORK_RAM_SIZE; offset++)
+		work_ram[offset] = *simpsons_work_ram_byte((uint16_t)(SIMPSONS_WORK_RAM + offset));
+	for (size_t index = 0; index < sizeof(memories) / sizeof(memories[0]); index++)
+	{
+		char path[1024];
+		FILE *file;
+
+		snprintf(path, sizeof(path), "%s/%" PRIu64 "_%s.bin", g_dump_dir, frame, memories[index].name);
+		file = fopen(path, "wb");
+		if (!file)
+		{
+			fprintf(stderr, "%s: cannot be written\n", path);
+			exit(1);
+		}
+		fwrite(memories[index].data, 1, memories[index].size, file);
+		fclose(file);
+	}
+}
+
 /* A frame is done: the controls change, the frame's sound closes and its hashes are taken, as kref's */
 static void frame_done(void)
 {
@@ -123,6 +163,9 @@ static void frame_done(void)
 		fprintf(g_hashes, "%" PRIu64 " %016" PRIx64 "\n", number, simpsons_state_hash());
 	if (g_video_hashes)
 		fprintf(g_video_hashes, "%" PRIu64 " %016" PRIx64 "\n", number, simpsons_video_hash(game_frame()));
+	for (int index = 0; index < g_dump_count; index++)
+		if (g_dumps[index] == number)
+			dump_memories(number);
 	if (number >= g_frames)
 		finish();
 }
@@ -161,6 +204,11 @@ int main(int argc, char **argv)
 			assets = argv[++index];
 		else if (!strcmp(argv[index], "--service"))
 			service = true;
+		else if (!strcmp(argv[index], "--dump") && has_value)
+			while (index + 1 < argc && argv[index + 1][0] != '-' && g_dump_count < DUMPS_MAX)
+				g_dumps[g_dump_count++] = strtoull(argv[++index], NULL, 10);
+		else if (!strcmp(argv[index], "--dump-dir") && has_value)
+			g_dump_dir = argv[++index];
 		else
 		{
 			fprintf(stderr, "%s", USAGE);

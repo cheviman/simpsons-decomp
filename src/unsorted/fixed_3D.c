@@ -3,7 +3,7 @@
  *    Description: the fixed program's code, 07A000-07BFFF
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    06-11-2026
+ *    Modified:    07-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -164,10 +164,10 @@ void sub_07A075(uint16_t y, uint16_t u)
 
 void sub_07A07E(void)
 {
-	uint16_t d = 0, ignored16 = 0, ignored16_3 = 0, u = 0, x = 0, y = 0;
+	uint16_t d = 0, ignored16 = 0, ignored16_3 = 0, inputs = 0, player = 0, record = 0, u = 0, x = 0, y = 0;
 	uint8_t stack = 0, stack_2 = 0;
-	uint8_t t8 = 0;
-	uint16_t t1 = 0, t2 = 0, t3 = 0, t4 = 0, t5 = 0, t6 = 0, t7 = 0, t9 = 0, t10 = 0, t11 = 0;
+	uint8_t frames_2 = 0;
+	uint16_t t1 = 0, t2 = 0, frames = 0, t3 = 0, state = 0, object_kind = 0, t4 = 0, lives = 0, lives_2 = 0, state_2 = 0;
 
 	sub_079269();
 	sub_0796A3();
@@ -188,14 +188,14 @@ void sub_07A07E(void)
 		x++;
 		u--;
 	}
-	t1 = DATA16(demos_ADDRESS + (int8_t)((uint32_t)unk_485E << 1));
-	unk_4850 = mem_read8(t1);
+	t1 = demos[(int8_t)((uint8_t)((uint32_t)unk_485E << 1)) / 2];
+	unk_4850 = DEMO(t1)->players;
 	t2 = t1 + 1u;
-	t3 = mem_read16(t2);
-	unk_5800 = t3;
-	t4 = t2 + 2u;
-	x = t4 + 1u;
-	unk_4803 = mem_read8(t4);
+	frames = DEMO(t2 - 0x1u)->frames;
+	unk_5800 = frames;
+	t3 = t2 + 2u;
+	x = t3 + 1u;
+	unk_4803 = DEMO(t3 - 0x3u)->step;
 	unk_4804 = 0u;
 	unk_4805 &= 0xFFu;
 	unk_4805 &= 0xFF00u;
@@ -206,29 +206,29 @@ void sub_07A07E(void)
 	unk_48F1 = unk_4850;
 	do
 	{
-		u = DATA16(player_records_ADDRESS + (int8_t)((uint32_t)unk_48F0 << 1));
-		t5 = io_read16(u + 0x17u);
-		mem_write8(t5, 0u);
-		stack_2 = u >> 8;
-		stack = (uint8_t)u;
-		t6 = io_read16(u + 0x15u);
-		mem_write8(t6, unk_48F0);
-		t7 = x;
-		x = t7 + 2u;
-		u = mem_read16(t7);
-		mem_write16(y, u);
-		t8 = io_read8(u + 1u);
-		mem_write8(y + 2u, t8);
-		mem_write8(y + 3u, mem_read8(u));
-		u = ((uint32_t)stack_2 << 8) | stack;
-		t9 = io_read16(u + 4u);
-		mem_write8(t9, 0u);
+		player = player_records[(int8_t)((uint8_t)((uint32_t)unk_48F0 << 1)) / 2];
+		state = PLAYER(player)->state;
+		mem_write8(state, 0u);
+		stack_2 = player >> 8;
+		stack = (uint8_t)player;
+		object_kind = PLAYER(player)->object_kind;
+		mem_write8(object_kind, unk_48F0);
+		t4 = x;
+		x = t4 + 2u;
+		inputs = mem_read16(t4);
+		mem_write16(y, inputs);
+		frames_2 = DEMO_INPUT(inputs)->frames;
+		mem_write8(y + 2u, frames_2);
+		mem_write8(y + 3u, DEMO_INPUT(inputs)->controls);
+		record = ((uint32_t)stack_2 << 8) | stack;
+		lives = PLAYER(record)->lives;
+		mem_write8(lives, 0u);
 		if ((unk_48F1 & 1u) != 0u)
 		{
-			t10 = io_read16(u + 4u);
-			mem_write8(t10, 2u);
-			t11 = io_read16(u + 0x17u);
-			mem_write8(t11, 2u);
+			lives_2 = PLAYER(record)->lives;
+			mem_write8(lives_2, 2u);
+			state_2 = PLAYER(record)->state;
+			mem_write8(state_2, 2u);
 		}
 		y += 0x10u;
 		unk_48F1 = unk_48F1 >> 1;
@@ -241,8 +241,8 @@ void sub_07A12B(uint16_t u)
 {
 	uint8_t a = 0;
 	uint16_t d = 0, ignored16 = 0, u_2 = 0, x = 0, y = 0;
-	uint8_t t3 = 0, t4 = 0;
-	uint16_t t1 = 0, t2 = 0;
+	uint8_t t2 = 0, t3 = 0;
+	uint16_t t1 = 0, object_kind = 0;
 
 	if (unk_4804 == 2u)
 	{
@@ -275,20 +275,20 @@ void sub_07A12B(uint16_t u)
 	unk_48F1 = unk_4850;
 	do
 	{
-		t2 = io_read16(DATA16(player_records_ADDRESS + (int8_t)((uint32_t)unk_48F0 << 1)) + 0x15u);
-		mem_write8(t2, unk_48F0);
+		object_kind = PLAYER(player_records[(int8_t)((uint8_t)((uint32_t)unk_48F0 << 1)) / 2])->object_kind;
+		mem_write8(object_kind, unk_48F0);
 		u_2 = mem_read16(y);
 		mem_write8(y + 3u, mem_read8(u_2));
-		t3 = mem_read8(y + 2u);
-		mem_write8(y + 2u, t3 - 1u);
-		if (t3 == 1u)
+		t2 = mem_read8(y + 2u);
+		mem_write8(y + 2u, t2 - 1u);
+		if (t2 == 1u)
 		{
 			u_2 += 2u;
 			a = io_read8(u_2);
 			mem_write8(y + 3u, a);
 			mem_write8(y + 4u, ~a);
-			t4 = mem_read8(u_2 + 1u);
-			mem_write8(y + 2u, t4);
+			t3 = mem_read8(u_2 + 1u);
+			mem_write8(y + 2u, t3);
 			mem_write16(y, u_2);
 		}
 		y += 0x10u;
@@ -2635,7 +2635,7 @@ void sub_07A537(void)
 	sub_079269();
 	unk_480E = 0x13u;
 	set_lines(unk_480E);
-	unk_48A4 = DATA16(0x600Cu);
+	unk_48A4 = stage_slots[0].record;
 	sub_07BA87();
 	unk_4804++;
 }
@@ -3476,7 +3476,7 @@ void sub_07A776(void)
 	carry = sub_0797ED(d);
 	unk_480E = 0x13u;
 	set_lines(unk_480E);
-	unk_48A4 = DATA16(0x600Fu);
+	unk_48A4 = stage_slots[1].record;
 	sub_07BA87();
 	unk_4804++;
 }
@@ -3872,7 +3872,7 @@ void sub_07A8C1(void)
 	carry = sub_0797ED(d);
 	unk_480E = 0x13u;
 	set_lines(unk_480E);
-	unk_48A4 = DATA16(0x6015u);
+	unk_48A4 = stage_slots[3].record;
 	sub_07BA87();
 	unk_4804++;
 }
@@ -4334,7 +4334,7 @@ void sub_07AA15(void)
 	carry = sub_0797ED(d);
 	unk_480E = 0x13u;
 	set_lines(unk_480E);
-	unk_48A4 = DATA16(0x6018u);
+	unk_48A4 = stage_slots[4].record;
 	sub_07BA87();
 	unk_4804++;
 }
@@ -4784,7 +4784,7 @@ void sub_07AB58(void)
 	carry = sub_0797ED(d);
 	unk_480E = 0x13u;
 	set_lines(unk_480E);
-	unk_48A4 = DATA16(0x601Bu);
+	unk_48A4 = stage_slots[5].record;
 	sub_07BA87();
 	unk_4804++;
 }
@@ -5222,7 +5222,7 @@ void sub_07AC7D(void)
 	carry = sub_0797ED(d);
 	unk_480E = 0x13u;
 	set_lines(unk_480E);
-	unk_48A4 = DATA16(0x601Eu);
+	unk_48A4 = stage_slots[6].record;
 	sub_07BA87();
 	unk_4804++;
 }
@@ -5691,7 +5691,7 @@ void sub_07ADDB(void)
 	carry = sub_0797ED(d);
 	unk_480E = 0x13u;
 	set_lines(unk_480E);
-	unk_48A4 = DATA16(0x6027u);
+	unk_48A4 = stage_slots[9].record;
 	sub_07BA87();
 	t1 = io_read8(VIDEO_1C80);
 	io_write8(VIDEO_1C80, 0u);
@@ -6605,7 +6605,7 @@ void sub_07B071(void)
 	carry = sub_0797ED(d);
 	unk_480E = 0x13u;
 	set_lines(unk_480E);
-	unk_48A4 = DATA16(0x6021u);
+	unk_48A4 = stage_slots[7].record;
 	sub_07BA87();
 	unk_4804++;
 }
@@ -7092,7 +7092,7 @@ void sub_07B1E7(void)
 	carry = sub_0797ED(d);
 	unk_480E = 0x13u;
 	set_lines(unk_480E);
-	unk_48A4 = DATA16(0x6024u);
+	unk_48A4 = stage_slots[8].record;
 	sub_07BA87();
 	unk_4885 = unk_4850;
 	unk_4804++;
@@ -8189,41 +8189,41 @@ uint16_t sub_07B5A9(void)
 	}
 	unk_4872 = 1u;
 	sub_07CBD2(0u);
-	t1 = loaded_table_07E7D3_ADDRESS + (int8_t)(((uint32_t)unk_4867 << 1) << 1);
-	unk_480E = DATA8(t1);
+	t1 = scene_routines_ADDRESS + (int8_t)(((uint32_t)unk_4867 << 1) << 1);
+	unk_480E = SCENE_ROUTINE(t1)->bank;
 	set_lines(unk_480E);
 	switch ((uint16_t)(t1 + 1u))
 	{
-	case 0xE7D4u:
+	case scene_routines_ADDRESS + 0x1u:
 		sub_03E02A();
 		break;
-	case 0xE7D8u:
+	case scene_routines_ADDRESS + 0x5u:
 		sub_03E003();
 		break;
-	case 0xE7DCu:
-	case 0xE7F0u:
-	case 0xE7FCu:
+	case scene_routines_ADDRESS + 0x9u:
+	case scene_routines_ADDRESS + 0x1Du:
+	case scene_routines_ADDRESS + 0x29u:
 		carry = sub_07B6A4();
 		break;
-	case 0xE7E0u:
+	case scene_routines_ADDRESS + 0xDu:
 		sub_03E012();
 		break;
-	case 0xE7E4u:
+	case scene_routines_ADDRESS + 0x11u:
 		sub_03E048();
 		break;
-	case 0xE7E8u:
+	case scene_routines_ADDRESS + 0x15u:
 		sub_03E01B();
 		break;
-	case 0xE7ECu:
+	case scene_routines_ADDRESS + 0x19u:
 		sub_03E027();
 		break;
-	case 0xE7F4u:
+	case scene_routines_ADDRESS + 0x21u:
 		sub_03E042();
 		break;
-	case 0xE7F8u:
+	case scene_routines_ADDRESS + 0x25u:
 		sub_03E039();
 		break;
-	case 0xE800u:
+	case scene_routines_ADDRESS + 0x2Du:
 		sub_03E04E();
 		break;
 	}
@@ -8391,34 +8391,34 @@ void sub_07B70D(uint16_t *p_x, uint16_t *p_y, uint16_t *p_u, uint16_t *p_d, uint
 	uint16_t d = (uint16_t)*p_d;
 	uint32_t carry = *p_carry;
 	uint8_t a = 0;
-	uint16_t d_2 = 0, u = 0, x = 0, y = 0;
+	uint16_t d_2 = 0, player = 0, u = 0, y = 0;
 	uint8_t stack = 0;
-	uint16_t t1 = 0;
+	uint16_t state = 0;
 
 	u = unk_4817_ADDRESS;
 	stack = 0u;
 	do
 	{
-		x = DATA16(player_records_ADDRESS + (int8_t)((uint32_t)stack << 1));
+		player = player_records[(int8_t)((uint8_t)((uint32_t)stack << 1)) / 2];
 		y = loaded_table_07E803_ADDRESS;
-		t1 = io_read16(x + 0x17u);
-		switch ((int8_t)(uint8_t)((uint32_t)mem_read8(t1) << 1))
+		state = PLAYER(player)->state;
+		switch ((int8_t)(uint8_t)((uint32_t)mem_read8(state) << 1))
 		{
 		case 0:
-			d = sub_07B731(x, u);
+			d = sub_07B731(player, u);
 			break;
 		case 2:
 		case 10:
-			sub_07B74F(x, u, &y, &d);
+			sub_07B74F(player, u, &y, &d);
 			break;
 		case 4:
-			sub_07B7E8(x, u, &y, &d);
+			sub_07B7E8(player, u, &y, &d);
 			break;
 		case 6:
-			sub_07B843(x, u, &y, &d);
+			sub_07B843(player, u, &y, &d);
 			break;
 		case 8:
-			d = sub_07B897(x, u);
+			d = sub_07B897(player, u);
 			break;
 		case 12:
 		case 18:
@@ -8429,7 +8429,7 @@ void sub_07B70D(uint16_t *p_x, uint16_t *p_y, uint16_t *p_u, uint16_t *p_d, uint
 			d = sub_07B8BA((uint8_t)d);
 			break;
 		case 16:
-			sub_07B901(&x, &y, &u, &d);
+			sub_07B901(&player, &y, &u, &d);
 			break;
 		}
 		u += 8u;
@@ -8438,7 +8438,7 @@ void sub_07B70D(uint16_t *p_x, uint16_t *p_y, uint16_t *p_u, uint16_t *p_d, uint
 		carry = a < 4u;
 	} while (a != 4u);
 	d_2 = (d & 0xFFu) | ((uint32_t)stack << 8);
-	*p_x = x;
+	*p_x = player;
 	*p_y = y;
 	*p_u = u;
 	*p_d = d_2;
@@ -8449,32 +8449,32 @@ uint16_t sub_07B731(uint16_t x, uint16_t u)
 {
 	uint8_t a = 0, d = 0;
 	uint16_t d_2 = 0;
-	uint16_t t1 = 0, t2 = 0, t3 = 0, t4 = 0, t5 = 0;
+	uint16_t play_status = 0, t1 = 0, state = 0, t2 = 0, state_2 = 0;
 
-	t1 = mem_read16(x + 0x19u);
-	mem_write8(t1, 0u);
+	play_status = PLAYER(x)->play_status;
+	mem_write8(play_status, 0u);
 	if (unk_483B != 0u)
 	{
-		t2 = mem_read16(u);
-		d = (uint8_t)t2;
-		a = (uint8_t)(t2 >> 8);
-		if (t2 != 0u)
+		t1 = mem_read16(u);
+		d = (uint8_t)t1;
+		a = (uint8_t)(t1 >> 8);
+		if (t1 != 0u)
 		{
 			a = 1u;
-			t3 = mem_read16(x + 0x17u);
-			mem_write8(t3, 1u);
+			state = PLAYER(x)->state;
+			mem_write8(state, 1u);
 		}
 		d_2 = (d & 0xFFu) | ((uint32_t)a << 8);
 		return d_2;
 	}
-	t4 = unk_4837;
-	d = (uint8_t)t4;
-	a = (uint8_t)(t4 >> 8);
-	if (t4 != 0u)
+	t2 = unk_4837;
+	d = (uint8_t)t2;
+	a = (uint8_t)(t2 >> 8);
+	if (t2 != 0u)
 	{
 		a = 1u;
-		t5 = mem_read16(x + 0x17u);
-		mem_write8(t5, 1u);
+		state_2 = PLAYER(x)->state;
+		mem_write8(state_2, 1u);
 	}
 	d_2 = (d & 0xFFu) | ((uint32_t)a << 8);
 	return d_2;
@@ -8488,133 +8488,133 @@ void sub_07B74F(uint16_t x, uint16_t u, uint16_t *p_y, uint16_t *p_d)
 	uint8_t a = 0, b = 0;
 	uint16_t d_2 = 0;
 	uint8_t stack = 0;
-	uint8_t t2 = 0, t4 = 0, t9 = 0, t14 = 0, t25 = 0, t26 = 0;
-	uint16_t t1 = 0, t3 = 0, t5 = 0, t6 = 0, t7 = 0, t8 = 0, t10 = 0, t11 = 0, t12 = 0, t13 = 0, t15 = 0, t16 = 0, t17 = 0, t18 = 0, t19 = 0, t20 = 0, t21 = 0, t22 = 0, t23 = 0, t24 = 0;
+	uint8_t t1 = 0, t2 = 0, t5 = 0, bit = 0, initial_3 = 0, number = 0;
+	uint16_t play_status = 0, lives = 0, t3 = 0, lives_2 = 0, t4 = 0, state = 0, t6 = 0, t7 = 0, lives_3 = 0, lives_4 = 0, life = 0, object_life = 0, countdown = 0, state_2 = 0, play_status_2 = 0, state_3 = 0, score = 0, t8 = 0, score_2 = 0, initial = 0;
 	uint32_t unk_48F3_halfword = 0, unk_48F0_halfword = 0;
 
 	b = (uint8_t)d;
-	t1 = mem_read16(x + 0x19u);
-	mem_write8(t1, 0u);
+	play_status = PLAYER(x)->play_status;
+	mem_write8(play_status, 0u);
 	if (unk_483B != 0u)
 	{
-		t2 = mem_read8(mem_read16(x)) & 0xB0u;
-		a = t2;
-		if (t2 == 0u)
+		t1 = mem_read8(PLAYER(x)->pressed) & 0xB0u;
+		a = t1;
+		if (t1 == 0u)
 		{
 			d_2 = ((uint32_t)a << 8) | b;
 			*p_d = d_2;
 			return;
 		}
-		t3 = mem_read16(x + 4u);
-		b = mem_read8(t3);
+		lives = PLAYER(x)->lives;
+		b = mem_read8(lives);
 		y = mem_read16(u);
 		do
 		{
-			t4 = unk_485A;
-			carry = (uint8_t)(b + t4) < b;
-			b += t4;
+			t2 = unk_485A;
+			carry = (uint8_t)(b + t2) < b;
+			b += t2;
 			if (carry)
 				b = 0xFFu;
-			t5 = y - 1u;
-			y = t5;
-		} while (t5 != 0u);
-		t6 = mem_read16(x + 4u);
-		mem_write8(t6, b);
+			t3 = y - 1u;
+			y = t3;
+		} while (t3 != 0u);
+		lives_2 = PLAYER(x)->lives;
+		mem_write8(lives_2, b);
 		mem_write16(u, 0u);
 	}
 	else
 	{
-		t7 = unk_4837;
-		a = (uint8_t)(t7 >> 8);
-		b = (uint8_t)t7;
-		if (t7 == 0u)
+		t4 = unk_4837;
+		a = (uint8_t)(t4 >> 8);
+		b = (uint8_t)t4;
+		if (t4 == 0u)
 		{
-			t8 = mem_read16(x + 0x17u);
-			mem_write8(t8, 0u);
+			state = PLAYER(x)->state;
+			mem_write8(state, 0u);
 			d_2 = ((uint32_t)a << 8) | b;
 			*p_d = d_2;
 			return;
 		}
-		t9 = mem_read8(mem_read16(x)) & 0xB0u;
-		a = t9;
-		if (t9 == 0u)
+		t5 = mem_read8(PLAYER(x)->pressed) & 0xB0u;
+		a = t5;
+		if (t5 == 0u)
 		{
 			d_2 = ((uint32_t)a << 8) | b;
 			*p_d = d_2;
 			return;
 		}
-		t10 = unk_4837;
-		t11 = t10 - 1u;
-		unk_4837 = t11;
-		t12 = mem_read16(x + 4u);
-		t13 = mem_read16(x + 4u);
-		mem_write8(t13, mem_read8(t12) + unk_485A);
+		t6 = unk_4837;
+		t7 = t6 - 1u;
+		unk_4837 = t7;
+		lives_3 = PLAYER(x)->lives;
+		lives_4 = PLAYER(x)->lives;
+		mem_write8(lives_4, mem_read8(lives_3) + unk_485A);
 	}
-	t14 = mem_read8(x + 6u);
-	unk_4850 |= t14;
-	t15 = mem_read16(x + 0xFu);
-	mem_write8(t15, 0x28u);
-	t16 = mem_read16(x + 0x13u);
-	mem_write8(t16, 0x28u);
+	bit = PLAYER(x)->bit;
+	unk_4850 |= bit;
+	life = PLAYER(x)->life;
+	mem_write8(life, 0x28u);
+	object_life = PLAYER(x)->object_life;
+	mem_write8(object_life, 0x28u);
 	b = 0u;
-	t17 = mem_read16(x + 7u);
-	mem_write16(t17, 0u);
-	t18 = mem_read16(x + 0x17u);
-	if (mem_read8(t18) == 5u)
+	countdown = PLAYER(x)->countdown;
+	mem_write16(countdown, 0u);
+	state_2 = PLAYER(x)->state;
+	if (mem_read8(state_2) == 5u)
 	{
-		t19 = mem_read16(x + 0x19u);
-		mem_write8(t19, 2u);
+		play_status_2 = PLAYER(x)->play_status;
+		mem_write8(play_status_2, 2u);
 		a = 2u;
-		t20 = mem_read16(x + 0x17u);
-		mem_write8(t20, 2u);
+		state_3 = PLAYER(x)->state;
+		mem_write8(state_3, 2u);
 		d_2 = ((uint32_t)a << 8) | b;
 		*p_y = y;
 		*p_d = d_2;
 		return;
 	}
-	t21 = mem_read16(x + 9u);
-	t22 = mem_read16(t21);
-	a = (uint8_t)(t22 >> 8);
-	b = (uint8_t)t22;
+	score = PLAYER(x)->score;
+	t8 = mem_read16(score);
+	a = (uint8_t)(t8 >> 8);
+	b = (uint8_t)t8;
 	unk_48F3_halfword = ((uint32_t)a << 8) | b;
 	unk_48F3 = (uint8_t)(unk_48F3_halfword >> 8u);
 	unk_48F4 = (uint8_t)unk_48F3_halfword;
-	t23 = mem_read16(x + 9u);
-	mem_write16(t23, 0u);
+	score_2 = PLAYER(x)->score;
+	mem_write16(score_2, 0u);
 	d_2 = ((uint32_t)a << 8) | b;
 	sub_079718(&d_2, &carry);
 	a = (uint8_t)(d_2 >> 8);
 	b = (uint8_t)d_2;
 	if (carry == 0u)
 	{
-		t19 = mem_read16(x + 0x19u);
-		mem_write8(t19, 2u);
+		play_status_2 = PLAYER(x)->play_status;
+		mem_write8(play_status_2, 2u);
 		a = 2u;
-		t20 = mem_read16(x + 0x17u);
-		mem_write8(t20, 2u);
+		state_3 = PLAYER(x)->state;
+		mem_write8(state_3, 2u);
 		d_2 = ((uint32_t)a << 8) | b;
 		*p_y = y;
 		*p_d = d_2;
 		return;
 	}
 	stack = a;
-	t24 = mem_read16(x + 0xBu);
-	b = (uint8_t)t24;
-	unk_48F0_halfword = ((uint32_t)(t24 >> 8) << 8) | b;
+	initial = (((uint32_t)PLAYER(x)->initial_1 << 8u) | PLAYER(x)->initial_2);
+	b = (uint8_t)initial;
+	unk_48F0_halfword = ((uint32_t)(initial >> 8) << 8) | b;
 	unk_48F0 = (uint8_t)(unk_48F0_halfword >> 8u);
 	unk_48F1 = (uint8_t)unk_48F0_halfword;
-	t25 = mem_read8(x + 0xDu);
-	unk_48F2 = t25;
-	t26 = mem_read8(x + 0xEu);
-	unk_48F5 = t26;
+	initial_3 = PLAYER(x)->initial_3;
+	unk_48F2 = initial_3;
+	number = PLAYER(x)->number;
+	unk_48F5 = number;
 	d_2 = ((uint32_t)stack << 8) | b;
 	d_2 = sub_079743(d_2);
 	b = (uint8_t)d_2;
-	t19 = mem_read16(x + 0x19u);
-	mem_write8(t19, 2u);
+	play_status_2 = PLAYER(x)->play_status;
+	mem_write8(play_status_2, 2u);
 	a = 2u;
-	t20 = mem_read16(x + 0x17u);
-	mem_write8(t20, 2u);
+	state_3 = PLAYER(x)->state;
+	mem_write8(state_3, 2u);
 	d_2 = ((uint32_t)a << 8) | b;
 	*p_y = y;
 	*p_d = d_2;
@@ -8627,57 +8627,57 @@ void sub_07B7E8(uint16_t x, uint16_t u, uint16_t *p_y, uint16_t *p_d)
 	uint32_t carry = 0;
 	uint8_t a = 0, b = 0;
 	uint16_t d_2 = 0;
-	uint8_t t3 = 0, t4 = 0, t9 = 0, t12 = 0;
-	uint16_t t1 = 0, t2 = 0, t5 = 0, t6 = 0, t7 = 0, t8 = 0, t10 = 0, t11 = 0, t13 = 0, t14 = 0;
+	uint8_t bit = 0, number = 0, t1 = 0, t3 = 0;
+	uint16_t play_status = 0, lives = 0, countdown = 0, countdown_2 = 0, play_status_2 = 0, state = 0, t2 = 0, lives_2 = 0, t4 = 0, lives_3 = 0;
 
 	b = (uint8_t)d;
-	t1 = mem_read16(x + 0x19u);
-	mem_write8(t1, 2u);
-	t2 = mem_read16(x + 4u);
-	if (mem_read8(t2) == 0u)
+	play_status = PLAYER(x)->play_status;
+	mem_write8(play_status, 2u);
+	lives = PLAYER(x)->lives;
+	if (mem_read8(lives) == 0u)
 	{
-		t3 = mem_read8(x + 6u);
-		unk_4850 &= ~t3;
-		t4 = mem_read8(x + 0xEu);
-		unk_4A1D = t4;
-		t5 = mem_read16(x + 7u);
-		mem_write16(t5, 0u);
-		t6 = mem_read16(x + 7u);
-		mem_write8(t6, 0x20u);
+		bit = PLAYER(x)->bit;
+		unk_4850 &= ~bit;
+		number = PLAYER(x)->number;
+		unk_4A1D = number;
+		countdown = PLAYER(x)->countdown;
+		mem_write16(countdown, 0u);
+		countdown_2 = PLAYER(x)->countdown;
+		mem_write8(countdown_2, 0x20u);
 		unk_4A1C = 0x20u;
 		unk_4A22 = 0u;
-		t7 = mem_read16(x + 0x19u);
-		mem_write8(t7, 1u);
-		t8 = mem_read16(x + 0x17u);
-		mem_write8(t8, 3u);
+		play_status_2 = PLAYER(x)->play_status;
+		mem_write8(play_status_2, 1u);
+		state = PLAYER(x)->state;
+		mem_write8(state, 3u);
 		d_2 = 0x300u;
 	}
 	else
 	{
-		t9 = unk_483B;
-		a = t9;
-		if (t9 != 0u)
+		t1 = unk_483B;
+		a = t1;
+		if (t1 != 0u)
 		{
-			t10 = mem_read16(u);
-			a = (uint8_t)(t10 >> 8);
-			b = (uint8_t)t10;
-			if (t10 != 0u)
+			t2 = mem_read16(u);
+			a = (uint8_t)(t2 >> 8);
+			b = (uint8_t)t2;
+			if (t2 != 0u)
 			{
-				t11 = mem_read16(x + 4u);
-				b = mem_read8(t11);
+				lives_2 = PLAYER(x)->lives;
+				b = mem_read8(lives_2);
 				y = mem_read16(u);
 				do
 				{
-					t12 = unk_485A;
-					carry = (uint8_t)(b + t12) < b;
-					b += t12;
+					t3 = unk_485A;
+					carry = (uint8_t)(b + t3) < b;
+					b += t3;
 					if (carry)
 						b = 0xFFu;
-					t13 = y - 1u;
-					y = t13;
-				} while (t13 != 0u);
-				t14 = mem_read16(x + 4u);
-				mem_write8(t14, b);
+					t4 = y - 1u;
+					y = t4;
+				} while (t4 != 0u);
+				lives_3 = PLAYER(x)->lives;
+				mem_write8(lives_3, b);
 				a = 0u;
 				b = 0u;
 				mem_write16(u, 0u);
@@ -8695,46 +8695,46 @@ void sub_07B843(uint16_t x, uint16_t u, uint16_t *p_y, uint16_t *p_d)
 	uint32_t carry = 0, half_carry = 0;
 	uint8_t a = 0, d = 0;
 	uint16_t d_2 = 0;
-	uint8_t t3 = 0, t5 = 0, t6 = 0, t7 = 0, t8 = 0;
-	uint16_t t1 = 0, t2 = 0, t4 = 0, t9 = 0, t10 = 0, t11 = 0, t12 = 0, t13 = 0, t14 = 0, t15 = 0, t16 = 0;
+	uint8_t t2 = 0, t3 = 0, t4 = 0, t5 = 0, t6 = 0;
+	uint16_t play_status = 0, t1 = 0, countdown = 0, credit_given = 0, play_status_2 = 0, state = 0, play_status_3 = 0, state_2 = 0, t7 = 0, play_status_4 = 0, state_3 = 0;
 
-	t1 = mem_read16(x + 0x19u);
-	mem_write8(t1, 1u);
+	play_status = PLAYER(x)->play_status;
+	mem_write8(play_status, 1u);
 	if (unk_483B != 0u)
 	{
-		t2 = mem_read16(u);
-		d = (uint8_t)t2;
-		if (t2 == 0u)
+		t1 = mem_read16(u);
+		d = (uint8_t)t1;
+		if (t1 == 0u)
 		{
-			t3 = unk_486A;
-			a = t3;
-			if (t3 != 0u)
+			t2 = unk_486A;
+			a = t2;
+			if (t2 != 0u)
 			{
-				t4 = mem_read16(x + 7u);
-				y = t4;
-				t5 = mem_read8(y + 1u);
-				mem_write8(y + 1u, t5 + 1u);
-				t6 = mem_read8(y + 1u);
-				a = t6;
+				countdown = PLAYER(x)->countdown;
+				y = countdown;
+				t3 = mem_read8(y + 1u);
+				mem_write8(y + 1u, t3 + 1u);
+				t4 = mem_read8(y + 1u);
+				a = t4;
 				if (a == 0x3Cu)
 				{
 					mem_write8(y + 1u, 0u);
-					t7 = mem_read8(y);
-					t8 = 0x99u + t7;
-					half_carry = ((0x99u ^ t7 ^ t8) >> 4) & 1u;
-					carry = (uint8_t)(0x99u + t7) < 0x99u;
-					a = konami_daa(t8, half_carry, carry);
+					t5 = mem_read8(y);
+					t6 = 0x99u + t5;
+					half_carry = ((0x99u ^ t5 ^ t6) >> 4) & 1u;
+					carry = (uint8_t)(0x99u + t5) < 0x99u;
+					a = konami_daa(t6, half_carry, carry);
 					mem_write8(y, a);
 					if (a == 0x99u)
 					{
 						mem_write16(y, 0u);
-						t9 = mem_read16(x + 2u);
-						mem_write8(t9, 0u);
-						t10 = mem_read16(x + 0x19u);
-						mem_write8(t10, 0u);
+						credit_given = PLAYER(x)->credit_given;
+						mem_write8(credit_given, 0u);
+						play_status_2 = PLAYER(x)->play_status;
+						mem_write8(play_status_2, 0u);
 						a = 4u;
-						t11 = mem_read16(x + 0x17u);
-						mem_write8(t11, 4u);
+						state = PLAYER(x)->state;
+						mem_write8(state, 4u);
 					}
 				}
 			}
@@ -8742,48 +8742,48 @@ void sub_07B843(uint16_t x, uint16_t u, uint16_t *p_y, uint16_t *p_d)
 		}
 		else
 		{
-			t12 = mem_read16(x + 0x19u);
-			mem_write8(t12, 0u);
-			t13 = mem_read16(x + 0x17u);
-			mem_write8(t13, 5u);
+			play_status_3 = PLAYER(x)->play_status;
+			mem_write8(play_status_3, 0u);
+			state_2 = PLAYER(x)->state;
+			mem_write8(state_2, 5u);
 			d_2 = (d & 0xFFu) | 0x500u;
 		}
 	}
 	else
 	{
-		t14 = unk_4837;
-		d = (uint8_t)t14;
-		if (t14 == 0u)
+		t7 = unk_4837;
+		d = (uint8_t)t7;
+		if (t7 == 0u)
 		{
-			t3 = unk_486A;
-			a = t3;
-			if (t3 != 0u)
+			t2 = unk_486A;
+			a = t2;
+			if (t2 != 0u)
 			{
-				t4 = mem_read16(x + 7u);
-				y = t4;
-				t5 = mem_read8(y + 1u);
-				mem_write8(y + 1u, t5 + 1u);
-				t6 = mem_read8(y + 1u);
-				a = t6;
+				countdown = PLAYER(x)->countdown;
+				y = countdown;
+				t3 = mem_read8(y + 1u);
+				mem_write8(y + 1u, t3 + 1u);
+				t4 = mem_read8(y + 1u);
+				a = t4;
 				if (a == 0x3Cu)
 				{
 					mem_write8(y + 1u, 0u);
-					t7 = mem_read8(y);
-					t8 = 0x99u + t7;
-					half_carry = ((0x99u ^ t7 ^ t8) >> 4) & 1u;
-					carry = (uint8_t)(0x99u + t7) < 0x99u;
-					a = konami_daa(t8, half_carry, carry);
+					t5 = mem_read8(y);
+					t6 = 0x99u + t5;
+					half_carry = ((0x99u ^ t5 ^ t6) >> 4) & 1u;
+					carry = (uint8_t)(0x99u + t5) < 0x99u;
+					a = konami_daa(t6, half_carry, carry);
 					mem_write8(y, a);
 					if (a == 0x99u)
 					{
 						mem_write16(y, 0u);
-						t9 = mem_read16(x + 2u);
-						mem_write8(t9, 0u);
-						t10 = mem_read16(x + 0x19u);
-						mem_write8(t10, 0u);
+						credit_given = PLAYER(x)->credit_given;
+						mem_write8(credit_given, 0u);
+						play_status_2 = PLAYER(x)->play_status;
+						mem_write8(play_status_2, 0u);
 						a = 4u;
-						t11 = mem_read16(x + 0x17u);
-						mem_write8(t11, 4u);
+						state = PLAYER(x)->state;
+						mem_write8(state, 4u);
 					}
 				}
 			}
@@ -8791,10 +8791,10 @@ void sub_07B843(uint16_t x, uint16_t u, uint16_t *p_y, uint16_t *p_d)
 		}
 		else
 		{
-			t15 = mem_read16(x + 0x19u);
-			mem_write8(t15, 0u);
-			t16 = mem_read16(x + 0x17u);
-			mem_write8(t16, 5u);
+			play_status_4 = PLAYER(x)->play_status;
+			mem_write8(play_status_4, 0u);
+			state_3 = PLAYER(x)->state;
+			mem_write8(state_3, 5u);
 			d_2 = (d & 0xFFu) | 0x500u;
 		}
 	}
@@ -8805,21 +8805,21 @@ void sub_07B843(uint16_t x, uint16_t u, uint16_t *p_y, uint16_t *p_d)
 uint16_t sub_07B897(uint16_t x, uint16_t u)
 {
 	uint16_t d = 0;
-	uint16_t t1 = 0, t2 = 0, t3 = 0, t4 = 0, t5 = 0;
+	uint16_t play_status = 0, countdown = 0, countdown_2 = 0, countdown_3 = 0, state = 0;
 
-	t1 = mem_read16(x + 0x19u);
-	mem_write8(t1, 0u);
+	play_status = PLAYER(x)->play_status;
+	mem_write8(play_status, 0u);
 	mem_write8(u + 7u, 0u);
-	t2 = mem_read16(x + 7u);
-	mem_write8(t2, mem_read8(t2) + 1u);
-	t3 = mem_read16(x + 7u);
-	if (mem_read8(t3) < 0xC0u)
+	countdown = PLAYER(x)->countdown;
+	mem_write8(countdown, mem_read8(countdown) + 1u);
+	countdown_2 = PLAYER(x)->countdown;
+	if (mem_read8(countdown_2) < 0xC0u)
 		return sub_07B731(x, u);
 	d = 0u;
-	t4 = mem_read16(x + 7u);
-	mem_write16(t4, 0u);
-	t5 = mem_read16(x + 0x17u);
-	mem_write8(t5, 0u);
+	countdown_3 = PLAYER(x)->countdown;
+	mem_write16(countdown_3, 0u);
+	state = PLAYER(x)->state;
+	mem_write8(state, 0u);
 	return d;
 }
 
@@ -8914,10 +8914,10 @@ void sub_07B901(uint16_t *p_x, uint16_t *p_y, uint16_t *p_u, uint16_t *p_d)
 	uint8_t d = (uint8_t)*p_d;
 	uint32_t carry = 0, half_carry = 0;
 	uint8_t a = 0, b = 0;
-	uint16_t d_2 = 0, x = 0, y_2 = 0;
+	uint16_t d_2 = 0, player = 0, x = 0, y_2 = 0;
 	uint8_t stack = 0;
-	uint8_t t1 = 0, t2 = 0, t3 = 0, t7 = 0, t8 = 0, t9 = 0;
-	uint16_t t4 = 0, t5 = 0, t6 = 0, t10 = 0;
+	uint8_t t1 = 0, t2 = 0, t3 = 0, t4 = 0, t5 = 0, t6 = 0;
+	uint16_t countdown = 0, credit_given = 0, countdown_2 = 0, countdown_3 = 0;
 
 	b = (uint8_t)d;
 	if (unk_49F0 == 2u || unk_49F1 == 2u || unk_49F2 == 2u || unk_49F3 == 2u)
@@ -8941,7 +8941,7 @@ void sub_07B901(uint16_t *p_x, uint16_t *p_y, uint16_t *p_u, uint16_t *p_d)
 	set_lines(unk_480E);
 	b = stack;
 	sub_040006();
-	x = DATA16(player_records_ADDRESS + (int8_t)((uint32_t)unk_4A1D << 1));
+	player = player_records[(int8_t)((uint8_t)((uint32_t)unk_4A1D << 1)) / 2];
 	unk_4A22++;
 	if (unk_4A22 == 0x3Cu)
 	{
@@ -8960,12 +8960,12 @@ void sub_07B901(uint16_t *p_x, uint16_t *p_y, uint16_t *p_u, uint16_t *p_d)
 				if (t3 == 3u)
 				{
 					stack = a;
-					x = DATA16(player_records_ADDRESS + (int8_t)((uint32_t)a << 1));
-					t4 = io_read16(x + 7u);
-					u = t4;
+					player = player_records[(int8_t)((uint8_t)((uint32_t)a << 1)) / 2];
+					countdown = PLAYER(player)->countdown;
+					u = countdown;
 					mem_write16(u, 0u);
-					t5 = io_read16(x + 2u);
-					mem_write8(t5, 0u);
+					credit_given = PLAYER(player)->credit_given;
+					mem_write8(credit_given, 0u);
 					mem_write8(y_2 + 7u, 4u);
 					a = stack;
 				}
@@ -8983,7 +8983,7 @@ void sub_07B901(uint16_t *p_x, uint16_t *p_y, uint16_t *p_u, uint16_t *p_d)
 			unk_4802 = 3u;
 			unk_4803 = 0u;
 			d_2 = 0x300u;
-			*p_x = x;
+			*p_x = player;
 			*p_y = y_2;
 			*p_u = u;
 			*p_d = d_2;
@@ -8999,7 +8999,7 @@ void sub_07B901(uint16_t *p_x, uint16_t *p_y, uint16_t *p_u, uint16_t *p_d)
 			a = unk_4A1C;
 			unk_4A21 = a;
 			d_2 = ((uint32_t)a << 8) | b;
-			*p_x = x;
+			*p_x = player;
 			*p_y = y;
 			*p_u = u;
 			*p_d = d_2;
@@ -9011,19 +9011,19 @@ void sub_07B901(uint16_t *p_x, uint16_t *p_y, uint16_t *p_u, uint16_t *p_d)
 		a = unk_4A1C;
 		unk_4A21 = a;
 		d_2 = ((uint32_t)a << 8) | b;
-		*p_x = x;
+		*p_x = player;
 		*p_y = y;
 		*p_u = u;
 		*p_d = d_2;
 		return;
 	}
-	t6 = io_read16(x + 7u);
-	u = t6;
-	t7 = unk_4A1C;
-	t8 = 0x99u + t7;
-	half_carry = ((0x99u ^ t7 ^ t8) >> 4) & 1u;
-	carry = (uint8_t)(0x99u + t7) < 0x99u;
-	a = konami_daa(t8, half_carry, carry);
+	countdown_2 = PLAYER(player)->countdown;
+	u = countdown_2;
+	t4 = unk_4A1C;
+	t5 = 0x99u + t4;
+	half_carry = ((0x99u ^ t4 ^ t5) >> 4) & 1u;
+	carry = (uint8_t)(0x99u + t4) < 0x99u;
+	a = konami_daa(t5, half_carry, carry);
 	if (a == 0x99u)
 	{
 		y_2 = unk_49D0_ADDRESS;
@@ -9034,12 +9034,12 @@ void sub_07B901(uint16_t *p_x, uint16_t *p_y, uint16_t *p_u, uint16_t *p_d)
 			if (t3 == 3u)
 			{
 				stack = a;
-				x = DATA16(player_records_ADDRESS + (int8_t)((uint32_t)a << 1));
-				t4 = io_read16(x + 7u);
-				u = t4;
+				player = player_records[(int8_t)((uint8_t)((uint32_t)a << 1)) / 2];
+				countdown = PLAYER(player)->countdown;
+				u = countdown;
 				mem_write16(u, 0u);
-				t5 = io_read16(x + 2u);
-				mem_write8(t5, 0u);
+				credit_given = PLAYER(player)->credit_given;
+				mem_write8(credit_given, 0u);
 				mem_write8(y_2 + 7u, 4u);
 				a = stack;
 			}
@@ -9057,7 +9057,7 @@ void sub_07B901(uint16_t *p_x, uint16_t *p_y, uint16_t *p_u, uint16_t *p_d)
 		unk_4802 = 3u;
 		unk_4803 = 0u;
 		d_2 = 0x300u;
-		*p_x = x;
+		*p_x = player;
 		*p_y = y_2;
 		*p_u = u;
 		*p_d = d_2;
@@ -9070,14 +9070,14 @@ void sub_07B901(uint16_t *p_x, uint16_t *p_y, uint16_t *p_u, uint16_t *p_d)
 	a = 0u;
 	do
 	{
-		t9 = mem_read8(y + 7u);
-		b = t9;
+		t6 = mem_read8(y + 7u);
+		b = t6;
 		if (b == 3u)
 		{
 			stack = a;
-			x = DATA16(player_records_ADDRESS + (int8_t)((uint32_t)a << 1));
-			t10 = io_read16(x + 7u);
-			u = t10;
+			player = player_records[(int8_t)((uint8_t)((uint32_t)a << 1)) / 2];
+			countdown_3 = PLAYER(player)->countdown;
+			u = countdown_3;
 			a = unk_4A1C;
 			if (a <= mem_read8(u))
 			{
@@ -9094,7 +9094,7 @@ void sub_07B901(uint16_t *p_x, uint16_t *p_y, uint16_t *p_u, uint16_t *p_d)
 		a = unk_4A1C;
 		unk_4A21 = a;
 		d_2 = ((uint32_t)a << 8) | b;
-		*p_x = x;
+		*p_x = player;
 		*p_y = y;
 		*p_u = u;
 		*p_d = d_2;
@@ -9106,7 +9106,7 @@ void sub_07B901(uint16_t *p_x, uint16_t *p_y, uint16_t *p_u, uint16_t *p_d)
 	a = unk_4A1C;
 	unk_4A21 = a;
 	d_2 = ((uint32_t)a << 8) | b;
-	*p_x = x;
+	*p_x = player;
 	*p_y = y;
 	*p_u = u;
 	*p_d = d_2;
@@ -9161,7 +9161,7 @@ void sub_07BA50(void)
 
 void sub_07BA87(void)
 {
-	unk_4867 = DATA8(indexed_table_07E88D_ADDRESS + (int8_t)unk_4803);
+	unk_4867 = step_scenes[(int8_t)unk_4803];
 }
 
 void sub_07BA93(void)
@@ -9219,7 +9219,7 @@ void sub_07BAC7(uint16_t d, uint16_t *p_y, uint16_t *p_u)
 
 	stack = d >> 8;
 	d_2 = (d & 0xFFu) | ((uint32_t)stack << 8);
-	switch (DATA16(indexed_table_07BADA_ADDRESS + (int8_t)((uint32_t)unk_487E << 1)))
+	switch (palette_request_handlers[(int8_t)((uint8_t)((uint32_t)unk_487E << 1)) / 2])
 	{
 	case code_read_as_tiles_07BAEC_ADDRESS:
 		u = sub_07BAEC(d_2);
@@ -9295,7 +9295,7 @@ uint16_t sub_07BB12(uint16_t u, uint16_t d)
 	t1 = (((uint32_t)unk_48E8 << 8u) | unk_48E9);
 	b = (uint8_t)t1;
 	carry = (int8_t)b < 0;
-	t2 = DATA16(0x6000u + (((uint32_t)(uint8_t)(((uint32_t)(t1 >> 8) << 1) | carry) << 8) | (uint8_t)((uint32_t)b << 1))) + 2u;
+	t2 = TABLE16(palette_effects, (uint16_t)(((uint32_t)(uint8_t)(((uint32_t)(t1 >> 8) << 1) | carry) << 8) | (uint8_t)((uint32_t)b << 1))) + 2u;
 	mem_write8(u + 6u, io_read8(t2));
 	t3 = t2 + 1u;
 	a = mem_read8(t3);
@@ -9328,7 +9328,7 @@ uint16_t sub_07BB1F(uint16_t d)
 		t1 = (((uint32_t)unk_48E8 << 8u) | unk_48E9);
 		b = (uint8_t)t1;
 		carry = (int8_t)b < 0;
-		t2 = DATA16(0x6000u + (((uint32_t)(uint8_t)(((uint32_t)(t1 >> 8) << 1) | carry) << 8) | (uint8_t)((uint32_t)b << 1))) + 2u;
+		t2 = TABLE16(palette_effects, (uint16_t)(((uint32_t)(uint8_t)(((uint32_t)(t1 >> 8) << 1) | carry) << 8) | (uint8_t)((uint32_t)b << 1))) + 2u;
 		mem_write8(u + 6u, io_read8(t2));
 		t3 = t2 + 1u;
 		a = mem_read8(t3);
@@ -9526,25 +9526,25 @@ void sub_07BCBA(uint16_t u, uint16_t *p_y, uint16_t *p_d)
 {
 	uint16_t d = (uint16_t)*p_d;
 	uint8_t a = 0, b = 0;
-	uint16_t d_2 = 0, u_2 = 0, x = 0, y = 0;
-	uint8_t t1 = 0, t2 = 0, t3 = 0, t5 = 0, t6 = 0;
-	uint16_t t4 = 0;
+	uint16_t d_2 = 0, palette_load = 0, set_table = 0, source = 0, x = 0;
+	uint8_t t1 = 0, t2 = 0, t3 = 0, palettes = 0, t4 = 0;
+	uint16_t destination = 0;
 
 	unk_480E = 0x2Du;
 	set_lines(unk_480E);
 	io_write8(u, 0u);
 	t1 = mem_read8(u + 1u);
 	unk_48F0 = t1;
-	x = palette_sets_ADDRESS;
+	set_table = palette_sets_ADDRESS;
 	t2 = mem_read8(u + 2u);
 	b = t2;
 	if ((int8_t)t2 < 0)
 	{
-		x = palette_sets_high_ADDRESS;
+		set_table = palette_sets_high_ADDRESS;
 		b &= 0x7Fu;
 	}
 	b = (uint32_t)b << 1;
-	y = DATA16(x + (int8_t)b);
+	palette_load = PALETTE_SET(set_table + (int8_t)b);
 	unk_48F1 = 4u;
 	do
 	{
@@ -9552,22 +9552,22 @@ void sub_07BCBA(uint16_t u, uint16_t *p_y, uint16_t *p_d)
 		a = t3;
 		if (t3 != 0u)
 		{
-			u_2 = mem_read16(y);
-			t4 = mem_read16(y + 2u);
-			x = t4;
-			t5 = mem_read8(y + 4u);
-			d = (d & 0xFFu) | ((uint32_t)t5 << 8);
-			d = sub_07BF51(x, u_2, d);
+			source = PALETTE_LOAD(palette_load)->source;
+			destination = PALETTE_LOAD(palette_load)->destination;
+			x = destination;
+			palettes = PALETTE_LOAD(palette_load)->palettes;
+			d = (d & 0xFFu) | ((uint32_t)palettes << 8);
+			d = sub_07BF51(x, source, d);
 			a = (uint8_t)(d >> 8);
 			b = (uint8_t)d;
 		}
-		y += 5u;
+		palette_load += 5u;
 		unk_48F0 = unk_48F0 >> 1;
-		t6 = unk_48F1;
-		unk_48F1 = t6 - 1u;
-	} while (t6 != 1u);
+		t4 = unk_48F1;
+		unk_48F1 = t4 - 1u;
+	} while (t4 != 1u);
 	d_2 = ((uint32_t)a << 8) | b;
-	*p_y = y;
+	*p_y = palette_load;
 	*p_d = d_2;
 }
 
@@ -9732,86 +9732,86 @@ void sub_07BD01(uint16_t u, uint16_t *p_y, uint16_t *p_d)
 	*p_d = d_2;
 }
 
-void sub_07BD51(uint16_t u, uint16_t *p_x, uint16_t *p_y, uint16_t *p_d)
+void sub_07BD51(uint16_t u, uint16_t *p_step, uint16_t *p_y, uint16_t *p_d)
 {
-	uint16_t x = (uint16_t)*p_x;
+	uint16_t step = (uint16_t)*p_step;
 	uint8_t a = 0, d = 0;
-	uint16_t d_2 = 0, y = 0;
+	uint16_t address = 0, d_2 = 0;
 	uint8_t stack = 0;
-	uint8_t t1 = 0, t5 = 0;
-	uint16_t t2 = 0, t3 = 0, t4 = 0;
+	uint8_t t1 = 0, t4 = 0;
+	uint16_t t2 = 0, t3 = 0, colour = 0;
 
 	t1 = mem_read8(u + 6u);
 	unk_48F0 = t1;
 	for (;;)
 	{
-		t2 = x;
-		y = mem_read16(t2);
+		t2 = step;
+		address = PALETTE_EFFECT_STEP(t2)->address;
 		t3 = t2 + 2u;
-		x = t3 + 2u;
-		t4 = mem_read16(t3);
-		d = (uint8_t)t4;
-		mem_write16(y, ((uint32_t)(t4 >> 8) << 8) | (d & 0xFFu));
-		t5 = unk_48F0;
-		a = t5;
-		if (t5 == 0u)
+		step = t3 + 2u;
+		colour = PALETTE_EFFECT_STEP(t3 - 0x2u)->colour;
+		d = (uint8_t)colour;
+		mem_write16(address, ((uint32_t)(colour >> 8) << 8) | (d & 0xFFu));
+		t4 = unk_48F0;
+		a = t4;
+		if (t4 == 0u)
 			break;
 		unk_48F0--;
 	}
-	mem_write16(u + 2u, x);
+	mem_write16(u + 2u, step);
 	stack = a;
 	a = unk_480F & ~3u;
 	unk_480F = a;
 	io_write8(IO_1FC2, a);
 	d_2 = (d & 0xFFu) | ((uint32_t)stack << 8);
-	*p_x = x;
-	*p_y = y;
+	*p_step = step;
+	*p_y = address;
 	*p_d = d_2;
 }
 
-void sub_07BD6C(uint16_t u, uint16_t *p_x, uint16_t *p_y, uint16_t *p_d, uint32_t *p_carry)
+void sub_07BD6C(uint16_t u, uint16_t *p_step, uint16_t *p_y, uint16_t *p_d, uint32_t *p_carry)
 {
-	uint16_t x = (uint16_t)*p_x;
+	uint16_t step = (uint16_t)*p_step;
 	uint32_t carry = *p_carry;
 	uint8_t a = 0, d = 0;
-	uint16_t d_2 = 0, y = 0;
+	uint16_t address = 0, d_2 = 0;
 	uint8_t stack = 0;
-	uint8_t t1 = 0, t5 = 0;
-	uint16_t t2 = 0, t3 = 0, t4 = 0;
+	uint8_t t1 = 0, address_2 = 0;
+	uint16_t t2 = 0, t3 = 0, colour = 0;
 
 	t1 = mem_read8(u + 6u);
 	unk_48F0 = t1;
 	for (;;)
 	{
-		t2 = x;
-		y = mem_read16(t2);
+		t2 = step;
+		address = PALETTE_EFFECT_STEP(t2)->address;
 		t3 = t2 + 2u;
-		x = t3 + 2u;
-		t4 = mem_read16(t3);
-		d = (uint8_t)t4;
-		mem_write16(y, ((uint32_t)(t4 >> 8) << 8) | (d & 0xFFu));
+		step = t3 + 2u;
+		colour = PALETTE_EFFECT_STEP(t3 - 0x2u)->colour;
+		d = (uint8_t)colour;
+		mem_write16(address, ((uint32_t)(colour >> 8) << 8) | (d & 0xFFu));
 		if (unk_48F0 == 0u)
 			break;
-		x -= 8u;
+		step -= 8u;
 		unk_48F0--;
 	}
-	x -= 8u;
-	t5 = mem_read8(x);
-	a = t5;
-	if ((int8_t)t5 < 0)
+	step -= 8u;
+	address_2 = (uint8_t)(PALETTE_EFFECT_STEP(step)->address >> 8u);
+	a = address_2;
+	if ((int8_t)address_2 < 0)
 	{
 		carry = 0u;
 		mem_write8(u + 1u, 0u);
-		x += 4u;
+		step += 4u;
 	}
-	mem_write16(u + 2u, x);
+	mem_write16(u + 2u, step);
 	stack = a;
 	a = unk_480F & ~3u;
 	unk_480F = a;
 	io_write8(IO_1FC2, a);
 	d_2 = (d & 0xFFu) | ((uint32_t)stack << 8);
-	*p_x = x;
-	*p_y = y;
+	*p_step = step;
+	*p_y = address;
 	*p_d = d_2;
 	*p_carry = carry;
 }
@@ -9907,22 +9907,22 @@ void sub_07BDC1(uint16_t u, uint16_t *p_x, uint32_t *p_carry)
 	uint16_t x = (uint16_t)*p_x;
 	uint32_t carry = *p_carry;
 	uint8_t a = 0;
-	uint8_t t1 = 0, t3 = 0, t4 = 0;
-	uint16_t t2 = 0;
+	uint8_t t1 = 0, t2 = 0, t3 = 0;
+	uint16_t spare = 0;
 
-	t1 = mem_read8(x + 1u);
+	t1 = (uint8_t)FADE_RANGE(x - 0x1u)->address;
 	a = t1;
 	if (a == 0xFFu)
 	{
-		t2 = mem_read16(x + 2u);
-		x = t2 + 4u;
+		spare = AT16(FADE_RANGE(x - 0x1u)->spare, -1);
+		x = spare + 4u;
 		mem_write16(u + 2u, x);
 		carry = 0u;
 	}
 	else
 	{
-		t3 = mem_read8(u + 7u);
-		if (a == t3)
+		t2 = mem_read8(u + 7u);
+		if (a == t2)
 		{
 			mem_write8(u + 7u, 0u);
 			x += 4u;
@@ -9931,10 +9931,10 @@ void sub_07BDC1(uint16_t u, uint16_t *p_x, uint32_t *p_carry)
 		}
 		else
 		{
-			t4 = mem_read8(u + 7u);
-			mem_write8(u + 7u, t4 + 1u);
-			t2 = mem_read16(x + 2u);
-			x = t2 + 4u;
+			t3 = mem_read8(u + 7u);
+			mem_write8(u + 7u, t3 + 1u);
+			spare = AT16(FADE_RANGE(x - 0x1u)->spare, -1);
+			x = spare + 4u;
 			mem_write16(u + 2u, x);
 			carry = 0u;
 		}
@@ -10000,7 +10000,7 @@ void sub_07BE21(uint16_t u, uint16_t *p_y, uint16_t *p_d)
 	uint16_t d = (uint16_t)*p_d;
 	uint32_t carry = 0;
 	uint8_t a = 0;
-	uint16_t u_2 = 0, x = 0;
+	uint16_t fade_range = 0, u_2 = 0;
 	uint32_t left_caller = 0;
 	uint8_t stack = 0, stack_2 = 0;
 	uint8_t t2 = 0, t4 = 0, t5 = 0, t7 = 0, t8 = 0, t10 = 0;
@@ -10039,10 +10039,10 @@ void sub_07BE21(uint16_t u, uint16_t *p_y, uint16_t *p_d)
 		unk_480F = a;
 		io_write8(IO_1FC2, a);
 		t8 = mem_read8(u + 7u);
-		t9 = loaded_table_07E97F_ADDRESS + (int8_t)(((uint32_t)t8 << 1) << 1);
-		x = t9 + 1u;
-		unk_48F1 = DATA8(t9);
-		u_2 = mem_read16(x);
+		t9 = fade_ranges_ADDRESS + (int8_t)(((uint32_t)t8 << 1) << 1);
+		fade_range = t9 + 1u;
+		unk_48F1 = FADE_RANGE(t9)->colours;
+		u_2 = FADE_RANGE(fade_range - 0x1u)->address;
 		for (;;)
 		{
 			y = loaded_table_07E97B_ADDRESS;
@@ -10059,26 +10059,26 @@ void sub_07BE21(uint16_t u, uint16_t *p_y, uint16_t *p_d)
 				break;
 			case -86:
 			case -14:
-				sub_07AA00(&x, &y, &u_2, &d, &left_caller, &carry);
+				sub_07AA00(&fade_range, &y, &u_2, &d, &left_caller, &carry);
 				break;
 			case -84:
 			case -12:
 				sub_07AC00();
 				break;
 			case -10:
-				sub_07BD51(u_2, &x, &y, &d);
+				sub_07BD51(u_2, &fade_range, &y, &d);
 				break;
 			case -8:
-				sub_07BD6C(u_2, &x, &y, &d, &carry);
+				sub_07BD6C(u_2, &fade_range, &y, &d, &carry);
 				break;
 			case -6:
 				carry = sub_07BDB0(u_2);
 				break;
 			case -4:
-				sub_07BDB4(u_2, &x, &carry);
+				sub_07BDB4(u_2, &fade_range, &carry);
 				break;
 			case -2:
-				sub_07BDC1(u_2, &x, &carry);
+				sub_07BDC1(u_2, &fade_range, &carry);
 				break;
 			}
 			a = (uint8_t)(d >> 8);
@@ -10165,7 +10165,7 @@ void sub_07BE8B(uint16_t u, uint16_t *p_y, uint16_t *p_d)
 uint16_t sub_07BEE6(uint16_t y, uint16_t u)
 {
 	uint8_t a = 0;
-	uint16_t u_2 = 0, x = 0;
+	uint16_t address = 0, u_2 = 0, x = 0;
 	uint8_t t1 = 0;
 	uint16_t t2 = 0, t3 = 0;
 
@@ -10180,11 +10180,11 @@ uint16_t sub_07BEE6(uint16_t y, uint16_t u)
 	{
 		if ((unk_48F1 & 1u) != 0u)
 		{
-			t2 = loaded_table_07E9BB_ADDRESS + (int8_t)(((uint32_t)unk_48F0 << 1) << 1);
-			u_2 = DATA16(t2);
-			x = mem_read16(t2 + 2u);
-			y = x;
-			t3 = x;
+			t2 = palette_clears_ADDRESS + (int8_t)(((uint32_t)unk_48F0 << 1) << 1);
+			u_2 = PALETTE_CLEAR(t2)->extra_bytes;
+			address = PALETTE_CLEAR(t2)->address;
+			y = address;
+			t3 = address;
 			x = t3 + 1u;
 			mem_write8(t3, 0u);
 			while (u_2 != 0u)

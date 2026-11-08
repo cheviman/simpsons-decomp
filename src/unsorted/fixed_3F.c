@@ -3,7 +3,7 @@
  *    Description: the fixed program's code, 07E000-07FFFF
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    06-11-2026
+ *    Modified:    07-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -30,9 +30,10 @@ void sub_07E028(uint16_t x, uint8_t d, uint16_t *p_y, uint16_t *p_u, uint32_t *p
 {
 	uint16_t y = (uint16_t)*p_y;
 	uint16_t u = 0;
+	uint32_t left_caller = 0;
 
 	u = loaded_table_07F26E_ADDRESS;
-	*p_left_caller = 0u;
+	left_caller = 0u;
 	switch ((int8_t)(uint8_t)((uint32_t)d << 1))
 	{
 	case 0:
@@ -55,7 +56,7 @@ void sub_07E028(uint16_t x, uint8_t d, uint16_t *p_y, uint16_t *p_u, uint32_t *p
 		break;
 	case 10:
 	case 16:
-		sub_07E0EC(x, &u, p_left_caller);
+		sub_07E0EC(x, &u, &left_caller);
 		break;
 	case 12:
 		sub_07E135(x);
@@ -64,7 +65,7 @@ void sub_07E028(uint16_t x, uint8_t d, uint16_t *p_y, uint16_t *p_u, uint32_t *p
 		sub_07E149(x);
 		break;
 	case 20:
-		sub_07E155(x, &u, p_left_caller);
+		sub_07E155(x, &u, &left_caller);
 		break;
 	case -38:
 		sub_07DDC9(x);
@@ -103,7 +104,7 @@ void sub_07E028(uint16_t x, uint8_t d, uint16_t *p_y, uint16_t *p_u, uint32_t *p
 		sub_07DF66(x);
 		break;
 	case -10:
-		sub_07DF83(x, &u, p_left_caller);
+		sub_07DF83(x, &u, &left_caller);
 		break;
 	case -8:
 		sub_07DFA1(x);
@@ -112,10 +113,13 @@ void sub_07E028(uint16_t x, uint8_t d, uint16_t *p_y, uint16_t *p_u, uint32_t *p
 		sub_07DFBA(x);
 		break;
 	}
-	if (*p_left_caller == 0u)
+	if (left_caller != 0u)
+		left_caller = 0u;
+	else
 		sub_0785BA(x);
 	*p_y = y;
 	*p_u = u;
+	*p_left_caller = left_caller;
 }
 
 void sub_07E031(uint16_t x)
@@ -719,7 +723,7 @@ uint16_t sub_07E1E8(uint16_t x, uint16_t u)
 {
 	uint32_t zero = 0, carry = 0;
 	uint8_t a = 0;
-	uint16_t d = 0, u_2 = 0;
+	uint16_t animations = 0, d = 0, u_2 = 0;
 	uint8_t t1 = 0, t2 = 0, t3 = 0;
 	uint16_t t4 = 0, t5 = 0, t6 = 0, t7 = 0, t8 = 0;
 
@@ -732,19 +736,19 @@ uint16_t sub_07E1E8(uint16_t x, uint16_t u)
 		sub_07E25C(x);
 		return u;
 	}
-	u_2 = indexed_table_07F2AC_ADDRESS;
+	animations = hit_animations_ADDRESS;
 	t2 = mem_read8(x + 0x28u);
 	a = t2;
 	if (a < 2u)
 	{
 		t3 = mem_read8(x + 0x29u);
 		mem_write8(x + 0x29u, t3 + 1u);
-		mem_write8(x + 5u, DATA8(u_2 + (int8_t)a) | 0x80u);
+		mem_write8(x + 5u, HIT_ANIMATION(animations + (int8_t)a) | 0x80u);
 		mem_write16(x + 0xFu, 0u);
 		mem_write16(x + 0x14u, 0u);
-		return u_2;
+		return animations;
 	}
-	mem_write8(x + 5u, DATA8(u_2 + (int8_t)a) | 0x80u);
+	mem_write8(x + 5u, HIT_ANIMATION(animations + (int8_t)a) | 0x80u);
 	mem_write16(x + 0x14u, 0u);
 	mem_write16(x + 0x19u, 0x400u);
 	mem_write16(x + 0xFu, 0xFE00u);

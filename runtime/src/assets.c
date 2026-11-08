@@ -100,13 +100,109 @@ static char *copy_text(const char *text, size_t length)
 	return copy;
 }
 
-/* 'data' at 'place' of a region, and its bytes given */
+/* ---- the programs' data as the game keeps it: its pieces, by the places the programs know them by ---- */
+
+/* A piece of a program's data: its bytes, at the place the program knows them by (the addresses it keeps in its
+   state, resolved through its bank) */
+typedef struct
+{
+	uint32_t place, size;
+	uint8_t *data;
+} kept_piece;
+
+typedef struct
+{
+	kept_piece *pieces;
+	size_t count, capacity;
+} kept_data;
+
+static kept_data g_kept[GAME_ASSETS_SOUND + 1];    /* the 053248 program's, the sound program's */
+
+static void forget_kept(kept_data *kept)
+{
+	for (size_t index = 0; index < kept->count; index++)
+		free(kept->pieces[index].data);
+	free(kept->pieces);
+	memset(kept, 0, sizeof(*kept));
+}
+
+static int keep(kept_data *kept, uint32_t place, const uint8_t *data, size_t length)
+{
+	kept_piece *added;
+
+	if (!length)
+		return 1;
+	kept->pieces = grow(kept->pieces, &kept->capacity, kept->count + 1, sizeof(kept_piece));
+	if (!kept->pieces)
+		return fail("no memory for the programs' data");
+	added = &kept->pieces[kept->count];
+	added->place = place;
+	added->size = (uint32_t)length;
+	added->data = malloc(length);
+	if (!added->data)
+		return fail("no memory for the programs' data");
+	memcpy(added->data, data, length);
+	kept->count++;
+	return 1;
+}
+
+static int by_kept_place(const void *first, const void *second)
+{
+	const uint32_t a = ((const kept_piece *)first)->place, b = ((const kept_piece *)second)->place;
+
+	return a < b ? -1 : a > b;
+}
+
+/* The pieces in the order of their places, none over another */
+static int order_kept(kept_data *kept, const char *what)
+{
+	qsort(kept->pieces, kept->count, sizeof(kept_piece), by_kept_place);
+	for (size_t index = 1; index < kept->count; index++)
+		if (kept->pieces[index - 1].place + kept->pieces[index - 1].size > kept->pieces[index].place)
+			return fail("%s: two pieces at %05X", what, (unsigned)kept->pieces[index].place);
+	return 1;
+}
+
+static const uint8_t *kept_at(const kept_data *kept, uint32_t place)
+{
+	size_t low = 0, high = kept->count;
+	const kept_piece *found;
+
+	while (low < high)
+	{
+		const size_t middle = (low + high) / 2;
+
+		if (kept->pieces[middle].place <= place)
+			low = middle + 1;
+		else
+			high = middle;
+	}
+	if (low == 0)
+		return NULL;
+	found = &kept->pieces[low - 1];
+	return place < found->place + found->size ? found->data + (place - found->place) : NULL;
+}
+
+const uint8_t *game_assets_program_at(uint32_t place)
+{
+	return kept_at(&g_kept[GAME_ASSETS_PROGRAM], place);
+}
+
+const uint8_t *game_assets_sound_at(uint32_t place)
+{
+	return kept_at(&g_kept[GAME_ASSETS_SOUND], place);
+}
+
+/* 'data' at 'place' of a region, and its bytes given; a program's data is kept as a piece too */
 static int give(const game_assets_memory *into, game_assets_region region, uint32_t place, const uint8_t *data,
 	size_t length)
 {
 	if (place > REGIONS[region].size || length > REGIONS[region].size - place)
 		return fail("a piece past the %s region's end (%X)", REGIONS[region].name, (unsigned)place);
-	memcpy(into[region].memory + place, data, length);
+	if ((region == GAME_ASSETS_PROGRAM || region == GAME_ASSETS_SOUND) && !keep(&g_kept[region], place, data, length))
+		return 0;
+	if (into[region].memory)
+		memcpy(into[region].memory + place, data, length);
 	if (into[region].given)
 		memset(into[region].given + place, 1, length);
 	return 1;
@@ -1330,15 +1426,23 @@ const char *game_assets_load_into(const char *folder, const game_assets_memory i
 	for (int region = 0; region < GAME_ASSETS_REGIONS; region++)
 	{
 		if (!into[region].memory)
-			return "a region has no memory to load into";
+		{
+			/* (the programs' data may be kept as pieces only: game_assets_program_at, game_assets_sound_at) */
+			if (region != GAME_ASSETS_PROGRAM && region != GAME_ASSETS_SOUND)
+				return "a region has no memory to load into";
+			continue;
+		}
 		memset(into[region].memory, 0, REGIONS[region].size);
 		if (into[region].given)
 			memset(into[region].given, 0, REGIONS[region].size);
 	}
+	forget_kept(&g_kept[GAME_ASSETS_PROGRAM]);
+	forget_kept(&g_kept[GAME_ASSETS_SOUND]);
 	if (!read_sheets(folder, "tiles", GAME_ASSETS_TILES, 8, TILE_COLUMNS, TILE_BYTES, into)
 		|| !read_sheets(folder, "sprites", GAME_ASSETS_SPRITES, 16, SPRITE_COLUMNS, SPRITE_BYTES, into)
 		|| !read_samples(folder, into) || !read_program_data(folder, into) || !read_sound_data(folder, into)
-		|| !read_eeprom(folder, into))
+		|| !read_eeprom(folder, into) || !order_kept(&g_kept[GAME_ASSETS_PROGRAM], "data")
+		|| !order_kept(&g_kept[GAME_ASSETS_SOUND], "sound_data"))
 		return g_problem[0] ? g_problem : "the assets do not load";
 	return NULL;
 }

@@ -4,7 +4,7 @@ Description: what the shared decompiler core (tools/core) needs to know of The S
              ROM set, and its settings
 Version:     0.1.0
 Created:     05-11-2026
-Modified:    05-11-2026
+Modified:    07-11-2026
 Author:      Sebastian Toyos
 
 The core (arcade-decomp: the decompiler, the CPU frontends, the analysis, the checks) is the same for every
@@ -60,6 +60,17 @@ DECOMPILED = "06-11-2026"
 # names them (a, b, d, x, y, u), and the names made of an address (sub_078E68, unused_020686) counted as such
 NOISE_REGISTERS = r"(?:[abdxyu]|r\d+)"
 ADDRESS_NAMES = True
+# The program's data read through the pointers the program keeps, by name (konami_cpu/emit.py): the values a pointer
+# walks (symbols.txt elements lines) read one at a time at their address, NAME(p), and a record reached by a pointer
+# moved any number of bytes, STRUCT(p + n)->field, as the records' copies are made from where they are read
+ELEMENT_READS = True
+# a table of records the code reads from one record before its start, its numbers counting from 1: bank 1C's team
+# moves (0393xx: by the two players' characters, (first x 4 + second) x 8 from 7EA9, the table at 7EB1)
+RECORDS_BEFORE = 1
+# the data the fixed program reads in the window of a bank it chose by a table, whatever the bank: the sprite engine
+# (079AE9) reads the animation set index at 6000 of the bank animation_sets gives the object's kind (079B11 "LDB ,U+;
+# STB <$0E; SETLN <$0E", 079B3E "LDU #$6000; CLRA; LDU D,U")
+WINDOW_ELEMENTS = {0x079AE9: {0x6000: "animation_set_index"}}
 
 # The Z80 sound program (072-e03.6g: 0000-7FFF fixed, 16 KB banks at 8000-BFFF by FE00, which the Z80 only reads as
 # data; its RAM at F000): the reset (IM 1, then 0923), the interrupt (0038, from the 053248's read of 1FC4) and the
@@ -94,7 +105,9 @@ SOUND_CREATED = "06-11-2026"                    # when src/sound/ was first writ
 # F1-F7 hand back to the 053248 (04BE-0533)
 SOUND_CONTEXT = ("a_alt", "bc_alt", "de_alt", "hl_alt")
 SOUND_LOADED_TABLES = True                      # the tables the C reads by name, which the board sets (src/sound/tables.c)
+SOUND_TABLES_USED_ONLY = True                   # only the ones the C reads: ld bc,$0007 (a count) names none
 SOUND_COUNTED_FROM_ONE = True                   # tables read from an element before them: effect_priorities[i - 1]
 SOUND_NAMES_BEFORE_TABLES = 2                   # the base of a table indexed from past its start: effect_levels from level 1
+SOUND_TABLE_REGISTERS = True                    # a table read through HL ("ld hl,TABLE; add hl,bc; ld e,(hl)"), by its name
 # the handlers the program stores in its channel records (+43) and switches on (run_channel's JP (HL)), by name
 SOUND_CODE_VALUES = True

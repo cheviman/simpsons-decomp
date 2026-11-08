@@ -5,7 +5,7 @@
  *                 CPU's arithmetic where the IR does not spell it out
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    06-11-2026
+ *    Modified:    07-11-2026
  *    Author:      Sebastian Toyos
  *
  *    license:BSD-3-Clause
@@ -107,6 +107,10 @@ extern const size_t game_table_count;
 /* A table read with another width than its elements': 'offset' bytes into it, as the program has it */
 #define TABLE8(table, offset)  DATA8(table##_ADDRESS + (offset))
 #define TABLE16(table, offset) DATA16(table##_ADDRESS + (offset))
+
+/* The start of the program bank's window (6000-7FFF), whatever bank the CPU's lines chose: where the fixed program reads
+   data a bank holds at the same place in each (an animation bank's set index), in the bank it chose by a table */
+#define BANK_WINDOW 0x6000u
 
 /* A place in the 256-byte page 'base' points into, 'low' bytes from its start */
 #define IN_PAGE(base, low) (((base) & ~0xFFu) | (low))

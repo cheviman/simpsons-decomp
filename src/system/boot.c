@@ -3,7 +3,7 @@
  *    Description: the reset: the board set up, the RAM and ROM checks, the main loop that runs the jobs
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    06-11-2026
+ *    Modified:    07-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -297,7 +297,7 @@ void sub_0786CE(void)
 	io_write8(VIDEO_180C, 0u);
 	io_write8(VIDEO_380C, 0u);
 	x = 0u;
-	u = 0x71E0u;
+	u = loaded_table_05F1E0_ADDRESS;
 	d = (d & 0xFFu) | 0xF00u;
 	d = sub_07BF51(x, u, d);
 	x = 0x400u;
@@ -462,7 +462,7 @@ void sub_078A1A(void)
 	uint8_t t1 = 0, t2 = 0, t3 = 0, t4 = 0, t5 = 0, t6 = 0;
 
 	x = unk_59F1_ADDRESS;
-	a = DATA8(indexed_table_07E3EB_ADDRESS + (int8_t)unk_59F1);
+	a = coinages[(int8_t)unk_59F1];
 	stack = a;
 	a &= 0xFu;
 	unk_481D = a;
@@ -673,7 +673,7 @@ void sub_078B1C(void)
 		stack = stack + 1u;
 	} while (stack != 0x30u);
 	t2 = unk_48FA;
-	if (t2 != value_07E423)
+	if (t2 != rom_13c_sum[0])
 		b = 3u;
 	else
 		b = 0u;
@@ -695,7 +695,7 @@ void sub_078B1C(void)
 		stack = stack + 1u;
 	} while (stack != 0x3Cu);
 	t3 = unk_48FA;
-	if (t3 != value_07E425)
+	if (t3 != rom_15c_sum[0])
 		b = 3u;
 	else
 		b = 0u;
@@ -714,7 +714,7 @@ void sub_078B1C(void)
 		stack = stack + 1u;
 	} while (stack != 0x10u);
 	t4 = unk_48FA;
-	if (t4 != value_07E427)
+	if (t4 != rom_16c_sum[0])
 		b = 3u;
 	else
 		b = 0u;
@@ -733,7 +733,7 @@ void sub_078B1C(void)
 		stack = stack + 1u;
 	} while (stack != 0x20u);
 	t5 = unk_48FA;
-	if (t5 != value_07E429)
+	if (t5 != rom_17c_sum[0])
 		b = 3u;
 	else
 		b = 0u;

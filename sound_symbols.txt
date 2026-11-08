@@ -193,8 +193,12 @@ field sample 07 flags u8
 # them (the code at 4916 follows)
 48FA  data   note_lengths  u16[14]
 # by an effect's level 1-7 (4198-41A5 "LD DE,$4166; ADD HL,DE" by twice the level: 41A5 reads 4168-4174; level 0
-# ends the effect first, 419A), two bytes, the first a volume (41A7 "CALL $0F7C")
+# ends the effect first, 419A), two bytes: a pan (41A7 "CALL $0F7C", set_pan) and a volume (41AB "JP $0D72",
+# set_volume)
 4168  data   effect_levels  u16[7]
+struct effect_level 02 rom
+field effect_level 00 pan u8
+field effect_level 01 volume u8
 # the words two effects step through, one every 24 frames (1323-1330) or as their counter runs out (3793-379D), from
 # their channel's word at 00 (kref --sound-rom-reads: 1329 reads 12E1-12EF; 3767 36B9-36BC, its first two, 3799 the
 # rest, 36BD-3715)
@@ -252,20 +256,29 @@ F3D0  var  pass_count  u8
 F3D1  var  command_f8_count  u8
 
 # ======== the tables the C reads by name ========
-# (ADDRESS table NAME TYPE: the game loads the asset piece of that name.) Three are indexed by the sound's number from
-# well before their first element: the priorities of the effects 40-7F (02C0 "LD HL,$3630; ADD HL,DE", 0320), of the
-# unused group 3C-3E (01F0 "LD HL,$2740") and the songs' banks (0355 "LD DE,$5D92"): their bases are tables of their
-# own, by the sound (the elements before the sounds' first are the code and data there, never read)
+# (ADDRESS table NAME TYPE: the game loads the asset piece of that name.) Some are indexed by the sound's number from
+# well before their first element: the priorities of the effects 40-7F (02C0 "LD HL,$3630; ADD HL,DE", 0320) and
+# their handlers (02D3, 0333 "LD HL,$3570"), the unused group 3C-3E's priorities (01F0 "LD HL,$2740") and handlers
+# (0205 "LD HL,$26FC"), the songs' banks (0355 "LD DE,$5D92") and headers (0362 "LD DE,$5CB2"): their bases are tables
+# of their own, by the sound (the elements before the sounds' first are the code and data there, never read). An FM
+# channel's pitches are indexed by the note's number from 13 (42FE "LD HL,$448B"), the same way
 3630  table  effect_priorities_40_by_sound  u8
+3570  table  effect_handlers_40_by_sound  u16
 2740  table  unused_effect_priorities_by_sound  u8
+26FC  table  unused_effect_handlers_by_sound  u16
 5D92  table  song_banks_by_sound  u8
+5CB2  table  song_headers_by_sound  u16
+448B  table  fm_pitches_by_note  u16
+# the PCM patch pcm_drum_b_4 hands load_patch (5CB3 "LD HL,$5CB0"), 3 bytes just before the code: its own name, as two
+# bytes before song_headers_by_sound it would read as that table's base (the patches the other routines hand
+# load_patch are numbers in the C still)
+5CB0  table  pcm_drum_b_4_patch  u8
 1016  table  effect_handlers  u16
 1086  table  effect_priorities  u8
 2774  table  unused_effect_group  u16
 277C  table  unused_effect_priorities  u8
 2E01  table  effect_handlers_2  u16
 2E79  table  effect_priorities_2  u8
-35F0  table  effect_handlers_40  u16
 3670  table  effect_priorities_40  u8
 0DB8  table  carrier_masks  u8
 0E10  table  note_codes  u8
@@ -273,12 +286,26 @@ F3D1  var  command_f8_count  u8
 44A5  table  fm_pitches  u16
 4533  table  pcm_pitches  u16
 48FA  table  note_lengths  u16
-5DB2  table  song_headers  u16
 5E12  table  song_banks  u8
 5E42  table  music_fm_patches  u16
 63F4  table  music_pcm_patches  u16
 642C  table  music_pcm_transpositions  s16
 28E9  table  samples  u8
+# what the code reads through a pointer it worked out, by the instruction that sets the pointer: an entry of
+# music_fm_patches or music_pcm_patches (music_tick 46FD, by the channel's kind: the patch's address), of
+# fm_pitches_by_note or pcm_pitches (431D), of music_commands (4660, the command's handler: read in the block the
+# other ways into the switch join), of song_headers_by_sound (start_song 0365, by the song the stack kept), a sample's
+# record (load_patch 0D44) and an effect's level (41A4)
+elements patch_address u16
+elements pitch u16
+elements music_command_handler u16
+elements song_header_address u16
+local music_tick 46FD hl patch_entry patch_address
+local music_tick 431D hl pitch_entry pitch
+local music_tick 4660 hl command_entry music_command_handler
+local start_song 0365 hl header_entry song_header_address
+local load_patch 0D44 hl sample_entry sample
+local pcm_effect_7f_set_volume 41A4 hl level effect_level
 
 # ======== the music's functions ========
 41AE  file  music  # the music: a song's tracks, their notes and commands, the pitch envelope, the gate, the fade's volume

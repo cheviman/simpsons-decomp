@@ -165,21 +165,68 @@ void sound_timers_due(uint64_t cycle)
 
 /* ---- the Z80's bus ---- */
 
+const uint8_t *(*simpsons_sound_data)(uint32_t place);
+
+/* The sound program's data byte at a place of its region, where simpsons_sound_data says (else game_sound) */
+static const uint8_t *sound_byte(uint32_t place)
+{
+	return simpsons_sound_data ? simpsons_sound_data(place) : &game_sound[place];
+}
+
 const uint8_t *simpsons_sound_data_at(uint32_t address)
 {
+	uint32_t place = 0;
+	const uint8_t *byte = NULL;
+
 	address &= 0xFFFFu;
 	if (address < 0x8000u)
-		return &game_sound[address];
-	if (address < 0xC000u)
+		byte = sound_byte(place = address);
+	else if (address < 0xC000u)
 	{
 		/* the bank: entries 0-1 the region's 10000, then 4000 more each (simpsons.cpp's audio bank) */
 		const uint32_t entry = simpsons_sound.bank;
 		const uint32_t base = 0x10000u + (entry < 2u ? 0u : (entry - 2u) * 0x4000u);
 
-		return &game_sound[base + (address - 0x8000u)];
+		byte = sound_byte(place = base + (address - 0x8000u));
 	}
-	fprintf(stderr, "Sound program data read at %04X, where no data is\n", (unsigned)address);
+	if (byte)
+		return byte;
+	fprintf(stderr, "The sound program read data at %04X (%05X) in frame %llu, where its assets have none\n",
+		(unsigned)address, (unsigned)place, (unsigned long long)simpsons_board.frame);
 	exit(3);
+}
+
+/* A table the program reads by name: a copy of its region's bytes from its place to the end of the fixed program or
+   of its bank, as the program reads it (song_headers past its own piece into the next: the copy cut at a piece's end
+   made the music read its tracks from the code), 0 where the assets give nothing (code). A table read from past its
+   start (song_banks_by_sound, by the sound numbers 80-AF) has its data a little after its place */
+#define SOUND_TABLE_LEAD 0x100u
+
+static const uint8_t *copy_sound_table(uint32_t place, const char **problem)
+{
+	const uint32_t end = place < 0x8000u ? 0x8000u : 0x10000u + ((place - 0x10000u) / 0x4000u + 1u) * 0x4000u;
+	uint32_t lead = 0, length = 0;
+	uint8_t *copy;
+
+	*problem = NULL;
+	if (!simpsons_sound_data)
+		return &game_sound[place];
+	while (lead < SOUND_TABLE_LEAD && place + lead < end && !simpsons_sound_data(place + lead))
+		lead++;
+	while (place + lead + length < end && simpsons_sound_data(place + lead + length))
+		length++;
+	if (!length || (copy = calloc(end - place + 4u, 1)) == NULL)
+	{
+		*problem = length ? "no memory for the sound program's tables" : "a sound table is in no asset";
+		return NULL;
+	}
+	for (uint32_t offset = 0; place + offset < end; offset++)
+	{
+		const uint8_t *byte = simpsons_sound_data(place + offset);
+
+		copy[offset] = byte ? *byte : 0u;
+	}
+	return copy;
 }
 
 uint8_t sound_bus_read(uint16_t address)
@@ -255,10 +302,17 @@ const char *simpsons_sound_init(void)
 	simpsons_ym2151_init(&simpsons_sound.fm);
 	simpsons_k053260_init(&simpsons_sound.pcm, game_samples, GAME_SAMPLES_SIZE);
 
-	/* the tables the program reads by name: game/data.h's game_sound, which the tools fill from the ROM set and
-	   the game from its assets */
+	/* the tables the program reads by name: from the assets' pieces in the game, game/data.h's game_sound in the
+	   tools (filled from the ROM set) */
 	for (size_t index = 0; index < sound_table_count; index++)
-		*sound_tables[index].data = &game_sound[sound_tables[index].address];
+	{
+		const char *problem;
+		const uint8_t *table = copy_sound_table(sound_tables[index].address, &problem);
+
+		if (!table)
+			return problem;
+		*sound_tables[index].data = table;
+	}
 	return NULL;
 }
 

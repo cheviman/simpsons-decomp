@@ -58,9 +58,14 @@ typedef struct
 
 extern simpsons_sound_board simpsons_sound;
 
+/* Where the sound program's data byte at a place (its region's offset: 0000-7FFF, the banks' from 10000) is: the
+   game's assets' pieces (game/assets.h's game_assets_sound_at); unset, game/data.h's game_sound, the ROM set's (the
+   tools that check the board against MAME's). NULL where there is none (the program's code) */
+extern const uint8_t *(*simpsons_sound_data)(uint32_t place);
+
 /* The sound board at power on, at the board's present (simpsons_board.cycles): its chips on the samples' memory
-   (game/data.h's game_samples), the program's tables and data from game/data.h's game_sound (the game fills it
-   from its assets). NULL, or what failed */
+   (game/data.h's game_samples), the program's tables and data where simpsons_sound_data says. NULL, or what
+   failed */
 const char *simpsons_sound_init(void);
 
 /* Hooks it to the board model, for the game: before the 053248 reads or writes the ports or raises the Z80's

@@ -22,7 +22,8 @@ As of 06-11-2026:
 - [x] Control scripts that play the game through (`tests/controls/`, `tools/make_scenarios.py`): the attract mode,
       the test mode's pages, games of one and four players, every stage and bonus game to its boss's end, and the
       ending; 25 scenarios, 343,270 frames on the reference
-- [ ] The same scenarios compared frame by frame with the decompiled game
+- [x] The same scenarios compared frame by frame with the decompiled game: all 25 the same in state, picture and
+      sound
 - [x] A decoder and disassembler for the 053248 in the shared core, the same text as MAME's at every offset of
       every program bank and of every opcode with every postbyte
 - [x] The 053248's static analysis: all the code the scenarios run (42,668 places), found without traces, its
@@ -50,16 +51,20 @@ As of 06-11-2026:
 - [x] The game from its assets, in a window (`simpsons`, SDL2) or headless: it opens no ROM, and no executable holds
       any of it (`tools/rom_in_executables.py`); the same as the reference in all 25 scenarios in state, picture and
       sound
-- [ ] The 053248 program decompiled to readable C: a first structured C in `src/` (`tools/decompile.py`, no goto),
-      the same as the reference in 12 of the 25 scenarios (the attract and test modes; not yet once play starts). The
-      game runs translated an instruction at a time for now
+- [x] The 053248 program decompiled to structured C (`src/`, `tools/decompile.py`): no goto, the same as the
+      reference in all 25 scenarios in state, picture and sound; the game in its window runs it
+- [ ] The 053248's C made readable: its structures typed, its functions and variables named by what they do, its
+      files by subject (its data is read by name already: below)
 - [x] The assets extracted by subject and checked byte for byte (`tools/extract_assets.py --check`): the sprites by
       the objects whose animations show them, the tiles by the stages whose maps show them, the K053260's samples
       as WAV files, the music as Standard MIDI Files (a song a file, as the Z80's driver plays it), and every other
       byte of data of both programs as text by name: the records by their fields, the addresses as the names of what
       they point at
 - [x] The assets loaded back in C byte for byte (`kref --assets-check`), the factory EEPROM among them
-- [ ] The assets read by name by the decompiled 053248 program
+- [x] Both programs' data read by name by the decompiled C, from the assets' pieces: the game builds no image of the
+      ROM's regions, and neither program's C reads its data through an address of the ROM (`tools/noise_report.py`,
+      `rom_reads` 0); an address a program keeps in its state (a pointer into its data) is found among the pieces by
+      the place it names
 
 ## Verifying your ROM set
 

@@ -3,7 +3,7 @@
  *    Description: bank 12's code
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    06-11-2026
+ *    Modified:    07-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -3382,10 +3382,10 @@ void sub_0241EC(uint16_t *p_x, uint16_t *p_y)
 			mem_write8(y + 0x32u, unk_48F1);
 			mem_write8(y + 0xAu, 0x30u);
 			mem_write8(y + 0xBu, 0x30u);
-			x = indexed_table_025962_ADDRESS;
+			x = stage_end_exit_waits_ADDRESS;
 			a = unk_48F2;
 			mem_write8(y + 0x30u, a);
-			mem_write8(y + VIDEO_0031, DATA8(indexed_table_025962_ADDRESS + (int8_t)a));
+			mem_write8(y + VIDEO_0031, (uint8_t)(EXIT_SPEED(stage_end_exit_speeds_ADDRESS + (int8_t)a - 0x4u)->x_speed >> 8u));
 			unk_48F2++;
 		}
 		unk_48F0 = (uint32_t)unk_48F0 << 1;
@@ -3678,9 +3678,9 @@ uint16_t sub_02427E(uint16_t x, uint16_t u)
 {
 	uint32_t carry = 0;
 	uint8_t a = 0, b = 0;
-	uint16_t d = 0, u_2 = 0;
-	uint8_t t1 = 0, t2 = 0, t3 = 0, t5 = 0, t9 = 0;
-	uint16_t t4 = 0, t6 = 0, t7 = 0, t8 = 0;
+	uint16_t d = 0, exit_speed = 0;
+	uint8_t t1 = 0, t2 = 0, t3 = 0, t5 = 0, t7 = 0;
+	uint16_t t4 = 0, t6 = 0, x_speed = 0, y_speed = 0;
 
 	t1 = mem_read8(x + VIDEO_0031);
 	a = t1;
@@ -3699,15 +3699,15 @@ uint16_t sub_02427E(uint16_t x, uint16_t u)
 		carry = sub_078680(d);
 	}
 	t5 = mem_read8(x + 0x30u);
-	t6 = loaded_table_025966_ADDRESS + (int8_t)(((uint32_t)t5 << 1) << 1);
-	u_2 = t6 + 2u;
-	t7 = DATA16(t6);
-	mem_write16(x + 0xFu, t7);
-	t8 = mem_read16(u_2);
-	mem_write16(x + 0x19u, t8);
-	t9 = mem_read8(x + 1u);
-	mem_write8(x + 1u, t9 + 1u);
-	return u_2;
+	t6 = stage_end_exit_speeds_ADDRESS + (int8_t)(((uint32_t)t5 << 1) << 1);
+	exit_speed = t6 + 2u;
+	x_speed = EXIT_SPEED(t6)->x_speed;
+	mem_write16(x + 0xFu, x_speed);
+	y_speed = EXIT_SPEED(exit_speed - 0x2u)->y_speed;
+	mem_write16(x + 0x19u, y_speed);
+	t7 = mem_read8(x + 1u);
+	mem_write8(x + 1u, t7 + 1u);
+	return exit_speed;
 }
 
 void sub_0242AC(uint16_t x)
@@ -7370,8 +7370,8 @@ uint16_t sub_025388(uint16_t x, uint16_t d)
 {
 	uint32_t carry = 0;
 	uint8_t a = 0, b = 0;
-	uint16_t u = 0, y = 0;
-	uint16_t t1 = 0, t2 = 0, t3 = 0, t4 = 0, t5 = 0, t6 = 0, t7 = 0;
+	uint16_t placement = 0, u = 0, y = 0;
+	uint16_t t1 = 0, t2 = 0, t3 = 0, kind = 0, t4 = 0, x_2 = 0, z = 0;
 
 	a = (uint8_t)(d >> 8);
 	t1 = a | 0x1000u;
@@ -7385,24 +7385,24 @@ uint16_t sub_025388(uint16_t x, uint16_t d)
 	carry = (int8_t)b < 0;
 	t2 = object_12_placements_ADDRESS + (((((uint32_t)a << 1) | carry) << 8) | (uint8_t)((uint32_t)b << 1));
 	u = t2 + 2u;
-	y = DATA16(t2);
+	y = PLACEMENT(t2)->object;
 	if (y == 0xFFFFu)
 		y = x;
 	mem_write8(y, 0x80u);
 	t3 = u;
-	t4 = mem_read16(t3);
-	mem_write16(y + 4u, ((uint32_t)(t4 >> 8) << 8) | (uint8_t)(t4 | 0x80u));
-	t5 = t3 + 2u;
-	u = t5 + 2u;
-	t6 = mem_read16(t5);
-	a = (uint8_t)(t6 >> 8);
-	b = (uint8_t)t6;
+	kind = PLACEMENT(t3 - 0x2u)->kind;
+	mem_write16(y + 4u, ((uint32_t)(kind >> 8) << 8) | (uint8_t)(kind | 0x80u));
+	t4 = t3 + 2u;
+	placement = t4 + 2u;
+	x_2 = PLACEMENT(t4 - 0x4u)->x;
+	a = (uint8_t)(x_2 >> 8);
+	b = (uint8_t)x_2;
 	if ((uint16_t)(((uint32_t)a << 8) | b) != 0xFFFFu)
 		mem_write16(y + 0xCu, ((uint32_t)a << 8) | b);
 	mem_write16(y + 0x11u, 0x80u);
-	t7 = mem_read16(u);
-	a = (uint8_t)(t7 >> 8);
-	b = (uint8_t)t7;
+	z = PLACEMENT(placement - 0x6u)->z;
+	a = (uint8_t)(z >> 8);
+	b = (uint8_t)z;
 	if ((uint16_t)(((uint32_t)a << 8) | b) != 0xFFFFu)
 		mem_write16(y + 0x16u, ((uint32_t)a << 8) | b);
 	return y;
@@ -7417,15 +7417,15 @@ void sub_0253C9(uint16_t d)
 	uint16_t t1 = 0, t2 = 0, t3 = 0, t4 = 0, t5 = 0;
 
 	unk_48EB = d >> 8;
-	t1 = DATA16(constant_table_02597A_ADDRESS + (uint8_t)((uint32_t)d << 1));
-	unk_48E8 = mem_read8(t1);
+	t1 = absent_player_blanks[d & 0x7Fu];
+	unk_48E8 = PLAYER_BLANK(t1)->width;
 	t2 = t1 + 1u;
-	unk_48EA = mem_read8(t2);
+	unk_48EA = PLAYER_BLANK(t2 - 0x1u)->height;
 	t3 = t2 + 1u;
 	t4 = t3 + 1u;
-	b = mem_read8(t4);
-	stack = mem_read8(t3);
-	x = mem_read16(t4 + 1u + (int8_t)((uint32_t)unk_48EB << 1));
+	b = PLAYER_BLANK(t4 - 0x3u)->colour;
+	stack = PLAYER_BLANK(t3 - 0x2u)->tile;
+	x = PLAYER_BLANK(t4 + (int8_t)((uint32_t)unk_48EB << 1) - 0x3u)->marge_place;
 	a = stack;
 	do
 	{
@@ -7649,7 +7649,7 @@ uint16_t sub_0254BF(uint8_t d)
 uint16_t sub_0254F4(uint16_t d)
 {
 	uint8_t a = 0, b = 0;
-	uint16_t d_2 = 0, u = 0;
+	uint16_t cosines = 0, d_2 = 0;
 	uint16_t t1 = 0;
 	uint32_t unk_48EC_halfword = 0;
 
@@ -7658,11 +7658,11 @@ uint16_t sub_0254F4(uint16_t d)
 	unk_48E8 = a;
 	unk_48E9 = b;
 	unk_48EA = a & 0x3Fu;
-	u = indexed_table_0259A4_ADDRESS;
+	cosines = wave_cosines_ADDRESS;
 	if ((unk_48E8 & 0x40u) == 0u)
-		a = (uint8_t)((uint16_t)((uint32_t)DATA8(u + (int8_t)(0x3Fu - unk_48EA)) * unk_48E9) >> 8);
+		a = (uint8_t)((uint16_t)((uint32_t)WAVE_COSINE(cosines + ((int8_t)(0x3Fu - unk_48EA))) * unk_48E9) >> 8);
 	else
-		a = (uint8_t)((uint16_t)((uint32_t)DATA8(u + (int8_t)unk_48EA) * b) >> 8);
+		a = (uint8_t)((uint16_t)((uint32_t)WAVE_COSINE(cosines + (int8_t)unk_48EA) * b) >> 8);
 	unk_48ED = a;
 	unk_48EC = 0u;
 	if ((unk_48E8 & 0x80u) != 0u)

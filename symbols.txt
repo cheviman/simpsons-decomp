@@ -63,30 +63,21 @@ field layer_map 00 tiles u16
 # adds to it (07C5A5 "ADDD [#$0A,X]", 07C636 "ADDD [#$0C,X]", 07C6A4 "ADDD [#$0E,X]")
 field layer_map 02 scroll_x u16
 field layer_map 04 scroll_y u16
-field layer_map 06 maps u16
-field layer_map 08 unk_08 u16
+# (with its type, in the section of the program's data by name below: layer_map.maps, layer_map.unk_08)
 field layer_map 0A offset_x u16
 field layer_map 0C offset_y u16
 field layer_map 0E offset_y2 u16
-field layer_map 10 maps_high u16
-07EC9D  table  layer_maps[2]  u16
+# (with its type, in the section of the program's data by name below: layer_map.maps_high, layer_maps)
 07ECA1  table  layers[2]  layer_map
 # by scene (direct page 75: 00-7F the first table, 80-FF the high one, bit 7 dropped), the address of a list of
 # 4-byte records by the scene's area (direct page 76): an address and its bank. Layer A's maps from its descriptor
 # (07C5B2 "LDY #$06,X", 07C5BA "LDY #$10,X", the descriptor ECA1 by 07C618 "LDX #$EC9D"), its tile blocks from
 # 07C8BD "LDY #$ECC9" / 07C8C5 "LDY #$ED29"; layer B's from ECB3 and 07C8F7 "LDY #$ECE9" / 07C8FF "LDY #$EDBB".
 # Each table ends where the first of its lists starts
-07ECC9  table  block_scenes_a[4]  u16
-07ECE9  table  block_scenes_b[4]  u16
-07ECF9  table  map_scenes_a[4]  u16
-07ED19  table  map_scenes_b[4]  u16
-07ED29  table  block_scenes_a_high[15]  u16
-07EDBB  table  block_scenes_b_high[15]  u16
-07EE41  table  map_scenes_a_high[15]  u16
-07EED3  table  map_scenes_b_high[15]  u16
+# (with its type, in the section of the program's data by name below: block_scenes_a, block_scenes_b, map_scenes_a,
+# map_scenes_b, block_scenes_a_high, block_scenes_b_high, map_scenes_a_high, map_scenes_b_high)
 # the K052109's registers 1D80 and 1F00 by scene and area (07C931 "LDY #$EF55" / 07C939 "LDY #$EF63": 2-byte records)
-07EF55  table  layer_modes[4]  u16
-07EF63  table  layer_modes_high[15]  u16
+# (with its type, in the section of the program's data by name below: layer_modes, layer_modes_high)
 # 16 bytes by a tile block's second byte (07C6FA "LDX #$F67C"), copied a column at a time (07C70F)
 07F67C  table  block_tile_flags[1]  u8
 
@@ -98,20 +89,21 @@ field palette_load 02 destination u16
 field palette_load 04 palettes u8
 # the sets of 4 loads by a request's byte 2 (07BCCE "LDX #$E9CB", from 80 07BCD6 "LDX #$EAEB"; its byte 1 says which
 # loads): each table ends where its first set starts
-07E9CB  table  palette_sets[14]  u16
-07EAEB  table  palette_sets_high[19]  u16
+# (with its type, in the section of the program's data by name below: palette_sets, palette_sets_high)
 
 # ======== the stages' objects (tools/data_walk.py: spawn lists) ========
 # an object a stage puts in when its scroll reaches it (07C9B2-07CA4D, the list's place kept in direct page 73)
 struct spawn 08 rom
-# where along the stage (07C9DE "CMPD #$00,X" against the scroll plus 150); a record whose first byte is FF ends the list
+# where along the stage (07C9DE "CMPD #$00,X" against the scroll plus 150); a record whose first byte is FF ends the
+# list
 field spawn 00 x u16
 # its height, 8 pixels a step up from the floor line (07CA21 "LDB #$02,X; SEX; ASLDI #$03; NEGD")
 field spawn 02 y s8
 field spawn 03 depth u8
 # bits 2-3 the object list it goes into (07CA50, by object_list_sizes and object_lists), bit 7 from the right
 field spawn 04 flags u8
-field spawn 05 unk_05 u8
+# the state the object starts in (07C9FE "LDA #$05,X; STA #$30,U": its field 30)
+field spawn 05 state u8
 # the stage's difficulty it takes (07C9E3 "CMPA <$6B": not put in above it)
 field spawn 06 level u8
 # the object's kind (07C9F5 "LDA #$07,X; STA #$01,U")
@@ -132,8 +124,7 @@ field spawn 07 kind u8
 struct tile_picture_place 05 rom
 field tile_picture_place 00 bank u8
 field tile_picture_place 01 tiles u16
-field tile_picture_place 03 picture u16
-07EFB5  table  tile_pictures[1]  u16
+# (with its type, in the section of the program's data by name below: tile_picture_place.picture, tile_pictures)
 
 # a line of a test mode page's menu (data_walk.py: test mode page), after the page's text and its 3 bytes
 struct test_menu_line 03 rom
@@ -168,15 +159,13 @@ field path_start 03 count_3a u8
 
 # ======== the attract mode's demos (tools/data_walk.py: demo, demo inputs) ========
 # by direct page 5E (07A0A4 "LDX #$E6A1; LDA <$5E; ASLA; LDX A,X")
-struct demo 0C rom
+# (with its type, in the section of the program's data by name below: struct demo)
 # the players who play it, a bit each (07A0AD "LDA ,X+; STA <$50")
-field demo 00 players u8
+# (with its type, in the section of the program's data by name below: demo.players)
 # the frames it lasts (07A0B2 "LDD ,X++; STD $5800", counted down at 07A14C)
-field demo 01 frames u16
-field demo 03 step u8
+# (with its type, in the section of the program's data by name below: demo.frames, demo.step)
 # the 4 players' inputs, in bank 2C (07A0F2 "LDU ,X++")
-field demo 04 inputs u16[4]
-07E6A1  table  demos[3]  u16
+# (with its type, in the section of the program's data by name below: demo.inputs, demos)
 # a step of a player's inputs: the controls and the frames they are held (07A17C, 07A192; 0 is 256)
 struct demo_input 02 rom
 field demo_input 00 controls u8
@@ -191,7 +180,7 @@ field demo_input 01 frames u8
 # by its kind (field 30: 02AD8F-02ADB4): a time (02AD8F "LDY #$79F1", into field 3D), its list of objects to put in
 # (02AD9A "LDY #$79FE"), and 4 next kinds by the players' number (02ADA3 "LDY #$7A18", "LDA A,Y" by direct page 57)
 02B9F1  table  object_15_times[13]  u8
-02B9FE  table  object_15_spawn_lists[13]  u16
+# (with its type, in the section of the program's data by name below: object_15_spawn_lists)
 02BA18  table  object_15_next_kinds[52]  u8
 
 # ======== the test mode (bank 2F) ========
@@ -306,30 +295,22 @@ field behaviour_choice 02 behaviour u16 enemy_behaviour
 # a player's record (07A0DE "LDU #$E819; LDA <$F0; ASLA; LDU A,U", by the player's number): the addresses of its
 # variables in the work RAM, which the code goes through ([#$15,U], [#$17,U], [#$04,U]: 07A0E7-07A10F), its bit
 # (06) and its initials (0B: MRG, HMR, BRT, LSA, the high score's)
-struct player 1B rom
-field player 00 variables_00 u16
-field player 02 variables_02 u16
-field player 04 lives u16
-field player 06 bit u8
-field player 07 variables_07 u16
-field player 09 variables_09 u16
-field player 0B initials u8[3]
-field player 0E number u8
-field player 0F variables_0f u16[6]
+# (with its type, in the section of the program's data by name below: struct player, player.variables_00,
+# player.variables_02, player.lives, player.bit, player.variables_07, player.variables_09, player.initials,
+# player.number, player.variables_0f)
 07E819  table  player_records[4]  u16 player
-07E821  table  players[4]  player
+07E821  table  player_variable_records[4]  player
 
 # ======== the players' gauges (bank 20) ========
 # a player's record for the gauges (040909 "LDX #$7294; ASLA; LDX A,X", by the player): the addresses of its
 # variables, read through ([#$12,X], [#$16,X], [#$02,X]), and places in the tile RAM
 struct gauge_player 18 rom
-field gauge_player 00 unk_00 u8
-field gauge_player 01 variables u16[11]
+# (with its type, in the section of the program's data by name below: gauge_player.unk_00, gauge_player.variables)
 field gauge_player 17 unk_17 u8
 041294  table  gauge_player_records[4]  u16 gauge_player
 04129C  table  gauge_players[4]  gauge_player
 # the two tiles, one above the other, of a gauge's step 1-8 (040A4C "LDY #$72FC; ASLA; LEAY A,Y": 0 draws 8D)
-0412FC  table  gauge_step_tiles[18]  u8
+# (with its type, in the section of the program's data by name below: gauge_step_tiles)
 # the game's rank, direct page 61 (040C40, at most 1F): the sum of a base (040C65 "LDX #$7782; LDA <$14; LDA A,X",
 # entry 1 while direct page 11 is set), a term by the players in the game (040C7D "LDX #$7786; LDA <$57; DECA"),
 # one by scene (040CB7 "LDX #$778A; LDA <$67"), and a step that grows by one, up to 5, each time the frame count in
@@ -356,7 +337,7 @@ field test_player 04 x u16
 field test_player 06 z u16
 field test_player 08 shadow_kind u16
 field test_player 0A shadow_x u16
-field test_player 0C unk_0c u8[5]
+# (with its type, in the section of the program's data by name below: test_player.unk_0c)
 field test_player 11 button u8
 05FD88  table  test_player_records[4]  u16 test_player
 05FD90  table  test_players[4]  test_player
@@ -400,17 +381,13 @@ field hit_box 06 field_23 u16
 # bank 1D's object's parts, by number (03B530 "LDY #$7D21", 8 bytes a record, 03B535-03B553): a speed, its y and z
 # from the object, its kind, its animation; kref --rom-reads: 03BD21-03BD96, 15 records
 struct part 08 rom
-field part 00 speed u8
-field part 01 dy s8
-field part 02 dz s8
-field part 03 kind u8
-field part 04 animation u16
-field part 06 unk_06 u16
+# (with its type, in the section of the program's data by name below: part.speed, part.dy, part.dz, part.kind,
+# part.animation, part.unk_06)
 03BD21  table  object_1d_parts[15]  part
 # bank 1C's object's moves: the next by step (0388D4 "LDX #$7DEB; LDA B,X", negative goes back to 0), and 4 of 4 bytes
 # (0388E2 "LDX #$7DF7", 0388E7 "LDD ,X++; LDY ,X")
 039DEB  table  object_1c_move_steps[12]  u8
-039DF7  table  object_1c_moves[8]  u16
+# (with its type, in the section of the program's data by name below: object_1c_moves)
 # bank 16's object, by its kind (02D1C9 "LDU #$7E39", into field 47; 02D1D1 "LDU #$7E3F", 4 bytes a record: its pattern
 # into field 3E, its kind and animation), and the patterns, 5 steps each (02D326 "LDB A,Y" by field 3C, which 02D209
 # sets to 5 and 02D319 counts down to 0); the child objects at 7E75 and 7E7D follow
@@ -441,7 +418,7 @@ field part_offset 02 dz s8
 # by number (079311: bit 7 clears it instead, 079346), in bank 12 (07932D "LDX $6021": the table's address, which the
 # bank keeps at 6021; 079331 "LDU B,X"), printed by 07936D (an address in the tile RAM, the characters, '/' and the
 # next address, '#' the end): "INSERT COIN", the copyright... The table ends where its first text starts
-024021  table  game_texts_address[1]  u16
+# (with its type, in the section of the program's data by name below: game_texts_address)
 0259E4  table  game_texts[19]  u16
 
 # code nothing the analysis follows reaches (runs that decode to a return or a jump at their end, or into code)
@@ -465,7 +442,7 @@ field part_offset 02 dz s8
 # of 5 by field 31 (03409B "LDU #$77C6; ASLA; LDU A,U"), a byte by direct page 57 (0340A7 "LDA A,U", into 188C)
 0357BC  table  object_1a_next_states[5]  u8
 0357C1  table  object_1a_states_after[5]  u8
-0357C6  table  object_1a_level_rows[5]  u16
+# (with its type, in the section of the program's data by name below: object_1a_level_rows)
 035754  table  object_1a_levels[20]  u8
 # after the spawn list nothing leads to, a record more like its (0356DD), places in the tile RAM (0356E5) and two texts
 # in the fixed printer's form (0356FE: spaces over two lines; 035744: T F V O), which nothing prints
@@ -513,3 +490,2424 @@ field part_offset 02 dz s8
 # 078E5B (a bank in the window) and 078E63 (the fixed program) run into it: "LDD <$FA; ADDB ,X+; ADCA #$00; STD <$FA;
 # LEAU -1,U; CMPU #$0000; BNE": the boot's RAM ROM CHECK adds up the program's chips, which the game does not have
 078E68  func  add_rom_bytes
+
+# ======== the program's data by name: the tables the C reads, and what it reads through pointers ========
+# every table the decompiled 053248 program reads, by what it is, with its element type and count, and the records and
+# values it reads through pointers (struct, elements, and the local and param lines that type the pointers); the
+# evidence
+# above each: the instructions that read it (as the listing has them) and what the value goes to. kref: what kref
+# --rom-reads saw an instruction read in the scenarios
+
+# ======== banks 10, 11, 12, 13 ========
+# Places are offsets of the program region; "(cpu XXXX)" is the address the code names. Evidence quotes are the
+# listing's (build\listing\simpsons.s); "kref" is build\reads\<scenario>\rom_reads.txt.
+#
+# Who is who (evidence for the subjects used below):
+# - bank 10 holds the two bonus stages and the wrestler. Bonus 1: scene 83 (07A689 sets direct page 75 to 83), its
+#   steps 020009 (from 07A6CC) and 020000 (from 07A748); bonus 2: scene 8B (07AF5A), 02000C (from 07AF97) and 020003
+#   (from 07B00F); both end with the results at 020F39 (020207 "LBSR $6F39", 020BF0 "LBSR $6F39"). The bonus objects
+#   are 4A40 + C0 x player (the player's slot: 0 Marge, 1 Homer, 2 Bart, 3 Lisa) with partners at +60 and +840.
+#   (kind_0E.png shows the texts "Hey, wake up and find Maggie!" and "Blow up your balloon and go after Maggie!":
+#   bonus 1's object grows as the player presses (its zoom, below), bonus 2 raises a level; the names keep
+#   bonus_1 / bonus_2.)
+# - the wrestler: object type 1F (the 4F80 list's handlers F2EC, entry 1F -> 020006 -> 0212F8), its kind 94 (021768 "LDU
+#   #$7E79; ASLA; LDD A,U; ORB #$80; STD #$04,X", values 94xx; SET_NAMES 0x94 "wrestler"); stage 1's spawn list
+#   (spawn_lists[0], 03659D) holds a type-1F spawn, stage 4's two, stage 8's one.
+# - the krusty balloon: object type 05 (entry 05 -> 026000 -> 026509), its kind 9D (02696B "LDU #$7CB6", values
+#   9Dxx; SET_NAMES 0x9D "krusty_balloon"); stage 2's spawn list (03685D) holds a type-05 spawn.
+# - stage 7's boss: object type 37 (entry 37 -> 022009 -> 022A4C), kind A3 (022EA0 "LDU #$7A55", values A3xx;
+#   no SET_NAMES name); the only type-37 spawn is in spawn_lists[9] (037A1D), scene 9 = step 13, stage 7. Its 4
+#   helpers are type 37 of the second object list (5280; 07CB9F's handlers F40D, entry 37 -> 02200C -> 023171), kind 12.
+# - the three bosses share one plan: health in field 1B (07C274 "LDA #$1B,X", 07C277 "SUBA #$1C,U": the attacker's
+#   field 1C is the damage), a 5-piece gauge drawn by 0786BF (07E496: "STD <$E8" the health one piece stands for,
+#   07E4AF "LDB #$05; MUL", 07E4B5 "LDB #$56,X" the health at the start, 07E4CD "CMPA <$EE" counting the pieces up to
+#   5), and their target player in field 2B.
+
+# ======== bank 10: the bonus stages ========
+
+# bonus 1's players, one record each (7 bytes): the presses the bonus reads (18E8 + player: 020362 "LDA [,U]", 020364
+# "ANDA
+# #$30", the attack/jump bits; 020816 "LDA [#$03,U]; STA [,U]" copies the player's, 02088C "LDA #$10; STA [,U]"
+# presses for a player not in the game), the player's bit (01 02 04 08: nothing reads it), the player's newly
+# pressed controls (4842 + 4 x player, which 079248 keeps: "LDA #$01,X; COMA; ANDA ,X; STA #$02,X"), and the
+# player's bonus object (4A40 + C0 x player: 0200C1 / 02083C "LDX #$05,U")
+struct bonus_player 07 rom
+field bonus_player 00 presses u16
+field bonus_player 02 bit u8
+field bonus_player 03 controls_pressed u16
+field bonus_player 05 object u16
+# by player: 0200BB "LDU #$7BC8; ASLA; LDU A,U" (A from 18EE, the player), 02027A/020330/02080E/020834/
+# 02087F the same in loops over the 4 players, 0208B8 "LDX #$7BC8; LDU ,X" (any press: sound 2900). Only bonus 1's
+# code reads it (callers 0200D9, 02012E, 02016F, 020172, 0202D8, 020324)
+021BC8  table  bonus_1_player_records[4]  u16 bonus_player
+# the 4 records (7BD0-7BEB; asset pieces 021BD0 ... 021BE5, one record each)
+021BD0  table  bonus_1_players[4]  bonus_player
+
+# the bonuses' shared start (0209C0 by 18F1): after C0 frames (0209CA "LDD #$00C0; STD $18EF", 0209D6 "DECW $18EF")
+# it puts placement 1A + the bonus (0209DE "ADDA #$1A; LBSR $67C7": 4EC0, kind 0E, animation 41 / 40) and queues its
+# sound for the Z80 (0209E9 "LDX #$7BC4", 0209EC "ASLA", 0209ED "LDD A,X", 0209EF "LBSR $8680": 3F30, 3F31). A is
+# the bonus: 020012 "CLRA; LBSR $69C0" (bonus 1), 020A47 / 020AB4 "LDA #$01; LBSR $69C0" (bonus 2)
+021BC4  table  bonus_intro_sounds[2]  u16
+
+# the bonuses' placements, by number (0207C7: "LDU #$7C00; ASLA; LDU A,U", then the record: 0207CF "LDY ,U++" the
+# object (0207D1 "CMPY #$FFFF", 0207D6 "TFR X,Y": FFFF the caller's), 0207E0 "LDD ,U++; ORB #$80; STD #$04,Y" its
+# kind and animation, 0207E7 "LDD ,U++" x (FFFF: as it is), 0207F1 "LDD #$00B0; STD #$11,Y", 0207F7 "LDD ,U++" z):
+# the shape of object_12_placements' records (025388), so the same struct. 28 addresses (7C38-7D10, one record each
+# after the table); both bonuses use it (bonus 1: 02072E-0207A1, the shared start 0209DE, 0209AE from 02002A and
+# 020A51). 0209AE "LDX [$7C32]" reads entry 25 (021C32, kref 0209AE 021C32-021C33 then 021D00-021D01): the
+# object of placement 25 (4E60), and puts placement 25 (0209B6 "LDA #$19; LBSR $67C7") when that object is off
+021C00  table  bonus_placements[28]  u16 placement
+# the 28 records themselves (pieces 021C38 ... 021D10, 8 bytes each); optional: the
+# u16 table above already types the reads
+021C38  table  bonus_placement_records[28]  placement
+
+# ---- bonus 2: a level per player that each press raises (020E0D "LDD #$01,U; ADDD #$0180; STD #$01,U") and that
+# falls 8 a frame (020DFA "LDD #$01,U; SUBD #$0008"); the object at +60 (kind 0A + player, 020B4B "STA #$64,U") shows
+# it (020DCE-020DD9: animation 91 + level/16, "ADDA #$91; STA #$65,U"); the kind-0E object at +840 (list 5280,
+# 020B69 "LDA #$0E; STA #$0844,U") stands beside the player (animation 88 in the game, C5 out of it: 020B89-020B96;
+# +1 while the player reacts, 020E38; +2 at the end, 020CF6). While the player presses with the level low, a reaction
+# of 16 frames at random (020E24 "LDA <$58; ROLA; ROLA; ROLA; ANDA #$03; ADDA #$08; LDB #$10; STD #$30,U": states 8-11
+# by the table 7D2C, counted down in field 31). The reactions read their tables by field 31 / 2 (31 is 10 when set and
+# decremented before the read: indexes 7 down to 0)
+
+# the player's x by player (020E72 "LDB <$F0; ASLB; LDX #$7D7D; LDD B,X", <$F0 the player; 020E6E "LDX #$00A8"
+# instead while direct page.. 1840 is 2). kref 020E79 021D7D-021D84; the next 8 bytes are the entries 10-13 of
+# bonus_2_level_object_offsets (below)
+021D7D  table  bonus_2_player_x[8]  u16
+# the +840 object's x from the player's (020B6F "LDA <$F0", 020B72 "LDY #$7D28", 020B75 "LDA A,Y", 020B77 "LEAX A,X",
+# 020B79 "STX #$084C,U"), by player
+021D28  table  bonus_2_side_object_x_offsets[4]  s8
+# reaction 8 (020D14): the player's x plus these, a wave (020D1D "LDA #$31,U; LSRA", 020D21 "LDY #$7D44", 020D24
+# "LDA A,Y", 020D26 "LEAX A,X", 020D28 "STX #$0C,U"). kref 020D24 021D44-021D4B: the 9th byte (FA, the wave's last
+# step) nothing reads
+021D44  table  bonus_2_shake_x_offsets[9]  s8
+# reaction 9 (020D36): squash and stretch, the zooms of the object and of its +60 partner (020D4B "LDA #$31,U;
+# LSRA", 020D4F "LDY #$7D55; LDB A,Y" the vertical, 020D54 "LEAY #$-08,Y; LDA A,Y" the horizontal, 020D59 "STD
+# #$0A,U", 020D5C "STD #$6A,U": field 0A the horizontal zoom, 0B the vertical, as 079CE1 / 079D61 take them; 40 the
+# normal size)
+021D4D  table  bonus_2_squash_zooms_x[8]  u8
+021D55  table  bonus_2_squash_zooms_y[8]  u8
+# reaction 10 (020D62): the +60 object's x moves, 8 steps by player (020D6F "LDA #$31,U; LSRA", 020D73 "LDX #$7D5D;
+# LEAX A,X", 020D78 "LDB <$F0; ASLB; ASLB; ASLB; LDB B,X; STB <$F2", added in 020E8E "LDA <$F2; LEAX A,X"). kref
+# 020D7E 021D5D-021D7C: 32 bytes, so the table takes the 12 bytes of the piece 021D71 (Lisa's row: 7F
+# moves her level object off the screen)
+021D5D  table  bonus_2_level_object_x_moves[20]  s8
+# the +60 object's place from the player's object, by the player's kind (020E80 "LDX #$7D71; LDA #$04,U; ASLA; LDD
+# A,X": the kind is 0A + player, so entries 10-13; 020E89 "LDX #$0C,U; LEAX A,X" x, 020E9F "LDY #$16,U; LEAY B,Y" z,
+# both signed). kref 020E87 021D85-021D8C only. The table starts where the code names it (7D71), so its entries 0-9
+# are the bytes of the two tables before (bonus_2_level_object_x_moves' last 12, bonus_2_player_x): the tables
+# overlap there, and each is counted as far as the next one starts
+struct xz_offset 02 rom
+field xz_offset 00 dx s8
+field xz_offset 01 dz s8
+021D71  table  bonus_2_level_object_offsets[6]  xz_offset
+
+# the bonuses' results (020F39, from both): a player put in the ranking (0210A5-021157) gets 1F in its field 47
+# (021127 "LDA #$1F; STA #$47,U"), and each frame (020FF6 "LDA #$47,U; BEQ", 020FFB "DEC #$47,U", A still the value
+# before) 020FFE "LDX #$7D9C", 021001 "LDA A,X", 021003 "STA #$19,U", 021006 "STA #$79,U": the y speeds (field 19,
+# positive up: 07D16E's gravity subtracts) of a hop, for it and its +60 partner. kref 021001 021D9D-021DBB: entries
+# 1-31; entry 0 is the last byte of the jump table 7D8D before (its 8th entry, 7017)
+021D9C  table  bonus_results_hop_speeds[32]  s8
+
+# ======== bank 10: the wrestler (object type 1F, kind 94) ========
+# its kind and animation by number (021766: 021768 "LDU #$7E79; ASLA; LDD A,U", 02176E "ORB #$80", 021770 "STD
+# #$04,X"); called with 00-0F; kref 02176C 021E79-021E98
+021E79  table  wrestler_animations[16]  u16
+# its hit boxes by number (021775: "LDU #$7E99; ASLA; ASLA; ASLA; LEAU A,U", then 02177D "LDD ,U++; STA #$1C,X; STB
+# #$1D,X", 021785 "STD #$1F,X", 02178A "STD #$21,X", 02178F "STD #$23,X": the hit_box struct); called with 0-3 (021826
+# "CLRA", 0215BA "LDA #$01", 0215F9 "LDA #$02", 02163F "LDA #$03"); kref 02177D-02178F 021E99-021EB8. The table spans
+# the 16 pieces 021E99 ... 021EB7
+021E99  table  wrestler_hit_boxes[4]  hit_box
+local sub_021775 02177B u box hit_box
+# the health one of the 5 pieces of its gauge stands for, by players (021307 "LDU #$7E75", 02130A "LDA <$57", 02130D
+# "DECA", 02130E "LDA A,U", 021310 "CLRB", 021311 "LBSR $86BF" -> 07E496 "STD <$E8"); 5 pieces from its 1B at the
+# start (C0: 02142C "LDA #$C0; STA #$1B,X") end at about wrestler_beaten_health (C0 - 5 x 19 = 43, C0 - 5 x 20 = 20...)
+021E75  table  wrestler_gauge_piece_health_by_players[4]  u8
+# the health at or below which, landing, it is beaten (021385: 021391 "LDU #$7E71", 021394 "LDA <$57; DECA",
+# 021398 "LDB #$1B,X", 02139B "CMPB A,U", 02139D "LBLS $7835": 021835 clears field 1B and sets state FD)
+021E71  table  wrestler_beaten_health_by_players[4]  u8
+# its walking speed toward its target, by rank (021565 state 1: 02157C "LDA #$2D,X" the direction, 02157F "LDY
+# #$7ED1", 021582 "LDB <$61", 021585 "LSRB", 021586 "LDB B,Y", 021588 "LBSR $8617": 07CC8E sets the speeds 14 and 0F)
+021ED1  table  wrestler_speeds_by_rank[16]  u8
+# next to its target (0216E4 -> 021700 "LBSR $77C9; LBCS $7920"): 021936 "LDU #$7EC9", 021939 "LDA <$57; DECA",
+# 02193D "LDA A,U", 02193F "CMPA <$58", 021942 "BHI $795D": below this chance it acts at once (02195D: guard, jump or
+# punch with field 29 cleared); else, unless it lost 0C or more health since the last time (021944 "LDA #$2F,X; SUBA
+# #$1B,X; CMPA #$0C"), it punches after 20 frames (02194E "LDA #$02; STA #$02,X", 021956 "LDA #$20; STA #$29,X")
+021EC9  table  wrestler_quick_attack_chances_by_players[4]  u8
+# with one player in the game or two or more next to it (021963 "LBSR $77E5"): 021968 "LDU #$7ECD", 02196B "LDA <$57;
+# DECA", 02196F "LDA A,U", 021971 "CMPA <$58", 021974 "BHI $7997": it guards (021997: flag 04 on field 00, no damage
+# in 07C26D; animation 8, state 3 for 40 frames)
+021ECD  table  wrestler_guard_chances_by_players[4]  u8
+# else 021976 "LDU #$7EB9", 021979 "LDA <$61", 02197C "LSRA", 02197D "LDA A,U", 02197F "LDB <$58; ADDB <$16", 021988
+# "CMPA <$F0", 02198B "BHI $79B4": it jumps at the player (0219B4: state 4, animation 7, x speed +-0180, y speed 0700),
+# otherwise it punches at once (02198D state 2)
+021EB9  table  wrestler_jump_chances_by_rank[16]  u8
+
+# ======== bank 11: the name entry and the high scores ========
+# a player's record in the name entry (25 bytes), by player (02203D / 022079 "LDY #$7532", 022279 / 0222D9 "LDU
+# #$7532", "ASLA; LDY A,Y"):
+# - 00 where its letters go in the sprite RAM (2000 + 100 x player: 022085 "LDU ,Y" handed to 022730, which writes a
+#   sprite of 10 bytes at U with the sprite RAM on, 022757-02278C; 0223FA "LDU ,U; LEAU #$0080,U" its initials')
+# - 02 4980 + 8 x player, an entry of the high score table (079718 "LDX #$4983" walks it 8 bytes an entry): nothing
+#   reads it
+# - 04 the player's newly pressed controls (4842 + 4 x player: 02236F "LDA [#$04,U]; ANDA #$02", 02239F "ANDA #$01",
+#   0223CF "ANDA #$30")
+# - 06 its initials (3852 + 3 x player, set to "A@@" at 0221B5: 022390 "LDY #$06,U; INC A,Y", 0222E4 "LDY #$06,U")
+# - 08 the player's score (49D4 + 8 x player: 022048 / 022087 "LDD [#$08,Y]", 0222F1 "LDD [#$08,U]")
+# - 0A the controls the player holds (4843 + 4 x player, 079248 "STA #$03,X": 02237B "LDA [#$0A,U]; ANDA #$02")
+# - 0C a place in the tile RAM, 2 rows above its box's (224E + 9 x player): nothing reads it
+# - 0E the address of its repeat countdown (3868 + player: 022367 "LDA [#$0E,U]; DEC [#$0E,U]", 022382 "LDA #$0F; STA
+#   [#$0E,U]")
+# - 10/12 where its place ("1ST"...) is printed (0220A4 "LDD #$10,Y; STD <$F8", 0220AA "LDD #$12,Y; STD <$FA"),
+#   14/16 its score (022114 "LDD #$14,Y", 02211A "LDD #$16,Y"), 18 its letters' colour (02240E "LDB #$18,U; ADDB #$0A")
+struct name_entry_player 19 rom
+field name_entry_player 00 sprites u16
+field name_entry_player 02 high_score_entry u16
+field name_entry_player 04 controls_pressed u16
+field name_entry_player 06 initials u16
+field name_entry_player 08 score u16
+field name_entry_player 0A controls_held u16
+field name_entry_player 0C tiles u16
+field name_entry_player 0E repeat_wait u16
+field name_entry_player 10 place_x u16
+field name_entry_player 12 place_y u16
+field name_entry_player 14 score_x u16
+field name_entry_player 16 score_y u16
+field name_entry_player 18 colour u8
+023532  table  name_entry_player_records[4]  u16 name_entry_player
+# the 4 records (pieces 02353A ... 023585)
+02353A  table  name_entry_players[4]  name_entry_player
+
+# the players' scores' addresses (49D4 49DC 49E4 49EC), which 022307 sorts the players by: 02231D "LDX #$7516" once,
+# then 022331 "LDA ,Y; ASLA; LDD [A,X]" and 022339 "LDA ,U; ASLA; LDD [A,X]" (the two DATA16 reads)
+023516  table  player_score_addresses[4]  u16
+elements score_address u16
+local sub_022307 02231D x score_addresses score_address
+
+# the two letters after a place, by place 0-9 (0220E9 "LDY #$751E", 0220EC "LDA ,X" the place, 0220EE "ASLA", 0220EF
+# "LEAY A,Y", 0220F1 "LDA ,Y+" and 022104 "LDA ,Y", each printed by 022730): "ST" "ND" "RD" "TH" x 7
+struct place_suffix 02 rom
+field place_suffix 00 first u8
+field place_suffix 01 second u8
+02351E  table  place_suffixes[10]  place_suffix
+local sub_022029 0220EF y suffix place_suffix
+
+# the letter at the cursor pulses: its sprite's vertical zoom by the frame (022437 "LDX #$759E", 02243A "LDB <$16;
+# ANDB #$1F; LSRB", 022441 "LDB B,X", 022443 "STB #$-07,U": byte 09 of the sprite 022730 just wrote, the vertical
+# zoom; 40 the normal size)
+02359E  table  name_entry_cursor_zooms[16]  u8
+
+# 022491 draws a picture of tiles in a player's column: by its B (0-3 the player's box, 4-7 the player's face; 02209C
+# "LDB #$04; ADDB <$F0") 0224B0 "LDX #$75AE; LDB #$07,S; ASLB; LDX B,X"; a picture is blocks of: 0224B9 "LDU ,X++" the
+# place in the tile RAM, 0224C0 "LDA ,X+" the width, 0224C5 "LDA ,X+" the height, 0224CA "LDA ,X+; ORA #$03,S" the
+# colour, then a tile a byte by rows (0224E5 "LDA ,X+; STA ,U+"), and 0224FA "LDA ,X+; BEQ $64B9": 00 another block,
+# else the end. The 8 addresses are followed by the 8 pictures (0235BE-023679, in the same piece)
+struct name_entry_block 05 rom
+field name_entry_block 00 tiles u16
+field name_entry_block 02 width u8
+field name_entry_block 03 height u8
+field name_entry_block 04 colour u8
+0235AE  table  name_entry_pictures[8]  u16 name_entry_block
+# the 8 pictures those addresses lead to, one after another (0235BE-023679): their blocks and tiles
+0235BE  table  name_entry_picture_blocks[188]  u8
+# a player's column (0224A1 "LDX #$767B; LDA #$06,S; ASLA; LDD A,X", A the player): 0224AA "STA #$05,S" the tiles it
+# moves the picture right (0224BB "LDB #$05,S; LEAU B,U": 00 09 12 1B), 0224AD "STB #$03,S" the bits it puts in the
+# colour (00 40 80 C0: the palette bits of the K052109's colour byte)
+struct name_entry_column 02 rom
+field name_entry_column 00 column u8
+field name_entry_column 01 palette u8
+02367B  table  name_entry_columns[4]  name_entry_column
+
+# 022730 prints a letter as a sprite (code, x, y, colour in the sprite RAM: 022757-02278C): 022734 "LDX #$7695",
+# 022737 "SUBA #$30", 022739 "LDB A,X" the code's low byte, 02273B "LDA #$-01,X" its high byte (78). Letters 30-80
+# (kref 022739 023695-0236E5). 023694 is the last byte of the piece 023683 (the state table 7683's 8
+# entries and 00 78)
+023694  table  sprite_font_code_high[1]  u8
+023695  table  sprite_font_codes[81]  u8
+
+# the high score table's little animated faces: 02263C prints an entry (place, 3 initials, score) and then its
+# character (the entry's byte 5, 0222DC "LDA ,X; STA <$F5" saved with it): 0226E7 "LDA ,X++; PUSHS A", 0226EB "LDY
+# #$76E6", 022704 "ADDB A,Y" (B the frame, 0-3), handed to 022730 as a letter (71 75 79 7D: the first of 4 letters
+# each, codes 7868... in sprite_font_codes)
+0236E6  table  high_score_icons[4]  u8
+elements high_score_icon u8
+local sub_02263C 0226EB y icons high_score_icon
+
+# ======== bank 11: the ending (scene 8E: 022809 "LDA #$8E; STA <$75") ========
+# the family's placements (022A1C: 022A1E "LDU #$7706", 022A21-022A29 A x 8, 022A2A "LEAU D,U", 022A2C "LDY ,U++",
+# 022A33 "LDD ,U++; ORB #$80; STD #$04,Y", 022A3A "LDD ,U++; STD #$0C,Y", 022A3F "LDD #$0080; STD #$11,Y", 022A45
+# "LDD ,U++; STD #$16,Y"): placement's shape (y fixed, no FFFF); kind 14 (family) and 0F; called with 0, 1, 2, 4, 5
+# (kref 022A2C 023706 ... 02372E)
+023706  table  ending_placements[6]  placement
+local sub_022A1C 022A2A u place placement
+# frames between the family's animations (02298F: "LDX #$76F8; LDA $18E9; ASLA; LDD A,X", 022999 "CMPD #$FFFF",
+# 02299E "CMPD $18E7", 0229BB "INCW $18E7"; when they have passed and 4D40's animation is over, 0229AC "LDA #$02;
+# LBSR $6A1C" puts ending_placements[2] again and 0229B6 "INC $18E9"). kref 022997 0236F8-0236FF: 4 of the 7 read
+0236F8  table  ending_family_waits[7]  u16
+# the staff roll, every A0 frames (022940): 02294F "LDX #$78B2; ASLA; LDU A,X; CLRA; LBSR $86CB" erases the name
+# (0793D1, the big letters), 02295D "LDX #$7736 ... LBSR $86B6" erases the title (079384), then the next: 022975 "LDA
+# #$40;
+# LBSR $86C8" prints the name in big letters (07939B), 022984 "CLRA; LBSR $85A5" the title in small ones (07936D).
+# Titles: "MAIN PAROGRAM", "SOFTWARE DESIGN"...; names: "THE SIMPSONS / STAFF", "A.SUZUKI"... kref 022953
+# 0238B2-0238DB and 022961 023736-02375F: 21 of the 24 (the last three repeat the 21st's text)
+023736  table  staff_roll_titles[24]  u16
+0238B2  table  staff_roll_names[24]  u16
+
+# ======== bank 11: stage 7's boss (object type 37, kind A3) ========
+# its kind and animation by number (022E9E: "LDU #$7A55; ASLA; LDD A,U; ORB #$80; STD #$04,X"); kref 022EA4
+# 023A55-023A70
+023A55  table  stage_7_boss_animations[14]  u16
+# its hit boxes (022EAD: "LDU #$7A71; ASLA; ASLA; ASLA; LEAU A,U", then 022EB5 "LDD ,U++; STA #$1C,X; STB #$1D,X" ...
+# 022EC9 "STD #$23,X"); called with 0-2 (022D07 "CLRA", 022CD9 "LDA #$01", 022D29 "LDA #$02"); kref 022EB5-022EC7
+# 023A71-023A88. Spans the pieces 023A71 ... and the first 2 bytes of 023A87; its other
+# 16 bytes (all 80, 023A89-023A98: two more boxes' worth) nothing reads as boxes
+023A71  table  stage_7_boss_hit_boxes[5]  hit_box
+local sub_022EAD 022EB3 u box hit_box
+# the health one gauge piece stands for (022A61 "LDU #$7A51; LDA <$57; DECA; LDA A,U", 022A6A "LDB #$04", 022A6C
+# "LBSR $86BF"; its health at the start E0, 022BB6)
+023A51  table  stage_7_boss_gauge_piece_health_by_players[4]  u8
+# landing, beaten at or below (022AE1 "LDU #$7A4D; LDA <$57; DECA", 022AE8 "LDB #$1B,X", 022AEB "CMPB A,U", 022AED
+# "LBLS $6FCB": 022FCB clears 1B, state FD)
+023A4D  table  stage_7_boss_beaten_health_by_players[4]  u8
+# its speed toward its target (022C97 "LDA #$2D,X", 022C9A "LDY #$7AA9; LDB <$61; LSRB; LDB B,Y", 022CA3 "LBSR $8617")
+023AA9  table  stage_7_boss_speeds_by_rank[16]  u8
+# the frames it walks without reaching its target (022E3B "INCW #$3D,X") before it charges: 022E29 "LDU #$7A99",
+# 022E2C "LDA <$57; DECA; ASLA", 022E31 "LEAU A,U", 022E33 "LDD #$3D,X", 022E36 "CMPD ,U", 022E38 "LBGE $70FD" (0230FD:
+# state 3, animation 3, hit box 2, at speed 40 toward the target, for A0 frames: 023127 "LDD #$00A0; STD #$3F,X")
+023A99  table  stage_7_boss_charge_waits_by_players[4]  u16
+elements charge_wait u16
+local sub_022DF2 022E31 u wait charge_wait
+# reaching its target (0230B3, state 2: an attack after field 29's frames, 022CB3): 0230D6 "LDU #$7AA1", 0230D9 "LDA
+# <$57; DECA", 0230DD "LDA A,U", 0230DF "CMPA <$58", 0230E2 "BHI $70F5": below this chance it attacks at once; else,
+# unless it lost 14 or more health since the last time (0230E4 "LDA #$2F,X; SUBA #$1B,X; CMPA #$14"), it waits 20
+# frames first (0230EE "LDA #$20; STA #$29,X")
+023AA1  table  stage_7_boss_quick_attack_chances_by_players[4]  u8
+# knocked (a hit of kind 13, or its third hit: 02304D "CMPA #$13", 023054 "CMPA #$02"): 023077 "LDU #$7AA5", 02307A
+# "LDA <$57; DECA", 02307E "LDA A,U", 023080 "CMPA <$58", 023083 "LBCC $712F": it jumps away to the middle (02312F:
+# state 4, animation 9, y speed 0900, x speed +-0300), else it falls (023086: state FE)
+023AA5  table  stage_7_boss_jump_away_chances_by_players[4]  u8
+# its 4 helpers (022B43: 022B46 "LDB #$01; LBSR $867D" an object of list 5280, 022B4F "LDA #$12; STA #$04,U" kind 12,
+# 022B82 "LDA #$37; STA #$01,U" type 37): 022B54 "LDY #$7AD9", 022B57 "LDA <$F0; ASLA; ASLA", 022B5C "LEAY A,Y",
+# 022B5E "LDA ,Y+; STA #$05,U" its animation, 022B68 "LDD ,Y++; ADDD #$091F; SUBD <$AC; STD #$0C,U" its x, 022B87
+# "LDA ,Y; STU A,X" the boss's field that keeps it (35 37 33 39: 022BD3 "LDU #$35,X" ...)
+struct helper_start 04 rom
+field helper_start 00 animation u8
+field helper_start 01 x u16
+field helper_start 03 slot u8
+023AD9  table  stage_7_boss_helper_starts[4]  helper_start
+local sub_022B43 022B5C y start helper_start
+# the frames between the helpers' attacks (022F3A: 022F44 "LDD #$3B,X; ADDD #$0001; STD #$3B,X", 022F4D "LDU #$7AB9",
+# 022F50 "LDA <$61; ANDA #$FE", 022F55 "LDD A,U", 022F57 "CMPD #$3B,X"; then 022F86-022FA7: idle helpers get a child
+# object (022F9D "LDY #$7AE9; LBSR $862C") and state 7). kref 022F55 023AD3-023AD6
+023AB9  table  stage_7_boss_helper_attack_times_by_rank[16]  u16
+# a helper's moves by its state 1-6 (the boss sets them: 022C39-022C56): its x speed (023184: "LDU #$7B09; LDA
+# #$02,X; DECA; ASLA; LDD A,U; STD #$0F,X") and how far it goes (02319C: "LDY #$7B15; LDA #$02,X; DECA; ASLA", 0231A4
+# "LEAY A,Y", 0231A6-0231B6 field 29-2A adding the speed, 0231B9 "LDD #$29,X; ABSD; CMPD ,Y": then state 0)
+023B09  table  stage_7_boss_helper_speeds[6]  u16
+023B15  table  stage_7_boss_helper_distances[6]  u16
+elements helper_distance u16
+local sub_02319C 0231A4 y distance helper_distance
+
+# ======== bank 12 ========
+# the game's texts' table, whose address the bank keeps at 6021 (07932D "LDX $6021", 079331 "LDU B,X"): the address
+# of game_texts, whose entries are each the address of a text
+elements game_text_entry u16
+024021  table  game_texts_address[1]  u16 game_text_entry
+
+# the ends of stage 2 (024003 from 07A876, scene 84 area 2: 0241A3) and of stage 5 (024006 from 07AD8F, scene 89),
+# whose state tables (770A, 7726) both run 0241E2: each player in the game (0241F7 "LDA <$85; ANDA <$F0") is put
+# (024202 "LBSR $7388", object_12_placements 0-3) and leaves after a wait by its order among them (024213 "LDX
+# #$7962", 024216 "LDA <$F2; STA #$30,Y", 02421C "LDA A,X", 02421E "STA #$31,Y"; 02427E "LDA #$31,X; BEQ; DEC #$31,X")
+025962  table  stage_end_exit_waits[4]  u8
+# then (024294 "LDU #$7966", 024297 "LDA #$30,X; ASLA; ASLA", 02429C "LEAU A,U", 02429E "LDD ,U++; STD #$0F,X" its x
+# speed, 0242A3 "LDD ,U; STD #$19,X" its y speed), shrinking (0242D0 "LDA #$0A,X; ADDA #$02") as it goes; by field 30,
+# its order, 4 for placement 0D (0241D0 "LDA #$04; STA #$30,Y"). kref 02429E/0242A3: the 5 records
+struct exit_speed 04 rom
+field exit_speed 00 x_speed u16
+field exit_speed 02 y_speed u16
+025966  table  stage_end_exit_speeds[5]  exit_speed
+local sub_02427E 02429C u speed exit_speed
+# object_12_placements read by number (025388: 02538A "LDU #$77BA", 02538D-025395 A x 8, 025396 "LEAU D,U", 025398
+# "LDY ,U++" ...): the record's pointer, so the reads go by field
+local sub_025388 025396 u place placement
+
+# the area of a player not in the game, filled with one tile (0253C9: 0253CE "LDU #$797A; ASLB; LDU B,U", 0253D4 "LDA
+# ,U+" the width, 0253D9 "LDA ,U+" the height, 0253DE "LDA ,U+" the tile (10, the blank the printers erase with),
+# 0253E0 "LDB ,U+" its colour (0253F6 "STB #$-2000,X; STA ,X+"), 0253E4 "LDA <$EB; ASLA; LDX A,U" the place by the
+# player); 0244F3-0244F7 (stage 5's end) "CLRB; LBSR $73C9" for each player out of <$85, 024692-024697 (scene 8B's,
+# 024668) "LDB #$01". The places are by player slot: 0 Marge, 1 Homer, 2 Bart, 3 Lisa. Records 797E, 798A
+struct player_blank 0C rom
+field player_blank 00 width u8
+field player_blank 01 height u8
+field player_blank 02 tile u8
+field player_blank 03 colour u8
+field player_blank 04 marge_place u16
+field player_blank 06 homer_place u16
+field player_blank 08 bart_place u16
+field player_blank 0A lisa_place u16
+02597A  table  absent_player_blanks[2]  u16 player_blank
+
+# a quarter of a cosine (80 down to 00 in 64 steps): 0254F4 makes a sine of it times B (025501 "LDU #$79A4", 025504
+# "LDA <$E8; BITA #$40", 02550B "LDA <$EA; LDA A,U; MUL" and 025513 "LDA #$3F; SUBA <$EA; LDA A,U" then 02551D "MUL";
+# 025524 "BITA #$80" ... "NEGW <$EC" the sign), which 0254BF adds to 0196 for each line's x scroll (0254C7 "LDX
+# #$1A00", 0254DA "ADDD #$0196", 0254E1 "STD ,X++": a wave over the layer). kref 02550E / 025518: all 64
+0259A4  table  wave_cosines[64]  u8
+elements wave_cosine u8
+local sub_0254F4 025501 u cosines wave_cosine
+
+# ======== bank 13 ========
+# the stages' title cards (026E1D by scene, 7D42): 026E97 "LDU #$7D8C; CLRA; LBSR $85A5" prints "STAGE 1 /
+# DOWNTOWN SPRINGFIELD" (027D8C), then 026E9E "CLRA; LBSR $719A" and 026EA8 "LDA #$09; LBSR $719A" put records (0-8:
+# 4D40, kind C2, animation = the record's number, one a stage; 9: 4DA0, kind 0F). 02719A: 02719C "LDU #$7E81",
+# 02719F-0271A7 A x 8, 0271A8 "LEAU D,U", 0271AA "LDY ,U++", 0271B1 "LDD ,U++; ORB #$80; STD #$04,Y", 0271B8 "LDD
+# ,U++; STD #$0C,Y", 0271BD "LDD #$0080; STD #$11,Y", 0271C3 "LDD ,U++; STD #$16,Y": placement's shape; kref 0271AA
+# reads records 0-6, 8, 9
+027E81  table  stage_title_placements[10]  placement
+local sub_02719A 0271A8 u place placement
+
+# a screen shake (direct page 97 set: 02150E the wrestler landing, 02658E the krusty balloon's): every other frame
+# (0261D4 "LDA <$95; CMPA #$01") 0261DE "LDX #$7A00", 0261E1 "LDA <$96; ANDA #$07; ASLA", 0261E7 "LEAX A,X", then
+# 0261E9 "LDD <$BF; ADDD ,X" and 0261F1 "LDB ,X; SEX; ADCA <$BE" (layer A's x scroll), 0261FA-026208 the same on layer
+# B's (CF, CE), 02620B "LDB ,X; NEGB; SEX; ADDD <$86; STD <$86", 026215 "STD $1FA0" (the sprites' offset, the other
+# way): +-3 pixels a step
+struct shake_step 02 rom
+field shake_step 00 pixels s8
+field shake_step 01 fraction u8
+027A00  table  screen_shake_steps[8]  shake_step
+local sub_0261D4 0261E7 x shake shake_step
+# its steps by its kind (direct page 98, 0-2: 02621F "LDU #$7A10", 026222 "LDB <$98", 026225 "CMPA B,U", 026227 "BNE":
+# then 026229-02622F clear 96, 97, 98)
+027A10  table  screen_shake_lengths[3]  u8
+
+# a stage record's layer (026413: "LDA ,U+; STA <$A6", 026418 "LDX #$7A37", 02641B "ASLA", 02641C "LDX A,X";
+# 02642C-026436 the other one): the addresses of the layer's x and y scroll (48BE 48C5, 48CE 48D5: layers' scroll_x
+# and scroll_y), which 026483 moves (026483 "LDY ,X" ... 026496 "LDY #$02,X")
+struct layer_scroll 04 rom
+field layer_scroll 00 x u16
+field layer_scroll 02 y u16
+027A37  table  layer_scroll_records[2]  u16 layer_scroll
+# the 2 records (pieces 027A3B, 027A3F)
+027A3B  table  layer_scrolls[2]  layer_scroll
+param sub_026483 x scroll layer_scroll
+
+# stage 3's second part (step 7: 027908's 8th entry, 604D) scrolls up (026123: layer A's y scroll, C5-C6, grows by
+# E2): layer A's offset_y (direct page CA, layers[0]'s field 0C) by the y scroll: 026123 "LDX #$7A5B", 026126 "LDA
+# <$8E; ASLA; ASLA", 02612B "LEAX A,X", 02612D "LDD ,X++; CMPD <$C5", 026132 "BGT $613A" (02613A "LDD ,X; STD <$CA"),
+# else 026134 "INC <$8E", 026137 "LEAX #$02,X", 02613A (for that frame CA gets the next record's limit). kref 02612D
+# reads the records 0-2 (limits 0320, 0420, 1000; the scroll stops at 0500, 0260B3), 02613A their offsets. The next 5
+# records (027A67-027A7A, limits 0400-0800) have the same shape and nothing reaches them; then the stage records
+# (027A7B, read by 02625A / 02633E). The piece 027A5B (521 bytes) holds all of it
+struct layer_offset_step 04 rom
+field layer_offset_step 00 until u16
+field layer_offset_step 02 offset_y u16
+027A5B  table  stage_3_part_2_layer_offsets[8]  layer_offset_step
+local sub_026123 02612B x step layer_offset_step
+# what 02613A "LDD ,X" reads: past the step's limit (02612D "LDD ,X++"), its offset; or, the limit passed (026137
+# "LEAX #$02,X"), the next step's limit, which CA takes for that frame
+elements layer_step_word u16
+local sub_026123 02612D,026137 x step_word layer_step_word
+# after them, up to the next table: the stages' records stage_slots point at (lists of 4-byte entries the stage's step
+# walks through direct page A4: 026257 "LDX <$A4; LDU #$02,X", 0262BE "LEAX #$04,X; STX <$A4") and what their entries
+# lead to (read by 02625A, 02629D-0262B1, 0262EC, 02633E, 0263AB, 0264B1); no struct describes them yet
+027A7B  table  stage_records[489]  u8
+
+# ---- the krusty balloon (object type 05, kind 9D) ----
+# its kind and animation by number (026969: 02696B "LDU #$7CB6", 02696E "ASLA", 02696F "LDD A,U", 026971 "ORB #$80",
+# 026973 "STD #$04,X"): kinds 9D, 9C and 04 (hit sparks)
+027CB6  table  krusty_balloon_animations[13]  u16
+# its hit boxes (026978: 02697A "LDU #$7CD0; ASLA; ASLA; ASLA", 026980 "LEAU A,U", 026982 "LDD ,U++; STA #$1C,X; STB
+# #$1D,X" ... 026996 "STD #$23,X"); called with 0-5 (026CB0 "LDA #$05"); spans the 24 pieces 027CD0 ...
+# 027CFE
+027CD0  table  krusty_balloon_hit_boxes[6]  hit_box
+local sub_026978 026980 u box hit_box
+# the health one gauge piece stands for (026523 "LDU #$7CB2; LDA <$57; DECA; LDA A,U", 02652C "LDB #$01", 02652E "LBSR
+# $86BF"; its health at the start A0, 02665F)
+027CB2  table  krusty_balloon_gauge_piece_health_by_players[4]  u8
+# beaten at or below: landing (0265D6 "LDU #$7CAE; LDA <$57; DECA; LDB #$1B,X; CMPB A,U; LBLS $6B55": 026B55 clears 1B,
+# state FD) and hit (026B9B "LDU #$7CAE" ... 026BA5 "CMPB A,U", 026BA7 "BLS $6BF1": knocked down)
+027CAE  table  krusty_balloon_beaten_health_by_players[4]  u8
+# its speed toward its target (026741 "LDA #$2D,X", 026744 "LDY #$7D18; LDB <$61; LSRB; LDB B,Y", 02674D "LBSR $8617")
+027D18  table  krusty_balloon_speeds_by_rank[16]  u8
+# hit: 026BBB "INC #$30,X", 026BBE "LDU #$7D00", 026BC1 "LDA <$57; DECA", 026BC5 "LDA A,U", 026BC7 "CMPA #$30,X",
+# 026BCA "BLS $6BDF": below the count it only flinches (state FF); at it (or with a hit of kind 13) it reacts
+027D00  table  krusty_balloon_hit_limits_by_players[4]  u8
+# reacting (026BDF "CLR #$30,X"): 026BE2 "LDY #$7D08", 026BE5 "LDA <$61; LSRA; LDA A,Y", 026BEB "CMPA <$58", 026BEE
+# "LBCC $6C7C": it flies off (026C7C: state 3, x, z and y speeds 0600), else it is knocked away (026BF1: state FE)
+027D08  table  krusty_balloon_fly_off_chances_by_rank[16]  u8
+# over its target (026C1C, from 026964): it lets out an object of type 04 (026C29) and attacks (state 2): 026C55
+# "LDU #$7D04", 026C58 "LDA <$57; DECA", 026C5C "LDA A,U", 026C5E "CMPA <$58", 026C61 "BHI $6C74": below this chance at
+# once; else, unless it lost 0C or more health since the last time (026C63-026C6B), after 20 frames (026C6D)
+027D04  table  krusty_balloon_quick_attack_chances_by_players[4]  u8
+# what it throws (0269E0: an object of type 31 or 10, its animation 8, hit box 2, y speed 0280; 026A45 / 026A4D its x
+# speed +-0280, 026A55 plus a random one): its z speed, 026A61 "LDY #$7D28", 026A64 "LDB <$58; ANDB #$07; ASLB",
+# 026A6A "LDD B,Y", 026A6C "LDB <$58", 026A6F "NEGD", 026A70 "STD #$14,U": minus (the entry's high byte, 0-3, with a
+# random low byte). The piece's last 2 bytes (027D38, 6D A8) nothing reads as this table
+027D28  table  krusty_balloon_throw_z_speeds[8]  u16
+
+# ======== already named, unchanged ========
+# 02600C stage_slots: read by field already (unk_48A4 = stage_slots[n].record); its record (a list of 4-byte
+# entries the stage step walks through direct page A4: 026257 "LDX <$A4; LDU #$02,X", 0262BE "LEAX #$04,X; STX
+# <$A4") has no struct yet
+# 024021 game_texts_address: only its type changes (above).
+
+# ======== banks 14, 15, 16, 17: the stages' goons, fat goons and scenery objects ========
+#
+# How the objects were told apart (evidence common to the entries below):
+# - An object's type is its field 01; the dispatcher of list 0 (07CB6C "LDU #$F387; LDD #$01,X; LDB A,U; STB <$0E;
+#   SETLN <$0E", 07CB7E "LDU #$F2EC; ASLA; JSR [A,U]") and those of lists 1-3 (07CBAD/07CBBF F4B0/F40D, 07CBE0/07CBF2
+#   F54C/F4F4, 07CC0F/07CC21 F581/F577) pick the bank and the handler; "list N type T" below is that. The scenes a type
+#   is put in come from the stages' spawn lists (spawn_lists by <$67: scene 0 stage 1, 1 stage 2, 3/4 stage 3
+#   forest/cemetery, 5 stage 4, 6 stage 5, 8 stage 6, 9 stage 7, 11 stage 8; E88D[step]) with the list in the spawn's
+#   flags bits 2-3 (07CA50 "ANDB #$0C; LSRB; LSRB").
+# - Kinds (field 04, the sprite set, tools/extract_assets.py SET_NAMES) come from the object setups the handlers load
+#   (07D132: "LDD ,U; ORB #$80; STD #$04,X"): 0785F9 -> 07D416 "LDU #$F1A8" (setup 8001: goon), bank 14's 7E5D (8401:
+#   goon_with_hat), 7E6F (8201: goon_with_umbrella), 7E81 (8301: goon_with_shovel), bank 15's 764C/77C6 (8101/8100:
+#   fat_goon). Kinds SET_NAMES leaves as kind_XX are named kind_XX here too.
+# - Object fields used as evidence (checked in the listing): 0C x (and 0E its fraction), 0F x speed, 11 y, 14 y speed,
+#   16 z (height: 07D16E's gravity "SUBD #$0060" from 19 brings it down to the floor in 5C), 19 z speed (the mover
+#   0799A7-079A2A adds 0F to 0C-0E, 14 to 11-13, 19 to 16-18); 09 sprite attributes (bit 6 facing, 07D249; bits 4-5 the
+#   priority 078638 returns with the floor); 3B/3C countdowns; 3E a word the handlers compare the object's x with
+#   (028982 "LDD #$0C,X; CMPD #$3E,X") or a direction and speed (028672 "LDD #$3E,X; LBSR $8617": 07CC8E speeds from
+#   A = direction, B = speed); 5C-5D the floor height (078638 -> 079495: the floor map cell at the object, low nibble x8
+#   into 5D, bits 4-5 the priority, bit 7 no floor); 1874 the players present (07D301 skips the nearest-player search
+#   when it is 0); 1884 set by the police car when it stops (02B489 "STA $1884").
+# - An enemy's action is its field 28: 07D62C "LDD #$28,X; LDU #$F586" (fixed) and 07D64C "LDU #$F620" (bank) /
+#   07D65E "LDU #$F5A2" (handler) dispatch it; enemy_behaviour's ranges name the action by the x distance to the
+#   player (field 2D, 07D35B), e.g. goon_with_shovel's (029DE7): 01-23 action 33, 26-3A action 14, 3C-64 action 15.
+
+# ---- bank 14: the goons' entrances (list 0 types) ----
+
+# type 26 (list 0; scenes 1, 5, 9): a goon (0283FF -> 02840B "LBSR $85F9") that comes from the back of the stage: its x
+# by field 30 (028437 "LDU #$7A72", 02843A "LDA #$30,X; ASLA", 02843E "LDD A,U", 028440 "STD #$0C,X"), its y 0050
+# (028443-028446) moving down 1 a frame (028449 "LDD #$0100; STD #$14,X") until 078638 finds floor under it (028456)
+# and it waits 40 frames (02846D-02846F). kref --rom-reads: 02843E reads entries 0-2
+029A72  table  goon_from_back_xs[4]  u16
+
+# a goon's entrance pose: the frames it waits (into 3C) and its sprite attributes (into 09), by field 30, shared by
+# type 1B (028692: 0286A7 "LDU #$7B16", 0286AE "LDD A,U", 0286B0 "STA #$3C,X", 0286B3 "STB #$09,X"; it then counts 3C
+# down 0286DF, moves 0080/FF80 and turns into goon_with_shovel, 0286FD "LDA #$83; STA #$04,X"), type 16 (028733 "LBSR
+# $85F9" goon) and type 3C (028722 "LBSR $6FC1" goon_with_hat), both 028740-02874C, then 028796 "DEC #$3C,X" before
+# animation B1. kref --rom-reads: 028747 reads entries 0-3, 8, 9; 0286AE entry 11
+struct goon_entrance 02 rom
+field goon_entrance 00 wait u8
+field goon_entrance 01 attributes u8
+029B16  table  goon_entrances[13]  goon_entrance
+
+# type 1E (list 0, put in by other objects): a goon (028A12 "LBSR $85F9") set on the floor (028A16 "LBSR $8638" into
+# 5C), that waits until the scroll brings its x under this (028A2B "LDU #$7BC8", 028A32 "LDD A,U", 028A34 "STD
+# #$3E,X"; step 0 is 02897F "LDD #$0C,X; CMPD #$3E,X; BCC") and then drops with gravity (0289F5 "LBSR $85B1")
+029BC8  table  goon_drop_xs[2]  u16
+
+# type 08 (list 0; scenes 3, 6, 9): goon_with_umbrella (028A62 "LBSR $7012": setup 7E6F, 8201) with animation A1, its x
+# by field 30 (028A74 "LDU #$7BE0", 028A7B "LDD A,U", 028A7D "STD #$0C,X"), which floats down: 028AC5 "LDD #$19,X;
+# SUBD #$0010" (a sixth of 07D16E's gravity, 0060) until it lands (028ACE "LBSR $8662", animation A2). kref: entries 0-3
+# read
+029BE0  table  umbrella_goon_xs[4]  u16
+
+# type ED (list 0; scene 4 only, stage 3's cemetery): goon_with_umbrella too (02956B "LDU #$7FC3; LDA #$30,X; ASLA",
+# 029572 "LDD A,U", 029574 "STD #$0C,X", 029577 "LBSR $7012", animation A1). 5 entries, A0 to 0120 by 20 (field 30 is
+# 00-03, 81, 82 in the spawn list: indexes 0-3; kref --rom-reads: 029572 reads 029FC5-029FCA). COUNT 5, not the
+# piece's 30: the rest of the piece, 029FCD-029FFE (50 bytes), is the assembler's leftovers, equal byte for byte to
+# banks 10, 11, 12, 15 and 16 at the same offsets (1FCD-1FFE), and only fill (029FFF) follows to the bank's end
+029FC3  table  cemetery_umbrella_goon_xs[30]  u16
+
+# types F3 and EE (list 0; scene 4, the cemetery): a goon that jumps in from a side: 02940A "LDU #$7F9B; LDA #$30,X;
+# ASLA", 029411 "LDD A,U", 029413 "STD #$0C,X" (0040 or 0180), then 02943D "LDD #$0200; STD #$0F,X" (negated from
+# 00E0 on, 029443-02944B) and z speed <$E2 (029454), landing at 029464. kref: 029411 reads both
+029F9B  table  goon_jump_in_xs[2]  u16
+
+# type F1 (list 0; scene 4, the cemetery): a goon that comes up from below the floor: 0294B9 "LDU #$7FAF", 0294C0 "LDD
+# A,U", 0294C2 "STD #$0C,X", 0294C8 "LDD #$FF80; STD #$16,X" (z under the floor), z speed <$E2 (0294F4) until z is
+# back over 0 (029507), then a jump (02951B "LDD #$0400; STD #$19,X")
+029FAF  table  goon_from_below_xs[2]  u16
+
+# type 2B (list 0; scene 1): a goon that comes down (028216 "LBSR $85F9") under a child object it carries (028219
+# "LDY #$79EC; LBSR $862C": child type 0D of list 1, 028197: setup 79D6, the goon set's animation 36, kept 3C over
+# it), falling at FE00 (028257) for 68 frames (028235, 02827C), after which the child flies up (028281 "LDU #$40,X;
+# LDA #$02; STA #$02,U" -> 0281EB/0281F5, gone over F0) and the goon falls to the floor (028294 "LBSR $85B1"). Its x
+# and x speed by field 30: 02823A "LDU #$79F4", 028240 "ASLA; ASLA; LEAU A,U", 028244 "LDD ,U; STD #$0C,X", 028249
+# "LDD #$02,U; STD #$0F,X". kref: records 0, 1, 3-6 read.
+struct descent_start 04 rom
+field descent_start 00 x u16
+field descent_start 02 x_speed s16
+0299F4  table  goon_descent_starts[8]  descent_start
+
+# type 06 (list 0; scene 5): goon_with_hat (02849C "LBSR $6FC1"), animation B7, by field 30 (0284A4 "LDU #$7A86",
+# 0284A7-0284AC "ASLA; ASLA; LEAU A,U"): the x the scroll brings it under before it moves (0284AE "LDD ,U", 0284B0
+# "STD #$3E,X"; 0284FE "LDD #$0C,X; CMPD #$3E,X; BCC"), its attributes (0284B3 "LDA #$02,U; STA #$09,X") and flags
+# (0284BE "ORA #$03,U; STA #$3D,X"; 0284D4: bit 7 shows it at once, "LDB #$80; STB #$00,X"; bit 0 clear sets hit box
+# 79BE and animation A2, 0284DE "LSRA; BCS"). kref: records 0-2.
+struct waiting_hat_goon_start 04 rom
+field waiting_hat_goon_start 00 trigger_x u16
+field waiting_hat_goon_start 02 attributes u8
+field waiting_hat_goon_start 03 flags u8
+029A86  table  waiting_hat_goon_starts[3]  waiting_hat_goon_start
+
+# type 15 (list 0, put in by other objects): a goon (02854D "LDU #$7AA8; LBSR $85AB": setup 8002) that shows when the
+# scroll brings it under its x, waits, walks up diagonally to the floor and waits again. By field 30 (02855D "LDU
+# #$7AAE", 028563-028565 "ASLA; ASLA; LEAU A,U"): flags (028567 "LDA ,U; ANDA #$30" into 09's priority; 028579 "LDD
+# ,U; ANDA #$80; STA #$3A,X": bit 7 walks direction E0 rather than 20, 0285CF-0285DC), the x/16 (028580 "CLRA; ASLDI
+# #$04; STD #$3E,X"; faces left from 0100, 028586; 0285B3 "CMPD #$3E,X"), the wait before it walks (02859A "LDD
+# #$02,U; STA #$3C,X", 0285C4 "DEC #$3C,X") and the one on the floor (0285A0 "STB #$3B,X", 028613 "DEC #$3B,X").
+struct goon_walk_in_start 04 rom
+field goon_walk_in_start 00 flags u8
+field goon_walk_in_start 01 trigger_x u8
+field goon_walk_in_start 02 wait u8
+field goon_walk_in_start 03 floor_wait u8
+029AAE  table  goon_walk_in_starts[4]  goon_walk_in_start
+
+# an entrance on a timer, shared by bank 14's type 1D (028633 "LBSR $85F9", goon) and bank 15's type 2C (02A64F "LBSR
+# $6133", fat_goon): hidden (028648 "LDA #$08; STA #$00,X") for a wait (028657 "LDD ,U; STA #$3C,X"; 028672 "DEC
+# #$3C,X"), then shown and moving by a direction and a speed (02865F "LDD #$02,U; STD #$3E,X", 02867C "LDD #$3E,X;
+# LBSR $8617": 07CC8E takes A the direction, B the speed) to the floor (0285E3), where it waits again (02865C "STB
+# #$3B,X", 028613). Bank 15: 02A669 "LDU #$78C0"... 02A67B, the same. kref: 028657 reads records 1, 2; 02A673 record
+# 0.
+struct delayed_start 04 rom
+field delayed_start 00 wait u8
+field delayed_start 01 floor_wait u8
+field delayed_start 02 direction u8
+field delayed_start 03 speed u8
+029AD2  table  delayed_goon_starts[4]  delayed_start
+02B8C0  table  delayed_fat_goon_starts[4]  delayed_start
+
+# types 3F and F4 (list 0; 3F in scenes 1, 5, 9): a goon (028836 "LBSR $85F9"; F4 028825 "LBSR $6144") that walks in
+# to the right (028877 "LDD #$0100; STD #$0F,X", animation 81) onto the floor (02890B) and waits there (028925 "DEC
+# #$3B,X"). By field 30 (028841 "LDU #$7B68", 028847 "ASLA; LEAU A,U"): its attributes (02884A "LDA #$09,X; ANDA #$8F;
+# ORA ,U") and that wait (028854 "LDB #$01,U; STB #$3B,X").
+struct goon_side_entry 02 rom
+field goon_side_entry 00 attributes u8
+field goon_side_entry 01 floor_wait u8
+029B68  table  goon_side_entries[2]  goon_side_entry
+
+# type 17 (list 0; scene 5, field 30 0-3): a goon hidden (028898 "LDA #$04; STA #$00,X") until the scroll brings it
+# under its x (0288E4 "LDD #$0C,X; CMPD #$3E,X; BCC"), then running in (0288FC "LDD #$0200; STD #$0F,X", animation 82)
+# onto the floor (02890B) where it waits (028925 "DEC #$3B,X"). By field 30 (0288AB "LDU #$7B7E", 0288B1 "ASLA; LEAU
+# A,U"): the x/16 (0288B5 "LDB ,U; ASLDI #$04; STD #$3E,X") and the wait (0288BC "LDA #$01,U; STA #$3B,X"). kref: all
+# 4 read.
+struct goon_run_in_start 02 rom
+field goon_run_in_start 00 trigger_x u8
+field goon_run_in_start 01 floor_wait u8
+029B7E  table  goon_run_in_starts[4]  goon_run_in_start
+
+# type 18 (list 0; scene 5): goon_with_hat (02893D "LBSR $6FC1") that waits for the scroll (02897F "CMPD #$3E,X"),
+# then for 3C (02898B), then jumps in (0289A7 "LDD #$0900; STD #$19,X", 0289BC "LDD #$FE00; STD #$14,X"). By field 30
+# (02895A "LDU #$7B98", 028960-028962): the x (028964 "LDD ,U; STD #$3E,X") and the wait (028969 "LDD #$02,U; STA
+# #$3C,X"; byte 3 goes into B and nothing takes it). kref: records 0-2.
+struct hat_goon_jump_in_start 04 rom
+field hat_goon_jump_in_start 00 trigger_x u16
+field hat_goon_jump_in_start 02 wait u8
+field hat_goon_jump_in_start 03 unused u8
+029B98  table  hat_goon_jump_in_starts[6]  hat_goon_jump_in_start
+
+# ---- bank 14: the goons' actions (enemy actions 00, 04, 05, 0F, 15, 33 in bank 14: F620/F5A2) ----
+
+# action 00 (028003 -> 028C61 "LDU #$7C70"), in the goons' and goon_with_hat's close ranges (029D37: "04 01 1F 9A 00 00
+# 00 02"): with the target player (field 38) on the floor, animation 86 and this wait by the players in the game
+# (028C77 "LDU #$7C7A", 028C7A "LDA <$57", 028C7D "LDA A,U", 028C7F "STA #$3B,X"), then animation A4 (028C93) and the
+# hit box 7BEE (028CAB). Entries 1-4 (04 02 01 01); kref reads 1-3
+029C7A  table  goon_strike_waits_by_players[5]  u8
+
+# action 04 (02800F -> 028D34 "LDU #$7C99") and 05 (028012 -> 7CC3), step 0 028D43: a jump attack (animation A6,
+# 028D7E A7 with "LDD #$0400; STD #$19,X") when this entry by the game's rank is at least the random byte (028D43 "LDU
+# #$7CA3", 028D46 "LDA <$61", 028D49 "LDA A,U", 028D4B "CMPA <$58", 028D4E "BCC $6D73"), else a short run (028D50
+# animation 90, "LDD #$0180; STD #$0F,X"). 00 up to rank 03, FF from rank 11 (hex). kref reads ranks 04-1B
+029CA3  table  goon_jump_attack_chances_by_rank[32]  u8
+
+# action 0F (028042 -> 028E05 "LDU #$7CCB"): a goon grabbing the player it touches (028E85-028E9A: the player's 4B,
+# 3D, 00 and 1E) shows the animation holding that player's character, by the held player's field 5B high nibble
+# (028ED3 "LDY #$7CD3", 028ED6 "LDA #$5B,U; LSRA x4", 028EDD "LDA A,Y", "ORA #$80; STA #$05,X"), and the next one
+# for the squeeze (028F1A-028F26 "LDA A,Y; INCA"). 4 entries (40 42 44 46), one a player; kref reads all 4
+029CD3  table  goon_hold_animations[4]  u8
+
+# action 33 (028033 -> 0290CC "LDU #$7EDB"), goon_with_shovel's close range (029DE7 range 01-23): animation 80 and this
+# wait by the players in the game (0290E2 "LDU #$7EE5", 0290E5 "LDA <$57", 0290E8 "LDA A,U", 0290EA "STA #$3B,X"),
+# then animation 92 and the hit box 7E8F (02910F). Entries 1-4
+029EE5  table  shovel_goon_close_strike_waits_by_players[5]  u8
+
+# action 15 (028093 -> 029120 "LDU #$7EEA"), goon_with_shovel's far ranges (029DE7 ranges 3C-50 and 58-64): animation
+# 80 and this wait by the players in the game (02912B "LDU #$7EF4", 02912E "LDA <$57", 029131 "LDA A,U", 029133 "STA
+# #$3B,X"), then animation 91 and the hit box 7E9F (02914A). Entries 1-4
+029EF4  table  shovel_goon_far_strike_waits_by_players[5]  u8
+
+# read only by unused_028AE0 (nothing calls it): a wait by the game's rank (028AE0 "LDU #$7C2E", 028AE3 "LDA <$61",
+# 028AE6 "LDA A,U", 028AE8 "STA #$3B,X") before animation 86; 10, 0C, 08, 04 eight ranks each
+029C2E  table  unused_goon_waits_by_rank[32]  u8
+
+# ---- bank 15: the fat goons (setups 764C 8101 and 77C6 8100: fat_goon) ----
+
+# type 36 (list 0): the fat goon's entrance poses, as goon_entrances (02A334 "LBSR $6093", 02A341 "LDU #$784A", 02A348
+# "LDD A,U", 02A34A "STA #$3C,X", 02A34D "STB #$09,X"; 02A376 "DEC #$3C,X"). The same first 12 entries as
+# goon_entrances. kref: 02A348 reads entries 0, 1, 8
+02B84A  table  fat_goon_entrances[12]  goon_entrance
+
+# type 2D (list 0; scenes 1, 5): the fat goon from the back of the stage, as goon_from_back_xs (02A45D "LDU #$7890",
+# 02A469 "LDD A,U", 02A46B "STD #$0C,X", 02A46E "LDD #$0040; STD #$11,X", 02A474 "LDD #$0100; STD #$14,X")
+02B890  table  fat_goon_from_back_xs[4]  u16
+
+# type EF (list 0; scene 4): the fat goon jumping in from a side, as goon_jump_in_xs (02ABCC "LDU #$79A5", 02ABD3 "LDD
+# A,U", 02ABD5 "STD #$0C,X", 02ABF7 "LDD #$0200; STD #$0F,X")
+02B9A5  table  fat_goon_jump_in_xs[2]  u16
+
+# type F0 (list 0; scene 4): the fat goon coming up from below, as goon_from_below_xs (02AC7C "LDU #$79B9", 02AC83 "LDD
+# A,U", 02AC85 "STD #$0C,X", 02AC8B "LDD #$FF80; STD #$16,X"; 02ACC9 waits for z over 0)
+02B9B9  table  fat_goon_from_below_xs[2]  u16
+
+# type 35 (list 0; scene 1): the fat goon coming down from far (02A6E7 "LDD #$00E0; STD #$16,X", zoom 1010 growing to
+# 4040, 02A702/02A72A) under the same carried child as goon_descent_starts (02A6B1 "LDY #$78E6; LBSR $862C", released
+# at 02A745 "LDA #$02; STA #$02,U"): x and x speed by field 30 (02A6D2 "LDU #$78EE", 02A6D8-02A6DA, 02A6DC "LDD ,U;
+# STD #$0C,X", 02A6ED "LDD #$02,U; STD #$0F,X"). kref: record 0.
+02B8EE  table  fat_goon_descent_starts[2]  descent_start
+
+# type 13 (list 0): a fat goon (02A205 "LBSR $6093", animation B3) that falls 60 frames at FF00 (02A225), then takes
+# by field 30 (02A23C "LDU #$7822", 02A242-02A244): the step of its handler it goes on with (02A246 "LDD ,U; STA
+# #$29,X": 2 walks up-left, 4 walks right then falls again), the floor height it walks to (02A24B "STB #$3D,X; STB
+# #$5D,X"; 02A273 "CMPA #$3D,X" against 078638's height x8) and a wait after which it turns to priority 10 (02A251
+# "LDA #$02,U; STA #$3C,X", 02A283 "DEC #$3C,X"). Byte 3 nothing reads. kref: both records.
+struct fat_goon_drop_route 04 rom
+field fat_goon_drop_route 00 next_step u8
+field fat_goon_drop_route 01 floor u8
+field fat_goon_drop_route 02 wait u8
+field fat_goon_drop_route 03 unused u8
+02B822  table  fat_goon_drop_routes[2]  fat_goon_drop_route
+
+# actions 09 (02A009 -> 02A881) and 0B (02A00F -> 02A9AA), in fat_goon's behaviours (02B5E8: "08 01 1F 9A 0B 29 0C 0B",
+# "04 20 28 4D 0C 0C 09 0C"): with the target on the floor, animation AA and this wait by the players in the game
+# (02A8CF / 02A9C0 "LDU #$7974", "LDA <$57", 02A8D5 / 02A9C6 "LDA A,U", "STA #$3B,X"), then the strike (A4 / AB and
+# hit boxes 7914 / 7924). Entries 1-4
+02B974  table  fat_goon_strike_waits_by_players[5]  u8
+
+# the fat goon's grab (02AA94, as goon_hold_animations): the animation holding each player's character (02AB20 "LDY
+# #$7995", 02AB23 "LDA #$5B,U; LSRA x4", 02AB2A "LDA A,Y; ORA #$80; STA #$05,X"): 34-37
+02B995  table  fat_goon_hold_animations[4]  u8
+
+# bank 15's object that puts in others: kept as symbols.txt has them (object_15_times, object_15_next_kinds), but the
+# lists object_15_spawn_lists points at are not records of the stages' `spawn` (assets/data/spawns.txt writes them
+# so): 02ADB8-02AE1E reads byte 0 against the object's clock (02ADC9 "LDA #$0000,Y; CMPA #$28,X", FF ends), byte 1
+# x8 the x (02ADF9 "LDB #$0001,Y; ASLDI #$03; STD #$0C,U"), byte 2 x8 plus <$B2 the y (02AE03-02AE0C), byte 3 the z
+# (02AE10 "LDB #$0003,Y; STD #$16,U; STD #$5C,U"), byte 4 the fewest players present (02ADD9 "LDA #$0004,Y; CMPA $1874;
+# LBCC"), byte 5 the flags whose bits 2-3 are the object list (02ADE4 "LDB #$0005,Y; LBSR $86AA" -> 07CA50), bytes 6
+# and 7 its field 30 and type (02ADEE "LDD #$0006,Y; STA #$30,U; STB #$01,U"). STRUCT fix: type its entries
+struct timed_spawn 08 rom
+field timed_spawn 00 time u8
+field timed_spawn 01 x u8
+field timed_spawn 02 y u8
+field timed_spawn 03 z u8
+field timed_spawn 04 players u8
+field timed_spawn 05 flags u8
+field timed_spawn 06 state u8
+field timed_spawn 07 type u8
+02B9FE  table  object_15_spawn_lists[13]  u16 timed_spawn
+
+# ---- bank 15: the stages' scenery objects ----
+
+# list 1 type FD (scene 1 only, stage 2 Krustyland): doors (02AF36 "LDU #$7DBC; LBSR $85AB": setup 0F25, kind 0F
+# police_car_and_doors, animation 25) that open once the camera is at 04E0 (02AF6E) and, by the players present, let
+# out objects of list 0 type 07 (02EF03; 02EF0F "LDU #$7E27", setup 9800: kind 98): by field 30 (02AF46 "LDU #$7DC2",
+# 02AF49-02AF4E): a wait (02AF50 "LDD ,U; STA #$3B,X"; 02AF7A "DEC #$3B,X"), an x/16 into 3E (02AF55 "CLRA; ASLDI
+# #$04; STD #$3E,X", which nothing of this object compares) and its list of releases (02AF5B "LDY #$02,U; STY
+# #$2A,X"), the address of the child object it lets out just before the list (02AF61 "LDD #$-02,Y; STD #$38,X"). Each
+# release (02AF98 "LDY #$2A,X; LDD ,Y; BMI" ends): put the child in when more players are present than its byte 0
+# (02AFA8 "CMPA <$57; BCC", 02AFAD "LDY #$38,X; LBSR $862C"), then wait its byte 1 (02AF9F "STB #$3B,X"). kref:
+# records 0-2.
+struct door_release 02 rom
+field door_release 00 players u8
+field door_release 01 wait u8
+struct krustyland_door 04 rom
+field krustyland_door 00 wait u8
+field krustyland_door 01 trigger_x u8
+field krustyland_door 02 releases u16 door_release
+02BDC2  table  krustyland_doors[3]  krustyland_door
+# the rest of the piece 02BDC2 (COUNT of 02BDC2 is 3, not its 59 bytes): the three release lists, each
+# after its child object's address (02BDCE 7DE5 then 00 10 03 20 FF; 02BDD5 7DED then 01 40 0F 40 02 20 FF; 02BDDE
+# 7DF5 then 00 80 0F E0 FF; kref: 02AF61 reads 02BDCE, 02BDD5, 02BDDE), and the three child objects (02BDE5, 02BDED,
+# 02BDF5: 07CA8A's 8-byte records, y offset 0002, list 0, field 30 01, 02, 03, type 07)
+02BDCE  table  krustyland_door_releases[47]  u8
+
+# list 1 type 3D (scenes 1, 5, 6, 8): a prop standing in the stage (02B0AF "LDU #$7E1D; LBSR $85AB", setup 0500) with
+# its kind and animation by field 30 (02B0BA "LDU #$7E23", 02B0C0-02B0C2, 02B0C4 "LDD ,U; STD #$04,X": AB/AC/AA/12/
+# 11/A2/D7 and their animations), its attributes (02B0C9 "LDD #$02,U; STA #$09,X") and the x/16 it goes away under
+# (02B0CF "CLRA; ASLDI #$04; STD #$3E,X"; 02B0D9 "LDD #$0C,X; CMPD #$3E,X; BCC; CLR #$00,X"). kref: records 2-4, 7-11.
+struct prop 04 rom
+field prop 00 kind u8
+field prop 01 animation u8
+field prop 02 attributes u8
+field prop 03 leave_x u8
+02BE23  table  props[12]  prop
+
+# list 2 type 27: kind D1 (02B1A4 "LDU #$7E83; LBSR $85AB", setup D107) flung off: by field 30's low 2 bits (02B1BA
+# "LDU #$7E89", 02B1BD-02B1C4 "ANDA #$03; ASLA; ASLA; LEAU A,U") its x speed (02B1C6 "LDD ,U; STD #$0F,X") and z speed
+# (02B1CB "LDD #$02,U; STD #$19,X"), shrinking (02B1DF "SUBD #$0101" from 6060) for 40 frames, then gone with sound
+# 2000 (02B1F2-02B1F8). kref: records 1-3.
+struct kind_d1_fling 04 rom
+field kind_d1_fling 00 x_speed s16
+field kind_d1_fling 02 z_speed s16
+02BE89  table  kind_d1_flings[4]  kind_d1_fling
+
+# list 1 type F0 (scene 4 only, the cemetery): kind C6 pieces (02B211 "LDU #$7ED1; LBSR $85AB", setup C600) at x 009A
+# (02B217) with a z and an animation by field 30 (02B21D "LDU #$7EA5", 02B223-02B225, 02B227 "LDD ,U; STD #$16,X",
+# 02B22C "LDA #$02,U; STA #$05,X"), moving up and down with <$E2 (02B23A "LDD <$E2; STD #$19,X") and gone out of
+# -80..A0 (02B202-02B20D). Byte 3 nothing reads. kref: records 0-5 (02BEA5-02BEBB). The piece the layout gives these
+# bytes, 02BEA1 (48 bytes), starts with the step table 7EA1 (02B1FC "LDU #$7EA1; ASLB; JSR [B,U]": 7211, 723A) and
+# holds no hit box.
+struct cemetery_piece 04 rom
+field cemetery_piece 00 z s16
+field cemetery_piece 02 animation u8
+field cemetery_piece 03 unused u8
+02BEA5  table  cemetery_pieces[11]  cemetery_piece
+
+# list 0 type E9 (scene 0, stage 1, field 30 0 and 1): kinds C3 and C4 (02B44E "LDU #$7F63; LBSR $85AB", setup C301)
+# coming in from the right: by field 30 (02B459 "LDU #$7F69", 02B45C-02B461) the x speed (02B463 "LDD ,U; STD
+# #$0F,X"), the frames it moves (02B468 "LDD #$02,U; STA #$3B,X"; 02B47F "DEC #$3B,X") and its kind (02B46E "STB
+# #$04,X"); when they run out it stops and sets 1884 (02B484-02B489 "LDA #$C0; STA #$00,X; STA $1884"), which the
+# police car's doors (02C442, kind 0F) and the bystanders (02E673) wait for: named the police car by that.
+struct police_car_arrival 04 rom
+field police_car_arrival 00 x_speed s16
+field police_car_arrival 02 frames u8
+field police_car_arrival 03 kind u8
+02BF69  table  police_car_arrivals[2]  police_car_arrival
+
+# ---- bank 16 ----
+
+# list 1 type 1A (scene 0, stage 1): the police car's doors (02C3FF "LDU #$7C28; LBSR $85AB": setup 0F14, kind 0F
+# police_car_and_doors): by field 30 (02C414 "LDU #$7C2E", 02C417-02C41C): the fewest players present for the door
+# (02C41E "LDA ,U; CMPA $1874; BHI" skips it), an x/16 into 3E (02C427 "LDB #$01,U; ASLDI #$04; STD #$3E,X", which
+# these steps do not compare), a wait after the car stops (02C42F "LDD #$02,U; STA #$3B,X"; 02C442 "LDA $1884", 02C44C
+# "DEC #$3B,X", animation 95) and its release list's number (02C435 "STB #$30,X"). kref: records 0-2.
+struct police_car_door 04 rom
+field police_car_door 00 players u8
+field police_car_door 01 trigger_x u8
+field police_car_door 02 wait u8
+field police_car_door 03 releases u8
+02DC2E  table  police_car_doors[4]  police_car_door
+# what a door lets out, by its release number (02C45C "LDU #$7C3E", 02C45F "LDA #$30,X; ASLA", 02C463 "LDY A,U"): a
+# list of the fewest players present (02C465 "LDA ,Y+; CMPA #$7F; BEQ", 02C46B "CMPA $1874; BCC") each followed by the
+# child object it puts in (02C471 "LBSR $862C", 02C474 "LEAY #$08,Y"; 07CA8A-07CAE5: x and y offsets, z, the list
+# flags, field 30, the type), up to 7F. COUNT 4, not the piece's 25: the lists follow (police_car_door_releases)
+struct car_door_release 09 rom
+field car_door_release 00 players u8
+field car_door_release 01 dx s16
+field car_door_release 03 dy s16
+field car_door_release 05 dz u8
+field car_door_release 06 flags u8
+field car_door_release 07 state u8
+field car_door_release 08 type u8
+02DC3E  table  police_car_door_lists[4]  u16 car_door_release
+# the three lists 02DC46, 02DC50, 02DC5A (kref: 02C465 reads 02DC46-02DC6C, 07CA8A-07CAD2 their children): goons of
+# list 0 type 16 (bank 14's 028727, field 30 80), the last with a second one (field 30 01) for more than 3 players.
+# 02DC6D-02DC6F, the end of the
+# piece 02DC3E, are not these: they are the step table 7C71's entries -2 and -1 (02C48A "LDU #$7C71;
+# ASLB; JSR [B,U]" with field 02 FE/FF, 02C4AA "LDD #$FF00; STA #$02,X"; kref: 02C48E reads 02DC6D-02DC7E)
+02DC46  table  police_car_door_releases[39]  u8
+
+# list 1 type DF (scene 4 only, the cemetery): kind 05 obstacles (02C0C9 "LDU #$7BA8; LBSR $85AB", setup 0506): x by
+# field 30 (02C0FF "LDU #$7B58", 02C102-02C105, 02C106 "LDD A,U", 02C108 "STD #$0C,X"), raising the floor under them
+# by 2 once in view (02C10F "CMPD #$0160", 02C117 "LDA #$02; LBSR $6C4A")
+02DB58  table  cemetery_obstacle_xs[8]  u16
+# whether each obstacle (by field 30) drops food when broken, in a row of 8 by the sum of the players' scores' last
+# BCD byte (02C0DD "LDU #$7B68", 02C0E0-02C0EC "LDA $49D5; ADDA $49DD; ADDA $49E5; ADDA $49ED", 02C0F0 "ANDA #$07;
+# ASLA x3; LEAU A,U", 02C0F7 "LDA #$30,X; LDA A,U; STA #$44,X"; 49D4+8n is the score 0796FD adds to with DAA): broken
+# (02C078), 44 non-zero turns it into kind 09 food jumping out (02C095 "LDD #$0800; STD #$19,X; LDA #$09; STA #$04,X"),
+# 0 makes it vanish (02C08C). FF drops, 00 not
+02DB68  table  cemetery_obstacle_food[64]  u8
+
+# kind 05 obstacles (02CB7D "LDU #$7DCD; LBSR $85AB", setup 0502) with the animation of field 30 (02CB94 "ORA #$80;
+# STA #$05,X"): the height, in floor steps of 8, the obstacle raises the floor map under it by, by its animation / 2
+# (02CB88 "LDU #$7DB1", 02CB8B "LDA #$30,X; LSRA", 02CB8F "LDA A,U", 02CB91 "STA #$47,X"; 02CBC3 "LDA #$47,X; LBSR
+# $6C4A": 02CC4A stores it in 188B and adds it to the low nibble, the floor height 078638 reads, of the 3 cells under
+# the object, 02CCA1-02CCB5)
+02DDB1  table  obstacle_heights[28]  u8
+
+# list 1 type 1F (scene 5): kind 10 (02C2DF "LDU #$7BEC", setup 1001) that comes down (02C350 "LDD
+# #$FF80; STD #$19,X" for 40 frames) and then rewrites the floor map over 32 columns of 6 cells from its place
+# (02C37E: 02C393 "LDU #$2A,X" = 07948C's floor-map address, 02C3B1-02C3D4 the six cells 40 apart). Which column gets
+# the edge cells: by the count of columns left, 32 (20 hex) down to 1 (02C38E "LDA #$20; STA <$F4", 02C39F "LDU #$7BF2",
+# 02C3A2 "LDA <$F4", 02C3A5 "LDA
+# A,U", 02C3A7 "BNE": non-zero 02C3AE "LDY #$7C12", else 02C3A9 "LDY #$7C18"). Entries 1-32 are read (kref: 02C3A5
+# reads 02DBF3-02DC12): entry 0 nothing reads, entry 32 is the first byte of the edge cells (FF)
+02DBF2  table  kind_10_floor_edge_flags[32]  u8
+# the 6 cells of a floor-map column (top to bottom, 02C3B8 "LDA ,Y; STA #$00,U" ... 02C3D4 "LDA #$05,Y; STA
+# #$0140,U"): FF no floor (bit 7: 078638's "no floor"), 00 floor at height 0
+struct floor_column 06 rom
+field floor_column 00 row_0 u8
+field floor_column 01 row_1 u8
+field floor_column 02 row_2 u8
+field floor_column 03 row_3 u8
+field floor_column 04 row_4 u8
+field floor_column 05 row_5 u8
+02DC12  table  kind_10_edge_floor_cells[1]  floor_column
+02DC18  table  kind_10_floor_cells[1]  floor_column
+# 02C37E reads through Y one of the two columns, by the two paths it takes
+local sub_02C37E 02C3A9,02C3AE y column floor_column
+
+# the four players' objects in the work RAM (4A40, 4B00, 4BC0, 4C80; 4A40 + C0 each, as 07D30C's search "LDU #$4A40",
+# "LEAU #$00C0,U"): 02CA45 picks one at random that is in play (02CA47 "LDA <$16", 02CA4A "LDU #$7D83", 02CA4D "ANDA
+# #$03; ASLA", 02CA50 "LDU A,U", 02CA52 "LDA #$00,U; BNE"; tries the next up to 4 times)
+02DD83  table  player_objects[4]  u16
+
+# list 1 type 2C (scene 6, stage 5's gorge): the boulder (02CE6F "LDU #$7DEF; LBSR $85AB", setup AF03: boulder) by
+# field 30 (02CE7F "LDU #$7DF5", 02CE82-02CE8A): whether it bounces back into the distance after landing (02CE8C "LDD
+# ,U; STA #$30,X"; 02CF18 "LDA #$30,X; BEQ": else "LDD #$FD00; STD #$14,X; LDD #$0400; STD #$19,X", 02CF65 shrinking
+# to 2020), the floor height it lands on (02CE91 "STB #$5D,X") and a wait before it falls (02CE94 "LDA #$02,U; STA
+# #$3B,X"; 02CEB3). Byte 3 nothing reads. kref: records 0-3.
+struct boulder_drop 04 rom
+field boulder_drop 00 bounces u8
+field boulder_drop 01 floor u8
+field boulder_drop 02 wait u8
+field boulder_drop 03 unused u8
+02DDF5  table  boulder_drops[4]  boulder_drop
+
+# bank 16's object (object_16_flags, object_16_kinds, object_16_patterns as symbols.txt has them; object_16_flags
+# stays). Its first record (02D1D1 "LDU #$7E3F", 02D1D4-02D1D6 "ASLA; ASLA; LEAU
+# A,U", 02D1D8 "LDD ,U"), is a record of the existing object_16_kinds[6] pattern_start: nothing to add. The second
+# (02D1EC "LDU #$7E95", 02D1EF-02D1F4 by field 30, 02D1F6 "LDD ,U; STA #$50,X; STB #$51,X", 02D1FE "LDD #$02,U; STA
+# #$52,X; STB #$53,X"): the four animations it plays one after the other, each when the last ends (02D27B "LDA #$50,X;
+# STA #$05,X" with sound 4800, 02D28B #$51, 02D2A9 #$52, 02D2B9 #$53, each after "LDA #$06,X; LSRA; BCC"): A7-AA for
+# the kind 0F ones, 93-96 for the kind 12 ones. kref: records 1, 2, 4, 5.
+struct object_16_animation_run 04 rom
+field object_16_animation_run 00 first u8
+field object_16_animation_run 01 second u8
+field object_16_animation_run 02 third u8
+field object_16_animation_run 03 fourth u8
+02DE95  table  object_16_animation_runs[6]  object_16_animation_run
+
+# animals that run across (02D437 "LDU #$7F0B; LBSR $85AB", setup 8600: dog): by field 30 (02D43D "LDU #$7EF9",
+# 02D440-02D445): their kind (02D447 "LDD ,U; STD #$2C,X; STA #$04,X": 86 dog, 89 squirrel, C5 dog_2) and the
+# animation it starts again with (2D: 02D4F9 "LDA #$2D,X; STA #$05,X", 02D51E "INCA"), their attributes (02D44F "LDD
+# #$02,U; STA #$09,X") and whether they run quiet (02D452 "STB #$44,X"; 02D503 "LDA #$44,X; BNE" skips sound 5F00).
+# kref: records 0-2.
+struct running_animal 04 rom
+field running_animal 00 kind u8
+field running_animal 01 animation u8
+field running_animal 02 attributes u8
+field running_animal 03 quiet u8
+02DEF9  table  running_animals[3]  running_animal
+# and by the same field 30 (02D458 "LDU #$7F05", 02D45B "LDA #$30,X; ASLA", 02D45F "LDD A,U"): the frames it stops
+# for (02D461 "STA #$50,X"; 02D499 "LDA #$50,X; STA #$3B,X") and whether it runs at full speed (02D464 "STB #$51,X";
+# 02D50E "LDA #$51,X; BNE", else "ASRW #$0F,X" halves it). kref: all 3
+struct running_animal_timing 02 rom
+field running_animal_timing 00 wait u8
+field running_animal_timing 01 fast u8
+02DF05  table  running_animal_timings[3]  running_animal_timing
+
+# list 1 type F2 (scene 8 only, stage 6 Dreamland): kind 05 obstacles (02D5E2 "LDU #$7F41; LBSR $85AB", setup 0500)
+# hidden (02D5E8 "LDA #$04; STA #$00,X") until a wait runs out, then thrown in (02D623: sound 0301, "LDD #$0300; STD
+# #$0F,X; LDD #$FF00; STD #$19,X"), landing with gravity (02D643) and staying as solid ones (02D674 hit box 7A98). By
+# field 30 (02D5F5 "LDU #$7F47", 02D5F8-02D5FD): animation (02D5FF "LDD ,U; STA #$05,X; STA #$32,X"), wait (02D60A
+# "STB #$3B,X") and x (02D60D "LDD #$02,U; STD #$0C,X"). kref: records 0-7.
+struct obstacle_drop 04 rom
+field obstacle_drop 00 animation u8
+field obstacle_drop 01 wait u8
+field obstacle_drop 02 x u16
+02DF47  table  dreamland_obstacle_drops[8]  obstacle_drop
+
+# list 1 type 16 (scene 0 field 30 0; scene 5 field 30 1): kind 0F animation 17 (02D728 "LDU #$7FA5", setup 0F17), or
+# for field 30 non-zero kind 10 animation 07 (02D746 "LDD #$1007; STD #$04,X"), that waits for the camera to reach
+# this x (02D75E "LDU #$7FA1", 02D761 "LDA #$30,X; ASLA", 02D765 "LDD A,U", 02D767 "STD #$3E,X"; 02D76E "LDD <$AC;
+# CMPD #$3E,X; BCS") and then rises out (02D781 "LDD #$0200; STD #$19,X") for 40 frames holding the scroll (02D790
+# "DEC <$A7"). kref: 02D765 reads 02DFA1-02DFA4. Its 2 entries are the last 2 bytes of the piece 02DF9B (the setup
+# 02DFA5 points its hit box at 7F9B, which is the step table 02D71F "LDU #$7F9B" uses: 7728, 776E, 7790, then this
+# table's 03D0) and the piece 02DFA3 (0430) (a data label, no table: its first word is the last of the hit box piece
+# at 02DF9B)
+02DFA1  data  rising_scenery_camera_xs
+
+# ---- bank 17 ----
+
+# list 1 type 25 (scene 0, stage 1, field 30 0-3): kind 0F scenery (02E07B "LDU #$7A0C; LBSR $85AB", setup 0F00) set
+# at x 01A0 (02E086) moving left by field 30 (02E08C "LDU #$7A12", 02E08F-02E094, 02E096 "LDD ,U; STD #$0F,X") with an
+# animation and attributes (02E09B "LDD #$02,U; ORA #$80; STA #$05,X; STB #$09,X"), its x kept in 0000-01FF so it
+# comes round again (02E0AA "LDA #$0C,X; ANDA #$01; STA #$0C,X") until the camera passes 06B0 (02E0B9). Animations
+# 18-1D. kref: records 0-4, 7.
+struct looping_scenery_move 04 rom
+field looping_scenery_move 00 x_speed s16
+field looping_scenery_move 02 animation u8
+field looping_scenery_move 03 attributes u8
+02FA12  table  looping_scenery_moves[10]  looping_scenery_move
+
+# list 1 type FC (scenes 3, 5, 9): an object lying in the stage until something takes it (steps 7A68: 61FA, 6209
+# twice, 620A "CLR #$00,X"), set up by field 30 (02E1FA "LDU #$7A70", 02E1FD "LDA #$30,X; ASLA", 02E201 "LDU A,U",
+# 02E203 "LBSR $85AB"): the setups 7A76, 7A7C, 7A82 (kinds 06, 07 hammer, 08: the kinds the item carriers put down,
+# carried_item_kinds)
+02FA70  table  item_setups[3]  u16
+
+# list 1 type 30 (scene 0 field 30 0, scene 1 field 30 1): kind A5 (02E39E "LDU #$7AFA", setup A500) walking in from
+# the right (02E3E2 "LDD #$FF00; STD #$0F,X"), which puts in a second one when more than 2 players are present
+# (02E3BC "LDA #$30,X; BMI", 02E3C1 "LDB $1874; CMPB #$02; BLS", 02E3C9 "ANDA #$03", 02E3CB "LDY #$7B00", 02E3CF "LDY
+# A,Y", 02E3D1 "LBSR $862C": the child objects 7B08-7B20, type 30 of list 1 with field 30 80-83) and later drops food
+# (02E406: 02E412 "LDY #$7B28", 02E419 "LDY A,Y", 02E41B "LBSR $862C": the child objects 7B30-7B48, type 12 of list 2
+# with field 30 00, 02, 04, 06 = 02E367 "LDU #$7ADE" kind 09 food with that animation). Both point at 07CA8A's 8-byte
+# child objects
+02FB00  table  kind_a5_partners[4]  u16
+02FB28  table  kind_a5_food_drops[4]  u16
+
+# food (kind 09) jumping out: by field 30's low 2 bits (02E217 "LDU #$7A96; LBSR $85AB" setup 0900; 02E222 "LDU
+# #$7A9C", 02E225-02E22A, 02E22B "LDU A,U"): its animation and the hit kind it gives what touches it (02E22D "LDD ,U;
+# ORA #$80; STA #$05,X; STB #$1D,X"; 07C344 "LDA #$1D,U; STA #$1E,X"), the gravity taken from its z speed each frame
+# (02E237 "LDD #$02,U; STD #$3E,X"; 02E279 "LDD #$19,X; SUBD #$3E,X"), its x speed (02E23D "LDD #$04,U; STD #$0F,X")
+# and z speed (02E24C "LDD #$06,U; STD #$19,X")
+struct food_move 08 rom
+field food_move 00 animation u8
+field food_move 01 hit_kind u8
+field food_move 02 gravity u16
+field food_move 04 x_speed s16
+field food_move 06 z_speed s16
+02FA9C  table  food_move_choices[4]  u16 food_move
+02FAA4  table  food_moves[4]  food_move
+# food's hit kind by its animation / 2 (02E2F7 "LDU #$7ACE", 02E2FA "LDA #$30,X; ANDA #$7F; LSRA", 02E300 "LDA A,U",
+# 02E302 "STA #$1D,X"; the collision 07C344 copies 1D into what it touches' 1E): FA for 0-6 and 9, 00 for the rest
+02FACE  table  food_hit_kinds[16]  u8
+
+# list 1 type F9 (scenes 1, 6): item carriers, kinds A8, A7, A6 by field 30 (02E533 "LDU #$7B7A", 02E536 "LDA #$30,X;
+# ASLA", 02E53A "LDU A,U", 02E53C "LBSR $85AB": setups A801, A701, A601), walking in from the right for 40 frames
+# (02E542-02E54A) and putting down what they carry (02E564 "LDY #$7B92", 02E56B "LDY A,Y", 02E56D "LBSR $862C": child
+# objects 7B98-7BA8, type 1A of list 2 with field 30 0-2) before leaving (02E583 "LDD #$FE80; STD #$0F,X")
+02FB7A  table  item_carrier_setups[3]  u16
+02FB92  table  item_carrier_items[3]  u16
+# the kind of what a carrier puts down (list 2 type 1A, 02E5D3: setup 7B80, then 02E5DE "LDU #$7BB8", 02E5E1 "LDA
+# #$30,X", 02E5E4 "LDA A,U", 02E5E6 "STA #$04,X"): 06, 07 (hammer), 08
+02FBB8  table  carried_item_kinds[3]  u8
+
+# list 1 type 29 (scene 0, stage 1): bystanders (02E635 "LDU #$7BD9; LBSR $85AB", setup A803) by field 30 (02E640 "LDU
+# #$7BCB", 02E643-02E648): their kind (02E64A "LDD ,U; STA #$04,X": A8, B5), facing and x/16 (02E64F "TSTB; BPL", "LDA
+# #$40; STA #$09,X", 02E657 "ANDB #$7F", 02E659 "ASLDI #$04; STD #$3E,X") and their three animations (02E65F "LDY
+# #$02,U; STY #$2A,X"): waiting (02E665 "LDA ,Y; STA #$05,X"), when the police car stops (02E673 "LDA $1884", 02E679
+# "LDU #$2A,X; LDA #$01,U") and running off (02E686: 02E68C "LDD #$FE00; STD #$0F,X", 02E695 "LDA #$02,U"). kref: both
+# records and both animation sets. The piece 02FBC3 (16 bytes) the layout gives 02FBC3-02FBD2 holds the step table
+# 7BC3 (02E62C "LDU #$7BC3": 6635, 6673, 6686, 66A1) and these 2 records, no hit box.
+struct bystander_animation_set 03 rom
+field bystander_animation_set 00 waiting u8
+field bystander_animation_set 01 startled u8
+field bystander_animation_set 02 fleeing u8
+struct bystander 04 rom
+field bystander 00 kind u8
+field bystander 01 place u8
+field bystander 02 animations u16 bystander_animation_set
+02FBCB  table  bystanders[2]  bystander
+02FBD3  table  bystander_animation_sets[2]  bystander_animation_set
+# the same pointer where the later steps read it back from field 2A
+local sub_02E673 02E679 u animations bystander_animation_set
+local sub_02E686 02E692 u animations bystander_animation_set
+
+# list 0 type 02 (scene 0, stage 1, field 30 0-2): kind 90, an enemy (02E6AE "LDU #$7C53; LBSR $85AB", setup 9000;
+# 02E6DE "LDU #$7BEF; STU #$2A,X" its behaviour) hidden until the camera is at 03D0 (02E725), then after a wait
+# walking out (02E744 "DEC #$3B,X", "LDD #$E040; LBSR $8617"). By field 30 (02E6E9 "LDU #$7C59", 02E6EC-02E6F1): an x
+# into 3E that sets its facing (02E6F3 "LDD ,U; STD #$3E,X; CMPD #$0100"), the wait (02E70C "LDD #$02,U; STA #$3B,X")
+# and a count its throwing action takes down (02E712 "STB #$3C,X"; 02E7A0 "DEC #$3C,X; LDA #$3C,X; BITA #$03", the
+# throw 02E7C1 "LDY #$7C73; LBSR $862F"). kref: records 0-2.
+struct kind_90_start 04 rom
+field kind_90_start 00 x u16
+field kind_90_start 02 wait u8
+field kind_90_start 03 throws u8
+02FC59  table  kind_90_starts[3]  kind_90_start
+
+# list 1 type 32 (scene 9, stage 7): kind B3 (02E834 "LDU #$7C99", setup B300) that takes 6 hits (02E844 "LDA #$06;
+# STA #$3C,X"): on each (02E84D "LDA #$00,X; BITA #$20") 3C goes down and the animation is this entry by the hits left
+# (02E864 "LDU #$7C9F", 02E867 "LDA #$3C,X", 02E86A "LDA A,U", 02E86C "STA #$05,X"); at 0 animation 83 (02E859).
+# Entries 1-6 (82 82 82 82 81 81), entry 0 the 83 the last hit shows anyway
+02FC9F  table  kind_b3_damage_animations[7]  u8
+
+# list 1 type 0F (scene 1, Krustyland): an unseen kind 04 object (02E8D8 "LDU #$7DBF", setup 0402; "LDA #$04; STA
+# #$00,X") that puts in 3 objects round it (02E90F-02E942: 02E918 "LDY #$7DA7; LBSR $862F", angles 55 apart in their
+# 3E) whose children count themselves out of its field 31 (02EB39 "LDU #$2A,X; DEC #$31,U"). Each frame it sets 3D
+# when that count is over this entry by the players present (02E8BB "LDU #$7DA2", 02E8BE "LDA $1874", 02E8C2 "LDA
+# A,U", 02E8C4 "CMPA #$31,X; BCC", 02E8C9 "INC #$3D,X"). Entries 1-4 (02 03 04 05). Evidence thin: named by the use
+02FDA2  table  krustyland_child_limits_by_players[5]  u8
+
+# kind 88 (02EC09 "LDU #$7E01; LBSR $85AB", setup 8800; list 0 type 1A, 02E036 -> 02EB0D): its colour by its health
+# (02EB67 "LDU #$7DFF", 02EB6A "LDA #$1B,X; CMPA #$07; BCC": 0 under 7, else 1; 02EB76 "LDB #$09,X; ANDB #$30; ORB
+# A,U; STB #$09,X"; field 1B the life 07C274 takes hits from): 8E when weak, 00 else.: U holds the table (02EB67 "LDU
+# #$7DFF"), A the entry
+02FDFF  table  kind_88_attributes_by_health[2]  u8
+elements kind_88_attributes u8
+local sub_02EB67 02EB67 u attributes kind_88_attributes
+
+# enemy action 20 (02E042 -> 02F1D8 "LDU #$7E83"), clown_on_ball's far range (behaviour 02FD3E: "08 40 48 1A 20 20 20
+# 20"): animation 86 or 87 (02F1DE-02F1EF, by <$58's bit 0) held for this wait by the game's rank / 8 (02F1F2 "LDU
+# #$7E87", 02F1F5 "LDA <$61; LSRA; LSRA; LSRA", 02F1FB "LDA A,U", 02F1FD "STA #$3B,X"; 02F204 "DEC #$3B,X; LBEQ $8635")
+02FE87  table  clown_on_ball_pause_waits_by_rank[4]  u8
+
+# a quarter wave of cosines, 80 = 1 at angle 0 down to 00 at 3F (02F257: 02F261 "LDU #$7E8F", 02F264 "LDA A,U; MUL"
+# with A the angle's low 6 bits and B the radius, then 02F26A "LDA #$3F; SUBA <$EF", 02F26F "LDA A,U" for the sine;
+# bits 6-7 of the angle swap and negate them). 02EA64 and 02ECBB call it to put an object round its parent (field 38)
+# at the angle in 3E: "LDD #$0C,U; ADDD <$E8; SUBD #$0C,X"
+02FE8F  table  orbit_cosines[64]  u8
+
+# list 1 type 3C (scene 1): kind B2 (02F33E "LDU #$7F35; LBSR $85AB", setup B201) switching between these two
+# animations every 128 frames (02F381-02F3A0: "DEC #$3B,X; BITA #$7F", 02F390 "LDU #$7F3B", "INC #$3D,X; ANDA #$01",
+# then "LDA A,U; STA #$05,X"), 85 when hit (02F375)
+02FF3B  table  kind_b2_idle_animations[2]  u8
+
+# clown_on_ball (02F08C "LDU #$7E65; LBSR $85AB", setup 9610; 02F09A "LDU #$7D3E; STU #$2A,X" its behaviour): put in
+# with field 30's bit 7 it stands in a pose by field 30 (02F0A5 "LDU #$7E6B", 02F0AB "BPL", 02F0AD "ASLA; LEAU A,U",
+# 02F0B0 "LDA ,U; STA #$05,X", 02F0B5-02F0BD "LDA #$09,X; ANDA #$CF; ORA #$01,U; STA #$09,X") until x is under 00E0
+# (02F0D8). No scenario reads them.
+struct clown_pose 02 rom
+field clown_pose 00 animation u8
+field clown_pose 01 attributes u8
+02FE6B  table  clown_on_ball_poses[4]  clown_pose
+
+# list 1 type 1C (scene 0 field 30 80): kind A0 (02F507 "LDU #$7F65; LBSR $85AB", setup A002). With field 30 under 80
+# it comes in by field 30 (02F549 "LDU #$7F6B", 02F54C-02F552 "ASLA x3; LEAU A,U"): z speed (02F554 "LDD ,U; STD
+# #$19,X"), x speed (02F559 "LDD #$02,U; STD #$0F,X"), x (02F55F "LDD #$04,U; STD #$0C,X") and the frames it moves
+# (02F565 "LDA #$06,U; STA #$3B,X"; 02F573 "DEC #$3B,X"); byte 7 nothing reads. No scenario reads them.
+struct kind_a0_entry 08 rom
+field kind_a0_entry 00 z_speed s16
+field kind_a0_entry 02 x_speed s16
+field kind_a0_entry 04 x u16
+field kind_a0_entry 06 frames u8
+field kind_a0_entry 07 unused u8
+02FF6B  table  kind_a0_entries[4]  kind_a0_entry
+# with field 30 81-83 (02F521 "ANDA #$7F; DECA") it waits hidden until its parent's x is under 0160 (02F657 "LDU
+# #$40,X; LDD #$0C,U; CMPD #$0160"), then is launched by field 30 (02F667 "LDU #$7F8B", 02F66A-02F670): x, y and z
+# speeds (02F672 "LDD ,U; STD #$0F,X", 02F677 "LDD #$02,U; STD #$14,X", 02F67D "LDD #$04,U; STD #$19,X") and the
+# parent's x it then waits for (02F683 "LDD #$06,U; STD #$3E,X"; 02F72B "LDD #$0C,U; CMPD #$3E,X"). kref: records 0-2.
+struct kind_a0_launch 08 rom
+field kind_a0_launch 00 x_speed s16
+field kind_a0_launch 02 y_speed s16
+field kind_a0_launch 04 z_speed s16
+field kind_a0_launch 06 parent_x u16
+02FF8B  table  kind_a0_launches[3]  kind_a0_launch
+
+# list 1 type 15 (scene 0, field 30 0): a figure (02F75C "LDU #$7FA7; LBSR $85AB", setup 8600) by field 30 (02F767
+# "LDU #$7FAD", 02F76A-02F76F): its kind (02F771 "LDD ,U; STA #$04,X": 0F, 95, 01 homer), attributes (02F776 "STB
+# #$09,X") and its 4 poses (02F779 "LDD #$02,U; STD #$2A,X"), one shown at random (02F78C "LDU #$2A,X", 02F78F "LDA
+# <$58; ADDA #$0D,X; ANDA #$03", 02F797 "LDA A,U; ORA #$80; STA #$05,X"). kref: record 0, its poses 02FFB9-02FFBC.
+struct random_pose_figure 04 rom
+field random_pose_figure 00 kind u8
+field random_pose_figure 01 attributes u8
+field random_pose_figure 02 poses u16
+02FFAD  table  random_pose_figures[3]  random_pose_figure
+# the three figures' 4 poses each (26 x4; 00 01 06 08; 17 1F 2F 3B). The rest of the piece 02FFAD,
+# 02FFC5-02FFC8 (77B5, 77AB), is the step table 7FC9's entries -2 and -1 (02F79F "LDU #$7FC9; ASLB; JSR [B,U]")
+02FFB9  table  random_figure_poses[12]  u8
+
+# ======== banks 18, 19, 1A, 1B, 1C ========
+# How the objects of these banks were told apart: the object lists' dispatchers (07CB6C "LDU #$F387" / 07CB7E "LDU
+# #$F2EC" for 4F80, 07CBAD/07CBBF F4B0/F40D for 5280, 07CBE0/07CBF2 F54C/F4F4 for 4D40) give each type (field 01) a
+# bank and a handler, and the enemies' actions (field 28) go through 07D64C "LDU #$F620" / 07D65E "LDU #$F5A2" the
+# same way. Bank 18: 4F80 types 10, 11, 14, 21, 22, 23, 24, 2F, 31, F2, F5; 5280 types 18, 19, 1D, 20, 22; actions 19,
+# 1A, 1D, 21, 22, 26, 2C, 31, 35, 3C. Bank 19: 4F80 types 30, 32, 33, 3D, FC, FD; 5280 types 33, 39, 3A, DE, F3, F5, F6,
+# FB; 4D40 17, 19; actions 23-25, 28, 2A, 2B, 2D-30, 32, 37, 39-3B. Bank 1A: 4F80 F7, F8, FE, FF; 5280 E3, EA, FE, FF;
+# 4D40 20, FE, FF. Bank 1B: 5280 types 0B, 0C, 12, 2A, 38. Bank 1C: the players (038003: the objects 4A40, 4B00, 4BC0,
+# 4C80 with their records 49D0-49E8, the inputs from direct page 40-4E).
+# Who each object is: its kind (field 04, the sprite set) from its setup (07D132 "LDD ,U; ORB #$80; STD #$04,X"), named
+# as tools/extract_assets.py's SET_NAMES names the set (lumberjack 8D, gorilla 9F, knight BC-C1, robot 8F, hit_sparks
+# 04); a set SET_NAMES does not name is called kind_XX, as extract_assets names its sheet. Its stage from the spawn
+# lists (spawn_lists by scene, E88D: scene 0 stage 1, 1 stage 2, 3/4 stage 3, 5 stage 4, 6 stage 5, 8 stage 6, 9 stage
+# 7, 11 stage 8). Object fields used below, checked in the listing: 05 animation, 06 bit 0 animation ended (079B90), 07
+# the animation's frame (079B3B "INC #$07,X", 079B6D), 09 flags (bit 6 faces left), 0A/0B zoom, 0C x, 11 y, 16 height,
+# 0F/14/19 the x, y and height speeds (07D16E "SUBD #$0060" on 19: gravity; 07CCDD sets 14 and 0F from a direction),
+# 1F/20/21 the hit box's sizes and 22/23/24 its offsets (07C13A-07C1D7), 1B vitality, 30 the state a spawn gives it
+# (07C9FE "LDA #$05,X; STA #$30,U"), 3B a countdown.
+
+# ---- shared shapes ----
+# a child object, the record 07862C/07CA8A puts in at an offset from the object in X (by Y): its x offset, negated
+# when X faces left (07CAB1-07CAC6), its y and height offsets (07CAD2 "ADDD #$11,X", 07CADC "LDB #$04,Y; ADDD
+# #$16,X"), the object list (07CA8A "LDB #$05,Y; LBSR $CA54"), its state and type (07CA92 "LDD #$06,Y; STA #$30,U;
+# STB #$01,U").
+struct child_object 08 rom
+field child_object 00 dx s16
+field child_object 02 dy s16
+field child_object 04 dz u8
+field child_object 05 list u8
+field child_object 06 state u8
+field child_object 07 type u8
+# an x speed and a y speed (fields 0F and 14), read as a pair (0311C2 "LDD ,U; STD #$0F,X", 0311C7 "LDD #$02,U; STD
+# #$14,X"; 039894 "LDD ,Y++; STD #$0F,U")
+struct velocity 04 rom
+field velocity 00 x_speed s16
+field velocity 02 y_speed s16
+# a height of a bobbing wave, read by a pointer the code points at one of two tables (031184/0335E1: "LDB B,U; SEX")
+elements bob_height s8
+
+# ======== bank 18 ========
+
+# ---- type 23, kind 97 (born from bank 16's object: 02D2F9 "LDY #$7EC1" / 02D2FF "LDY #$7EC9", children of type 23 in
+# state 0 or 1) ----
+# by its state: 030081 "LDU #$7988; LDA #$30,X; ASLA; ASLA; LEAU A,U", 030096 "LDD ,U; STA #$3C,X; STB #$3B,X",
+# 03009E "LDD #$02,U; STA #$3E,X; STB #$30,X ... STB #$05,X". 0300B0 counts 3C down, then it shows (00 80); when that
+# animation ends 0300DD "LDA #$3E,X; LBSR $866B" sets its speeds from the direction in 3E (07CCDD); 0300F0 counts 3B
+# down and stops it (CLRW 0F, 14); its animation is 30, then 30+1, then 30+2. Records: wait 20, 40 or 80 frames, the
+# directions 00/40/80/C0 (animation 00) or 8 directions 20 apart (animation 03)
+struct timed_move 04 rom
+field timed_move 00 delay u8
+field timed_move 01 travel u8
+field timed_move 02 direction u8
+field timed_move 03 animation u8
+031988  table  kind_97_timed_moves[16]  timed_move
+local sub_030081 030094 u move timed_move
+
+# ---- type 10, kind 91: object_18_behaviours stays; its read through U ----
+# 030137 "LDU #$79DA; LDA #$30,X; ASLA; ASLA", 03013F "LEAU A,U", 030141 "LDD ,U" (state, flags), 030154 "LDD #$02,U;
+# STD #$2A,X" (the behaviour)
+local sub_030122 03013F u choice behaviour_choice
+
+# ---- type 11, kind 9A (stage 1 and stage 3's forest): it drops on a player from above ----
+# by its state (0 or 1 in the spawn lists): 03047F "LDU #$7A30; LDA #$30,X; ASLA; ASLA; LEAU A,U", 030489 "LDD ,U; STD
+# #$3E,X", 03048E "LDD #$02,U; STA #$3D,X; STB #$30,X". 3E is added to its x when it drops and then negated (0304E2
+# "LDD #$2A,X; SUBD <$AC; ADDD #$3E,X; STD #$0C,X", 0304EE "NEGW #$3E,X"); none of its routines (7A1A: 645F-654E, and
+# 8620/8626/85C9 they call) reads 3D; 30: 0 waits for a player within 40 in x and z (0304BB-0304D6, then 19 = FE00:
+# it falls), 1 waits for its x to come below 0100 and goes to step FE (0304A4-0304B3: 030432)
+struct drop_start 04 rom
+field drop_start 00 x_offset s16
+field drop_start 02 unused u8
+field drop_start 03 mode u8
+031A30  table  kind_9a_drop_starts[2]  drop_start
+local sub_03045F 030487 u start drop_start
+
+# ---- 5280 type 18, kind 91 ----
+# by its state: 030577 "LDU #$7A56; LDA #$30,X; ASLA; ASLA; LEAU A,U", 030581 "LDD ,U; STA #$3B,X; STB #$09,X",
+# 030589 "LDD #$02,U; STA #$02,X" (B dropped: byte 3, 00 in all, nothing reads). 3B: the frames before it pops in
+# (030590 "DEC #$3B,X", then 00 80, animation 92, sound 7B); 02: the step of 7A38 it starts at (01 or 0A, both 6590)
+struct appearance 04 rom
+field appearance 00 wait u8
+field appearance 01 flags u8
+field appearance 02 step u8
+field appearance 03 unused u8
+031A56  table  kind_91_appearances[7]  appearance
+local sub_030565 03057F u start appearance
+
+# ---- type 14, kind 97 (stage 3's forest; its behaviour 7A88: 030684 "LDU #$7A88; STU #$2A,X") ----
+# its way in, by its state 1-4 (state 0 skips it: 03068F "LDA #$30,X; BEQ" to 03069D, entry 0 unread): 0306B4 "LDU
+# #$7AF8; LDA #$30,X; ASLA; LDD A,U; STA #$3B,X; CLRA; ASLDI #$04; STD #$0C,X": it shows animation 90 at x = the low
+# byte x 16 for the frames of the high byte (0306CF "DEC #$3B,X"), then animation 91 and sound 48
+struct timed_spot 02 rom
+field timed_spot 00 wait u8
+field timed_spot 01 x u8
+031AF8  table  kind_97_entrances[5]  timed_spot
+# action 31 (bank 18's 66F5; only kind 97's behaviour 031A88 lists it): it takes hold of a player (030721-0307A8:
+# within 8 in x and 4 in z it sets the player's 4B to itself, 3D to 0C, 00 |= 20, 1E to 3), and shows the animation by
+# the held player's field 5B >> 4: 0307AB "LDY #$7B0A; LDA #$5B,U; LSRA x4; LDA A,Y; ORA #$80; STA #$05,X" (5B's
+# high bits hold a character, field 04 x 16: 039216-03921A in bank 1C; 4 entries, one a character)
+031B0A  table  kind_97_hold_animations[4]  u8
+
+# ---- type 2F, the lumberjack (setup 7BF2: 8D00; behaviour 7B36) ----
+# action 22 (bank 18's 68EA; only the lumberjack's behaviour 031B36 lists it): after its swings (hit boxes 7B16/7B0E,
+# sound 6A) it shows animation 86 again and again: 03094D "LDU #$7C0C; LDA <$57; LDA A,U; STA #$3C,X", 03095C each
+# time the animation ends "DEC #$3C,X", at 0 the action ends (8635). By the players in the game (1-4: 4, 2, 1, 1;
+# entry 0 unread)
+031C0C  table  lumberjack_pause_loops_by_players[5]  u8
+
+# ---- type 31, the gorilla (setup 7C1D: 9F00; behaviour 7B8E) ----
+# its way in, by its state (1-4 in the spawn lists): 0309BB "LDU #$7C3B; LDA #$30,X; ASLA; ASLA", 0309C3 "LEAU A,U",
+# 0309C5 "LDD ,U; STA #$09,X; CLRA; ASLDI #$04; STD #$3E,X" (flags; the x it walks to, x 16: 0309E6 "CMPD #$3E,X"),
+# 0309D0 "LDA #$02,U" (the step of 7C23 it starts at; bit 7 also hides it: 0309D5-0309D9 "LDB #$04; STB #$00,X"),
+# 0309DF "LDA #$03,U; STA #$05,X" (its animation)
+struct gorilla_entrance 04 rom
+field gorilla_entrance 00 flags u8
+field gorilla_entrance 01 x u8
+field gorilla_entrance 02 step u8
+field gorilla_entrance 03 animation u8
+031C3B  table  gorilla_entrances[5]  gorilla_entrance
+local sub_0309B3 0309C3 u entrance gorilla_entrance
+# action 2C (bank 18's 6AE7; only the gorilla's behaviour 031B8E lists it): a leap, x speed 0200 and the height speed
+# by the stage's difficulty: 030AFD "LDU #$7C5D; LDA <$6B; ASLA; LDD A,U; STD #$19,X" (03E0 up to 0500), pulled down
+# 30 a frame (030B1D)
+031C5D  table  gorilla_leap_speeds[7]  u16
+
+# ---- type F5, the knight (stage 6; setup 7CF1: BC00, behaviour 7C7F) ----
+# its way in, by its state 80-8F (030C26 "LDU #$7CF7; LDA #$30,X; BPL"; 030C33 "LDA #$30,X; ASLA; ASLA", 030C38
+# "LEAU A,U": the shift drops bit 7), 030C3A "LDD ,U; STA #$3B,X; STB #$04,X" (a wait; the kind it comes in as: BC,
+# BE, C0), 030C42 "LDD #$02,U; STA #$50,X; CLRA; ASLDI #$04; STD #$0C,X" (the kind it fights as, put in 04 when the
+# entrance's animation ends: 030BE7 "LDA #$50,X; STA #$04,X"; its x, x 16). A state 00-7F reads only byte 2 (030C52-
+# 030C59 "LEAU A,U; LDA #$02,U; STA #$50,X")
+struct knight_entrance 04 rom
+field knight_entrance 00 wait u8
+field knight_entrance 01 entrance_kind u8
+field knight_entrance 02 kind u8
+field knight_entrance 03 x u8
+031CF7  table  knight_entrances[16]  knight_entrance
+local sub_030C0A 030C38,030C54 u entrance knight_entrance
+# by the same state, how it comes in: 030C6E "LDU #$7D51; LDA #$30,X; ASLA; LEAU A,U; LDD ,U; STA #$29,X; CLRA; STD
+# #$3E,X": the step of its table 7D37 (01: it jumps in from the front, zoom 8080 shrinking to 4040, 030C84-030CF6; 04:
+# it walks in from the right, 030D0E; 07: as 01 at another speed, 030D4E; 0A: it jumps in at x speed 0400, slowed each
+# frame by 3E: 030DCD "LDD #$0F,X; SUBD #$3E,X")
+struct knight_entrance_style 02 rom
+field knight_entrance_style 00 step u8
+field knight_entrance_style 01 slowdown u8
+031D51  table  knight_entrance_styles[16]  knight_entrance_style
+
+# ---- type F2, kind C7 (stage 6): it flies around a player and shoots ----
+# by its state, at 030E8F: 030E9A "LDU #$7DA1; LDA #$30,X; LDB A,U; STB #$3D,X", 030EA5 "LDU #$7DA8; LDB A,U; STB
+# #$2E,X", 030EAD "LDU #$7DAF; LDB A,U; STB #$3A,X", 030EB5 "LDU #$7DB6; LDA #$30,X; ASLA; LDD A,U; STD #$0C,X". Its
+# heading (2E, of 16; a word, the low byte its fraction) sweeps between 4 and C (031092-031102): 3A added each frame
+# ("CLRA; LDB #$3A,X; ADDD #$2E,X"), 3D the way it goes now (FF back, 00 on; "COM #$3D,X" at the ends). kref
+# --rom-reads: 030EA0 reads 031DA1-031DA6 and 030EBC 031DB6-031DC1 (states 0-5); the spawn lists give F2 states 0-7,
+# and 6-7 would read past each table (into the next one; for the x, into the setup at 7DC2)
+031DA1  table  kind_c7_sweep_ways[7]  u8
+031DA8  table  kind_c7_headings[7]  u8
+031DAF  table  kind_c7_sweep_rates[7]  u8
+031DB6  table  kind_c7_start_x[6]  u16
+# when hit (030FBF: 00 88, sound 63, animation 85, 1E frames) its height shakes: 03107A "LDU #$7DD8; CLRA; LDB
+# #$3B,X; ANDB #$03; LDB B,U; ADDD #$50,X; SUBD #$16,X; TFR B,A" (only the low byte is kept: FA acts as -6)
+031DD8  table  kind_c7_hurt_shakes[4]  u8
+# its bobbing: the height speed that brings it to 0040 plus a wave, by its counter 37: 031165 "LDU #$7DDC; CLRA; LDB
+# #$37,X; LDB B,U; ADDD #$0040" (37 kept to 0-1F), and 031184 "LDB #$37,X; BITB #$E0; BNE" -> "LDU #$7DFC" while 37 is
+# below 20, else "LDU #$7DDC"; "ANDB #$1F; LDB B,U; SEX; ADDD #$0040". 7DDC rises 00-20 and back, 7DFC falls 00 to E0
+# and back (kref --rom-reads: 031195 reads 031DDC-031E1B)
+031DDC  table  kind_c7_bob_up[32]  u8
+031DFC  table  kind_c7_bob_down[32]  s8
+local sub_031184 03118B,031190 u heights bob_height
+# the frames before its next shot, one of 4 at random: 0311CE "LBSR $8623; ANDA #$03; LDU #$7E1C; LDA A,U; STA
+# #$3B,X"; 030F57 counts 3B down, then 030F87 "LDY #$6FAE; LBSR $862C" (a child of type 28)
+031E1C  table  kind_c7_shot_waits[4]  u8
+# its x and y speeds by its heading: 0311AC "LDA #$02,X; CMPA #$02; BNE": "LDU #$7E20" while it circles (step 2,
+# 030F3D), else "LDU #$7E60"; 0311BB "LDA #$2E,X; ASLA; ASLA", 0311C0 "LEAU A,U", 0311C2 "LDD ,U; STD #$0F,X", 0311C7
+# "LDD #$02,U; STD #$14,X". The 7E60 ones are 3 times as fast (05FA against 01FE)
+031E20  table  kind_c7_slow_velocities[16]  velocity
+031E60  table  kind_c7_fast_velocities[16]  velocity
+local sub_0311AC 0311C0 u speeds velocity
+
+# ---- 5280 type 20, kind 8E (stages 4 and 5) ----
+# by its state (0-2): 0314ED "LDU #$7F52; LDA #$30,X; ASLA", 0314F4 "LEAU A,U", 0314F6 "LDD ,U; STA #$09,X; STB
+# #$05,X"
+struct pose 02 rom
+field pose 00 flags u8
+field pose 01 animation u8
+031F52  table  kind_8e_poses[3]  pose
+local sub_0314E2 0314F4 u look pose
+
+# ---- type 22, kind 8C (stage 4; setup 7F74: 8C00) ----
+# every 128 frames the next of 4 animations, until the scroll reaches 0270: 0315B3 "LDA <$16; BITA #$7F; BNE",
+# 0315BA "LDU #$7F7A; INC #$3C,X; LDA #$3C,X; ANDA #$03; LDA A,U; STA #$05,X". Only 4: 7F7E-7F81 (75ED 75ED) are the
+# handlers of type 21's steps FE and FF, its table 7F82 read backwards (0315E1 "LDU #$7F82; ASLB; JSR [B,U]"; kref
+# --rom-reads stage4: 0315C5 reads 031F7A-031F7D, 0315E5 reads 031F7E-031F7F)
+031F7A  table  kind_8c_animations[8]  u8
+
+# ======== bank 19 ========
+
+# ---- types 32, 33, 3D, kind A1 (stage 2 and stage 7; setup 7A32: A100; behaviours 7958, 7900, 79B0) ----
+# its way in, by its state: 032342 "LDU #$7A72; LDA #$30,X; LDA A,U; STA #$29,X; CLR #$30,X": the step of its table
+# 7A38 it starts at (01, 03, 05, 08, 0C, 11, 15, 16, 19, 1B)
+033A72  table  kind_a1_entrance_steps[11]  u8
+# action 37 (bank 19's 669A; its behaviours 033900 and 0339B0 list it): 0326A0 "LDA #$A7; STA #$05,X; LDU #$7AB5; LDA
+# <$57; LDA A,U; STA #$3B,X", 0326B4 "DEC #$3B,X", then animation A4 and its hit box 78F8 (0326CE). By the players in
+# the game (1-4: 8, 6, 3, 1; kref --rom-reads: 0326AB reads 033AB9)
+033AB5  table  kind_a1_attack_delays_by_players[5]  u8
+
+# ---- 5280 type 33: the robot's pieces (kind 8F, the robot: 032A4A "LDA #$8F; STA #$04,X") ----
+# by its state (0-7): 032A4F "LDU #$7B10; LDA #$30,X; ASLA; ASLA", 032A57 "LEAU A,U", 032A59 "LDD ,U; STA #$19,X; STB
+# #$3B,X" (the height speed's high byte; the frames before it shows: 032A75), 032A61 "LDA #$02,U; ORA #$80; STA
+# #$05,X", 032A69 "LDA #$03,U; LDB #$20; LBSR $8617" (its direction, at speed 20: 8 directions 20 apart). Then it falls
+# (40 a frame), bounces once (032A91 "LDD #$0200; STD #$19,X") and turns into sparks (kind 04, animation 80)
+struct robot_piece 04 rom
+field robot_piece 00 rise u8
+field robot_piece 01 wait u8
+field robot_piece 02 animation u8
+field robot_piece 03 direction u8
+033B10  table  robot_pieces[8]  robot_piece
+local sub_032A3F 032A57 u piece robot_piece
+
+# ---- 5280 type F6: a hit spark (setup 7BD0: 0402, kind 04 hit_sparks) ----
+# how long it lasts by its state (0-3, the child objects 7C50-7CA2): 032B02 "LDU #$7BCC; LDA #$30,X; LDA A,U; STA
+# #$3B,X", 032B11 "DEC #$3B,X; BNE; CLR #$00,X"
+033BCC  table  hit_spark_times[4]  u8
+
+# ---- type 30, the robot (setup 7BE2: 8F00; behaviour 7B70) ----
+# the hit spark (a child of type F6, FFFF none) it puts in at each frame (field 07) of an attack's animation: action 39
+# (032C8C animation 9D) 032CBD "LDY #$7C16; LDA #$07,X; ASLA; LDY A,Y; BMI; LBSR $862C"; action 23 (animation 92)
+# 032CFB "LDY #$7C3C"; action 24 (animation 91) 032D39 "LDY #$7C76" (sound 23 at frames 6 and 0E). The 7C50-7C68
+# sparks start at x -8, the 7C8A-7CA2 ones at +8 (kref --rom-reads: 032CC4 033C20-033C25, 032D02 033C40-033C4D, 032D40
+# 033C7A-033C87)
+033C16  table  robot_sparks_by_frame_9d[16]  u16 child_object
+033C3C  table  robot_sparks_by_frame_92[10]  u16 child_object
+033C76  table  robot_sparks_by_frame_91[10]  u16 child_object
+# after it is hit (its step 4, 6D51) and that animation ends, the next action and status of a fixed round by its
+# field 3D counting down: 032DC3 "LDU #$7CB8; DEC #$3D,X; LDA #$3D,X; ANDA #$07; LDB A,U; STB #$28,X" (2A, 25, 23,
+# 25, 28, 25, 24, 25), 032DD6 "LDU #$7CC0; LDB A,U; STB #$00,X" (C4 or C0)
+033CB8  table  robot_actions_after_hit[8]  u8
+033CC0  table  robot_status_after_hit[8]  u8
+# action 2A (032E33) sends off a part (032E5A "LDY #$7D10; LBRA $862F": type 17, kind 8F animation 18, 4D40 list)
+# that goes away into the back (14 = FF80) and shrinks: 032EBD "LDA #$3B,X; ... LDU #$7D22; LDA #$3B,X; LDA A,U; STA
+# #$0A,X; STA #$0B,X" (its zoom by the frames left, 3B from 2F down to 1: kref --rom-reads 032ED2 reads 033D23-033D51;
+# entry 0 unread: at 0 it is gone, 032EB4 "DEC #$3B,X; BNE; CLR #$00,X")
+033D22  table  robot_part_zooms[48]  u8
+
+# ---- 5280 types 39 and 3A, kind 12 (stage 7): type 3A the two parts type 39 puts in (032EF7 "LDY #$7D68", 032EFD
+# "LDY #$7D70": children of type 3A, states 0 and 1) ----
+# 032FAA "LDU #$7D96; LDA #$30,X; ASLA; ASLA", 032FB2 "LEAU A,U", 032FB4 "LDD ,U; STA #$3D,X; STB #$3C,X", 032FBD
+# "LDB #$03,U; STD #$16,X" (byte 2 unread; kref --rom-reads: 032FB4 033D96-97 and 033D9A-9B, 032FBD 033D99 and 033D9D).
+# 3D: the step of its parent (field 40) at which it shows animation 82 (032FC7 "LDU #$40,X; LDA #$02,U; CMPA #$3D,X");
+# 3C: the frames after that before animation 8F (032FDB "DEC #$3C,X")
+struct kind_12_part 04 rom
+field kind_12_part 00 parent_step u8
+field kind_12_part 01 wait u8
+field kind_12_part 02 unused u8
+field kind_12_part 03 height u8
+033D96  table  kind_12_parts[2]  kind_12_part
+local sub_032F9A 032FB2 u part kind_12_part
+
+# ---- type FD, kind B7 (stage 6; setup 7E1A: B700, behaviour 7DB6) ----
+# its way in, by its state 80-8B (033011 "LDA #$30,X; BPL": 00-7F come in at once): 033031 "LDU #$7E32; LDA #$30,X;
+# ASLA; LDD A,U; STA #$3B,X; STB #$29,X": a wait and the step of its table 7E20 (01: it falls in at x E0 with zoom
+# 6060, 033044; 04: it leaps in from x 0180, 0330BF; 07: it walks in from x 0180, 03311B). kref --rom-reads: 033038
+# reads 033E32-033E3B and 033E40-033E49
+struct timed_step 02 rom
+field timed_step 00 wait u8
+field timed_step 01 step u8
+033E32  table  kind_b7_entrances[12]  timed_step
+
+# ---- type FC, kind B8 (stages 6 and 7; setup 7EB7: B800): it leaps in, flies around a player and throws ----
+# by its state, at 033226 (as kind C7's in bank 18): 03323A "LDU #$7E86; LDA #$30,X; LDB A,U; STB #$3D,X", 033245
+# "LDU #$7E8D ... STB #$2E,X", 03324D "LDU #$7E94 ... STB #$3A,X", 033255 "LDU #$7E9B; ASLA; LDD A,U; STD #$3E,X",
+# 03325E "LDU #$7EA9; LDA #$30,X; ASLA; LDD A,U; STD #$52,X". It leaps in from the front (x 00E0, x speed 0300, zoom
+# 8080); while it comes down 3E slows its x speed each frame (033305 "LDD #$0F,X; SUBD #$3E,X") and 52 is its y speed
+# (0332C5 "LDD #$52,X; STD #$14,X"); 3D/2E/3A sweep its heading (0334EF-03355F). kref --rom-reads: the states 0, 2, 4, 6
+033E86  table  kind_b8_sweep_ways[7]  u8
+033E8D  table  kind_b8_headings[7]  u8
+033E94  table  kind_b8_sweep_rates[7]  u8
+033E9B  table  kind_b8_descent_slowdowns[7]  u16
+033EA9  table  kind_b8_descent_y_speeds[7]  s16
+# what it throws (children of type F3): three in a row, animation 95, 7 frames apart: 0333D0 "LDY #$7EC7; LDA #$3C,X;
+# ANDA #$03; ASLA; LDY A,Y; LBSR $862C" (3C from 3 down to 1: 0333D9 reads 033EC9-033ECE); one of two in turn,
+# animation 90: 03340C "LDY #$7EEF; LDA #$3C,X; ANDA #$01; ASLA; LDY A,Y; LBSR $862C"
+033EC7  table  kind_b8_volley_shots[4]  u16 child_object
+033EEF  table  kind_b8_single_shots[2]  u16 child_object
+# its height when hit shakes (0334D7 "LDU #$7F0D; CLRA; LDB #$3B,X; ANDB #$03; LDB B,U; ADDD #$50,X"), its bobbing
+# (0335C2 "LDU #$7F11 ... LDB B,U; ADDD #$0040"; 0335E1 "BITB #$E0; BNE" -> "LDU #$7F31" / "LDU #$7F11", "LDB B,U;
+# SEX"), its wait before throwing (03361F "LBSR $8623; ANDA #$03; LDU #$7F51; LDA A,U; STA #$3B,X"): bank 18's kind C7
+# tables, the same bytes
+033F0D  table  kind_b8_hurt_shakes[4]  u8
+033F11  table  kind_b8_bob_up[32]  u8
+033F31  table  kind_b8_bob_down[32]  s8
+local sub_0335E1 0335E8,0335ED u heights bob_height
+033F51  table  kind_b8_shot_waits[4]  u8
+# its x and y speeds by its heading: 033609 "LDU #$7F55; LDA #$2E,X; ASLA; ASLA", 033611 "LEAU A,U", 033613 "LDD ,U;
+# STD #$0F,X", 033618 "LDD #$02,U; STD #$14,X". 2E's high byte is kept to 0-F (033540 "ANDA #$0F"): the code reads the
+# first 16 (kref --rom-reads: 033F55-033F94); the other 16 (033F95-033FD4: a round circle, the y speeds twice as big)
+# nothing reads
+033F55  table  kind_b8_velocities[32]  velocity
+local sub_033609 033611 u speeds velocity
+# what it throws (5280 type F3, setup 7FDD: B800): its animation by its state (0-3 the volley's, 4-5 the single ones:
+# 03363E "LDU #$7FE3; LDA #$30,X; LDA A,U; STA #$05,X"), thrown up at 0400 with an x speed of 4 at random: 03364F "LDU
+# #$7FE9; LDA <$58; ANDA #$03; ASLA; LDD A,U; STD #$0F,X" (kref --rom-reads: 033658 reads 033FE9-033FF0; entries 4-10
+# are FFFF up to the bank's end, which nothing reads)
+033FE3  table  kind_b8_shot_animations[6]  u8
+033FE9  table  kind_b8_shot_speeds[11]  u16
+
+# ======== bank 1A ========
+
+# ---- object_1a_level_rows: its type (the rows point into object_1a_levels) ----
+# 03409B "LDU #$77C6; LDA #$31,X; ASLA; LDU A,U", 0340A4 "LDA <$57; LDA A,U; STA $188C", 0340AD "CMPA #$1B,X": each row
+# is a place in object_1a_levels, read by the players in the game: the vitality (1B, FF at 0340DE) below which it goes
+# to its next state. Today `u16`; with the elements the byte read reads by name
+elements object_1a_level u8
+0357C6  table  object_1a_level_rows[5]  u16 object_1a_level
+
+# ---- type F8 (the stage 6 boss: the last record of its spawn list; setup 77D0: BA00), its routines by field 52 ----
+# it runs at a player in legs, turning toward the player at the start of each (03429E "LBSR $8620", 0342B5 "LBSR $861D;
+# LDB #$30; LBSR $8617"): 0342BD "DEC #$3C,X; BEQ", 0342C2 "LDU #$77FE; LDA #$3C,X; LDA A,U; STA #$3B,X" (3C from 7
+# down to 1, set to 8 at 034296; entry 0 unread), 0342D7 counts 3B down
+0357FE  table  object_1a_chase_leg_times[8]  u8
+# it bounces: each time it lands, the next of 4 animations: 034564 "LDU #$782A; DEC #$3A,X; LDA #$3A,X; ANDA #$03; LDA
+# A,U; STA #$05,X" (then 19 = 0400, sound 64)
+03582A  table  object_1a_bounce_animations[4]  u8
+# a round of poses by its field 3A counting down: 0345F9 "LDU #$7832; DEC #$3A,X; LDA #$3A,X; ANDA #$07; LDA A,U; BMI;
+# STA #$3B,X" (the frames it holds it; FF ends the round, 034621), 03460B "LDU #$783A ... LDA A,U; STA #$05,X" (its
+# animation)
+035832  table  object_1a_pose_times[8]  u8
+03583A  table  object_1a_pose_animations[8]  u8
+# a leap at a player, by how far it is (field 44 = the x distance 2C / 16: 03467F "LDD #$2C,X; LSRDI #$04; ANDB #$0F;
+# STB #$44,X"): 03468F "LDU #$784E; LDB #$44,X; LDB B,U; LBSR $8617" (its speed toward the player), 03469A "LDU #$785E;
+# LDB #$44,X; LDA B,U; CLRB; STD #$19,X" (its height speed). Only 16 of the second: 786E-786F (672F) is the handler of
+# step FF of the table 7870 read backwards (034719 "LDU #$7870; LDB #$29,X; ASLB; JSR [B,U]", 034767 "LDA #$FF; STA
+# #$29,X")
+03584E  table  object_1a_leap_speeds[16]  u8
+03585E  table  object_1a_leap_heights[18]  u8
+# each time an animation of its routine 7896 ends, the next of 4 by field 3A counting down: 034A3C "LDU #$78A0; DEC
+# #$3A,X; LDA #$3A,X; ANDA #$03; LDA A,U; STA #$05,X" (that routine starts with the flash and sound 66 its other hit
+# reactions have: 0349DA-0349E8, as 0344E0)
+0358A0  table  object_1a_repeat_animations[4]  u8
+# it walks at a player (034C0A "LBSR $8620; LBSR $861D; LDB #$20; LBSR $8617") for the frames by its counter 4F:
+# 034C15 "LDU #$78C8; DEC #$4F,X; LDA #$4F,X; ANDA #$0F; LDA A,U; STA #$3B,X"
+0358C8  table  object_1a_approach_times[16]  u8
+# as kind D1 it lets out 4 objects (children of type 27), one each 20 frames: 034D41 "DEC #$3C,X; LDA #$3C,X; ANDA
+# #$03; ASLA; LDY #$78EC; LDY A,Y; LBSR $862C"
+0358EC  table  object_1a_released_objects[4]  u16 child_object
+
+# ---- 4D40 type 20, kind D1 (setup 792E: D103) ----
+# its start, one of 4 at random: 034E55 "LDU #$7926; LDA <$58; ANDA #$03; ASLA", 034E5E "LEAU A,U", 034E60 "LDA ,U;
+# CLRB; STD #$0F,X" (its x speed, negated facing left: 034E76), 034E66 "LDA #$01,U; STA #$3B,X" (the frames before it
+# turns toward the player: 034E8B-034E96)
+struct launch 02 rom
+field launch 00 speed u8
+field launch 01 time u8
+035926  table  object_1a_launches[4]  launch
+local sub_034E3A 034E5E u start launch
+
+# ---- types FE and FF, kind D1: a chain; FF's links follow the object in their field 2E (035285-0352C1) ----
+# by its state (0-23): 035266 "LDU #$79A6; LDA #$30,X; ASLA; LEAU A,U; LDD ,U; STA #$05,X; STB #$23,X" (type FF,
+# 03524C), 035331 "LDU #$79A6 ... LEAU A,U; LDB #$01,U; STB #$23,X" (type FE, 03530C). 23 is its hit box's y offset
+# (07C13A "LDB #$23,X; SEX; ADDD #$11,X"): 00-07 for the 8 links of animation 8D, 08 for those of 8B and 89
+struct chain_link 02 rom
+field chain_link 00 animation u8
+field chain_link 01 box_y_offset s8
+0359A6  table  object_1a_chain_links[24]  chain_link
+# the path type FE takes (object_1a_path_starts, the struct path_start): 0353A7 "LDU #$79DC ... LDA A,U; STA <$F0;
+# ASLA; ASLA", 0353B9 "LDU #$79E4", 0353BC "LEAU A,U", 0353BE "LDD ,U; STD #$2C,X", 0353C3 "LDD #$02,U; STA #$3B,X; STB
+# #$3A,X"
+local sub_0353A2 0353BC u start path_start
+# a quarter of a sine, 80 down to 00: 035472 (called by the chain's head, 035199, with A its direction 37 and B a
+# distance) 03547C "LDU #$7FA3; LDA A,U; MUL" (A = the direction's low 6 bits), 035485 "LDA #$3F; SUBA <$EF; LDA A,U;
+# ... MUL" (the other side): the offsets of the next link (into 50 and 52). 64 read; 035FE3-035FFF (29 bytes) are FF
+# up to the bank's end, which nothing reads
+035FA3  table  object_1a_sines[93]  u8
+
+# ======== bank 1B ========
+
+# ---- 5280 type 12, kind 0F (setup 644E: 0F09; extract_assets names the set police_car_and_doors) ----
+# when it opens (animations 8A-8D, sound 60), it lets out the objects of a list by its state: 0361BC "LDU #$6454; LDA
+# #$30,X; ASLA; LDY A,U", then 0361C5 "LDA ,Y+; CMPA #$7F; BEQ" (7F ends the list), 0361CB "CMPA $1874; BCC" (1874 is a
+# copy of the players in the game, 07C994 "LDA <$57; STA $1874": the object comes out only when there are more players
+# than this byte), 0361D4 "LBSR $862C" (the child object after it), 0361D7 "LEAY #$08,Y". kref --rom-reads: 0361C3
+# reads 036454-036455, 0361C5 reads 036458, 036461, 03646A, 036473. The piece holds the 2 addresses (both 6458), the
+# list and its end
+struct door_spawn 09 rom
+field door_spawn 00 players u8
+field door_spawn 01 dx s16
+field door_spawn 03 dy s16
+field door_spawn 05 dz u8
+field door_spawn 06 list u8
+field door_spawn 07 state u8
+field door_spawn 08 type u8
+036454  table  door_spawn_lists[2]  u16 door_spawn
+036458  table  door_spawns[3]  door_spawn
+036473  table  door_spawns_end[1]  u8
+# the other doors of bank 1B: they open when their x comes below a place (036344 "LDD #$0C,X; CMPD #$3E,X; BCC; INC
+# #$02,X") and let out the list their field 30 picks (03637E "LDA #$30,X; ASLA; LDY A,U", the same loop as 0361C5).
+# 5280 type 38, kind 12 (setup 6482: 1209): 036259 "LDU #$6488; LDA #$30,X; ASLA; ASLA", 036261 "LEAU A,U", 036263
+# "LDD ,U; STD #$3E,X", 036268 "LDD #$02,U; STB #$30,X" (byte 2 dropped); 5280 type 0B, kind 10 (setup 64F8: 1008;
+# later kind 0F, 0362ED "LDD #$0F95; STD #$04,X"): 0362B9 "LDU #$64FE", 0362C1 "LEAU A,U", 0362C8 "LDD #$02,U; STA
+# #$3B,X; STB #$30,X" (a wait before it opens: 0362D8 "DEC #$3B,X"); 5280 type 0C, kind 0F (setup 6547: 0F0E): 036328
+# "LDU #$654D", 036330 "LEAU A,U", 036337 "LDD #$02,U; STB #$30,X" (byte 2 dropped)
+struct door_opening 04 rom
+field door_opening 00 x u16
+field door_opening 02 wait u8
+field door_opening 03 list u8
+036488  table  kind_12_door_openings[4]  door_opening
+0364FE  table  kind_10_door_openings[3]  door_opening
+03654D  table  kind_0f_door_openings[4]  door_opening
+local sub_03624E 036261 u opening door_opening
+local sub_0362AE 0362C1 u opening door_opening
+local sub_03631D 036330 u opening door_opening
+
+# ======== bank 1C: the players ========
+# (the existing object_1c_* names call them "bank 1C's object"; bank 1C runs the 4 players' objects: 038003-038073
+# "LDU #$4A40; LDX #$49D0 ... LDU #$4B00; LDX #$49D8 ...", their inputs from direct page 40-4E into field 2E, 0380F1
+# "STY #$2E,U": 2E the joystick, 2F the buttons)
+
+# ---- object_1c_moves: its type and count (4 records of 4 bytes, not 8 words) ----
+# 0388D4 "LDX #$7DEB; LDA B,X" (object_1c_move_steps: the next, 0-3), 0388E0 "ASLA; ASLA", 0388E2 "LDX #$7DF7", 0388E5
+# "LEAX A,X", 0388E7 "LDD ,X++" (the state and animation: 03899D "STB #$05,U; CLRB; STD #$30,U"), 0388E9 "LDY ,X" (into
+# 42: 038985/038995 "STY #$42,U", copied to the hit box at the attack's frame, 038BB8 "LDX #$42,U; STX #$1C,U"; kref
+# --rom-reads: 0388E7 reads 039DF7-8, 039DFB-C, 039DFF-0, 039E03-4)
+struct player_move 04 rom
+field player_move 00 state u8
+field player_move 01 animation u8
+field player_move 02 hit u16
+039DF7  table  object_1c_moves[4]  player_move
+local sub_0388A2 0388E5 x move player_move
+
+# ---- the players' walk ----
+# by the joystick's bits (field 2E: 1 left, 2 right, 4 down, 8 up): 038B37 "LDA #$2E,U; ANDA #$0F; ASLA; ASLA; LDX
+# #$7F21; LDD A,X; ASRDI #$03; STD #$0F,U", and 03988B (A = 2E: 03868A "LDA #$2E,U; LBSR $788B") "ANDA #$0F; ASLA;
+# ASLA; LDY #$7F21", 039892 "LEAY A,Y", 039894 "LDD ,Y++; STD #$0F,U" (its sign gives the facing: 03989B "ANDA #$40")
+# and the y speed after it (039931 "LDD ,Y; STD #$14,U"). 15 (entry 15 would be the next piece, 039F5D,
+# the same 60 bytes again)
+039F21  table  player_walk_velocities[15]  velocity
+local sub_03988B 039892 y speeds velocity
+# its attack's hit box by its state (field 30, 06-0C) and character (field 04): 038BC5 "LDX #$7F99; SUBA #$06; ASLA;
+# ASLA; ADDA #$04,U; ASLA; LDD A,X; STA #$1F,U; STB #$22,U" (state 38 has its own: 038BDF "LDA #$12; STA #$1F,U"). 1F
+# is the hit box's x size (07C1A7 "LDB #$1F,X; ADDB #$1F,U"), 22 its x offset (07C162 "LDB #$22,X; SEX")
+struct attack_box 02 rom
+field attack_box 00 width u8
+field attack_box 01 x_offset s8
+039F99  table  player_attack_boxes[28]  attack_box
+
+# ---- what a player picks up (field 1E, F9-FC) ----
+# the vitality it gains, at most 28: 0393F5 "PULLS A; SUBA #$F9", 0393F9 "LDX #$7EAD", 0393FC "LDB #$1B,U; ADDB A,X;
+# CMPB #$28; BLS; LDB #$28; STB #$1B,U" (1E F9-FC jump there through the table at 7E8D: 039330 "LDX #$7E8D; JMP
+# [D,X]", 7E7F-7E85 all 73B6). kref --rom-reads: 0393FF reads 039EAD, 039EAE, 039EB0. 4: the next bytes are the first
+# team move's (below); the piece 039EAD is these 4 and the team moves
+039EAD  table  pickup_vitality[4]  u8
+
+# ---- the team moves (two players together: 0396B2-039781) ----
+# by the two characters: 039700 "LDB #$04,U; ASLB; ASLB; ADDB #$04,X; ASLB; ASLB; ASLB; LDY #$7EA9; CLRA", 03970F "LEAY
+# D,Y": record n = 4 x the first's character + the second's, from 7EA9, so record 1 is at 7EB1; one character with
+# itself never comes (records 5 and 10 are zeros, 0 and 15 lie in the next tables). 039711 "LDB ,Y+; STB #$35,U; STB
+# #$35,X" (the move, 0-3, into both), 039727 "LDD #$03,Y; LBSR $8680" (bytes 4-5: its sound), 03972D "LDB ,Y+; CLRA;
+# ASLDI #$02; LDX #$4A40; LEAX D,X" (the object, 4A40 + 4 x this, that plays the first part: 00 Marge's, 30 Homer's, 60
+# Bart's, 90 Lisa's), 039737 "LDA ,Y+; STA #$36,X" (its direction), 03974B "LDB ,Y" (the second part's object), 039755
+# "LDB ,-Y; DECB; STB #$36,X", 03976A-03977F (byte 6 when the second is right of the first, 7 when left: "ORA ,Y" into
+# the first's 09). kref --rom-reads: 039711 reads 039EB1, 039EB9, 039ED9, 039F01 (records 1, 2, 6, 11)
+struct team_move 08 rom
+field team_move 00 move u8
+field team_move 01 first_object u8
+field team_move 02 direction u8
+field team_move 03 second_object u8
+field team_move 04 sound u16
+field team_move 06 facing_second_right u8
+field team_move 07 facing_second_left u8
+039EB1  table  team_moves[14]  team_move
+local sub_0392F0 03970F y move team_move
+# the second object's facing the move gives (03976F "LEAY #$04,Y" from its direction: facing_second_right; 039777
+# "LEAY #$01,Y" when the second object stands left of the first, 039772 "CMPD #$0C,X": facing_second_left), put into
+# its field 09 (03977F "ORA ,Y")
+elements second_object_facing u8
+local sub_0392F0 03976F,039777 y facing second_object_facing
+# the team move's hit box width, by the move: 0396DA "LDB #$35,U; LDY #$7FD1; LDA B,Y; STA #$1F,U; STA #$1F,X" (kref
+# --rom-reads: 0396E0 reads 039FD1-039FD2; 4 moves, the rest FF up to the bank's end, which nothing reads)
+039FD1  table  team_move_box_widths[47]  u8
+# by the move, into field 3C when its attack starts: 0386E1 "LDA #$35,U; LDX #$7DD5; LDA A,X; STA #$3C,U" (then
+# 0386EF "LDY #$0C13; STY #$1C,U": its hit box); the move's routines test it (03851C, 03863C, 038690 "TST #$3C,U;
+# BNE"); nothing in bank 1C counts it down, so taken as the attack's length by what it holds (32, 32, 35, 38)
+039DD5  table  team_move_attack_lengths[4]  u8
+# an animation by the move and the character, added to a base (<$F2: E4 at 0391BD, EC at 0391E9; FF none): 0391EE "LDY
+# #$7E3D; LDA #$35,U; ASLA; ASLA; TFR A,B; ADDA #$04,U; LDA A,Y; BMI; ADDA <$F2; STA #$05,U". The index reaches 15
+# (kref --rom-reads: 0391FB reads 039E4B, move 3 Bart's), past these 8: the next table's first 8 bytes (FF FF 02 02
+# FF FF 03 03, moves 2 and 3) are entries 8-15 as well
+039E3D  table  team_move_animation_offsets[8]  u8
+
+# ======== banks 1D, 1E, 1F, 20, 2F ========
+#
+# Who is who (evidence used by many entries below):
+# - The 4F80 list's dispatcher (07CB3C: "LDU #$F387; LDB A,U; SETLN; LDU #$F2EC; ASLA; JSR [A,U]") sends type F6 to bank
+#   1D 6000 (03A271), type EC to 1D 6009 (03A99E), EA to 1D 6024 (03B8D8), and in bank 1E type 19 to 6000 (03C348), 20
+#   to 6009 (03C8BC), 0B to 600C (03CE4D), 3E to 6018 (03D1B3), F9 to 601B (03D6ED), E8 to 6015 (03DB61).
+#   (07EFF4/07EFF8: a spawn's flags bits 2-3 pick the list: 0 4F80, 1 5280, 2 4D40, 3 5640; each list has its own
+#   dispatcher and type tables, so a type number means an object only within its list.)
+# - spawn_lists by scene (E88D[step]: scene 05 = step 8 stage 4, 06 = step 9 stage 5, 08 = step 11 stage 6, 0B = step
+#   15 stage 8): scene 0B's list puts in F6 and EC (both x 03E0, flags 00), scene 05's a 19 at 0870, scene 06's a 20 at
+#   0828, scene 08's eight F9 (0290-02E0).
+# - "stage_8_boss" = type F6 (bank 1D 03A271): kind 9C (03A2AA "LDA #$9C; STA #$04,X"; set 9C is unnamed), health in
+#   field 1B (80, refilled while field 2D > 0: 03A277-03A288), three phases by field 2D (03A37A "LDY #$7A9C; JMP
+#   [A,Y]"), and its defeat advances the step's sub-step (03A794 "INC <$04"); 07B333-07B354 then runs a story and sets
+#   <$81, which type EC waits for (03AD6B "LDA <$81"). It is the boss before Mr. Burns' robot.
+# - "burns_robot" = type EC (bank 1D 03A99E): kinds CC-D4 (burns_robot..burns_robot_5 in SET_NAMES: 03AA88 "LDD
+#   #$D489", the table 03BBF9), its parts object_1d_parts include kind D3 (mr_burns). Field 30 + field 34 is its form
+#   (0-4: 03AAE5 "LDA #$30,X; ADDA #$34,X").
+# - "football_player" (type 19, kind 92: 03C35C), "bear" (type 20, kind A2: 03C8CD): SET_NAMES names; both end their
+#   stage's step ("INC <$04": the football player's at 03C79F, the bear's at 03CD59), stage 4 and stage 5 (kref
+#   --rom-reads: only the stage4 / stage5 scenarios read their tables).
+# - "stage_3_boss" = type 3E (bank 1E 03D1B3): two of them, kind C4 (field 30 = 0) and C3 (field 30 = 1: the first puts
+#   in the second, 03D1C5 "LDY #$7F08; LBSR $862C", child record type 3E), field 41 links them; when both are gone
+#   03D509-03D50E "STA <$7D; INC <$04"; only the stage3 scenario reads their tables. Bank 13 puts the first in
+#   (0260FD "LDA #$3E; STA #$01,U").
+# - Object field 00 bit 04 = can not be hurt: 07C26D "LDA #$00,X; ANDA #$04; BNE" skips "SUBA #$1C,U" (the health
+#   loss) and "ORA #$20" (hit). Field 1B the health, 1C the damage an object deals, 1D the strength it hits with (into
+#   the victim's 1E).
+# - Tables by the players in the game read "LDA <$57; LDA A,Y" (no DECA) have entries 1-4: their entry 4 is the next
+#   table's first byte (the game's own tables share it); counts kept at the piece's length where a piece starts there.
+
+
+# ======== stage 8's first boss (bank 1D, type F6) ========
+
+# its states' starts (03A29A "LDY #$7A3A; LBRA $6065", 03A065 "STB #$2E,X; ASLB; LDD B,Y; STA #$2F,X; STB #$05,X"):
+# the frames field 2F counts down and the animation (field 05), by state 0-30 (03A736 "LDB #$1E" the highest). Entries
+# 0 and 1 are bank_1d_states' entries 29 and 30 (65DF, 66F3): states 0 and 1 are never started through it (03A2B9 "LDA
+# #$01; STA #$2E,X"); kref --rom-reads: 03A069 reads 03BA3E-03BA77 (entries 2-30).); the same struct serves bank 1E's
+# 03DF7C
+struct state_start 02 rom
+field state_start 00 wait u8
+field state_start 01 animation u8
+03BA3A  table  stage_8_boss_state_starts[31]  state_start
+# (if the record table alone does not fold the read, also: local sub_03A29A 03A29A y starts state_start)
+
+# phase 1 (field 2D = 2, 03A37F), after a throw (states 0B/0C): 03A3FC "LDA <$57", 03A3FF "LDY #$7AA5", 03A402 "LDA
+# A,Y", 03A404 "CMPA <$58", 03A407 "LBGE $6626": at or above the random number (signed compare) it goes back to looking
+# for a player to hit; below it "INC #$33,X", and while 33 <= 3 "LDA #$01; STA #$32,X" ends its walk next frame to throw
+# again. Entries 1-4 by players: 60 70 80 90 (80 and 90 are negative to the signed compare)
+03BAA5  table  stage_8_boss_stop_throwing_chances_by_players[4]  u8
+# the bombs it throws at once: 03A429 "LDA <$57", 03A42C "LDY #$7AA9", 03A42F "LDA A,Y", 03A431 "STA <$F0", 03A434
+# "LBSR $6925" (6925: <$F0 times a child object from the record 7A7E, type 1D: 03A7DC kind 9C animation 89 thrown at a
+# player, which on the floor turns into animation 8A with a hit box and sound 6F00, 03A8E2-03A90D). By players: 4 6 8 10
+03BAA9  table  stage_8_boss_bombs_by_players[4]  u8
+# phase 2 (field 2D = 1, 03A441): 03A449 "LDY #$7AAD", 03A44C "LDA <$57", 03A450 "LDA A,Y", (negated by the random
+# number's sign and when 863B finds a wall) 03A463 "STD #$0F,X" (x speed, whole pixels: 2-5) and 03A466 "STA #$36,X"
+03BAAD  table  stage_8_boss_run_speeds_by_players[4]  u8
+# phase 2, when a hit has put it down (state 21, 03A6F3): 03A709 "INC #$33,X; LDB #$33,X", 03A70F "LDY $7AB1" (extended,
+# not immediate: Y is the word at 7AB1, 050A), 03A716 "CMPB A,Y": the game compares its hit count with the K052109's RAM
+# at 050B-050E. A bug: the table meant is the bytes after 7AB1 (0A 05 03 01 by players, never read). The word is read
+# as an address, so name it as one
+03BAB1  table  stage_8_boss_hit_limits_address[1]  u16
+# then (more hits than that) 03A71B "CLR #$33,X", 03A71E "LDY #$7AB5", 03A721 "LDA A,Y", 03A723 "STA #$32,X", 03A726
+# "LBSR $6177" (sets bit 04 of field 00: it can not be hurt); its run (03A46E) counts 32 down and at 0 03A478 "LBSR
+# $6180" clears the bit: frames it can not be hurt. By players: 14 1C 1E 26
+03BAB5  table  stage_8_boss_invulnerable_times_by_players[4]  u8
+# phase 2's run (03A4CD): "LDA <$58; LDB <$57", 03A4D3 "LDY #$7AB9", 03A4D6 "CMPA B,Y", 03A4D8 "LBCS $6683": a random
+# number below the entry skips this frame's look for a player within 30x10 to hit (6626, state 1D). By players: E0 F0
+# F8 FF (more players, fewer close attacks)
+03BAB9  table  stage_8_boss_run_skip_attack_chances_by_players[4]  u8
+# phase 3 (field 2D = 0, 03A4FA): it picks a player (60E7, into field 3A) and moves away from it: 03A537 "LBSR $861D"
+# (direction to it), "ADDA #$80", 03A53C "LDY #$7AC1", 03A542 "LDB B,Y", 03A544 "LBSR $8617" (speed in a direction)
+03BAC1  table  stage_8_boss_retreat_speeds_by_players[4]  u8
+# its walk: phase 1 (03A3B7 "LDY #$7AC5", 03A3BD "LDB A,Y", 03A3C1 "LBSR $8617", toward the nearest player or a random
+# way) and after phase 2's run, toward a player while it drops bombs (03A4B7, 03A4BD, 03A4BF "LBSR $8617", state 0E)
+03BAC5  table  stage_8_boss_walk_speeds_by_players[4]  u8
+# phase 3's jump at a player (03A54D: state 10, 03A552 "LDD #$0900; STD #$19,X" up speed), 03A561 "LDU #$7AC9", 03A567
+# "LDB B,U", 03A569 "LBSR $8617"
+03BAC9  table  stage_8_boss_jump_speeds_by_players[4]  u8
+# phase 3, every 64 frames field 34 runs out: a dash at a player (03A57B: state 14, which ends at 00C0 of speed), 03A583
+# "LDY #$7ACD", 03A589 "LDB B,Y", 03A58B "LBSR $8617"
+03BACD  table  stage_8_boss_dash_speeds_by_players[4]  u8
+# phase 3's jump (state 10, 03A59E): 03A5A4 "INC #$32,X; LDA #$32,X", 03A5AA "LDY #$7AD1", 03A5AD "LDB <$57", 03A5B0
+# "CMPB A,Y", 03A5B2 "LBLE $6683": while the players in the game are at most the entry for the frames in the air
+# (field 32 from 1) no bomb; above it 03A5B5 "CLR #$32,X", 03A5BA "LBSR $6925" drops one. Entries 1-4: 01 01 02 08
+# (2-4 players: a bomb every frame; 1 player: at count 6, from the next table's byte DC, negative). Entry 0 is the
+# dash speeds' last byte (80)
+03BAD1  table  stage_8_boss_jump_bomb_player_limits[5]  u8
+# (read through the Y it hands 6189, sub_03A189's mem_read8(y + b)): 03A683 "LDY #$7ABD",
+# 03A686 "LBSR $6189": 03A1B2 "LDA #$1B,X; LDB <$57", 03A1C0 "CMPA B,Y", "BLS $61CD": at or below the entry its last
+# health bar is gone (61CD "CLR #$1B,X", returns FF); each earlier bar ends at 48 (03A27F). By players: 44 20 10 00
+03BABD  table  stage_8_boss_beaten_healths_by_players[4]  u8
+
+
+# ======== Mr. Burns' robot (bank 1D, type EC) ========
+
+# form 1's second attack (handler 9, 03AF47 -> 7B52): each shot (03AF50: part 5, type 25 kind CD animation 84, x speed
+# 0500, sound 1D00), then 03AFA7 "LDU #$7B5A", 03AFAA "LDA <$57; DECA", 03AFAE "INC #$40,X; LDB #$40,X", 03AFB4 "CMPB
+# A,U", "BCS" -> animation 8E and 03AFC6 "DEC #$28,X" (another shot): the shots in a row. By players-1: 2 2 3 3
+03BB5A  table  burns_robot_volleys_by_players[4]  u8
+# its shots (handler 12, 03B0A7: part 9 + form, type 26 kind CC animation 88, x speed 0200): 03B0DF "LDY #$7B76", 03B0E2
+# "LDA #$3D,X; ASLA", 03B0E6 "LDD A,Y", 03B0E8 "STD #$14,U" (the shot's y speed); form 4 fires three, field 3D counting
+# them (03B117-03B11F). 0000, FF00, 0100
+03BB76  table  burns_robot_shot_y_speeds[3]  s16
+# the health each form starts with: 03AAE5 "LDU #$7B80", "LDA #$30,X; ADDA #$34,X", 03AAEE "LDA A,U", 03AAF0 "STA
+# #$1B,X", 03AAF3 "STA #$2F,X" (the same at 03AB67, 03ACC4). A0 A0 80 80 E0
+03BB80  table  burns_robot_healths[5]  u8
+# by form, the health at which the form is beaten, by players-1: 03B422 "LDU #$7B85", 03B42B "ASLA", 03B42C "LDU A,U",
+# 03B42E "LDA <$57; DECA", 03B432 "LDB #$1B,X", 03B435 "CMPB A,U", 03B437 "LBLS $73B8" (73B8: field 02 = FE - form,
+# the beaten form's handler). Each entry points at 4 bytes (40 20 10 00 in all five): elements, read
+# beaten_health(p)[players - 1]
+elements beaten_health u8
+03BB85  table  burns_robot_beaten_healths[5]  u16 beaten_health
+# form 0's walk (03B176): 03B197 "LDU #$7BA3", 03B19A "LDA <$57; DECA", 03B19E "LDA A,U", 03B1A0 "CMPA <$58", 03B1A3
+# "BHI $71AB" (<$F0 = 1: field 35 = 1, its second attack, handler 7, 03B443) else <$F0 = 0. By players-1: 40 60 80 80
+03BBA3  table  burns_robot_second_attack_chances_by_players[4]  u8
+# frames field 3B (counted up each frame, 03A99E) must pass before it fires its shots (handler 12): 03B577 "LDY #$7BA7",
+# 03B57A "LDA <$61; ADDA #$30,X; ADDA #$34,X; ANDA #$1E", 03B585 "LDD A,Y", 03B587 "CMPD #$3B,X" (then 03B180 "LBSR
+# $7566": x 40-180, 74E1: handler 12). By rank plus form; all 0280
+03BBA7  table  burns_robot_shot_times[16]  u16
+# form 2's (03B1FF): frames field 41 (counted up, 03A9B0) must reach before handler 11 (74C4), which holds part 14
+# (type EA, kind CE animation 88; 03B8D8 keeps it 30 in front of the robot while field 43 is set) for 40 frames:
+# 03B22C "LDY #$7BC7", 03B22F "LDA #$34,X; ASLA; ASLA; ADDA <$61; ANDA #$1E", 03B239 "LDD A,Y", 03B23B "CMPD #$41,X".
+# All 0200
+03BBC7  table  burns_robot_held_part_times[16]  u16
+# by form, the chance it attacks at once (03B443, after choosing an attack): 03B46D "LDU #$7BE7", 03B470 "LDA
+# #$34,X; ADDA #$30,X; ASLA", 03B477 "LDU A,U", 03B479 "LDA <$57; DECA", 03B47D "LDA A,U", 03B47F "CMPA <$58", 03B482
+# "BHI $7495" (attack now); otherwise, unless it lost more than 0C of health since (field 2F), 03B48E "LDA #$20; STA
+# #$29,X" (a 32-frame wait the attack handler counts down, 03AEF6). Points at 7BF1 (forms 0-3) and 7BF5 (form 4)
+elements quick_attack_chance u8
+03BBE7  table  burns_robot_quick_attack_chances[5]  u16 quick_attack_chance
+# its looks by number: 03B2F0 "LDU #$7BF9; ASLA; LDD A,U; ORB #$80; STD #$04,X": each its kind (CC-D4) and animation.
+# Numbers up to 34 (03AE15 "LDA #$34"); kref --rom-reads: 03B2F6 reads 03BBF9-03BC62; entry 53 nothing reads
+03BBF9  table  burns_robot_animations[54]  u16
+# its hit boxes by number: 03B2FF "LDU #$7C65; ASLA; LDU A,U", then "LDD ,U++; STA #$1C,X; STB #$1D,X", "LDD ,U++; STD
+# #$1F,X", "LDD ,U++; STD #$21,X", "LDD ,U++; STD #$23,X" (hit_box's layout); numbers 0-10 (03AF97 "LDA #$0F",
+# 03B051 "LDA #$10"); kref --rom-reads: 03B303 reads 03BC65-03BC86
+03BC65  table  burns_robot_hit_boxes[17]  u16 hit_box
+# by form, its walking speed by rank/2: 03B263 "LDA #$31,X" (the direction), 03B266 "LDY #$7CD7", 03B269 "LDB #$30,X;
+# ADDB #$34,X; ASLB", 03B270 "LDY B,Y", 03B272 "LDB <$61; LSRB", 03B276 "LDB B,Y", 03B278 "LBSR $8617". Points at 7CE1
+# (18s), 7CF1 (20s), 7D01 (30s, forms 2 and 3), 7D11 (50s)
+elements walk_speed u8
+03BCD7  table  burns_robot_walk_speeds[5]  u16 walk_speed
+# the tables those pointers lead to
+03BB8F  table  burns_robot_form_0_beaten_healths[4]  u8
+03BB93  table  burns_robot_form_1_beaten_healths[4]  u8
+03BB97  table  burns_robot_form_2_beaten_healths[4]  u8
+03BB9B  table  burns_robot_form_3_beaten_healths[4]  u8
+03BB9F  table  burns_robot_form_4_beaten_healths[4]  u8
+03BBF1  table  burns_robot_quick_attack_chances_forms_0_to_3[4]  u8
+03BBF5  table  burns_robot_quick_attack_chances_form_4[4]  u8
+03BC87  table  burns_robot_boxes[10]  hit_box
+03BCE1  table  burns_robot_walk_speeds_form_0[16]  u8
+03BCF1  table  burns_robot_walk_speeds_form_1[16]  u8
+03BD01  table  burns_robot_walk_speeds_forms_2_3[16]  u8
+03BD11  table  burns_robot_walk_speeds_form_4[16]  u8
+
+# the robot's parts (object_1d_parts, read by 03B51E): 03B530 "LDY #$7D21", 03B533 "LEAY A,Y", 03B535
+# "LDA ,Y+; STA <$EB" (<$EA cleared: 03B556 "LDD <$EA", "NEGD" when the part faces the other way, 03B55F "ADDD
+# #$0C,X; STD #$0C,U": an x offset, not a speed), 03B53A "LDB ,Y+; SEX; ADDD #$11,X", 03B543 "LDB ,Y+; SEX; ADDD
+# #$16,X", 03B54C "LDA ,Y+; STA #$01,U" (the new object's type), 03B551 "LDD ,Y; STD #$04,U" (its kind and animation);
+# bytes 6-7 (0000 in all 15) nothing reads. Replacement field lines for struct part (fixes 00, 03, 04; unk_06 named):
+field part 00 dx u8
+field part 01 dy s8
+field part 02 dz s8
+field part 03 type u8
+field part 04 kind u8
+field part 05 animation u8
+field part 06 unused u16
+local sub_03B51E 03B533 y setup part
+
+
+# ======== bank 1E ========
+
+# --- the scripted object (type E8, 03DB61; also list 1's E9 and list 2's 2A) ---
+# its script by field 30 (the spawn record's byte 5, 07C9FE): 03DB77 "LDA #$30,X; ASLA", 03DB7B "LDY #$78B5", 03DB7E
+# "LDY A,Y", 03DB80 "STY #$32,X"; 03DC1B "LDA ,Y+; ASLA; LDU #$7FAA; JMP [A,U]" runs the commands (00 flags, 01 wait,
+# 02 end, 03 kind and animation, 04 animation, 05 place, 06 speeds, 07 accelerations, 0B sound, 0C/0D zoom, 0F wait
+# for x...). 10 scripts: the table ends where the first starts (78C9); kref --rom-reads: 03DB7E reads 03D8B5-03D8C8.
+# The rest of the piece (03D8C9-03DB60, 664 bytes) is the ten scripts
+03D8B5  table  scripted_object_scripts[10]  u16
+# the ten scripts those addresses lead to, one after another (03D8C9-03DB60), their commands a byte at a time
+03D8C9  table  scripted_object_script_bytes[664]  u8
+
+# --- the football player (stage 4's boss, type 19, kind 92) ---
+# a player within 3C x 0C (03C615-03C626): unless it lost 0C or more health since field 46 (then a wait of 1, 03C63C
+# "LDD #$1401"), 03C641 "LDU #$7DA5", 03C644 "LDB <$57", 03C647 "LDB B,U", 03C649 "LDA #$14", 03C64B "STD #$2E,X":
+# state 14 (03C654: its attack, animation 84 with a hit box) after that many frames. Entries 1-4 by players: 1C 14 10
+# 0E (the piece 03DDA6); entry 0 is the last byte of the hit box at 03DDA2 (03C3F1 "LDY #$7DA2; LBSR
+# $62E5" reads 03DDA2-03DDA5). The code's base, 7DA5, is one before the table: its index counts from 1
+03DDA6  table  football_player_attack_delays_by_players[4]  u8
+# its run speed (field 36, the speed 8617 is handed at 03C4EE): 03C51F "LDA #$FF; SUBA #$1B,X; LSRA" (half the health
+# it has lost), 03C525 "LDY #$7DAA", 03C528 "LDB <$61; LSRB", 03C52C "ADDA B,Y", 03C52E "LDB <$58; MUL", 03C532 "ADDA
+# #$10", 03C534 "STA #$36,X": the range of a random speed, by rank/2. D6 to 2A by 6 (signed). Rank 1E-1F reads entry 15,
+# the next table's first byte
+03DDAA  table  football_player_speed_ranges_by_rank[15]  s8
+# the 8 objects of its line (type 06 in list 2: the first from 03C72D "LDY #$7DC8; LBSR $862F", each next one from the
+# one before, 03C8AF "INC $184A", 03C8B3 "LDY #$7DE6; LBSR $862F"; $184A counts them): 03C86D "LDB $184A; ASLB",
+# 03C872 "LDY #$7DD6", 03C875 "LEAY B,Y", 03C877 "LDA #$92; LDB ,Y+; STD #$04,X" (kind 92's animation), 03C87E "LDB
+# ,Y", "NEGB" facing left, 03C888 "SEX; ADDD #$0C,X; STD #$0C,X" (its x from the one before). The 1st, 4th and 7th get
+# a hit box (03C847-03C857).
+struct line_piece 02 rom
+field line_piece 00 animation u8
+field line_piece 01 dx s8
+03DDD6  table  football_player_line_pieces[8]  line_piece
+local sub_03C006 03C875 y piece line_piece
+
+# --- the bear (stage 5's boss, type 20, kind A2) ---
+# a player within 30 x 08 (03CAE4-03CAF0): unless it lost more than 10 of health since field 47 (03CB34: a wait of 1),
+# 03CB1E "LDU #$7E63", 03CB21 "LDB <$57", 03CB24 "LDB B,U", 03CB26 "LDA #$11", 03CB2E "LBSR $604C" (604C: "STY #$2E,X":
+# state 11 and its wait; state 11 at 03CC1B waits, then attacks, animation 81). Entries 1-4 by players: 28 28 1E 1C
+# (the piece 03DE64 and 03DE67's first byte); entry 0 is the last byte of the child record 03DE5C (type
+# 35). The code's base, 7E63, is one before the table: its index counts from 1; the 4th entry is the first byte of
+# the table after
+03DE64  table  bear_attack_delays_by_players[3]  u8
+# its charge (03CB96, animation 8C, state 0A, hit box 03DE90): 03CBAA "LDY #$7E80", 03CBAD "LDA <$61; LSRA; ANDA #$FE",
+# 03CBB3 "LDD A,Y", "NEGD" facing left, 03CBC1 "STD #$0F,X" (x speed). By rank/4: 03C0-0430
+03DE80  table  bear_charge_speeds_by_rank[8]  u16
+# its 11 parts (the existing object_1e_part_offsets are theirs: 03C8F6 in the bear's start), type 0B/0E/01 by list,
+# all handled by 03CE4D (kind 10 animation 91): when $184A (the bear's phase) is 2 or more each flies off by its
+# number (field 2D, 03C968): 03CE8C "LDA #$2D,X; ASLA; ASLA", 03CE91 "LDY #$7E9C", 03CE94 "LEAY A,Y", 03CE96 "LDD
+# ,Y++; STD #$0F,X", 03CE9B "LDA ,Y+; STA #$14,X", 03CEA0 "LDA ,Y; STA #$19,X" (high bytes of the y speed and the up
+# speed; 03CEAB then pulls it down 0060 a frame and bounces it). kref --rom-reads: 03DE9C-03DEC7 (11); the 12th (0000
+# FE 03) nothing reads.
+struct part_flight 04 rom
+field part_flight 00 speed_x s16
+field part_flight 02 speed_y s8
+field part_flight 03 speed_z u8
+03DE9C  table  bear_part_flights[12]  part_flight
+local sub_03C00C 03CE94 y flight part_flight
+
+# --- stage 3's bosses (type 3E, kinds C4 and C3) ---
+# a player near (03D30E-03D331): 03D35C "LDB <$57", 03D35F "LDY #$7F35", 03D362 "LDA <$58; EORA #$30,X; ANDA #$0F",
+# 03D36A "CMPA B,Y", 03D36C "BHI $7377": at or below the entry 03D36E "LDY #$060E; STY #$2E,X" (state 6, its attack
+# 03D3DE, after 0E frames), else 03D377 "LDY #$0601" (after 1). Out of 16; entries 1-4 by players: 10 0A 02 01 (the
+# piece 03DF36 and 03DF39's first byte); the code's base, 7F35, is one before the table: its index counts from 1; the
+# 4th entry is the first byte of
+# the table after
+03DF36  table  stage_3_boss_slow_attack_chances_by_players[3]  u8
+# after an attack (03D44D): 03D46C "LDY #$7F39", 03D46F "LDB <$57", 03D472 "LDA <$58", 03D475 "CMPA B,Y", 03D477 "LBHI
+# $7285" (back to walking); at or below the entry 03D47A another attack (hit box 7F32, animation 84, state 08).
+# Entries 1-4 by players: 10 80 C0 F0
+03DF39  table  stage_3_boss_follow_up_chances_by_players[4]  u8
+
+# --- the objects of type F9 (03D6ED, kind B9, unnamed set; stage 6's list puts in eight, only stage6 reads these) ---
+# their states' starts: 03D702 "LDY #$7F7C; LBRA $6059", 03C059 "STB #$2E,X; ASLB; LDD B,Y; STA #$2F,X; STB #$05,X":
+# states 2-14 (03D743 "LDB #$02"... 03D8B0 "LDB #$0E"); entries 0 and 1 are bank_1e_states' entries 13 and 14 (788C,
+# 7748). kref --rom-reads: 03C05D reads 03DF80-03DF97. Merges 03DF7C (4) and 03DF80 (26).
+03DF7C  table  object_f9_state_starts[15]  state_start
+# (if needed: local sub_03D702 03D702 y starts state_start)
+
+
+# ======== bank 1F: the players' second sprite (fields 60-BF of a player, handlers by field 90: 03EAB3 "LDX #$7E5B") ========
+
+# state 12 (03EAEF; bank 1C 039B0C sets it with the player's own kind and animation 87, 3E = 120 frames, field 00 = C4
+# can not be hurt): 03EAFE "LDX #$16,U", 03EB01 "LDA #$04,U" (the player's character: 0 Marge 1 Homer 2 Bart 3 Lisa),
+# 03EB04 "LDY #$7E77", 03EB07 "LDA A,Y", 03EB09 "LEAX A,X", "LEAX #$007F,X", 03EB0F "STX #$76,U" (its height above
+# the player's). 50 40 30 30
+03FE77  table  player_overhead_heights[4]  u8
+# states 8 and 10 (03EB18/03EB25: a thrown thing, x speed 0A00 or 0300, e.g. 038AF8 kind 08 animation 82, 0385F3 the
+# player's field 40 with animation 80): 03EB68 "LDA #$04,U", 03EB6B "LDY #$7E7B", 03EB6E "LDB A,Y", 03EB70 "LDY #$16,U;
+# LEAY B,Y", 03EB75 "STY #$76,U": the height it starts at, by character. 28 28 20 20
+03FE7B  table  player_throw_heights[4]  u8
+# state 2 (03EC60: the speech balloon, kind B1 = speech_balloons_2): 03EC67 "LDA #$00A0,U", 03EC6B "LDY #$7E7F", 03EC6E
+# "LDB A,Y", 03EC90 "LDA #$B1; STD #$64,U": its animation by the balloon's number (field A0, set by 039C29). Read 0-3;
+# entry 4 (94) nothing reads
+03FE7F  table  player_balloon_animations[5]  u8
+# number 3, a pair's balloon (the other player in field 32): 03EC7E "LDA #$04,Y; ASLA; ASLA; ADDA #$04,U", 03EC86 "LDY
+# #$7E84", 03EC89 "ADDB A,Y" (added to animation 90), and 03ECC6 "LDX #$7E84; LDA A,X; LDB #$C0; MUL; ADDD #$4A40": the
+# player whose object the balloon follows. By the other's character x 4 + this one's: the one of the pair (Marge-Homer:
+# Homer, Marge-Bart: Marge, Marge-Lisa: Marge, Homer-Bart: Bart, Homer-Lisa: Lisa, Bart-Lisa: Bart)
+03FE84  table  pair_balloon_players[16]  u8
+# every frame for each player (03ED16): 03ED25 "LDA #$30,U", 03ED28 "LDX #$7E94", 03ED2B "LDA A,X", 03ED2D "STA
+# #$02,U": what the player's state (field 30) says to the others in its field 02: 00, 01, FF, FE. The enemies test it:
+# 03B44C "LDA #$02,U; LBMI $73D8" (the robot), 03D406 "LDA #$02,U; CMPA #$01" (stage 3's bosses)
+03FE94  table  player_state_classes[72]  s8
+
+
+# ======== bank 20 ========
+
+# the attract's profile scenes: the character's moves (04078D, by A, 0-4): 04078D "LDU #$705A", 040790 "LDY #$70E3",
+# "TFR A,B; ASLB", 040796 "LDY B,Y" (then 04079E/0407EC through Y): "LDD ,Y++; STD #$0F,X; STD #$6F,X" (x speed),
+# "LDD ,Y++; STD #$14,X; STD #$74,X" (y speed), "LDA ,Y+; STA #$28,X" (frames, counted down at 0407CA), 0407EC the same
+# negated (back). kref --rom-reads: 0407A5-0407C1 read 0410ED-041105
+struct profile_move 05 rom
+field profile_move 00 speed_x s16
+field profile_move 02 speed_y s16
+field profile_move 04 frames u8
+0410E3  table  profile_moves[5]  u16 profile_move
+# extra: the moves themselves (five pieces of 5 bytes), and what types the reads through Y (mem_read16(y) now)
+0410ED  table  profile_move_records[5]  profile_move
+param sub_04079E y move profile_move
+param sub_0407EC y move profile_move
+
+# a player's quarter of the top line, by its number: 040AAE "LDY #$730E", 040AB1 "LDA #$01,X; ASLA; INCA", 040AB6 "LDA
+# A,Y" (the colour bits ORed into its digits' colour RAM, 040ACF), 040BDE "LDX #$730E", 040BE4 "ASLA", 040BE5 "LDD
+# A,X", 040BE7 "STA #$05,S" (the column: 040BFB "LEAU B,U"), 040BEA "STB #$03,S" (ORed into the pictures' colour,
+# 040C09). 00/00 09/40 12/80 1B/C0
+struct gauge_column 02 rom
+field gauge_column 00 column u8
+field gauge_column 01 colour u8
+04130E  table  gauge_player_columns[4]  gauge_column
+# the pictures 040BCE draws in a player's quarter, by number (B): 040BED "LDX #$7316", 040BF0 "LDB #$07,S; ASLB",
+# 040BF4 "LDX B,X", then blocks of a tile address, width, height, colour and tiles, a 00 after one if another follows
+# (040BF6-040C39). Numbers: 0 playing, 2 the continue count, 4 status 4, 5 status 1 and 5, 3 others, 1 and 0A before
+# them (040953-0409CC), 6-9 the four players' own (040B0C "ADDB #$06")
+041316  table  gauge_pictures[11]  u16
+# the continue countdown ($4A1C, BCD, counted down from 20 at 07B946-07B955) in big digits: 040B44 "LDA $4A1C", the
+# high digit 040B50 "LDX #$73F1; ASLA; LDU A,X" at 2418 (a 0 drawn blank, 040B5E "LDA #$80"), the low 040B66 "LDX
+# #$73F1", 040B6A "LDU A,X" at 2420; each a picture of 8 x 8 tiles for 040B88 (width, height, colour, tiles)
+0413F1  table  continue_digit_pictures[10]  u16
+
+# the big two-row digits a player's counts are printed with (040AA8, a BCD byte: lives, the continue count): 040ABB "LDY
+# #$774E", (high digit, 0 drawn as entry 10, blank: 040AC5 "LDA #$A0") 040ACB "LEAY A,Y",
+# 040ACD "LDA ,Y+; ORA #$01,S; STA #$-2000,U; STA #$-1FC0,U" (colour RAM of both rows, with the player's colour),
+# 040ADA "LDB ,Y+; STB ,U" (top tile), 040ADE "LDB ,Y; STB #$40,U" (bottom tile); the low digit the same from
+# 040AE6/040AF0. Byte 3 (00) nothing reads. 11 records = the piece 04174E
+struct big_digit 04 rom
+field big_digit 00 attribute u8
+field big_digit 01 top u8
+field big_digit 02 bottom u8
+field big_digit 03 unused u8
+04174E  table  big_digits[11]  big_digit
+local sub_040AA8 040ACB,040AF0 y digit big_digit
+
+# gauge_step_tiles, read by 0409F2 as pairs: 040A4C "LDY #$72FC", 040A4F "ASLA", 040A52 "LEAY A,Y",
+# 040A54 "LDA ,Y+; STA ,U" (top), 040A5C "LDA ,Y; STA #$40,U" (the row below), by the gauge tile's step 1-8; step 0
+# is drawn by 040A69 itself (8D/9D, the table's entry 0). 9 records of 2 bytes
+struct gauge_step 02 rom
+field gauge_step 00 top u8
+field gauge_step 01 bottom u8
+0412FC  table  gauge_step_tiles[9]  gauge_step
+local sub_0409F2 040A52 y step gauge_step
+
+# gauge_player (gauge_player_records, read in sub_040003, sub_04000F, sub_040953): 24 bytes, one byte, one byte, then
+# eleven words (0408EB "LDY #$02,X" reads the word at 02). Values from 04129C; which code reads each:
+#   00 01/02/04/08, nothing reads it; 01 0-3, 040960 "LDA #$01,X; LDB #$0A; LBSR $6BCE" (the player's quarter);
+#   02 4A00 + 7n (also the player record's 07): 04099E "LDA [#$02,X]" (the continue count, BCD) and 0409F2 "LDU
+#      #$02,X" with "CMPB #$02,U", "TST #$03,U", 0408EB "LDA #$03,Y; DECA" (the gauge's shown step and its delay);
+#   04 4819 + 8n, nothing reads it; 06 49D0 + 8n: 0409AF "LDD [#$06,X]" (lives, printed less one at 08: 0409AC "LDU
+#      #$08,X"); 0A: 04099B "LDU #$0A,X" (where the continue count goes); 0C 49D2 + 8n: 0409F7 "LDB [#$0C,X]" (health,
+#      x 1F / 28 the gauge's steps); 0E: 040A3C "LDU #$0E,X" (the gauge's 4 tiles); 10/11 (13 23 ...) nothing reads;
+#   12 49D4 + 8n: 040948 "LDD [#$12,X]" (the score, printed at 14 by 07941B); 16 49D7 + 8n: 040959 "LDA [#$16,X];
+#      CMPA #$02" (the player's status: 2 playing, 3 continue count, 4 game over at 07B9E6).
+# Replacement field lines:
+field gauge_player 00 bit u8
+field gauge_player 01 number u8
+field gauge_player 02 counters u16
+field gauge_player 04 unused_04 u16
+field gauge_player 06 lives u16
+field gauge_player 08 lives_tiles u16
+field gauge_player 0A continue_tiles u16
+field gauge_player 0C health u16
+field gauge_player 0E gauge_tiles u16
+field gauge_player 10 unused_10 u8
+field gauge_player 11 unused_11 u8
+field gauge_player 12 score u16
+field gauge_player 14 score_tiles u16
+field gauge_player 16 status u16
+
+# the rank's base, read by 040C65 through X with its index from two paths, <$14 or 1: 040C65 "LDX #$7782", 040C6D "LDA
+# <$14" / 040C72 "LDA #$01", 040C74 "LDA A,X", 040C76 "ADDA <$61". The table is rank_base; the read through X
+# is typed with
+elements rank_amount u8
+local sub_040C65 040C65 x amounts rank_amount
+
+
+# ======== bank 2F ========
+
+# the test mode menu's cursor (a multiple of 3, a test_menu_line each; $590A the menu's length, 05E638): 05E50C "LDA
+# $1F90; ANDA #$0C", 05E51A "LDX #$6502", 05E51F "LSRA; LSRA", 05E521 "LDA A,X", 05E523 "ADDA [,Y]" (wrapping at both
+# ends, 05E525-05E533). By the 1P joystick's bits 2-3: 0, +3, -3, 0
+05E502  table  test_menu_cursor_steps[4]  s8
+# a byte as two hex digits: 05E713 "LDY #$75AE", "LSRA" x4, 05E71A "LDA A,Y; STA ,X+", 05E720 "ANDA #$0F", 05E722 "LDA
+# A,Y". Tile codes of 0-9 and A-F (00-09, 11-16)
+05F5AE  table  test_mode_hex_digit_tiles[16]  u8
+# the coin options page (05E2D6): the coin slot's setting 0-15 (05E2D6 "LDY #$5A59; LBSR $660A") picks 05E2DC "LDY
+# #$7A5D", 05E2DF "LDA B,Y", 05E2E3 "SUBA #$30" (the coins), and 05E309 "LDY #$7A6F", 05E30C "LDA A,Y", 05E30E "SUBA
+# #$30" (the credits), printed with "COIN" (7A9B) and "CREDIT" (7AA0). Each is 18 bytes in the test mode printer's
+# form (C6 new line, the 16 digits, C0 end), though nothing prints them: the reads at 7A5D/7A6F are entries 1-16 of
+# them (05FA5D, 05FA6F become coin_setting_coin_digits[1 + b] and coin_setting_credit_digits[1 + a]).
+# Moves the pieces test_mode_text_05FA5C/05FA6E from texts to tables
+05FA5C  table  coin_setting_coin_digits[18]  u8
+05FA6E  table  coin_setting_credit_digits[18]  u8
+# the EEPROM (ER5911) writes and reads (05E8F1, 05E915), the values put in 1FC2 (bit 3 CS, bit 4 CLK, bit 7 DI): the
+# 7 address bits from $5A00 (05E93E "LDX #$7CA7; LDA ,X+", 05E947 "BITB #$40; ... ORA #$80; STA $1FC2", 05E954 "ORA
+# ,X+; STA $1FC2", up to FF: 7 pairs 08/18 and FF)
+05FCA7  table  eeprom_address_signals[15]  u8
+# the 8 data bits from $5A01 (05E965 "LDX #$7CB6", the same with "BITB #$80": 8 pairs and FF)
+05FCB6  table  eeprom_data_signals[17]  u8
+# after a write: 05E98F "LDX #$7CCB; LDA ,X+; STA $1FC2" (00), until 05E998 "LDA $1F81; ANDA #$20" (ready)
+05FCCB  table  eeprom_wait_signal[1]  u8
+# the RAM ROM CHECK's graphics ROMs (05EAB0, $5A1A the chip 0-5: two tile ROMs, 05EB19, then four sprite ROMs,
+# 05EB48): 05ECFE "LDY #$7D5C", 05ED04 "LDA $5A1A; ASLA", 05ED0B "CMPX A,Y" (the sum it got, then OK 05ED0F or BAD
+# 05ED28): E71A CE24 B079 9852 A940 62A8
+05FD5C  table  graphics_rom_sums[6]  u16
+# 05ED01 "LDU #$7D68", 05ED09 "LDU A,U": where each chip's OK/BAD and sum are printed (221F-249F)
+05FD68  table  graphics_rom_result_places[6]  u16
+# 05EB5E "LDU #$7D74", 05EB61 "LDA $5A11" (the sprite ROM 0-3), 05EB65 "LDA A,U", 05EB67 "STA <$F6" (into 1FA4, the
+# K053246's ROM read address, 05ECA8). 00 01 02 03
+05FD74  table  sprite_rom_read_banks[4]  u8
+
+# the game start's four portraits (05EE08, from 05E015, which 07A460/07A4A5 run: kref reads it in every game scenario
+# and in no test one): each player's 9 x 20 tiles coloured: 05EE49 "LDX #$7DD8", 05EE4C "LDA <$F0; ASLA; ASLA", 05EE51
+# "LEAX A,X", 05EE53 "LDU ,X++" (top left in the tile RAM), 05EE5F "LDB ,X; STB #$-2000,U" (its colour RAM); byte 3
+# (00) nothing reads. 4 records (05EE93 "CMPA #$04"); kref --rom-reads: 05FDD8-05FDE7. The rest of the piece 05FDD8
+# (05FDE8-05FFFF, 536 bytes) is FF to the bank's end.
+struct portrait_area 04 rom
+field portrait_area 00 tiles u16
+field portrait_area 02 colour u8
+field portrait_area 03 unused u8
+05FDD8  table  portrait_areas[4]  portrait_area
+local sub_05EE08 05EE51 x area portrait_area
+
+# test_player (test_player_records, read in sub_05EEAB): the same portraits, not the test mode's (05EEAB "LDU #$7D88",
+# from 05E015 above; kinds 0A-0D are marge_portrait..lisa_portrait). Its 5 unnamed bytes (unk_0c u8[5]): 05EF61
+# "LDA #$06; LDB #$0C,U; LBSR $8677" with <$7E = 1 (07BAC7 -> 07BAEC: a palette set request), 05EF6B "LDA #$02; STA
+# <$7E", 05EF70 "LDD #$0D,U; LBSR $8677" (07BB1F: a palette effect of bank 2E), 05EF78 "LDD #$0F,U; LBSR $869E" (0797ED:
+# a sound command, 3F18-3F1B) - when its start button (11, 05EF1B "ANDA <$5B") has been pressed. Replacement for the
+# line "field test_player 0C unk_0c u8[5]":
+field test_player 0C palette_set u8
+field test_player 0D palette_effect u16
+field test_player 0F sound u16
+
+# the sound test's two lists, read by 05E23E and 05E2A0: 05E242 "LDX #$68EF" (music) / 05E2A4 "LDX
+# #$6799" (effects), then 05E728 "SUBA #$30; LEAX A,X; LEAX A,X; LDD ,X; LBRA $8680": X is 30 entries past the start of
+# sound_test_music / sound_test_effects, the reads through X are typed with
+elements sound_test_command u16
+local sub_05E23E 05E242 x commands sound_test_command
+local sub_05E2A0 05E2A4 x commands sound_test_command
+
+
+# ======== already named, staying ========
+# zoom_steps_address (079D10 "LDX $602A": the address of zoom_steps), story_scripts (03E05A by field 30; 03E59F "LDU
+# #$70F8; LDU A,U" by <$58 & 6 is entries 64-67, four scripts one is picked from at random), profile_texts,
+# gauge_player_records (struct fixed above), rank_by_players, rank_by_scene, rank_step_times (scene 11 reads
+# rank_frame_limits' first, as symbols.txt says), test_mode_texts, test_mode_words (05E350 "LDY #$7935" is entry 31 on:
+# the difficulty's words), test_player_records (struct fixed above): their types and counts are right.
+
+# ======== the fixed program (078000-07FFFF) ========
+# Proposed symbols.txt lines, grouped by subject. Places are the program's offsets; the quotes are the listing's
+# (build\listing\simpsons.s) instructions; kref --rom-reads ranges are over the 25 scenarios (build\reads).
+# Lines that REPLACE existing ones: struct player and its fields (all of them), struct demo and its fields, and the
+# table lines demos, palette_sets, palette_sets_high, layer_maps, the 8 block_/map_scenes tables, layer_modes,
+# layer_modes_high, tile_pictures (a STRUCT added), field layer_map 08 (unk_08), 06 and 10 (a STRUCT added), field
+# tile_picture_place 03 (a STRUCT added). Everything else is new.
+
+# ======== the boot: the coins and the RAM ROM CHECK ========
+
+# the coinage settings: by the coin setting the work RAM keeps at 59F1 (the EEPROM's settings' copy: 078A1A "LDX
+# #$59F1", 078A1D "LDU #$E3EB", 078A20 "LDA ,X", 078A22 "LDA A,U"), a byte whose high nibble is the coins a credit
+# takes (078A30-078A34 "LSRA" x4, "STA <$1C"; 07921E "LDA <$1C", 079229 "CMPA #$02,U" against the coins counted) and
+# whose low nibble the credits they give (078A26 "ANDA #$0F; STA <$1D"; 079239 "LDB <$1D; ADDD #$00,U"): 11 12 13 ...
+# 41 43 45 (1 coin 1 credit ... 4 coins 5 credits)
+07E3EB  table  coinages[16]  u8
+
+# the sums the RAM ROM CHECK expects of the program's four chips (MAME's ROM_START( simpsons ): 13c at 040000, 15c at
+# 060000, 16c at 000000, 17c at 020000), each compared with the sum of 078E5B/078E63 (direct page FA) and printed OK
+# or BAD (078C4F "LDB #$03"): banks 20-2F (078C22 "LDA #$20", 078C3D "CMPA #$30", 078C46 "CMPD $E423"); the fixed
+# program and banks 30-3B (078C61 "LDX #$8000; LDU #$8000; LBSR $8E63", 078C6A "LDA #$30", 078C85 "CMPA #$3C",
+# 078C8E "CMPD $E425"); banks 00-0F (078CA9 "LDA #$00", 078CC4 "CMPA #$10", 078CCD "CMPD $E427"); banks 10-1F
+# (078CE8 "LDA #$10", 078D03 "CMPA #$20", 078D0C "CMPD $E429"). Each is read on its own (no index): a table of one
+07E423  table  rom_13c_sum[1]  u16
+07E425  table  rom_15c_sum[1]  u16
+07E427  table  rom_16c_sum[1]  u16
+07E429  table  rom_17c_sum[1]  u16
+
+# the restart: bank 2F's test mode leaves through the reset vector (05E3AA "LDX $FFFE", 05E3AE "JMP ,X"; also 078A16
+# and 078DB9 "JMP [$FFFE]"): 86CE, the reset's routine. It is the last word of the CPU's vectors (FFF6 FIRQ 91B2,
+# FFF8 IRQ 8F43, FFFA SWI and FFFC NMI 89EC, FFFE RESET 86CE; FFF0-FFF5 FF), which today sit at the end of the
+# block_tile_flags piece (07F67C, 2436 bytes up to 07FFFF): a data label names it, no table
+# (a data label, no table: the vectors are at the end of the block_tile_flags piece)
+07FFFE  data  reset_vector
+
+# ======== the tile RAM's digits ========
+# the tile of each hex digit, the character less 30 (00-09 for 0-9, 11-16 for A-F): 07945E "LDU #$E435", 079461-079467
+# "ANDA #$F0; LSRA x4; LDA A,U" (the high digit), 079471 "ANDA #$0F; LDA A,U" (the low one), 07946D "STA ,X+" into the
+# tile RAM (07947D prints D as four digits); kref: 079467/079473 read 07E435-07E443
+07E435  table  hex_digit_tiles[16]  u8
+
+# ======== the players ========
+
+# a player's record (07A0DE "LDU #$E819; LDA <$F0; ASLA; LDU A,U", 07B713 "LDX #$E819 ... LDX A,X", by the player's
+# number): the addresses of its variables in the work RAM, read through ([#$NN,X]) by the players' routines
+# 07B731-07B8B0 (by its state, 07B71B "LDY #$E803", 07B71E "LDA [#$17,X]; ASLA; JSR [A,Y]") and by the attract's demo
+# (07A0E7-07A114). Marge's record: 4842 481E 49D1 01 4A00 49D4 "MRG" 00 49D2 4840 4A5B 4A44 49D7 49F0; each next player
+# 4 on
+# for 00 and 11, 8 on for 02 04 09 0F 17, 7 on for 07, C0 on for 13 and 15 (its object), 1 on for 19
+struct player 1B rom
+# its newly pressed controls (4842 + 4 x player: 07924D-079265 keep each player's controls at 4840 + 4n, last frame's
+# at +1, the newly pressed at +2, the held at +3): 07B75C "LDA [,X]; ANDA #$B0" (start and the two buttons: it joins)
+field player 00 pressed u16
+# the flag its coin slot's record keeps once the slot has given it a credit (481E = the record 4817 + 8n's byte 7:
+# 079242 "LDA #$01; STA #$07,U"; while it is clear a credit takes direct page 3A's coins more, 079221 "LDB #$07,U; BNE;
+# ADDA <$3A"), cleared when the player leaves the game (07B88B and 07B9E3 "CLR [#$02,X]")
+field player 02 credit_given u16
+field player 04 lives u16
+field player 06 bit u8
+# its continue countdown: BCD seconds then frames (07B82D "LDA #$20; STA [#$07,X]"; 07B86E "LDY #$07,X; INC #$01,Y;
+# CMPA #$3C" a second, "LDA #$99; ADDA ,Y; DAA" down by one), and the game-over wait's frames (07B89D "INC [#$07,X];
+# LDA [#$07,X]; CMPA #$C0")
+field player 07 countdown u16
+# its score, a BCD word (49D4 + 8n): the score jobs 03-06 add to it (079828 "LDX #$49D4; LBRA $96FD" ... 07983A "LDX
+# #$49EC"), 07B7B6 "LDD [#$09,X]" checks it against the high scores (079718: the 10 records at 4983) when it leaves
+field player 09 score u16
+# its initials for the high score table: MRG, HMR, BRT, LSA (07B7C6 "LDD #$0B,X; STD <$F0", 07B7CC "LDA #$0D,X; STA
+# <$F2", copied into the high score record by 079743-079779)
+field player 0B initial_1 u8
+field player 0C initial_2 u8
+field player 0D initial_3 u8
+field player 0E number u8
+# its life the game keeps between stages (49D2 + 8n): 07B7A5 "LDA #$28; STA [#$0F,X]" when it joins, 07B6B6-07B6C3
+# "LDA #$28; STA ,U" for each player playing at a stage's start, 020A17-020A21 "ADDA #$14 ... CMPA #$28" a refill
+field player 0F life u16
+# its controls block (4840 + 4n: this frame, last frame, newly pressed, held: 07924D-079265); nothing reads it through
+# the record
+field player 11 controls u16
+# its object's hit points (the player object 4A40 + C0 x player's field 1B, which 07C2E0 "LDA #$1B,X; SUBA #$1C,U"
+# lowers by the hitter's power): 07B7A8 "STA [#$13,X]" (28) when it joins
+field player 13 object_life u16
+# its object's kind (field 04, the sprite set): 07A0EC "LDA <$F0", 07A0EF "STA [#$15,U]" (07A174-07A177 likewise
+# through X): the player's number (00 marge, 01 homer, 02 bart, 03 lisa)
+field player 15 object_kind u16
+# its state (49D7 + 8n), by which 07B71E "LDA [#$17,X]; ASLA; JSR [A,Y]" runs the routines at E803: 0 out (07B731:
+# credits make it 1), 1 may join (07B74F: start with a credit, lives from direct page 5A, then 2), 2 playing (07B7E8:
+# no lives left makes it 3, 07B83F), 3 the continue countdown (07B843: a credit makes it 5, the countdown's end 4),
+# 4 game over (07B897: C0 frames, then 0), 5 joining again (07B74F)
+field player 17 state u16
+# whether it plays (49F0 + n): 2 playing (07B7DF, 07B7EA), 1 while its continue countdown runs (07B83A, 07B845),
+# 0 neither (07B731 "CLR [#$19,X]"); 07B8BA-07B8D8 and 07B901-07B922 "LDA $49F0; CMPA #$02" (anyone playing),
+# 07B6BB "LDA ,X; CMPA #$02" (the life refilled at a stage's start)
+field player 19 play_status u16
+
+# the addresses of the players' newly pressed controls (4842, 4846, 484A, 484E: the same as each player record's
+# field 00): 07979A "LDX #$E449", 07979D "LDA <$F0; ASLA", 0797A1 "LDA [A,X]; ANDA #$30" (the two buttons) for each
+# player whose bit is in direct page 50 (07978C "LDB <$50", 4 of them: 079792 "CMPA #$04"): any of them skips (a story);
+# kref: 0797A1 reads 07E449-07E450
+07E449  table  player_presses[4]  u16
+
+# what the score jobs add to a player's score (by the job's argument B): 0796FF "LDU #$E445", 079702 "ASLB", 079703
+# "LEAU B,U", 079705 "LDA #$01,U; ADDA #$01,X; DAA; STA #$01,X", 07970F "LDA ,U; ADCA ,X; DAA; STA ,X": a BCD word
+# (0000, 0001) added to the score at X (the jobs 03-06 of the main loop's job table E3FB: 0789E4 "LDX #$E3FB; ASLA;
+# JSR [A,X]", entries 079828-07983A).
+struct score_addition 02 rom
+field score_addition 00 high u8
+field score_addition 01 low u8
+07E445  table  score_additions[2]  score_addition
+
+# ======== the attract's demos ========
+# demos holds the demos' addresses (07A0A4 "LDX #$E6A1; LDA <$5E; ASLA; LDX A,X") each a demo record; the
+# players' inputs are a field a player (07A0D2 "LDY #$5810", 07A0F2 "LDU ,X++" once for each of the 4 players, 07A0F4
+# "STU ,Y", Y 10 on a
+# player: 07A117), each the address in bank 2C (07A0C8 "LDB #$2C; STB <$0E; SETLN <$0E") of that player's inputs
+07E6A1  table  demos[3]  u16 demo
+struct demo 0C rom
+field demo 00 players u8
+field demo 01 frames u16
+field demo 03 step u8
+field demo 04 marge_inputs u16 demo_input
+field demo 06 homer_inputs u16 demo_input
+field demo 08 bart_inputs u16 demo_input
+field demo 0A lisa_inputs u16 demo_input
+# (in the same function) the input step 07A0F2 loads, read 07A0F6 "LDA #$01,U" (its frames) and
+# 07A0FC "LDA ,U" (its controls); and the player record 07A101 "PULLS U" brings
+# back (07A103 "CLR [#$04,U]", 07A114 "STA [#$17,U]")
+local sub_07A07E 07A0F2 u inputs demo_input
+local sub_07A07E 07A101 u record player
+
+# ======== the steps and scenes ========
+
+# the scene of each step of the game: 07BA87 "LDX #$E88D", 07BA8A "LDA <$03", 07BA8D "LDA A,X", 07BA8F "STA <$67"
+# (steps 2 and 3, stage 1 and its bonus, scene 0; 4 stage 2 scene 1; 6-7 stage 3 scenes 3-4; 8 4 scene 5... 15 stage 8
+# scene 0B; 12, bonus 2, scene 0); kref: 07BA8D reads 07E88F-07E89C (steps 2-15)
+07E88D  table  step_scenes[16]  u8
+
+# the objects' sprites' priority against the tile layers, by the step (all 05): 079ADD "LDX #$E574", 079AE0 "LDA
+# <$03", 079AE3 "LDA A,X", 079AE5 "STA <$FA"; an object without its own (field 09 bits 4-5 clear: 079DE2-079DE7) takes
+# it (079DF7 "LDA <$FA; STA <$FB"), into its sprites' colour word's high byte (079C18 "LDA <$FB", 079C29 "STD #$0C,Y"),
+# which the K053246's callback in simpsons.cpp takes as the priority ((color & 0x0f80) >> 6); kref: 07E574-07E584
+07E574  table  step_sprite_priorities[17]  u8
+
+# a routine in bank 1F each scene runs while its stage plays: by the scene (07B5B6 "LDX #$E7D3", 07B5B9 "LDA <$67",
+# 07B5BC "ASLA; ASLA; LEAX A,X"), its bank (07B5C2 "LDB ,X+; STB <$0E; SETLN <$0E") and the routine (07B5CC "JSR
+# [,X]"), in the steps' playing substep (07A5E0 "LBRA $B5A9", substep 3 of step 2's table E707). Bank 1F's put the
+# actor at 5640 to a story script (03E804 "LDX #$5640; LDA #$38; STA #$30,X; LBRA $605A"; 03E05A starts it when the
+# actor is free); scenes 2, 7 and 0A (the stories') have 07B6A4 ("CLRA; RTS"); byte 3 is 00 in all and nothing reads
+# it. kref: 07B5C2 reads 07E7D3-07E7FF.
+struct scene_routine 04 rom
+field scene_routine 00 bank u8
+field scene_routine 01 routine u16
+field scene_routine 03 spare u8
+07E7D3  table  scene_routines[12]  scene_routine
+
+# ======== the palette jobs ========
+
+# what a palette request starts, by its kind in direct page 7E (07BAC9 "LDX #$BADA", 07BACE "LDA <$7E", 07BAD1 "ASLA",
+# 07BAD2 "LDX A,X", 07BAD6 "JSR ,X"): each takes a free slot of the jobs at 3C00 (07BF39: 40 of 8 bytes, run each frame
+# by 07BC8B "LDX #$BCAA; ASLA; JSR [A,X]") and writes its job: 0 and 1 a load of palette sets (BAEC: job 1), 2 a
+# palette effect from bank 2E (BB1F: job 2), 3 the background colour (BB71: job 3, which 07BDF6 "LDD #$01,U; STD
+# $0C00" sets), 4 and 5 a fade of the ranges the request's bits name (BB85: job 4 darkens, 5 brightens), 6 the palette
+# RAM's 0C00-0DFF filled with FFFF (BBF6: job 6), 7 a clear of palette ranges (BC78: job 7), 8 the effect again in
+# the caller's slot when it runs one (BB12 "LDA ,U; CMPA #$02; BNE $BB1F"); kref: 07BAD2 reads 07BADC-07BAEB
+07BADA  table  palette_request_handlers[9]  u16
+
+# a palette effect's start, in bank 2E (07BB35 "LDB #$2E", 07BB37 "STB <$0E", 07BB3A "SETLN <$0E"), by the request's
+# number D (07BB45 "LDX #$6000", 07BB48 "LDD <$E8; ASLB; ROLA", 07BB4D "LDX D,X"): after 2 bytes (07BB4F "LEAX
+# #$02,X") the colours a step sets less one (07BB52 "LDA ,X+; STA #$06,U": 07BD51-07BD62 count it down to 0) and the
+# frames between steps (07BB57 "LDA ,X+; STA #$04,U; STA #$05,U": 07BD0D "LDA #$04,U; CMPA #$05,U"), then the steps
+# (07BB5F "STX #$02,U": address and colour, 4 bytes a colour). Byte 0 is 80, where a run backwards stops (07BD85 "LEAX
+# #$-08,X; LDA ,X; BPL"); byte 1 nothing reads. The table at bank 2E's 6000: 146 bytes (kref: 07BB4D reads
+# 05C000-05C091).
+struct palette_effect 04 rom
+field palette_effect 00 stop u8
+field palette_effect 01 spare u8
+field palette_effect 02 extra_colours u8
+field palette_effect 03 delay u8
+05C000  table  palette_effects[73]  u16 palette_effect
+# a step of a palette effect's script, after its header: a colour's place in the palette RAM and the colour (07BD57
+# "LDY ,X++; LDD ,X++; STD ,Y", the job's byte 6 more colours a step: 07BD51 "LDA #$06,U"), X the script's place, which
+# the job keeps at its byte 2 (07BD67 "STX #$02,U"); 07BD6C the same, then back two steps to run them again
+struct palette_effect_step 04 rom
+field palette_effect_step 00 address u16
+field palette_effect_step 02 colour u16
+param sub_07BD51 x step palette_effect_step
+param sub_07BD6C x step palette_effect_step
+
+# the palette sets (already named) point at their loads (07BCDC "LDY B,X", 07BCEA "LDU ,Y", 07BCEC "LDX #$02,Y",
+# 07BCEF "LDA #$04,Y", 07BCF5 "LEAY #$05,Y"): the tables get the struct
+07E9CB  table  palette_sets[14]  u16 palette_load
+07EAEB  table  palette_sets_high[19]  u16 palette_load
+# 07BCBA keeps either table in X (07BCCE "LDX #$E9CB", or from 80 07BCD6 "LDX #$EAEB; ANDB #$7F") and reads 07BCDC
+# "LDY B,X"
+elements palette_set u16 palette_load
+local sub_07BCBA 07BCCE,07BCD6 x set_table palette_set
+
+# the palette ranges a fade works on, one a step of the fade (the job's byte 7, 0-15: 07BE24 "CMPA #$10" starts it
+# again): 07BE4D "LDX #$E97F", 07BE50 "LDA #$07,U; ASLA; ASLA; LEAX A,X", 07BE57 "LDA ,X+; STA <$F1" the colours,
+# 07BE5C "LDU ,X" the first one's address in the palette RAM, each darkened or brightened (07BE5E "LDY #$E97B; LDA
+# <$F0; ASLA; JSR [A,Y]": 07BF94 takes a step off each component, 07BFD1 adds one) a colour at a time (07BE67 "LEAU
+# #$02,U; DEC <$F1"), when the job's mask has the step's bit (07BE34 "LDA #$06,U; ANDA #$01", 07BE71 "LSRW #$05,U";
+# the mask from the request's bits, 07BB85-07BBF2: bit 0 steps 0-1, 1 steps 2-3, 2 steps 4-5, 3 steps 6-13, 4 step
+# 14). 15 records: 32 colours at 0400 0440 0800 0840 0A00 0A40 0000 0040... 01C0, and 1 at 0C00; byte 3 is 00 in all,
+# nothing reads it. kref: 07BE57/07BE5C read 07E987-07E9B9.
+struct fade_range 04 rom
+field fade_range 00 colours u8
+field fade_range 01 address u16
+field fade_range 03 spare u8
+07E97F  table  fade_ranges[15]  fade_range
+
+# the palette ranges job 7 clears, one a bit of the request (07BEFB "LDA #$01,U; STA <$F1", 07BF04 "ANDA #$01", 4 of
+# them: 07BF24 "CMPA #$04"): 07BF08 "LDX #$E9BB", 07BF0B "LDA <$F0; ASLA; ASLA; LEAX A,X", 07BF12 "LDU ,X++" the bytes
+# after the first, 07BF14 "LDX ,X" where, 07BF16 "LEAY ,X; CLR ,X+; BMOVE Y,X,U" (007F 0400, 007F 0800, 007F 0A00,
+# 01FF 0000).
+struct palette_clear 04 rom
+field palette_clear 00 extra_bytes u16
+field palette_clear 02 address u16
+07E9BB  table  palette_clears[4]  palette_clear
+
+# the palette effects an object's colours take as it loses its hit points (0786BF "LBRA $E496"): by the caller's B
+# (07E4F1 "LDY #$E526", 07E4F4 "LDA <$E9; ASLA; LDY A,Y"; at the start 07E515 "LDU #$E526", 07E51C "LDD [A,U]", a new
+# effect, 07E510 "LDA #$02; STA <$7E", its slot kept in field 54: 07E521 "STU #$54,X"), a row of 6 effect numbers by
+# a level (07E4FA "LDA <$EA; ASLA; LDD A,Y", 07E500 "LBSR $BAC7" with 07E4EC "LDA #$08; STA <$7E": the effect again in
+# its slot). The level is 0 when its hit points (field 1B, which 07C274 "LDA #$1B,X; SUBA #$1C,U" lowers by the
+# hitter's power) are gone (07E49E "TST #$1B,X"), else 1-5 by how much of the last 5 x A of them is left (07E4AF-
+# 07E4DD, A the caller's step by the players in the game, e.g. 021307 "LDU #$7E75; LDA <$57; DECA; LDA A,U"); 5 changes
+# nothing (07E4DB "CMPB #$05; BNE"), and a level counts only below the last one (07E4E4 "CMPA #$53,X; BCC").
+# Callers: bank 10's object B=0 (021310 "CLRB"), bank 13's B=1 (02652C), bank 1E's two B=2 (03C348) and B=3 (03C8BC),
+# bank 11's B=4 (022A6A). kref: 07E4FE reads the first 5 words of each row, never the sixth
+struct hurt_effect_row 0C rom
+# at the start, and again when its hit points are gone
+field hurt_effect_row 00 normal u16
+field hurt_effect_row 02 fifth_left u16
+field hurt_effect_row 04 two_fifths_left u16
+field hurt_effect_row 06 three_fifths_left u16
+field hurt_effect_row 08 four_fifths_left u16
+# level 5, which changes nothing: never read
+field hurt_effect_row 0A all_left u16
+07E526  table  hurt_effect_rows[5]  u16 hurt_effect_row
+
+# ======== the sprites' animations ========
+# 079AE9 picks an object's animation set by its kind (field 04, 079B03 "LDB #$04,X"): 079B08 "LDU #$E591; ASLB; ROLA;
+# LEAU D,U" (from 80, 079B21 "LDU #$E5BB"), the set's bank (079B11 / 079B2A "LDB ,U+; STB <$0E; SETLN <$0E") and its
+# index's offset (079B1B / 079B34 "LDB ,U")
+local sub_079AE9 079B0D,079B26 u kind_set animation_set
+# then the set's table of animations from the index at the start of that bank (079B3E "LDU #$6000; CLRA", 079B42 "LDU
+# D,U": data_walk.py's set index), and the animation by field 05 (079B69 "ASLB;
+# ROLA", 079B6B "LDU D,U"), then the frame by field 07 (079B6D "LDA #$07,X; ASLA; ASLA; LEAU A,U"). The bank is
+# whichever animation_sets gave, so the index is no table of its own: a pointer typed by the instruction that loads it
+elements animation_set_index u16 animation_table
+elements animation_table u16
+local sub_079AE9 079B3E u set_index animation_set_index
+
+# ======== the background ========
+
+# the tile layers' records: layer_maps holds their addresses (07C618 "LDX #$EC9D; ASLA; LDX A,X") each a layer_map
+# record.
+# Its field 08: the address (48C8, 48D8) of the copy of the scroll y the IRQ keeps (0790FA "LDD <$C5; STD <$C8",
+# 079106 "LDD <$D5; STD <$D8"; 07C399 "LDD <$C8" checks it against the scroll); nothing reads it through the record
+07EC9D  table  layer_maps[2]  u16 layer_map
+field layer_map 08 last_scroll_y u16
+
+# an area of a scene: where its tile blocks (block_scenes) or its map (map_scenes) are and the bank (07C8D6 "LDB
+# #$02,Y; STB <$0E; SETLN <$0E", 07C8E1 "LDY ,Y"; 07C5C9 "LDA #$02,Y; STA <$9E", 07C5DC "LDY ,Y"); byte 3 is 00 in all
+# 125 (assets maps.txt "area REF BANK 00") and nothing reads it
+struct scene_area 04 rom
+field scene_area 00 address u16
+field scene_area 02 bank u8
+field scene_area 03 spare u8
+# the scene tables (already named) hold each scene's list of areas (07C8CB "LDY A,Y", then 07C8CD "LDA <$76; ASLA;
+# ASLA; LEAY A,Y" by the area): they get the struct
+07ECC9  table  block_scenes_a[4]  u16 scene_area
+07ECE9  table  block_scenes_b[4]  u16 scene_area
+07ECF9  table  map_scenes_a[4]  u16 scene_area
+07ED19  table  map_scenes_b[4]  u16 scene_area
+07ED29  table  block_scenes_a_high[15]  u16 scene_area
+07EDBB  table  block_scenes_b_high[15]  u16 scene_area
+07EE41  table  map_scenes_a_high[15]  u16 scene_area
+07EED3  table  map_scenes_b_high[15]  u16 scene_area
+# 07C8BD and 07C8F7 keep one of two tables in Y by the scene's bit 7 (07C8BD "LDY #$ECC9", 07C8C5 "LDY #$ED29";
+# 07C8F7 "LDY #$ECE9", 07C8FF "LDY #$EDBB") and read 07C8CB / 07C905 "LDY A,Y"
+elements scene_area_list u16 scene_area
+local sub_07C8BD 07C8BD,07C8C5 y scene_lists scene_area_list
+local sub_07C8F7 07C8F7,07C8FF y scene_lists scene_area_list
+# (optional, same reads through the layer's record: 07C5B2 "LDY #$06,X", 07C5BA "LDY #$10,X", 07C5C0 "LDY A,Y")
+field layer_map 06 maps u16 scene_area_list
+field layer_map 10 maps_high u16 scene_area_list
+
+# the K052109's tile ROM banks of an area: 07C947 "LDA ,Y+; STA $1D80" (MAME k052109.cpp: banks 0 and 1), 07C94D
+# "LDA ,Y+; STA $1F00" (banks 2 and 3)
+struct layer_mode 02 rom
+field layer_mode 00 tile_banks_01 u8
+field layer_mode 01 tile_banks_23 u8
+07EF55  table  layer_modes[4]  u16 layer_mode
+07EF63  table  layer_modes_high[15]  u16 layer_mode
+# 07C931 "LDY #$EF55" / 07C939 "LDY #$EF63", 07C93F "LDY A,Y", 07C941 "LDA <$76; ASLA; LEAY A,Y"
+elements layer_mode_list u16 layer_mode
+local sub_07C931 07C931,07C939 y mode_lists layer_mode_list
+
+# a picture of tiles (tile_picture_place's field 03, 07C538 "LDU ,U"): its width (07C53A "LDA ,U+; STA <$F0": the tiles
+# of a row, 07C566 "LDA #$40; SUBA <$F0; LEAX A,X" to the next), its height (07C53F "LDA ,U+; STA <$F2", the rows) and
+# the colour its tiles take (07C544 "LDA ,U+; STA <$F3", 07C552 "STB #$-2000,X"), then a tile a byte (07C556 "LDA ,U+")
+struct tile_picture 03 rom
+field tile_picture 00 width u8
+field tile_picture 01 height u8
+field tile_picture 02 colour u8
+field tile_picture_place 03 picture u16 tile_picture
+07EFB5  table  tile_pictures[1]  u16 tile_picture_place
+# 07C51C "LDU #$EFB5" then a branch (bit 7 of the number draws it blank: 07C522-07C524), 07C528 "LDU A,U"
+elements tile_picture_entry u16 tile_picture_place
+local sub_07C51C 07C51C u places tile_picture_entry
+
+# ======== the stage's enemies ========
+
+# the most enemies a stage has in before it puts in no more: direct page 6B's (the stage's difficulty) (07CB06 "LDU
+# #$F000", 07CB09 "LDA <$6B", 07CB0C "LDA A,U", 07CB0E "STA $1885") plus the scene's (07CB12 "LDU #$F008", 07CB15 "LDA
+# <$67", 07CB18 "LDA A,U", 07CB1A "ADDA $1885"); in the cemetery (direct page 8D, set only at 07AABF after 07AAA5 "LDA
+# #$87; STA <$75": stage_3_cemetery) by the players in the game instead (07CAFC "LDU #$F014", 07CAFF "LDA <$57",
+# 07CB02 "LDA A,U"; entry 0 unused). Compared with the enemies (07CB2C "CMPA $1876"; 07CB89 "INC $1876": the objects of
+# the list at 4F80 whose field 42 has bit 7 clear): over it, 07C9A0 "LBSR $CAEA; BCC" skips the spawns of the frame
+# (in the cemetery 07C9D0, each spawn of that list). kref: 07CB0C reads 07F000-07F004, 07CB18 all, 07CB02 07F018
+07F000  table  enemy_limits_by_difficulty[8]  u8
+07F008  table  extra_enemies_by_scene[12]  u8
+07F014  table  cemetery_enemy_limits_by_players[5]  u8
+# the most enemies that go after one player (1877, 07D4BA "LDA #$45,U; CMPA $1877": over it, 07CC38 picks the player
+# the fewest go after, by its field 45): the enemies (1876, up to 15: 07CC5A "CMPA #$10" gives 4 from 16) shared out
+# between the players in the game, rounded up, a row of 16 for 2, 3 and 4 players (07CC7B "LDU #$F031", 07CC7E
+# "DECA; ASLA x4; LEAU A,U", 07CC85 "LDA B,U; STA $1877"; one player takes the count itself, 07CC76); kref:
+# 07F031-07F059
+07F031  table  attackers_per_player[48]  u8
+
+# ======== the objects' dispatchers: the bank of each type's handler ========
+# Each list of objects runs its objects' handlers by their type (field 01, signed: types run below 0): "LDD #$01,X",
+# the bank "LDB A,U; STB <$0E; SETLN <$0E", the handler "ASLA; JSR [A,U]" from the table after. The handler tables
+# (F2EC, F40D, F4F4, F577, F5A2) and the bank tables share the bytes: each bank table's negative types are the end of
+# the handler table before it, and the bytes after its type 3F are the start of the next list's handler table for its
+# negative types. Counts: the asset pieces' (each bank table and the handler words that follow it, up to the next table)
+# the list at 4F80 (8 objects; spawn list 0, object_lists' first), the enemies: 07CB62 "LDX #$4F80", 07CB6C "LDU
+# #$F387", 07CB74 "LDB A,U", 07CB7E "LDU #$F2EC; ASLA; JSR [A,U]", and each counted unless its field 42 has bit 7
+# (07CB84-07CB89 "INC $1876", the count the enemy limits above hold the stage to); kref: 07CB74 reads 07F36D-07F3C6
+# (types -26 to 3F); 07F3C7-07F40C are the next list's handlers for its types -35 to -1 (07CBC3 reads 07F3C7-07F48C)
+07F387  table  enemy_banks[134]  u8
+# the list at 5280 (10 objects; spawn list 1): 07CBA3 "LDX #$5280", 07CBAD "LDU #$F4B0", 07CBB5 "LDB A,U", 07CBBF "LDU
+# #$F40D; ASLA; JSR [A,U]", counted at 07CBC5 "INC $1879" (which nothing reads); kref: 07CBB5 reads 07F48D-07F4EF
+# (types -35 to 3F); 07F4F0-07F4F3 are the next list's handlers for its types -2 and -1 (07CBF6 reads 07F4F0-07F549).
+# Named by its place in object_lists: what the list holds is not established (its types 00 and 01 are bank 16's
+# object, whose kinds are 0F police_car_and_doors and 12: 02DE3F)
+07F4B0  table  object_list_1_banks[68]  u8
+# the list at 4D40 (6 objects; spawn list 2), where the child objects go (07CA9E "LDB #$02; LBSR $CA54", from 07862F:
+# an object born at an offset from its parent's place): 07CBD6 "LDX #$4D40", 07CBE0 "LDU #$F54C", 07CBE8 "LDB A,U",
+# 07CBF2 "LDU #$F4F4; ASLA; JSR [A,U]"; kref: 07CBE8 reads 07F54A-07F576 (types -2 to 2A)
+07F54C  table  child_object_banks[43]  u8
+# the list at 5640 (1 object; spawn list 3, 66 of its 78 spawns type 00): the stage's events: its types 00 and 01 are
+# bank 15's object (02A05A "LBRA $6D6B", 02A05D "LBRA $6D85"; one of its steps waits until no enemy is left, 02AD47
+# "LDA $1876; BNE", then a sound, 02AD52 "LDD #$9300; LBSR $8680", and two child objects, 02AD5B-02AD64; its tables
+# object_15_* at 02AD8F), its type 03 bank 1F's (03E015 "LBRA $6888"), whose code works on the object at 5640 (03E804-
+# 03E9E4), the actor the scenes' routines start on a story script (scene_routines); 07CC05 "LDX #$5640", 07CC0F "LDU
+# #$F581", 07CC17 "LDB A,U", 07CC21 "LDU #$F577; ASLA; JSR [A,U]"; kref: 07CC17 reads 07F581-07F585
+07F581  table  stage_event_banks[5]  u8
+# by the object's field 28, the action the fixed program's routines run (07D604-07D626 pick it from the enemy's
+# behaviour: "LDA B,U; STA #$28,X"; 07D62F "LDU #$F586; ASLA; JSR [A,U]" the fixed program's own): the bank of an
+# action's handler in the banks (07D63B, the jump vector 0785DE: 07D64C "LDU #$F620", 07D64F "LDD #$28,X", 07D654 "LDB
+# A,U", 07D65E "LDU #$F5A2; ASLA; JSR [A,U]"); kref: 07D654 reads 07F620-07F65E
+07F620  table  action_banks[63]  u8
+# the like for the unused dispatcher 07D47E (07D484 "LDU #$F661; LDB A,U"), next to unused_object_handlers
+07F661  table  unused_object_banks[1]  u8
+
+# the animation an object shows in the fixed program's shared hit reaction (07865C "LBRA $E1D3": by field 29, 07E1D3
+# "LDU #$F29E; LDA #$29,X; ASLA; JSR [A,U]"), by its field 28 (07E1FB "LDU #$F2AC", 07E1FE "LDA #$28,X", 07E205 / 07E239
+# "LDA A,U; ORA #$80; STA #$05,X": field 05, started again); 0-1 stand (07E240 "CLRW #$0F,X"), 2 on are thrown back
+# (07E20F "LDD #$0400; STD #$19,X", 07E215 "LDD #$FE00; STD #$0F,X"). kref: 07E239 reads 07F2AC-07F2AD, 07E205
+# 07F2AE-07F2B5 (field 28 0-9). Count 10, not the piece's 64: 07F2B8 on is the enemies' handler table for their types
+# -26 to -1 (F2EC less 2 x 26; 07CB82 reads 07F2B8-07F36B), and 07F2B6-07F2B7 (60 6F) look like one more handler word
+# (type -27, whose bank byte 07F36C is 17) that no scenario reaches
+07F2AC  table  hit_animations[64]  u8
+# U holds the table's address (07E1FB) and, later, field 25's object (07E21B "LDU #$25,X"): the table's, typed
+elements hit_animation u8
+local sub_07E1E8 07E1FB u animations hit_animation
+
+# ======== moving: the sines, the angle, the jumps ========
+# a quarter of a sine wave, 0-90 degrees in 64 steps, 128 at 90 (sin x 128: 0, 3, 6 ... 5B at 32 ... 80 at 64):
+# 07CCA0 "LDU #$F061", 07CCA3-07CCB0 fold the angle (0-FF, 40 = 90 degrees) to 0-40, 07CCB1 "LDA A,U", 07CCB6 "MUL"
+# by the speed, 07CCB7 "LSRDI #$04", negated past 80 (07CCBE "NEGD"); 07CC8E puts the two (sine and, 40 on, cosine)
+# into the speeds 14 and 0F; kref: 07CCB1 reads 07F061-07F0A1. (Read through U; its piece neighbours
+# the next two)
+07F061  table  sines[65]  u8
+# the same quarter at 20 (sin x 20: 0 ... 0E at 32 ... 14 at 64), times 16 as a speed: 07CCC0 "LDU #$F0A2", 07CCD1 "LDB
+# A,U; CLRA; ASLDI #$04" (07CCDD: fields 14 and 0F); kref: 07CCD1 reads 07F0A2-07F0E2
+07F0A2  table  sines_20[65]  u8
+# the arctangent, in 256ths of a turn, of 0-64 sixty-fourths (0 ... 20 at 64, 45 degrees): the direction from X's object
+# to U's (07CCFD "LDD #$0C,U", 07CD00 "SUBD #$0C,X"; 07CD0A "LDD #$11,U", 07CD0D "SUBD #$11,X"): the shorter distance
+# over the longer,
+# both shifted so the longer fits in a byte (07CD1C-07CD3A), divided (07CD42 "DIV X,B"), the quotient the index (07CD43
+# "LDD #$F0E3", 07CD46 "LDA D,X"; the other way 07CD71-07CD78 "LDA D,X; SUBA #$40; NEGA"), then the quadrant by the
+# signs (07CD79-07CD8D); kref: 07CD46 reads 07F0E3-07F123. It is the second half of the piece 07F0A2
+# (130 bytes): with sines_20 at 65 the piece's two tables are 65 and 65
+07F0E3  table  arctangents[65]  u8
+# the speed up (into field 19, 16 times this: 07CDE0 "LDB A,U; CLRA; ASLDI #$04", 07CDE5 "STD #$19,X"; 079A18-079A2A
+# add it to the height in 16) an object jumps with to a floor N steps of 8 pixels above the one it is on: N = field 45
+# (the floor the block flags give: 07CEB1 "ANDA #$0F; STA #$45,X"; 07CF0E "LDB #$45,X; ASLDI #$03; CMPD #$16,X") less
+# field 5D / 8 (07CDD6 "LDB #$5D,X; LSRB x3"; 07CE13-07CE18 the floor x 8): 07CDD3 "LDU #$F124", 07CDDE "SUBA ,S+";
+# from 07D6D6, 07D70F, 07D739, 07D763 (the actions 07D6C4-07D751, each with "LDA #$45,X" first). Entry 1 (90) is out
+# of line with 2-15 (7A up by 2);
+# kref: 07CDE0 reads 07F126-07F130
+07F124  table  climb_speeds[16]  u8

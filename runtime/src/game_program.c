@@ -5,7 +5,7 @@
  *                 assets, by name and by the addresses it keeps
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    06-11-2026
+ *    Modified:    07-11-2026
  *    Author:      Sebastian Toyos
  *
  *    license:BSD-3-Clause
@@ -38,6 +38,7 @@
 #define CC_I         0x10u
 #define MASK_BITS    (CC_F | CC_I)
 #define RECORD_COPIES 32
+#define RECORD_SLACK  4u        /* the bytes past a record a read through it may reach (data_record) */
 #define RECORD_MAX    64u
 
 void (*program_frame)(void);
@@ -47,19 +48,41 @@ static uint32_t interrupts;
 static bool tables_loaded;
 
 /* ---- what the last code to run was (tools/decompile.py --trace): shown when the program stops ---- */
+/* With SIMPSONS_TRACE=FILE and SIMPSONS_TRACE_FRAMES=FIRST-LAST in the environment, a traced build also writes every
+   function and block those frames run, in order ("FRAME F|B PLACE"), to compare with kref --order (a development
+   aid) */
 
 #define TRACE_SIZE 48
 static uint32_t traced[TRACE_SIZE];
 static unsigned traced_count;
+static FILE *trace_file;
+static unsigned long long trace_first, trace_last;
+static bool trace_opened;
+
+static void trace_to_file(char kind, uint32_t place)
+{
+	if (!trace_opened)
+	{
+		const char *path = getenv("SIMPSONS_TRACE"), *frames = getenv("SIMPSONS_TRACE_FRAMES");
+
+		trace_opened = true;
+		if (path && frames && sscanf(frames, "%llu-%llu", &trace_first, &trace_last) == 2)
+			trace_file = fopen(path, "w");
+	}
+	if (trace_file && simpsons_board.frame >= trace_first && simpsons_board.frame <= trace_last)
+		fprintf(trace_file, "%llu %c %06X\n", (unsigned long long)simpsons_board.frame, kind, (unsigned)place);
+}
 
 void game_trace(uint32_t place)
 {
 	traced[traced_count++ % TRACE_SIZE] = place;
+	trace_to_file('F', place);
 }
 
 void game_trace_block(uint32_t place)
 {
 	traced[traced_count++ % TRACE_SIZE] = place | 0x80000000u;
+	trace_to_file('B', place);
 }
 
 static void show_trace(void)
@@ -83,9 +106,17 @@ static GAME_NORETURN void stop(const char *what, uint32_t value)
 
 /* ---- the program's data ---- */
 
+/* The program's byte at a place (its region's offset): the assets' piece the board was given
+   (simpsons_board.program_at), else game/data.h's game_program; NULL where there is none (code) */
+static const uint8_t *program_byte(uint32_t place)
+{
+	return simpsons_board.program_at ? simpsons_board.program_at(place) : &game_program[place];
+}
+
 const uint8_t *data_at(uint32_t address)
 {
 	const int32_t place = simpsons_program_offset((uint16_t)address);
+	const uint8_t *byte;
 
 	if (place < 0)
 	{
@@ -93,9 +124,9 @@ const uint8_t *data_at(uint32_t address)
 			return simpsons_work_ram_byte((uint16_t)address);    /* (a pointer the program set to the work RAM) */
 		stop("the program read data at", address & 0xFFFFu);
 	}
-	if (simpsons_board.program_given && !simpsons_board.program_given[place])
+	if ((byte = program_byte((uint32_t)place)) == NULL)
 		stop("the program read its code as data at", (uint32_t)place);
-	return &game_program[place];
+	return byte;
 }
 
 /* A record of the program's data, its bytes the other way round: from the work RAM where the program set the
@@ -103,7 +134,7 @@ const uint8_t *data_at(uint32_t address)
    its expression) */
 const void *data_record(uint32_t address, uint32_t size)
 {
-	static uint8_t copies[RECORD_COPIES][RECORD_MAX];
+	static uint8_t copies[RECORD_COPIES][RECORD_MAX + RECORD_SLACK];
 	static unsigned next;
 	uint8_t *copy;
 
@@ -114,12 +145,26 @@ const void *data_record(uint32_t address, uint32_t size)
 		stop("the program read a record too long at", address);
 	copy = copies[next++ % RECORD_COPIES];
 	for (uint32_t at = 0; at < size; at++)
-		copy[size - 1u - at] = *data_at((address + at) & 0xFFFFu);
-	return copy;
+		copy[size + RECORD_SLACK - 1u - at] = *data_at((address + at) & 0xFFFFu);
+	/* (and the few bytes after it, where the assets give them: a word the program reads across the record's last
+	   byte, which the C reads as a part of that field, AT16(record->field, -1)) */
+	for (uint32_t at = size; at < size + RECORD_SLACK; at++)
+	{
+		const int32_t place = simpsons_program_offset((uint16_t)(address + at));
+		const uint8_t *byte = place >= 0 ? program_byte((uint32_t)place) : NULL;
+
+		copy[size + RECORD_SLACK - 1u - at] = byte ? *byte : 0u;
+	}
+	return copy + RECORD_SLACK;
 }
 
-/* Every table of the registry: a copy of the data from its place on, as long as the assets give bytes there (in its
-   bank, or the fixed program), each element in the host's byte order. NULL, or what failed */
+/* How far before its place a table can be read: the CPU adds an index register's byte signed (A,X), so a table the C
+   reads by such an index (NAME[(int8_t)a]) reaches back up to 128 bytes */
+#define TABLE_BEFORE 0x80u
+
+/* Every table of the registry: a copy of the data around its place, as far as the assets give bytes there (in its
+   bank, or the fixed program): from its place on, and up to TABLE_BEFORE bytes before it in whole elements, each
+   element in the host's byte order. The table's pointer is its place in the copy. NULL, or what failed */
 static const char *load_tables(void)
 {
 	static char problem[160];
@@ -127,32 +172,37 @@ static const char *load_tables(void)
 	for (size_t index = 0; index < game_table_count; index++)
 	{
 		const game_table *table = &game_tables[index];
+		const uint32_t start = table->place >= GAME_PROGRAM_SIZE - 0x8000u ? GAME_PROGRAM_SIZE - 0x8000u
+			: table->place / 0x2000u * 0x2000u;
 		const uint32_t end = table->place >= GAME_PROGRAM_SIZE - 0x8000u ? GAME_PROGRAM_SIZE
 			: (table->place / 0x2000u + 1u) * 0x2000u;
-		uint32_t length = 0;
+		uint32_t length = 0, before = 0;
 		uint8_t *copy;
 
 		if (!table->name)
 			continue;
-		while (table->place + length < end
-			&& (!simpsons_board.program_given || simpsons_board.program_given[table->place + length]))
+		while (table->place + length < end && program_byte(table->place + length))
 			length++;
 		if (!length)
 		{
 			snprintf(problem, sizeof(problem), "the program's table %s is in no asset", table->name);
 			return problem;
 		}
-		copy = malloc(length + 4u);
+		while (before < TABLE_BEFORE && table->place - before > start && program_byte(table->place - before - 1u))
+			before++;
+		before -= before % table->element;
+		copy = malloc(before + length + 4u);
 		if (!copy)
 		{
 			snprintf(problem, sizeof(problem), "no memory for the program's table %s", table->name);
 			return problem;
 		}
-		memset(copy, 0, length + 4u);
-		memcpy(copy, &game_program[table->place], length);
+		memset(copy, 0, before + length + 4u);
+		for (uint32_t offset = 0; offset < before + length; offset++)
+			copy[offset] = *program_byte(table->place - before + offset);
 		/* (big endian to the host's: each element's bytes the other way round) */
 		if (table->element > 1)
-			for (uint32_t first = 0; first + table->element <= length; first += table->element)
+			for (uint32_t first = 0; first + table->element <= before + length; first += table->element)
 				for (uint32_t low = first, high = first + table->element - 1u; low < high; low++, high--)
 				{
 					const uint8_t byte = copy[low];
@@ -160,7 +210,7 @@ static const char *load_tables(void)
 					copy[low] = copy[high];
 					copy[high] = byte;
 				}
-		*table->data = copy;
+		*table->data = copy + before;
 	}
 	return NULL;
 }

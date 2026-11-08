@@ -3,7 +3,7 @@
  *    Description: bank 10's code
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    06-11-2026
+ *    Modified:    07-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -299,7 +299,7 @@ uint16_t sub_020006(uint16_t x, uint16_t y, uint16_t d)
 		break;
 	}
 	sub_021795(x);
-	d_3 = (uint32_t)DATA8(indexed_table_021E75_ADDRESS + (int8_t)(unk_4857 - 1u)) << 8;
+	d_3 = (uint32_t)wrestler_gauge_piece_health_by_players[(int8_t)((uint8_t)(unk_4857 - 1u))] << 8;
 	y = sub_0786BF(x, y, d_3);
 	return y;
 }
@@ -559,27 +559,27 @@ void sub_0200B4(uint16_t *p_x, uint16_t *p_y, uint16_t *p_d, uint32_t *p_carry)
 {
 	uint16_t y = (uint16_t)*p_y;
 	uint32_t carry = *p_carry;
-	uint16_t d = 0, ignored16 = 0, ignored16_2 = 0, u = 0, x = 0, y_2 = 0;
+	uint16_t bonus_player = 0, d = 0, ignored16 = 0, ignored16_2 = 0, u = 0, x = 0, y_2 = 0;
 	uint16_t stack = 0, stack_4 = 0;
-	uint8_t t1 = 0, t3 = 0;
-	uint16_t t2 = 0;
+	uint8_t t1 = 0, t2 = 0;
+	uint16_t object = 0;
 
 	sub_020967(y);
 	t1 = io_read8(VIDEO_18EE);
-	u = DATA16(indexed_table_021BC8_ADDRESS + (int8_t)((uint32_t)t1 << 1));
-	t2 = io_read16(u + 5u);
-	x = t2;
+	bonus_player = bonus_1_player_records[(int8_t)((uint8_t)((uint32_t)t1 << 1)) / 2];
+	object = BONUS_PLAYER(bonus_player)->object;
+	x = object;
 	mem_write8(x, mem_read8(x) | 0x10u);
-	mem_write8(mem_read16(u), 0u);
+	mem_write8(BONUS_PLAYER(bonus_player)->presses, 0u);
 	if ((unk_4815 & 3u) == 0u)
-		mem_write8(mem_read16(u), 0x10u);
-	stack = u;
+		mem_write8(BONUS_PLAYER(bonus_player)->presses, 0x10u);
+	stack = bonus_player;
 	stack_4 = x;
 	sub_0208AB(&ignored16, &ignored16_2, &carry);
 	x = stack_4;
 	u = stack;
-	t3 = io_read8(VIDEO_18EE);
-	d = (uint32_t)t3 << 8;
+	t2 = io_read8(VIDEO_18EE);
+	d = (uint32_t)t2 << 8;
 	*p_x = x;
 	*p_y = y_2;
 	*p_d = d;
@@ -1365,7 +1365,7 @@ void sub_020264(uint16_t *p_x, uint16_t *p_y, uint16_t *p_d, uint32_t *p_carry)
 	uint16_t y = (uint16_t)*p_y;
 	uint32_t carry = *p_carry;
 	uint8_t a = 0, b = 0;
-	uint16_t d = 0, u = 0, x = 0, y_2 = 0;
+	uint16_t bonus_player = 0, d = 0, x = 0, y_2 = 0;
 	uint8_t stack = 0;
 	uint8_t t1 = 0, t4 = 0, t6 = 0, t7 = 0;
 	uint16_t t2 = 0, t3 = 0, t5 = 0;
@@ -1395,12 +1395,12 @@ void sub_020264(uint16_t *p_x, uint16_t *p_y, uint16_t *p_d, uint32_t *p_carry)
 			}
 			else
 			{
-				u = DATA16(indexed_table_021BC8_ADDRESS + (int8_t)((uint32_t)stack << 1));
-				mem_write8(mem_read16(u), 0u);
+				bonus_player = bonus_1_player_records[(int8_t)((uint8_t)((uint32_t)stack << 1)) / 2];
+				mem_write8(BONUS_PLAYER(bonus_player)->presses, 0u);
 				if ((unk_4815 & 1u) == 0u)
-					mem_write8(mem_read16(u), 0x10u);
+					mem_write8(BONUS_PLAYER(bonus_player)->presses, 0x10u);
 				d = (uint32_t)stack << 8;
-				sub_02034A(u, &x, &y, &d, &carry);
+				sub_02034A(bonus_player, &x, &y, &d, &carry);
 			}
 		}
 		t6 = mem_read8(x + 0x3Fu);
@@ -1496,7 +1496,7 @@ void sub_020324(uint16_t *p_x, uint16_t *p_y, uint16_t *p_d)
 	unk_48F1 = 0u;
 	do
 	{
-		u = DATA16(indexed_table_021BC8_ADDRESS + (int8_t)((uint32_t)unk_48F1 << 1));
+		u = bonus_1_player_records[(int8_t)((uint8_t)((uint32_t)unk_48F1 << 1)) / 2];
 		d = (uint32_t)unk_48F1 << 8;
 		sub_02034A(u, &x, &y, &d, &carry);
 		x += 0xC0u;
@@ -1540,7 +1540,7 @@ void sub_02034A(uint16_t u, uint16_t *p_x, uint16_t *p_y, uint16_t *p_d, uint32_
 		t4 = mem_read8(x + 6u);
 		mem_write8(x + 6u, t4 & 0xBFu);
 		mem_write16(x + 0x2Du, 0u);
-		if ((mem_read8(mem_read16(u)) & 0x30u) == 0u)
+		if ((mem_read8(BONUS_PLAYER(u)->presses) & 0x30u) == 0u)
 		{
 			t5 = mem_read8(x + 0x32u);
 			if (t5 == 0u)
@@ -1558,7 +1558,7 @@ void sub_02034A(uint16_t u, uint16_t *p_x, uint16_t *p_y, uint16_t *p_d, uint32_
 					t10 = mem_read16(x + 0x35u);
 					mem_write8(t10 + 5u, 0x81u);
 				}
-				mem_write16(x + 0x2Du, 0xE800u);
+				mem_write16(x + 0x2Du, scene_routines_ADDRESS + 0x2Du);
 			}
 			else
 			{
@@ -2597,32 +2597,32 @@ void sub_0207C7(uint16_t x, uint16_t *p_y, uint16_t *p_d, uint32_t *p_carry)
 	uint16_t d = (uint16_t)*p_d;
 	uint32_t carry = *p_carry;
 	uint8_t a = 0, b = 0;
-	uint16_t d_2 = 0, u = 0, y = 0;
-	uint16_t t1 = 0, t2 = 0, t3 = 0, t4 = 0, t5 = 0, t6 = 0, t7 = 0;
+	uint16_t d_2 = 0, placement = 0, u = 0, y = 0;
+	uint16_t t1 = 0, t2 = 0, kind = 0, t3 = 0, x_2 = 0, z = 0, t4 = 0;
 
-	t1 = DATA16(indexed_table_021C00_ADDRESS + (int8_t)((uint32_t)(d >> 8) << 1));
+	t1 = bonus_placements[(int8_t)((uint8_t)((uint32_t)(d >> 8) << 1)) / 2];
 	u = t1 + 2u;
-	y = mem_read16(t1);
+	y = PLACEMENT(t1)->object;
 	if (y == 0xFFFFu)
 		y = x;
 	mem_write8(y, mem_read8(y) | 0x80u);
 	t2 = u;
-	t3 = mem_read16(t2);
-	mem_write16(y + 4u, ((uint32_t)(t3 >> 8) << 8) | (uint8_t)(t3 | 0x80u));
-	t4 = t2 + 2u;
-	u = t4 + 2u;
-	t5 = mem_read16(t4);
-	a = (uint8_t)(t5 >> 8);
-	b = (uint8_t)t5;
+	kind = PLACEMENT(t2 - 0x2u)->kind;
+	mem_write16(y + 4u, ((uint32_t)(kind >> 8) << 8) | (uint8_t)(kind | 0x80u));
+	t3 = t2 + 2u;
+	placement = t3 + 2u;
+	x_2 = PLACEMENT(t3 - 0x4u)->x;
+	a = (uint8_t)(x_2 >> 8);
+	b = (uint8_t)x_2;
 	if ((uint16_t)(((uint32_t)a << 8) | b) != 0xFFFFu)
 		mem_write16(y + 0xCu, ((uint32_t)a << 8) | b);
 	mem_write16(y + 0x11u, 0xB0u);
-	t6 = mem_read16(u);
-	a = (uint8_t)(t6 >> 8);
-	b = (uint8_t)t6;
-	t7 = ((uint32_t)a << 8) | b;
-	carry = t7 < 0xFFFFu;
-	if (t7 != 0xFFFFu)
+	z = PLACEMENT(placement - 0x6u)->z;
+	a = (uint8_t)(z >> 8);
+	b = (uint8_t)z;
+	t4 = ((uint32_t)a << 8) | b;
+	carry = t4 < 0xFFFFu;
+	if (t4 != 0xFFFFu)
 		mem_write16(y + 0x16u, ((uint32_t)a << 8) | b);
 	d_2 = ((uint32_t)a << 8) | b;
 	*p_y = y;
@@ -2632,10 +2632,10 @@ void sub_0207C7(uint16_t x, uint16_t *p_y, uint16_t *p_d, uint32_t *p_carry)
 
 void sub_020803(void)
 {
-	uint16_t u = 0, x = 0;
+	uint16_t bonus_player = 0, x = 0;
 	uint8_t stack = 0;
 	uint8_t t1 = 0;
-	uint16_t t2 = 0;
+	uint16_t controls_pressed = 0;
 
 	x = unk_4A40_ADDRESS;
 	stack = 0u;
@@ -2644,9 +2644,9 @@ void sub_020803(void)
 		t1 = mem_read8(x + 0x3Eu);
 		if (t1 != 0u)
 		{
-			u = DATA16(indexed_table_021BC8_ADDRESS + (int8_t)((uint32_t)stack << 1));
-			t2 = io_read16(u + 3u);
-			mem_write8(mem_read16(u), mem_read8(t2));
+			bonus_player = bonus_1_player_records[(int8_t)((uint8_t)((uint32_t)stack << 1)) / 2];
+			controls_pressed = BONUS_PLAYER(bonus_player)->controls_pressed;
+			mem_write8(BONUS_PLAYER(bonus_player)->presses, mem_read8(controls_pressed));
 		}
 		x += 0xC0u;
 		stack = stack + 1u;
@@ -2657,18 +2657,18 @@ void sub_020829(void)
 {
 	uint16_t x = 0;
 	uint8_t stack = 0, stack_2 = 0;
-	uint8_t t2 = 0, t3 = 0;
-	uint16_t t1 = 0;
+	uint8_t t1 = 0, t2 = 0;
+	uint16_t object = 0;
 
 	unk_48F0 = 0u;
 	stack = 0u;
 	stack_2 = unk_4858 & 3u;
 	do
 	{
-		t1 = io_read16(DATA16(indexed_table_021BC8_ADDRESS + (uint8_t)((uint32_t)stack_2 << 1)) + 5u);
-		x = t1;
-		t2 = mem_read8(x + 0x3Eu);
-		if (t2 == 0u)
+		object = BONUS_PLAYER(bonus_1_player_records[stack_2 & 0x7Fu])->object;
+		x = object;
+		t1 = mem_read8(x + 0x3Eu);
+		if (t1 == 0u)
 		{
 			if (unk_48F0 == 0u)
 			{
@@ -2678,8 +2678,8 @@ void sub_020829(void)
 			else
 				mem_write8(x + 0x42u, stack + stack_2);
 		}
-		t3 = mem_read8(x + 0x42u);
-		mem_write8(x + 0x42u, t3 + 5u);
+		t2 = mem_read8(x + 0x42u);
+		mem_write8(x + 0x42u, t2 + 5u);
 		stack_2 = (stack_2 + 1u) & 3u;
 		stack = stack + 1u;
 	} while (stack != 4u);
@@ -2687,7 +2687,7 @@ void sub_020829(void)
 
 void sub_020874(void)
 {
-	uint16_t u = 0, x = 0;
+	uint16_t bonus_player = 0, x = 0;
 	uint8_t stack = 0;
 	uint8_t t1 = 0, t2 = 0, t3 = 0, t4 = 0;
 
@@ -2698,17 +2698,17 @@ void sub_020874(void)
 		t1 = mem_read8(x + 0x3Eu);
 		if (t1 == 0u)
 		{
-			u = DATA16(indexed_table_021BC8_ADDRESS + (int8_t)((uint32_t)stack << 1));
+			bonus_player = bonus_1_player_records[(int8_t)((uint8_t)((uint32_t)stack << 1)) / 2];
 			t2 = mem_read8(x + 0x41u);
 			if (t2 != 0u)
 			{
-				mem_write8(mem_read16(u), 0u);
+				mem_write8(BONUS_PLAYER(bonus_player)->presses, 0u);
 				t3 = mem_read8(x + 0x41u);
 				mem_write8(x + 0x41u, t3 - 1u);
 			}
 			else
 			{
-				mem_write8(mem_read16(u), 0x10u);
+				mem_write8(BONUS_PLAYER(bonus_player)->presses, 0x10u);
 				t4 = mem_read8(x + 0x42u);
 				mem_write8(x + 0x41u, t4);
 			}
@@ -2734,7 +2734,7 @@ void sub_0208AB(uint16_t *p_x, uint16_t *p_d, uint32_t *p_carry)
 	}
 	a = 0u;
 	stack = 0u;
-	x = indexed_table_021BC8_ADDRESS;
+	x = bonus_1_player_records_ADDRESS;
 	do
 	{
 		u = mem_read16(x);
@@ -3166,7 +3166,7 @@ void sub_0209AE(void)
 	uint32_t carry = 0;
 	uint16_t d = 0, x = 0, y = 0;
 
-	x = mem_read16(rom_021C32);
+	x = mem_read16(bonus_placements[25]);
 	if (mem_read8(x) != 0u)
 		return;
 	d = 0x1900u;
@@ -3340,8 +3340,8 @@ void sub_0209D6(uint16_t *p_x, uint16_t *p_y, uint16_t *p_d, uint32_t *p_carry)
 		d_2 = (uint32_t)(uint8_t)(a + 0x1Au) << 8;
 		sub_0207C7(x, &y, &d_2, &carry);
 		mem_write8(y, 0x80u);
-		x = indexed_table_021BC4_ADDRESS;
-		t2 = DATA16(indexed_table_021BC4_ADDRESS + (int8_t)((uint32_t)stack << 1));
+		x = bonus_intro_sounds_ADDRESS;
+		t2 = bonus_intro_sounds[(int8_t)((uint8_t)((uint32_t)stack << 1)) / 2];
 		d = t2;
 		a = (uint8_t)(t2 >> 8);
 		carry = sub_078680(d);
@@ -3537,7 +3537,7 @@ void sub_020B37(uint16_t u)
 	unk_48F2 = 0u;
 	x = sub_020E80(u);
 	mem_write8(u + 0x844u, 0xEu);
-	mem_write16(u + 0x84Cu, x + (int8_t)DATA8(indexed_table_021D28_ADDRESS + (int8_t)unk_48F0));
+	mem_write16(u + 0x84Cu, x + bonus_2_side_object_x_offsets[(int8_t)unk_48F0]);
 	mem_write8(u + 0x852u, 0x90u);
 	mem_write8(u + 0x857u, 0x30u);
 	a = 0x88u;
@@ -3841,7 +3841,7 @@ void sub_020D14(uint16_t u, uint16_t *p_d, uint32_t *p_carry)
 	{
 		x = sub_020E66();
 		t3 = mem_read8(u + VIDEO_0031);
-		mem_write16(u + 0xCu, x + (int8_t)DATA8(indexed_table_021D44_ADDRESS + (t3 >> 1)));
+		mem_write16(u + 0xCu, x + bonus_2_shake_x_offsets[t3 >> 1]);
 		t4 = mem_read8(u + 5u);
 		mem_write8(u + 5u, t4 | 0x80u);
 		sub_020DCB(u, &d, &carry);
@@ -3879,8 +3879,8 @@ void sub_020D36(uint16_t u, uint16_t *p_d, uint32_t *p_carry)
 			mem_write8(u + 0x60u, 0x90u);
 			t4 = mem_read8(u + VIDEO_0031);
 			a = t4 >> 1;
-			b = DATA8(indexed_table_021D55_ADDRESS + a);
-			a = DATA8(indexed_table_021D4D_ADDRESS + a);
+			b = bonus_2_squash_zooms_y[a];
+			a = bonus_2_squash_zooms_x[a];
 			mem_write16(u + 0xAu, ((uint32_t)a << 8) | b);
 			mem_write16(u + 0x6Au, ((uint32_t)a << 8) | b);
 			sub_020DCB(u, &d, &carry);
@@ -3917,7 +3917,7 @@ void sub_020D62(uint16_t u, uint16_t *p_d, uint32_t *p_carry)
 		{
 			t4 = mem_read8(u + VIDEO_0031);
 			a = t4 >> 1;
-			unk_48F2 = DATA8(loaded_table_021D5D_ADDRESS + a + (int8_t)((((uint32_t)unk_48F0 << 1) << 1) << 1));
+			unk_48F2 = TABLE8(bonus_2_level_object_x_moves, (uint16_t)(a + (int8_t)((((uint32_t)unk_48F0 << 1) << 1) << 1)));
 			if (a != 7u)
 				sub_020DCB(u, &d, &carry);
 			else
@@ -4101,7 +4101,7 @@ uint16_t sub_020E66(void)
 	t1 = io_read8(VIDEO_1840);
 	if (t1 != 2u)
 	{
-		t2 = DATA16(indexed_table_021D7D_ADDRESS + (int8_t)((uint32_t)unk_48F0 << 1));
+		t2 = bonus_2_player_x[(int8_t)((uint8_t)((uint32_t)unk_48F0 << 1)) / 2];
 		stack = t2 >> 8;
 		stack_10002 = t2;
 		x = ((uint32_t)stack << 8) | stack_10002;
@@ -4115,17 +4115,17 @@ uint16_t sub_020E80(uint16_t u)
 {
 	uint16_t x = 0;
 	uint8_t t1 = 0;
-	uint16_t t2 = 0, t3 = 0, t4 = 0, t5 = 0;
+	uint16_t dx = 0, t2 = 0, t3 = 0, t4 = 0;
 
 	t1 = mem_read8(u + 4u);
-	t2 = DATA16(indexed_table_021D71_ADDRESS + (int8_t)((uint32_t)t1 << 1));
-	t3 = mem_read16(u + 0xCu);
-	x = t3 + (int8_t)(t2 >> 8) + (int8_t)unk_48F2;
+	dx = (((uint32_t)(uint8_t)XZ_OFFSET(bonus_2_level_object_offsets_ADDRESS + (int8_t)((uint32_t)t1 << 1))->dx << 8u) | (uint8_t)XZ_OFFSET(bonus_2_level_object_offsets_ADDRESS + (int8_t)((uint32_t)t1 << 1))->dz);
+	t2 = mem_read16(u + 0xCu);
+	x = t2 + (int8_t)(dx >> 8) + (int8_t)unk_48F2;
 	mem_write16(u + 0x6Cu, x);
-	t4 = mem_read16(u + 0x11u);
-	mem_write16(u + 0x71u, t4 - 2u);
-	t5 = mem_read16(u + 0x16u);
-	mem_write16(u + 0x76u, t5 + (int8_t)t2);
+	t3 = mem_read16(u + 0x11u);
+	mem_write16(u + 0x71u, t3 - 2u);
+	t4 = mem_read16(u + 0x16u);
+	mem_write16(u + 0x76u, t4 + (int8_t)dx);
 	return x;
 }
 
@@ -4446,8 +4446,8 @@ void sub_020FD9(uint16_t *p_x, uint16_t *p_y, uint16_t *p_d, uint32_t *p_carry)
 		{
 			t4 = mem_read8(u + 0x47u);
 			mem_write8(u + 0x47u, t4 - 1u);
-			x = indexed_table_021D9C_ADDRESS;
-			a = DATA8(indexed_table_021D9C_ADDRESS + (int8_t)a);
+			x = bonus_results_hop_speeds_ADDRESS;
+			a = bonus_results_hop_speeds[(int8_t)a];
 			mem_write8(u + 0x19u, a);
 			mem_write8(u + 0x79u, a);
 		}
@@ -5215,7 +5215,7 @@ void sub_021385(uint16_t x)
 	mem_write16(x + 0xFu, 0u);
 	mem_write16(x + 0x14u, 0u);
 	t1 = mem_read8(x + 0x1Bu);
-	if (t1 <= DATA8(indexed_table_021E71_ADDRESS + (int8_t)(unk_4857 - 1u)))
+	if (t1 <= wrestler_beaten_health_by_players[(int8_t)((uint8_t)(unk_4857 - 1u))])
 	{
 		d = 0x9800u;
 		carry = sub_078689(d);
@@ -5711,8 +5711,8 @@ uint16_t sub_021565(uint16_t x, uint16_t y)
 	}
 	sub_02172D(x);
 	t2 = mem_read8(x + 0x2Du);
-	y = indexed_table_021ED1_ADDRESS;
-	d = ((uint32_t)t2 << 8) | DATA8(indexed_table_021ED1_ADDRESS + (unk_4861 >> 1));
+	y = wrestler_speeds_by_rank_ADDRESS;
+	d = ((uint32_t)t2 << 8) | wrestler_speeds_by_rank[unk_4861 >> 1];
 	sub_078617(x, d);
 	sub_02174B(x);
 	return y;
@@ -6441,8 +6441,8 @@ void sub_0216E4(uint16_t x, uint16_t *p_u, uint32_t *p_carry)
 	mem_write16(x + 0x14u, 0u);
 	sub_02174B(x);
 	mem_write8(x + 0x29u, 0u);
-	u = indexed_table_021EC9_ADDRESS;
-	if (DATA8(indexed_table_021EC9_ADDRESS + (int8_t)(unk_4857 - 1u)) <= unk_4858)
+	u = wrestler_quick_attack_chances_by_players_ADDRESS;
+	if (wrestler_quick_attack_chances_by_players[(int8_t)((uint8_t)(unk_4857 - 1u))] <= unk_4858)
 	{
 		t8 = mem_read8(x + VIDEO_002F);
 		t9 = mem_read8(x + 0x1Bu);
@@ -6462,8 +6462,8 @@ void sub_0216E4(uint16_t x, uint16_t *p_u, uint32_t *p_carry)
 	carry = sub_0217E5(x);
 	if (carry)
 	{
-		u = indexed_table_021ECD_ADDRESS;
-		if (unk_4858 < DATA8(indexed_table_021ECD_ADDRESS + (int8_t)(unk_4857 - 1u)))
+		u = wrestler_guard_chances_by_players_ADDRESS;
+		if (unk_4858 < wrestler_guard_chances_by_players[(int8_t)((uint8_t)(unk_4857 - 1u))])
 		{
 			mem_write8(x, mem_read8(x) | 4u);
 			mem_write8(x + 0x29u, 0x40u);
@@ -6478,8 +6478,8 @@ void sub_0216E4(uint16_t x, uint16_t *p_u, uint32_t *p_carry)
 			return;
 		}
 	}
-	u = indexed_table_021EB9_ADDRESS;
-	a = DATA8(indexed_table_021EB9_ADDRESS + (unk_4861 >> 1));
+	u = wrestler_jump_chances_by_rank_ADDRESS;
+	a = wrestler_jump_chances_by_rank[unk_4861 >> 1];
 	unk_48F0 = unk_4858 + (uint8_t)unk_4815;
 	if (a <= unk_48F0)
 	{
@@ -6595,7 +6595,7 @@ void sub_021766(uint16_t x, uint16_t *p_d, uint32_t *p_carry)
 
 	a = (uint8_t)(d >> 8);
 	carry = (int8_t)a < 0;
-	t1 = DATA16(constant_table_021E79_ADDRESS + (uint8_t)((uint32_t)a << 1));
+	t1 = wrestler_animations[a & 0x7Fu];
 	a = (uint8_t)(t1 >> 8);
 	b = t1 | 0x80u;
 	mem_write16(x + 4u, ((uint32_t)a << 8) | b);
@@ -6607,21 +6607,21 @@ void sub_021766(uint16_t x, uint16_t *p_d, uint32_t *p_carry)
 uint16_t sub_021775(uint16_t x, uint16_t d)
 {
 	uint16_t u = 0;
-	uint16_t t1 = 0, t2 = 0, t3 = 0, t4 = 0, t5 = 0, t6 = 0, t7 = 0, t8 = 0;
+	uint16_t t1 = 0, field_1c = 0, t2 = 0, field_1f = 0, t3 = 0, field = 0, t4 = 0, field_23 = 0;
 
-	t1 = indexed_table_021E99_ADDRESS + (uint8_t)((((uint32_t)(d >> 8) << 1) << 1) << 1);
-	t2 = DATA16(t1);
-	mem_write16(x + 0x1Cu, t2);
-	t3 = t1 + 2u;
-	t4 = mem_read16(t3);
-	mem_write16(x + 0x1Fu, t4);
-	t5 = t3 + 2u;
-	t6 = mem_read16(t5);
-	mem_write16(x + 0x21u, t6);
-	t7 = t5 + 2u;
-	u = t7 + 2u;
-	t8 = mem_read16(t7);
-	mem_write16(x + 0x23u, t8);
+	t1 = wrestler_hit_boxes_ADDRESS + (uint8_t)((((uint32_t)(d >> 8) << 1) << 1) << 1);
+	field_1c = HIT_BOX(t1)->field_1c;
+	mem_write16(x + 0x1Cu, field_1c);
+	t2 = t1 + 2u;
+	field_1f = HIT_BOX(t2 - 0x2u)->field_1f;
+	mem_write16(x + 0x1Fu, field_1f);
+	t3 = t2 + 2u;
+	field = HIT_BOX(t3 - 0x4u)->field_21;
+	mem_write16(x + 0x21u, field);
+	t4 = t3 + 2u;
+	u = t4 + 2u;
+	field_23 = HIT_BOX(t4 - 0x6u)->field_23;
+	mem_write16(x + 0x23u, field_23);
 	return u;
 }
 

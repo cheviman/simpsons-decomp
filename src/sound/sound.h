@@ -3,7 +3,7 @@
  *    Description: the sound program's ports, variables, tables, structures and functions
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    06-11-2026
+ *    Modified:    07-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the Z80 sound program decompiled into C by
@@ -152,6 +152,9 @@ extern const void *effect_handlers_data;
 #define effect_priorities_ADDRESS 0x1086u
 extern const void *effect_priorities_data;
 #define effect_priorities ((const uint8_t *)effect_priorities_data)
+#define unused_effect_handlers_by_sound_ADDRESS 0x26FCu
+extern const void *unused_effect_handlers_by_sound_data;
+#define unused_effect_handlers_by_sound ((const uint16_t *)unused_effect_handlers_by_sound_data)
 #define unused_effect_priorities_by_sound_ADDRESS 0x2740u
 extern const void *unused_effect_priorities_by_sound_data;
 #define unused_effect_priorities_by_sound ((const uint8_t *)unused_effect_priorities_by_sound_data)
@@ -166,13 +169,13 @@ extern const void *samples_data;
 #define samples (*(const uint8_t *)samples_data)
 #define effect_handlers_2_ADDRESS 0x2E01u
 extern const void *effect_handlers_2_data;
-#define effect_handlers_2 (*(const uint16_t *)effect_handlers_2_data)
+#define effect_handlers_2 ((const uint16_t *)effect_handlers_2_data)
 #define effect_priorities_2_ADDRESS 0x2E79u
 extern const void *effect_priorities_2_data;
 #define effect_priorities_2 ((const uint8_t *)effect_priorities_2_data)
-#define effect_handlers_40_ADDRESS 0x35F0u
-extern const void *effect_handlers_40_data;
-#define effect_handlers_40 (*(const uint16_t *)effect_handlers_40_data)
+#define effect_handlers_40_by_sound_ADDRESS 0x3570u
+extern const void *effect_handlers_40_by_sound_data;
+#define effect_handlers_40_by_sound ((const uint16_t *)effect_handlers_40_by_sound_data)
 #define effect_priorities_40_by_sound_ADDRESS 0x3630u
 extern const void *effect_priorities_40_by_sound_data;
 #define effect_priorities_40_by_sound ((const uint8_t *)effect_priorities_40_by_sound_data)
@@ -182,6 +185,9 @@ extern const void *effect_priorities_40_data;
 #define effect_levels_ADDRESS 0x4168u
 extern const void *effect_levels_data;
 #define effect_levels (*(const uint16_t *)effect_levels_data)
+#define fm_pitches_by_note_ADDRESS 0x448Bu
+extern const void *fm_pitches_by_note_data;
+#define fm_pitches_by_note (*(const uint16_t *)fm_pitches_by_note_data)
 #define fm_pitches_ADDRESS 0x44A5u
 extern const void *fm_pitches_data;
 #define fm_pitches (*(const uint16_t *)fm_pitches_data)
@@ -191,12 +197,15 @@ extern const void *pcm_pitches_data;
 #define note_lengths_ADDRESS 0x48FAu
 extern const void *note_lengths_data;
 #define note_lengths (*(const uint16_t *)note_lengths_data)
+#define pcm_drum_b_4_patch_ADDRESS 0x5CB0u
+extern const void *pcm_drum_b_4_patch_data;
+#define pcm_drum_b_4_patch (*(const uint8_t *)pcm_drum_b_4_patch_data)
+#define song_headers_by_sound_ADDRESS 0x5CB2u
+extern const void *song_headers_by_sound_data;
+#define song_headers_by_sound (*(const uint16_t *)song_headers_by_sound_data)
 #define song_banks_by_sound_ADDRESS 0x5D92u
 extern const void *song_banks_by_sound_data;
 #define song_banks_by_sound ((const uint8_t *)song_banks_by_sound_data)
-#define song_headers_ADDRESS 0x5DB2u
-extern const void *song_headers_data;
-#define song_headers (*(const uint16_t *)song_headers_data)
 #define song_banks_ADDRESS 0x5E12u
 extern const void *song_banks_data;
 #define song_banks (*(const uint8_t *)song_banks_data)
@@ -244,11 +253,11 @@ extern const void *music_pcm_transpositions_data;
 
 /* data in the program ROM sound_symbols.txt labels */
 #define effect_steps_12e1_ADDRESS 0x12E1u
-#define unused_effect_handlers_ADDRESS 0x26FCu
 #define effect_steps_36b9_ADDRESS 0x36B9u
 #define music_commands_ADDRESS 0x44A6u
 #define instrument_routines_low_ADDRESS 0x496Cu
 #define instrument_routines_ADDRESS 0x4E4Eu
+#define song_headers_ADDRESS 0x5DB2u
 
 /* where the code the program holds as values is (the handlers it stores and switches on) */
 #define channel_idle_ADDRESS 0x0C39u
@@ -880,15 +889,27 @@ struct sample
 	uint8_t flags;
 };
 
+struct effect_level
+{
+	uint8_t pan;
+	uint8_t volume;
+};
+
 #pragma pack(pop)
 
 _Static_assert(sizeof(struct fm_patch) == 0x19, "struct fm_patch has the size of the program ROM's records");
 _Static_assert(sizeof(struct pcm_patch) == 0x3, "struct pcm_patch has the size of the program ROM's records");
 _Static_assert(sizeof(struct sample) == 0x8, "struct sample has the size of the program ROM's records");
+_Static_assert(sizeof(struct effect_level) == 0x2, "struct effect_level has the size of the program ROM's records");
 
 #define FM_PATCH(address) ((const struct fm_patch *)sound_rom_at(address))
 #define PCM_PATCH(address) ((const struct pcm_patch *)sound_rom_at(address))
 #define SAMPLE(address) ((const struct sample *)sound_rom_at(address))
+#define EFFECT_LEVEL(address) ((const struct effect_level *)sound_rom_at(address))
+#define PATCH_ADDRESS(address) ((const uint16_t *)sound_rom_at(address))
+#define PITCH(address) ((const uint16_t *)sound_rom_at(address))
+#define MUSIC_COMMAND_HANDLER(address) ((const uint16_t *)sound_rom_at(address))
+#define SONG_HEADER_ADDRESS(address) ((const uint16_t *)sound_rom_at(address))
 
 /* chips.c: the records' handlers and the chips: the YM2151's registers, patches, volumes, pitches, keys, LFO and pan; the K053260's voices */
 void stop_channel(uint16_t ix);

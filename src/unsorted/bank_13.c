@@ -3,7 +3,7 @@
  *    Description: bank 13's code
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    06-11-2026
+ *    Modified:    07-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -151,7 +151,7 @@ void sub_026000(uint16_t *p_x, uint16_t *p_y)
 	}
 	sub_026D01(x);
 	sub_026D35(x);
-	d = ((uint32_t)DATA8(indexed_table_027CB2_ADDRESS + (int8_t)(unk_4857 - 1u)) << 8) | 1u;
+	d = ((uint32_t)krusty_balloon_gauge_piece_health_by_players[(int8_t)((uint8_t)(unk_4857 - 1u))] << 8) | 1u;
 	y = sub_0786BF(x, y, d);
 	*p_x = x;
 	*p_y = y;
@@ -905,26 +905,26 @@ void sub_026123(void)
 {
 	uint32_t carry = 0;
 	uint8_t a = 0, d = 0;
-	uint16_t x = 0;
-	uint16_t t1 = 0, t2 = 0, t3 = 0, t4 = 0, t5 = 0, t6 = 0, t7 = 0;
+	uint16_t step_word = 0;
+	uint16_t t1 = 0, until = 0, layer_step_word = 0, t2 = 0, t3 = 0, t4 = 0, t5 = 0;
 
-	t1 = loaded_table_027A5B_ADDRESS + (int8_t)(((uint32_t)unk_488E << 1) << 1);
-	x = t1 + 2u;
-	t2 = DATA16(t1);
-	if ((int16_t)t2 <= (int16_t)unk_48C5)
+	t1 = stage_3_part_2_layer_offsets_ADDRESS + (int8_t)(((uint32_t)unk_488E << 1) << 1);
+	step_word = t1 + 2u;
+	until = LAYER_OFFSET_STEP(t1)->until;
+	if ((int16_t)until <= (int16_t)unk_48C5)
 	{
 		unk_488E++;
-		x += 2u;
+		step_word += 2u;
 	}
-	t3 = mem_read16(x);
-	unk_48CA = t3;
-	t4 = AT16(unk_48B8, -1);
-	t5 = unk_48E2;
-	t6 = t4;
-	t7 = t6 + t5;
-	carry = (uint16_t)(t6 + t5) < t6;
-	d = (uint8_t)t7;
-	a = (uint8_t)(t7 >> 8);
+	layer_step_word = LAYER_STEP_WORD(step_word);
+	unk_48CA = layer_step_word;
+	t2 = AT16(unk_48B8, -1);
+	t3 = unk_48E2;
+	t4 = t2;
+	t5 = t4 + t3;
+	carry = (uint16_t)(t4 + t3) < t4;
+	d = (uint8_t)t5;
+	a = (uint8_t)(t5 >> 8);
 	AT16(unk_48C5, -1) = ((uint32_t)a << 8) | (d & 0xFFu);
 	AT16(unk_48B8, -1) = ((uint32_t)a << 8) | (d & 0xFFu);
 	a = (uint8_t)(unk_48B8 >> 8u) + carry;
@@ -1014,7 +1014,7 @@ uint16_t sub_026172(uint16_t u)
 
 	t1 = u;
 	u_2 = t1 + 2u;
-	if ((int16_t)io_read16(t1) <= (int16_t)unk_48AC)
+	if ((int16_t)mem_read16(t1) <= (int16_t)unk_48AC)
 	{
 		unk_48AB++;
 		unk_4880++;
@@ -1125,8 +1125,8 @@ uint16_t sub_0261D4(uint16_t u)
 {
 	uint32_t carry = 0;
 	uint8_t a = 0, b = 0;
-	uint16_t x = 0;
-	uint16_t t1 = 0, t2 = 0, t3 = 0, t4 = 0, t5 = 0, t6 = 0, t7 = 0, t8 = 0, t9 = 0, t10 = 0;
+	uint16_t shake = 0;
+	uint16_t t1 = 0, pixels = 0, t2 = 0, t3 = 0, t4 = 0, pixels_2 = 0, t5 = 0, t6 = 0, t7 = 0, t8 = 0;
 
 	if (unk_4895 != 1u)
 	{
@@ -1134,30 +1134,30 @@ uint16_t sub_0261D4(uint16_t u)
 		return u;
 	}
 	unk_4895 = 0u;
-	x = loaded_table_027A00_ADDRESS + (uint8_t)((unk_4896 & 7u) << 1);
+	shake = screen_shake_steps_ADDRESS + (uint8_t)((unk_4896 & 7u) << 1);
 	t1 = AT16(unk_48BE, -1);
-	t2 = DATA16(x);
-	t3 = t1;
-	t4 = t3 + t2;
-	carry = (uint16_t)(t3 + t2) < t3;
-	AT16(unk_48BE, -1) = t4;
-	unk_48BE = (unk_48BE & 0xFFu) | ((((uint16_t)(int8_t)DATA8(x) >> 8) + (uint8_t)(unk_48BE >> 8u) + carry & 0xFFu) << 8u);
-	t5 = AT16(unk_48CE, -1);
-	t6 = DATA16(x);
-	t7 = t5;
-	t8 = t7 + t6;
-	carry = (uint16_t)(t7 + t6) < t7;
-	AT16(unk_48CE, -1) = t8;
-	unk_48CE = (unk_48CE & 0xFFu) | ((((uint16_t)(int8_t)DATA8(x) >> 8) + (uint8_t)(unk_48CE >> 8u) + carry & 0xFFu) << 8u);
-	t9 = (int8_t)(0u - DATA8(x));
-	t10 = t9 + unk_4886;
-	a = (uint8_t)(t10 >> 8);
-	b = (uint8_t)t10;
+	pixels = (((uint32_t)(uint8_t)SHAKE_STEP(shake)->pixels << 8u) | SHAKE_STEP(shake)->fraction);
+	t2 = t1;
+	t3 = t2 + pixels;
+	carry = (uint16_t)(t2 + pixels) < t2;
+	AT16(unk_48BE, -1) = t3;
+	unk_48BE = (unk_48BE & 0xFFu) | ((((uint16_t)SHAKE_STEP(shake)->pixels >> 8) + (uint8_t)(unk_48BE >> 8u) + carry & 0xFFu) << 8u);
+	t4 = AT16(unk_48CE, -1);
+	pixels_2 = (((uint32_t)(uint8_t)SHAKE_STEP(shake)->pixels << 8u) | SHAKE_STEP(shake)->fraction);
+	t5 = t4;
+	t6 = t5 + pixels_2;
+	carry = (uint16_t)(t5 + pixels_2) < t5;
+	AT16(unk_48CE, -1) = t6;
+	unk_48CE = (unk_48CE & 0xFFu) | ((((uint16_t)SHAKE_STEP(shake)->pixels >> 8) + (uint8_t)(unk_48CE >> 8u) + carry & 0xFFu) << 8u);
+	t7 = (int8_t)(0u - SHAKE_STEP(shake)->pixels);
+	t8 = t7 + unk_4886;
+	a = (uint8_t)(t8 >> 8);
+	b = (uint8_t)t8;
 	unk_4886 = ((uint32_t)a << 8) | b;
 	io_write16(IO_1FA0, ((uint32_t)a << 8) | b);
 	unk_4896++;
-	u = indexed_table_027A10_ADDRESS;
-	if (unk_4896 != DATA8(indexed_table_027A10_ADDRESS + (int8_t)unk_4898))
+	u = screen_shake_lengths_ADDRESS;
+	if (unk_4896 != screen_shake_lengths[(int8_t)unk_4898])
 	{
 		unk_4895++;
 		return u;
@@ -1629,13 +1629,13 @@ uint16_t sub_026413(uint16_t u)
 	u_2 = t1 + 1u;
 	d = (uint32_t)mem_read8(t1) << 8;
 	unk_48A6 = d >> 8;
-	x = DATA16(indexed_table_027A37_ADDRESS + (int8_t)((uint16_t)((uint32_t)(uint8_t)((uint32_t)(d >> 8) << 1) << 8) >> 8));
+	x = LAYER_SCROLL(layer_scrolls_ADDRESS + (int8_t)((uint16_t)((uint32_t)(uint8_t)((uint32_t)(d >> 8) << 1) << 8) >> 8) - 0x4u)->x;
 	unk_48F2 = (uint8_t)(unk_48DE >> 8u);
 	unk_48F3 = (uint8_t)unk_48DE;
 	unk_48F4 = (uint8_t)(unk_48E0 >> 8u);
 	unk_48F5 = (uint8_t)unk_48E0;
 	sub_026483(x);
-	x = DATA16(indexed_table_027A37_ADDRESS + ((uint16_t)((uint32_t)(uint8_t)((uint32_t)((uint16_t)((((uint16_t)((uint32_t)(uint8_t)(((uint16_t)((uint32_t)unk_48A6 << 8) >> 8) + 1u) << 8) >> 8) & 1u) << 8) >> 8) << 1) << 8) >> 8));
+	x = LAYER_SCROLL(layer_scrolls_ADDRESS + ((uint16_t)((uint32_t)(uint8_t)((uint32_t)((uint16_t)((((uint16_t)((uint32_t)(uint8_t)(((uint16_t)((uint32_t)unk_48A6 << 8) >> 8) + 1u) << 8) >> 8) & 1u) << 8) >> 8) << 1) << 8) >> 8) - 0x4u)->x;
 	d = unk_48DE;
 	unk_48F0 = (uint8_t)(d >> 8u);
 	unk_48F1 = (uint8_t)d;
@@ -1671,28 +1671,28 @@ uint16_t sub_026413(uint16_t u)
 	return u_2;
 }
 
-void sub_026483(uint16_t x)
+void sub_026483(uint16_t scroll)
 {
 	uint32_t carry = 0;
-	uint16_t y = 0;
-	uint16_t t1 = 0, t2 = 0, t3 = 0, t4 = 0, t5 = 0, t6 = 0, t7 = 0, t8 = 0, t9 = 0;
+	uint16_t x = 0, y = 0;
+	uint16_t t1 = 0, t2 = 0, t3 = 0, t4 = 0, y_2 = 0, t5 = 0, t6 = 0, t7 = 0, t8 = 0;
 
-	y = mem_read16(x);
+	x = LAYER_SCROLL(scroll)->x;
 	t1 = (((uint32_t)unk_48F2 << 8u) | unk_48F3);
-	t2 = io_read16(y + 1u);
+	t2 = io_read16(x + 1u);
 	t3 = t1;
 	t4 = t3 + t2;
 	carry = (uint16_t)(t3 + t2) < t3;
-	io_write16(y + 1u, t4);
-	mem_write8(y, ((uint16_t)(int8_t)unk_48F2 >> 8) + mem_read8(y) + carry);
-	t5 = mem_read16(x + 2u);
-	y = t5;
-	t6 = (((uint32_t)unk_48F4 << 8u) | unk_48F5);
-	t7 = mem_read16(y + 1u);
-	t8 = t6;
-	t9 = t8 + t7;
-	carry = (uint16_t)(t8 + t7) < t8;
-	mem_write16(y + 1u, t9);
+	io_write16(x + 1u, t4);
+	mem_write8(x, ((uint16_t)(int8_t)unk_48F2 >> 8) + mem_read8(x) + carry);
+	y_2 = LAYER_SCROLL(scroll)->y;
+	y = y_2;
+	t5 = (((uint32_t)unk_48F4 << 8u) | unk_48F5);
+	t6 = mem_read16(y + 1u);
+	t7 = t5;
+	t8 = t7 + t6;
+	carry = (uint16_t)(t7 + t6) < t7;
+	mem_write16(y + 1u, t8);
 	mem_write8(y, ((uint16_t)(int8_t)unk_48F4 >> 8) + mem_read8(y) + carry);
 }
 
@@ -2276,7 +2276,7 @@ void sub_0265C7(uint16_t x)
 	mem_write16(x + 0xFu, 0u);
 	mem_write16(x + 0x19u, 0u);
 	t5 = mem_read8(x + 0x1Bu);
-	if (DATA8(indexed_table_027CAE_ADDRESS + (int8_t)(unk_4857 - 1u)) < t5)
+	if (krusty_balloon_beaten_health_by_players[(int8_t)((uint8_t)(unk_4857 - 1u))] < t5)
 	{
 		t6 = mem_read8(x + 0x28u);
 		mem_write8(x + 0x28u, t6 + 1u);
@@ -2834,8 +2834,8 @@ uint16_t sub_02672A(uint16_t x, uint16_t y)
 	}
 	sub_02699B(x);
 	t2 = mem_read8(x + 0x2Du);
-	y = indexed_table_027D18_ADDRESS;
-	d = ((uint32_t)t2 << 8) | DATA8(indexed_table_027D18_ADDRESS + (unk_4861 >> 1));
+	y = krusty_balloon_speeds_by_rank_ADDRESS;
+	d = ((uint32_t)t2 << 8) | krusty_balloon_speeds_by_rank[unk_4861 >> 1];
 	sub_078617(x, d);
 	return y;
 }
@@ -3862,8 +3862,8 @@ void sub_02693A(uint16_t x, uint16_t *p_u, uint32_t *p_carry)
 						mem_write8(x + 0x35u, 0u);
 						d_2 = 0u;
 						sub_026969(x, d_2);
-						u = indexed_table_027D04_ADDRESS;
-						if (unk_4858 < DATA8(indexed_table_027D04_ADDRESS + (int8_t)(unk_4857 - 1u)))
+						u = krusty_balloon_quick_attack_chances_by_players_ADDRESS;
+						if (unk_4858 < krusty_balloon_quick_attack_chances_by_players[(int8_t)((uint8_t)(unk_4857 - 1u))])
 						{
 							t14 = mem_read8(x + 0x1Bu);
 							mem_write8(x + VIDEO_002F, t14);
@@ -3898,25 +3898,25 @@ void sub_026969(uint16_t x, uint16_t d)
 {
 	uint16_t t1 = 0;
 
-	t1 = DATA16(indexed_table_027CB6_ADDRESS + (int8_t)((uint32_t)(d >> 8) << 1));
+	t1 = krusty_balloon_animations[(int8_t)((uint8_t)((uint32_t)(d >> 8) << 1)) / 2];
 	mem_write16(x + 4u, ((uint32_t)(t1 >> 8) << 8) | (uint8_t)(t1 | 0x80u));
 }
 
 void sub_026978(uint16_t x, uint16_t d)
 {
-	uint16_t t1 = 0, t2 = 0, t3 = 0, t4 = 0, t5 = 0, t6 = 0, t7 = 0;
+	uint16_t t1 = 0, field_1c = 0, t2 = 0, field_1f = 0, t3 = 0, field = 0, field_23 = 0;
 
-	t1 = indexed_table_027CD0_ADDRESS + (uint8_t)((((uint32_t)(d >> 8) << 1) << 1) << 1);
-	t2 = DATA16(t1);
-	mem_write16(x + 0x1Cu, t2);
-	t3 = t1 + 2u;
-	t4 = mem_read16(t3);
-	mem_write16(x + 0x1Fu, t4);
-	t5 = t3 + 2u;
-	t6 = mem_read16(t5);
-	mem_write16(x + 0x21u, t6);
-	t7 = mem_read16(t5 + 2u);
-	mem_write16(x + 0x23u, t7);
+	t1 = krusty_balloon_hit_boxes_ADDRESS + (uint8_t)((((uint32_t)(d >> 8) << 1) << 1) << 1);
+	field_1c = HIT_BOX(t1)->field_1c;
+	mem_write16(x + 0x1Cu, field_1c);
+	t2 = t1 + 2u;
+	field_1f = HIT_BOX(t2 - 0x2u)->field_1f;
+	mem_write16(x + 0x1Fu, field_1f);
+	t3 = t2 + 2u;
+	field = HIT_BOX(t3 - 0x4u)->field_21;
+	mem_write16(x + 0x21u, field);
+	field_23 = HIT_BOX(t3 - 0x4u)->field_23;
+	mem_write16(x + 0x23u, field_23);
 }
 
 void sub_02699B(uint16_t x)
@@ -4178,8 +4178,8 @@ uint16_t sub_026A55(uint16_t u, uint32_t carry)
 	t2 = mem_read16(u + 0xFu);
 	t3 = (((uint32_t)(uint8_t)((uint32_t)(t1 >> 8) << 1) << 8) | (uint8_t)(((uint32_t)(uint8_t)t1 << 1) | carry)) + t2;
 	mem_write16(u + 0xFu, t3);
-	y = indexed_table_027D28_ADDRESS;
-	t4 = 0u - (((uint32_t)(DATA16(indexed_table_027D28_ADDRESS + (uint8_t)((unk_4858 & 7u) << 1)) >> 8) << 8) | unk_4858);
+	y = krusty_balloon_throw_z_speeds_ADDRESS;
+	t4 = 0u - (((uint32_t)(krusty_balloon_throw_z_speeds[unk_4858 & 7u] >> 8) << 8) | unk_4858);
 	mem_write16(u + 0x14u, t4);
 	return y;
 }
@@ -4460,9 +4460,9 @@ uint16_t sub_026B79(uint16_t x, uint16_t y)
 	sub_026969(x, d);
 	d &= 0xFFu;
 	sub_026978(x, d);
-	u = indexed_table_027CAE_ADDRESS;
+	u = krusty_balloon_beaten_health_by_players_ADDRESS;
 	t2 = mem_read8(x + 0x1Bu);
-	if (t2 <= DATA8(indexed_table_027CAE_ADDRESS + (int8_t)(unk_4857 - 1u)))
+	if (t2 <= krusty_balloon_beaten_health_by_players[(int8_t)((uint8_t)(unk_4857 - 1u))])
 	{
 		mem_write16(x + 0x19u, 0x300u);
 		t3 = mem_read16(x + 0x25u);
@@ -4486,7 +4486,7 @@ uint16_t sub_026B79(uint16_t x, uint16_t y)
 		t7 = mem_read8(x + 0x30u);
 		mem_write8(x + 0x30u, t7 + 1u);
 		t8 = mem_read8(x + 0x30u);
-		if (t8 < DATA8(indexed_table_027D00_ADDRESS + (int8_t)(unk_4857 - 1u)))
+		if (t8 < krusty_balloon_hit_limits_by_players[(int8_t)((uint8_t)(unk_4857 - 1u))])
 		{
 			mem_write16(x + 0xFu, 0u);
 			mem_write16(x + 0x14u, 0u);
@@ -4497,8 +4497,8 @@ uint16_t sub_026B79(uint16_t x, uint16_t y)
 		}
 	}
 	mem_write8(x + 0x30u, 0u);
-	y = indexed_table_027D08_ADDRESS;
-	if (unk_4858 <= DATA8(indexed_table_027D08_ADDRESS + (unk_4861 >> 1)))
+	y = krusty_balloon_fly_off_chances_by_rank_ADDRESS;
+	if (unk_4858 <= krusty_balloon_fly_off_chances_by_rank[unk_4861 >> 1])
 	{
 		sub_026969(x, d);
 		mem_write16(x + 0xFu, 0x600u);
@@ -6311,8 +6311,8 @@ uint16_t sub_02719A(uint16_t d)
 {
 	uint32_t carry = 0;
 	uint8_t a = 0, b = 0;
-	uint16_t y = 0;
-	uint16_t t1 = 0, t2 = 0, t3 = 0, t4 = 0, t5 = 0, t6 = 0, t7 = 0;
+	uint16_t object = 0;
+	uint16_t t1 = 0, t2 = 0, t3 = 0, kind = 0, t4 = 0, x = 0, z = 0;
 
 	a = (uint8_t)(d >> 8);
 	t1 = a | 0x1000u;
@@ -6324,20 +6324,20 @@ uint16_t sub_02719A(uint16_t d)
 	b = (uint32_t)b << 1;
 	a = (uint8_t)(((uint32_t)a << 1) | carry);
 	carry = (int8_t)b < 0;
-	t2 = loaded_table_027E81_ADDRESS + (((((uint32_t)a << 1) | carry) << 8) | (uint8_t)((uint32_t)b << 1));
-	y = DATA16(t2);
-	mem_write8(y, 0x80u);
+	t2 = stage_title_placements_ADDRESS + (((((uint32_t)a << 1) | carry) << 8) | (uint8_t)((uint32_t)b << 1));
+	object = PLACEMENT(t2)->object;
+	mem_write8(object, 0x80u);
 	t3 = t2 + 2u;
-	t4 = mem_read16(t3);
-	io_write16(y + 4u, ((uint32_t)(t4 >> 8) << 8) | (uint8_t)(t4 | 0x80u));
-	t5 = t3 + 2u;
-	t6 = mem_read16(t5);
-	io_write16(y + 0xCu, t6);
-	io_write16(y + 0x11u, 0x80u);
-	t7 = mem_read16(t5 + 2u);
-	io_write16(y + 0x16u, t7);
-	io_write8(y + 9u, 0x20u);
-	return y;
+	kind = PLACEMENT(t3 - 0x2u)->kind;
+	io_write16(object + 4u, ((uint32_t)(kind >> 8) << 8) | (uint8_t)(kind | 0x80u));
+	t4 = t3 + 2u;
+	x = PLACEMENT(t4 - 0x4u)->x;
+	io_write16(object + 0xCu, x);
+	io_write16(object + 0x11u, 0x80u);
+	z = PLACEMENT(t4 - 0x4u)->z;
+	io_write16(object + 0x16u, z);
+	io_write8(object + 9u, 0x20u);
+	return object;
 }
 
 void sub_0271CF(void)

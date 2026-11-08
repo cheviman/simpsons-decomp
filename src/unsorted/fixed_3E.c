@@ -3,7 +3,7 @@
  *    Description: the fixed program's code, 07C000-07DFFF
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    06-11-2026
+ *    Modified:    07-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -758,7 +758,7 @@ void sub_07C4A3(uint16_t d, uint16_t *p_x, uint16_t *p_y, uint16_t *p_u)
 	a = (uint8_t)(d >> 8);
 	stack = (uint8_t)d;
 	stack_2 = a;
-	x = DATA16(layer_maps_ADDRESS + (uint8_t)((uint32_t)a << 1));
+	x = layer_maps[a & 0x7Fu];
 	saved_unk_480E = unk_480E;
 	do
 	{
@@ -788,23 +788,23 @@ void sub_07C4A3(uint16_t d, uint16_t *p_x, uint16_t *p_y, uint16_t *p_u)
 void sub_07C4E1(uint16_t d, uint16_t *p_y, uint16_t *p_u)
 {
 	uint8_t a = 0;
-	uint16_t d_2 = 0, u = 0, x = 0, y = 0;
+	uint16_t d_2 = 0, layer_map = 0, u = 0, x = 0, y = 0;
 	uint8_t stack = 0, stack_2 = 0, stack_3 = 0, stack_4 = 0;
-	uint8_t t7 = 0;
-	uint16_t t1 = 0, t2 = 0, t3 = 0, t4 = 0, t5 = 0, t6 = 0, t8 = 0;
+	uint8_t t5 = 0;
+	uint16_t offset_x = 0, offset_y = 0, t1 = 0, t2 = 0, t3 = 0, t4 = 0, t6 = 0;
 
 	a = (uint8_t)(d >> 8);
 	stack = (uint8_t)d;
 	stack_2 = a;
-	x = DATA16(layer_maps_ADDRESS + (uint8_t)((uint32_t)a << 1));
-	t1 = io_read16(x + 0xAu);
-	mem_write16(t1, 0u);
-	t2 = io_read16(x + 0xCu);
-	mem_write16(t2, 0u);
+	layer_map = layer_maps[a & 0x7Fu];
+	offset_x = LAYER_MAP(layer_map)->offset_x;
+	mem_write16(offset_x, 0u);
+	offset_y = LAYER_MAP(layer_map)->offset_y;
+	mem_write16(offset_y, 0u);
 	do
 	{
-		stack_4 = x >> 8;
-		stack_3 = (uint8_t)x;
+		stack_4 = layer_map >> 8;
+		stack_3 = (uint8_t)layer_map;
 		d_2 = (uint32_t)stack_2 << 8;
 		sub_07C573(&y, &u, &d_2);
 		sub_07C744((uint8_t)d_2, &y, &u);
@@ -814,17 +814,17 @@ void sub_07C4E1(uint16_t d, uint16_t *p_y, uint16_t *p_u)
 		d_2 = (uint32_t)stack_2 << 8;
 		sub_07C573(&y, &u, &d_2);
 		y = sub_07C789(y, (uint8_t)d_2);
-		x = ((uint32_t)stack_4 << 8) | stack_3;
-		t3 = io_read16(x + 0xAu);
-		t4 = mem_read16(t3);
-		t5 = t4 + 8u;
-		t6 = io_read16(x + 0xAu);
-		mem_write16(t6, t5);
-		t7 = stack;
-		stack = t7 - 1u;
-	} while (t7 != 1u);
-	t8 = io_read16(x + 0xAu);
-	mem_write16(t8, 0u);
+		layer_map = ((uint32_t)stack_4 << 8) | stack_3;
+		t1 = io_read16(layer_map + 0xAu);
+		t2 = mem_read16(t1);
+		t3 = t2 + 8u;
+		t4 = io_read16(layer_map + 0xAu);
+		mem_write16(t4, t3);
+		t5 = stack;
+		stack = t5 - 1u;
+	} while (t5 != 1u);
+	t6 = io_read16(layer_map + 0xAu);
+	mem_write16(t6, 0u);
 	*p_y = y;
 	*p_u = u;
 }
@@ -832,30 +832,30 @@ void sub_07C4E1(uint16_t d, uint16_t *p_y, uint16_t *p_u)
 void sub_07C51C(uint16_t d)
 {
 	uint8_t a = 0, b = 0;
-	uint16_t u = 0, x = 0;
-	uint8_t t8 = 0, t9 = 0;
-	uint16_t t1 = 0, t2 = 0, t3 = 0, t4 = 0, t5 = 0, t6 = 0, t7 = 0;
+	uint16_t picture = 0, places = 0, u = 0, x = 0;
+	uint8_t t7 = 0, t8 = 0;
+	uint16_t tile_picture_entry = 0, t1 = 0, t2 = 0, t3 = 0, t4 = 0, t5 = 0, t6 = 0;
 
 	a = (uint8_t)(d >> 8);
-	u = tile_pictures_ADDRESS;
+	places = tile_pictures_ADDRESS;
 	if ((int8_t)a < 0)
 	{
 		a = 0u;
 		unk_48F4++;
 	}
-	t1 = DATA16(u + (uint8_t)((uint32_t)a << 1));
-	unk_480E = mem_read8(t1);
+	tile_picture_entry = TILE_PICTURE_ENTRY(places + (a & 0x7Fu) * 0x2u);
+	unk_480E = TILE_PICTURE_PLACE(tile_picture_entry)->bank;
 	set_lines(unk_480E);
-	t2 = t1 + 1u;
-	x = mem_read16(t2);
-	u = mem_read16(t2 + 2u);
-	t3 = u;
-	unk_48F0 = mem_read8(t3);
+	t1 = tile_picture_entry + 1u;
+	x = TILE_PICTURE_PLACE(t1 - 0x1u)->tiles;
+	picture = TILE_PICTURE_PLACE(t1 - 0x1u)->picture;
+	t2 = picture;
+	unk_48F0 = TILE_PICTURE(t2)->width;
+	t3 = t2 + 1u;
+	unk_48F2 = TILE_PICTURE(t3 - 0x1u)->height;
 	t4 = t3 + 1u;
-	unk_48F2 = io_read8(t4);
-	t5 = t4 + 1u;
-	u = t5 + 1u;
-	unk_48F3 = mem_read8(t5);
+	u = t4 + 1u;
+	unk_48F3 = TILE_PICTURE(t4 - 0x2u)->colour;
 	do
 	{
 		unk_48F1 = unk_48F0;
@@ -863,21 +863,21 @@ void sub_07C51C(uint16_t d)
 		do
 		{
 			mem_write8(x - 0x2000u, b);
-			t6 = u;
-			u = t6 + 1u;
-			a = mem_read8(t6);
+			t5 = u;
+			u = t5 + 1u;
+			a = mem_read8(t5);
 			if (unk_48F4 != 0u)
 				a = 1u;
-			t7 = x;
-			x = t7 + 1u;
-			mem_write8(t7, a);
-			t8 = unk_48F1;
-			unk_48F1 = t8 - 1u;
-		} while (t8 != 1u);
+			t6 = x;
+			x = t6 + 1u;
+			mem_write8(t6, a);
+			t7 = unk_48F1;
+			unk_48F1 = t7 - 1u;
+		} while (t7 != 1u);
 		x += (int8_t)(0x40u - unk_48F0);
-		t9 = unk_48F2;
-		unk_48F2 = t9 - 1u;
-	} while (t9 != 1u);
+		t8 = unk_48F2;
+		unk_48F2 = t8 - 1u;
+	} while (t8 != 1u);
 }
 
 void sub_07C573(uint16_t *p_y, uint16_t *p_u, uint16_t *p_d)
@@ -885,80 +885,80 @@ void sub_07C573(uint16_t *p_y, uint16_t *p_u, uint16_t *p_d)
 	uint16_t d = (uint16_t)*p_d;
 	uint32_t carry = 0;
 	uint8_t a = 0, b = 0;
-	uint16_t d_2 = 0, u = 0, x = 0, y = 0;
+	uint16_t d_2 = 0, layer_map = 0, scene_area = 0, u = 0, y = 0;
 	uint8_t stack = 0, stack_2 = 0;
-	uint8_t t14 = 0, t16 = 0, t17 = 0;
-	uint16_t t1 = 0, t2 = 0, t3 = 0, t4 = 0, t5 = 0, t6 = 0, t7 = 0, t8 = 0, t9 = 0, t10 = 0, t11 = 0, t12 = 0, t13 = 0, t15 = 0, t18 = 0, t19 = 0, t20 = 0, t21 = 0, t22 = 0, t23 = 0, t24 = 0, t25 = 0, t26 = 0, t27 = 0, t28 = 0, t29 = 0, t30 = 0;
+	uint8_t t8 = 0, bank = 0, bank_2 = 0;
+	uint16_t scroll_x = 0, t1 = 0, offset_x = 0, t2 = 0, scroll_y = 0, t3 = 0, t4 = 0, t5 = 0, scroll_x_2 = 0, t6 = 0, offset_x_2 = 0, t7 = 0, maps = 0, maps_high = 0, scroll_x_3 = 0, t9 = 0, offset_x_3 = 0, t10 = 0, scroll_y_2 = 0, t11 = 0, offset_y2 = 0, t12 = 0, t13 = 0, scroll_x_4 = 0, t14 = 0, offset_x_4 = 0, t15 = 0;
 	uint32_t unk_48F0_halfword = 0;
 
 	a = (uint8_t)(d >> 8);
 	unk_48E8 = a;
-	x = DATA16(layer_maps_ADDRESS + (int8_t)((uint32_t)a << 1));
-	u = mem_read16(x);
-	t1 = io_read16(x + 2u);
-	t2 = mem_read16(t1);
-	t3 = io_read16(x + 0xAu);
-	t4 = t2 + mem_read16(t3);
-	carry = ((t4 >> 8) >> 0) & 1u;
-	unk_48F0_halfword = ((uint8_t)(((uint8_t)t4 >> 1) | (carry << 7)) >> 1) >> 1;
+	layer_map = layer_maps[(int8_t)((uint8_t)((uint32_t)a << 1)) / 2];
+	u = LAYER_MAP(layer_map)->tiles;
+	scroll_x = LAYER_MAP(layer_map)->scroll_x;
+	t1 = mem_read16(scroll_x);
+	offset_x = LAYER_MAP(layer_map)->offset_x;
+	t2 = t1 + mem_read16(offset_x);
+	carry = ((t2 >> 8) >> 0) & 1u;
+	unk_48F0_halfword = ((uint8_t)(((uint8_t)t2 >> 1) | (carry << 7)) >> 1) >> 1;
 	unk_48F0 = (uint8_t)(unk_48F0_halfword >> 8u);
 	unk_48F1 = (uint8_t)unk_48F0_halfword;
-	t5 = io_read16(x + 4u);
-	t6 = mem_read16(t5);
-	b = (uint8_t)t6;
-	unk_48F8 = ((uint32_t)(t6 >> 8) << 8) | b;
-	t7 = 0x40u * ((((b & 0xE0u) >> 1) >> 1) >> 1);
-	t8 = t7 + (((uint32_t)unk_48F0 << 8u) | unk_48F1);
-	u += t8;
-	t9 = io_read16(x + 2u);
-	t10 = mem_read16(t9);
-	t11 = io_read16(x + 0xAu);
-	t12 = t10 + mem_read16(t11);
-	carry = ((t12 >> 8) >> 0) & 1u;
-	unk_48FA = unk_4000_ADDRESS + (((uint8_t)(((uint8_t)t12 >> 1) | (carry << 7)) >> 1) >> 1);
-	t13 = io_read16(x + 6u);
-	y = t13;
-	t14 = unk_4875;
-	a = t14;
-	if ((int8_t)t14 < 0)
+	scroll_y = LAYER_MAP(layer_map)->scroll_y;
+	t3 = mem_read16(scroll_y);
+	b = (uint8_t)t3;
+	unk_48F8 = ((uint32_t)(t3 >> 8) << 8) | b;
+	t4 = 0x40u * ((((b & 0xE0u) >> 1) >> 1) >> 1);
+	t5 = t4 + (((uint32_t)unk_48F0 << 8u) | unk_48F1);
+	u += t5;
+	scroll_x_2 = LAYER_MAP(layer_map)->scroll_x;
+	t6 = mem_read16(scroll_x_2);
+	offset_x_2 = LAYER_MAP(layer_map)->offset_x;
+	t7 = t6 + mem_read16(offset_x_2);
+	carry = ((t7 >> 8) >> 0) & 1u;
+	unk_48FA = unk_4000_ADDRESS + (((uint8_t)(((uint8_t)t7 >> 1) | (carry << 7)) >> 1) >> 1);
+	maps = LAYER_MAP(layer_map)->maps;
+	y = maps;
+	t8 = unk_4875;
+	a = t8;
+	if ((int8_t)t8 < 0)
 	{
-		t15 = io_read16(x + 0x10u);
-		y = t15;
+		maps_high = LAYER_MAP(layer_map)->maps_high;
+		y = maps_high;
 		a &= 0x7Fu;
 	}
-	y = mem_read16(y + (int8_t)((uint32_t)a << 1)) + (int8_t)(((uint32_t)unk_4876 << 1) << 1);
-	t16 = io_read8(y + 2u);
-	unk_489E = t16;
-	t17 = io_read8(y + 2u);
-	unk_480E = t17;
+	scene_area = SCENE_AREA_LIST(y + (int8_t)((uint32_t)a << 1)) + (int8_t)(((uint32_t)unk_4876 << 1) << 1);
+	bank = SCENE_AREA(scene_area)->bank;
+	unk_489E = bank;
+	bank_2 = SCENE_AREA(scene_area)->bank;
+	unk_480E = bank_2;
 	set_lines(unk_480E);
-	t18 = io_read16(x + 2u);
-	t19 = mem_read16(t18);
-	t20 = io_read16(x + 0xAu);
-	t21 = t19 + mem_read16(t20);
-	y = mem_read16(mem_read16(y) + (int8_t)((uint32_t)(t21 >> 8) << 1));
-	b = (((((uint8_t)t21 >> 1) >> 1) >> 1) >> 1) & 0xEu;
+	scroll_x_3 = LAYER_MAP(layer_map)->scroll_x;
+	t9 = mem_read16(scroll_x_3);
+	offset_x_3 = LAYER_MAP(layer_map)->offset_x;
+	t10 = t9 + mem_read16(offset_x_3);
+	y = mem_read16(SCENE_AREA(scene_area)->address + (int8_t)((uint32_t)(t10 >> 8) << 1));
+	b = (((((uint8_t)t10 >> 1) >> 1) >> 1) >> 1) & 0xEu;
 	unk_48F0 = (uint8_t)(b >> 8u);
 	unk_48F1 = (uint8_t)b;
 	stack_2 = y >> 8;
 	stack = (uint8_t)y;
 	unk_48FC = y + b;
-	t22 = io_read16(x + 4u);
-	t23 = mem_read16(t22);
-	a = (uint8_t)(t23 >> 8);
-	b = (uint8_t)t23;
+	scroll_y_2 = LAYER_MAP(layer_map)->scroll_y;
+	t11 = mem_read16(scroll_y_2);
+	a = (uint8_t)(t11 >> 8);
+	b = (uint8_t)t11;
 	unk_48F8 = ((uint32_t)a << 8) | b;
-	t24 = io_read16(x + 0xEu);
-	t25 = (((uint32_t)a << 8) | b) + mem_read16(t24);
-	a = (uint8_t)(t25 >> 8);
+	offset_y2 = LAYER_MAP(layer_map)->offset_y2;
+	t12 = (((uint32_t)a << 8) | b) + mem_read16(offset_y2);
+	a = (uint8_t)(t12 >> 8);
 	carry = (a >> 0) & 1u;
-	t26 = (((uint32_t)(uint8_t)((int8_t)a >> 1) << 8) | ((((uint8_t)t25 >> 1) | (carry << 7)) & 0xF0u)) + (((uint32_t)unk_48F0 << 8u) | unk_48F1);
-	y = (((uint32_t)stack_2 << 8) | stack) + t26;
-	t27 = io_read16(x + 2u);
-	t28 = mem_read16(t27);
-	t29 = io_read16(x + 0xAu);
-	t30 = t28 + mem_read16(t29);
-	d_2 = ((uint32_t)(t30 >> 8) << 8) | (((((uint8_t)t30 >> 1) >> 1) >> 1) & 3u);
+	t13 = (((uint32_t)(uint8_t)((int8_t)a >> 1) << 8) | ((((uint8_t)t12 >> 1) | (carry << 7)) & 0xF0u)) + (((uint32_t)unk_48F0 << 8u) | unk_48F1);
+	y = (((uint32_t)stack_2 << 8) | stack) + t13;
+	scroll_x_4 = LAYER_MAP(layer_map)->scroll_x;
+	t14 = mem_read16(scroll_x_4);
+	offset_x_4 = LAYER_MAP(layer_map)->offset_x;
+	t15 = t14 + mem_read16(offset_x_4);
+	d_2 = ((uint32_t)(t15 >> 8) << 8) | (((((uint8_t)t15 >> 1) >> 1) >> 1) & 3u);
 	*p_y = y;
 	*p_u = u;
 	*p_d = d_2;
@@ -969,84 +969,84 @@ void sub_07C618(uint16_t *p_y, uint16_t *p_u, uint16_t *p_d)
 	uint16_t d = (uint16_t)*p_d;
 	uint32_t carry = 0;
 	uint8_t a = 0, b = 0;
-	uint16_t d_2 = 0, u = 0, x = 0, y = 0;
+	uint16_t address = 0, d_2 = 0, layer_map = 0, scene_area = 0, u = 0, x = 0, y = 0;
 	uint8_t stack = 0, stack_2 = 0, stack_3 = 0, stack_4 = 0;
-	uint8_t t8 = 0, t10 = 0, t11 = 0;
-	uint16_t t1 = 0, t2 = 0, t3 = 0, t4 = 0, t5 = 0, t6 = 0, t7 = 0, t9 = 0, t12 = 0, t13 = 0, t14 = 0, t15 = 0, t16 = 0, t17 = 0, t18 = 0, t19 = 0, t20 = 0, t21 = 0, t22 = 0, t23 = 0, t24 = 0, t25 = 0, t26 = 0, t27 = 0, t28 = 0, t29 = 0;
+	uint8_t t4 = 0, bank = 0, bank_2 = 0;
+	uint16_t scroll_x = 0, t1 = 0, scroll_y = 0, offset_y = 0, t2 = 0, t3 = 0, maps = 0, maps_high = 0, scroll_x_2 = 0, t5 = 0, t6 = 0, t7 = 0, t8 = 0, t9 = 0, t10 = 0, t11 = 0, t12 = 0, t13 = 0, t14 = 0, t15 = 0, t16 = 0, t17 = 0, t18 = 0, t19 = 0, t20 = 0, t21 = 0;
 	uint32_t unk_48F0_halfword = 0, unk_48F0_halfword_2 = 0;
 
 	a = (uint8_t)(d >> 8);
 	unk_48E8 = a;
-	x = DATA16(layer_maps_ADDRESS + (int8_t)((uint32_t)a << 1));
-	u = mem_read16(x);
-	t1 = io_read16(x + 2u);
-	t2 = mem_read16(t1);
-	a = (uint8_t)(t2 >> 8);
-	b = (uint8_t)t2;
+	layer_map = layer_maps[(int8_t)((uint8_t)((uint32_t)a << 1)) / 2];
+	u = LAYER_MAP(layer_map)->tiles;
+	scroll_x = LAYER_MAP(layer_map)->scroll_x;
+	t1 = mem_read16(scroll_x);
+	a = (uint8_t)(t1 >> 8);
+	b = (uint8_t)t1;
 	unk_48F8 = ((uint32_t)a << 8) | b;
 	carry = (a >> 0) & 1u;
 	unk_48F0_halfword = ((uint8_t)(((b & 0xE0u) >> 1) | (carry << 7)) >> 1) >> 1;
 	unk_48F0 = (uint8_t)(unk_48F0_halfword >> 8u);
 	unk_48F1 = (uint8_t)unk_48F0_halfword;
-	t3 = io_read16(x + 4u);
-	t4 = io_read16(x + 0xCu);
-	t5 = 0x40u * ((((uint8_t)((uint8_t)mem_read16(t3) + mem_read16(t4)) >> 1) >> 1) >> 1);
-	t6 = t5 + (((uint32_t)unk_48F0 << 8u) | unk_48F1);
-	a = (uint8_t)(t6 >> 8);
-	b = (uint8_t)t6;
+	scroll_y = LAYER_MAP(layer_map)->scroll_y;
+	offset_y = LAYER_MAP(layer_map)->offset_y;
+	t2 = 0x40u * ((((uint8_t)((uint8_t)mem_read16(scroll_y) + mem_read16(offset_y)) >> 1) >> 1) >> 1);
+	t3 = t2 + (((uint32_t)unk_48F0 << 8u) | unk_48F1);
+	a = (uint8_t)(t3 >> 8);
+	b = (uint8_t)t3;
 	u += ((uint32_t)a << 8) | b;
 	unk_48FA = unk_4000_ADDRESS + (((uint32_t)a << 8) | b);
-	t7 = io_read16(x + 6u);
-	y = t7;
-	t8 = unk_4875;
-	a = t8;
-	if ((int8_t)t8 < 0)
+	maps = LAYER_MAP(layer_map)->maps;
+	y = maps;
+	t4 = unk_4875;
+	a = t4;
+	if ((int8_t)t4 < 0)
 	{
-		t9 = io_read16(x + 0x10u);
-		y = t9;
+		maps_high = LAYER_MAP(layer_map)->maps_high;
+		y = maps_high;
 		a &= 0x7Fu;
 	}
-	y = mem_read16(y + (int8_t)((uint32_t)a << 1)) + (int8_t)(((uint32_t)unk_4876 << 1) << 1);
-	t10 = io_read8(y + 2u);
-	unk_489E = t10;
-	t11 = io_read8(y + 2u);
-	unk_480E = t11;
+	scene_area = SCENE_AREA_LIST(y + (int8_t)((uint32_t)a << 1)) + (int8_t)(((uint32_t)unk_4876 << 1) << 1);
+	bank = SCENE_AREA(scene_area)->bank;
+	unk_489E = bank;
+	bank_2 = SCENE_AREA(scene_area)->bank;
+	unk_480E = bank_2;
 	set_lines(unk_480E);
-	y = mem_read16(y);
-	t12 = io_read16(x + 2u);
-	t13 = mem_read16(t12);
-	a = (uint32_t)(t13 >> 8) << 1;
-	stack_2 = x >> 8;
-	stack = (uint8_t)x;
-	stack_3 = t13;
+	address = SCENE_AREA(scene_area)->address;
+	scroll_x_2 = LAYER_MAP(layer_map)->scroll_x;
+	t5 = mem_read16(scroll_x_2);
+	a = (uint32_t)(t5 >> 8) << 1;
+	stack_2 = layer_map >> 8;
+	stack = (uint8_t)layer_map;
+	stack_3 = t5;
 	stack_4 = a;
-	unk_48FC = mem_read16(y + (int8_t)a);
-	t14 = mem_read16(y + (int8_t)(a + 2u));
-	t15 = t14 - unk_48FC;
-	t16 = t15 - 0x10u;
-	unk_48FC = t16;
+	unk_48FC = mem_read16(address + (int8_t)a);
+	t6 = mem_read16(address + (int8_t)(a + 2u));
+	t7 = t6 - unk_48FC;
+	t8 = t7 - 0x10u;
+	unk_48FC = t8;
 	x = ((uint32_t)stack_2 << 8) | stack;
-	y = mem_read16(y + (int8_t)stack_4);
+	y = mem_read16(address + (int8_t)stack_4);
 	unk_48F0_halfword_2 = ((((stack_3 >> 1) >> 1) >> 1) >> 1) & 0xEu;
 	unk_48F0 = (uint8_t)(unk_48F0_halfword_2 >> 8u);
 	unk_48F1 = (uint8_t)unk_48F0_halfword_2;
-	t17 = io_read16(x + 4u);
-	t18 = mem_read16(t17);
-	t19 = io_read16(x + 0xCu);
-	t20 = t18 + mem_read16(t19);
-	t21 = io_read16(x + 0xEu);
-	t22 = t20 + mem_read16(t21);
-	a = (uint8_t)(t22 >> 8);
+	t9 = io_read16(x + 4u);
+	t10 = mem_read16(t9);
+	t11 = io_read16(x + 0xCu);
+	t12 = t10 + mem_read16(t11);
+	t13 = io_read16(x + 0xEu);
+	t14 = t12 + mem_read16(t13);
+	a = (uint8_t)(t14 >> 8);
 	carry = (a >> 0) & 1u;
-	t23 = (((uint32_t)(uint8_t)((int8_t)a >> 1) << 8) | ((((uint8_t)t22 >> 1) | (carry << 7)) & 0xF0u)) + (((uint32_t)unk_48F0 << 8u) | unk_48F1);
-	y += t23;
-	t24 = io_read16(x + 4u);
-	t25 = mem_read16(t24);
-	t26 = io_read16(x + 0xCu);
-	t27 = t25 + mem_read16(t26);
-	t28 = io_read16(x + 0xEu);
-	t29 = t27 + mem_read16(t28);
-	d_2 = ((uint32_t)(t29 >> 8) << 8) | (((uint8_t)t29 >> 1) & 0xCu);
+	t15 = (((uint32_t)(uint8_t)((int8_t)a >> 1) << 8) | ((((uint8_t)t14 >> 1) | (carry << 7)) & 0xF0u)) + (((uint32_t)unk_48F0 << 8u) | unk_48F1);
+	y += t15;
+	t16 = io_read16(x + 4u);
+	t17 = mem_read16(t16);
+	t18 = io_read16(x + 0xCu);
+	t19 = t17 + mem_read16(t18);
+	t20 = io_read16(x + 0xEu);
+	t21 = t19 + mem_read16(t20);
+	d_2 = ((uint32_t)(t21 >> 8) << 8) | (((uint8_t)t21 >> 1) & 0xCu);
 	*p_y = y;
 	*p_u = u;
 	*p_d = d_2;
@@ -1344,28 +1344,28 @@ uint16_t sub_07C8BD(void)
 {
 	uint32_t carry = 0;
 	uint8_t a = 0, b = 0;
-	uint16_t x = 0, y = 0;
-	uint8_t t1 = 0, t2 = 0;
-	uint16_t t3 = 0, t4 = 0;
+	uint16_t address = 0, scene_area = 0, scene_lists = 0, x = 0;
+	uint8_t t1 = 0, bank = 0;
+	uint16_t t2 = 0, t3 = 0;
 
-	y = block_scenes_a_ADDRESS;
+	scene_lists = block_scenes_a_ADDRESS;
 	t1 = unk_4875;
 	a = t1;
 	if ((int8_t)t1 < 0)
 	{
-		y = block_scenes_a_high_ADDRESS;
+		scene_lists = block_scenes_a_high_ADDRESS;
 		a &= 0x7Fu;
 	}
-	y = DATA16(y + (int8_t)((uint32_t)a << 1)) + (int8_t)(((uint32_t)unk_4876 << 1) << 1);
-	t2 = io_read8(y + 2u);
-	unk_480E = t2;
+	scene_area = SCENE_AREA_LIST(scene_lists + (int8_t)((uint32_t)a << 1)) + (int8_t)(((uint32_t)unk_4876 << 1) << 1);
+	bank = SCENE_AREA(scene_area)->bank;
+	unk_480E = bank;
 	set_lines(unk_480E);
-	y = mem_read16(y);
-	t3 = unk_48FE;
-	b = (uint8_t)t3;
+	address = SCENE_AREA(scene_area)->address;
+	t2 = unk_48FE;
+	b = (uint8_t)t2;
 	carry = (int8_t)b < 0;
 	b = (uint32_t)b << 1;
-	a = (uint8_t)(((uint32_t)(t3 >> 8) << 1) | carry);
+	a = (uint8_t)(((uint32_t)(t2 >> 8) << 1) | carry);
 	unk_48FE = ((uint32_t)a << 8) | b;
 	carry = (int8_t)b < 0;
 	b = (uint32_t)b << 1;
@@ -1374,8 +1374,8 @@ uint16_t sub_07C8BD(void)
 	b = (uint32_t)b << 1;
 	a = (uint8_t)(((uint32_t)a << 1) | carry);
 	carry = (int8_t)b < 0;
-	t4 = (((uint32_t)(uint8_t)(((uint32_t)a << 1) | carry) << 8) | (uint8_t)((uint32_t)b << 1)) + unk_48FE;
-	x = y + t4;
+	t3 = (((uint32_t)(uint8_t)(((uint32_t)a << 1) | carry) << 8) | (uint8_t)((uint32_t)b << 1)) + unk_48FE;
+	x = address + t3;
 	return x;
 }
 
@@ -1383,28 +1383,28 @@ uint16_t sub_07C8F7(void)
 {
 	uint32_t carry = 0;
 	uint8_t a = 0, b = 0;
-	uint16_t x = 0, y = 0;
-	uint8_t t1 = 0, t2 = 0;
-	uint16_t t3 = 0, t4 = 0;
+	uint16_t address = 0, scene_area = 0, scene_lists = 0, x = 0;
+	uint8_t t1 = 0, bank = 0;
+	uint16_t t2 = 0, t3 = 0;
 
-	y = block_scenes_b_ADDRESS;
+	scene_lists = block_scenes_b_ADDRESS;
 	t1 = unk_4875;
 	a = t1;
 	if ((int8_t)t1 < 0)
 	{
-		y = block_scenes_b_high_ADDRESS;
+		scene_lists = block_scenes_b_high_ADDRESS;
 		a &= 0x7Fu;
 	}
-	y = DATA16(y + (int8_t)((uint32_t)a << 1)) + (int8_t)(((uint32_t)unk_4876 << 1) << 1);
-	t2 = io_read8(y + 2u);
-	unk_480E = t2;
+	scene_area = SCENE_AREA_LIST(scene_lists + (int8_t)((uint32_t)a << 1)) + (int8_t)(((uint32_t)unk_4876 << 1) << 1);
+	bank = SCENE_AREA(scene_area)->bank;
+	unk_480E = bank;
 	set_lines(unk_480E);
-	y = mem_read16(y);
-	t3 = unk_48FE;
-	b = (uint8_t)t3;
+	address = SCENE_AREA(scene_area)->address;
+	t2 = unk_48FE;
+	b = (uint8_t)t2;
 	carry = (int8_t)b < 0;
 	b = (uint32_t)b << 1;
-	a = (uint8_t)(((uint32_t)(t3 >> 8) << 1) | carry);
+	a = (uint8_t)(((uint32_t)(t2 >> 8) << 1) | carry);
 	unk_48FE = ((uint32_t)a << 8) | b;
 	carry = (int8_t)b < 0;
 	b = (uint32_t)b << 1;
@@ -1413,30 +1413,30 @@ uint16_t sub_07C8F7(void)
 	b = (uint32_t)b << 1;
 	a = (uint8_t)(((uint32_t)a << 1) | carry);
 	carry = (int8_t)b < 0;
-	t4 = (((uint32_t)(uint8_t)(((uint32_t)a << 1) | carry) << 8) | (uint8_t)((uint32_t)b << 1)) + unk_48FE;
-	x = y + t4;
+	t3 = (((uint32_t)(uint8_t)(((uint32_t)a << 1) | carry) << 8) | (uint8_t)((uint32_t)b << 1)) + unk_48FE;
+	x = address + t3;
 	return x;
 }
 
 void sub_07C931(void)
 {
-	uint8_t a = 0;
-	uint16_t y = 0;
+	uint8_t a = 0, tile_banks = 0;
+	uint16_t mode_lists = 0;
 	uint8_t t1 = 0;
 	uint16_t t2 = 0;
 
-	y = layer_modes_ADDRESS;
+	mode_lists = layer_modes_ADDRESS;
 	t1 = unk_4875;
 	a = t1;
 	if ((int8_t)t1 < 0)
 	{
-		y = layer_modes_high_ADDRESS;
+		mode_lists = layer_modes_high_ADDRESS;
 		a &= 0x7Fu;
 	}
-	t2 = DATA16(y + (int8_t)((uint32_t)a << 1)) + (int8_t)((uint32_t)unk_4876 << 1);
-	io_write8(VIDEO_1D80, mem_read8(t2));
-	a = mem_read8(t2 + 1u);
-	io_write8(VIDEO_1F00, a);
+	t2 = LAYER_MODE_LIST(mode_lists + (int8_t)((uint32_t)a << 1)) + (int8_t)((uint32_t)unk_4876 << 1);
+	io_write8(VIDEO_1D80, LAYER_MODE(t2)->tile_banks_01);
+	tile_banks = LAYER_MODE(t2)->tile_banks_23;
+	io_write8(VIDEO_1F00, tile_banks);
 }
 
 uint32_t sub_07C954(uint16_t y, uint32_t left_caller)
@@ -1449,7 +1449,7 @@ uint32_t sub_07C954(uint16_t y, uint32_t left_caller)
 	io_write8(VIDEO_1876, 0u);
 	unk_480E = 0x1Bu;
 	set_lines(unk_480E);
-	unk_4873 = mem_read16(DATA16(spawn_list_places_ADDRESS + (int8_t)((uint32_t)unk_4867 << 1)));
+	unk_4873 = mem_read16(spawn_list_places[(int8_t)((uint8_t)((uint32_t)unk_4867 << 1)) / 2]);
 	sub_07C985();
 	left_caller = sub_07CB3C(y, left_caller);
 	sub_07CB9F(&ignored16, &ignored16_2, &left_caller);
@@ -1466,7 +1466,7 @@ void sub_07C985(void)
 	uint8_t t7 = 0, t8 = 0, t9 = 0, t10 = 0, t11 = 0, t15 = 0, t18 = 0, t24 = 0;
 	uint16_t t1 = 0, t2 = 0, t3 = 0, t4 = 0, t5 = 0, t6 = 0, t12 = 0, t13 = 0, t14 = 0, t16 = 0, t17 = 0, t19 = 0, t20 = 0, t21 = 0, t22 = 0, t23 = 0;
 
-	b = DATA8(spawn_ranges_ADDRESS + (int8_t)unk_4861);
+	b = spawn_ranges[(int8_t)unk_4861];
 	t1 = (uint32_t)b << 1;
 	carry = b >> 15;
 	io_write16(VIDEO_1886, t1);
@@ -1587,8 +1587,8 @@ void sub_07CA54(uint16_t *p_u, uint16_t *p_d, uint32_t *p_carry)
 	uint16_t t2 = 0, t3 = 0;
 
 	b = (uint8_t)d;
-	a = DATA8(object_list_sizes_ADDRESS + (int8_t)b);
-	u = DATA16(object_lists_ADDRESS + (int8_t)((uint32_t)b << 1));
+	a = object_list_sizes[(int8_t)b];
+	u = object_lists[(int8_t)((uint8_t)((uint32_t)b << 1)) / 2];
 	for (;;)
 	{
 		if (mem_read8(u) != 0u)
@@ -1666,7 +1666,7 @@ void sub_07CAAB(uint16_t x, uint16_t y, uint16_t u, uint16_t *p_d, uint32_t *p_c
 
 	mem_write16(u + 0x40u, x);
 	mem_write16(u + 2u, 0u);
-	t1 = io_read16(y);
+	t1 = mem_read16(y);
 	unk_48E8 = (uint8_t)(t1 >> 8u);
 	unk_48E9 = (uint8_t)t1;
 	t2 = mem_read8(x + 9u);
@@ -1707,7 +1707,7 @@ uint32_t sub_07CAEA(uint32_t carry)
 
 	if (unk_488D != 0u)
 	{
-		a = DATA8(indexed_table_07F014_ADDRESS + (int8_t)unk_4857);
+		a = cemetery_enemy_limits_by_players[(int8_t)unk_4857];
 		io_write8(VIDEO_1885, a);
 		switch ((int8_t)(uint8_t)((uint32_t)unk_4867 << 1))
 		{
@@ -1736,9 +1736,9 @@ uint32_t sub_07CAEA(uint32_t carry)
 		unk_48A8 = 1u;
 		return carry;
 	}
-	io_write8(VIDEO_1885, DATA8(indexed_table_07F000_ADDRESS + (int8_t)unk_486B));
+	io_write8(VIDEO_1885, enemy_limits_by_difficulty[(int8_t)unk_486B]);
 	t2 = io_read8(VIDEO_1885);
-	a = DATA8(indexed_table_07F008_ADDRESS + (int8_t)unk_4867) + t2;
+	a = extra_enemies_by_scene[(int8_t)unk_4867] + t2;
 	io_write8(VIDEO_1885, a);
 	switch ((int8_t)(uint8_t)((uint32_t)unk_4867 << 1))
 	{
@@ -1816,7 +1816,7 @@ uint32_t sub_07CB3C(uint16_t y, uint32_t left_caller)
 			t5 = mem_read16(x + 1u);
 			a = (uint8_t)(t5 >> 8);
 			stack = t5;
-			unk_480E = DATA8(indexed_table_07F387_ADDRESS + (int8_t)a);
+			unk_480E = enemy_banks[(int8_t)a];
 			set_lines(unk_480E);
 			u = loaded_table_07F2EC_ADDRESS;
 			a = (uint32_t)a << 1;
@@ -2136,7 +2136,7 @@ void sub_07CB9F(uint16_t *p_y, uint16_t *p_u, uint32_t *p_left_caller)
 			t2 = mem_read16(x + 1u);
 			a = (uint8_t)(t2 >> 8);
 			stack = t2;
-			unk_480E = DATA8(indexed_table_07F4B0_ADDRESS + (int8_t)a);
+			unk_480E = object_list_1_banks[(int8_t)a];
 			set_lines(unk_480E);
 			u = loaded_table_07F40D_ADDRESS;
 			carry = (int8_t)a < 0;
@@ -2466,7 +2466,7 @@ uint16_t sub_07CBD2(uint16_t u)
 			t2 = mem_read16(x + 1u);
 			a = (uint8_t)(t2 >> 8);
 			stack = t2;
-			unk_480E = DATA8(indexed_table_07F54C_ADDRESS + (int8_t)a);
+			unk_480E = child_object_banks[(int8_t)a];
 			set_lines(unk_480E);
 			u = loaded_table_07F4F4_ADDRESS;
 			a = (uint32_t)a << 1;
@@ -2623,7 +2623,7 @@ void sub_07CC05(void)
 			t1 = mem_read16(x + 1u);
 			a = (uint8_t)(t1 >> 8);
 			stack = t1;
-			unk_480E = DATA8(indexed_table_07F581_ADDRESS + (int8_t)a);
+			unk_480E = stage_event_banks[(int8_t)a];
 			set_lines(unk_480E);
 			a = (uint32_t)a << 1;
 			d = stack;
@@ -2704,7 +2704,7 @@ void sub_07CC5A(void)
 	a = t4 - 1u;
 	if (t4 != 1u)
 	{
-		io_write8(VIDEO_1877, DATA8(loaded_table_07F031_ADDRESS + (int8_t)(((((a - 1u) << 1) << 1) << 1) << 1) + (int8_t)b));
+		io_write8(VIDEO_1877, TABLE8(attackers_per_player, (uint16_t)((int8_t)(((((a - 1u) << 1) << 1) << 1) << 1) + (int8_t)b)));
 		return;
 	}
 	io_write8(VIDEO_1877, b);
@@ -2732,7 +2732,7 @@ void sub_07CCA0(uint16_t *p_u, uint16_t *p_d)
 	uint16_t d = (uint16_t)*p_d;
 	uint16_t u = 0;
 
-	u = indexed_table_07F061_ADDRESS;
+	u = sines_ADDRESS;
 	d = sub_07CCA3(u, d);
 	*p_u = u;
 	*p_d = d;
@@ -2774,7 +2774,7 @@ void sub_07CCC0(uint16_t *p_u, uint16_t *p_d)
 	uint16_t d = (uint16_t)*p_d;
 	uint16_t u = 0;
 
-	u = indexed_table_07F0A2_ADDRESS;
+	u = sines_20_ADDRESS;
 	d = sub_07CCC3(u, d);
 	*p_u = u;
 	*p_d = d;
@@ -2896,7 +2896,7 @@ uint16_t sub_07CCF0(uint16_t x, uint16_t u, uint8_t d)
 				} while (t14 != 0u);
 			}
 		}
-		a = 0u - (DATA8(konami_divx((((uint32_t)unk_48E8 << 8u) | unk_48E9), unk_48EB) - 0xF1Du) - 0x40u);
+		a = 0u - (arctangents[konami_divx((((uint32_t)unk_48E8 << 8u) | unk_48E9), unk_48EB)] - 0x40u);
 	}
 	else
 	{
@@ -2933,7 +2933,7 @@ uint16_t sub_07CCF0(uint16_t x, uint16_t u, uint8_t d)
 				} while (t16 != 0u);
 			}
 		}
-		a = DATA8(konami_divx((((uint32_t)unk_48EA << 8u) | unk_48EB), unk_48E9) - 0xF1Du);
+		a = arctangents[konami_divx((((uint32_t)unk_48EA << 8u) | unk_48EB), unk_48E9)];
 	}
 	if ((int8_t)unk_48EC >= 0)
 	{
@@ -3015,7 +3015,7 @@ uint16_t sub_07CCFB(uint16_t x, uint16_t u)
 				} while (t12 != 0u);
 			}
 		}
-		a = 0u - (DATA8(konami_divx((((uint32_t)unk_48E8 << 8u) | unk_48E9), unk_48EB) - 0xF1Du) - 0x40u);
+		a = 0u - (arctangents[konami_divx((((uint32_t)unk_48E8 << 8u) | unk_48E9), unk_48EB)] - 0x40u);
 	}
 	else
 	{
@@ -3052,7 +3052,7 @@ uint16_t sub_07CCFB(uint16_t x, uint16_t u)
 				} while (t14 != 0u);
 			}
 		}
-		a = DATA8(konami_divx((((uint32_t)unk_48EA << 8u) | unk_48EB), unk_48E9) - 0xF1Du);
+		a = arctangents[konami_divx((((uint32_t)unk_48EA << 8u) | unk_48EB), unk_48E9)];
 	}
 	if ((int8_t)unk_48EC >= 0)
 	{
@@ -3094,10 +3094,10 @@ uint16_t sub_07CDD3(uint16_t x, uint16_t d)
 	uint8_t t1 = 0;
 	uint16_t t2 = 0;
 
-	u = indexed_table_07F124_ADDRESS;
+	u = climb_speeds_ADDRESS;
 	t1 = mem_read8(x + 0x5Du);
 	stack = ((t1 >> 1) >> 1) >> 1;
-	t2 = (uint32_t)DATA8(indexed_table_07F124_ADDRESS + (int8_t)((d >> 8) - stack)) << 4;
+	t2 = (uint32_t)climb_speeds[(int8_t)((uint8_t)((d >> 8) - stack))] << 4;
 	mem_write16(x + 0x19u, t2);
 	return u;
 }
@@ -3502,7 +3502,9 @@ void sub_07D056(uint16_t x, uint16_t *p_u, uint32_t *p_left_caller)
 	uint8_t t1 = 0;
 
 	sub_07CFEC(x, &u, p_left_caller);
-	if (*p_left_caller == 0u)
+	if (*p_left_caller != 0u)
+		*p_left_caller = 0u;
+	else
 	{
 		u = loaded_table_07F134_ADDRESS;
 		t1 = mem_read8(x + 0x1Eu);
@@ -4229,7 +4231,7 @@ void unused_07D47E(uint16_t x)
 	sub_07D35B(x, u);
 	t2 = mem_read16(x + 0x28u);
 	a = (uint8_t)(t2 >> 8);
-	unk_480E = DATA8(indexed_table_07F661_ADDRESS + (int8_t)a);
+	unk_480E = unused_object_banks[(int8_t)a];
 	set_lines(unk_480E);
 	u = unused_object_handlers_ADDRESS;
 	d = (uint32_t)(uint8_t)((uint32_t)a << 1) << 8;
@@ -5057,7 +5059,7 @@ void sub_07D63B(uint16_t x, uint16_t *p_y, uint16_t *p_u, uint32_t *p_left_calle
 	t4 = mem_read16(x + 0x28u);
 	a = (uint8_t)(t4 >> 8);
 	stack = t4;
-	unk_480E = DATA8(indexed_table_07F620_ADDRESS + (int8_t)a);
+	unk_480E = action_banks[(int8_t)a];
 	set_lines(unk_480E);
 	u = loaded_table_07F5A2_ADDRESS;
 	a = (uint32_t)a << 1;
@@ -5352,11 +5354,10 @@ void sub_07D667(uint16_t x, uint16_t *p_y, uint16_t *p_u, uint32_t *p_left_calle
 		sub_07E143(x, d, &y, &u, p_left_caller);
 		break;
 	}
-	if (*p_left_caller == 0u)
-	{
-		if (mem_read8(x) != 0u)
-			u = sub_07CDE9(x, u);
-	}
+	if (*p_left_caller != 0u)
+		*p_left_caller = 0u;
+	else if (mem_read8(x) != 0u)
+		u = sub_07CDE9(x, u);
 	*p_y = y;
 	*p_u = u;
 }
@@ -11265,9 +11266,10 @@ void sub_07DE29(uint16_t x, uint8_t d, uint16_t *p_y, uint16_t *p_u, uint32_t *p
 {
 	uint16_t y = (uint16_t)*p_y;
 	uint16_t u = 0;
+	uint32_t left_caller = 0;
 
 	u = loaded_table_07F254_ADDRESS;
-	*p_left_caller = 0u;
+	left_caller = 0u;
 	switch ((int8_t)(uint8_t)((uint32_t)d << 1))
 	{
 	case 0:
@@ -11298,7 +11300,7 @@ void sub_07DE29(uint16_t x, uint8_t d, uint16_t *p_y, uint16_t *p_u, uint32_t *p
 		sub_07DF66(x);
 		break;
 	case 16:
-		sub_07DF83(x, &u, p_left_caller);
+		sub_07DF83(x, &u, &left_caller);
 		break;
 	case 18:
 		sub_07DFA1(x);
@@ -11326,7 +11328,7 @@ void sub_07DE29(uint16_t x, uint8_t d, uint16_t *p_y, uint16_t *p_u, uint32_t *p
 		break;
 	case 36:
 	case 42:
-		sub_07E0EC(x, &u, p_left_caller);
+		sub_07E0EC(x, &u, &left_caller);
 		break;
 	case 38:
 		sub_07E135(x);
@@ -11335,7 +11337,7 @@ void sub_07DE29(uint16_t x, uint8_t d, uint16_t *p_y, uint16_t *p_u, uint32_t *p
 		sub_07E149(x);
 		break;
 	case 46:
-		sub_07E155(x, &u, p_left_caller);
+		sub_07E155(x, &u, &left_caller);
 		break;
 	case -12:
 		sub_07DDC9(x);
@@ -11347,10 +11349,13 @@ void sub_07DE29(uint16_t x, uint8_t d, uint16_t *p_y, uint16_t *p_u, uint32_t *p
 		sub_07DE14(x);
 		break;
 	}
-	if (*p_left_caller == 0u)
+	if (left_caller != 0u)
+		left_caller = 0u;
+	else
 		sub_0785BA(x);
 	*p_y = y;
 	*p_u = u;
+	*p_left_caller = left_caller;
 }
 
 void sub_07DE32(uint16_t x)
@@ -11426,9 +11431,10 @@ void sub_07DEB1(uint16_t x, uint8_t d, uint16_t *p_y, uint16_t *p_u, uint32_t *p
 {
 	uint16_t y = (uint16_t)*p_y;
 	uint16_t u = 0;
+	uint32_t left_caller = 0;
 
 	u = loaded_table_07F258_ADDRESS;
-	*p_left_caller = 0u;
+	left_caller = 0u;
 	switch ((int8_t)(uint8_t)((uint32_t)d << 1))
 	{
 	case 0:
@@ -11453,7 +11459,7 @@ void sub_07DEB1(uint16_t x, uint8_t d, uint16_t *p_y, uint16_t *p_u, uint32_t *p
 		sub_07DF66(x);
 		break;
 	case 12:
-		sub_07DF83(x, &u, p_left_caller);
+		sub_07DF83(x, &u, &left_caller);
 		break;
 	case 14:
 		sub_07DFA1(x);
@@ -11481,7 +11487,7 @@ void sub_07DEB1(uint16_t x, uint8_t d, uint16_t *p_y, uint16_t *p_u, uint32_t *p
 		break;
 	case 32:
 	case 38:
-		sub_07E0EC(x, &u, p_left_caller);
+		sub_07E0EC(x, &u, &left_caller);
 		break;
 	case 34:
 		sub_07E135(x);
@@ -11490,7 +11496,7 @@ void sub_07DEB1(uint16_t x, uint8_t d, uint16_t *p_y, uint16_t *p_u, uint32_t *p
 		sub_07E149(x);
 		break;
 	case 42:
-		sub_07E155(x, &u, p_left_caller);
+		sub_07E155(x, &u, &left_caller);
 		break;
 	case -16:
 		sub_07DDC9(x);
@@ -11508,10 +11514,13 @@ void sub_07DEB1(uint16_t x, uint8_t d, uint16_t *p_y, uint16_t *p_u, uint32_t *p
 		sub_07DE68(x);
 		break;
 	}
-	if (*p_left_caller == 0u)
+	if (left_caller != 0u)
+		left_caller = 0u;
+	else
 		sub_0785BA(x);
 	*p_y = y;
 	*p_u = u;
+	*p_left_caller = left_caller;
 }
 
 void sub_07DEBA(uint16_t x)
@@ -11991,9 +12000,10 @@ void sub_07DFB1(uint16_t x, uint8_t d, uint16_t *p_y, uint16_t *p_u, uint32_t *p
 {
 	uint16_t y = (uint16_t)*p_y;
 	uint16_t u = 0;
+	uint32_t left_caller = 0;
 
 	u = loaded_table_07F268_ADDRESS;
-	*p_left_caller = 0u;
+	left_caller = 0u;
 	switch ((int8_t)(uint8_t)((uint32_t)d << 1))
 	{
 	case 0:
@@ -12019,7 +12029,7 @@ void sub_07DFB1(uint16_t x, uint8_t d, uint16_t *p_y, uint16_t *p_u, uint32_t *p
 		break;
 	case 16:
 	case 22:
-		sub_07E0EC(x, &u, p_left_caller);
+		sub_07E0EC(x, &u, &left_caller);
 		break;
 	case 18:
 		sub_07E135(x);
@@ -12028,7 +12038,7 @@ void sub_07DFB1(uint16_t x, uint8_t d, uint16_t *p_y, uint16_t *p_u, uint32_t *p
 		sub_07E149(x);
 		break;
 	case 26:
-		sub_07E155(x, &u, p_left_caller);
+		sub_07E155(x, &u, &left_caller);
 		break;
 	case -32:
 		sub_07DDC9(x);
@@ -12067,16 +12077,19 @@ void sub_07DFB1(uint16_t x, uint8_t d, uint16_t *p_y, uint16_t *p_u, uint32_t *p
 		sub_07DF66(x);
 		break;
 	case -4:
-		sub_07DF83(x, &u, p_left_caller);
+		sub_07DF83(x, &u, &left_caller);
 		break;
 	case -2:
 		sub_07DFA1(x);
 		break;
 	}
-	if (*p_left_caller == 0u)
+	if (left_caller != 0u)
+		left_caller = 0u;
+	else
 		sub_0785BA(x);
 	*p_y = y;
 	*p_u = u;
+	*p_left_caller = left_caller;
 }
 
 void sub_07DFBA(uint16_t x)

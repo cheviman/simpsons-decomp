@@ -3,7 +3,7 @@
  *    Description: the music: a song's tracks, their notes and commands, the pitch envelope, the gate, the fade's volume
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    06-11-2026
+ *    Modified:    07-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the Z80 sound program decompiled into C by
@@ -104,8 +104,8 @@ uint16_t music_tick(uint16_t ix)
 {
 	bool L_0042C5 = false;
 	uint32_t zero = 0, negative = 0, overflow = 0, carry = 0;
-	uint8_t a = 0, b = 0, bc = 0, c = 0, d = 0, e = 0;
-	uint16_t hl = 0;
+	uint8_t a = 0, b = 0, bc = 0, c = 0, d = 0, e = 0, element = 0;
+	uint16_t command_entry = 0, hl = 0, patch_entry = 0, pitch_entry = 0;
 	uint8_t stack = 0, saved_c = 0;
 	uint8_t t1 = 0, t2 = 0, t3 = 0, t4 = 0;
 	uint32_t jump_target = 0;
@@ -168,9 +168,9 @@ uint16_t music_tick(uint16_t ix)
 		if (!L_0042C5)
 		{
 			z80_block(71);
-			hl = c * 2u + music_commands_ADDRESS;
+			command_entry = c * 2u + music_commands_ADDRESS;
 		}
-		jump_target = L_0042C5 ? 0x4737u : SOUND_ROM16(hl);
+		jump_target = L_0042C5 ? 0x4737u : MUSIC_COMMAND_HANDLER(command_entry)[0];
 		switch (jump_target)
 		{
 		case 0x0046A6u:
@@ -205,26 +205,25 @@ uint16_t music_tick(uint16_t ix)
 			z80_block(61);
 			c = ((uint32_t)a << 1) | (a >> 7);
 			b = 0u;
-			hl = music_fm_patches_ADDRESS;
+			patch_entry = music_fm_patches_ADDRESS;
 			if (z80_read8((uint16_t)(ix + 0x40u)) >= 8u)
 			{
 				z80_block(89);
-				hl = music_pcm_transpositions_ADDRESS + (((uint32_t)b << 8) | c);
-				d = SOUND_ROM8(hl + 1u);
-				z80_write8((uint16_t)(ix + 0x26u), SOUND_ROM8(hl));
+				d = TABLE8(music_pcm_transpositions, 0x1u + (uint16_t)(((uint32_t)b << 8) | c));
+				z80_write8((uint16_t)(ix + 0x26u), TABLE8(music_pcm_transpositions, (uint16_t)(((uint32_t)b << 8) | c)));
 				z80_write8((uint16_t)(ix + 0x27u), d);
-				hl = music_pcm_patches_ADDRESS;
+				patch_entry = music_pcm_patches_ADDRESS;
 			}
 			z80_block(99);
-			hl += ((uint32_t)b << 8) | c;
-			e = SOUND_ROM8(hl);
-			d = SOUND_ROM8(hl + 1u);
-			z80_write8((uint16_t)(ix + 0x19u), e);
+			patch_entry += ((uint32_t)b << 8) | c;
+			element = (uint8_t)PATCH_ADDRESS(patch_entry)[0];
+			d = (uint8_t)(PATCH_ADDRESS(patch_entry)[0] >> 8u);
+			z80_write8((uint16_t)(ix + 0x19u), element);
 			z80_write8((uint16_t)(ix + 0x1Au), d);
 			if (z80_read8((uint16_t)(ix + 0x41u)) >> 7 == 0u)
 				continue;
 			z80_block(21);
-			hl = ((uint32_t)d << 8) | e;
+			hl = ((uint32_t)d << 8) | element;
 			load_patch(hl, ix);
 			z80_block(36);
 			a = z80_read8((uint16_t)(ix + 0x18u));
@@ -345,16 +344,16 @@ uint16_t music_tick(uint16_t ix)
 			stack = (negative << 7) | (zero << 6) | (overflow << 2) | (carry << 0);
 			set_note_gate(ix);
 			z80_block(46);
-			hl = 0x448Bu;
+			pitch_entry = fm_pitches_by_note_ADDRESS;
 			if (z80_read8((uint16_t)(ix + 0x40u)) >= 8u)
 			{
 				z80_block(10);
-				hl = pcm_pitches_ADDRESS;
+				pitch_entry = pcm_pitches_ADDRESS;
 			}
 			z80_block(217);
 			a = c & 0xFu;
-			hl = hl + (uint8_t)((((uint32_t)a << 1) | (a >> 7)) + z80_read8((uint16_t)(ix + 0x15u))) + z80_read16((uint16_t)(ix + 0x26u));
-			hl = z80_read8((uint16_t)(ix + 0x16u)) + SOUND_ROM16(hl);
+			pitch_entry = pitch_entry + (uint8_t)((((uint32_t)a << 1) | (a >> 7)) + z80_read8((uint16_t)(ix + 0x15u))) + z80_read16((uint16_t)(ix + 0x26u));
+			hl = z80_read8((uint16_t)(ix + 0x16u)) + PITCH(pitch_entry)[0];
 			z80_write16((uint16_t)(ix + 0x2Cu), hl);
 			set_pitch(hl, ix);
 			z80_block(20);
@@ -908,8 +907,8 @@ uint32_t add_note_length(uint8_t bc, uint16_t ix)
 	a = bc & 0xF0u;
 	a = (a >> 1) | ((uint32_t)a << 7);
 	a = (a >> 1) | ((uint32_t)a << 7);
-	hl = note_lengths_ADDRESS + (uint8_t)((a >> 1) | ((uint32_t)a << 7));
-	de = SOUND_ROM16(hl);
+	de = (uint8_t)((a >> 1) | ((uint32_t)a << 7));
+	de = TABLE16(note_lengths, de);
 	hl = z80_read16((uint16_t)(ix + 0x3Au));
 	carry = (uint16_t)(hl + de) < hl;
 	hl += de;

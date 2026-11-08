@@ -3,7 +3,7 @@
  *    Description: bank 18's code
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    06-11-2026
+ *    Modified:    07-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -1328,25 +1328,25 @@ void sub_030077(uint16_t x)
 uint16_t sub_030081(uint16_t x)
 {
 	uint8_t d = 0;
-	uint16_t u = 0, y = 0;
-	uint8_t t1 = 0, t4 = 0;
-	uint16_t t2 = 0, t3 = 0;
+	uint16_t move = 0, u = 0, y = 0;
+	uint8_t t1 = 0, t2 = 0;
+	uint16_t delay = 0, direction = 0;
 
 	u = object_setup_031982_ADDRESS;
 	y = sub_0785AB(x, u);
 	mem_write8(x, 4u);
 	t1 = mem_read8(x + 0x30u);
-	u = loaded_table_031988_ADDRESS + (int8_t)(((uint32_t)t1 << 1) << 1);
-	t2 = DATA16(u);
-	mem_write8(x + VIDEO_003C, t2 >> 8);
-	mem_write8(x + 0x3Bu, t2);
-	t3 = mem_read16(u + 2u);
-	d = (uint8_t)t3;
-	mem_write8(x + 0x3Eu, t3 >> 8);
+	move = kind_97_timed_moves_ADDRESS + (int8_t)(((uint32_t)t1 << 1) << 1);
+	delay = (((uint32_t)TIMED_MOVE(move)->delay << 8u) | TIMED_MOVE(move)->travel);
+	mem_write8(x + VIDEO_003C, delay >> 8);
+	mem_write8(x + 0x3Bu, delay);
+	direction = (((uint32_t)TIMED_MOVE(move)->direction << 8u) | TIMED_MOVE(move)->animation);
+	d = (uint8_t)direction;
+	mem_write8(x + 0x3Eu, direction >> 8);
 	mem_write8(x + 0x30u, d);
 	mem_write8(x + 5u, d);
-	t4 = mem_read8(x + 2u);
-	mem_write8(x + 2u, t4 + 1u);
+	t2 = mem_read8(x + 2u);
+	mem_write8(x + 2u, t2 + 1u);
 	return y;
 }
 
@@ -1423,9 +1423,9 @@ void sub_03010C(uint16_t x)
 
 uint16_t sub_030122(uint16_t x)
 {
-	uint16_t u = 0, y = 0;
-	uint8_t t1 = 0, t2 = 0, t4 = 0, t6 = 0;
-	uint16_t t3 = 0, t5 = 0;
+	uint16_t choice = 0, u = 0, y = 0;
+	uint8_t t1 = 0, t2 = 0, t3 = 0, t4 = 0;
+	uint16_t state = 0, behaviour = 0;
 
 	u = object_setup_0319D4_ADDRESS;
 	y = sub_0785AB(x, u);
@@ -1442,16 +1442,16 @@ uint16_t sub_030122(uint16_t x)
 	}
 	mem_write8(x, 4u);
 	t2 = mem_read8(x + 0x30u);
-	u = object_18_behaviours_ADDRESS + (int8_t)(((uint32_t)t2 << 1) << 1);
-	t3 = DATA16(u);
-	mem_write8(x + 0x30u, t3 >> 8);
-	t4 = mem_read8(x + 9u);
-	unk_48F0 = t4 & 0x30u;
-	mem_write8(x + 9u, t3 | unk_48F0);
-	t5 = mem_read16(u + 2u);
-	mem_write16(x + 0x2Au, t5);
-	t6 = mem_read8(x + 2u);
-	mem_write8(x + 2u, t6 + 1u);
+	choice = object_18_behaviours_ADDRESS + (int8_t)(((uint32_t)t2 << 1) << 1);
+	state = (((uint32_t)BEHAVIOUR_CHOICE(choice)->state << 8u) | BEHAVIOUR_CHOICE(choice)->flags);
+	mem_write8(x + 0x30u, state >> 8);
+	t3 = mem_read8(x + 9u);
+	unk_48F0 = t3 & 0x30u;
+	mem_write8(x + 9u, state | unk_48F0);
+	behaviour = BEHAVIOUR_CHOICE(choice)->behaviour;
+	mem_write16(x + 0x2Au, behaviour);
+	t4 = mem_read8(x + 2u);
+	mem_write8(x + 2u, t4 + 1u);
 	return y;
 }
 
@@ -1588,7 +1588,7 @@ uint16_t sub_03017C(uint16_t x)
 	mem_write8(x + 5u, 0x92u);
 	t5 = mem_read8(x + 0x28u);
 	mem_write8(x + 0x28u, t5 + 1u);
-	d = 0x7B00u;
+	d = kind_97_entrances_ADDRESS + 0x8u;
 	carry = sub_078680(d);
 	return u;
 }
@@ -1670,7 +1670,7 @@ void sub_030223(uint16_t x)
 	mem_write8(x + 4u, 0x91u);
 	mem_write8(x + 5u, 0x92u);
 	mem_write8(x + 0x28u, 1u);
-	d = 0x7B00u;
+	d = kind_97_entrances_ADDRESS + 0x8u;
 	carry = sub_078680(d);
 }
 
@@ -1740,7 +1740,7 @@ void sub_030295(uint16_t x)
 	mem_write8(x + 5u, 0x92u);
 	t2 = mem_read8(x + 0x29u);
 	mem_write8(x + 0x29u, t2 + 1u);
-	d = 0x7B00u;
+	d = kind_97_entrances_ADDRESS + 0x8u;
 	carry = sub_078680(d);
 	sub_0785C9(x);
 }
@@ -2140,9 +2140,9 @@ void sub_030432(uint16_t x, uint16_t *p_y, uint16_t *p_u)
 
 void sub_03045F(uint16_t x, uint16_t *p_y, uint16_t *p_u)
 {
-	uint16_t u = 0, y = 0;
-	uint8_t t1 = 0, t2 = 0, t7 = 0;
-	uint16_t t3 = 0, t4 = 0, t5 = 0, t6 = 0;
+	uint16_t start = 0, u = 0, y = 0;
+	uint8_t t1 = 0, t2 = 0, t5 = 0;
+	uint16_t x_offset = 0, unused = 0, t3 = 0, t4 = 0;
 
 	u = object_setup_031A2A_ADDRESS;
 	y = sub_0785AB(x, u);
@@ -2154,19 +2154,19 @@ void sub_03045F(uint16_t x, uint16_t *p_y, uint16_t *p_u)
 	t1 = mem_read8(x + 0x42u);
 	mem_write8(x + 0x42u, t1 - 1u);
 	t2 = mem_read8(x + 0x30u);
-	u = loaded_table_031A30_ADDRESS + (int8_t)(((uint32_t)t2 << 1) << 1);
-	t3 = DATA16(u);
-	mem_write16(x + 0x3Eu, t3);
-	t4 = mem_read16(u + 2u);
-	mem_write8(x + 0x3Du, t4 >> 8);
-	mem_write8(x + 0x30u, t4);
-	t5 = mem_read16(x + 0xCu);
-	t6 = t5 + unk_48AC;
-	mem_write16(x + 0x2Au, t6);
-	t7 = mem_read8(x + 2u);
-	mem_write8(x + 2u, t7 + 1u);
+	start = kind_9a_drop_starts_ADDRESS + (int8_t)(((uint32_t)t2 << 1) << 1);
+	x_offset = DROP_START(start)->x_offset;
+	mem_write16(x + 0x3Eu, x_offset);
+	unused = (((uint32_t)DROP_START(start)->unused << 8u) | DROP_START(start)->mode);
+	mem_write8(x + 0x3Du, unused >> 8);
+	mem_write8(x + 0x30u, unused);
+	t3 = mem_read16(x + 0xCu);
+	t4 = t3 + unk_48AC;
+	mem_write16(x + 0x2Au, t4);
+	t5 = mem_read8(x + 2u);
+	mem_write8(x + 2u, t5 + 1u);
 	*p_y = y;
-	*p_u = u;
+	*p_u = start;
 }
 
 void sub_0304A4(uint16_t x)
@@ -2279,9 +2279,9 @@ void sub_03054E(uint16_t x)
 
 void sub_030565(uint16_t x, uint16_t *p_y, uint16_t *p_u)
 {
-	uint16_t u = 0, y = 0;
+	uint16_t start = 0, u = 0, y = 0;
 	uint8_t t2 = 0;
-	uint16_t t1 = 0, t3 = 0, t4 = 0;
+	uint16_t t1 = 0, wait = 0, step = 0;
 
 	u = object_setup_031A72_ADDRESS;
 	y = sub_0785AB(x, u);
@@ -2289,14 +2289,14 @@ void sub_030565(uint16_t x, uint16_t *p_y, uint16_t *p_u)
 	t1 = io_read16(VIDEO_1854);
 	mem_write16(x + 0x40u, t1);
 	t2 = mem_read8(x + 0x30u);
-	u = loaded_table_031A56_ADDRESS + (int8_t)(((uint32_t)t2 << 1) << 1);
-	t3 = DATA16(u);
-	mem_write8(x + 0x3Bu, t3 >> 8);
-	mem_write8(x + 9u, t3);
-	t4 = mem_read16(u + 2u);
-	mem_write8(x + 2u, t4 >> 8);
+	start = kind_91_appearances_ADDRESS + (int8_t)(((uint32_t)t2 << 1) << 1);
+	wait = (((uint32_t)APPEARANCE(start)->wait << 8u) | APPEARANCE(start)->flags);
+	mem_write8(x + 0x3Bu, wait >> 8);
+	mem_write8(x + 9u, wait);
+	step = (((uint32_t)APPEARANCE(start)->step << 8u) | APPEARANCE(start)->unused);
+	mem_write8(x + 2u, step >> 8);
 	*p_y = y;
-	*p_u = u;
+	*p_u = start;
 }
 
 void sub_030590(uint16_t x)
@@ -2313,7 +2313,7 @@ void sub_030590(uint16_t x)
 	mem_write8(x + 5u, 0x92u);
 	t2 = mem_read8(x + 2u);
 	mem_write8(x + 2u, t2 + 1u);
-	d = 0x7B00u;
+	d = kind_97_entrances_ADDRESS + 0x8u;
 	carry = sub_078680(d);
 }
 
@@ -2529,18 +2529,18 @@ void sub_0306A6(uint16_t x)
 
 void sub_0306AF(uint16_t x)
 {
-	uint8_t t1 = 0, t4 = 0;
-	uint16_t t2 = 0, t3 = 0;
+	uint8_t t1 = 0, t3 = 0;
+	uint16_t wait = 0, t2 = 0;
 
 	mem_write8(x, 0x80u);
 	t1 = mem_read8(x + 0x30u);
-	t2 = DATA16(indexed_table_031AF8_ADDRESS + (int8_t)((uint32_t)t1 << 1));
-	mem_write8(x + 0x3Bu, t2 >> 8);
-	t3 = (t2 & 0xFFu) << 4;
-	mem_write16(x + 0xCu, t3);
+	wait = (((uint32_t)TIMED_SPOT(kind_97_entrances_ADDRESS + (int8_t)((uint32_t)t1 << 1))->wait << 8u) | TIMED_SPOT(kind_97_entrances_ADDRESS + (int8_t)((uint32_t)t1 << 1))->x);
+	mem_write8(x + 0x3Bu, wait >> 8);
+	t2 = (wait & 0xFFu) << 4;
+	mem_write16(x + 0xCu, t2);
 	mem_write8(x + 5u, 0x90u);
-	t4 = mem_read8(x + 0x29u);
-	mem_write8(x + 0x29u, t4 + 1u);
+	t3 = mem_read8(x + 0x29u);
+	mem_write8(x + 0x29u, t3 + 1u);
 }
 
 void sub_0306CF(uint16_t x)
@@ -2883,9 +2883,9 @@ void sub_030721(uint16_t x, uint16_t *p_y, uint16_t *p_u)
 									stack = t16 & 0x70u;
 									t17 = mem_read8(x + 0x27u);
 									mem_write8(x + 0x27u, (t17 & 0x8Fu) | stack);
-									y = indexed_table_031B0A_ADDRESS;
+									y = kind_97_hold_animations_ADDRESS;
 									t18 = mem_read8(u + 0x5Bu);
-									mem_write8(x + 5u, DATA8(indexed_table_031B0A_ADDRESS + ((((t18 >> 1) >> 1) >> 1) >> 1)) | 0x80u);
+									mem_write8(x + 5u, kind_97_hold_animations[(((t18 >> 1) >> 1) >> 1) >> 1] | 0x80u);
 									t19 = mem_read8(x + 0x29u);
 									mem_write8(x + 0x29u, t19 + 1u);
 								}
@@ -3177,8 +3177,8 @@ uint16_t sub_030942(uint16_t x, uint16_t u)
 	if (carry)
 	{
 		mem_write8(x + 5u, 0x86u);
-		u = indexed_table_031C0C_ADDRESS;
-		mem_write8(x + VIDEO_003C, DATA8(indexed_table_031C0C_ADDRESS + (int8_t)unk_4857));
+		u = lumberjack_pause_loops_by_players_ADDRESS;
+		mem_write8(x + VIDEO_003C, lumberjack_pause_loops_by_players[(int8_t)unk_4857]);
 		t2 = mem_read8(x + 0x29u);
 		mem_write8(x + 0x29u, t2 + 1u);
 	}
@@ -3271,28 +3271,28 @@ void sub_0309AA(uint16_t x)
 void sub_0309B3(uint16_t x)
 {
 	uint8_t a = 0;
-	uint16_t u = 0;
-	uint8_t t1 = 0, t4 = 0, t5 = 0;
-	uint16_t t2 = 0, t3 = 0;
+	uint16_t entrance = 0;
+	uint8_t t1 = 0, step = 0, animation = 0;
+	uint16_t flags = 0, t2 = 0;
 
 	mem_write8(x, 0x80u);
 	mem_write8(x + 0x57u, 0x80u);
 	t1 = mem_read8(x + 0x30u);
-	u = loaded_table_031C3B_ADDRESS + (int8_t)(((uint32_t)t1 << 1) << 1);
-	t2 = DATA16(u);
-	mem_write8(x + 9u, t2 >> 8);
-	t3 = (uint32_t)(uint8_t)t2 << 4;
-	mem_write16(x + 0x3Eu, t3);
-	t4 = mem_read8(u + 2u);
-	a = t4;
-	if ((int8_t)t4 < 0)
+	entrance = gorilla_entrances_ADDRESS + (int8_t)(((uint32_t)t1 << 1) << 1);
+	flags = (((uint32_t)GORILLA_ENTRANCE(entrance)->flags << 8u) | GORILLA_ENTRANCE(entrance)->x);
+	mem_write8(x + 9u, flags >> 8);
+	t2 = (uint32_t)(uint8_t)flags << 4;
+	mem_write16(x + 0x3Eu, t2);
+	step = GORILLA_ENTRANCE(entrance)->step;
+	a = step;
+	if ((int8_t)step < 0)
 	{
 		a &= 0x7Fu;
 		mem_write8(x, 4u);
 	}
 	mem_write8(x + 0x29u, a);
-	t5 = mem_read8(u + 3u);
-	mem_write8(x + 5u, t5);
+	animation = GORILLA_ENTRANCE(entrance)->animation;
+	mem_write8(x + 5u, animation);
 }
 
 void sub_0309E6(uint16_t x)
@@ -3476,8 +3476,8 @@ uint16_t sub_030AED(uint16_t x)
 	mem_write8(x + 5u, 0x91u);
 	mem_write8(x + 0x3Bu, 8u);
 	mem_write16(x + 0xFu, 0x200u);
-	u = indexed_table_031C5D_ADDRESS;
-	t1 = DATA16(indexed_table_031C5D_ADDRESS + (int8_t)((uint32_t)unk_486B << 1));
+	u = gorilla_leap_speeds_ADDRESS;
+	t1 = gorilla_leap_speeds[(int8_t)((uint8_t)((uint32_t)unk_486B << 1)) / 2];
 	mem_write16(x + 0x19u, t1);
 	sub_07859C(x);
 	t2 = mem_read8(x + 9u);
@@ -3660,9 +3660,9 @@ void sub_030BE1(uint16_t x)
 uint16_t sub_030C0A(uint16_t x)
 {
 	uint8_t a = 0;
-	uint16_t u = 0, y = 0;
-	uint8_t t1 = 0, t2 = 0, t3 = 0, t4 = 0, t8 = 0;
-	uint16_t t5 = 0, t6 = 0, t7 = 0;
+	uint16_t entrance = 0, u = 0, y = 0;
+	uint8_t t1 = 0, t2 = 0, kind = 0, t3 = 0, t5 = 0;
+	uint16_t wait = 0, kind_2 = 0, t4 = 0;
 
 	u = object_setup_031CF1_ADDRESS;
 	y = sub_0785AB(x, u);
@@ -3672,29 +3672,30 @@ uint16_t sub_030C0A(uint16_t x)
 	mem_write16(x + 0x2Au, enemy_behaviour_031C7F_ADDRESS);
 	mem_write8(x + 0x3Au, 0x10u);
 	mem_write16(x + 0x5Cu, 0u);
-	u = loaded_table_031CF7_ADDRESS;
+	entrance = knight_entrances_ADDRESS;
 	t2 = mem_read8(x + 0x30u);
 	a = t2;
 	if ((int8_t)t2 >= 0)
 	{
-		t3 = mem_read8(u + (int8_t)(((uint32_t)a << 1) << 1) + 2u);
-		mem_write8(x + 0x50u, t3);
+		entrance += (int8_t)(((uint32_t)a << 1) << 1);
+		kind = KNIGHT_ENTRANCE(entrance)->kind;
+		mem_write8(x + 0x50u, kind);
 		mem_write8(x + 0x30u, 0u);
 		mem_write8(x + 2u, 2u);
 		return y;
 	}
 	mem_write8(x, 4u);
-	t4 = mem_read8(x + 0x30u);
-	u += (int8_t)(((uint32_t)t4 << 1) << 1);
-	t5 = DATA16(u);
-	mem_write8(x + 0x3Bu, t5 >> 8);
-	mem_write8(x + 4u, t5);
-	t6 = mem_read16(u + 2u);
-	mem_write8(x + 0x50u, t6 >> 8);
-	t7 = (t6 & 0xFFu) << 4;
-	mem_write16(x + 0xCu, t7);
-	t8 = mem_read8(x + 2u);
-	mem_write8(x + 2u, t8 + 1u);
+	t3 = mem_read8(x + 0x30u);
+	entrance += (int8_t)(((uint32_t)t3 << 1) << 1);
+	wait = (((uint32_t)KNIGHT_ENTRANCE(entrance)->wait << 8u) | KNIGHT_ENTRANCE(entrance)->entrance_kind);
+	mem_write8(x + 0x3Bu, wait >> 8);
+	mem_write8(x + 4u, wait);
+	kind_2 = (((uint32_t)KNIGHT_ENTRANCE(entrance)->kind << 8u) | KNIGHT_ENTRANCE(entrance)->x);
+	mem_write8(x + 0x50u, kind_2 >> 8);
+	t4 = (kind_2 & 0xFFu) << 4;
+	mem_write16(x + 0xCu, t4);
+	t5 = mem_read8(x + 2u);
+	mem_write8(x + 2u, t5 + 1u);
 	return y;
 }
 
@@ -3746,12 +3747,12 @@ void sub_030C65(uint16_t x)
 void sub_030C6E(uint16_t x)
 {
 	uint8_t t1 = 0;
-	uint16_t t2 = 0;
+	uint16_t step = 0;
 
 	t1 = mem_read8(x + 0x30u);
-	t2 = DATA16(loaded_table_031D51_ADDRESS + (int8_t)((uint32_t)t1 << 1));
-	mem_write8(x + 0x29u, t2 >> 8);
-	mem_write16(x + 0x3Eu, t2 & 0xFFu);
+	step = (((uint32_t)KNIGHT_ENTRANCE_STYLE(knight_entrance_styles_ADDRESS + (int8_t)((uint32_t)t1 << 1))->step << 8u) | KNIGHT_ENTRANCE_STYLE(knight_entrance_styles_ADDRESS + (int8_t)((uint32_t)t1 << 1))->slowdown);
+	mem_write8(x + 0x29u, step >> 8);
+	mem_write16(x + 0x3Eu, step & 0xFFu);
 	mem_write8(x + 0x30u, 0u);
 }
 
@@ -4053,11 +4054,11 @@ uint16_t sub_030E8F(uint16_t x)
 	mem_write8(x, 4u);
 	t1 = mem_read8(x + 0x30u);
 	a = t1;
-	mem_write8(x + 0x3Du, DATA8(indexed_table_031DA1_ADDRESS + (int8_t)a));
-	mem_write8(x + 0x2Eu, DATA8(indexed_table_031DA8_ADDRESS + (int8_t)a));
-	mem_write8(x + 0x3Au, DATA8(indexed_table_031DAF_ADDRESS + (int8_t)a));
+	mem_write8(x + 0x3Du, kind_c7_sweep_ways[(int8_t)a]);
+	mem_write8(x + 0x2Eu, kind_c7_headings[(int8_t)a]);
+	mem_write8(x + 0x3Au, kind_c7_sweep_rates[(int8_t)a]);
 	t2 = mem_read8(x + 0x30u);
-	t3 = DATA16(indexed_table_031DB6_ADDRESS + (int8_t)((uint32_t)t2 << 1));
+	t3 = kind_c7_start_x[(int8_t)((uint8_t)((uint32_t)t2 << 1)) / 2];
 	mem_write16(x + 0xCu, t3);
 	mem_write16(x + 0x16u, 0x40u);
 	mem_write8(x + 0x3Bu, 0x80u);
@@ -4439,7 +4440,7 @@ void sub_03107A(uint16_t x)
 	t1 = mem_read8(x + 0x3Bu);
 	t2 = mem_read16(x + 0x50u);
 	t3 = mem_read16(x + 0x16u);
-	mem_write16(x + 0x19u, (uint32_t)(uint16_t)(((uint32_t)a << 8) | (uint8_t)((((uint32_t)a << 8) | (uint8_t)((((uint32_t)a << 8) | DATA8(indexed_table_031DD8_ADDRESS + (t1 & 3u))) + t2)) - t3)) << 8);
+	mem_write16(x + 0x19u, (uint32_t)(uint16_t)(((uint32_t)a << 8) | (uint8_t)((((uint32_t)a << 8) | (uint8_t)((((uint32_t)a << 8) | kind_c7_hurt_shakes[t1 & 3u]) + t2)) - t3)) << 8);
 }
 
 void sub_031092(uint16_t x)
@@ -4593,7 +4594,7 @@ void sub_031165(uint16_t x)
 
 	t1 = mem_read8(x + 0x37u);
 	t2 = mem_read16(x + 0x16u);
-	mem_write16(x + 0x19u, (uint32_t)(uint16_t)(((uint32_t)a << 8) | (uint8_t)((((uint32_t)a << 8) | (uint8_t)((((uint32_t)a << 8) | DATA8(indexed_table_031DDC_ADDRESS + (int8_t)t1)) + 0x40u)) - t2)) << 8);
+	mem_write16(x + 0x19u, (uint32_t)(uint16_t)(((uint32_t)a << 8) | (uint8_t)((((uint32_t)a << 8) | (uint8_t)((((uint32_t)a << 8) | kind_c7_bob_up[(int8_t)t1]) + 0x40u)) - t2)) << 8);
 	t3 = mem_read8(x + 0x37u);
 	mem_write8(x + 0x37u, (t3 + 1u) & 0x1Fu);
 }
@@ -4601,39 +4602,39 @@ void sub_031165(uint16_t x)
 void sub_031184(uint16_t x)
 {
 	uint8_t a = 0, b = 0;
-	uint16_t u = 0;
+	uint16_t heights = 0;
 	uint8_t t1 = 0, t3 = 0;
 	uint16_t t2 = 0;
 
 	t1 = mem_read8(x + 0x37u);
 	b = t1;
 	if ((b & 0xE0u) != 0u)
-		u = indexed_table_031DDC_ADDRESS;
+		heights = kind_c7_bob_up_ADDRESS;
 	else
-		u = indexed_table_031DFC_ADDRESS;
+		heights = kind_c7_bob_down_ADDRESS;
 	t2 = mem_read16(x + 0x16u);
-	mem_write16(x + 0x19u, (uint32_t)(uint16_t)(((uint32_t)a << 8) | (uint8_t)((((uint32_t)a << 8) | (uint8_t)((((uint32_t)a << 8) | (uint8_t)(int8_t)DATA8(u + (b & 0x1Fu))) + 0x40u)) - t2)) << 8);
+	mem_write16(x + 0x19u, (uint32_t)(uint16_t)(((uint32_t)a << 8) | (uint8_t)((((uint32_t)a << 8) | (uint8_t)((((uint32_t)a << 8) | (uint8_t)BOB_HEIGHT(heights + (b & 0x1Fu))) + 0x40u)) - t2)) << 8);
 	t3 = mem_read8(x + 0x37u);
 	mem_write8(x + 0x37u, t3 + 1u);
 }
 
 void sub_0311AC(uint16_t x)
 {
-	uint16_t u = 0;
+	uint16_t speeds = 0;
 	uint8_t t1 = 0, t2 = 0;
-	uint16_t t3 = 0, t4 = 0;
+	uint16_t x_speed = 0, y_speed = 0;
 
 	t1 = mem_read8(x + 2u);
 	if (t1 != 2u)
-		u = loaded_table_031E60_ADDRESS;
+		speeds = kind_c7_fast_velocities_ADDRESS;
 	else
-		u = loaded_table_031E20_ADDRESS;
+		speeds = kind_c7_slow_velocities_ADDRESS;
 	t2 = mem_read8(x + 0x2Eu);
-	u += (int8_t)(((uint32_t)t2 << 1) << 1);
-	t3 = DATA16(u);
-	mem_write16(x + 0xFu, t3);
-	t4 = mem_read16(u + 2u);
-	mem_write16(x + 0x14u, t4);
+	speeds += (int8_t)(((uint32_t)t2 << 1) << 1);
+	x_speed = VELOCITY(speeds)->x_speed;
+	mem_write16(x + 0xFu, x_speed);
+	y_speed = VELOCITY(speeds)->y_speed;
+	mem_write16(x + 0x14u, y_speed);
 }
 
 void sub_0311CE(uint16_t x)
@@ -4643,7 +4644,7 @@ void sub_0311CE(uint16_t x)
 
 	d = sub_078623(0u);
 	a = (uint8_t)(d >> 8);
-	mem_write8(x + 0x3Bu, DATA8(indexed_table_031E1C_ADDRESS + (a & 3u)));
+	mem_write8(x + 0x3Bu, (uint8_t)(VELOCITY(kind_c7_slow_velocities_ADDRESS + (a & 3u) - 0x4u)->x_speed >> 8u));
 }
 
 void sub_0311F5(uint16_t x, uint16_t *p_y, uint16_t *p_u)
@@ -5246,29 +5247,29 @@ void sub_0314CD(uint16_t x)
 
 void sub_0314E2(uint16_t x, uint16_t *p_y, uint16_t *p_u)
 {
-	uint16_t u = 0, y = 0;
-	uint8_t t1 = 0, t3 = 0, t4 = 0;
-	uint16_t t2 = 0;
+	uint16_t look = 0, u = 0, y = 0;
+	uint8_t t1 = 0, t2 = 0, t3 = 0;
+	uint16_t flags = 0;
 
 	u = object_setup_031F58_ADDRESS;
 	y = sub_0785AB(x, u);
 	mem_write8(x, 0x80u);
 	t1 = mem_read8(x + 0x30u);
-	u = loaded_table_031F52_ADDRESS + (int8_t)((uint32_t)t1 << 1);
-	t2 = DATA16(u);
-	mem_write8(x + 9u, t2 >> 8);
-	mem_write8(x + 5u, t2);
-	t3 = mem_read8(x + 0x30u);
-	if (t3 != 0u)
+	look = kind_8e_poses_ADDRESS + (int8_t)((uint32_t)t1 << 1);
+	flags = (((uint32_t)POSE(look)->flags << 8u) | POSE(look)->animation);
+	mem_write8(x + 9u, flags >> 8);
+	mem_write8(x + 5u, flags);
+	t2 = mem_read8(x + 0x30u);
+	if (t2 != 0u)
 	{
-		t4 = mem_read8(x + 2u);
-		mem_write8(x + 2u, t4 + 1u);
+		t3 = mem_read8(x + 2u);
+		mem_write8(x + 2u, t3 + 1u);
 		sub_03150C();
 	}
 	else
 		mem_write8(x + 2u, 2u);
 	*p_y = y;
-	*p_u = u;
+	*p_u = look;
 }
 
 void sub_03150C(void)
@@ -5454,7 +5455,7 @@ void sub_0315B3(uint16_t x)
 		t1 = mem_read8(x + VIDEO_003C);
 		mem_write8(x + VIDEO_003C, t1 + 1u);
 		t2 = mem_read8(x + VIDEO_003C);
-		mem_write8(x + 5u, DATA8(indexed_table_031F7A_ADDRESS + (t2 & 3u)));
+		mem_write8(x + 5u, kind_8c_animations[t2 & 3u]);
 	}
 	t3 = unk_48AC;
 	if (t3 >= 0x270u)

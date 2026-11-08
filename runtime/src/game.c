@@ -26,7 +26,6 @@
 
 static simpsons_frame g_frame;
 static bool g_draw;
-static uint8_t g_program_given[GAME_PROGRAM_SIZE];    /* the program's bytes the assets give: its data */
 
 void (*game_frame_done)(void);
 
@@ -42,9 +41,10 @@ static void frame(void)
 
 const char *game_load(const char *folder)
 {
+	/* (the programs' data as its pieces only, by the places the programs know it by: no image of the ROM) */
 	const game_assets_memory into[GAME_ASSETS_REGIONS] = {
-		{ game_program, g_program_given }, { game_sound, NULL }, { game_tiles, NULL }, { game_sprites, NULL },
-		{ game_samples, NULL }, { game_eeprom, NULL } };
+		{ NULL, NULL }, { NULL, NULL }, { game_tiles, NULL }, { game_sprites, NULL }, { game_samples, NULL },
+		{ game_eeprom, NULL } };
 
 	return game_assets_load_into(folder, into);
 }
@@ -55,7 +55,8 @@ const char *game_reset(bool service, bool draw)
 
 	simpsons_reset();
 	simpsons_board.frame_timing = true;
-	simpsons_board.program_given = g_program_given;
+	simpsons_board.program_at = game_assets_program_at;
+	simpsons_sound_data = game_assets_sound_at;
 	if (service)
 		simpsons_board.test &= (uint8_t)~SIMPSONS_TEST_SERVICE;
 	if ((problem = simpsons_sound_init()) != NULL)

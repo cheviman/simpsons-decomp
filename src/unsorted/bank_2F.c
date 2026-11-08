@@ -3,7 +3,7 @@
  *    Description: bank 2F's code
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    06-11-2026
+ *    Modified:    07-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -1167,14 +1167,14 @@ void sub_05E23E(uint16_t *p_d, uint32_t *p_carry)
 {
 	uint32_t carry = *p_carry;
 	uint8_t a = 0;
-	uint16_t d = 0, x = 0;
+	uint16_t commands = 0, sound_test_command = 0;
 
 	a = unk_5915;
-	x = 0x68EFu;
+	commands = 0x68EFu;
 	a -= 0x30u;
-	d = DATA16(x + (int8_t)a + (int8_t)a);
-	carry = sub_078680(d);
-	*p_d = d;
+	sound_test_command = SOUND_TEST_COMMAND(commands + (int8_t)a * 0x2u);
+	carry = sub_078680(sound_test_command);
+	*p_d = sound_test_command;
 	*p_carry = carry;
 }
 
@@ -1371,14 +1371,14 @@ void sub_05E2A0(uint16_t *p_d, uint32_t *p_carry)
 {
 	uint32_t carry = *p_carry;
 	uint8_t a = 0;
-	uint16_t d = 0, x = 0;
+	uint16_t commands = 0, sound_test_command = 0;
 
 	a = unk_5916;
-	x = 0x6799u;
+	commands = 0x6799u;
 	a -= 0x30u;
-	d = DATA16(x + (int8_t)a + (int8_t)a);
-	carry = sub_078680(d);
-	*p_d = d;
+	sound_test_command = SOUND_TEST_COMMAND(commands + (int8_t)a * 0x2u);
+	carry = sub_078680(sound_test_command);
+	*p_d = sound_test_command;
 	*p_carry = carry;
 }
 
@@ -1515,7 +1515,7 @@ uint16_t sub_05E2D6(uint16_t x, uint16_t d)
 	sub_05E60A(&x, &y, &d, &zero);
 	b = (uint8_t)d;
 	stack = b;
-	a = DATA8(rom_05FA5D_ADDRESS + (int8_t)b) - 0x30u;
+	a = coin_setting_coin_digits[1 + (int8_t)b] - 0x30u;
 	if (unk_48F0 == 0u)
 	{
 		y = 0x5A62u;
@@ -1536,7 +1536,7 @@ uint16_t sub_05E2D6(uint16_t x, uint16_t d)
 	d_2 = ((uint32_t)a << 8) | b;
 	sub_05E2CD(&x, &d_2);
 	x++;
-	a = DATA8(rom_05FA6F_ADDRESS + (int8_t)stack) - 0x30u;
+	a = coin_setting_credit_digits[1 + (int8_t)stack] - 0x30u;
 	d_2 = ((uint32_t)a << 8) | b;
 	x = sub_05E6FD(x, d_2);
 	u = test_mode_text_05FAA0_ADDRESS;
@@ -1579,7 +1579,7 @@ void sub_05E31B(uint16_t *p_d, uint32_t *p_carry)
 	a = (uint8_t)(d_2 >> 8);
 	b = (uint8_t)d_2;
 	x = 0x235Fu;
-	u = DATA16(0x7935u + (int8_t)((uint32_t)b << 1));
+	u = test_mode_words[31 + (int8_t)((uint8_t)((uint32_t)b << 1)) / 2];
 	d_3 = 0u;
 	sub_05E650(d_3, &x, &u, &carry);
 	y = 0x5A5Eu;
@@ -1632,7 +1632,7 @@ void sub_05E399(uint16_t x, uint8_t d)
 void sub_05E3A7(void)
 {
 	sub_078659();
-	switch (rom_07FFFE[0])
+	switch (reset_vector[0])
 	{
 	case 0x86CEu:
 		break;
@@ -2159,7 +2159,7 @@ void sub_05E506(uint16_t *p_d, uint32_t *p_carry)
 	else
 	{
 		b = mem_read8(unk_590B);
-		t3 = DATA8(indexed_table_05E502_ADDRESS + ((a >> 1) >> 1)) + mem_read8(unk_590B);
+		t3 = test_menu_cursor_steps[(a >> 1) >> 1] + mem_read8(unk_590B);
 		a = t3;
 		if ((int8_t)t3 < 0)
 			a = unk_590A - 3u;
@@ -2350,7 +2350,7 @@ uint32_t sub_05E62A(uint16_t x, uint16_t d)
 	uint16_t u = 0;
 	uint16_t t1 = 0, t2 = 0, t3 = 0;
 
-	u = DATA16(test_mode_texts_ADDRESS + (int8_t)((uint32_t)(d >> 8) << 1));
+	u = test_mode_texts[(int8_t)((uint8_t)((uint32_t)(d >> 8) << 1)) / 2];
 	d_2 = 0u;
 	sub_05E650(d_2, &x, &u, &carry);
 	t1 = u;
@@ -2449,7 +2449,7 @@ void sub_05E650(uint16_t d, uint16_t *p_x, uint16_t *p_u, uint32_t *p_carry)
 			stack_6 = u;
 			stack_10007 = a;
 			stack_10008 = b;
-			u_2 = DATA16(test_mode_words_ADDRESS + (int8_t)((uint32_t)a << 1));
+			u_2 = test_mode_words[(int8_t)((uint8_t)((uint32_t)a << 1)) / 2];
 			d = b;
 			sub_05E650(d, &x, &u_2, &carry);
 			b = stack_10008;
@@ -2546,10 +2546,10 @@ void sub_05E711(uint16_t *p_x, uint16_t *p_d)
 	stack = (uint8_t)d;
 	stack_2 = a;
 	t1 = x;
-	mem_write8(t1, DATA8(indexed_table_05F5AE_ADDRESS + ((((a >> 1) >> 1) >> 1) >> 1)));
+	mem_write8(t1, test_mode_hex_digit_tiles[(((a >> 1) >> 1) >> 1) >> 1]);
 	t2 = t1 + 1u;
 	x_2 = t2 + 1u;
-	mem_write8(t2, DATA8(indexed_table_05F5AE_ADDRESS + (stack_2 & 0xFu)));
+	mem_write8(t2, test_mode_hex_digit_tiles[stack_2 & 0xFu]);
 	d_2 = ((uint32_t)stack_2 << 8) | stack;
 	*p_x = x_2;
 	*p_d = d_2;
@@ -2642,7 +2642,7 @@ void sub_05E93E(void)
 	uint16_t t1 = 0, t2 = 0;
 
 	x = 0x7CA8u;
-	a = indexed_table_05FCA7;
+	a = eeprom_address_signals[0];
 	b = unk_5A00;
 	do
 	{
@@ -2668,7 +2668,7 @@ void sub_05E965(void)
 	uint16_t t1 = 0, t2 = 0;
 
 	x = 0x7CB7u;
-	a = indexed_table_05FCB6;
+	a = eeprom_data_signals[0];
 	b = unk_5A01;
 	do
 	{
@@ -2710,7 +2710,7 @@ void sub_05E98F(void)
 
 	do
 	{
-		io_write8(IO_1FC2, indexed_table_05FCCB);
+		io_write8(IO_1FC2, eeprom_wait_signal[0]);
 		t1 = io_read8(IO_1F81);
 	} while ((t1 & 0x20u) == 0u);
 }
@@ -2996,7 +2996,7 @@ uint16_t sub_05EB48(void)
 	x = 0u;
 	unk_48F4 = 0u;
 	unk_48F5 = 0u;
-	unk_48F6 = (unk_48F6 & 0xFFu) | ((DATA8(indexed_table_05FD74_ADDRESS + (int8_t)unk_5A11) & 0xFFu) << 8u);
+	unk_48F6 = (unk_48F6 & 0xFFu) | ((sprite_rom_read_banks[(int8_t)unk_5A11] & 0xFFu) << 8u);
 	unk_48F0 = 8u;
 	do
 	{
@@ -3198,8 +3198,8 @@ uint16_t sub_05ECFE(uint16_t x)
 	uint16_t u = 0;
 
 	a = (uint32_t)unk_5A1A << 1;
-	u = DATA16(indexed_table_05FD68_ADDRESS + (int8_t)a);
-	if (x != DATA16(indexed_table_05FD5C_ADDRESS + (int8_t)a))
+	u = TABLE16(graphics_rom_result_places, (int8_t)a);
+	if (x != TABLE16(graphics_rom_sums, (int8_t)a))
 		return sub_05ED28(x, u);
 	return sub_05ED0F(x, u);
 }
@@ -3301,7 +3301,7 @@ void sub_05EDB4(void)
 
 uint16_t sub_05EE08(uint16_t u)
 {
-	uint16_t d = 0, ignored16 = 0, ignored16_2 = 0, ignored16_3 = 0, u_2 = 0, x = 0;
+	uint16_t d = 0, ignored16 = 0, ignored16_2 = 0, ignored16_3 = 0, portrait_area = 0, u_2 = 0;
 	uint8_t stack = 0, stack_2 = 0;
 	uint8_t t2 = 0, t3 = 0;
 	uint16_t t1 = 0;
@@ -3324,16 +3324,16 @@ uint16_t sub_05EE08(uint16_t u)
 	unk_48F0 = 0u;
 	do
 	{
-		t1 = loaded_table_05FDD8_ADDRESS + (int8_t)(((uint32_t)unk_48F0 << 1) << 1);
-		x = t1 + 2u;
-		u_2 = DATA16(t1);
+		t1 = portrait_areas_ADDRESS + (int8_t)(((uint32_t)unk_48F0 << 1) << 1);
+		portrait_area = t1 + 2u;
+		u_2 = PORTRAIT_AREA(t1)->tiles;
 		unk_48F2 = 0x14u;
 		do
 		{
 			unk_48F1 = 9u;
 			do
 			{
-				mem_write8(u_2 - 0x2000u, mem_read8(x));
+				mem_write8(u_2 - 0x2000u, PORTRAIT_AREA(portrait_area - 0x2u)->colour);
 				u_2++;
 				stack_2 = u_2 >> 8;
 				stack = (uint8_t)u_2;
@@ -3355,7 +3355,7 @@ uint16_t sub_05EE08(uint16_t u)
 	io_write8(IO_1FB9, 0x13u);
 	io_write8(IO_1FBA, 0x2Cu);
 	unk_4805 = (unk_4805 & 0xFFu) | (((uint8_t)(unk_4805 >> 8u) + 1u & 0xFFu) << 8u);
-	return x;
+	return portrait_area;
 }
 
 uint16_t sub_05EEAB(void)
@@ -3368,7 +3368,7 @@ uint16_t sub_05EEAB(void)
 	stack = 0u;
 	do
 	{
-		u = DATA16(test_player_records_ADDRESS + (int8_t)((uint32_t)stack << 1));
+		u = test_player_records[(int8_t)((uint8_t)((uint32_t)stack << 1)) / 2];
 		x = sub_05EED1(x, u);
 		x += 0xC0u;
 		unk_48F0 = (uint32_t)unk_48F0 << 1;
@@ -3413,40 +3413,40 @@ uint16_t sub_05EED1(uint16_t x, uint16_t u)
 void sub_05EEDA(uint16_t x, uint16_t u)
 {
 	uint16_t d = 0;
-	uint8_t t6 = 0;
-	uint16_t t1 = 0, t2 = 0, t3 = 0, t4 = 0, t5 = 0;
+	uint8_t t1 = 0;
+	uint16_t kind = 0, x_2 = 0, z = 0, shadow_kind = 0, shadow_x = 0;
 
 	mem_write8(x, 0x80u);
-	t1 = mem_read16(u + 2u);
-	d = t1;
+	kind = (((uint32_t)TEST_PLAYER(u)->kind << 8u) | TEST_PLAYER(u)->animation);
+	d = kind;
 	mem_write8(x + 4u, d >> 8);
 	mem_write8(x + 5u, d | 0x80u);
-	t2 = mem_read16(u + 4u);
-	mem_write16(x + 0xCu, t2);
+	x_2 = TEST_PLAYER(u)->x;
+	mem_write16(x + 0xCu, x_2);
 	mem_write16(x + 0x11u, 0x80u);
-	t3 = mem_read16(u + 6u);
-	mem_write16(x + 0x16u, t3);
-	t4 = mem_read16(u + 8u);
-	d = t4;
+	z = TEST_PLAYER(u)->z;
+	mem_write16(x + 0x16u, z);
+	shadow_kind = TEST_PLAYER(u)->shadow_kind;
+	d = shadow_kind;
 	mem_write16(x + 0x64u, d);
-	t5 = mem_read16(u + 0xAu);
-	mem_write16(x + 0x6Cu, t5);
+	shadow_x = TEST_PLAYER(u)->shadow_x;
+	mem_write16(x + 0x6Cu, shadow_x);
 	mem_write16(x + 0x71u, 0x80u);
 	mem_write16(x + 0x76u, 0x58u);
-	t6 = mem_read8(x + 1u);
-	mem_write8(x + 1u, t6 + 1u);
+	t1 = mem_read8(x + 1u);
+	mem_write8(x + 1u, t1 + 1u);
 }
 
 void sub_05EF1B(uint16_t x, uint16_t u)
 {
-	uint8_t t1 = 0, t2 = 0;
+	uint8_t button = 0, t1 = 0;
 
-	t1 = mem_read8(u + 0x11u);
-	if ((t1 & unk_485B) != 0u)
+	button = TEST_PLAYER(u)->button;
+	if ((button & unk_485B) != 0u)
 	{
 		mem_write8(x + 0x30u, 0x20u);
-		t2 = mem_read8(x + 1u);
-		mem_write8(x + 1u, t2 + 1u);
+		t1 = mem_read8(x + 1u);
+		mem_write8(x + 1u, t1 + 1u);
 	}
 }
 
@@ -3468,11 +3468,11 @@ void sub_05EF2C(uint16_t x)
 void sub_05EF3F(uint16_t x, uint16_t u)
 {
 	uint8_t a = 0;
-	uint16_t d = 0, ignored16 = 0, u_2 = 0;
+	uint16_t d = 0, ignored16 = 0, test_player = 0;
 	uint8_t stack = 0;
 	uint16_t stack_3 = 0;
-	uint8_t t1 = 0, t2 = 0, t3 = 0, t4 = 0, t7 = 0;
-	uint16_t t5 = 0, t6 = 0;
+	uint8_t t1 = 0, t2 = 0, t3 = 0, palette_set = 0, t5 = 0;
+	uint16_t palette_effect = 0, t4 = 0;
 
 	t1 = mem_read8(x + 0x28u);
 	mem_write8(x + 0x28u, t1 - 1u);
@@ -3492,20 +3492,20 @@ void sub_05EF3F(uint16_t x, uint16_t u)
 	stack = a;
 	stack_3 = u;
 	unk_487E = 1u;
-	t4 = mem_read8(u + 0xCu);
-	d = 0x600u | t4;
+	palette_set = TEST_PLAYER(u)->palette_set;
+	d = 0x600u | palette_set;
 	sub_078677(d, &ignored16, &u);
-	u_2 = stack_3;
+	test_player = stack_3;
 	unk_487E = 2u;
-	t5 = mem_read16(u_2 + 0xDu);
-	d = t5;
-	sub_078677(d, &ignored16, &u_2);
-	t6 = mem_read16(stack_3 + 0xFu);
-	d = t6;
+	palette_effect = TEST_PLAYER(test_player)->palette_effect;
+	d = palette_effect;
+	sub_078677(d, &ignored16, &test_player);
+	t4 = mem_read16(stack_3 + 0xFu);
+	d = t4;
 	sub_07869E(d);
 	a = stack;
-	t7 = mem_read8(x + 1u);
-	mem_write8(x + 1u, t7 + 1u);
+	t5 = mem_read8(x + 1u);
+	mem_write8(x + 1u, t5 + 1u);
 	mem_write8(x + 5u, a | 0x80u);
 }
 

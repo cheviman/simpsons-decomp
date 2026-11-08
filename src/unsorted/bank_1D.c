@@ -3,7 +3,7 @@
  *    Description: bank 1D's code
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    06-11-2026
+ *    Modified:    07-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -1933,14 +1933,14 @@ uint16_t sub_03A29A(uint16_t x, uint8_t d)
 {
 	uint8_t b = 0;
 	uint16_t y = 0;
-	uint16_t t1 = 0;
+	uint16_t wait = 0;
 
 	b = (uint8_t)d;
-	y = indexed_table_03BA3A_ADDRESS;
+	y = stage_8_boss_state_starts_ADDRESS;
 	mem_write8(x + 0x2Eu, b);
-	t1 = DATA16(y + (int8_t)((uint32_t)b << 1));
-	b = (uint8_t)t1;
-	mem_write8(x + VIDEO_002F, ((t1 & ~0xFFu) | b) >> 8);
+	wait = (((uint32_t)STATE_START(y + (int8_t)((uint32_t)b << 1))->wait << 8u) | STATE_START(y + (int8_t)((uint32_t)b << 1))->animation);
+	b = (uint8_t)wait;
+	mem_write8(x + VIDEO_002F, ((wait & ~0xFFu) | b) >> 8);
 	mem_write8(x + 5u, b);
 	return y;
 }
@@ -2146,7 +2146,7 @@ uint16_t sub_03A37F(uint16_t x, uint16_t u)
 					a = (uint8_t)(d >> 8);
 				}
 				stack = a;
-				d = ((uint32_t)stack << 8) | DATA8(indexed_table_03BAC5_ADDRESS + (int8_t)unk_4857);
+				d = ((uint32_t)stack << 8) | stage_8_boss_walk_speeds_by_players[(int8_t)unk_4857];
 				sub_078617(x, d);
 				sub_03A96E(x);
 				t5 = mem_read16(x + 0xFu);
@@ -2201,7 +2201,7 @@ uint16_t sub_03A37F(uint16_t x, uint16_t u)
 			sub_03A294(x, d_2);
 			u = sub_03A23C(x);
 			mem_write8(x + 0x32u, 0x56u);
-			if ((int8_t)unk_4858 <= (int8_t)DATA8(indexed_table_03BAA5_ADDRESS + (int8_t)unk_4857))
+			if ((int8_t)unk_4858 <= (int8_t)stage_8_boss_stop_throwing_chances_by_players[(int8_t)unk_4857])
 				return sub_03A626(x);
 			t12 = mem_read8(x + 0x33u);
 			mem_write8(x + 0x33u, t12 + 1u);
@@ -2218,7 +2218,7 @@ uint16_t sub_03A37F(uint16_t x, uint16_t u)
 		sub_03A29A(x, d_2);
 	}
 	mem_write8(x + 0x32u, 0x56u);
-	if ((int8_t)unk_4858 <= (int8_t)DATA8(indexed_table_03BAA5_ADDRESS + (int8_t)unk_4857))
+	if ((int8_t)unk_4858 <= (int8_t)stage_8_boss_stop_throwing_chances_by_players[(int8_t)unk_4857])
 		return sub_03A626(x);
 	t12 = mem_read8(x + 0x33u);
 	mem_write8(x + 0x33u, t12 + 1u);
@@ -2248,7 +2248,7 @@ uint16_t sub_03A422(uint16_t x, uint16_t u)
 			return sub_03A626(x);
 		return sub_03A5D1(x, u);
 	}
-	a = DATA8(indexed_table_03BAA9_ADDRESS + (int8_t)unk_4857);
+	a = stage_8_boss_bombs_by_players[(int8_t)unk_4857];
 	unk_48F0 = a;
 	d = (uint32_t)a << 8;
 	sub_03A925(x, d, &ignored16, &ignored16_2);
@@ -2266,7 +2266,7 @@ uint16_t sub_03A441(uint16_t x, uint16_t u)
 	d = 0xDu;
 	sub_03A29A(x, d);
 	mem_write16(x + 0x14u, 0u);
-	a = DATA8(indexed_table_03BAAD_ADDRESS + (int8_t)unk_4857);
+	a = stage_8_boss_run_speeds_by_players[(int8_t)unk_4857];
 	if ((int8_t)unk_4858 < 0)
 		a = 0u - a;
 	stack = a;
@@ -2328,14 +2328,14 @@ uint16_t sub_03A46E(uint16_t x, uint16_t u)
 	mem_write8(x + 0x34u, t7 - 1u);
 	if (t7 != 1u)
 	{
-		if (unk_4858 < DATA8(indexed_table_03BAB9_ADDRESS + (int8_t)unk_4857))
+		if (unk_4858 < stage_8_boss_run_skip_attack_chances_by_players[(int8_t)unk_4857])
 			return sub_03A683(x, u);
 		return sub_03A626(x);
 	}
 	sub_03A0E7(&u_2, &d);
 	d = sub_078671(x, u_2, d);
 	a = (uint8_t)(d >> 8);
-	d = ((uint32_t)a << 8) | DATA8(indexed_table_03BAC5_ADDRESS + (int8_t)unk_4857);
+	d = ((uint32_t)a << 8) | stage_8_boss_walk_speeds_by_players[(int8_t)unk_4857];
 	sub_078617(x, d);
 	d_2 = 0xEu;
 	sub_03A29A(x, d_2);
@@ -2397,7 +2397,7 @@ uint16_t sub_03A516(uint16_t x)
 			d = 0x14u;
 			d = sub_078671(x, u, d);
 			a = (uint8_t)(d >> 8);
-			d = ((uint32_t)a << 8) | DATA8(indexed_table_03BACD_ADDRESS + (int8_t)unk_4857);
+			d = ((uint32_t)a << 8) | stage_8_boss_dash_speeds_by_players[(int8_t)unk_4857];
 			sub_078617(x, d);
 			sub_03A21C(x);
 			d_2 = 0x14u;
@@ -2419,8 +2419,8 @@ uint16_t sub_03A516(uint16_t x)
 		sub_03A0E7(&u, &ignored16);
 		d = sub_07861D(x, u);
 		a = (uint8_t)(d >> 8);
-		u = indexed_table_03BAC9_ADDRESS;
-		d = ((uint32_t)a << 8) | DATA8(indexed_table_03BAC9_ADDRESS + (int8_t)unk_4857);
+		u = stage_8_boss_jump_speeds_by_players_ADDRESS;
+		d = ((uint32_t)a << 8) | stage_8_boss_jump_speeds_by_players[(int8_t)unk_4857];
 		sub_078617(x, d);
 		sub_03A072(x);
 		sub_03A21C(x);
@@ -2439,8 +2439,8 @@ uint16_t sub_03A516(uint16_t x)
 		sub_03A0E7(&u, &ignored16);
 		d = sub_07861D(x, u);
 		a = (uint8_t)(d >> 8);
-		u = indexed_table_03BAC9_ADDRESS;
-		d = ((uint32_t)a << 8) | DATA8(indexed_table_03BAC9_ADDRESS + (int8_t)unk_4857);
+		u = stage_8_boss_jump_speeds_by_players_ADDRESS;
+		d = ((uint32_t)a << 8) | stage_8_boss_jump_speeds_by_players[(int8_t)unk_4857];
 		sub_078617(x, d);
 		sub_03A072(x);
 		sub_03A21C(x);
@@ -2452,7 +2452,7 @@ uint16_t sub_03A516(uint16_t x)
 	u = t4;
 	d = sub_07861D(x, u);
 	a = (uint8_t)(d >> 8);
-	d = ((uint32_t)(uint8_t)(a - 0x80u) << 8) | DATA8(indexed_table_03BAC1_ADDRESS + (int8_t)unk_4857);
+	d = ((uint32_t)(uint8_t)(a - 0x80u) << 8) | stage_8_boss_retreat_speeds_by_players[(int8_t)unk_4857];
 	sub_078617(x, d);
 	sub_03A21C(x);
 	return sub_03A680(x, u);
@@ -2470,7 +2470,7 @@ uint16_t sub_03A59E(uint16_t x, uint16_t u)
 	t1 = mem_read8(x + 0x32u);
 	mem_write8(x + 0x32u, t1 + 1u);
 	t2 = mem_read8(x + 0x32u);
-	if ((int8_t)unk_4857 <= (int8_t)DATA8(indexed_table_03BAD1_ADDRESS + (int8_t)t2))
+	if ((int8_t)unk_4857 <= (int8_t)stage_8_boss_jump_bomb_player_limits[(int8_t)t2])
 		return sub_03A683(x, u);
 	mem_write8(x + 0x32u, 0u);
 	d = 0x100u;
@@ -2624,7 +2624,7 @@ uint16_t sub_03A683(uint16_t x, uint16_t u)
 	uint8_t t1 = 0, t3 = 0, t4 = 0, t5 = 0, t6 = 0;
 	uint16_t t2 = 0, t7 = 0, t8 = 0;
 
-	y = indexed_table_03BABD_ADDRESS;
+	y = stage_8_boss_beaten_healths_by_players_ADDRESS;
 	sub_03A189(x, y, &u, &zero, &negative);
 	if (zero)
 		return y;
@@ -2696,11 +2696,11 @@ uint16_t sub_03A6F3(uint16_t x, uint16_t y, uint16_t u)
 	mem_write8(x + 0x33u, t3 + 1u);
 	t4 = mem_read8(x + 0x33u);
 	a = unk_4857;
-	if (t4 <= mem_read8(value_03BAB1 + (int8_t)a))
+	if (t4 <= mem_read8(stage_8_boss_hit_limits_address[0] + (int8_t)a))
 		return sub_03A5D1(x, u);
 	mem_write8(x + 0x33u, 0u);
-	y = indexed_table_03BAB5_ADDRESS;
-	mem_write8(x + 0x32u, DATA8(indexed_table_03BAB5_ADDRESS + (int8_t)a));
+	y = stage_8_boss_invulnerable_times_by_players_ADDRESS;
+	mem_write8(x + 0x32u, stage_8_boss_invulnerable_times_by_players[(int8_t)a]);
 	zero = sub_03A177(x);
 	if (zero == 0u)
 		return sub_03A5D1(x, u);
@@ -3558,7 +3558,7 @@ uint16_t sub_03AAAD(uint16_t x, uint16_t y)
 	mem_write8(x + 0x34u, t2 + 1u);
 	t3 = mem_read8(x + 0x30u);
 	t4 = mem_read8(x + 0x34u);
-	a = DATA8(indexed_table_03BB80_ADDRESS + (int8_t)(t3 + t4));
+	a = burns_robot_healths[(int8_t)((uint8_t)(t3 + t4))];
 	mem_write8(x + 0x1Bu, a);
 	mem_write8(x + VIDEO_002F, a);
 	sub_03B590(x);
@@ -3780,7 +3780,7 @@ uint16_t sub_03AB38(uint16_t x, uint16_t y)
 	mem_write8(x + 0x34u, t5 + 1u);
 	t6 = mem_read8(x + 0x30u);
 	t7 = mem_read8(x + 0x34u);
-	a = DATA8(indexed_table_03BB80_ADDRESS + (int8_t)(t6 + t7));
+	a = burns_robot_healths[(int8_t)((uint8_t)(t6 + t7))];
 	mem_write8(x + 0x1Bu, a);
 	mem_write8(x + VIDEO_002F, a);
 	sub_03B590(x);
@@ -4313,7 +4313,7 @@ uint16_t sub_03ACBF(uint16_t x, uint16_t y)
 		return y;
 	t2 = mem_read8(x + 0x30u);
 	t3 = mem_read8(x + 0x34u);
-	a = DATA8(indexed_table_03BB80_ADDRESS + (int8_t)(t2 + t3));
+	a = burns_robot_healths[(int8_t)((uint8_t)(t2 + t3))];
 	mem_write8(x + 0x1Bu, a);
 	mem_write8(x + VIDEO_002F, a);
 	sub_03B590(x);
@@ -5368,7 +5368,7 @@ void sub_03AFA0(uint16_t x)
 	t2 = mem_read8(x + 0x40u);
 	mem_write8(x + 0x40u, t2 + 1u);
 	t3 = mem_read8(x + 0x40u);
-	if (t3 < DATA8(indexed_table_03BB5A_ADDRESS + (int8_t)a))
+	if (t3 < burns_robot_volleys_by_players[(int8_t)a])
 	{
 		mem_write8(x + 5u, 0x8Eu);
 		t4 = mem_read8(x + 0x28u);
@@ -5707,9 +5707,9 @@ uint16_t sub_03B0A7(uint16_t x, uint16_t y)
 	sub_03B51E(x, u, d_2);
 	t6 = (((uint32_t)unk_48F2 << 8u) | unk_48F3);
 	mem_write16(u + 0xFu, t6);
-	y = indexed_table_03BB76_ADDRESS;
+	y = burns_robot_shot_y_speeds_ADDRESS;
 	t7 = mem_read8(x + 0x3Du);
-	t8 = DATA16(indexed_table_03BB76_ADDRESS + (int8_t)((uint32_t)t7 << 1));
+	t8 = burns_robot_shot_y_speeds[(int8_t)((uint8_t)((uint32_t)t7 << 1)) / 2];
 	mem_write16(u + 0x14u, t8);
 	t2 = mem_read8(x + 0x28u);
 	mem_write8(x + 0x28u, t2 + 1u);
@@ -5845,7 +5845,7 @@ void sub_03B176(uint16_t x, uint16_t *p_y, uint16_t *p_u, uint32_t *p_carry)
 			sub_03B371(x, &u, &carry);
 			if (carry == 0u)
 				carry = 0u;
-			else if (unk_4858 < DATA8(indexed_table_03BBA3_ADDRESS + (int8_t)(unk_4857 - 1u)))
+			else if (unk_4858 < burns_robot_second_attack_chances_by_players[(int8_t)((uint8_t)(unk_4857 - 1u))])
 			{
 				unk_48F0 = 1u;
 				sub_03B443(x, &u, &carry);
@@ -5868,7 +5868,7 @@ void sub_03B176(uint16_t x, uint16_t *p_y, uint16_t *p_u, uint32_t *p_carry)
 				sub_03B371(x, &u, &carry);
 				if (carry == 0u)
 					carry = 0u;
-				else if (unk_4858 < DATA8(indexed_table_03BBA3_ADDRESS + (int8_t)(unk_4857 - 1u)))
+				else if (unk_4858 < burns_robot_second_attack_chances_by_players[(int8_t)((uint8_t)(unk_4857 - 1u))])
 				{
 					unk_48F0 = 1u;
 					sub_03B443(x, &u, &carry);
@@ -5995,9 +5995,9 @@ void sub_03B1FF(uint16_t x, uint16_t *p_y, uint16_t *p_u, uint32_t *p_carry)
 					carry = 0u;
 				else
 				{
-					y = indexed_table_03BBC7_ADDRESS;
+					y = burns_robot_held_part_times_ADDRESS;
 					t2 = mem_read8(x + 0x34u);
-					t3 = DATA16(indexed_table_03BBC7_ADDRESS + (((((uint32_t)t2 << 1) << 1) + unk_4861) & 0x1Eu));
+					t3 = burns_robot_held_part_times[(((((uint32_t)t2 << 1) << 1) + unk_4861) & 0x1Eu) / 2u];
 					t4 = mem_read16(x + 0x41u);
 					if ((int16_t)t3 <= (int16_t)t4)
 					{
@@ -6036,9 +6036,9 @@ void sub_03B1FF(uint16_t x, uint16_t *p_y, uint16_t *p_u, uint32_t *p_carry)
 						carry = 0u;
 					else
 					{
-						y = indexed_table_03BBC7_ADDRESS;
+						y = burns_robot_held_part_times_ADDRESS;
 						t2 = mem_read8(x + 0x34u);
-						t3 = DATA16(indexed_table_03BBC7_ADDRESS + (((((uint32_t)t2 << 1) << 1) + unk_4861) & 0x1Eu));
+						t3 = burns_robot_held_part_times[(((((uint32_t)t2 << 1) << 1) + unk_4861) & 0x1Eu) / 2u];
 						t4 = mem_read16(x + 0x41u);
 						if ((int16_t)t3 <= (int16_t)t4)
 						{
@@ -6106,8 +6106,8 @@ uint16_t sub_03B263(uint16_t x)
 	t1 = mem_read8(x + VIDEO_0031);
 	t2 = mem_read8(x + 0x30u);
 	t3 = mem_read8(x + 0x34u);
-	y = DATA16(indexed_table_03BCD7_ADDRESS + (int8_t)((uint32_t)(t2 + t3) << 1));
-	d = ((uint32_t)t1 << 8) | mem_read8(y + (unk_4861 >> 1));
+	y = burns_robot_walk_speeds[(int8_t)((uint8_t)((uint32_t)(t2 + t3) << 1)) / 2];
+	d = ((uint32_t)t1 << 8) | WALK_SPEED(y + (unk_4861 >> 1));
 	sub_078617(x, d);
 	sub_03B2D5(x);
 	return y;
@@ -6221,7 +6221,7 @@ uint16_t sub_03B2F0(uint16_t x, uint16_t d)
 	uint16_t d_2 = 0;
 	uint16_t t1 = 0;
 
-	t1 = DATA16(indexed_table_03BBF9_ADDRESS + (int8_t)((uint32_t)(d >> 8) << 1));
+	t1 = burns_robot_animations[(int8_t)((uint8_t)((uint32_t)(d >> 8) << 1)) / 2];
 	a = (uint8_t)(t1 >> 8);
 	b = t1 | 0x80u;
 	mem_write16(x + 4u, ((uint32_t)a << 8) | b);
@@ -6231,19 +6231,19 @@ uint16_t sub_03B2F0(uint16_t x, uint16_t d)
 
 uint16_t sub_03B2FF(uint16_t x, uint16_t d)
 {
-	uint16_t d_2 = 0, u = 0;
+	uint16_t field_1c = 0, u = 0;
 	uint16_t t1 = 0, t2 = 0, t3 = 0, t4 = 0;
 
-	t1 = DATA16(indexed_table_03BC65_ADDRESS + (int8_t)((uint16_t)((uint32_t)(uint8_t)((uint32_t)(d >> 8) << 1) << 8) >> 8));
-	d_2 = mem_read16(t1);
-	mem_write16(x + 0x1Cu, d_2);
+	t1 = TABLE16(burns_robot_hit_boxes, (int8_t)((uint16_t)((uint32_t)(uint8_t)((uint32_t)(d >> 8) << 1) << 8) >> 8));
+	field_1c = HIT_BOX(t1)->field_1c;
+	mem_write16(x + 0x1Cu, field_1c);
 	t2 = t1 + 2u;
-	mem_write16(x + 0x1Fu, mem_read16(t2));
+	mem_write16(x + 0x1Fu, HIT_BOX(t2 - 0x2u)->field_1f);
 	t3 = t2 + 2u;
-	mem_write16(x + 0x21u, mem_read16(t3));
+	mem_write16(x + 0x21u, HIT_BOX(t3 - 0x4u)->field_21);
 	t4 = t3 + 2u;
 	u = t4 + 2u;
-	mem_write16(x + 0x23u, mem_read16(t4));
+	mem_write16(x + 0x23u, HIT_BOX(t4 - 0x6u)->field_23);
 	return u;
 }
 
@@ -6358,7 +6358,7 @@ void sub_03B3FB(uint16_t x)
 	t3 = mem_read8(x + 0x30u);
 	t4 = mem_read8(x + 0x34u);
 	t5 = mem_read8(x + 0x1Bu);
-	if (mem_read8(DATA16(indexed_table_03BB85_ADDRESS + (int8_t)((uint32_t)(t3 + t4) << 1)) + (int8_t)(unk_4857 - 1u)) < t5)
+	if (BEATEN_HEALTH(burns_robot_beaten_healths[(int8_t)((uint8_t)((uint32_t)(t3 + t4) << 1)) / 2] + ((int8_t)(unk_4857 - 1u))) < t5)
 	{
 		mem_write8(x + 2u, 0xFFu);
 		mem_write8(x + 0x28u, 0u);
@@ -6400,8 +6400,8 @@ void sub_03B443(uint16_t x, uint16_t *p_u, uint32_t *p_carry)
 		mem_write8(x + 0x29u, 0u);
 		t7 = mem_read8(x + 0x34u);
 		t8 = mem_read8(x + 0x30u);
-		u = DATA16(indexed_table_03BBE7_ADDRESS + (int8_t)((uint32_t)(t7 + t8) << 1));
-		if (unk_4858 < mem_read8(u + (int8_t)(unk_4857 - 1u)))
+		u = burns_robot_quick_attack_chances[(int8_t)((uint8_t)((uint32_t)(t7 + t8) << 1)) / 2];
+		if (unk_4858 < QUICK_ATTACK_CHANCE(u + ((int8_t)(unk_4857 - 1u))))
 		{
 			t9 = mem_read8(x + 0x1Bu);
 			mem_write8(x + VIDEO_002F, t9);
@@ -6475,8 +6475,8 @@ void sub_03B509(uint16_t x)
 uint16_t sub_03B51E(uint16_t x, uint16_t u, uint16_t d)
 {
 	uint8_t a = 0, b = 0;
-	uint16_t y = 0;
-	uint16_t t1 = 0, t2 = 0, t3 = 0, t4 = 0, t5 = 0, t6 = 0, t7 = 0, t8 = 0, t9 = 0, t10 = 0, t11 = 0, t12 = 0, t13 = 0, t14 = 0, t15 = 0;
+	uint16_t part = 0;
+	uint16_t t1 = 0, t2 = 0, dy = 0, t3 = 0, t4 = 0, t5 = 0, dz = 0, t6 = 0, t7 = 0, t8 = 0, kind = 0, t9 = 0, t10 = 0, t11 = 0, t12 = 0;
 
 	a = (uint8_t)(d >> 8);
 	unk_48EA = 0u;
@@ -6487,35 +6487,35 @@ uint16_t sub_03B51E(uint16_t x, uint16_t u, uint16_t d)
 		a &= 0x7Fu;
 	}
 	t1 = object_1d_parts_ADDRESS + (int8_t)((((uint32_t)a << 1) << 1) << 1);
-	unk_48EB = DATA8(t1);
+	unk_48EB = PART(t1)->dx;
 	t2 = t1 + 1u;
-	t3 = (int8_t)mem_read8(t2);
-	t4 = mem_read16(x + 0x11u);
-	t5 = t3 + t4;
-	mem_write16(u + 0x11u, t5);
-	t6 = t2 + 1u;
-	t7 = (int8_t)mem_read8(t6);
-	t8 = mem_read16(x + 0x16u);
-	t9 = t7 + t8;
-	mem_write16(u + 0x16u, t9);
-	t10 = t6 + 1u;
-	y = t10 + 1u;
-	mem_write8(u + 1u, mem_read8(t10));
-	t11 = mem_read16(y);
-	mem_write16(u + 4u, t11);
-	t12 = (((uint32_t)unk_48EA << 8u) | unk_48EB);
-	a = (uint8_t)(t12 >> 8);
-	b = (uint8_t)t12;
+	dy = PART(t2 - 0x1u)->dy;
+	t3 = mem_read16(x + 0x11u);
+	t4 = dy + t3;
+	mem_write16(u + 0x11u, t4);
+	t5 = t2 + 1u;
+	dz = PART(t5 - 0x2u)->dz;
+	t6 = mem_read16(x + 0x16u);
+	t7 = dz + t6;
+	mem_write16(u + 0x16u, t7);
+	t8 = t5 + 1u;
+	part = t8 + 1u;
+	mem_write8(u + 1u, PART(t8 - 0x3u)->type);
+	kind = (((uint32_t)PART(part - 0x4u)->kind << 8u) | PART(part - 0x4u)->animation);
+	mem_write16(u + 4u, kind);
+	t9 = (((uint32_t)unk_48EA << 8u) | unk_48EB);
+	a = (uint8_t)(t9 >> 8);
+	b = (uint8_t)t9;
 	if ((int8_t)unk_48E8 < 0)
 	{
-		t13 = 0u - (((uint32_t)a << 8) | b);
-		a = (uint8_t)(t13 >> 8);
-		b = (uint8_t)t13;
+		t10 = 0u - (((uint32_t)a << 8) | b);
+		a = (uint8_t)(t10 >> 8);
+		b = (uint8_t)t10;
 	}
-	t14 = mem_read16(x + 0xCu);
-	t15 = (((uint32_t)a << 8) | b) + t14;
-	mem_write16(u + 0xCu, t15);
-	return y;
+	t11 = mem_read16(x + 0xCu);
+	t12 = (((uint32_t)a << 8) | b) + t11;
+	mem_write16(u + 0xCu, t12);
+	return part;
 }
 
 uint32_t sub_03B566(uint16_t x)
@@ -6543,10 +6543,10 @@ void sub_03B577(uint16_t x, uint16_t *p_y, uint32_t *p_carry)
 	uint8_t t1 = 0, t2 = 0;
 	uint16_t t3 = 0, t4 = 0;
 
-	y = indexed_table_03BBA7_ADDRESS;
+	y = burns_robot_shot_times_ADDRESS;
 	t1 = mem_read8(x + 0x30u);
 	t2 = mem_read8(x + 0x34u);
-	t3 = DATA16(indexed_table_03BBA7_ADDRESS + ((unk_4861 + t1 + t2) & 0x1Eu));
+	t3 = burns_robot_shot_times[((unk_4861 + t1 + t2) & 0x1Eu) / 2u];
 	t4 = mem_read16(x + 0x3Bu);
 	if ((int16_t)t3 < (int16_t)t4)
 		carry = 1u;

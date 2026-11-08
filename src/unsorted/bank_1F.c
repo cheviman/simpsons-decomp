@@ -3,7 +3,7 @@
  *    Description: bank 1F's code
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    06-11-2026
+ *    Modified:    07-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -543,7 +543,7 @@ void sub_03E05A(uint16_t *p_x, uint16_t *p_y, uint16_t *p_u)
 			io_write16(x + 0x40u, y_2);
 			io_write8(x + 0x58u, 0u);
 			io_write8(x + 0x2Du, 1u);
-			y = DATA16(story_scripts_ADDRESS + (uint8_t)((uint32_t)b << 1));
+			y = story_scripts[b & 0x7Fu];
 			io_write16(x + 0x2Eu, y);
 		}
 	}
@@ -579,7 +579,7 @@ void sub_03E05A(uint16_t *p_x, uint16_t *p_y, uint16_t *p_u)
 		io_write16(x + 0x40u, y_2);
 		io_write8(x + 0x58u, 0u);
 		io_write8(x + 0x2Du, 1u);
-		y = DATA16(story_scripts_ADDRESS + (uint8_t)((uint32_t)b << 1));
+		y = story_scripts[b & 0x7Fu];
 		io_write16(x + 0x2Eu, y);
 	}
 	if (x != 0x5640u)
@@ -1891,7 +1891,7 @@ void sub_03E59F(uint16_t *p_x, uint16_t *p_y, uint16_t *p_u)
 	uint16_t u = 0, x_2 = 0;
 	uint16_t stack = 0;
 
-	u = DATA16(0x70F8u + (unk_4858 & 6u));
+	u = story_scripts[64 + (unk_4858 & 6u) / 2u];
 	b = unk_4850;
 	stack = x;
 	x_2 = sub_03E7F3();
@@ -2431,7 +2431,7 @@ void sub_03EAEF(uint16_t u)
 	mem_write16(u + 0x71u, t2 - 0x7Fu);
 	t3 = mem_read16(u + 0x16u);
 	t4 = mem_read8(u + 4u);
-	mem_write16(u + 0x76u, t3 + (int8_t)DATA8(indexed_table_03FE77_ADDRESS + (int8_t)t4) + 0x7Fu);
+	mem_write16(u + 0x76u, t3 + (int8_t)player_overhead_heights[(int8_t)t4] + 0x7Fu);
 	sub_03EADC(u);
 	sub_03ED16(u);
 }
@@ -2489,7 +2489,7 @@ void sub_03EB30(uint16_t y, uint16_t u, uint16_t d)
 	mem_write16(u + 0x71u, t7);
 	t8 = mem_read8(u + 4u);
 	t9 = mem_read16(u + 0x16u);
-	mem_write16(u + 0x76u, t9 + (int8_t)DATA8(indexed_table_03FE7B_ADDRESS + (int8_t)t8));
+	mem_write16(u + 0x76u, t9 + (int8_t)player_throw_heights[(int8_t)t8]);
 	mem_write8(u + 0x7Fu, 4u);
 	mem_write8(u + 0x80u, 4u);
 	mem_write8(u + 0x81u, 4u);
@@ -2663,7 +2663,7 @@ void sub_03EC60(uint16_t u)
 	}
 	t2 = mem_read8(u + VIDEO_00A0);
 	a = t2;
-	b = DATA8(indexed_table_03FE7F_ADDRESS + (int8_t)a);
+	b = player_balloon_animations[(int8_t)a];
 	if (a != 3u)
 	{
 		t3 = mem_read8(u + 4u);
@@ -2677,7 +2677,7 @@ void sub_03EC60(uint16_t u)
 		mem_write8(y + 0x90u, 0u);
 		t5 = mem_read8(y + 4u);
 		t6 = mem_read8(u + 4u);
-		b += DATA8(indexed_table_03FE84_ADDRESS + (int8_t)((((uint32_t)t5 << 1) << 1) + t6));
+		b += pair_balloon_players[(int8_t)((uint8_t)((((uint32_t)t5 << 1) << 1) + t6))];
 	}
 	mem_write16(u + 0x64u, 0xB100u | b);
 	mem_write8(u + 0x90u, 1u);
@@ -2720,7 +2720,7 @@ void sub_03ECAA(uint16_t u)
 	t4 = mem_read16(u + 0x32u);
 	t5 = mem_read8(t4 + 4u);
 	t6 = mem_read8(u + 4u);
-	d = ((uint32_t)DATA8(indexed_table_03FE84_ADDRESS + (int8_t)((uint16_t)((uint32_t)(uint8_t)(((uint16_t)((uint32_t)(uint8_t)((uint32_t)((uint16_t)((uint32_t)(uint8_t)((uint32_t)((uint16_t)((uint32_t)t5 << 8) >> 8) << 1) << 8) >> 8) << 1) << 8) >> 8) + t6) << 8) >> 8)) << 8) | 0xC0u;
+	d = ((uint32_t)pair_balloon_players[(int8_t)((uint16_t)((uint32_t)(uint8_t)(((uint16_t)((uint32_t)(uint8_t)((uint32_t)((uint16_t)((uint32_t)(uint8_t)((uint32_t)((uint16_t)((uint32_t)t5 << 8) >> 8) << 1) << 8) >> 8) << 1) << 8) >> 8) + t6) << 8) >> 8)] << 8) | 0xC0u;
 	stack = (uint32_t)(d >> 8) * (uint8_t)d + unk_4A40_ADDRESS;
 	x = stack;
 	t7 = mem_read16(x + 0xCu);
@@ -2754,5 +2754,5 @@ void sub_03ED16(uint16_t u)
 	t2 = mem_read8(u + 0x1Bu);
 	mem_write8(u + 0x52u, t2);
 	t3 = mem_read8(u + 0x30u);
-	mem_write8(u + 2u, DATA8(indexed_table_03FE94_ADDRESS + (int8_t)t3));
+	mem_write8(u + 2u, player_state_classes[(int8_t)t3]);
 }

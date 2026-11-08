@@ -3,7 +3,7 @@
  *    Description: the PCM effects (commands 40-7E, and 3F by its argument): samples of the K053260
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    06-11-2026
+ *    Modified:    07-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the Z80 sound program decompiled into C by
@@ -4866,8 +4866,8 @@ void pcm_effect_7f_retrigger(uint16_t ix)
 
 void pcm_effect_7f_set_volume(uint16_t ix)
 {
-	uint8_t a = 0;
-	uint16_t hl = 0;
+	uint8_t a = 0, pan = 0, volume = 0;
+	uint16_t level = 0;
 
 	z80_block(40);
 	a = z80_read8(ix) & 7u;
@@ -4877,11 +4877,11 @@ void pcm_effect_7f_set_volume(uint16_t ix)
 		return;
 	}
 	z80_block(73);
-	hl = a * 2u + (effect_levels_ADDRESS - 0x2u);
-	a = SOUND_ROM8(hl);
-	hl++;
-	set_pan(ix, a);
+	level = a * 2u + (effect_levels_ADDRESS - 0x2u);
+	pan = EFFECT_LEVEL(level)->pan;
+	level++;
+	set_pan(ix, pan);
 	z80_block(17);
-	a = SOUND_ROM8(hl);
-	set_volume(ix, a);
+	volume = EFFECT_LEVEL(level - 0x1u)->volume;
+	set_volume(ix, volume);
 }

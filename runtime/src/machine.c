@@ -351,10 +351,13 @@ uint8_t simpsons_read(uint16_t address)
 	if (address >= 0x6000u)
 	{
 		const int32_t place = simpsons_program_offset(address);
+		const uint8_t *byte;
 
-		if (simpsons_board.program_given && !simpsons_board.program_given[place])
+		if (!simpsons_board.program_at)
+			return game_program[place];
+		if ((byte = simpsons_board.program_at((uint32_t)place)) == NULL)
 			program_not_given(place, address);
-		return game_program[place];
+		return *byte;
 	}
 	if (address >= 0x4000u)
 		return *simpsons_work_ram_byte(address);

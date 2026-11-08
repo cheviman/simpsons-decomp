@@ -114,12 +114,7 @@ if(SIMPSONS_DECOMPILED)
 		# (the decompiled calls nest as the program's do; a jump to another function is a call that returns)
 		target_link_options(simpsons_game_headless PRIVATE /STACK:67108864)
 	endif()
-	# (the window takes the decompiled program once it is the same as the reference in every scenario; until then, the
-	# translation scaffold, unless asked)
-	option(SIMPSONS_WINDOW_DECOMPILED "The window runs the decompiled program, not the translation scaffold" OFF)
-	if(SIMPSONS_WINDOW_DECOMPILED)
-		set(SIMPSONS_WINDOW_PROGRAM simpsons_game_decompiled)
-	endif()
+	set(SIMPSONS_WINDOW_PROGRAM simpsons_game_decompiled)
 else()
 	message(STATUS "No decompiled program in src/ (tools/decompile.py): no simpsons_game_headless")
 endif()
@@ -151,8 +146,8 @@ else()
 	message(STATUS "No generated program in build/generated (tools/recompile.py): no game")
 endif()
 
-# The game in a window (ports/sdl2): the translation scaffold, or the decompiled program with SIMPSONS_WINDOW_DECOMPILED
-# (SIMPSONS_WINDOW_PROGRAM); SDL2 from the system, or on Windows the development package unpacked in
+# The game in a window (ports/sdl2): the decompiled program where src/ has it (SIMPSONS_WINDOW_PROGRAM), else the
+# translation scaffold; SDL2 from the system, or on Windows the development package unpacked in
 # build/downloads/sdl2, its library beside the executable
 if(SIMPSONS_WINDOW_PROGRAM)
 	set(SIMPSONS_SDL2_UNPACKED "")

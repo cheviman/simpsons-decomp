@@ -3,7 +3,7 @@
  *    Description: bank 20's code
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    06-11-2026
+ *    Modified:    07-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -25,7 +25,7 @@ void sub_040003(void)
 	do
 	{
 		stack = a;
-		x = DATA16(gauge_player_records_ADDRESS + (int8_t)((uint32_t)a << 1));
+		x = gauge_player_records[(int8_t)((uint8_t)((uint32_t)a << 1)) / 2];
 		sub_040946(x);
 		d = (uint32_t)stack << 8;
 		sub_040953(d);
@@ -95,18 +95,18 @@ uint16_t sub_04000F(void)
 	uint8_t a = 0;
 	uint16_t y = 0;
 	uint8_t stack = 0;
-	uint8_t t2 = 0;
-	uint16_t t1 = 0;
+	uint8_t t1 = 0;
+	uint16_t counters = 0;
 
 	a = 0u;
 	stack = 0u;
 	do
 	{
-		t1 = io_read16(DATA16(gauge_player_records_ADDRESS + (int8_t)((uint32_t)a << 1)) + 2u);
-		y = t1;
-		t2 = mem_read8(y + 3u);
-		a = t2;
-		if (t2 != 0u)
+		counters = GAUGE_PLAYER(gauge_player_records[(int8_t)((uint8_t)((uint32_t)a << 1)) / 2])->counters;
+		y = counters;
+		t1 = mem_read8(y + 3u);
+		a = t1;
+		if (t1 != 0u)
 			a--;
 		mem_write8(y + 3u, a);
 		stack = stack + 1u;
@@ -2340,7 +2340,7 @@ void sub_04078D(uint16_t x, uint16_t d)
 	uint8_t t1 = 0;
 
 	u = loaded_table_04105A_ADDRESS;
-	y = DATA16(indexed_table_0410E3_ADDRESS + (uint8_t)((uint32_t)((d | b) >> 8) << 1));
+	y = profile_moves[((d | b) >> 8) & 0x7Fu];
 	t1 = mem_read8(x + 1u);
 	switch ((int8_t)(uint8_t)((uint32_t)t1 << 1))
 	{
@@ -2498,9 +2498,9 @@ void sub_04078D(uint16_t x, uint16_t d)
 	}
 }
 
-void sub_04079E(uint16_t x, uint16_t y, uint16_t d)
+void sub_04079E(uint16_t x, uint16_t move, uint16_t d)
 {
-	uint16_t d_2 = 0, y_2 = 0;
+	uint16_t profile_move = 0, speed_x = 0, speed_y = 0;
 	uint8_t stack = 0;
 	uint8_t t1 = 0, t4 = 0;
 	uint16_t t2 = 0, t3 = 0;
@@ -2510,18 +2510,18 @@ void sub_04079E(uint16_t x, uint16_t y, uint16_t d)
 	if (t1 != 1u)
 		return;
 	stack = d >> 8;
-	t2 = y;
-	d_2 = mem_read16(t2);
-	mem_write16(x + 0xFu, d_2);
-	mem_write16(x + 0x6Fu, d_2);
+	t2 = move;
+	speed_x = PROFILE_MOVE(t2)->speed_x;
+	mem_write16(x + 0xFu, speed_x);
+	mem_write16(x + 0x6Fu, speed_x);
 	t3 = t2 + 2u;
-	y_2 = t3 + 2u;
-	d_2 = mem_read16(t3);
-	mem_write16(x + 0x14u, d_2);
-	mem_write16(x + 0x74u, d_2);
+	profile_move = t3 + 2u;
+	speed_y = PROFILE_MOVE(t3 - 0x2u)->speed_y;
+	mem_write16(x + 0x14u, speed_y);
+	mem_write16(x + 0x74u, speed_y);
 	if ((uint16_t)((uint32_t)stack << 8) >> 8 == 4u)
 		mem_write16(x + 0x6Fu, 0xFF00u);
-	mem_write8(x + 0x28u, (uint16_t)((uint32_t)mem_read8(y_2) << 8) >> 8);
+	mem_write8(x + 0x28u, (uint16_t)((uint32_t)PROFILE_MOVE(profile_move - 0x4u)->frames << 8) >> 8);
 	t4 = mem_read8(x + 1u);
 	mem_write8(x + 1u, t4 + 1u);
 }
@@ -2555,7 +2555,7 @@ void sub_0407E0(uint16_t x, uint16_t d)
 	}
 }
 
-void sub_0407EC(uint16_t x, uint16_t y)
+void sub_0407EC(uint16_t x, uint16_t move)
 {
 	uint16_t d = 0;
 	uint8_t t1 = 0, t4 = 0;
@@ -2565,15 +2565,15 @@ void sub_0407EC(uint16_t x, uint16_t y)
 	mem_write8(x + 0x28u, t1 - 1u);
 	if (t1 == 1u)
 	{
-		t2 = y;
-		d = 0u - mem_read16(t2);
+		t2 = move;
+		d = 0u - PROFILE_MOVE(t2)->speed_x;
 		mem_write16(x + 0xFu, d);
 		mem_write16(x + 0x6Fu, d);
 		t3 = t2 + 2u;
-		d = 0u - mem_read16(t3);
+		d = 0u - PROFILE_MOVE(t3 - 0x2u)->speed_y;
 		mem_write16(x + 0x14u, d);
 		mem_write16(x + 0x74u, d);
-		d = (uint32_t)mem_read8(t3 + 2u) << 8;
+		d = (uint32_t)PROFILE_MOVE(t3 - 0x2u)->frames << 8;
 		mem_write8(x + 0x28u, d >> 8);
 		t4 = mem_read8(x + 1u);
 		mem_write8(x + 1u, t4 + 1u);
@@ -2614,7 +2614,7 @@ void sub_04082C(uint16_t d)
 	uint16_t t1 = 0, t2 = 0, t3 = 0, t4 = 0, t5 = 0, t6 = 0;
 	uint32_t unk_48F1_halfword = 0, unk_48F1_halfword_2 = 0;
 
-	t1 = DATA16(profile_texts_ADDRESS + (uint8_t)((uint32_t)(d >> 8) << 1));
+	t1 = profile_texts[(d >> 8) & 0x7Fu];
 	x = t1 + 2u;
 	t2 = mem_read16(t1);
 	unk_48F3 = (uint8_t)(t2 >> 8u);
@@ -2704,12 +2704,12 @@ void sub_0408BF(void)
 void sub_040946(uint16_t x)
 {
 	uint16_t d = 0, x_2 = 0;
-	uint16_t t1 = 0, t2 = 0;
+	uint16_t score = 0, score_tiles = 0;
 
-	t1 = mem_read16(x + 0x12u);
-	d = mem_read16(t1);
-	t2 = mem_read16(x + 0x14u);
-	x_2 = t2;
+	score = GAUGE_PLAYER(x)->score;
+	d = mem_read16(score);
+	score_tiles = GAUGE_PLAYER(x)->score_tiles;
+	x_2 = score_tiles;
 	sub_0786A7(x_2, d);
 }
 
@@ -2717,20 +2717,20 @@ void sub_040953(uint16_t d)
 {
 	uint32_t carry = 0;
 	uint8_t a = 0, b = 0;
-	uint16_t d_2 = 0, u = 0, x = 0;
-	uint8_t t5 = 0, t6 = 0, t7 = 0, t11 = 0, t12 = 0, t13 = 0, t14 = 0;
-	uint16_t t1 = 0, t2 = 0, t3 = 0, t4 = 0, t8 = 0, t9 = 0, t10 = 0;
+	uint16_t d_2 = 0, gauge_player = 0, u = 0;
+	uint8_t t2 = 0, number = 0, number_2 = 0, number_3 = 0, number_4 = 0, number_5 = 0, number_6 = 0;
+	uint16_t status = 0, lives_tiles = 0, lives = 0, t1 = 0, status_2 = 0, continue_tiles = 0, counters = 0;
 
-	x = DATA16(gauge_player_records_ADDRESS + (int8_t)((uint32_t)(d >> 8) << 1));
-	t1 = io_read16(x + 0x16u);
-	if (mem_read8(t1) == 2u)
+	gauge_player = gauge_player_records[(int8_t)((uint8_t)((uint32_t)(d >> 8) << 1)) / 2];
+	status = GAUGE_PLAYER(gauge_player)->status;
+	if (mem_read8(status) == 2u)
 	{
-		t2 = io_read16(x + 8u);
-		u = t2;
-		t3 = io_read16(x + 6u);
-		t4 = mem_read16(t3);
-		b = (uint8_t)t4;
-		if ((uint16_t)(((uint32_t)(t4 >> 8) << 8) | b) > 0xFFu)
+		lives_tiles = GAUGE_PLAYER(gauge_player)->lives_tiles;
+		u = lives_tiles;
+		lives = GAUGE_PLAYER(gauge_player)->lives;
+		t1 = mem_read16(lives);
+		b = (uint8_t)t1;
+		if ((uint16_t)(((uint32_t)(t1 >> 8) << 8) | b) > 0xFFu)
 			b = 0xFFu;
 		d_2 = (uint8_t)(b - 1u);
 		sub_0409CF(&u, &d_2, &carry);
@@ -2738,50 +2738,50 @@ void sub_040953(uint16_t d)
 		if (carry)
 			a = 0x99u;
 		d_2 = (d_2 & 0xFFu) | ((uint32_t)a << 8);
-		sub_040AA8(x, u, d_2);
-		sub_040B0C(x);
-		x = sub_0409F2(x);
-		t5 = mem_read8(x + 1u);
-		d_2 = (uint32_t)t5 << 8;
+		sub_040AA8(gauge_player, u, d_2);
+		sub_040B0C(gauge_player);
+		gauge_player = sub_0409F2(gauge_player);
+		t2 = mem_read8(gauge_player + 1u);
+		d_2 = (uint32_t)t2 << 8;
 		sub_040BCE(d_2);
 		return;
 	}
-	t6 = io_read8(x + 1u);
-	d_2 = ((uint32_t)t6 << 8) | 0xAu;
+	number = GAUGE_PLAYER(gauge_player)->number;
+	d_2 = ((uint32_t)number << 8) | 0xAu;
 	sub_040BCE(d_2);
-	t7 = io_read8(x + 1u);
-	d_2 = ((uint32_t)t7 << 8) | 1u;
+	number_2 = GAUGE_PLAYER(gauge_player)->number;
+	d_2 = ((uint32_t)number_2 << 8) | 1u;
 	sub_040BCE(d_2);
-	t8 = io_read16(x + 0x16u);
-	a = mem_read8(t8);
+	status_2 = GAUGE_PLAYER(gauge_player)->status;
+	a = mem_read8(status_2);
 	if (a == 3u)
 	{
-		t9 = io_read16(x + 0xAu);
-		u = t9;
-		t10 = io_read16(x + 2u);
-		d_2 = (d_2 & 0xFFu) | ((uint32_t)mem_read8(t10) << 8);
-		sub_040AA8(x, u, d_2);
-		t11 = io_read8(x + 1u);
-		d_2 = ((uint32_t)t11 << 8) | 2u;
+		continue_tiles = GAUGE_PLAYER(gauge_player)->continue_tiles;
+		u = continue_tiles;
+		counters = GAUGE_PLAYER(gauge_player)->counters;
+		d_2 = (d_2 & 0xFFu) | ((uint32_t)mem_read8(counters) << 8);
+		sub_040AA8(gauge_player, u, d_2);
+		number_3 = GAUGE_PLAYER(gauge_player)->number;
+		d_2 = ((uint32_t)number_3 << 8) | 2u;
 		sub_040BCE(d_2);
 		return;
 	}
 	if (a == 4u)
 	{
-		t12 = io_read8(x + 1u);
-		d_2 = ((uint32_t)t12 << 8) | 4u;
+		number_4 = GAUGE_PLAYER(gauge_player)->number;
+		d_2 = ((uint32_t)number_4 << 8) | 4u;
 		sub_040BCE(d_2);
 		return;
 	}
 	if (a == 1u || a == 5u)
 	{
-		t13 = io_read8(x + 1u);
-		d_2 = ((uint32_t)t13 << 8) | 5u;
+		number_5 = GAUGE_PLAYER(gauge_player)->number;
+		d_2 = ((uint32_t)number_5 << 8) | 5u;
 		sub_040BCE(d_2);
 		return;
 	}
-	t14 = io_read8(x + 1u);
-	d_2 = ((uint32_t)t14 << 8) | 3u;
+	number_6 = GAUGE_PLAYER(gauge_player)->number;
+	d_2 = ((uint32_t)number_6 << 8) | 3u;
 	sub_040BCE(d_2);
 }
 
@@ -2834,42 +2834,42 @@ void sub_0409CF(uint16_t *p_u, uint16_t *p_d, uint32_t *p_carry)
 uint16_t sub_0409F2(uint16_t x)
 {
 	uint32_t zero = 0, carry = 0;
-	uint8_t a = 0, b = 0;
+	uint8_t a = 0, b = 0, bottom = 0;
 	uint16_t u = 0;
 	uint8_t stack = 0, stack_2 = 0, stack_3 = 0, stack_4 = 0;
-	uint8_t t3 = 0, t5 = 0, t6 = 0, t7 = 0, t10 = 0, t11 = 0;
-	uint16_t t1 = 0, t2 = 0, t4 = 0, t8 = 0, t9 = 0;
+	uint8_t t1 = 0, t3 = 0, t4 = 0, t5 = 0, t8 = 0, t9 = 0;
+	uint16_t counters = 0, health = 0, t2 = 0, t6 = 0, t7 = 0;
 
-	t1 = mem_read16(x + 2u);
-	u = t1;
+	counters = GAUGE_PLAYER(x)->counters;
+	u = counters;
 	a = 0x1Fu;
-	t2 = mem_read16(x + 0xCu);
-	t3 = mem_read8(t2);
-	b = t3;
-	if (t3 != 0u)
+	health = GAUGE_PLAYER(x)->health;
+	t1 = mem_read8(health);
+	b = t1;
+	if (t1 != 0u)
 	{
-		t4 = (uint32_t)a * b;
+		t2 = (uint32_t)a * b;
 		stack_2 = x >> 8;
 		stack = (uint8_t)x;
-		stack_3 = t4;
-		stack_4 = t4 >> 8;
+		stack_3 = t2;
+		stack_4 = t2 >> 8;
 		stack_3 = konami_divx((uint16_t)(((uint32_t)stack_4 << 8) | stack_3), 0x28u);
 		b = stack_3 + 1u;
 		x = ((uint32_t)stack_2 << 8) | stack;
 	}
-	t5 = mem_read8(u + 2u);
-	zero = (uint8_t)(b - t5) == 0u;
-	carry = b < t5;
-	if (b == t5)
+	t3 = mem_read8(u + 2u);
+	zero = (uint8_t)(b - t3) == 0u;
+	carry = b < t3;
+	if (b == t3)
 		b = 2u;
 	else if (carry | zero)
 		b = 1u;
 	else
 		b = 0u;
-	t6 = mem_read8(u + 2u);
-	a = t6;
-	t7 = mem_read8(u + 3u);
-	if (t7 != 0u)
+	t4 = mem_read8(u + 2u);
+	a = t4;
+	t5 = mem_read8(u + 3u);
+	if (t5 != 0u)
 		return x;
 	if (b != 2u)
 	{
@@ -2880,8 +2880,8 @@ uint16_t sub_0409F2(uint16_t x)
 		mem_write8(u + 2u, a);
 		mem_write8(u + 3u, 2u);
 	}
-	t8 = mem_read16(x + 0xEu);
-	u = t8;
+	t6 = mem_read16(x + 0xEu);
+	u = t6;
 	stack = 4u;
 	do
 	{
@@ -2908,68 +2908,68 @@ uint16_t sub_0409F2(uint16_t x)
 			else
 			{
 				stack_2 = a;
-				t9 = gauge_step_tiles_ADDRESS + (int8_t)((uint32_t)a << 1);
-				mem_write8(u, DATA8(t9));
+				t7 = gauge_step_tiles_ADDRESS + (int8_t)((uint32_t)a << 1);
+				mem_write8(u, GAUGE_STEP(t7)->top);
 				mem_write8(u - 0x2000u, 0xC0u);
-				a = mem_read8(t9 + 1u);
-				mem_write8(u + 0x40u, a);
+				bottom = GAUGE_STEP(t7)->bottom;
+				mem_write8(u + 0x40u, bottom);
 				mem_write8(u - 0x1FC0u, 0xC0u);
 				a = stack_2;
 			}
-			t10 = a;
-			a = t10 - 8u;
-			if (t10 < 8u)
+			t8 = a;
+			a = t8 - 8u;
+			if (t8 < 8u)
 				a = 0u;
 		}
 		u++;
-		t11 = stack;
-		stack = t11 - 1u;
-	} while (t11 != 1u);
+		t9 = stack;
+		stack = t9 - 1u;
+	} while (t9 != 1u);
 	return x;
 }
 
 void sub_040AA8(uint16_t x, uint16_t u, uint16_t d)
 {
-	uint8_t a = 0, b = 0;
+	uint8_t a = 0, bottom = 0;
 	uint16_t y = 0;
 	uint8_t stack_F = 0, stack = 0;
-	uint8_t t1 = 0, t2 = 0;
-	uint16_t t3 = 0, t4 = 0, t5 = 0, t6 = 0;
+	uint8_t number = 0, t1 = 0;
+	uint16_t t2 = 0, t3 = 0, t4 = 0, t5 = 0;
 
 	stack = d >> 8;
-	t1 = mem_read8(x + 1u);
-	stack_F = DATA8(indexed_table_04130E_ADDRESS + (int8_t)(((uint32_t)t1 << 1) + 1u));
-	y = loaded_table_04174E_ADDRESS;
-	t2 = stack & ~0xFu;
-	a = t2;
-	if (t2 == 0u)
+	number = GAUGE_PLAYER(x)->number;
+	stack_F = GAUGE_COLUMN(gauge_player_columns_ADDRESS + (int8_t)(((uint32_t)number << 1) + 1u))->column;
+	y = big_digits_ADDRESS;
+	t1 = stack & ~0xFu;
+	a = t1;
+	if (t1 == 0u)
 		a = 0xA0u;
-	t3 = y + ((a >> 1) >> 1);
-	a = DATA8(t3) | stack_F;
+	t2 = y + ((a >> 1) >> 1);
+	a = BIG_DIGIT(t2)->attribute | stack_F;
 	mem_write8(u - 0x2000u, a);
 	mem_write8(u - 0x1FC0u, a);
-	t4 = t3 + 1u;
-	mem_write8(u, mem_read8(t4));
-	b = mem_read8(t4 + 1u);
-	mem_write8(u + 0x40u, b);
+	t3 = t2 + 1u;
+	mem_write8(u, BIG_DIGIT(t3 - 0x1u)->top);
+	bottom = BIG_DIGIT(t3 - 0x1u)->bottom;
+	mem_write8(u + 0x40u, bottom);
 	u++;
-	t5 = loaded_table_04174E_ADDRESS + (uint8_t)(((stack & 0xFu) << 1) << 1);
-	a = DATA8(t5) | stack_F;
+	t4 = big_digits_ADDRESS + (uint8_t)(((stack & 0xFu) << 1) << 1);
+	a = BIG_DIGIT(t4)->attribute | stack_F;
 	mem_write8(u - 0x2000u, a);
 	mem_write8(u - 0x1FC0u, a);
-	t6 = t5 + 1u;
-	mem_write8(u, mem_read8(t6));
-	b = mem_read8(t6 + 1u);
-	mem_write8(u + 0x40u, b);
+	t5 = t4 + 1u;
+	mem_write8(u, BIG_DIGIT(t5 - 0x1u)->top);
+	bottom = BIG_DIGIT(t5 - 0x1u)->bottom;
+	mem_write8(u + 0x40u, bottom);
 }
 
 void sub_040B0C(uint16_t x)
 {
 	uint16_t d = 0;
-	uint8_t t1 = 0;
+	uint8_t number = 0;
 
-	t1 = mem_read8(x + 1u);
-	d = ((uint32_t)t1 << 8) | (uint8_t)(t1 + 6u);
+	number = GAUGE_PLAYER(x)->number;
+	d = ((uint32_t)number << 8) | (uint8_t)(number + 6u);
 	sub_040BCE(d);
 }
 
@@ -2983,14 +2983,14 @@ void sub_040B44(void)
 	stack = a;
 	a = (((a >> 1) >> 1) >> 1) >> 1;
 	stack_2 = a;
-	u = DATA16(indexed_table_0413F1_ADDRESS + (uint8_t)((uint32_t)a << 1));
+	u = continue_digit_pictures[a & 0x7Fu];
 	x = 0x2418u;
 	a = stack_2;
 	if (a == 0u)
 		a = 0x80u;
 	d = (uint32_t)a << 8;
 	sub_040B88(x, u, d);
-	u = DATA16(indexed_table_0413F1_ADDRESS + (uint8_t)((stack & 0xFu) << 1));
+	u = continue_digit_pictures[stack & 0xFu];
 	x = 0x2420u;
 	d = 0u;
 	sub_040B88(x, u, d);
@@ -3069,28 +3069,28 @@ void sub_040BCE(uint16_t d)
 	uint8_t a = 0, b = 0;
 	uint16_t u = 0, x = 0;
 	uint8_t stack_E = 0, stack_F = 0, stack = 0, stack_11 = 0, stack_12 = 0, stack_13 = 0, stack_14 = 0, stack_15 = 0, stack_16 = 0;
-	uint8_t t8 = 0, t9 = 0;
-	uint16_t t1 = 0, t2 = 0, t3 = 0, t4 = 0, t5 = 0, t6 = 0, t7 = 0, t10 = 0;
+	uint8_t t7 = 0, t8 = 0;
+	uint16_t column = 0, t1 = 0, t2 = 0, t3 = 0, t4 = 0, t5 = 0, t6 = 0, t9 = 0;
 
 	a = (uint8_t)(d >> 8);
 	stack_16 = a;
 	stack = a & 0x7Fu;
 	stack_F = (uint8_t)d;
-	t1 = DATA16(indexed_table_04130E_ADDRESS + (int8_t)((uint32_t)stack << 1));
-	stack_11 = t1 >> 8;
-	stack_13 = t1;
-	x = DATA16(indexed_table_041316_ADDRESS + (int8_t)((uint32_t)stack_F << 1));
+	column = (((uint32_t)GAUGE_COLUMN(gauge_player_columns_ADDRESS + (int8_t)((uint32_t)stack << 1))->column << 8u) | GAUGE_COLUMN(gauge_player_columns_ADDRESS + (int8_t)((uint32_t)stack << 1))->colour);
+	stack_11 = column >> 8;
+	stack_13 = column;
+	x = gauge_pictures[(int8_t)((uint8_t)((uint32_t)stack_F << 1)) / 2];
 	do
 	{
-		t2 = x;
-		u = mem_read16(t2) + (int8_t)stack_11;
-		t3 = t2 + 2u;
-		stack_15 = mem_read8(t3);
+		t1 = x;
+		u = mem_read16(t1) + (int8_t)stack_11;
+		t2 = t1 + 2u;
+		stack_15 = mem_read8(t2);
+		t3 = t2 + 1u;
+		stack_14 = mem_read8(t3);
 		t4 = t3 + 1u;
-		stack_14 = mem_read8(t4);
-		t5 = t4 + 1u;
-		x = t5 + 1u;
-		a = mem_read8(t5) | stack_13;
+		x = t4 + 1u;
+		a = mem_read8(t4) | stack_13;
 		if ((int8_t)stack_16 < 0)
 			a = 0u;
 		stack_E = a;
@@ -3101,21 +3101,21 @@ void sub_040BCE(uint16_t d)
 			do
 			{
 				mem_write8(u - 0x2000u, b);
-				t6 = x;
-				x = t6 + 1u;
-				t7 = u;
-				u = t7 + 1u;
-				mem_write8(t7, mem_read8(t6));
-				t8 = stack_12;
-				stack_12 = t8 - 1u;
-			} while (t8 != 1u);
+				t5 = x;
+				x = t5 + 1u;
+				t6 = u;
+				u = t6 + 1u;
+				mem_write8(t6, mem_read8(t5));
+				t7 = stack_12;
+				stack_12 = t7 - 1u;
+			} while (t7 != 1u);
 			u += (int8_t)(0x40u - stack_15);
-			t9 = stack_14;
-			stack_14 = t9 - 1u;
-		} while (t9 != 1u);
-		t10 = x;
-		x = t10 + 1u;
-	} while (mem_read8(t10) == 0u);
+			t8 = stack_14;
+			stack_14 = t8 - 1u;
+		} while (t8 != 1u);
+		t9 = x;
+		x = t9 + 1u;
+	} while (mem_read8(t9) == 0u);
 }
 
 void sub_040C61(void)
@@ -3126,19 +3126,19 @@ void sub_040C61(void)
 void sub_040C65(void)
 {
 	uint8_t a = 0;
-	uint16_t x = 0;
+	uint16_t amounts = 0;
 
-	x = rank_base_ADDRESS;
+	amounts = rank_base_ADDRESS;
 	if (unk_4811 != 0u)
 		a = 1u;
 	else
 		a = unk_4814;
-	unk_4861 += DATA8(x + (int8_t)a);
+	unk_4861 += RANK_AMOUNT(amounts + (int8_t)a);
 }
 
 void sub_040C7D(void)
 {
-	unk_4861 += DATA8(rank_by_players_ADDRESS + (int8_t)(unk_4857 - 1u));
+	unk_4861 += rank_by_players[(int8_t)((uint8_t)(unk_4857 - 1u))];
 }
 
 void sub_040C8D(void)
@@ -3147,7 +3147,7 @@ void sub_040C8D(void)
 	uint16_t t1 = 0;
 
 	t1 = unk_4863;
-	if (t1 < DATA16(rank_step_times_ADDRESS + (int8_t)((uint32_t)unk_4867 << 1)))
+	if (t1 < rank_step_times[(int8_t)((uint8_t)((uint32_t)unk_4867 << 1)) / 2])
 	{
 		unk_4861 += unk_4862;
 		return;
@@ -3162,7 +3162,7 @@ void sub_040C8D(void)
 
 void sub_040CB7(void)
 {
-	unk_4861 += DATA8(rank_by_scene_ADDRESS + (int8_t)unk_4867);
+	unk_4861 += rank_by_scene[(int8_t)unk_4867];
 }
 
 void sub_040CC6(void)

@@ -3,7 +3,7 @@
  *    Description: the reset and its self test, the commands from the 053248, the main loop
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    06-11-2026
+ *    Modified:    07-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the Z80 sound program decompiled into C by
@@ -593,8 +593,8 @@ void sound_command(void)
 				z80_block(149);
 				z80_write8((uint16_t)(ix + 0x41u), (uint8_t)bc);
 				z80_write8((uint16_t)(ix + 0x42u), a);
-				hl = effect_handlers_2_ADDRESS + (uint8_t)((uint32_t)bc << 1);
-				de_2 = SOUND_ROM16(hl);
+				bc = (uint8_t)((uint32_t)bc << 1);
+				de_2 = effect_handlers_2[bc / 2u];
 				z80_write16((uint16_t)(ix + 0x43u), de_2);
 				key_off(ix);
 				z80_block(14);
@@ -644,8 +644,8 @@ void sound_command(void)
 		z80_block(149);
 		z80_write8((uint16_t)(ix + 0x41u), (uint8_t)bc);
 		z80_write8((uint16_t)(ix + 0x42u), a);
-		hl = effect_handlers_2_ADDRESS + (uint8_t)((uint32_t)bc << 1);
-		de_2 = SOUND_ROM16(hl);
+		bc = (uint8_t)((uint32_t)bc << 1);
+		de_2 = effect_handlers_2[bc / 2u];
 		z80_write16((uint16_t)(ix + 0x43u), de_2);
 		key_off(ix);
 		z80_block(14);
@@ -716,8 +716,8 @@ void sound_command(void)
 		z80_block(149);
 		z80_write8((uint16_t)(ix + 0x41u), (uint8_t)bc);
 		z80_write8((uint16_t)(ix + 0x42u), a);
-		hl = 0x3570u + (uint8_t)((uint32_t)bc << 1);
-		de_2 = SOUND_ROM16(hl);
+		bc = (uint8_t)((uint32_t)bc << 1);
+		de_2 = effect_handlers_40_by_sound[bc / 2u];
 		z80_write16((uint16_t)(ix + 0x43u), de_2);
 		key_off(ix);
 		z80_block(21);
@@ -886,9 +886,9 @@ void start_sound(uint8_t a)
 			if (a == z80_read8((uint16_t)(ix + 0x41u)))
 			{
 				z80_block(111);
-				hl = 0x3570u + (uint8_t)((uint32_t)c << 1);
-				d = SOUND_ROM8(hl + 1u);
-				z80_write8((uint16_t)(ix + 0x43u), SOUND_ROM8(hl));
+				c = (uint32_t)c << 1;
+				d = TABLE8(effect_handlers_40_by_sound, 0x1u + c);
+				z80_write8((uint16_t)(ix + 0x43u), TABLE8(effect_handlers_40_by_sound, c));
 				z80_write8((uint16_t)(ix + 0x44u), d);
 				key_off(ix);
 				z80_block(14);
@@ -939,9 +939,9 @@ void start_sound(uint8_t a)
 		z80_write8((uint16_t)(ix + 0x41u), c);
 		z80_write8((uint16_t)(ix + 0x42u), a_2);
 		z80_block(111);
-		hl = 0x3570u + (uint8_t)((uint32_t)c << 1);
-		d = SOUND_ROM8(hl + 1u);
-		z80_write8((uint16_t)(ix + 0x43u), SOUND_ROM8(hl));
+		c = (uint32_t)c << 1;
+		d = TABLE8(effect_handlers_40_by_sound, 0x1u + c);
+		z80_write8((uint16_t)(ix + 0x43u), TABLE8(effect_handlers_40_by_sound, c));
 		z80_write8((uint16_t)(ix + 0x44u), d);
 		key_off(ix);
 		z80_block(14);
@@ -970,9 +970,9 @@ void start_sound(uint8_t a)
 		z80_block(172);
 		unk_F274 = c;
 		unk_F275 = a_2;
-		hl = unused_effect_handlers_ADDRESS + (uint8_t)((uint32_t)c << 1);
-		d = SOUND_ROM8(hl + 1u);
-		unk_F276 = SOUND_ROM8(hl);
+		c = (uint32_t)c << 1;
+		d = TABLE8(unused_effect_handlers_by_sound, 0x1u + c);
+		unk_F276 = TABLE8(unused_effect_handlers_by_sound, c);
 		unk_F277 = d;
 		unk_F278 = 0u;
 		a_2 = 0u;
@@ -1058,9 +1058,9 @@ void start_sound(uint8_t a)
 		break;
 	}
 	z80_block(134);
-	hl = effect_handlers_ADDRESS - 0x2u + (uint8_t)((uint32_t)c << 1);
-	d = SOUND_ROM8(hl + 1u);
-	z80_write8((uint16_t)(ix + 0x43u), SOUND_ROM8(hl));
+	c = (uint32_t)c << 1;
+	d = TABLE8(effect_handlers, (uint16_t)(c - 1u));
+	z80_write8((uint16_t)(ix + 0x43u), TABLE8(effect_handlers, (uint16_t)(c - 2u)));
 	z80_write8((uint16_t)(ix + 0x44u), d);
 	z80_write8((uint16_t)(ix + 0x45u), 0u);
 	a_2 = 0u;
@@ -1196,7 +1196,7 @@ void stop_channel_unless_kept(uint16_t ix)
 void start_song(uint8_t a)
 {
 	uint8_t a_2 = 0;
-	uint16_t hl = 0, ix = 0;
+	uint16_t header_entry = 0, hl = 0, ix = 0;
 	uint8_t saved_a = 0;
 
 	z80_block(12);
@@ -1209,8 +1209,8 @@ void start_song(uint8_t a)
 	saved_a = a;
 	z80_write8(SOUND_BANK_FE00, song_banks_by_sound[a]);
 	a_2 = saved_a;
-	hl = a_2 * 2u + 0x5CB2u;
-	hl = SOUND_ROM16(hl);
+	header_entry = a_2 * 2u + song_headers_by_sound_ADDRESS;
+	hl = SONG_HEADER_ADDRESS(header_entry)[0];
 	ix = 0xF003u;
 	hl = start_music_channel(hl, ix, a_2);
 	z80_block(31);

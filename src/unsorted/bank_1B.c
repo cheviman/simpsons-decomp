@@ -3,7 +3,7 @@
  *    Description: bank 1B's code
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    06-11-2026
+ *    Modified:    07-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -283,7 +283,7 @@ void sub_03606B(uint16_t x)
 	mem_write8(x + 0x3Bu, t1 - 1u);
 	if (t1 != 1u)
 		return;
-	d = players_ADDRESS + 0xFu;
+	d = player_variable_records_ADDRESS + 0xFu;
 	sub_078617(x, d);
 	mem_write8(x + 5u, 0x81u);
 	t2 = mem_read8(x + 2u);
@@ -512,24 +512,24 @@ void sub_036197(uint16_t x, uint16_t *p_y, uint16_t *p_u)
 void sub_0361B9(uint16_t x, uint16_t *p_y, uint16_t *p_u)
 {
 	uint32_t carry = 0;
-	uint8_t a = 0;
+	uint8_t players = 0;
 	uint16_t ignored16 = 0, u = 0, y = 0;
 	uint8_t t1 = 0, t3 = 0, t4 = 0, t5 = 0;
 	uint16_t t2 = 0;
 
 	mem_write8(x + 0x3Au, 0u);
-	u = indexed_table_036454_ADDRESS;
+	u = door_spawn_lists_ADDRESS;
 	t1 = mem_read8(x + 0x30u);
-	y = DATA16(indexed_table_036454_ADDRESS + (int8_t)((uint32_t)t1 << 1));
+	y = door_spawn_lists[(int8_t)((uint8_t)((uint32_t)t1 << 1)) / 2];
 	for (;;)
 	{
 		t2 = y;
 		y = t2 + 1u;
-		a = mem_read8(t2);
-		if (a == 0x7Fu)
+		players = DOOR_SPAWN(t2)->players;
+		if (players == 0x7Fu)
 			break;
 		t3 = io_read8(VIDEO_1874);
-		if (a < t3)
+		if (players < t3)
 		{
 			t4 = mem_read8(x + 0x3Au);
 			mem_write8(x + 0x3Au, t4 + 1u);
@@ -609,24 +609,24 @@ void sub_036233(void)
 
 void sub_03624E(uint16_t x, uint16_t *p_y, uint16_t *p_u)
 {
-	uint16_t u = 0, y = 0;
-	uint8_t t1 = 0, t4 = 0;
-	uint16_t t2 = 0, t3 = 0;
+	uint16_t opening = 0, u = 0, y = 0;
+	uint8_t t1 = 0, t2 = 0;
+	uint16_t x_2 = 0, wait = 0;
 
 	u = object_setup_036482_ADDRESS;
 	y = sub_0785AB(x, u);
 	mem_write8(x, 0x80u);
 	t1 = mem_read8(x + 0x30u);
-	u = loaded_table_036488_ADDRESS + (int8_t)(((uint32_t)t1 << 1) << 1);
-	t2 = DATA16(u);
-	mem_write16(x + 0x3Eu, t2);
-	t3 = mem_read16(u + 2u);
-	mem_write8(x + 0x30u, t3);
+	opening = kind_12_door_openings_ADDRESS + (int8_t)(((uint32_t)t1 << 1) << 1);
+	x_2 = DOOR_OPENING(opening)->x;
+	mem_write16(x + 0x3Eu, x_2);
+	wait = (((uint32_t)DOOR_OPENING(opening)->wait << 8u) | DOOR_OPENING(opening)->list);
+	mem_write8(x + 0x30u, wait);
 	mem_write8(x + 9u, 0u);
-	t4 = mem_read8(x + 2u);
-	mem_write8(x + 2u, t4 + 1u);
+	t2 = mem_read8(x + 2u);
+	mem_write8(x + 2u, t2 + 1u);
 	*p_y = y;
-	*p_u = u;
+	*p_u = opening;
 }
 
 void sub_036275(uint16_t x)
@@ -671,25 +671,25 @@ void sub_036297(uint16_t x)
 
 void sub_0362AE(uint16_t x, uint16_t *p_y, uint16_t *p_u)
 {
-	uint16_t u = 0, y = 0;
-	uint8_t t1 = 0, t4 = 0;
-	uint16_t t2 = 0, t3 = 0;
+	uint16_t opening = 0, u = 0, y = 0;
+	uint8_t t1 = 0, t2 = 0;
+	uint16_t x_2 = 0, wait = 0;
 
 	u = object_setup_0364F8_ADDRESS;
 	y = sub_0785AB(x, u);
 	mem_write8(x, 0x80u);
 	t1 = mem_read8(x + 0x30u);
-	u = loaded_table_0364FE_ADDRESS + (int8_t)(((uint32_t)t1 << 1) << 1);
-	t2 = DATA16(u);
-	mem_write16(x + 0x3Eu, t2);
-	t3 = mem_read16(u + 2u);
-	mem_write8(x + 0x3Bu, t3 >> 8);
-	mem_write8(x + 0x30u, t3);
+	opening = kind_10_door_openings_ADDRESS + (int8_t)(((uint32_t)t1 << 1) << 1);
+	x_2 = DOOR_OPENING(opening)->x;
+	mem_write16(x + 0x3Eu, x_2);
+	wait = (((uint32_t)DOOR_OPENING(opening)->wait << 8u) | DOOR_OPENING(opening)->list);
+	mem_write8(x + 0x3Bu, wait >> 8);
+	mem_write8(x + 0x30u, wait);
 	mem_write8(x + 9u, 0u);
-	t4 = mem_read8(x + 2u);
-	mem_write8(x + 2u, t4 + 1u);
+	t2 = mem_read8(x + 2u);
+	mem_write8(x + 2u, t2 + 1u);
 	*p_y = y;
-	*p_u = u;
+	*p_u = opening;
 }
 
 void sub_0362D8(uint16_t x)
@@ -737,24 +737,24 @@ void sub_03630B(uint16_t x, uint16_t *p_y, uint16_t *p_u)
 
 void sub_03631D(uint16_t x, uint16_t *p_y, uint16_t *p_u)
 {
-	uint16_t u = 0, y = 0;
-	uint8_t t1 = 0, t4 = 0;
-	uint16_t t2 = 0, t3 = 0;
+	uint16_t opening = 0, u = 0, y = 0;
+	uint8_t t1 = 0, t2 = 0;
+	uint16_t x_2 = 0, wait = 0;
 
 	u = object_setup_036547_ADDRESS;
 	y = sub_0785AB(x, u);
 	mem_write8(x, 0x80u);
 	t1 = mem_read8(x + 0x30u);
-	u = loaded_table_03654D_ADDRESS + (int8_t)(((uint32_t)t1 << 1) << 1);
-	t2 = DATA16(u);
-	mem_write16(x + 0x3Eu, t2);
-	t3 = mem_read16(u + 2u);
-	mem_write8(x + 0x30u, t3);
+	opening = kind_0f_door_openings_ADDRESS + (int8_t)(((uint32_t)t1 << 1) << 1);
+	x_2 = DOOR_OPENING(opening)->x;
+	mem_write16(x + 0x3Eu, x_2);
+	wait = (((uint32_t)DOOR_OPENING(opening)->wait << 8u) | DOOR_OPENING(opening)->list);
+	mem_write8(x + 0x30u, wait);
 	mem_write8(x + 9u, 0u);
-	t4 = mem_read8(x + 2u);
-	mem_write8(x + 2u, t4 + 1u);
+	t2 = mem_read8(x + 2u);
+	mem_write8(x + 2u, t2 + 1u);
 	*p_y = y;
-	*p_u = u;
+	*p_u = opening;
 }
 
 void sub_036344(uint16_t x)
