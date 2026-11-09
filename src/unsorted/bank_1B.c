@@ -3,7 +3,7 @@
  *    Description: bank 1B's code
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    07-11-2026
+ *    Modified:    09-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -468,12 +468,10 @@ void sub_036175(uint16_t x)
 
 void sub_036188(uint16_t x)
 {
-	uint32_t carry = 0;
 	uint8_t t1 = 0, t2 = 0;
 
 	t1 = mem_read8(x + 6u);
-	carry = (t1 >> 0) & 1u;
-	if (carry)
+	if (t1 & 1u)
 	{
 		mem_write8(x + 0x3Bu, 0x20u);
 		t2 = mem_read8(x + 2u);
@@ -715,12 +713,10 @@ void sub_0362D8(uint16_t x)
 
 void sub_036301(uint16_t x)
 {
-	uint32_t carry = 0;
 	uint8_t t1 = 0;
 
 	t1 = mem_read8(x + 6u);
-	carry = (t1 >> 0) & 1u;
-	if (carry)
+	if (t1 & 1u)
 		mem_write8(x, 0u);
 }
 
@@ -788,12 +784,10 @@ void sub_036350(uint16_t x)
 
 void sub_036369(uint16_t x)
 {
-	uint32_t carry = 0;
 	uint8_t t1 = 0, t2 = 0;
 
 	t1 = mem_read8(x + 6u);
-	carry = (t1 >> 0) & 1u;
-	if (carry)
+	if (t1 & 1u)
 	{
 		t2 = mem_read8(x + 2u);
 		mem_write8(x + 2u, t2 + 1u);

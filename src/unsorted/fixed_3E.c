@@ -3,7 +3,7 @@
  *    Description: the fixed program's code, 07C000-07DFFF
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    07-11-2026
+ *    Modified:    09-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -899,9 +899,9 @@ void sub_07C573(uint16_t *p_y, uint16_t *p_u, uint16_t *p_d)
 	t1 = mem_read16(scroll_x);
 	offset_x = LAYER_MAP(layer_map)->offset_x;
 	t2 = t1 + mem_read16(offset_x);
-	carry = ((t2 >> 8) >> 0) & 1u;
+	carry = (t2 >> 8) & 1u;
 	unk_48F0_halfword = ((uint8_t)(((uint8_t)t2 >> 1) | (carry << 7)) >> 1) >> 1;
-	unk_48F0 = (uint8_t)(unk_48F0_halfword >> 8u);
+	unk_48F0 = 0u;
 	unk_48F1 = (uint8_t)unk_48F0_halfword;
 	scroll_y = LAYER_MAP(layer_map)->scroll_y;
 	t3 = mem_read16(scroll_y);
@@ -914,7 +914,7 @@ void sub_07C573(uint16_t *p_y, uint16_t *p_u, uint16_t *p_d)
 	t6 = mem_read16(scroll_x_2);
 	offset_x_2 = LAYER_MAP(layer_map)->offset_x;
 	t7 = t6 + mem_read16(offset_x_2);
-	carry = ((t7 >> 8) >> 0) & 1u;
+	carry = (t7 >> 8) & 1u;
 	unk_48FA = unk_4000_ADDRESS + (((uint8_t)(((uint8_t)t7 >> 1) | (carry << 7)) >> 1) >> 1);
 	maps = LAYER_MAP(layer_map)->maps;
 	y = maps;
@@ -938,7 +938,7 @@ void sub_07C573(uint16_t *p_y, uint16_t *p_u, uint16_t *p_d)
 	t10 = t9 + mem_read16(offset_x_3);
 	y = mem_read16(SCENE_AREA(scene_area)->address + (int8_t)((uint32_t)(t10 >> 8) << 1));
 	b = (((((uint8_t)t10 >> 1) >> 1) >> 1) >> 1) & 0xEu;
-	unk_48F0 = (uint8_t)(b >> 8u);
+	unk_48F0 = 0u;
 	unk_48F1 = (uint8_t)b;
 	stack_2 = y >> 8;
 	stack = (uint8_t)y;
@@ -951,7 +951,7 @@ void sub_07C573(uint16_t *p_y, uint16_t *p_u, uint16_t *p_d)
 	offset_y2 = LAYER_MAP(layer_map)->offset_y2;
 	t12 = (((uint32_t)a << 8) | b) + mem_read16(offset_y2);
 	a = (uint8_t)(t12 >> 8);
-	carry = (a >> 0) & 1u;
+	carry = a & 1u;
 	t13 = (((uint32_t)(uint8_t)((int8_t)a >> 1) << 8) | ((((uint8_t)t12 >> 1) | (carry << 7)) & 0xF0u)) + (((uint32_t)unk_48F0 << 8u) | unk_48F1);
 	y = (((uint32_t)stack_2 << 8) | stack) + t13;
 	scroll_x_4 = LAYER_MAP(layer_map)->scroll_x;
@@ -984,9 +984,9 @@ void sub_07C618(uint16_t *p_y, uint16_t *p_u, uint16_t *p_d)
 	a = (uint8_t)(t1 >> 8);
 	b = (uint8_t)t1;
 	unk_48F8 = ((uint32_t)a << 8) | b;
-	carry = (a >> 0) & 1u;
+	carry = a & 1u;
 	unk_48F0_halfword = ((uint8_t)(((b & 0xE0u) >> 1) | (carry << 7)) >> 1) >> 1;
-	unk_48F0 = (uint8_t)(unk_48F0_halfword >> 8u);
+	unk_48F0 = 0u;
 	unk_48F1 = (uint8_t)unk_48F0_halfword;
 	scroll_y = LAYER_MAP(layer_map)->scroll_y;
 	offset_y = LAYER_MAP(layer_map)->offset_y;
@@ -1028,7 +1028,7 @@ void sub_07C618(uint16_t *p_y, uint16_t *p_u, uint16_t *p_d)
 	x = ((uint32_t)stack_2 << 8) | stack;
 	y = mem_read16(address + (int8_t)stack_4);
 	unk_48F0_halfword_2 = ((((stack_3 >> 1) >> 1) >> 1) >> 1) & 0xEu;
-	unk_48F0 = (uint8_t)(unk_48F0_halfword_2 >> 8u);
+	unk_48F0 = 0u;
 	unk_48F1 = (uint8_t)unk_48F0_halfword_2;
 	t9 = io_read16(x + 4u);
 	t10 = mem_read16(t9);
@@ -1037,7 +1037,7 @@ void sub_07C618(uint16_t *p_y, uint16_t *p_u, uint16_t *p_d)
 	t13 = io_read16(x + 0xEu);
 	t14 = t12 + mem_read16(t13);
 	a = (uint8_t)(t14 >> 8);
-	carry = (a >> 0) & 1u;
+	carry = a & 1u;
 	t15 = (((uint32_t)(uint8_t)((int8_t)a >> 1) << 8) | ((((uint8_t)t14 >> 1) | (carry << 7)) & 0xF0u)) + (((uint32_t)unk_48F0 << 8u) | unk_48F1);
 	y += t15;
 	t16 = io_read16(x + 4u);
@@ -1468,7 +1468,7 @@ void sub_07C985(void)
 
 	b = spawn_ranges[(int8_t)unk_4861];
 	t1 = (uint32_t)b << 1;
-	carry = b >> 15;
+	carry = 0u;
 	io_write16(VIDEO_1886, t1);
 	io_write8(VIDEO_1874, unk_4857);
 	if (unk_488D != 0u)
@@ -3527,7 +3527,6 @@ void sub_07D056(uint16_t x, uint16_t *p_u, uint32_t *p_left_caller)
 
 void sub_07D071(uint16_t x)
 {
-	uint32_t carry = 0;
 	uint8_t a = 0;
 	uint8_t t1 = 0, t2 = 0, t3 = 0, t5 = 0, t6 = 0;
 	uint16_t t4 = 0;
@@ -3538,8 +3537,7 @@ void sub_07D071(uint16_t x)
 		t2 = io_read8(VIDEO_187B);
 		io_write8(VIDEO_187B, t2 - 1u);
 		t3 = io_read8(VIDEO_187B);
-		carry = (t3 >> 0) & 1u;
-		if (carry == 0u)
+		if ((t3 & 1u) == 0u)
 		{
 			sub_07D0A9(x);
 			return;
@@ -3553,8 +3551,7 @@ void sub_07D071(uint16_t x)
 		t2 = io_read8(VIDEO_187B);
 		io_write8(VIDEO_187B, t2 - 1u);
 		t3 = io_read8(VIDEO_187B);
-		carry = (t3 >> 0) & 1u;
-		if (carry == 0u)
+		if ((t3 & 1u) == 0u)
 		{
 			sub_07D0A9(x);
 			return;
@@ -10992,14 +10989,12 @@ void sub_07DDC9(uint16_t x)
 
 uint16_t sub_07DDDE(uint16_t x, uint16_t y)
 {
-	uint32_t carry = 0;
 	uint16_t y_2 = 0;
 	uint8_t t1 = 0;
 	uint16_t t2 = 0;
 
 	t1 = mem_read8(x + 6u);
-	carry = (t1 >> 0) & 1u;
-	if (carry == 0u)
+	if ((t1 & 1u) == 0u)
 		return y;
 	mem_write8(x, 0xC0u);
 	t2 = mem_read16(x + 0x48u);

@@ -3,7 +3,7 @@
  *    Description: the fixed program's code, 07E000-07FFFF
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    07-11-2026
+ *    Modified:    09-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -694,12 +694,10 @@ void sub_07E195(uint16_t x, uint16_t *p_y, uint16_t *p_u)
 
 void sub_07E1A4(uint16_t x)
 {
-	uint32_t carry = 0;
 	uint8_t t1 = 0;
 
 	t1 = mem_read8(x + 6u);
-	carry = (t1 >> 0) & 1u;
-	if (carry)
+	if (t1 & 1u)
 		mem_write8(x, 0u);
 }
 
@@ -781,14 +779,12 @@ uint16_t sub_07E1E8(uint16_t x, uint16_t u)
 
 uint16_t sub_07E247(uint16_t x, uint16_t y)
 {
-	uint32_t carry = 0;
 	uint16_t y_2 = 0;
 	uint8_t t1 = 0;
 	uint16_t t2 = 0;
 
 	t1 = mem_read8(x + 6u);
-	carry = (t1 >> 0) & 1u;
-	if (carry == 0u)
+	if ((t1 & 1u) == 0u)
 		return y;
 	mem_write8(x, 0xC0u);
 	t2 = mem_read16(x + 0x48u);
@@ -825,8 +821,7 @@ void sub_07E270(uint16_t x, uint16_t *p_y, uint16_t *p_u)
 	uint16_t t5 = 0;
 
 	t1 = mem_read8(x + 6u);
-	carry = (t1 >> 0) & 1u;
-	if (carry)
+	if (t1 & 1u)
 	{
 		t2 = mem_read8(x + 0x43u);
 		if (t2 == 0u)

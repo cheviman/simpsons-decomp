@@ -3,7 +3,7 @@
  *    Description: bank 11's code
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    07-11-2026
+ *    Modified:    09-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -1591,7 +1591,7 @@ void sub_022A88(uint16_t x, uint32_t carry)
 	mem_write8(x, mem_read8(x) & 0x7Fu);
 	a = (uint8_t)unk_4815 & 1u;
 	t1 = (a >> 1) | (carry << 7);
-	carry = a >> 0;
+	carry = a;
 	mem_write8(x, (t1 >> 1) | (carry << 7) | mem_read8(x));
 	t2 = mem_read8(x + 0x29u);
 	mem_write8(x + 0x29u, t2 + 1u);

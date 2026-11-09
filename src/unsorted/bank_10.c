@@ -3,7 +3,7 @@
  *    Description: bank 10's code
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    07-11-2026
+ *    Modified:    09-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -2966,10 +2966,9 @@ void sub_020937(uint16_t *p_x, uint16_t *p_d, uint32_t *p_carry)
 	unk_4D59 = 0x300u;
 	t1 = unk_48C5;
 	t2 = t1;
-	carry = (uint16_t)(t2 + 3u) < t2;
 	b = (uint8_t)(t2 + 3u);
 	unk_48C5 = ((uint32_t)((uint16_t)(t2 + 3u) >> 8) << 8) | b;
-	if (carry == 0u)
+	if (t2 <= (uint16_t)(t2 + 3u))
 	{
 		carry = 0u;
 		d = b;
@@ -3518,7 +3517,6 @@ void sub_020AE3(void)
 
 void sub_020B37(uint16_t u)
 {
-	uint32_t carry = 0;
 	uint8_t a = 0;
 	uint16_t x = 0;
 	uint8_t t1 = 0;
@@ -3542,9 +3540,8 @@ void sub_020B37(uint16_t u)
 	mem_write8(u + 0x857u, 0x30u);
 	a = 0x88u;
 	t1 = unk_48F1;
-	carry = (t1 >> 0) & 1u;
 	unk_48F1 = t1 >> 1;
-	if (carry == 0u)
+	if ((t1 & 1u) == 0u)
 		a = 0xC5u;
 	mem_write8(u + 0x845u, a);
 	mem_write8(u + 0x883u, a);
@@ -4855,25 +4852,24 @@ void sub_02125F(uint16_t *p_y, uint16_t *p_d)
 void sub_02128C(uint16_t *p_d, uint32_t *p_negative)
 {
 	uint32_t negative = *p_negative;
-	uint32_t carry = 0;
 	uint8_t b = 0;
 	uint16_t d = 0;
-	uint8_t t1 = 0, t2 = 0;
+	uint8_t t1 = 0, t2 = 0, t3 = 0;
 
 	b = unk_4850;
 	unk_48F0 = 4u;
 	do
 	{
-		carry = (b >> 0) & 1u;
-		b = b >> 1;
-		if (carry)
+		t1 = b;
+		b = t1 >> 1;
+		if (t1 & 1u)
 			break;
-		t1 = unk_48F0;
-		unk_48F0 = t1 - 1u;
-	} while (t1 != 1u);
-	t2 = 4u - unk_48F0;
-	negative = t2 >> 7;
-	d = ((uint32_t)t2 << 8) | b;
+		t2 = unk_48F0;
+		unk_48F0 = t2 - 1u;
+	} while (t2 != 1u);
+	t3 = 4u - unk_48F0;
+	negative = t3 >> 7;
+	d = ((uint32_t)t3 << 8) | b;
 	*p_d = d;
 	*p_negative = negative;
 }
@@ -5077,7 +5073,7 @@ void sub_021338(uint16_t x, uint8_t d, uint32_t carry)
 	mem_write8(x, mem_read8(x) & 0x7Fu);
 	a = (uint8_t)unk_4815 & 1u;
 	t1 = (a >> 1) | (carry << 7);
-	carry = a >> 0;
+	carry = a;
 	mem_write8(x, (t1 >> 1) | (carry << 7) | mem_read8(x));
 	t2 = mem_read8(x + 0x29u);
 	mem_write8(x + 0x29u, t2 + 1u);

@@ -3,7 +3,7 @@
  *    Description: the fixed program's code, 078000-079FFF
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    07-11-2026
+ *    Modified:    09-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -1549,18 +1549,17 @@ void sub_0792DD(uint16_t *p_x, uint16_t *p_y)
 
 uint16_t sub_079311(uint16_t d)
 {
-	uint32_t carry = 0;
 	uint8_t a = 0, b = 0;
 	uint16_t d_2 = 0, ignored16 = 0, u = 0;
 	uint8_t saved_unk_480E = 0, stack = 0;
+	uint8_t t1 = 0;
 
-	b = (uint8_t)d;
 	unk_48E8 = d >> 8;
 	saved_unk_480E = unk_480E;
 	a = unk_48E8;
-	carry = (int8_t)b < 0;
-	b = (uint32_t)b << 1;
-	if (carry)
+	t1 = (uint8_t)d;
+	b = (uint32_t)t1 << 1;
+	if ((int8_t)t1 < 0)
 	{
 		stack = b & 0x7Fu;
 		unk_480E = 0x12u;
@@ -1775,7 +1774,7 @@ void sub_0794EB(uint16_t x, uint16_t *p_u, uint16_t *p_d, uint32_t *p_negative)
 	t4 = mem_read8(x + 0xCu);
 	t5 = (((uint32_t)(uint8_t)(t4 + unk_48E8 + carry) << 8) | ((uint16_t)(t3 + t2) >> 8)) + unk_48AC;
 	t6 = t5 - 0x40u;
-	carry = ((t6 >> 8) >> 0) & 1u;
+	carry = (t6 >> 8) & 1u;
 	unk_48E8 = 0u;
 	unk_48E9 = ((uint8_t)(((uint8_t)t6 >> 1) | (carry << 7)) >> 1) >> 1;
 	unk_48EC = 0u;

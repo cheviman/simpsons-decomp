@@ -3,7 +3,7 @@
  *    Description: the code the board runs by itself (the reset's, the interrupts' handlers) and the tables the game loads by name
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    07-11-2026
+ *    Modified:    09-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by

@@ -4,17 +4,17 @@
  *                 jumps and returns through the runtime, its interrupts and its frames
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    06-11-2026
+ *    Modified:    09-11-2026
  *    Author:      Sebastian Toyos
  *
  *    license:BSD-3-Clause
  *    Behavior follows MAME's Konami CPU core (src/devices/cpu/m6809: konami.lst, base6x09.lst; Nathan Woods), as
  *    tools/core/konami_cpu/interpreter.py does it (the lift's oracle checks that one against MAME's core).
+ *    It needs none of the translation scaffold's CPU (konami/cpu.h): the decompiled program uses these helpers with
+ *    its own memory access (game/support.h).
  */
 #ifndef KONAMI_OPS_H
 #define KONAMI_OPS_H
-
-#include "konami/cpu.h"
 
 #include <stdbool.h>
 #include <stdint.h>

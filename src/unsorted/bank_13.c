@@ -3,7 +3,7 @@
  *    Description: bank 13's code
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    07-11-2026
+ *    Modified:    09-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -1824,10 +1824,10 @@ uint16_t sub_0264E7(void)
 
 	t1 = (((uint32_t)unk_48F0 << 8u) | unk_48F1);
 	a = (uint8_t)(t1 >> 8);
-	carry = (a >> 0) & 1u;
+	carry = a & 1u;
 	a = (int8_t)a >> 1;
 	b = ((uint8_t)t1 >> 1) | (carry << 7);
-	carry = (a >> 0) & 1u;
+	carry = a & 1u;
 	d = ((uint32_t)(uint8_t)((int8_t)a >> 1) << 8) | (uint8_t)((b >> 1) | (carry << 7));
 	return d;
 }
@@ -1841,7 +1841,7 @@ uint16_t sub_0264EF(void)
 
 	t1 = (((uint32_t)unk_48F0 << 8u) | unk_48F1);
 	a = (uint8_t)(t1 >> 8);
-	carry = (a >> 0) & 1u;
+	carry = a & 1u;
 	d = ((uint32_t)(uint8_t)((int8_t)a >> 1) << 8) | (uint8_t)(((uint8_t)t1 >> 1) | (carry << 7));
 	return d;
 }
@@ -8361,22 +8361,20 @@ void sub_0276C6(uint16_t x)
 
 void sub_0276E3(uint16_t x)
 {
-	uint32_t carry = 0;
 	uint8_t a = 0;
 	uint16_t d = 0;
-	uint8_t t1 = 0, t2 = 0;
+	uint8_t t1 = 0, t2 = 0, t3 = 0;
 
 	t1 = mem_read8(x + 0x29u);
-	a = t1;
-	carry = (uint8_t)(a + 2u) < a;
-	a += 2u;
+	t2 = t1;
+	a = t2 + 2u;
 	mem_write8(x + 0x29u, a);
-	if (carry)
+	if ((uint8_t)(t2 + 2u) < t2)
 	{
 		mem_write16(x + 0xFu, 0x200u);
 		mem_write16(x + 0x14u, 0u);
-		t2 = mem_read8(x + 1u);
-		mem_write8(x + 1u, t2 + 1u);
+		t3 = mem_read8(x + 1u);
+		mem_write8(x + 1u, t3 + 1u);
 		return;
 	}
 	d = ((uint32_t)a << 8) | 0x40u;
@@ -8711,22 +8709,20 @@ void sub_02773B(uint16_t x)
 
 void sub_027749(uint16_t x)
 {
-	uint32_t carry = 0;
 	uint8_t a = 0;
 	uint16_t d = 0;
-	uint8_t t1 = 0, t2 = 0;
+	uint8_t t1 = 0, t2 = 0, t3 = 0;
 
 	t1 = mem_read8(x + 0x29u);
-	a = t1;
-	carry = (uint8_t)(a + 2u) < a;
-	a += 2u;
+	t2 = t1;
+	a = t2 + 2u;
 	mem_write8(x + 0x29u, a);
-	if (carry)
+	if ((uint8_t)(t2 + 2u) < t2)
 	{
 		mem_write16(x + 0xFu, 0x200u);
 		mem_write16(x + 0x14u, 0u);
-		t2 = mem_read8(x + 1u);
-		mem_write8(x + 1u, t2 + 1u);
+		t3 = mem_read8(x + 1u);
+		mem_write8(x + 1u, t3 + 1u);
 		return;
 	}
 	d = ((uint32_t)a << 8) | 0x20u;

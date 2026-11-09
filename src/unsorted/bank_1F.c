@@ -3,7 +3,7 @@
  *    Description: bank 1F's code
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    07-11-2026
+ *    Modified:    09-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -1355,9 +1355,8 @@ void sub_03E2FB(uint16_t *p_x, uint16_t *p_y, uint16_t *p_u)
 		{
 			mem_write8(x_2 + 0x60u, 0u);
 			t16 = unk_48F1;
-			carry = (t16 >> 0) & 1u;
 			unk_48F1 = t16 >> 1;
-			if (carry)
+			if (t16 & 1u)
 				mem_write8(x_2, 4u);
 			t17 = mem_read8(y + 6u);
 			mem_write8(x_2 + 0x30u, t17);
@@ -1886,10 +1885,11 @@ void sub_03E59F(uint16_t *p_x, uint16_t *p_y, uint16_t *p_u)
 {
 	uint16_t x = (uint16_t)*p_x;
 	uint16_t y = (uint16_t)*p_y;
-	uint32_t zero = 0, carry = 0;
+	uint32_t zero = 0;
 	uint8_t b = 0;
 	uint16_t u = 0, x_2 = 0;
 	uint16_t stack = 0;
+	uint8_t t1 = 0;
 
 	u = story_scripts[64 + (unk_4858 & 6u) / 2u];
 	b = unk_4850;
@@ -1897,9 +1897,9 @@ void sub_03E59F(uint16_t *p_x, uint16_t *p_y, uint16_t *p_u)
 	x_2 = sub_03E7F3();
 	do
 	{
-		carry = (b >> 0) & 1u;
-		b = b >> 1;
-		if (carry == 0u)
+		t1 = b;
+		b = t1 >> 1;
+		if ((t1 & 1u) == 0u)
 		{
 			mem_write8(x_2 + 0x2Du, 1u);
 			mem_write16(x_2 + 0x2Eu, u);
@@ -2274,7 +2274,7 @@ void sub_03E7A3(uint16_t *p_u, uint16_t *p_d)
 
 uint16_t sub_03E7BA(void)
 {
-	uint32_t zero = 0, carry = 0;
+	uint32_t zero = 0;
 	uint8_t a = 0;
 	uint16_t x = 0;
 	uint8_t stack = 0, stack_10002 = 0;
@@ -2299,18 +2299,16 @@ uint16_t sub_03E7BA(void)
 		} while (t4 != 1u);
 	}
 	t5 = unk_48F1;
-	carry = (t5 >> 0) & 1u;
 	unk_48F1 = t5 >> 1;
-	if (carry)
+	if (t5 & 1u)
 		return x;
 	unk_48F1 = unk_4885;
 	x = sub_03E7F3();
 	do
 	{
 		t6 = unk_48F1;
-		carry = (t6 >> 0) & 1u;
 		unk_48F1 = t6 >> 1;
-		if (carry)
+		if (t6 & 1u)
 			break;
 		sub_03E7FC(&x, &zero);
 	} while (zero == 0u);

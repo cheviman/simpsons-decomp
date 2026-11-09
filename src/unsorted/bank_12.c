@@ -3,7 +3,7 @@
  *    Description: bank 12's code
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    07-11-2026
+ *    Modified:    09-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -3739,51 +3739,49 @@ void sub_0242AC(uint16_t x)
 
 void sub_0242D0(uint16_t x)
 {
-	uint32_t carry = 0;
 	uint8_t a = 0, b = 0;
-	uint8_t t1 = 0, t2 = 0, t3 = 0, t4 = 0, t5 = 0;
-	uint16_t t6 = 0, t7 = 0, t8 = 0, t9 = 0, t10 = 0;
+	uint8_t t1 = 0, t2 = 0, t3 = 0, t4 = 0, t5 = 0, t6 = 0;
+	uint16_t t7 = 0, t8 = 0, t9 = 0, t10 = 0, t11 = 0;
 
 	t1 = mem_read8(x + 0xAu);
-	a = t1;
-	carry = (uint8_t)(a + 2u) < a;
-	a += 2u;
+	t2 = t1;
+	a = t2 + 2u;
 	mem_write8(x + 0xAu, a);
 	mem_write8(x + 0xBu, a);
-	if (carry)
+	if ((uint8_t)(t2 + 2u) < t2)
 	{
-		t2 = mem_read8(x + 0x32u);
-		a = 0x98u + t2;
 		t3 = mem_read8(x + 0x32u);
-		if (t3 == 4u)
+		a = 0x98u + t3;
+		t4 = mem_read8(x + 0x32u);
+		if (t4 == 4u)
 			a = 0x8Eu;
 		mem_write8(x + 5u, a);
 		mem_write8(x + 0xAu, 0x40u);
 		mem_write8(x + 0xBu, 0x40u);
-		t4 = mem_read8(x + 0x33u);
-		mem_write8(x + 0x33u, t4 + 1u);
+		t5 = mem_read8(x + 0x33u);
+		mem_write8(x + 0x33u, t5 + 1u);
 		if (unk_4867 == 6u)
 		{
-			t5 = mem_read8(x + 1u);
-			mem_write8(x + 1u, t5 + 1u);
+			t6 = mem_read8(x + 1u);
+			mem_write8(x + 1u, t6 + 1u);
 		}
 	}
 	mem_write8(x, mem_read8(x) | 0x10u);
-	t6 = mem_read16(x + 0xFu);
-	t7 = t6;
-	t8 = t7 - 8u;
-	a = (uint8_t)(t8 >> 8);
-	b = (uint8_t)t8;
-	if (t7 < 8u)
+	t7 = mem_read16(x + 0xFu);
+	t8 = t7;
+	t9 = t8 - 8u;
+	a = (uint8_t)(t9 >> 8);
+	b = (uint8_t)t9;
+	if (t8 < 8u)
 	{
 		a = 0u;
 		b = 0u;
 	}
 	mem_write16(x + 0xFu, ((uint32_t)a << 8) | b);
-	t9 = mem_read16(x + 0x19u);
-	t10 = t9 + 0x16u;
-	a = (uint8_t)(t10 >> 8);
-	b = (uint8_t)t10;
+	t10 = mem_read16(x + 0x19u);
+	t11 = t10 + 0x16u;
+	a = (uint8_t)(t11 >> 8);
+	b = (uint8_t)t11;
 	if ((int16_t)(((uint32_t)a << 8) | b) >= -0x10)
 	{
 		a = 0xFFu;

@@ -3,7 +3,7 @@
  *    Description: the fixed program's code, 07A000-07BFFF
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    07-11-2026
+ *    Modified:    09-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -8488,8 +8488,8 @@ void sub_07B74F(uint16_t x, uint16_t u, uint16_t *p_y, uint16_t *p_d)
 	uint8_t a = 0, b = 0;
 	uint16_t d_2 = 0;
 	uint8_t stack = 0;
-	uint8_t t1 = 0, t2 = 0, t5 = 0, bit = 0, initial_3 = 0, number = 0;
-	uint16_t play_status = 0, lives = 0, t3 = 0, lives_2 = 0, t4 = 0, state = 0, t6 = 0, t7 = 0, lives_3 = 0, lives_4 = 0, life = 0, object_life = 0, countdown = 0, state_2 = 0, play_status_2 = 0, state_3 = 0, score = 0, t8 = 0, score_2 = 0, initial = 0;
+	uint8_t t1 = 0, t2 = 0, t3 = 0, t6 = 0, bit = 0, initial_3 = 0, number = 0;
+	uint16_t play_status = 0, lives = 0, t4 = 0, lives_2 = 0, t5 = 0, state = 0, t7 = 0, t8 = 0, lives_3 = 0, lives_4 = 0, life = 0, object_life = 0, countdown = 0, state_2 = 0, play_status_2 = 0, state_3 = 0, score = 0, t9 = 0, score_2 = 0, initial = 0;
 	uint32_t unk_48F3_halfword = 0, unk_48F0_halfword = 0;
 
 	b = (uint8_t)d;
@@ -8511,23 +8511,23 @@ void sub_07B74F(uint16_t x, uint16_t u, uint16_t *p_y, uint16_t *p_d)
 		do
 		{
 			t2 = unk_485A;
-			carry = (uint8_t)(b + t2) < b;
-			b += t2;
-			if (carry)
+			t3 = b;
+			b = t3 + t2;
+			if ((uint8_t)(t3 + t2) < t3)
 				b = 0xFFu;
-			t3 = y - 1u;
-			y = t3;
-		} while (t3 != 0u);
+			t4 = y - 1u;
+			y = t4;
+		} while (t4 != 0u);
 		lives_2 = PLAYER(x)->lives;
 		mem_write8(lives_2, b);
 		mem_write16(u, 0u);
 	}
 	else
 	{
-		t4 = unk_4837;
-		a = (uint8_t)(t4 >> 8);
-		b = (uint8_t)t4;
-		if (t4 == 0u)
+		t5 = unk_4837;
+		a = (uint8_t)(t5 >> 8);
+		b = (uint8_t)t5;
+		if (t5 == 0u)
 		{
 			state = PLAYER(x)->state;
 			mem_write8(state, 0u);
@@ -8535,17 +8535,17 @@ void sub_07B74F(uint16_t x, uint16_t u, uint16_t *p_y, uint16_t *p_d)
 			*p_d = d_2;
 			return;
 		}
-		t5 = mem_read8(PLAYER(x)->pressed) & 0xB0u;
-		a = t5;
-		if (t5 == 0u)
+		t6 = mem_read8(PLAYER(x)->pressed) & 0xB0u;
+		a = t6;
+		if (t6 == 0u)
 		{
 			d_2 = ((uint32_t)a << 8) | b;
 			*p_d = d_2;
 			return;
 		}
-		t6 = unk_4837;
-		t7 = t6 - 1u;
-		unk_4837 = t7;
+		t7 = unk_4837;
+		t8 = t7 - 1u;
+		unk_4837 = t8;
 		lives_3 = PLAYER(x)->lives;
 		lives_4 = PLAYER(x)->lives;
 		mem_write8(lives_4, mem_read8(lives_3) + unk_485A);
@@ -8573,9 +8573,9 @@ void sub_07B74F(uint16_t x, uint16_t u, uint16_t *p_y, uint16_t *p_d)
 		return;
 	}
 	score = PLAYER(x)->score;
-	t8 = mem_read16(score);
-	a = (uint8_t)(t8 >> 8);
-	b = (uint8_t)t8;
+	t9 = mem_read16(score);
+	a = (uint8_t)(t9 >> 8);
+	b = (uint8_t)t9;
 	unk_48F3_halfword = ((uint32_t)a << 8) | b;
 	unk_48F3 = (uint8_t)(unk_48F3_halfword >> 8u);
 	unk_48F4 = (uint8_t)unk_48F3_halfword;
@@ -8624,11 +8624,10 @@ void sub_07B7E8(uint16_t x, uint16_t u, uint16_t *p_y, uint16_t *p_d)
 {
 	uint16_t y = (uint16_t)*p_y;
 	uint8_t d = (uint8_t)*p_d;
-	uint32_t carry = 0;
 	uint8_t a = 0, b = 0;
 	uint16_t d_2 = 0;
-	uint8_t bit = 0, number = 0, t1 = 0, t3 = 0;
-	uint16_t play_status = 0, lives = 0, countdown = 0, countdown_2 = 0, play_status_2 = 0, state = 0, t2 = 0, lives_2 = 0, t4 = 0, lives_3 = 0;
+	uint8_t bit = 0, number = 0, t1 = 0, t3 = 0, t4 = 0;
+	uint16_t play_status = 0, lives = 0, countdown = 0, countdown_2 = 0, play_status_2 = 0, state = 0, t2 = 0, lives_2 = 0, t5 = 0, lives_3 = 0;
 
 	b = (uint8_t)d;
 	play_status = PLAYER(x)->play_status;
@@ -8669,13 +8668,13 @@ void sub_07B7E8(uint16_t x, uint16_t u, uint16_t *p_y, uint16_t *p_d)
 				do
 				{
 					t3 = unk_485A;
-					carry = (uint8_t)(b + t3) < b;
-					b += t3;
-					if (carry)
+					t4 = b;
+					b = t4 + t3;
+					if ((uint8_t)(t4 + t3) < t4)
 						b = 0xFFu;
-					t4 = y - 1u;
-					y = t4;
-				} while (t4 != 0u);
+					t5 = y - 1u;
+					y = t5;
+				} while (t5 != 0u);
 				lives_3 = PLAYER(x)->lives;
 				mem_write8(lives_3, b);
 				a = 0u;

@@ -3,7 +3,7 @@
  *    Description: bank 2F's code
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    07-11-2026
+ *    Modified:    09-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -198,10 +198,9 @@ uint16_t sub_05E012(uint16_t d)
 
 void sub_05E015(uint16_t u)
 {
-	uint32_t carry = 0;
 	uint8_t a = 0;
 	uint16_t x = 0;
-	uint8_t t1 = 0;
+	uint8_t t1 = 0, t2 = 0;
 
 	unk_4872 = 0u;
 	sub_05EDB4();
@@ -233,10 +232,9 @@ void sub_05E015(uint16_t u)
 		sub_05EF9D(x);
 		break;
 	}
-	a = unk_4878;
-	carry = (uint8_t)(a + 1u) < a;
-	a++;
-	if (carry)
+	t1 = unk_4878;
+	a = t1 + 1u;
+	if ((uint8_t)(t1 + 1u) < t1)
 		a = 0xFFu;
 	unk_4878 = a;
 	if (a < 0x20u)
@@ -264,9 +262,9 @@ void sub_05E015(uint16_t u)
 		}
 		x += 4u;
 		unk_48F0 = (uint32_t)unk_48F0 << 1;
-		t1 = unk_48F1;
-		unk_48F1 = t1 - 1u;
-	} while (t1 != 1u);
+		t2 = unk_48F1;
+		unk_48F1 = t2 - 1u;
+	} while (t2 != 1u);
 }
 
 void sub_05E042(uint16_t y, uint16_t d)
@@ -935,7 +933,7 @@ void sub_05E1A5(uint16_t *p_d, uint32_t *p_carry)
 	uint8_t a = 0, b = 0, d = 0;
 	uint16_t d_2 = 0, x = 0, y = 0;
 	uint8_t stack = 0, stack_2 = 0, stack_3 = 0, stack_4 = 0, stack_5 = 0;
-	uint8_t t2 = 0, t3 = 0, t4 = 0;
+	uint8_t t2 = 0, t3 = 0, t4 = 0, t5 = 0;
 	uint16_t t1 = 0;
 
 	y = IO_1F90;
@@ -956,15 +954,15 @@ void sub_05E1A5(uint16_t *p_d, uint32_t *p_carry)
 		{
 			stack_4 = b;
 			b = 0u;
-			carry = (a >> 0) & 1u;
-			a = a >> 1;
-			if (carry == 0u)
+			t2 = a;
+			a = t2 >> 1;
+			if ((t2 & 1u) == 0u)
 				b++;
 			d = b;
 			x = sub_05E204(x, d);
-			t2 = stack_4;
-			b = t2 - 1u;
-		} while (t2 != 1u);
+			t3 = stack_4;
+			b = t3 - 1u;
+		} while (t3 != 1u);
 		x += 0x40u;
 		stack_5 = y >> 8;
 		stack_4 = (uint8_t)y;
@@ -978,10 +976,9 @@ void sub_05E1A5(uint16_t *p_d, uint32_t *p_carry)
 		if (zero || (int8_t)stack_3 > 2)
 		{
 			b = 0u;
-			t3 = unk_48F0;
-			carry = (t3 >> 0) & 1u;
-			unk_48F0 = t3 >> 1;
-			if (carry)
+			t4 = unk_48F0;
+			unk_48F0 = t4 >> 1;
+			if (t4 & 1u)
 				b++;
 			d = b;
 			x = sub_05E204(x, d);
@@ -991,16 +988,15 @@ void sub_05E1A5(uint16_t *p_d, uint32_t *p_carry)
 		if (stack_4 != 0u)
 		{
 			b = 0u;
-			carry = ((a >> 1) >> 0) & 1u;
-			if (carry == 0u)
+			if (((a >> 1) & 1u) == 0u)
 				b++;
 			d = b;
 			sub_05E204(x, d);
 		}
 		x = ((uint32_t)stack_2 << 8) | stack;
-		t4 = stack_3;
-		b = t4 - 1u;
-	} while (t4 != 1u);
+		t5 = stack_3;
+		b = t5 - 1u;
+	} while (t5 != 1u);
 	d_2 = b;
 	*p_d = d_2;
 	sub_05E506(p_d, &carry);
@@ -1018,10 +1014,10 @@ uint16_t sub_05E204(uint16_t x, uint8_t d)
 	carry = 0u;
 	unk_48F1 = 0u;
 	t1 = (b >> 1) | (carry << 7);
-	carry = (b >> 0) & 1u;
+	carry = b & 1u;
 	b = t1;
 	t2 = (b >> 1) | (carry << 7);
-	carry = (b >> 0) & 1u;
+	carry = b & 1u;
 	mem_write8(x - 0x1FC0u, (t2 >> 1) | (carry << 7));
 	x += 0x40u;
 	return x;

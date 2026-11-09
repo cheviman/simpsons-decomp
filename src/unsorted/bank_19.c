@@ -3,7 +3,7 @@
  *    Description: bank 19's code
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    07-11-2026
+ *    Modified:    09-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -1879,12 +1879,10 @@ void sub_0322EE(uint16_t x)
 
 void sub_0322F7(uint16_t x)
 {
-	uint32_t carry = 0;
 	uint8_t t1 = 0;
 
 	t1 = mem_read8(x + 6u);
-	carry = (t1 >> 0) & 1u;
-	if (carry)
+	if (t1 & 1u)
 		mem_write8(x, 0u);
 }
 
@@ -2070,12 +2068,10 @@ void sub_03237F(uint16_t x)
 
 void sub_032392(uint16_t x)
 {
-	uint32_t carry = 0;
 	uint8_t t1 = 0, t2 = 0;
 
 	t1 = mem_read8(x + 6u);
-	carry = (t1 >> 0) & 1u;
-	if (carry)
+	if (t1 & 1u)
 	{
 		mem_write8(x, 0xC0u);
 		t2 = mem_read8(x + 2u);
@@ -2282,8 +2278,7 @@ uint16_t sub_0324E3(uint16_t x, uint16_t y, uint32_t u)
 	uint8_t t1 = 0, t2 = 0, t3 = 0;
 
 	t1 = mem_read8(x + 6u);
-	carry = (t1 >> 0) & 1u;
-	if (carry == 0u)
+	if ((t1 & 1u) == 0u)
 		return y;
 	y = child_object_033A7D_ADDRESS;
 	sub_07862C(x, y, &ignored16, &ignored16_2, &carry);
@@ -2405,12 +2400,10 @@ void sub_03256B(uint16_t x)
 
 void sub_032590(uint16_t x)
 {
-	uint32_t carry = 0;
 	uint8_t t1 = 0, t2 = 0, t3 = 0;
 
 	t1 = mem_read8(x + 6u);
-	carry = (t1 >> 0) & 1u;
-	if (carry)
+	if (t1 & 1u)
 	{
 		t2 = mem_read8(x + VIDEO_003C);
 		mem_write8(x + VIDEO_003C, t2 - 1u);
@@ -2634,12 +2627,10 @@ uint16_t sub_0326D5(uint16_t x)
 
 void sub_0326DE(uint16_t x)
 {
-	uint32_t carry = 0;
 	uint8_t t1 = 0;
 
 	t1 = mem_read8(x + 6u);
-	carry = (t1 >> 0) & 1u;
-	if (carry == 0u)
+	if ((t1 & 1u) == 0u)
 		return;
 	mem_write8(x + 2u, 2u);
 	mem_write8(x + 0x3Bu, 0u);
@@ -2666,13 +2657,11 @@ uint16_t sub_0326EE(uint16_t x)
 
 void sub_03270B(uint16_t x)
 {
-	uint32_t carry = 0;
 	uint8_t t1 = 0, t2 = 0, t4 = 0;
 	uint16_t t3 = 0;
 
 	t1 = mem_read8(x + 6u);
-	carry = (t1 >> 0) & 1u;
-	if (carry == 0u)
+	if ((t1 & 1u) == 0u)
 		return;
 	mem_write8(x + 5u, 0x98u);
 	mem_write16(x + 0xFu, 0x100u);
@@ -2689,12 +2678,10 @@ void sub_03270B(uint16_t x)
 
 uint16_t sub_032730(uint16_t x, uint16_t y)
 {
-	uint32_t carry = 0;
 	uint8_t t1 = 0, t2 = 0, t3 = 0;
 
 	t1 = mem_read8(x + 6u);
-	carry = (t1 >> 0) & 1u;
-	if (carry)
+	if (t1 & 1u)
 	{
 		t2 = mem_read8(x + VIDEO_003C);
 		mem_write8(x + VIDEO_003C, t2 - 1u);
@@ -2805,13 +2792,11 @@ void sub_032796(uint16_t x)
 
 void sub_0327E2(uint16_t x)
 {
-	uint32_t carry = 0;
 	uint8_t t1 = 0, t3 = 0, t4 = 0;
 	uint16_t t2 = 0;
 
 	t1 = mem_read8(x + 6u);
-	carry = (t1 >> 0) & 1u;
-	if (carry == 0u)
+	if ((t1 & 1u) == 0u)
 		return;
 	t2 = mem_read16(x + 0x2Cu);
 	if (t2 >= 0x80u)
@@ -2869,12 +2854,10 @@ uint16_t sub_03280A(uint16_t x, uint16_t y)
 
 void sub_032852(uint16_t x)
 {
-	uint32_t carry = 0;
 	uint8_t t1 = 0;
 
 	t1 = mem_read8(x + 6u);
-	carry = (t1 >> 0) & 1u;
-	if (carry == 0u)
+	if ((t1 & 1u) == 0u)
 		return;
 	mem_write8(x + 2u, 2u);
 	mem_write8(x + 0x3Bu, 0u);
@@ -2907,13 +2890,11 @@ void sub_03286B(uint16_t x)
 
 void sub_032881(uint16_t x)
 {
-	uint32_t carry = 0;
 	uint8_t t1 = 0, t2 = 0, t4 = 0;
 	uint16_t t3 = 0;
 
 	t1 = mem_read8(x + 6u);
-	carry = (t1 >> 0) & 1u;
-	if (carry == 0u)
+	if ((t1 & 1u) == 0u)
 		return;
 	mem_write8(x, 4u);
 	mem_write16(x + 0xFu, 0x200u);
@@ -2962,12 +2943,10 @@ void sub_0328C1(uint16_t x)
 
 void sub_0328D1(uint16_t x)
 {
-	uint32_t carry = 0;
 	uint8_t t1 = 0;
 
 	t1 = mem_read8(x + 6u);
-	carry = (t1 >> 0) & 1u;
-	if (carry == 0u)
+	if ((t1 & 1u) == 0u)
 		return;
 	mem_write8(x + 2u, 2u);
 	mem_write8(x + 0x3Bu, 0u);
@@ -3049,12 +3028,10 @@ void sub_032919(uint16_t x)
 
 void sub_032930(uint16_t x)
 {
-	uint32_t carry = 0;
 	uint8_t t1 = 0;
 
 	t1 = mem_read8(x + 6u);
-	carry = (t1 >> 0) & 1u;
-	if (carry)
+	if (t1 & 1u)
 		mem_write8(x, 0u);
 }
 
@@ -3313,12 +3290,10 @@ void sub_032ABD(uint16_t x)
 
 void sub_032AD0(uint16_t x)
 {
-	uint32_t carry = 0;
 	uint8_t t1 = 0, t2 = 0;
 
 	t1 = mem_read8(x + 6u);
-	carry = (t1 >> 0) & 1u;
-	if (carry == 0u)
+	if ((t1 & 1u) == 0u)
 		return;
 	t2 = mem_read8(x + 0x30u);
 	if (t2 == 0u)
@@ -3366,8 +3341,7 @@ uint16_t sub_032B4C(uint16_t x)
 
 	u = object_setup_033BE2_ADDRESS;
 	y = sub_0785AB(x, u);
-	carry = (unk_4857 >> 0) & 1u;
-	if (carry)
+	if (unk_4857 & 1u)
 		mem_write8(x + 0x1Bu, 0x30u);
 	u = sub_078620(x);
 	sub_078626(x, u);
@@ -3441,12 +3415,10 @@ void sub_032BCF(uint16_t x)
 
 void unused_032BE5(uint16_t x)
 {
-	uint32_t carry = 0;
 	uint8_t t1 = 0, t2 = 0, t3 = 0;
 
 	t1 = mem_read8(x + 6u);
-	carry = (t1 >> 0) & 1u;
-	if (carry == 0u)
+	if ((t1 & 1u) == 0u)
 		return;
 	t2 = mem_read8(x + 9u);
 	mem_write8(x + 9u, t2 & 0x7Fu);
@@ -3523,12 +3495,10 @@ uint16_t sub_032C42(uint16_t x)
 
 void sub_032C4B(uint16_t x)
 {
-	uint32_t carry = 0;
 	uint8_t t1 = 0;
 
 	t1 = mem_read8(x + 6u);
-	carry = (t1 >> 0) & 1u;
-	if (carry == 0u)
+	if ((t1 & 1u) == 0u)
 		return;
 	sub_032C51(x);
 }
@@ -3603,8 +3573,7 @@ void sub_032CA5(uint16_t x, uint16_t *p_y, uint16_t *p_u)
 			sub_07862C(x, y, &u, &ignored16, &carry);
 	}
 	t5 = mem_read8(x + 6u);
-	carry = (t5 >> 0) & 1u;
-	if (carry)
+	if (t5 & 1u)
 	{
 		t6 = mem_read8(x + 0x29u);
 		mem_write8(x + 0x29u, t6 + 1u);
@@ -3653,8 +3622,7 @@ void sub_032CE7(uint16_t x, uint16_t *p_y, uint16_t *p_u)
 			sub_07862C(x, y, &u, &ignored16, &carry);
 	}
 	t5 = mem_read8(x + 6u);
-	carry = (t5 >> 0) & 1u;
-	if (carry)
+	if (t5 & 1u)
 	{
 		t6 = mem_read8(x + 0x29u);
 		mem_write8(x + 0x29u, t6 + 1u);
@@ -3691,8 +3659,7 @@ void sub_032D25(uint16_t x, uint16_t *p_y, uint16_t *p_u)
 	if ((t1 & 2u) == 0u)
 	{
 		t2 = mem_read8(x + 6u);
-		carry = (t2 >> 0) & 1u;
-		if (carry)
+		if (t2 & 1u)
 		{
 			t3 = mem_read8(x + 0x29u);
 			mem_write8(x + 0x29u, t3 + 1u);
@@ -3712,8 +3679,7 @@ void sub_032D25(uint16_t x, uint16_t *p_y, uint16_t *p_u)
 		if ((int16_t)t6 >= 0)
 			sub_07862C(x, y, &u, &ignored16, &carry);
 		t7 = mem_read8(x + 6u);
-		carry = (t7 >> 0) & 1u;
-		if (carry)
+		if (t7 & 1u)
 		{
 			t8 = mem_read8(x + 0x29u);
 			mem_write8(x + 0x29u, t8 + 1u);
@@ -3808,7 +3774,6 @@ uint16_t sub_032D9C(uint16_t x, uint16_t y)
 void sub_032D9F(uint16_t x, uint16_t *p_y, uint16_t *p_u)
 {
 	uint16_t u = (uint16_t)*p_u;
-	uint32_t carry = 0;
 	uint8_t a = 0;
 	uint16_t y = 0;
 	uint8_t t2 = 0, t3 = 0, t4 = 0, t5 = 0, t6 = 0;
@@ -3818,8 +3783,7 @@ void sub_032D9F(uint16_t x, uint16_t *p_y, uint16_t *p_u)
 	y = t1;
 	sub_0785B4(x, y);
 	t2 = mem_read8(x + 6u);
-	carry = (t2 >> 0) & 1u;
-	if (carry)
+	if (t2 & 1u)
 	{
 		mem_write8(x, 0xC4u);
 		mem_write8(x + 0x43u, 0xC4u);
@@ -3843,13 +3807,11 @@ void sub_032D9F(uint16_t x, uint16_t *p_y, uint16_t *p_u)
 
 void sub_032DE4(uint16_t x)
 {
-	uint32_t carry = 0;
 	uint8_t t1 = 0, t2 = 0, t3 = 0, t4 = 0;
 
 	sub_032C6D(x);
 	t1 = mem_read8(x + 6u);
-	carry = (t1 >> 0) & 1u;
-	if (carry)
+	if (t1 & 1u)
 	{
 		mem_write8(x + 0x3Bu, 0x40u);
 		t2 = mem_read8(x + 9u);
@@ -3925,8 +3887,7 @@ void sub_032E47(uint16_t x, uint16_t *p_y, uint16_t *p_u)
 	uint8_t t1 = 0, t2 = 0;
 
 	t1 = mem_read8(x + 6u);
-	carry = (t1 >> 0) & 1u;
-	if (carry == 0u)
+	if ((t1 & 1u) == 0u)
 		return;
 	mem_write8(x, 0xC0u);
 	t2 = mem_read8(x + 0x29u);
@@ -4446,14 +4407,12 @@ void sub_03315D(uint16_t x)
 
 uint16_t sub_033168(uint16_t x, uint16_t y)
 {
-	uint32_t carry = 0;
 	uint16_t y_2 = 0;
 	uint8_t t1 = 0, t2 = 0, t4 = 0;
 	uint16_t t3 = 0;
 
 	t1 = mem_read8(x + 6u);
-	carry = (t1 >> 0) & 1u;
-	if (carry == 0u)
+	if ((t1 & 1u) == 0u)
 		return y;
 	mem_write8(x + 5u, 0x94u);
 	mem_write16(x + 0xFu, 0x300u);
@@ -4520,12 +4479,10 @@ void sub_0331B5(uint16_t x, uint16_t *p_y, uint16_t *p_u)
 
 void sub_0331C5(uint16_t x)
 {
-	uint32_t carry = 0;
 	uint8_t t1 = 0;
 
 	t1 = mem_read8(x + 6u);
-	carry = (t1 >> 0) & 1u;
-	if (carry == 0u)
+	if ((t1 & 1u) == 0u)
 		return;
 	mem_write8(x + 2u, 2u);
 	mem_write8(x + 0x3Bu, 0u);
@@ -4916,7 +4873,6 @@ void sub_033425(uint16_t x)
 
 void sub_03344D(uint16_t x)
 {
-	uint32_t carry = 0;
 	uint8_t a = 0;
 	uint8_t t1 = 0, t2 = 0, t3 = 0, t4 = 0, t5 = 0;
 
@@ -4926,8 +4882,7 @@ void sub_03344D(uint16_t x)
 	if (t1 != 1u)
 	{
 		t2 = mem_read8(x + 0x3Bu);
-		carry = (t2 >> 0) & 1u;
-		if (carry)
+		if (t2 & 1u)
 		{
 			t3 = mem_read8(x + 9u);
 			a = (t3 & 0x30u) | 0x8Fu;
@@ -5012,12 +4967,10 @@ void sub_0334B7(uint16_t x)
 
 void sub_0334C5(uint16_t x)
 {
-	uint32_t carry = 0;
 	uint8_t t1 = 0, t2 = 0;
 
 	t1 = mem_read8(x + 6u);
-	carry = (t1 >> 0) & 1u;
-	if (carry)
+	if (t1 & 1u)
 	{
 		t2 = mem_read8(x + 0x27u);
 		mem_write8(x + 0x27u, t2 | 0x80u);
@@ -5301,12 +5254,10 @@ void sub_03369A(uint16_t x)
 
 void sub_0336A7(uint16_t x)
 {
-	uint32_t carry = 0;
 	uint8_t t1 = 0;
 
 	t1 = mem_read8(x + 6u);
-	carry = (t1 >> 0) & 1u;
-	if (carry == 0u)
+	if ((t1 & 1u) == 0u)
 		return;
 	mem_write8(x, 0u);
 }
