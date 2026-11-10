@@ -3,7 +3,7 @@
  *    Description: the records' handlers and the chips: the YM2151's registers, patches, volumes, pitches, keys, LFO and pan; the K053260's voices
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    07-11-2026
+ *    Modified:    09-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the Z80 sound program decompiled into C by
@@ -11,46 +11,47 @@
  */
 #include "sound.h"
 
-/* key off, the fastest release, the record's sound and priority 0, its handler channel_idle */
-void stop_channel(uint16_t ix)
+/* Stops what the record plays: key off, the fastest release, its sound and priority 0, its handler
+   channel_idle. */
+void stop_channel(uint16_t channel)
 {
-	uint16_t hl = 0;
+	uint16_t handler = 0;
 
 	z80_block(17);
-	key_off(ix);
+	key_off(channel);
 	z80_block(17);
-	fast_release(ix);
+	fast_release(channel);
 	z80_block(48);
-	z80_write8((uint16_t)(ix + 0x41u), 0u);
-	z80_write8((uint16_t)(ix + 0x42u), 0u);
-	hl = channel_idle_ADDRESS;
-	set_channel_handler(hl, ix);
+	CHANNEL(channel)->sound = 0u;
+	CHANNEL(channel)->priority = 0u;
+	handler = channel_idle_ADDRESS;
+	set_channel_handler(handler, channel);
 }
 
-/* HL into the record's handler (+43) */
-void set_channel_handler(uint16_t hl, uint16_t ix)
+/* The routine that runs the record from its next pass on. */
+void set_channel_handler(uint16_t handler, uint16_t channel)
 {
 	z80_block(38);
-	z80_write16((uint16_t)(ix + 0x43u), hl);
+	CHANNEL(channel)->handler = handler;
 	channel_idle();
 }
 
-/* a free record's handler: RET */
+/* A free record's handler: nothing. */
 void channel_idle(void)
 {
 	z80_block(10);
 }
 
-/* YM2151 register B plus the record's chip channel (+40) = C */
-void write_fm_channel_register(uint16_t bc, uint16_t ix)
+/* Writes a register of the record's YM2151 channel: the register given plus its chip_channel. */
+void write_fm_channel_register(uint16_t fm_write, uint16_t channel)
 {
 	z80_block(27);
-	bc = (bc & 0xFFu) | ((uint32_t)(uint8_t)(z80_read8((uint16_t)(ix + 0x40u)) + (bc >> 8)) << 8);
-	write_fm_register(bc);
+	fm_write = (fm_write & 0xFFu) | ((uint32_t)(uint8_t)(CHANNEL(channel)->chip_channel + (fm_write >> 8)) << 8);
+	write_fm_register(fm_write);
 }
 
-/* YM2151 register B = C, each write after the busy flag (F801 bit 7) clears */
-void write_fm_register(uint16_t bc)
+/* Writes a register of the YM2151, each byte once the chip's busy flag is clear. */
+void write_fm_register(uint16_t fm_write)
 {
 	for (;;)
 	{
@@ -60,7 +61,7 @@ void write_fm_register(uint16_t bc)
 		z80_cycles(5);
 	}
 	z80_block(17);
-	z80_write8(FM_F800, bc >> 8);
+	z80_write8(FM_F800, fm_write >> 8);
 	for (;;)
 	{
 		z80_block(27);
@@ -69,604 +70,664 @@ void write_fm_register(uint16_t bc)
 		z80_cycles(5);
 	}
 	z80_block(27);
-	z80_write8(FM_F801, (uint8_t)bc);
+	z80_write8(FM_F801, (uint8_t)fm_write);
 }
 
-/* YM2151 timer B (register 12 = F9) restarted and its flag cleared (register 14): the main loop's tick */
+/* Starts the YM2151's timer B again (register 12 at F9: some 2 ms) and clears its flag: the main loop's
+   pace. */
 void restart_frame_timer(void)
 {
-	uint16_t bc = 0;
+	uint16_t fm_write = 0;
 
 	z80_block(27);
-	bc = 0x1420u;
-	write_fm_register(bc);
+	fm_write = 0x1420u;
+	write_fm_register(fm_write);
 	z80_block(27);
-	bc = 0x12F9u;
-	write_fm_register(bc);
+	fm_write = 0x12F9u;
+	write_fm_register(fm_write);
 	z80_block(20);
-	bc = 0x140Au;
-	write_fm_register(bc);
+	fm_write = 0x140Au;
+	write_fm_register(fm_write);
 }
 
-/* the patch at HL into the record's chip channel: an FM one's 25 bytes (algorithm, the operators'
-   registers), or a PCM one's sample and two bytes */
-void load_patch(uint16_t hl, uint16_t ix)
+/* Loads a patch into the record's channel: on the YM2151 (keyed off and released at the fastest first)
+   its 25 bytes into the operators' registers, the connection, the total levels and the release rates
+   kept in the record, then update_volume; on the K053260, pcm_load_patch. */
+void load_patch(uint16_t patch, uint16_t channel)
 {
-	uint8_t a = 0, c = 0;
-	uint16_t bc = 0, hl_2 = 0, sample_entry = 0;
-	uint16_t saved_hl = 0;
+	uint8_t c1_release = 0, c2_release = 0, connection = 0, m1_release = 0, m2_release = 0;
+	uint16_t fm_write = 0;
 
 	z80_block(36);
-	if (z80_read8((uint16_t)(ix + 0x40u)) >= 8u)
+	if (CHANNEL(channel)->chip_channel >= 8u)
 	{
-		z80_block(255);
-		a = pcm_keys & z80_read8((uint16_t)(ix + 0x4Cu));
-		pcm_keys = a;
-		z80_write8(PCM_FC28, a);
-		saved_hl = hl;
-		sample_entry = z80_read8(hl) * 2u * 2u * 2u + samples_ADDRESS;
-		move_block(sample_entry, z80_read16((uint16_t)(ix + 0x4Au)), 7u, 1u);
-		a = pcm_loops & z80_read8((uint16_t)(ix + 0x4Eu));
-		if (SAMPLE(sample_entry)->flags & 1u)
-		{
-			z80_block(19);
-			a |= z80_read8((uint16_t)(ix + 0x4Fu));
-		}
-		z80_block(110);
-		pcm_loops = a;
-		z80_write8(PCM_FC2A, a);
-		hl_2 = saved_hl + 1u;
-		z80_write8((uint16_t)(ix + 0x46u), z80_read8(hl_2));
-		z80_write8((uint16_t)(ix + 0x47u), z80_read8((uint16_t)(hl_2 + 1u)));
-		update_volume(ix);
+		pcm_load_patch(patch, channel);
 		return;
 	}
 	z80_block(17);
-	key_off(ix);
+	key_off(channel);
 	z80_block(17);
-	fast_release(ix);
+	fast_release(channel);
 	z80_block(50);
-	c = z80_read8(hl);
-	z80_write8((uint16_t)(ix + 0x46u), c);
-	bc = 0x2000u | c;
-	write_fm_channel_register(bc, ix);
+	connection = FM_PATCH(patch)->connection;
+	CHANNEL(channel)->connection = connection;
+	fm_write = 0x2000u | connection;
+	write_fm_channel_register(fm_write, channel);
 	z80_block(37);
-	hl++;
-	bc = 0x4000u | z80_read8(hl);
-	write_fm_channel_register(bc, ix);
+	patch++;
+	fm_write = 0x4000u | FM_PATCH(patch - 0x1u)->m1_detune_multiple;
+	write_fm_channel_register(fm_write, channel);
 	z80_block(69);
-	hl++;
-	z80_write8((uint16_t)(ix + 0x47u), z80_read8(hl));
-	hl++;
-	bc = 0x8000u | z80_read8(hl);
-	write_fm_channel_register(bc, ix);
+	patch++;
+	CHANNEL(channel)->m1_total_level = FM_PATCH(patch - 0x2u)->m1_total_level;
+	patch++;
+	fm_write = 0x8000u | FM_PATCH(patch - 0x3u)->m1_attack;
+	write_fm_channel_register(fm_write, channel);
 	z80_block(37);
-	hl++;
-	bc = 0xA000u | z80_read8(hl);
-	write_fm_channel_register(bc, ix);
+	patch++;
+	fm_write = 0xA000u | FM_PATCH(patch - 0x4u)->m1_decay_1;
+	write_fm_channel_register(fm_write, channel);
 	z80_block(37);
-	hl++;
-	bc = 0xC000u | z80_read8(hl);
-	write_fm_channel_register(bc, ix);
+	patch++;
+	fm_write = 0xC000u | FM_PATCH(patch - 0x5u)->m1_decay_2;
+	write_fm_channel_register(fm_write, channel);
 	z80_block(56);
-	hl++;
-	c = z80_read8(hl);
-	z80_write8((uint16_t)(ix + 0x4Bu), c);
-	bc = 0xE000u | c;
-	write_fm_channel_register(bc, ix);
+	patch++;
+	m1_release = FM_PATCH(patch - 0x6u)->m1_release;
+	CHANNEL(channel)->m1_release = m1_release;
+	fm_write = 0xE000u | m1_release;
+	write_fm_channel_register(fm_write, channel);
 	z80_block(37);
-	hl++;
-	bc = 0x5000u | z80_read8(hl);
-	write_fm_channel_register(bc, ix);
+	patch++;
+	fm_write = 0x5000u | FM_PATCH(patch - 0x7u)->c1_detune_multiple;
+	write_fm_channel_register(fm_write, channel);
 	z80_block(69);
-	hl++;
-	z80_write8((uint16_t)(ix + 0x48u), z80_read8(hl));
-	hl++;
-	bc = 0x9000u | z80_read8(hl);
-	write_fm_channel_register(bc, ix);
+	patch++;
+	CHANNEL(channel)->c1_total_level = FM_PATCH(patch - 0x8u)->c1_total_level;
+	patch++;
+	fm_write = 0x9000u | FM_PATCH(patch - 0x9u)->c1_attack;
+	write_fm_channel_register(fm_write, channel);
 	z80_block(37);
-	hl++;
-	bc = 0xB000u | z80_read8(hl);
-	write_fm_channel_register(bc, ix);
+	patch++;
+	fm_write = 0xB000u | FM_PATCH(patch - 0xAu)->c1_decay_1;
+	write_fm_channel_register(fm_write, channel);
 	z80_block(37);
-	hl++;
-	bc = 0xD000u | z80_read8(hl);
-	write_fm_channel_register(bc, ix);
+	patch++;
+	fm_write = 0xD000u | FM_PATCH(patch - 0xBu)->c1_decay_2;
+	write_fm_channel_register(fm_write, channel);
 	z80_block(56);
-	hl++;
-	c = z80_read8(hl);
-	z80_write8((uint16_t)(ix + 0x4Cu), c);
-	bc = 0xF000u | c;
-	write_fm_channel_register(bc, ix);
+	patch++;
+	c1_release = FM_PATCH(patch - 0xCu)->c1_release;
+	CHANNEL(channel)->c1_release = c1_release;
+	fm_write = 0xF000u | c1_release;
+	write_fm_channel_register(fm_write, channel);
 	z80_block(37);
-	hl++;
-	bc = 0x4800u | z80_read8(hl);
-	write_fm_channel_register(bc, ix);
+	patch++;
+	fm_write = 0x4800u | FM_PATCH(patch - 0xDu)->m2_detune_multiple;
+	write_fm_channel_register(fm_write, channel);
 	z80_block(69);
-	hl++;
-	z80_write8((uint16_t)(ix + 0x49u), z80_read8(hl));
-	hl++;
-	bc = 0x8800u | z80_read8(hl);
-	write_fm_channel_register(bc, ix);
+	patch++;
+	CHANNEL(channel)->m2_total_level = FM_PATCH(patch - 0xEu)->m2_total_level;
+	patch++;
+	fm_write = 0x8800u | FM_PATCH(patch - 0xFu)->m2_attack;
+	write_fm_channel_register(fm_write, channel);
 	z80_block(37);
-	hl++;
-	bc = 0xA800u | z80_read8(hl);
-	write_fm_channel_register(bc, ix);
+	patch++;
+	fm_write = 0xA800u | FM_PATCH(patch - 0x10u)->m2_decay_1;
+	write_fm_channel_register(fm_write, channel);
 	z80_block(37);
-	hl++;
-	bc = 0xC800u | z80_read8(hl);
-	write_fm_channel_register(bc, ix);
+	patch++;
+	fm_write = 0xC800u | FM_PATCH(patch - 0x11u)->m2_decay_2;
+	write_fm_channel_register(fm_write, channel);
 	z80_block(56);
-	hl++;
-	c = z80_read8(hl);
-	z80_write8((uint16_t)(ix + 0x4Du), c);
-	bc = 0xE800u | c;
-	write_fm_channel_register(bc, ix);
+	patch++;
+	m2_release = FM_PATCH(patch - 0x12u)->m2_release;
+	CHANNEL(channel)->m2_release = m2_release;
+	fm_write = 0xE800u | m2_release;
+	write_fm_channel_register(fm_write, channel);
 	z80_block(37);
-	hl++;
-	bc = 0x5800u | z80_read8(hl);
-	write_fm_channel_register(bc, ix);
+	patch++;
+	fm_write = 0x5800u | FM_PATCH(patch - 0x13u)->c2_detune_multiple;
+	write_fm_channel_register(fm_write, channel);
 	z80_block(69);
-	hl++;
-	z80_write8((uint16_t)(ix + 0x4Au), z80_read8(hl));
-	hl++;
-	bc = 0x9800u | z80_read8(hl);
-	write_fm_channel_register(bc, ix);
+	patch++;
+	CHANNEL(channel)->c2_total_level = FM_PATCH(patch - 0x14u)->c2_total_level;
+	patch++;
+	fm_write = 0x9800u | FM_PATCH(patch - 0x15u)->c2_attack;
+	write_fm_channel_register(fm_write, channel);
 	z80_block(37);
-	hl++;
-	bc = 0xB800u | z80_read8(hl);
-	write_fm_channel_register(bc, ix);
+	patch++;
+	fm_write = 0xB800u | FM_PATCH(patch - 0x16u)->c2_decay_1;
+	write_fm_channel_register(fm_write, channel);
 	z80_block(37);
-	hl++;
-	bc = 0xD800u | z80_read8(hl);
-	write_fm_channel_register(bc, ix);
+	patch++;
+	fm_write = 0xD800u | FM_PATCH(patch - 0x17u)->c2_decay_2;
+	write_fm_channel_register(fm_write, channel);
 	z80_block(56);
-	c = z80_read8((uint16_t)(hl + 1u));
-	z80_write8((uint16_t)(ix + 0x4Eu), c);
-	bc = 0xF800u | c;
-	write_fm_channel_register(bc, ix);
+	c2_release = FM_PATCH(patch - 0x17u)->c2_release;
+	CHANNEL(channel)->c2_release = c2_release;
+	fm_write = 0xF800u | c2_release;
+	write_fm_channel_register(fm_write, channel);
 	z80_block(10);
-	update_volume(ix);
+	update_volume(channel);
 }
 
-/* A into the record's volume (+45), then update_volume */
-void set_volume(uint16_t ix, uint8_t a)
+/* A K053260 voice's patch: the voice keyed off, its sample's registers (samples) into the voice's, the
+   voice's KADPCM bit as the sample's kadpcm says, the patch's level and decay_step into the record, then
+   update_volume. */
+void pcm_load_patch(uint16_t patch, uint16_t channel)
+{
+	uint8_t keys = 0, modes = 0;
+	uint16_t pcm_patch = 0, sample_entry = 0;
+	uint16_t saved_patch = 0;
+
+	z80_block(255);
+	keys = pcm_keys & CHANNEL(channel)->pcm.key_mask;
+	pcm_keys = keys;
+	z80_write8(PCM_FC28, keys);
+	saved_patch = patch;
+	sample_entry = PCM_PATCH(patch)->sample * 2u * 2u * 2u + samples_ADDRESS;
+	move_block(sample_entry, CHANNEL(channel)->pcm.registers, 7u, 1u);
+	modes = pcm_modes & CHANNEL(channel)->pcm.kadpcm_mask;
+	if (SAMPLE(sample_entry)->kadpcm & 1u)
+	{
+		z80_block(19);
+		modes |= CHANNEL(channel)->pcm.kadpcm_bit;
+	}
+	z80_block(110);
+	pcm_modes = modes;
+	z80_write8(PCM_FC2A, modes);
+	pcm_patch = saved_patch + 1u;
+	CHANNEL(channel)->pcm.level = PCM_PATCH(pcm_patch - 0x1u)->level;
+	CHANNEL(channel)->pcm.decay_step = PCM_PATCH(pcm_patch - 0x1u)->decay_step;
+	update_volume(channel);
+}
+
+/* The record's volume (an attenuation: 0 the loudest, 7F silent), then update_volume. */
+void set_volume(uint16_t channel, uint8_t volume)
 {
 	z80_block(19);
-	z80_write8((uint16_t)(ix + 0x45u), a);
-	update_volume(ix);
+	CHANNEL(channel)->volume = volume;
+	update_volume(channel);
 }
 
-/* the volume to the chip: an FM channel's carriers' total levels (carrier_masks by the algorithm), a PCM
-   voice's volume register */
-void update_volume(uint16_t ix)
+/* The record's volume to its chip: on the YM2151 the four operators' total levels, the volume added to
+   the carriers' (carrier_masks, by the algorithm in connection); on the K053260, pcm_update_volume. */
+void update_volume(uint16_t channel)
 {
-	uint8_t a = 0;
-	uint16_t bc = 0, hl = 0;
-	uint8_t t1 = 0, t2 = 0;
+	uint8_t c1_total_level = 0, c2_total_level = 0, m1_total_level = 0, m2_total_level = 0;
+	uint16_t carriers = 0, fm_write = 0;
 
 	z80_block(36);
-	if (z80_read8((uint16_t)(ix + 0x40u)) < 8u)
+	if (CHANNEL(channel)->chip_channel >= 8u)
 	{
-		z80_block(108);
-		hl = carrier_masks[z80_read8((uint16_t)(ix + 0x46u)) & 7u];
-		a = z80_read8((uint16_t)(ix + 0x47u));
-		bc = 0x6000u;
-		hl = write_operator_level(bc, hl, ix, a);
-		z80_block(43);
-		a = z80_read8((uint16_t)(ix + 0x49u));
-		bc = 0x6800u;
-		hl = write_operator_level(bc, hl, ix, a);
-		z80_block(43);
-		a = z80_read8((uint16_t)(ix + 0x48u));
-		bc = 0x7000u;
-		hl = write_operator_level(bc, hl, ix, a);
-		z80_block(26);
-		a = z80_read8((uint16_t)(ix + 0x4Au));
-		bc = 0x7800u;
-		write_operator_level(bc, hl, ix, a);
+		pcm_update_volume(channel);
 		return;
 	}
-	z80_block(48);
-	t1 = z80_read8((uint16_t)(ix + 0x45u)) + z80_read8((uint16_t)(ix + 0x46u));
-	a = t1;
-	if ((int8_t)t1 < 0)
-	{
-		z80_block(7);
-		a = 0x7Fu;
-	}
-	z80_block(29);
-	t2 = a + z80_read8((uint16_t)(ix + 0x48u));
-	a = t2;
-	if ((int8_t)t2 < 0)
-	{
-		z80_block(7);
-		a = 0x7Fu;
-	}
-	z80_block(28);
-	a = ~a & 0x7Fu;
-	if (a < 4u)
-	{
-		z80_block(4);
-		a = 0u;
-	}
-	z80_block(76);
-	z80_write8((uint16_t)(z80_read16((uint16_t)(ix + 0x4Au)) + 7u), a);
+	z80_block(108);
+	carriers = carrier_masks[CHANNEL(channel)->connection & 7u];
+	m1_total_level = CHANNEL(channel)->m1_total_level;
+	fm_write = 0x6000u;
+	carriers = write_operator_level(fm_write, carriers, channel, m1_total_level);
+	z80_block(43);
+	m2_total_level = CHANNEL(channel)->m2_total_level;
+	fm_write = 0x6800u;
+	carriers = write_operator_level(fm_write, carriers, channel, m2_total_level);
+	z80_block(43);
+	c1_total_level = CHANNEL(channel)->c1_total_level;
+	fm_write = 0x7000u;
+	carriers = write_operator_level(fm_write, carriers, channel, c1_total_level);
+	z80_block(26);
+	c2_total_level = CHANNEL(channel)->c2_total_level;
+	fm_write = 0x7800u;
+	write_operator_level(fm_write, carriers, channel, c2_total_level);
 }
 
-/* an FM operator's total level, with the record's volume added when it is a carrier */
-uint16_t write_operator_level(uint16_t bc, uint16_t hl, uint16_t ix, uint8_t a)
+/* One operator's total level: the volume added (at most 7F) when the carriers' mask says it is a
+   carrier; hands the mask back shifted for the next operator. */
+uint16_t write_operator_level(uint16_t fm_write, uint16_t carriers, uint16_t channel, uint8_t level)
 {
 	uint32_t carry = 0;
-	uint8_t l = 0;
-	uint16_t bc_2 = 0, hl_2 = 0;
+	uint8_t mask = 0;
+	uint16_t next_carriers = 0;
 	uint8_t t1 = 0;
 
-	l = (uint8_t)hl;
+	mask = (uint8_t)carriers;
 	z80_block(18);
-	carry = l >> 7;
-	l = (uint32_t)l << 1;
+	carry = mask >> 7;
+	mask = (uint32_t)mask << 1;
 	if (carry)
 	{
 		z80_block(29);
-		t1 = a + z80_read8((uint16_t)(ix + 0x45u));
-		a = t1;
+		t1 = level + CHANNEL(channel)->volume;
+		level = t1;
 		if ((int8_t)t1 < 0)
 		{
 			z80_block(7);
-			a = 0x7Fu;
+			level = 0x7Fu;
 		}
 	}
 	z80_block(14);
-	bc_2 = (bc & ~0xFFu) | a;
-	hl_2 = (hl & ~0xFFu) | l;
-	write_fm_channel_register(bc_2, ix);
-	return hl_2;
+	fm_write = (fm_write & ~0xFFu) | level;
+	next_carriers = (carriers & ~0xFFu) | mask;
+	write_fm_channel_register(fm_write, channel);
+	return next_carriers;
 }
 
-/* HL to the record's channel: an FM one's key fraction and key code (note_codes), a PCM voice's pitch
-   registers */
-void set_pitch(uint16_t hl, uint16_t ix)
+/* A K053260 voice's volume register: 7F less the volume, the patch's level and the decay (each sum at
+   most 7F), and 0 below 4. */
+void pcm_update_volume(uint16_t channel)
 {
-	uint8_t a = 0;
-	uint16_t bc = 0, de = 0, hl_2 = 0;
+	uint8_t attenuation = 0;
+	uint8_t t1 = 0, t2 = 0;
+
+	z80_block(48);
+	t1 = CHANNEL(channel)->volume + CHANNEL(channel)->pcm.level;
+	attenuation = t1;
+	if ((int8_t)t1 < 0)
+	{
+		z80_block(7);
+		attenuation = 0x7Fu;
+	}
+	z80_block(29);
+	t2 = attenuation + CHANNEL(channel)->pcm.decay;
+	attenuation = t2;
+	if ((int8_t)t2 < 0)
+	{
+		z80_block(7);
+		attenuation = 0x7Fu;
+	}
+	z80_block(28);
+	attenuation = ~attenuation & 0x7Fu;
+	if (attenuation < 4u)
+	{
+		z80_block(4);
+		attenuation = 0u;
+	}
+	z80_block(76);
+	z80_write8((uint16_t)(CHANNEL(channel)->pcm.registers + 7u), attenuation);
+}
+
+/* The record's pitch to its chip: on the YM2151 the key fraction and the key code (note_codes; its high
+   byte's octaves wrap past 8); on the K053260, pcm_set_pitch. */
+void set_pitch(uint16_t pitch, uint16_t channel)
+{
+	uint8_t note = 0;
+	uint16_t fm_write = 0;
 	uint8_t t1 = 0;
 
 	z80_block(36);
-	if (z80_read8((uint16_t)(ix + 0x40u)) >= 8u)
+	if (CHANNEL(channel)->chip_channel >= 8u)
 	{
-		z80_block(72);
-		de = hl;
-		hl_2 = z80_read16((uint16_t)(ix + 0x4Au));
-		z80_write16(hl_2, de);
+		pcm_set_pitch(pitch, channel);
 		return;
 	}
 	z80_block(11);
-	a = (hl >> 8) & 0x1Fu;
+	note = (pitch >> 8) & 0x1Fu;
 	do
 	{
 		z80_block(17);
-		t1 = a;
-		a = t1 - 0x18u;
+		t1 = note;
+		note = t1 - 0x18u;
 	} while (t1 >= 0x18u);
 	z80_block(61);
-	hl = ((hl & 0xFFu) | ((uint32_t)(uint8_t)(a + 0x18u) << 8)) * 2u * 2u;
-	bc = 0x3000u | (uint8_t)hl;
-	write_fm_channel_register(bc, ix);
+	pitch = ((pitch & 0xFFu) | ((uint32_t)(uint8_t)(note + 0x18u) << 8)) * 2u * 2u;
+	fm_write = 0x3000u | (uint8_t)pitch;
+	write_fm_channel_register(fm_write, channel);
 	z80_block(56);
-	bc = 0x2800u | note_codes[hl >> 8];
-	write_fm_channel_register(bc, ix);
+	fm_write = 0x2800u | note_codes[pitch >> 8];
+	write_fm_channel_register(fm_write, channel);
 }
 
-/* an FM channel's operators on (register 08); a PCM voice keyed off, FA00 armed, HALT until the
-   K053260's NMI, then keyed on, its volume back to full */
-void key_on(uint16_t ix)
+/* A K053260 voice's pitch registers. */
+void pcm_set_pitch(uint16_t pitch, uint16_t channel)
 {
-	uint8_t a = 0;
-	uint16_t bc = 0;
+	uint16_t registers = 0, voice_pitch = 0;
+
+	z80_block(72);
+	voice_pitch = pitch;
+	registers = CHANNEL(channel)->pcm.registers;
+	z80_write16(registers, voice_pitch);
+}
+
+/* Keys the record's channel on: on the YM2151 its four operators; on the K053260, pcm_key_on. */
+void key_on(uint16_t channel)
+{
+	uint8_t chip_channel = 0;
+	uint16_t fm_write = 0;
 
 	z80_block(36);
-	a = z80_read8((uint16_t)(ix + 0x40u));
-	if (a < 8u)
+	chip_channel = CHANNEL(channel)->chip_channel;
+	if (chip_channel >= 8u)
 	{
-		z80_block(28);
-		bc = 0x800u | a | 0x78u;
-		write_fm_register(bc);
+		pcm_key_on(channel);
 		return;
 	}
+	z80_block(28);
+	fm_write = 0x800u | chip_channel | 0x78u;
+	write_fm_register(fm_write);
+}
+
+/* Keys a K053260 voice on, unless pcm_keyed says it is: its key bit off, then the NMI armed and a wait
+   for it (the chip takes the new sample), the key bit on, pcm_keyed set, the decay back to 0 and
+   update_volume. */
+void pcm_key_on(uint16_t channel)
+{
+	uint8_t keys = 0;
+
 	z80_block(37);
-	if ((pcm_keyed & z80_read8((uint16_t)(ix + 0x4Du))) != 0u)
+	if ((pcm_keyed & CHANNEL(channel)->pcm.key_bit) != 0u)
 	{
 		z80_cycles(6);
 		return;
 	}
 	z80_block(165);
-	a = pcm_keys & z80_read8((uint16_t)(ix + 0x4Cu));
-	pcm_keys = a;
-	z80_write8(PCM_FC28, a);
-	pcm_keyed |= z80_read8((uint16_t)(ix + 0x4Du));
-	a = pcm_keys | z80_read8((uint16_t)(ix + 0x4Du));
-	pcm_keys = a;
-	z80_write8(NMI_ARM_FA00, a);
+	keys = pcm_keys & CHANNEL(channel)->pcm.key_mask;
+	pcm_keys = keys;
+	z80_write8(PCM_FC28, keys);
+	pcm_keyed |= CHANNEL(channel)->pcm.key_bit;
+	keys = pcm_keys | CHANNEL(channel)->pcm.key_bit;
+	pcm_keys = keys;
+	z80_write8(NMI_ARM_FA00, keys);
 	z80_halt();
 	z80_block(42);
-	z80_write8(PCM_FC28, a);
-	z80_write8((uint16_t)(ix + 0x48u), 0u);
-	update_volume(ix);
+	z80_write8(PCM_FC28, keys);
+	CHANNEL(channel)->pcm.decay = 0u;
+	update_volume(channel);
 }
 
-/* an FM channel's operators off (register 08); a PCM voice's key bit cleared */
-void key_off(uint16_t ix)
+/* Keys the record's channel off: on the YM2151 its four operators; on the K053260, pcm_key_off. */
+void key_off(uint16_t channel)
 {
-	uint8_t a = 0;
-	uint16_t bc = 0;
+	uint8_t chip_channel = 0;
+	uint16_t fm_write = 0;
 
 	z80_block(36);
-	a = z80_read8((uint16_t)(ix + 0x40u));
-	if (a < 8u)
+	chip_channel = CHANNEL(channel)->chip_channel;
+	if (chip_channel >= 8u)
 	{
-		z80_block(21);
-		bc = 0x800u | a;
-		write_fm_register(bc);
+		pcm_key_off(channel);
 		return;
 	}
+	z80_block(21);
+	fm_write = 0x800u | chip_channel;
+	write_fm_register(fm_write);
+}
+
+/* Clears a K053260 voice's bit of pcm_keyed, if set: its sample plays on to its end. */
+void pcm_key_off(uint16_t channel)
+{
 	z80_block(37);
-	if ((pcm_keyed & z80_read8((uint16_t)(ix + 0x4Du))) == 0u)
+	if ((pcm_keyed & CHANNEL(channel)->pcm.key_bit) == 0u)
 	{
 		z80_cycles(6);
 		return;
 	}
 	z80_block(55);
-	pcm_keyed &= z80_read8((uint16_t)(ix + 0x4Cu));
+	pcm_keyed &= CHANNEL(channel)->pcm.key_mask;
 }
 
-/* an FM channel's operators' release at their fastest (E0-F8 = FF); a PCM record's volume down to 7F */
-void fast_release(uint16_t ix)
+/* On the YM2151 the four operators' release at its fastest; on the K053260, pcm_fast_release. */
+void fast_release(uint16_t channel)
 {
-	uint16_t bc = 0;
+	uint16_t fm_write = 0;
 
 	z80_block(36);
-	if (z80_read8((uint16_t)(ix + 0x40u)) >= 8u)
+	if (CHANNEL(channel)->chip_channel >= 8u)
 	{
-		z80_block(29);
-		z80_write8((uint16_t)(ix + 0x48u), 0x7Fu);
+		pcm_fast_release(channel);
 		return;
 	}
 	z80_block(31);
-	bc = 0xE0FFu;
-	write_fm_channel_register(bc, ix);
+	fm_write = 0xE0FFu;
+	write_fm_channel_register(fm_write, channel);
 	z80_block(31);
-	bc = 0xF0FFu;
-	write_fm_channel_register(bc, ix);
+	fm_write = 0xF0FFu;
+	write_fm_channel_register(fm_write, channel);
 	z80_block(31);
-	bc = 0xE8FFu;
-	write_fm_channel_register(bc, ix);
+	fm_write = 0xE8FFu;
+	write_fm_channel_register(fm_write, channel);
 	z80_block(24);
-	bc = 0xF8FFu;
-	write_fm_channel_register(bc, ix);
+	fm_write = 0xF8FFu;
+	write_fm_channel_register(fm_write, channel);
 }
 
-/* Unused: the FM channel's release rates back from +4B-+4E */
-void unused_0F06(uint16_t ix)
+/* A K053260 voice's decay at 7F: silent at the next volume. */
+void pcm_fast_release(uint16_t channel)
 {
-	uint16_t bc = 0;
+	z80_block(29);
+	CHANNEL(channel)->pcm.decay = 0x7Fu;
+}
+
+/* Unused: puts a YM2151 channel's release rates back as its patch had them (after fast_release). */
+void restore_release(uint16_t channel)
+{
+	uint16_t fm_write = 0;
 
 	z80_block(31);
-	if (z80_read8((uint16_t)(ix + 0x40u)) >= 8u)
+	if (CHANNEL(channel)->chip_channel >= 8u)
 	{
 		z80_cycles(6);
 		return;
 	}
 	z80_block(43);
-	bc = 0xE000u | z80_read8((uint16_t)(ix + 0x4Bu));
-	write_fm_channel_register(bc, ix);
+	fm_write = 0xE000u | CHANNEL(channel)->m1_release;
+	write_fm_channel_register(fm_write, channel);
 	z80_block(43);
-	bc = 0xF000u | z80_read8((uint16_t)(ix + 0x4Cu));
-	write_fm_channel_register(bc, ix);
+	fm_write = 0xF000u | CHANNEL(channel)->c1_release;
+	write_fm_channel_register(fm_write, channel);
 	z80_block(43);
-	bc = 0xE800u | z80_read8((uint16_t)(ix + 0x4Du));
-	write_fm_channel_register(bc, ix);
+	fm_write = 0xE800u | CHANNEL(channel)->m2_release;
+	write_fm_channel_register(fm_write, channel);
 	z80_block(36);
-	bc = 0xF800u | z80_read8((uint16_t)(ix + 0x4Eu));
-	write_fm_channel_register(bc, ix);
+	fm_write = 0xF800u | CHANNEL(channel)->c2_release;
+	write_fm_channel_register(fm_write, channel);
 }
 
-/* YM2151 register 19 with bit 7: the LFO's phase modulation depth */
-void set_lfo_pm_depth(uint8_t a)
+/* The YM2151's LFO phase modulation depth (register 19 with bit 7). */
+void set_lfo_pm_depth(uint8_t depth)
 {
-	uint16_t bc = 0;
+	uint16_t fm_write = 0;
 
 	z80_block(28);
-	bc = 0x1900u | a | 0x80u;
-	write_fm_register(bc);
+	fm_write = 0x1900u | depth | 0x80u;
+	write_fm_register(fm_write);
 }
 
-/* YM2151 register 19 without bit 7: the LFO's amplitude modulation depth */
-void set_lfo_am_depth(uint8_t a)
+/* The YM2151's LFO amplitude modulation depth (register 19 without bit 7). */
+void set_lfo_am_depth(uint8_t depth)
 {
-	uint16_t bc = 0;
+	uint16_t fm_write = 0;
 
 	z80_block(28);
-	bc = 0x1900u | (a & 0x7Fu);
-	write_fm_register(bc);
+	fm_write = 0x1900u | (depth & 0x7Fu);
+	write_fm_register(fm_write);
 }
 
-/* an FM channel's PMS (register 38 bits 4-6), kept in +4F */
-void set_channel_pm_sensitivity(uint16_t ix, uint8_t a)
+/* A YM2151 channel's phase modulation sensitivity (register 38's bits 4-6), kept in lfo_sensitivity;
+   nothing on the K053260. */
+void set_channel_pm_sensitivity(uint16_t channel, uint8_t sensitivity)
 {
-	uint8_t a_2 = 0, c = 0;
-	uint16_t bc = 0;
+	uint8_t bits = 0, lfo_sensitivity = 0;
+	uint16_t fm_write = 0;
 
 	z80_block(58);
-	a &= 7u;
-	a = ((uint32_t)a << 1) | (a >> 7);
-	a = ((uint32_t)a << 1) | (a >> 7);
-	a = ((uint32_t)a << 1) | (a >> 7);
-	c = ((uint32_t)a << 1) | (a >> 7);
-	if (z80_read8((uint16_t)(ix + 0x40u)) >= 8u)
+	sensitivity &= 7u;
+	sensitivity = ((uint32_t)sensitivity << 1) | (sensitivity >> 7);
+	sensitivity = ((uint32_t)sensitivity << 1) | (sensitivity >> 7);
+	sensitivity = ((uint32_t)sensitivity << 1) | (sensitivity >> 7);
+	bits = ((uint32_t)sensitivity << 1) | (sensitivity >> 7);
+	if (CHANNEL(channel)->chip_channel >= 8u)
 	{
 		z80_cycles(6);
 		return;
 	}
 	z80_block(70);
-	a_2 = (z80_read8((uint16_t)(ix + 0x4Fu)) & 3u) | c;
-	z80_write8((uint16_t)(ix + 0x4Fu), a_2);
-	bc = 0x3800u | a_2;
-	write_fm_channel_register(bc, ix);
+	lfo_sensitivity = (CHANNEL(channel)->lfo_sensitivity & 3u) | bits;
+	CHANNEL(channel)->lfo_sensitivity = lfo_sensitivity;
+	fm_write = 0x3800u | lfo_sensitivity;
+	write_fm_channel_register(fm_write, channel);
 }
 
-/* an FM channel's AMS (register 38 bits 0-1), kept in +4F */
-void set_channel_am_sensitivity(uint16_t ix, uint8_t a)
+/* A YM2151 channel's amplitude modulation sensitivity (register 38's bits 0-1), kept in lfo_sensitivity;
+   nothing on the K053260. */
+void set_channel_am_sensitivity(uint16_t channel, uint8_t sensitivity)
 {
-	uint8_t a_2 = 0, c = 0;
-	uint16_t bc = 0;
+	uint8_t bits = 0, lfo_sensitivity = 0;
+	uint16_t fm_write = 0;
 
 	z80_block(42);
-	c = a & 3u;
-	if (z80_read8((uint16_t)(ix + 0x40u)) >= 8u)
+	bits = sensitivity & 3u;
+	if (CHANNEL(channel)->chip_channel >= 8u)
 	{
 		z80_cycles(6);
 		return;
 	}
 	z80_block(70);
-	a_2 = (z80_read8((uint16_t)(ix + 0x4Fu)) & 0x70u) | c;
-	z80_write8((uint16_t)(ix + 0x4Fu), a_2);
-	bc = 0x3800u | a_2;
-	write_fm_channel_register(bc, ix);
+	lfo_sensitivity = (CHANNEL(channel)->lfo_sensitivity & 0x70u) | bits;
+	CHANNEL(channel)->lfo_sensitivity = lfo_sensitivity;
+	fm_write = 0x3800u | lfo_sensitivity;
+	write_fm_channel_register(fm_write, channel);
 }
 
-/* YM2151 register 18: the LFO's frequency */
-void set_lfo_frequency(uint8_t a)
+/* The YM2151's LFO frequency (register 18). */
+void set_lfo_frequency(uint8_t frequency)
 {
-	uint16_t bc = 0;
+	uint16_t fm_write = 0;
 
 	z80_block(21);
-	bc = 0x1800u | a;
-	write_fm_register(bc);
+	fm_write = 0x1800u | frequency;
+	write_fm_register(fm_write);
 }
 
-/* YM2151 register 1B: the LFO's waveform */
-void set_lfo_waveform(uint8_t a)
+/* The YM2151's LFO waveform (register 1B). */
+void set_lfo_waveform(uint8_t waveform)
 {
-	uint16_t bc = 0;
+	uint16_t fm_write = 0;
 
 	z80_block(21);
-	bc = 0x1B00u | a;
-	write_fm_register(bc);
+	fm_write = 0x1B00u | waveform;
+	write_fm_register(fm_write);
 }
 
-/* an FM channel's left and right (register 20 bits 6-7, kept in +46); a PCM voice's pan (FC2C-FC2D, kept
-   in F3C5-F3C6) */
-void set_pan(uint16_t ix, uint8_t a)
+/* The record's pan: a YM2151 channel's outputs (1 left, 2 right, 3 both: register 20's bits 6-7, kept in
+   connection), or a K053260 voice's pan (1 left to 7 right) in its pan register, kept in pcm_pans_1 or
+   pcm_pans_2. */
+void set_pan(uint16_t channel, uint8_t pan)
 {
-	uint8_t a_2 = 0, c = 0;
-	uint16_t bc = 0;
+	uint8_t bits = 0, chip_channel = 0, connection = 0, pans = 0;
+	uint16_t fm_write = 0;
 
 	z80_block(40);
-	c = a;
-	a_2 = z80_read8((uint16_t)(ix + 0x40u));
-	if (a_2 >= 8u)
+	bits = pan;
+	chip_channel = CHANNEL(channel)->chip_channel;
+	if (chip_channel >= 8u)
 	{
 		z80_block(10);
-		if (a_2 == 8u)
+		if (chip_channel == 8u)
 		{
 			z80_block(60);
-			a_2 = (pcm_pans_1 & 0x38u) | c;
-			pcm_pans_1 = a_2;
-			z80_write8(PCM_FC2C, a_2);
+			pans = (pcm_pans_1 & 0x38u) | bits;
+			pcm_pans_1 = pans;
+			z80_write8(PCM_FC2C, pans);
 			return;
 		}
 		z80_block(17);
-		if (a_2 == 9u)
+		if (chip_channel == 9u)
 		{
 			z80_block(84);
-			a_2 = (pcm_pans_1 & 7u) | ((((uint32_t)c << 1) << 1) << 1);
-			pcm_pans_1 = a_2;
-			z80_write8(PCM_FC2C, a_2);
+			pans = (pcm_pans_1 & 7u) | ((((uint32_t)bits << 1) << 1) << 1);
+			pcm_pans_1 = pans;
+			z80_write8(PCM_FC2C, pans);
 			return;
 		}
 		z80_block(17);
-		if (a_2 == 0xAu)
+		if (chip_channel == 0xAu)
 		{
 			z80_block(60);
-			a_2 = (pcm_pans_2 & 0x38u) | c;
-			pcm_pans_2 = a_2;
-			z80_write8(PCM_FC2D, a_2);
+			pans = (pcm_pans_2 & 0x38u) | bits;
+			pcm_pans_2 = pans;
+			z80_write8(PCM_FC2D, pans);
 			return;
 		}
 		z80_block(84);
-		a_2 = (pcm_pans_2 & 7u) | ((((uint32_t)c << 1) << 1) << 1);
-		pcm_pans_2 = a_2;
-		z80_write8(PCM_FC2D, a_2);
+		pans = (pcm_pans_2 & 7u) | ((((uint32_t)bits << 1) << 1) << 1);
+		pcm_pans_2 = pans;
+		z80_write8(PCM_FC2D, pans);
 		return;
 	}
 	z80_block(86);
-	c = (c >> 1) | ((uint32_t)c << 7);
-	a_2 = (z80_read8((uint16_t)(ix + 0x46u)) & 0x3Fu) | (c >> 1) | ((uint32_t)c << 7);
-	z80_write8((uint16_t)(ix + 0x46u), a_2);
-	bc = 0x2000u | a_2;
-	write_fm_channel_register(bc, ix);
+	bits = (bits >> 1) | ((uint32_t)bits << 7);
+	connection = (CHANNEL(channel)->connection & 0x3Fu) | (bits >> 1) | ((uint32_t)bits << 7);
+	CHANNEL(channel)->connection = connection;
+	fm_write = 0x2000u | connection;
+	write_fm_channel_register(fm_write, channel);
 }
 
-/* on FM channel 7: the noise off (register 0F = 0) */
-void noise_off(uint16_t ix)
+/* On FM_7, the YM2151's noise off (register 0F). */
+void noise_off(uint16_t channel)
 {
-	uint16_t bc = 0;
+	uint16_t fm_write = 0;
 
 	z80_block(31);
-	if (z80_read8((uint16_t)(ix + 0x40u)) != 7u)
+	if (CHANNEL(channel)->chip_channel != 7u)
 	{
 		z80_cycles(6);
 		return;
 	}
 	z80_block(24);
-	bc = 0xF00u;
-	write_fm_register(bc);
+	fm_write = 0xF00u;
+	write_fm_register(fm_write);
 }
 
-/* Unused: on FM channel 7, the noise on at frequency A (register 0F) */
-void unused_0FF2(uint16_t ix, uint8_t a)
+/* Unused: on FM_7, the YM2151's noise on at the frequency given (register 0F). */
+void noise_on(uint16_t channel, uint8_t noise_frequency)
 {
-	uint8_t c = 0;
-	uint16_t bc = 0;
+	uint8_t noise = 0;
+	uint16_t fm_write = 0;
 
 	z80_block(42);
-	c = a | 0x80u;
-	if (z80_read8((uint16_t)(ix + 0x40u)) != 7u)
+	noise = noise_frequency | 0x80u;
+	if (CHANNEL(channel)->chip_channel != 7u)
 	{
 		z80_cycles(6);
 		return;
 	}
 	z80_block(17);
-	bc = 0xF00u | c;
-	write_fm_register(bc);
+	fm_write = 0xF00u | noise;
+	write_fm_register(fm_write);
 }
 
-/* a PCM record's voice's bit of the K053260's status (FC29); nothing for an FM record */
-uint32_t pcm_voice_playing(uint16_t ix)
+/* Whether the record's K053260 voice still plays (its bit of the chip's status); a YM2151 record says it
+   does. */
+uint32_t pcm_voice_playing(uint16_t channel)
 {
 	uint32_t zero = 0;
-	uint8_t a = 0;
+	uint8_t chip_channel = 0;
 
 	z80_block(31);
-	a = z80_read8((uint16_t)(ix + 0x40u));
-	zero = (uint8_t)(a - 8u) == 0u;
-	if (a < 8u)
+	chip_channel = CHANNEL(channel)->chip_channel;
+	zero = (uint8_t)(chip_channel - 8u) == 0u;
+	if (chip_channel < 8u)
 	{
 		z80_cycles(6);
 		return zero;
 	}
 	z80_block(42);
-	zero = (z80_read8(PCM_FC29) & z80_read8((uint16_t)(ix + 0x4Du))) == 0u;
+	zero = (z80_read8(PCM_FC29) & CHANNEL(channel)->pcm.key_bit) == 0u;
 	return zero;
 }
 
-/* Unused: the next byte at the pointer F3C8 (0100 on: the program's own bytes) */
-void unused_100D(void)
+/* Unused: the byte at byte_pointer, which moves on by one within its page (sound_main points it at the
+   program's bytes). */
+uint8_t next_pointer_byte(void)
 {
-	uint16_t hl = 0;
+	uint8_t value = 0;
+	uint16_t pointer = 0;
 
 	z80_block(53);
-	hl = byte_pointer;
-	byte_pointer = (hl & ~0xFFu) | (uint8_t)(hl + 1u);
+	pointer = byte_pointer;
+	value = z80_read8(pointer);
+	byte_pointer = IN_PAGE(pointer, (uint8_t)(pointer + 1u));
+	return value;
 }

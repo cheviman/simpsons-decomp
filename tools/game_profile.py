@@ -71,6 +71,35 @@ RECORDS_BEFORE = 1
 # (079AE9) reads the animation set index at 6000 of the bank animation_sets gives the object's kind (079B11 "LDB ,U+;
 # STB <$0E; SETLN <$0E", 079B3E "LDU #$6000; CLRA; LDU D,U")
 WINDOW_ELEMENTS = {0x079AE9: {0x6000: "animation_set_index"}}
+# The objects: 0x60 bytes each, 33 of them one after another from 4A40 (symbols.txt's struct object): the 4 players'
+# (4A40 + C0 x player, each with its partner at +60: 07D30C "LDU #$4A40") and the 4 lists the objects' dispatchers run
+# (object_lists, 07EFF8: 4D40 x 6, 4F80 x 8, 5280 x 10, 5640 x 1, each list right after the one before). The
+# dispatchers hand each handler its object in X (07CB62 "LDX #$4F80" ... "JSR [A,U]")
+STRUCT_ARRAYS = {"object": (0x4A40, 33)}
+OBJECT_REGISTER = "x"
+# an object at a fixed address that is of one family in some functions only: the list at 5640 (one object, the
+# stage's events) is the story actor in the stories' routines (03E804 "LDX #$5640; LDA #$38; STA #$30,X; LBRA $605A":
+# a scene's actor started on its script), whose fields an access by its address reads by the family's names (the
+# players' objects at 4A40 + C0 n are not always the player family's: the bonus games' objects are there too)
+INSTANCE_FAMILIES_BY_FUNCTION = {(0x5640, "story"): "story_actor"}
+OWN_OBJECT_POINTERS = True     # (the object register is the family's object in the pointer analysis too)
+NESTED_FAMILIES = True         # (a family's view takes the fields of the families its name extends)
+# names by use, as TMNT's: a parameter or result takes the name of the structure read through it, or of the variable
+# every caller hands it; a variable stored into, or compared with, one field only takes its name; a constant stored
+# into a field typed as a number is a number
+PARAMS_BY_USE = True
+PARAMS_FROM_CALLERS = True
+NAMES_BY_STORES = True
+NAMES_BY_COMPARISONS = True
+NUMBERS_BY_FIELD = True
+# the data flow by part, as TMNT's (konami_cpu/decompile.py): what a function reads to hand back a register, part by
+# part (D's bytes, X's); a register written with an operation that leaves some of its parts writes only the others;
+# what a function hands back is only what its callers read, once everything is known; a web two local lines name
+# takes the name of its definition first in the program (the same C whatever the order of a set)
+PASSES_BY_PART = True
+UNCHANGED_PARTS = True
+NARROW_OUTPUTS = True
+CHOSEN_IN_ORDER = True
 
 # The Z80 sound program (072-e03.6g: 0000-7FFF fixed, 16 KB banks at 8000-BFFF by FE00, which the Z80 only reads as
 # data; its RAM at F000): the reset (IM 1, then 0923), the interrupt (0038, from the 053248's read of 1FC4) and the
@@ -111,3 +140,46 @@ SOUND_NAMES_BEFORE_TABLES = 2                   # the base of a table indexed fr
 SOUND_TABLE_REGISTERS = True                    # a table read through HL ("ld hl,TABLE; add hl,bc; ld e,(hl)"), by its name
 # the handlers the program stores in its channel records (+43) and switches on (run_channel's JP (HL)), by name
 SOUND_CODE_VALUES = True
+# ... those an "ld hl,HANDLER" hands set_channel_handler (0C33: "ld hl,$436A; jp $0C33", stop_channel 0C30 "ld
+# hl,$0C39" runs into it): a function's address loaded for something else is a number (self_test_failed 0B28 "ld
+# bc,$1000", a delay; fm_effect_33_retrigger "ld hl,$1208", a pitch)
+SOUND_HANDLER_SETTERS = (0x0C33,)
+# a pitch is a number, whatever data of the program ROM is at that address (fm_effect_0e "ld hl,$1400; ... call $0DE8"
+# would read as a place in a patch): what set_pitch and pcm_set_pitch take in HL
+SOUND_NUMBER_ARGUMENTS = {"set_pitch": ("hl",), "pcm_set_pitch": ("hl",)}
+# the Z80 writes a record's words a byte at a time: two constant bytes stored at a field and the next are the field's
+# word ("ld hl,$0600; ld (ix+$02),l; ld (ix+$03),h": pitch = 0x600; start_music_track 4255 "ld (ix+$3a),$FF; ld
+# (ix+$3b),$FF": time = 0xFFFF), or the two fields' bytes (z80/pairs.py)
+SOUND_JOIN_CONSTANT_STORES = True
+# ... and a word of a record moved in HL ("ld l,(ix+$02); ld h,(ix+$03); add hl,de; ld (ix+$02),l; ld (ix+$03),h") is
+# the word, not its two bytes (z80/pairs.py: the pair is not split into its bytes for that)
+SOUND_WORDS_IN_MEMORY = True
+# The 12 channel records (sound_symbols.txt's array line) are structures at a fixed address too: an access by the
+# address of a field of one reads that field, by the name of its chip's channel (sound_main 0A4D-0AF4 gives each its
+# own: "ld ix,$F003; ld (ix+$40),$00" up to "ld ix,$F373; ld (ix+$40),$0B"; F003-F233 the YM2151's 0-7, F283-F373 the
+# K053260's voices 0-3)
+SOUND_INSTANCES = True
+SOUND_NAMED_BASES = {0xF003: "FM_0", 0xF053: "FM_1", 0xF0A3: "FM_2", 0xF0F3: "FM_3", 0xF143: "FM_4", 0xF193: "FM_5",
+                     0xF1E3: "FM_6", 0xF233: "FM_7", 0xF283: "PCM_0", 0xF2D3: "PCM_1", 0xF323: "PCM_2",
+                     0xF373: "PCM_3"}
+# every handler runs on its record in IX (run_channel 0C1B-0C21 "ld l,(ix+$43); ld h,(ix+$44); jp (hl)"): what an
+# effect or a drum keeps in +00-+07 means one thing to each (sound_symbols.txt's scoped lines, by the families of the
+# handlers' names), and +46-+4F one thing to the YM2151's records and another to the K053260's (the pcm family)
+SOUND_FAMILY_STRUCT = "channel"
+SOUND_OBJECT_REGISTER = "ix"
+SOUND_NESTED_FAMILIES = True
+# sound_main sets up the K053260's records by their addresses (0A8D-0B0D "ld ix,$F283 ... ld (ix+$4a),l; ld
+# (ix+$4b),h; ld (ix+$4c),$FE"...): what it writes there are the pcm family's fields
+SOUND_INSTANCE_FAMILIES = {(0xF283, "sound_main"): "pcm", (0xF2D3, "sound_main"): "pcm",
+                           (0xF323, "sound_main"): "pcm", (0xF373, "sound_main"): "pcm"}
+# the names of what the code does with a value (decompiler/emit.py, as the 053248's PARAMS_BY_USE and the rest): the
+# record a handler runs on is its channel, a value stored into one field only is what that field holds, a loop's DJNZ
+# counts its count
+SOUND_PARAMS_BY_USE = True
+SOUND_NAMES_BY_STORES = True
+SOUND_PARAMS_FROM_CALLERS = True
+SOUND_NAMES_BY_COMPARISONS = True
+SOUND_LOOP_COUNTERS = True
+# a value a function keeps as it is and hands to a routine is what that routine calls it (fm_effect_01_move_pitch:
+# "ld (ix+$02),l; ld (ix+$03),h; call $0DE8", the pitch)
+SOUND_NAMES_PAST_STORES = True

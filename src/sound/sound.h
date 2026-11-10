@@ -3,7 +3,7 @@
  *    Description: the sound program's ports, variables, tables, structures and functions
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    07-11-2026
+ *    Modified:    09-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the Z80 sound program decompiled into C by
@@ -21,6 +21,18 @@ extern uint16_t sample_rom_2_sum;
 extern uint8_t self_test_failures;
 
 /* the sound program's variables and channel records, in the Z80's RAM (F000-F7FF) */
+#define FM_0 0xF003u
+#define FM_1 0xF053u
+#define FM_2 0xF0A3u
+#define FM_3 0xF0F3u
+#define FM_4 0xF143u
+#define FM_5 0xF193u
+#define FM_6 0xF1E3u
+#define FM_7 0xF233u
+#define PCM_0 0xF283u
+#define PCM_1 0xF2D3u
+#define PCM_2 0xF323u
+#define PCM_3 0xF373u
 #define held_command_ADDRESS 0xF000u
 #define held_command SOUND_RAM16(held_command_ADDRESS)
 #define command_held_ADDRESS 0xF002u
@@ -41,22 +53,12 @@ extern uint8_t self_test_failures;
 #define unk_F223 SOUND_RAM8(unk_F223_ADDRESS)
 #define unk_F273_ADDRESS 0xF273u
 #define unk_F273 SOUND_RAM8(unk_F273_ADDRESS)
-#define unk_F274_ADDRESS 0xF274u
-#define unk_F274 SOUND_RAM8(unk_F274_ADDRESS)
 #define unk_F275_ADDRESS 0xF275u
 #define unk_F275 SOUND_RAM8(unk_F275_ADDRESS)
-#define unk_F276_ADDRESS 0xF276u
-#define unk_F276 SOUND_RAM8(unk_F276_ADDRESS)
-#define unk_F277_ADDRESS 0xF277u
-#define unk_F277 SOUND_RAM8(unk_F277_ADDRESS)
-#define unk_F278_ADDRESS 0xF278u
-#define unk_F278 SOUND_RAM8(unk_F278_ADDRESS)
 #define unk_F2C3_ADDRESS 0xF2C3u
 #define unk_F2C3 SOUND_RAM8(unk_F2C3_ADDRESS)
 #define unk_F2CD_ADDRESS 0xF2CDu
-#define unk_F2CD SOUND_RAM8(unk_F2CD_ADDRESS)
-#define unk_F2CE_ADDRESS 0xF2CEu
-#define unk_F2CE SOUND_RAM8(unk_F2CE_ADDRESS)
+#define unk_F2CD SOUND_RAM16(unk_F2CD_ADDRESS)
 #define unk_F2CF_ADDRESS 0xF2CFu
 #define unk_F2CF SOUND_RAM8(unk_F2CF_ADDRESS)
 #define unk_F2D0_ADDRESS 0xF2D0u
@@ -68,9 +70,7 @@ extern uint8_t self_test_failures;
 #define unk_F313_ADDRESS 0xF313u
 #define unk_F313 SOUND_RAM8(unk_F313_ADDRESS)
 #define unk_F31D_ADDRESS 0xF31Du
-#define unk_F31D SOUND_RAM8(unk_F31D_ADDRESS)
-#define unk_F31E_ADDRESS 0xF31Eu
-#define unk_F31E SOUND_RAM8(unk_F31E_ADDRESS)
+#define unk_F31D SOUND_RAM16(unk_F31D_ADDRESS)
 #define unk_F31F_ADDRESS 0xF31Fu
 #define unk_F31F SOUND_RAM8(unk_F31F_ADDRESS)
 #define unk_F320_ADDRESS 0xF320u
@@ -82,9 +82,7 @@ extern uint8_t self_test_failures;
 #define unk_F363_ADDRESS 0xF363u
 #define unk_F363 SOUND_RAM8(unk_F363_ADDRESS)
 #define unk_F36D_ADDRESS 0xF36Du
-#define unk_F36D SOUND_RAM8(unk_F36D_ADDRESS)
-#define unk_F36E_ADDRESS 0xF36Eu
-#define unk_F36E SOUND_RAM8(unk_F36E_ADDRESS)
+#define unk_F36D SOUND_RAM16(unk_F36D_ADDRESS)
 #define unk_F36F_ADDRESS 0xF36Fu
 #define unk_F36F SOUND_RAM8(unk_F36F_ADDRESS)
 #define unk_F370_ADDRESS 0xF370u
@@ -96,9 +94,7 @@ extern uint8_t self_test_failures;
 #define unk_F3B3_ADDRESS 0xF3B3u
 #define unk_F3B3 SOUND_RAM8(unk_F3B3_ADDRESS)
 #define unk_F3BD_ADDRESS 0xF3BDu
-#define unk_F3BD SOUND_RAM8(unk_F3BD_ADDRESS)
-#define unk_F3BE_ADDRESS 0xF3BEu
-#define unk_F3BE SOUND_RAM8(unk_F3BE_ADDRESS)
+#define unk_F3BD SOUND_RAM16(unk_F3BD_ADDRESS)
 #define unk_F3BF_ADDRESS 0xF3BFu
 #define unk_F3BF SOUND_RAM8(unk_F3BF_ADDRESS)
 #define unk_F3C0_ADDRESS 0xF3C0u
@@ -109,8 +105,8 @@ extern uint8_t self_test_failures;
 #define unk_F3C2 SOUND_RAM8(unk_F3C2_ADDRESS)
 #define pcm_keys_ADDRESS 0xF3C3u
 #define pcm_keys SOUND_RAM8(pcm_keys_ADDRESS)
-#define pcm_loops_ADDRESS 0xF3C4u
-#define pcm_loops SOUND_RAM8(pcm_loops_ADDRESS)
+#define pcm_modes_ADDRESS 0xF3C4u
+#define pcm_modes SOUND_RAM8(pcm_modes_ADDRESS)
 #define pcm_pans_1_ADDRESS 0xF3C5u
 #define pcm_pans_1 SOUND_RAM8(pcm_pans_1_ADDRESS)
 #define pcm_pans_2_ADDRESS 0xF3C6u
@@ -138,8 +134,6 @@ extern uint8_t self_test_failures;
 
 /* data in the program ROM the code reads, which the game loads from its assets */
 #define rom_0007_ADDRESS 0x0007u
-extern const void *rom_0007_data;
-#define rom_0007 ((const uint8_t *)rom_0007_data)
 #define carrier_masks_ADDRESS 0x0DB8u
 extern const void *carrier_masks_data;
 #define carrier_masks ((const uint8_t *)carrier_masks_data)
@@ -148,7 +142,7 @@ extern const void *note_codes_data;
 #define note_codes ((const uint8_t *)note_codes_data)
 #define effect_handlers_ADDRESS 0x1016u
 extern const void *effect_handlers_data;
-#define effect_handlers (*(const uint16_t *)effect_handlers_data)
+#define effect_handlers ((const uint16_t *)effect_handlers_data)
 #define effect_priorities_ADDRESS 0x1086u
 extern const void *effect_priorities_data;
 #define effect_priorities ((const uint8_t *)effect_priorities_data)
@@ -159,14 +153,8 @@ extern const void *unused_effect_handlers_by_sound_data;
 extern const void *unused_effect_priorities_by_sound_data;
 #define unused_effect_priorities_by_sound ((const uint8_t *)unused_effect_priorities_by_sound_data)
 #define unused_effect_group_ADDRESS 0x2774u
-extern const void *unused_effect_group_data;
-#define unused_effect_group (*(const uint16_t *)unused_effect_group_data)
 #define unused_effect_priorities_ADDRESS 0x277Cu
-extern const void *unused_effect_priorities_data;
-#define unused_effect_priorities (*(const uint8_t *)unused_effect_priorities_data)
 #define samples_ADDRESS 0x28E9u
-extern const void *samples_data;
-#define samples (*(const uint8_t *)samples_data)
 #define effect_handlers_2_ADDRESS 0x2E01u
 extern const void *effect_handlers_2_data;
 #define effect_handlers_2 ((const uint16_t *)effect_handlers_2_data)
@@ -180,41 +168,21 @@ extern const void *effect_handlers_40_by_sound_data;
 extern const void *effect_priorities_40_by_sound_data;
 #define effect_priorities_40_by_sound ((const uint8_t *)effect_priorities_40_by_sound_data)
 #define effect_priorities_40_ADDRESS 0x3670u
-extern const void *effect_priorities_40_data;
-#define effect_priorities_40 (*(const uint8_t *)effect_priorities_40_data)
+#define effect_levels_by_position_ADDRESS 0x4166u
 #define effect_levels_ADDRESS 0x4168u
-extern const void *effect_levels_data;
-#define effect_levels (*(const uint16_t *)effect_levels_data)
 #define fm_pitches_by_note_ADDRESS 0x448Bu
-extern const void *fm_pitches_by_note_data;
-#define fm_pitches_by_note (*(const uint16_t *)fm_pitches_by_note_data)
 #define fm_pitches_ADDRESS 0x44A5u
-extern const void *fm_pitches_data;
-#define fm_pitches (*(const uint16_t *)fm_pitches_data)
 #define pcm_pitches_ADDRESS 0x4533u
-extern const void *pcm_pitches_data;
-#define pcm_pitches (*(const uint16_t *)pcm_pitches_data)
 #define note_lengths_ADDRESS 0x48FAu
 extern const void *note_lengths_data;
 #define note_lengths (*(const uint16_t *)note_lengths_data)
-#define pcm_drum_b_4_patch_ADDRESS 0x5CB0u
-extern const void *pcm_drum_b_4_patch_data;
-#define pcm_drum_b_4_patch (*(const uint8_t *)pcm_drum_b_4_patch_data)
 #define song_headers_by_sound_ADDRESS 0x5CB2u
-extern const void *song_headers_by_sound_data;
-#define song_headers_by_sound (*(const uint16_t *)song_headers_by_sound_data)
 #define song_banks_by_sound_ADDRESS 0x5D92u
 extern const void *song_banks_by_sound_data;
 #define song_banks_by_sound ((const uint8_t *)song_banks_by_sound_data)
 #define song_banks_ADDRESS 0x5E12u
-extern const void *song_banks_data;
-#define song_banks (*(const uint8_t *)song_banks_data)
 #define music_fm_patches_ADDRESS 0x5E42u
-extern const void *music_fm_patches_data;
-#define music_fm_patches (*(const uint16_t *)music_fm_patches_data)
 #define music_pcm_patches_ADDRESS 0x63F4u
-extern const void *music_pcm_patches_data;
-#define music_pcm_patches (*(const uint16_t *)music_pcm_patches_data)
 #define music_pcm_transpositions_ADDRESS 0x642Cu
 extern const void *music_pcm_transpositions_data;
 #define music_pcm_transpositions (*(const int16_t *)music_pcm_transpositions_data)
@@ -252,8 +220,10 @@ extern const void *music_pcm_transpositions_data;
 #define SOUND_BANK_FE00 0xFE00u
 
 /* data in the program ROM sound_symbols.txt labels */
-#define effect_steps_12e1_ADDRESS 0x12E1u
-#define effect_steps_36b9_ADDRESS 0x36B9u
+#define fm_effect_08_pitches_ADDRESS 0x12E1u
+#define pcm_effect_40_notes_ADDRESS 0x36B9u
+#define pcm_effect_41_notes_ADDRESS 0x36D9u
+#define pcm_effect_42_notes_ADDRESS 0x36F9u
 #define music_commands_ADDRESS 0x44A6u
 #define instrument_routines_low_ADDRESS 0x496Cu
 #define instrument_routines_ADDRESS 0x4E4Eu
@@ -261,7 +231,6 @@ extern const void *music_pcm_transpositions_data;
 
 /* where the code the program holds as values is (the handlers it stores and switches on) */
 #define channel_idle_ADDRESS 0x0C39u
-#define pcm_voice_playing_ADDRESS 0x1000u
 #define fm_effect_02_ADDRESS 0x10D7u
 #define fm_effect_02_delay_ADDRESS 0x10E1u
 #define fm_effect_01_ADDRESS 0x10E5u
@@ -303,11 +272,11 @@ extern const void *music_pcm_transpositions_data;
 #define fm_effect_12_slide_ADDRESS 0x1651u
 #define fm_effect_13_ADDRESS 0x1698u
 #define fm_effect_13_slide_ADDRESS 0x16BFu
-#define fm_effect_13_slide_2_ADDRESS 0x1705u
-#define fm_effect_13_slide_3_ADDRESS 0x173Cu
+#define fm_effect_13_hold_ADDRESS 0x1705u
+#define fm_effect_13_fall_ADDRESS 0x173Cu
 #define fm_effect_14_ADDRESS 0x1787u
 #define fm_effect_14_slide_ADDRESS 0x17ADu
-#define fm_effect_14_slide_2_ADDRESS 0x17F4u
+#define fm_effect_14_hold_ADDRESS 0x17F4u
 #define fm_effect_15_ADDRESS 0x184Cu
 #define fm_effect_15_note_ADDRESS 0x1869u
 #define fm_effect_15_slide_ADDRESS 0x189Bu
@@ -370,16 +339,16 @@ extern const void *music_pcm_transpositions_data;
 #define fm_effect_2a_retrigger_2_ADDRESS 0x21A6u
 #define fm_effect_2a_hold_ADDRESS 0x21C6u
 #define fm_effect_2c_ADDRESS 0x2200u
-#define fm_effect_2c_delay_ADDRESS 0x2227u
-#define fm_effect_2c_hold_ADDRESS 0x2248u
+#define fm_effect_2c_step_up_ADDRESS 0x2227u
+#define fm_effect_2c_step_down_ADDRESS 0x2248u
 #define fm_effect_2d_ADDRESS 0x22A1u
 #define fm_effect_2d_note_ADDRESS 0x22ABu
-#define fm_effect_2d_delay_ADDRESS 0x22D6u
-#define fm_effect_2d_hold_ADDRESS 0x22F7u
+#define fm_effect_2d_step_up_ADDRESS 0x22D6u
+#define fm_effect_2d_step_down_ADDRESS 0x22F7u
 #define fm_effect_2e_ADDRESS 0x2350u
 #define fm_effect_2e_note_ADDRESS 0x235Au
-#define fm_effect_2e_delay_ADDRESS 0x2385u
-#define fm_effect_2e_hold_ADDRESS 0x23A6u
+#define fm_effect_2e_step_up_ADDRESS 0x2385u
+#define fm_effect_2e_step_down_ADDRESS 0x23A6u
 #define fm_effect_2f_ADDRESS 0x23FFu
 #define fm_effect_2f_slide_ADDRESS 0x2426u
 #define fm_effect_32_ADDRESS 0x2475u
@@ -401,11 +370,11 @@ extern const void *music_pcm_transpositions_data;
 #define fm_effect_37_slide_ADDRESS 0x26D4u
 #define fm_effect_38_ADDRESS 0x2717u
 #define fm_effect_38_slide_ADDRESS 0x273Eu
-#define unused_effect_2799_slide_ADDRESS 0x27C0u
-#define unused_effect_280E_hold_ADDRESS 0x2829u
-#define unused_effect_2856_end_ADDRESS 0x2873u
-#define unused_effect_289F_step_ADDRESS 0x28BCu
-#define unused_effect_289F_end_ADDRESS 0x28D2u
+#define unused_effect_3c_slide_ADDRESS 0x27C0u
+#define unused_effect_3d_lower_noise_ADDRESS 0x2829u
+#define unused_effect_3e_end_ADDRESS 0x2873u
+#define unused_effect_3f_step_ADDRESS 0x28BCu
+#define unused_effect_3f_end_ADDRESS 0x28D2u
 #define pcm_effect_3f_00_ADDRESS 0x2EB8u
 #define pcm_effect_3f_00_wait_sample_ADDRESS 0x2ECCu
 #define pcm_effect_3f_01_ADDRESS 0x2ED6u
@@ -528,8 +497,8 @@ extern const void *music_pcm_transpositions_data;
 #define pcm_effect_42_ADDRESS 0x3719u
 #define pcm_effect_41_ADDRESS 0x372Au
 #define pcm_effect_40_ADDRESS 0x373Bu
-#define pcm_effect_42_retrigger_ADDRESS 0x375Du
-#define pcm_effect_42_setup_2_ADDRESS 0x378Fu
+#define pcm_effect_42_next_note_ADDRESS 0x375Du
+#define pcm_effect_42_rest_ADDRESS 0x378Fu
 #define pcm_effect_43_ADDRESS 0x37C5u
 #define pcm_effect_43_wait_sample_ADDRESS 0x37D9u
 #define pcm_effect_44_ADDRESS 0x37E3u
@@ -650,20 +619,20 @@ extern const void *music_pcm_transpositions_data;
 #define pcm_effect_79_ADDRESS 0x3F80u
 #define pcm_effect_79_wait_sample_ADDRESS 0x3F94u
 #define pcm_effect_7a_ADDRESS 0x3F9Eu
-#define pcm_effect_7a_retrigger_ADDRESS 0x3FBEu
-#define pcm_effect_7a_retrigger_2_ADDRESS 0x3FE6u
-#define pcm_effect_7a_retrigger_3_ADDRESS 0x4007u
+#define pcm_effect_7a_fade_in_ADDRESS 0x3FBEu
+#define pcm_effect_7a_delay_ADDRESS 0x3FE6u
+#define pcm_effect_7a_fade_out_ADDRESS 0x4007u
 #define pcm_effect_7b_ADDRESS 0x4031u
 #define pcm_effect_7b_wait_sample_ADDRESS 0x4045u
 #define pcm_effect_7c_ADDRESS 0x404Fu
-#define pcm_effect_7c_retrigger_ADDRESS 0x406Fu
-#define pcm_effect_7c_retrigger_2_ADDRESS 0x4097u
-#define pcm_effect_7c_retrigger_3_ADDRESS 0x40B8u
+#define pcm_effect_7c_fade_in_ADDRESS 0x406Fu
+#define pcm_effect_7c_delay_ADDRESS 0x4097u
+#define pcm_effect_7c_fade_out_ADDRESS 0x40B8u
 #define pcm_effect_7d_ADDRESS 0x40E2u
 #define pcm_effect_7d_wait_sample_ADDRESS 0x40F6u
 #define pcm_effect_7e_ADDRESS 0x4100u
-#define pcm_effect_7e_retrigger_ADDRESS 0x411Du
-#define pcm_effect_7e_retrigger_2_ADDRESS 0x413Eu
+#define pcm_effect_7e_delay_ADDRESS 0x411Du
+#define pcm_effect_7e_fade_out_ADDRESS 0x413Eu
 #define pcm_effect_7f_ADDRESS 0x4176u
 #define pcm_effect_7f_retrigger_ADDRESS 0x4188u
 #define music_pitch_envelope_1_ADDRESS 0x436Au
@@ -671,6 +640,34 @@ extern const void *music_pcm_transpositions_data;
 #define music_pitch_envelope_3_ADDRESS 0x43E4u
 #define music_pitch_envelope_4_ADDRESS 0x4421u
 #define music_note_tick_ADDRESS 0x4458u
+#define track_set_drum_kit_ADDRESS 0x46A6u
+#define track_set_tempo_ADDRESS 0x46D2u
+#define track_set_instrument_ADDRESS 0x46DBu
+#define track_set_volume_ADDRESS 0x471Eu
+#define track_set_gate_ADDRESS 0x472Eu
+#define track_held_note_ADDRESS 0x4737u
+#define track_set_detune_ADDRESS 0x4767u
+#define track_set_pitch_envelope_ADDRESS 0x4770u
+#define track_reset_e8_ADDRESS 0x47A9u
+#define track_reset_e9_ADDRESS 0x47ACu
+#define track_reset_ea_ADDRESS 0x47AFu
+#define track_reset_eb_ADDRESS 0x47B2u
+#define track_reset_ec_ADDRESS 0x47B5u
+#define track_set_lfo_ADDRESS 0x47B8u
+#define track_set_lfo_ramp_ADDRESS 0x47D3u
+#define track_set_pan_ADDRESS 0x47DCu
+#define track_jump_ADDRESS 0x47ECu
+#define track_jump_counted_ADDRESS 0x47FCu
+#define track_loop_start_ADDRESS 0x4818u
+#define track_loop_end_ADDRESS 0x482Du
+#define track_loop_2_start_ADDRESS 0x4842u
+#define track_loop_2_end_ADDRESS 0x4857u
+#define track_call_part_ADDRESS 0x486Cu
+#define track_part_return_ADDRESS 0x488Eu
+#define track_reset_f8_ADDRESS 0x48B0u
+#define track_reset_fd_ADDRESS 0x48B3u
+#define track_set_priority_ADDRESS 0x48B6u
+#define track_end_ADDRESS 0x48C9u
 #define fm_drum_1_1_ADDRESS 0x49C5u
 #define fm_drum_1_1_slide_ADDRESS 0x49E4u
 #define fm_drum_1_2_ADDRESS 0x4A18u
@@ -868,25 +865,52 @@ extern const void *music_pcm_transpositions_data;
 #define pcm_drum_b_e_ADDRESS 0x5D8Du
 #define pcm_drum_b_f_ADDRESS 0x5DA1u
 
+/* numbers the code uses, by name (sound_symbols.txt's constant lines) */
+#define RANDOM_BYTES 0x200u
+#define FAILED_DELAY 0x1000u
+
 /* the sound program's structures in the shared RAM */
 #pragma pack(push, 1)
 struct fm_patch
 {
-	uint8_t algorithm;
-	uint8_t pad_01[0x18];
+	uint8_t connection;
+	uint8_t m1_detune_multiple;
+	uint8_t m1_total_level;
+	uint8_t m1_attack;
+	uint8_t m1_decay_1;
+	uint8_t m1_decay_2;
+	uint8_t m1_release;
+	uint8_t c1_detune_multiple;
+	uint8_t c1_total_level;
+	uint8_t c1_attack;
+	uint8_t c1_decay_1;
+	uint8_t c1_decay_2;
+	uint8_t c1_release;
+	uint8_t m2_detune_multiple;
+	uint8_t m2_total_level;
+	uint8_t m2_attack;
+	uint8_t m2_decay_1;
+	uint8_t m2_decay_2;
+	uint8_t m2_release;
+	uint8_t c2_detune_multiple;
+	uint8_t c2_total_level;
+	uint8_t c2_attack;
+	uint8_t c2_decay_1;
+	uint8_t c2_decay_2;
+	uint8_t c2_release;
 };
 
 struct pcm_patch
 {
 	uint8_t sample;
-	uint8_t unk_01;
-	uint8_t unk_02;
+	uint8_t level;
+	uint8_t decay_step;
 };
 
 struct sample
 {
 	uint8_t registers[0x7];
-	uint8_t flags;
+	uint8_t kadpcm;
 };
 
 struct effect_level
@@ -895,762 +919,1523 @@ struct effect_level
 	uint8_t volume;
 };
 
+struct channel
+{
+	union
+	{
+		struct
+		{
+			uint8_t count;
+			uint8_t timer;
+			uint16_t pitch;
+			uint8_t rounds;
+			uint8_t extra_byte;
+			uint16_t extra_word;
+			uint8_t pad_08[0x8];
+			uint8_t song;
+			uint8_t music_priority;
+			uint8_t drum_kit;
+			uint8_t tempo;
+			uint8_t gate;
+			uint8_t octave;
+			uint8_t detune;
+			uint8_t music_volume;
+			uint8_t music_pan;
+			uint16_t patch;
+			uint8_t lfo_ramp;
+			uint8_t envelope_count_1;
+			int8_t envelope_step_1;
+			uint8_t envelope_count_2;
+			int8_t envelope_step_2;
+			uint8_t envelope_count_3;
+			int8_t envelope_step_3;
+			uint8_t envelope_count_4;
+			int8_t envelope_step_4;
+			uint8_t envelope_period;
+			uint8_t spare;
+			int16_t transposition;
+			uint16_t drum_routines;
+			uint8_t envelope_timer;
+			uint8_t envelope_count;
+			uint16_t note_pitch;
+			uint8_t lfo_ramp_timer;
+			uint8_t lfo_ramp_step;
+			uint8_t jump_count;
+			uint8_t loop_count;
+			uint16_t loop_start;
+			uint8_t loop_2_count;
+			uint16_t loop_2_start;
+			uint8_t part_count;
+			uint16_t part_return;
+			uint16_t time;
+			uint16_t gate_time;
+			uint16_t track;
+			uint8_t chip_channel;
+			uint8_t sound;
+			uint8_t priority;
+			uint16_t handler;
+			uint8_t volume;
+			uint8_t connection;
+			uint8_t m1_total_level;
+			uint8_t c1_total_level;
+			uint8_t m2_total_level;
+			uint8_t c2_total_level;
+			uint8_t m1_release;
+			uint8_t c1_release;
+			uint8_t m2_release;
+			uint8_t c2_release;
+			uint8_t lfo_sensitivity;
+		};
+		struct
+		{
+			uint8_t pad_00[0x1];
+			uint16_t pitch;
+		} fm_drum_1_1;
+		struct
+		{
+			uint16_t passes;
+		} fm_drum_1_5;
+		struct
+		{
+			uint16_t passes;
+		} fm_drum_1_6;
+		struct
+		{
+			uint16_t passes;
+		} fm_drum_1_7;
+		struct
+		{
+			uint16_t passes;
+		} fm_drum_1_8;
+		struct
+		{
+			uint8_t random_index;
+			uint8_t pad_01[0x1];
+			int16_t pitch_step;
+			uint16_t pitch;
+			uint16_t passes;
+		} fm_drum_2_4;
+		struct
+		{
+			uint8_t pad_00[0x4];
+			uint8_t attenuation;
+		} fm_effect_05;
+		struct
+		{
+			uint8_t pad_00[0x4];
+			uint8_t attenuation;
+		} fm_effect_06;
+		struct
+		{
+			uint16_t passes;
+		} fm_effect_07;
+		struct
+		{
+			uint16_t next_pitch;
+			uint8_t timer;
+		} fm_effect_08;
+		struct
+		{
+			uint8_t pad_00[0x2];
+			uint8_t timer;
+		} fm_effect_09;
+		struct
+		{
+			union
+			{
+				uint16_t passes;
+				uint8_t passes_low;
+			};
+		} fm_effect_11;
+		struct
+		{
+			uint16_t pitch;
+			union
+			{
+				uint16_t passes;
+				uint8_t passes_low;
+			};
+		} fm_effect_12;
+		struct
+		{
+			uint8_t pitch_fraction;
+			uint16_t pitch;
+			union
+			{
+				uint16_t passes;
+				uint8_t passes_low;
+			};
+		} fm_effect_13;
+		struct
+		{
+			uint8_t pitch_fraction;
+			uint16_t pitch;
+			union
+			{
+				uint16_t passes;
+				uint8_t passes_low;
+			};
+		} fm_effect_14;
+		struct
+		{
+			uint16_t passes;
+			uint8_t timer;
+		} fm_effect_15;
+		struct
+		{
+			uint16_t pitch;
+			uint8_t timer;
+		} fm_effect_15_slide;
+		struct
+		{
+			uint8_t pad_00[0x1];
+			uint16_t pitch;
+		} fm_effect_18;
+		struct
+		{
+			uint8_t pad_00[0x4];
+			uint8_t attenuation;
+		} fm_effect_19;
+		struct
+		{
+			uint8_t pad_00[0x1];
+			uint16_t pitch;
+		} fm_effect_1e;
+		struct
+		{
+			union
+			{
+				uint16_t passes;
+				uint8_t passes_low;
+			};
+		} fm_effect_1f;
+		struct
+		{
+			uint8_t pad_00[0x1];
+			uint16_t pitch;
+		} fm_effect_20;
+		struct
+		{
+			uint16_t passes;
+		} fm_effect_21;
+		struct
+		{
+			uint8_t timer;
+			uint8_t count;
+		} fm_effect_22;
+		struct
+		{
+			uint8_t timer;
+			uint8_t count;
+		} fm_effect_24;
+		struct
+		{
+			uint8_t timer;
+			uint8_t count;
+		} fm_effect_25;
+		struct
+		{
+			uint8_t pad_00[0x4];
+			uint8_t attenuation;
+		} fm_effect_2f;
+		struct
+		{
+			uint8_t pad_00[0x4];
+			uint8_t attenuation;
+		} fm_effect_38;
+		struct
+		{
+			uint8_t pad_00[0x46];
+			uint8_t level;
+			uint8_t decay_step;
+			uint8_t decay;
+			uint8_t pad_49[0x1];
+			uint16_t registers;
+			uint8_t key_mask;
+			uint8_t key_bit;
+			uint8_t kadpcm_mask;
+			uint8_t kadpcm_bit;
+		} pcm;
+		struct
+		{
+			uint16_t notes;
+			uint16_t passes;
+			uint8_t pad_04[0x42];
+			uint8_t level;
+			uint8_t decay_step;
+			uint8_t decay;
+			uint8_t pad_49[0x1];
+			uint16_t registers;
+			uint8_t key_mask;
+			uint8_t key_bit;
+			uint8_t kadpcm_mask;
+			uint8_t kadpcm_bit;
+		} pcm_effect_42;
+		struct
+		{
+			uint8_t attenuation;
+			uint8_t pad_01[0x45];
+			uint8_t level;
+			uint8_t decay_step;
+			uint8_t decay;
+			uint8_t pad_49[0x1];
+			uint16_t registers;
+			uint8_t key_mask;
+			uint8_t key_bit;
+			uint8_t kadpcm_mask;
+			uint8_t kadpcm_bit;
+		} pcm_effect_50;
+		struct
+		{
+			uint8_t timer;
+			uint8_t pan;
+			uint8_t pad_02[0x44];
+			uint8_t level;
+			uint8_t decay_step;
+			uint8_t decay;
+			uint8_t pad_49[0x1];
+			uint16_t registers;
+			uint8_t key_mask;
+			uint8_t key_bit;
+			uint8_t kadpcm_mask;
+			uint8_t kadpcm_bit;
+		} pcm_effect_54;
+		struct
+		{
+			uint16_t passes;
+			uint8_t pad_02[0x44];
+			uint8_t level;
+			uint8_t decay_step;
+			uint8_t decay;
+			uint8_t pad_49[0x1];
+			uint16_t registers;
+			uint8_t key_mask;
+			uint8_t key_bit;
+			uint8_t kadpcm_mask;
+			uint8_t kadpcm_bit;
+		} pcm_effect_57;
+		struct
+		{
+			union
+			{
+				uint16_t passes;
+				uint8_t attenuation;
+				struct
+				{
+					uint8_t pad_00[0x1];
+					uint8_t timer;
+				};
+			};
+			uint8_t pad_02[0x44];
+			uint8_t level;
+			uint8_t decay_step;
+			uint8_t decay;
+			uint8_t pad_49[0x1];
+			uint16_t registers;
+			uint8_t key_mask;
+			uint8_t key_bit;
+			uint8_t kadpcm_mask;
+			uint8_t kadpcm_bit;
+		} pcm_effect_7a;
+		struct
+		{
+			union
+			{
+				uint16_t passes;
+				uint8_t attenuation;
+				struct
+				{
+					uint8_t pad_00[0x1];
+					uint8_t timer;
+				};
+			};
+			uint8_t pad_02[0x44];
+			uint8_t level;
+			uint8_t decay_step;
+			uint8_t decay;
+			uint8_t pad_49[0x1];
+			uint16_t registers;
+			uint8_t key_mask;
+			uint8_t key_bit;
+			uint8_t kadpcm_mask;
+			uint8_t kadpcm_bit;
+		} pcm_effect_7c;
+		struct
+		{
+			union
+			{
+				uint16_t passes;
+				uint8_t attenuation;
+				struct
+				{
+					uint8_t pad_00[0x1];
+					uint8_t timer;
+				};
+			};
+			uint8_t pad_02[0x44];
+			uint8_t level;
+			uint8_t decay_step;
+			uint8_t decay;
+			uint8_t pad_49[0x1];
+			uint16_t registers;
+			uint8_t key_mask;
+			uint8_t key_bit;
+			uint8_t kadpcm_mask;
+			uint8_t kadpcm_bit;
+		} pcm_effect_7e;
+		struct
+		{
+			uint8_t position;
+			uint8_t pad_01[0x45];
+			uint8_t level;
+			uint8_t decay_step;
+			uint8_t decay;
+			uint8_t pad_49[0x1];
+			uint16_t registers;
+			uint8_t key_mask;
+			uint8_t key_bit;
+			uint8_t kadpcm_mask;
+			uint8_t kadpcm_bit;
+		} pcm_effect_7f;
+		struct
+		{
+			uint8_t pad_00[0x1];
+			uint8_t noise_frequency;
+		} unused_effect_3c;
+		struct
+		{
+			uint8_t pad_00[0x1];
+			uint8_t noise_frequency;
+		} unused_effect_3d;
+		struct
+		{
+			uint16_t passes;
+		} unused_effect_3e;
+		struct
+		{
+			uint16_t passes;
+		} unused_effect_3f;
+	};
+};
+
 #pragma pack(pop)
 
 _Static_assert(sizeof(struct fm_patch) == 0x19, "struct fm_patch has the size of the program ROM's records");
 _Static_assert(sizeof(struct pcm_patch) == 0x3, "struct pcm_patch has the size of the program ROM's records");
 _Static_assert(sizeof(struct sample) == 0x8, "struct sample has the size of the program ROM's records");
 _Static_assert(sizeof(struct effect_level) == 0x2, "struct effect_level has the size of the program ROM's records");
+_Static_assert(sizeof(struct channel) == 0x50, "struct channel has the size of the game's blocks");
 
 #define FM_PATCH(address) ((const struct fm_patch *)sound_rom_at(address))
 #define PCM_PATCH(address) ((const struct pcm_patch *)sound_rom_at(address))
 #define SAMPLE(address) ((const struct sample *)sound_rom_at(address))
 #define EFFECT_LEVEL(address) ((const struct effect_level *)sound_rom_at(address))
+#define CHANNEL(address) ((struct channel *)sound_ram_at(address))
 #define PATCH_ADDRESS(address) ((const uint16_t *)sound_rom_at(address))
 #define PITCH(address) ((const uint16_t *)sound_rom_at(address))
 #define MUSIC_COMMAND_HANDLER(address) ((const uint16_t *)sound_rom_at(address))
 #define SONG_HEADER_ADDRESS(address) ((const uint16_t *)sound_rom_at(address))
 
+/* the program ROM's tables of records, by name: name[i].field */
+#define fm_effect_01_patch_ADDRESS 0x10BEu
+#define fm_effect_03_patch_ADDRESS 0x115Du
+#define fm_effect_05_patch_ADDRESS 0x11D6u
+#define fm_effect_07_patch_ADDRESS 0x1265u
+#define fm_effect_08_patch_ADDRESS 0x12C8u
+#define fm_effect_0c_patch_ADDRESS 0x1351u
+#define fm_effect_0e_patch_ADDRESS 0x13ECu
+#define fm_effect_0f_patch_ADDRESS 0x148Cu
+#define fm_effect_10_patch_ADDRESS 0x1509u
+#define fm_effect_11_patch_ADDRESS 0x1586u
+#define fm_effect_12_patch_ADDRESS 0x15F7u
+#define fm_effect_13_patch_ADDRESS 0x167Fu
+#define fm_effect_14_patch_ADDRESS 0x176Eu
+#define fm_effect_15_patch_ADDRESS 0x181Au
+#define fm_effect_15_patch_2_ADDRESS 0x1833u
+#define fm_effect_16_patch_ADDRESS 0x18BFu
+#define fm_effect_18_patch_ADDRESS 0x193Du
+#define fm_effect_19_patch_ADDRESS 0x1999u
+#define fm_effect_1a_patch_ADDRESS 0x1A0Fu
+#define fm_effect_1b_patch_ADDRESS 0x1A76u
+#define fm_effect_1c_patch_ADDRESS 0x1AE8u
+#define fm_effect_1d_patch_ADDRESS 0x1B88u
+#define fm_effect_1e_patch_ADDRESS 0x1C10u
+#define fm_effect_1f_patch_ADDRESS 0x1C6Cu
+#define fm_effect_20_patch_ADDRESS 0x1CD0u
+#define fm_effect_21_patch_ADDRESS 0x1D42u
+#define fm_effect_22_patch_ADDRESS 0x1D8Cu
+#define fm_effect_23_patch_ADDRESS 0x1DF3u
+#define fm_effect_24_patch_ADDRESS 0x1E5Au
+#define fm_effect_25_patch_ADDRESS 0x1ECEu
+#define fm_effect_26_patch_ADDRESS 0x1F50u
+#define fm_effect_27_patch_ADDRESS 0x1FDEu
+#define fm_effect_28_patch_ADDRESS 0x2052u
+#define fm_effect_29_patch_ADDRESS 0x20CBu
+#define fm_effect_2a_patch_ADDRESS 0x214Cu
+#define fm_effect_2c_patch_ADDRESS 0x21E7u
+#define fm_effect_2d_patch_ADDRESS 0x2288u
+#define fm_effect_2e_patch_ADDRESS 0x2337u
+#define fm_effect_2f_patch_ADDRESS 0x23E6u
+#define fm_effect_30_patch_ADDRESS 0x245Cu
+#define fm_effect_33_patch_ADDRESS 0x24E8u
+#define fm_effect_34_patch_ADDRESS 0x2558u
+#define fm_effect_35_patch_ADDRESS 0x25C1u
+#define fm_effect_36_patch_ADDRESS 0x2638u
+#define fm_effect_37_patch_ADDRESS 0x2694u
+#define fm_effect_38_patch_ADDRESS 0x26FEu
+#define unused_effect_3c_patch_ADDRESS 0x2780u
+#define unused_effect_3d_patch_ADDRESS 0x27F5u
+#define unused_effect_3e_patch_ADDRESS 0x283Du
+#define unused_effect_3f_patch_ADDRESS 0x2886u
+#define pcm_effect_3f_00_patch_ADDRESS 0x2EB5u
+#define pcm_effect_3f_01_patch_ADDRESS 0x2ED3u
+#define pcm_effect_3f_02_patch_ADDRESS 0x2EF1u
+#define pcm_effect_3f_03_patch_ADDRESS 0x2F0Fu
+#define pcm_effect_3f_04_patch_ADDRESS 0x2F2Du
+#define pcm_effect_3f_05_patch_ADDRESS 0x2F4Bu
+#define pcm_effect_3f_06_patch_ADDRESS 0x2F69u
+#define pcm_effect_3f_07_patch_ADDRESS 0x2F87u
+#define pcm_effect_3f_08_patch_ADDRESS 0x2FA5u
+#define pcm_effect_3f_09_patch_ADDRESS 0x2FC3u
+#define pcm_effect_3f_0a_patch_ADDRESS 0x2FE1u
+#define pcm_effect_3f_0b_patch_ADDRESS 0x2FFFu
+#define pcm_effect_3f_0c_patch_ADDRESS 0x301Du
+#define pcm_effect_3f_0d_patch_ADDRESS 0x303Bu
+#define pcm_effect_3f_0e_patch_ADDRESS 0x3059u
+#define pcm_effect_3f_0f_patch_ADDRESS 0x3077u
+#define pcm_effect_3f_10_patch_ADDRESS 0x3095u
+#define pcm_effect_3f_11_patch_ADDRESS 0x30B3u
+#define pcm_effect_3f_12_patch_ADDRESS 0x30D1u
+#define pcm_effect_3f_13_patch_ADDRESS 0x30EFu
+#define pcm_effect_3f_14_patch_ADDRESS 0x310Du
+#define pcm_effect_3f_15_patch_ADDRESS 0x312Bu
+#define pcm_effect_3f_16_patch_ADDRESS 0x3149u
+#define pcm_effect_3f_17_patch_ADDRESS 0x3167u
+#define pcm_effect_3f_18_patch_ADDRESS 0x3185u
+#define pcm_effect_3f_19_patch_ADDRESS 0x31A3u
+#define pcm_effect_3f_1a_patch_ADDRESS 0x31C1u
+#define pcm_effect_3f_1b_patch_ADDRESS 0x31DFu
+#define pcm_effect_3f_1c_patch_ADDRESS 0x31FDu
+#define pcm_effect_3f_1d_patch_ADDRESS 0x321Bu
+#define pcm_effect_3f_1e_patch_ADDRESS 0x3239u
+#define pcm_effect_3f_1f_patch_ADDRESS 0x3257u
+#define pcm_effect_3f_20_patch_ADDRESS 0x3275u
+#define pcm_effect_3f_21_patch_ADDRESS 0x3293u
+#define pcm_effect_3f_22_patch_ADDRESS 0x32B1u
+#define pcm_effect_3f_23_patch_ADDRESS 0x32CFu
+#define pcm_effect_3f_24_patch_ADDRESS 0x32EDu
+#define pcm_effect_3f_25_patch_ADDRESS 0x330Bu
+#define pcm_effect_3f_26_patch_ADDRESS 0x3329u
+#define pcm_effect_3f_27_patch_ADDRESS 0x3347u
+#define pcm_effect_3f_28_patch_ADDRESS 0x3365u
+#define pcm_effect_3f_29_patch_ADDRESS 0x3383u
+#define pcm_effect_3f_2a_patch_ADDRESS 0x33A1u
+#define pcm_effect_3f_2b_patch_ADDRESS 0x33BFu
+#define pcm_effect_3f_2c_patch_ADDRESS 0x33DDu
+#define pcm_effect_3f_2d_patch_ADDRESS 0x3401u
+#define pcm_effect_3f_2e_patch_ADDRESS 0x3425u
+#define pcm_effect_3f_30_patch_ADDRESS 0x344Cu
+#define pcm_effect_3f_31_patch_ADDRESS 0x3470u
+#define pcm_effect_3f_32_patch_ADDRESS 0x3494u
+#define pcm_effect_3f_33_patch_ADDRESS 0x34B8u
+#define pcm_effect_3f_34_patch_ADDRESS 0x34DCu
+#define pcm_effect_3f_35_patch_ADDRESS 0x3500u
+#define pcm_effect_3f_36_patch_ADDRESS 0x3524u
+#define pcm_effect_3f_37_patch_ADDRESS 0x3548u
+#define pcm_effect_3f_38_patch_ADDRESS 0x356Cu
+#define pcm_effect_3f_39_patch_ADDRESS 0x3596u
+#define pcm_effect_3f_3a_patch_ADDRESS 0x35B4u
+#define pcm_effect_3f_3b_patch_ADDRESS 0x35D2u
+#define pcm_effect_40_patch_ADDRESS 0x36B0u
+#define pcm_effect_41_patch_ADDRESS 0x36B3u
+#define pcm_effect_42_patch_ADDRESS 0x36B6u
+#define pcm_effect_43_patch_ADDRESS 0x37C2u
+#define pcm_effect_44_patch_ADDRESS 0x37E0u
+#define pcm_effect_45_patch_ADDRESS 0x37FEu
+#define pcm_effect_46_patch_ADDRESS 0x381Cu
+#define pcm_effect_47_patch_ADDRESS 0x3847u
+#define pcm_effect_48_patch_ADDRESS 0x3865u
+#define pcm_effect_49_patch_ADDRESS 0x3883u
+#define pcm_effect_4a_patch_ADDRESS 0x38A1u
+#define pcm_effect_4b_patch_ADDRESS 0x38BFu
+#define pcm_effect_4c_patch_ADDRESS 0x38DDu
+#define pcm_effect_4d_patch_ADDRESS 0x38FBu
+#define pcm_effect_4e_patch_ADDRESS 0x3919u
+#define pcm_effect_4f_patch_ADDRESS 0x3937u
+#define pcm_effect_50_patch_ADDRESS 0x3955u
+#define pcm_effect_51_patch_ADDRESS 0x39A1u
+#define pcm_effect_52_patch_ADDRESS 0x39C5u
+#define pcm_effect_53_patch_ADDRESS 0x39FEu
+#define pcm_effect_54_patch_ADDRESS 0x3A1Cu
+#define pcm_effect_55_patch_ADDRESS 0x3A5Eu
+#define pcm_effect_56_patch_ADDRESS 0x3A82u
+#define pcm_effect_57_patch_ADDRESS 0x3ADFu
+#define pcm_effect_57_patch_2_ADDRESS 0x3AE2u
+#define pcm_effect_58_patch_ADDRESS 0x3B5Fu
+#define pcm_effect_59_patch_ADDRESS 0x3B90u
+#define pcm_effect_5a_patch_ADDRESS 0x3BAEu
+#define pcm_effect_5b_patch_ADDRESS 0x3BCCu
+#define pcm_effect_5c_patch_ADDRESS 0x3BEDu
+#define pcm_effect_5d_patch_ADDRESS 0x3C26u
+#define pcm_effect_5e_patch_ADDRESS 0x3C59u
+#define pcm_effect_5f_patch_ADDRESS 0x3C77u
+#define pcm_effect_60_patch_ADDRESS 0x3C95u
+#define pcm_effect_61_patch_ADDRESS 0x3CB3u
+#define pcm_effect_62_patch_ADDRESS 0x3CD1u
+#define pcm_effect_63_patch_ADDRESS 0x3CEFu
+#define pcm_effect_64_patch_ADDRESS 0x3D0Du
+#define pcm_effect_65_patch_ADDRESS 0x3D2Bu
+#define pcm_effect_66_patch_ADDRESS 0x3D49u
+#define pcm_effect_67_patch_ADDRESS 0x3D67u
+#define pcm_effect_68_patch_ADDRESS 0x3D85u
+#define pcm_effect_69_patch_ADDRESS 0x3DA3u
+#define pcm_effect_6a_patch_ADDRESS 0x3DC1u
+#define pcm_effect_6b_patch_ADDRESS 0x3DDFu
+#define pcm_effect_6c_patch_ADDRESS 0x3DFDu
+#define pcm_effect_6d_patch_ADDRESS 0x3E1Bu
+#define pcm_effect_6e_patch_ADDRESS 0x3E39u
+#define pcm_effect_6f_patch_ADDRESS 0x3E57u
+#define pcm_effect_70_patch_ADDRESS 0x3E75u
+#define pcm_effect_71_patch_ADDRESS 0x3E93u
+#define pcm_effect_72_patch_ADDRESS 0x3EB1u
+#define pcm_effect_73_patch_ADDRESS 0x3ECFu
+#define pcm_effect_74_patch_ADDRESS 0x3EEDu
+#define pcm_effect_75_patch_ADDRESS 0x3F0Bu
+#define pcm_effect_76_patch_ADDRESS 0x3F29u
+#define pcm_effect_77_patch_ADDRESS 0x3F47u
+#define pcm_effect_79_patch_ADDRESS 0x3F7Du
+#define pcm_effect_7a_patch_ADDRESS 0x3F9Bu
+#define pcm_effect_7b_patch_ADDRESS 0x402Eu
+#define pcm_effect_7c_patch_ADDRESS 0x404Cu
+#define pcm_effect_7d_patch_ADDRESS 0x40DFu
+#define pcm_effect_7e_patch_ADDRESS 0x40FDu
+#define pcm_effect_7f_patch_ADDRESS 0x4165u
+#define fm_drum_1_1_patch_ADDRESS 0x49ACu
+#define fm_drum_1_2_patch_ADDRESS 0x49FFu
+#define fm_drum_1_3_patch_ADDRESS 0x4A38u
+#define fm_drum_1_4_patch_ADDRESS 0x4A71u
+#define fm_drum_1_5_patch_ADDRESS 0x4AAAu
+#define fm_drum_1_6_patch_ADDRESS 0x4B0Du
+#define fm_drum_1_7_patch_ADDRESS 0x4B70u
+#define fm_drum_1_8_patch_ADDRESS 0x4BD3u
+#define fm_drum_2_1_patch_ADDRESS 0x4C39u
+#define fm_drum_2_2_patch_ADDRESS 0x4C98u
+#define fm_drum_2_3_patch_ADDRESS 0x4CF7u
+#define fm_drum_2_4_patch_ADDRESS 0x4D49u
+#define fm_drum_2_5_patch_ADDRESS 0x4E0Eu
+#define pcm_drum_1_1_patch_ADDRESS 0x4FCEu
+#define pcm_drum_1_2_patch_ADDRESS 0x4FE2u
+#define pcm_drum_1_3_patch_ADDRESS 0x4FF6u
+#define pcm_drum_1_4_patch_ADDRESS 0x5010u
+#define pcm_drum_1_5_patch_ADDRESS 0x502Au
+#define pcm_drum_1_6_patch_ADDRESS 0x5044u
+#define pcm_drum_1_7_patch_ADDRESS 0x505Eu
+#define pcm_drum_1_8_patch_ADDRESS 0x5072u
+#define pcm_drum_1_9_patch_ADDRESS 0x5086u
+#define pcm_drum_1_a_patch_ADDRESS 0x509Au
+#define pcm_drum_1_b_patch_ADDRESS 0x50AEu
+#define pcm_drum_1_b_patch_2_ADDRESS 0x50B1u
+#define pcm_drum_1_b_patch_3_ADDRESS 0x50B4u
+#define pcm_drum_1_c_patch_ADDRESS 0x50EEu
+#define pcm_drum_1_c_patch_2_ADDRESS 0x50F1u
+#define pcm_drum_1_c_patch_3_ADDRESS 0x50F4u
+#define pcm_drum_1_f_patch_ADDRESS 0x513Fu
+#define pcm_drum_2_1_patch_ADDRESS 0x5153u
+#define pcm_drum_2_2_patch_ADDRESS 0x5167u
+#define pcm_drum_2_3_patch_ADDRESS 0x517Bu
+#define pcm_drum_2_4_patch_ADDRESS 0x5195u
+#define pcm_drum_2_5_patch_ADDRESS 0x51AFu
+#define pcm_drum_2_6_patch_ADDRESS 0x51C9u
+#define pcm_drum_2_7_patch_ADDRESS 0x51E3u
+#define pcm_drum_2_8_patch_ADDRESS 0x51F7u
+#define pcm_drum_2_9_patch_ADDRESS 0x520Bu
+#define pcm_drum_2_a_patch_ADDRESS 0x521Fu
+#define pcm_drum_2_b_patch_ADDRESS 0x5233u
+#define pcm_drum_2_c_patch_ADDRESS 0x5247u
+#define pcm_drum_2_d_patch_ADDRESS 0x525Bu
+#define pcm_drum_2_e_patch_ADDRESS 0x526Fu
+#define pcm_drum_2_f_patch_ADDRESS 0x5283u
+#define pcm_drum_3_1_patch_ADDRESS 0x5297u
+#define pcm_drum_3_2_patch_ADDRESS 0x52ABu
+#define pcm_drum_3_3_patch_ADDRESS 0x52BFu
+#define pcm_drum_3_4_patch_ADDRESS 0x52D9u
+#define pcm_drum_3_5_patch_ADDRESS 0x52F3u
+#define pcm_drum_3_6_patch_ADDRESS 0x530Du
+#define pcm_drum_3_7_patch_ADDRESS 0x5327u
+#define pcm_drum_3_8_patch_ADDRESS 0x533Bu
+#define pcm_drum_3_9_patch_ADDRESS 0x534Fu
+#define pcm_drum_3_a_patch_ADDRESS 0x5363u
+#define pcm_drum_3_b_patch_ADDRESS 0x5377u
+#define pcm_drum_3_c_patch_ADDRESS 0x538Bu
+#define pcm_drum_3_d_patch_ADDRESS 0x539Fu
+#define pcm_drum_3_e_patch_ADDRESS 0x53B3u
+#define pcm_drum_3_f_patch_ADDRESS 0x53C7u
+#define pcm_drum_4_1_patch_ADDRESS 0x53DBu
+#define pcm_drum_4_2_patch_ADDRESS 0x53EFu
+#define pcm_drum_4_3_patch_ADDRESS 0x5403u
+#define pcm_drum_4_4_patch_ADDRESS 0x5417u
+#define pcm_drum_4_5_patch_ADDRESS 0x5431u
+#define pcm_drum_4_6_patch_ADDRESS 0x544Bu
+#define pcm_drum_4_7_patch_ADDRESS 0x5465u
+#define pcm_drum_4_8_patch_ADDRESS 0x5479u
+#define pcm_drum_4_9_patch_ADDRESS 0x548Du
+#define pcm_drum_4_a_patch_ADDRESS 0x54A1u
+#define pcm_drum_4_b_patch_ADDRESS 0x54B5u
+#define pcm_drum_4_c_patch_ADDRESS 0x54C9u
+#define pcm_drum_4_d_patch_ADDRESS 0x54DDu
+#define pcm_drum_4_e_patch_ADDRESS 0x54F1u
+#define pcm_drum_4_f_patch_ADDRESS 0x5505u
+#define pcm_drum_5_1_patch_ADDRESS 0x5519u
+#define pcm_drum_5_2_patch_ADDRESS 0x552Du
+#define pcm_drum_5_3_patch_ADDRESS 0x5541u
+#define pcm_drum_5_4_patch_ADDRESS 0x555Bu
+#define pcm_drum_5_5_patch_ADDRESS 0x5575u
+#define pcm_drum_5_6_patch_ADDRESS 0x558Fu
+#define pcm_drum_5_7_patch_ADDRESS 0x55A9u
+#define pcm_drum_5_8_patch_ADDRESS 0x55BDu
+#define pcm_drum_5_9_patch_ADDRESS 0x55D1u
+#define pcm_drum_5_a_patch_ADDRESS 0x55E5u
+#define pcm_drum_5_b_patch_ADDRESS 0x55F9u
+#define pcm_drum_5_c_patch_ADDRESS 0x560Du
+#define pcm_drum_5_d_patch_ADDRESS 0x5621u
+#define pcm_drum_5_e_patch_ADDRESS 0x5635u
+#define pcm_drum_5_f_patch_ADDRESS 0x5649u
+#define pcm_drum_6_1_patch_ADDRESS 0x565Du
+#define pcm_drum_6_2_patch_ADDRESS 0x5671u
+#define pcm_drum_6_3_patch_ADDRESS 0x5685u
+#define pcm_drum_6_4_patch_ADDRESS 0x569Fu
+#define pcm_drum_6_5_patch_ADDRESS 0x56B9u
+#define pcm_drum_6_6_patch_ADDRESS 0x56D3u
+#define pcm_drum_6_7_patch_ADDRESS 0x56EDu
+#define pcm_drum_6_8_patch_ADDRESS 0x5701u
+#define pcm_drum_6_9_patch_ADDRESS 0x5715u
+#define pcm_drum_6_a_patch_ADDRESS 0x5729u
+#define pcm_drum_6_b_patch_ADDRESS 0x573Du
+#define pcm_drum_6_c_patch_ADDRESS 0x5751u
+#define pcm_drum_6_d_patch_ADDRESS 0x5765u
+#define pcm_drum_6_e_patch_ADDRESS 0x5779u
+#define pcm_drum_6_f_patch_ADDRESS 0x578Du
+#define pcm_drum_7_1_patch_ADDRESS 0x57A1u
+#define pcm_drum_7_2_patch_ADDRESS 0x57B5u
+#define pcm_drum_7_3_patch_ADDRESS 0x57C9u
+#define pcm_drum_7_4_patch_ADDRESS 0x57DDu
+#define pcm_drum_7_5_patch_ADDRESS 0x57F7u
+#define pcm_drum_7_6_patch_ADDRESS 0x5811u
+#define pcm_drum_7_7_patch_ADDRESS 0x582Bu
+#define pcm_drum_7_8_patch_ADDRESS 0x583Fu
+#define pcm_drum_7_9_patch_ADDRESS 0x5853u
+#define pcm_drum_7_a_patch_ADDRESS 0x5867u
+#define pcm_drum_7_b_patch_ADDRESS 0x587Bu
+#define pcm_drum_7_c_patch_ADDRESS 0x588Fu
+#define pcm_drum_7_d_patch_ADDRESS 0x58A3u
+#define pcm_drum_7_e_patch_ADDRESS 0x58B7u
+#define pcm_drum_7_f_patch_ADDRESS 0x58CBu
+#define pcm_drum_8_1_patch_ADDRESS 0x58DFu
+#define pcm_drum_8_2_patch_ADDRESS 0x58F3u
+#define pcm_drum_8_3_patch_ADDRESS 0x5907u
+#define pcm_drum_8_4_patch_ADDRESS 0x5921u
+#define pcm_drum_8_5_patch_ADDRESS 0x593Bu
+#define pcm_drum_8_6_patch_ADDRESS 0x5955u
+#define pcm_drum_8_7_patch_ADDRESS 0x596Fu
+#define pcm_drum_8_8_patch_ADDRESS 0x5983u
+#define pcm_drum_8_9_patch_ADDRESS 0x5997u
+#define pcm_drum_8_a_patch_ADDRESS 0x59ABu
+#define pcm_drum_8_b_patch_ADDRESS 0x59BFu
+#define pcm_drum_8_c_patch_ADDRESS 0x59D3u
+#define pcm_drum_8_d_patch_ADDRESS 0x59E7u
+#define pcm_drum_8_e_patch_ADDRESS 0x59FBu
+#define pcm_drum_8_f_patch_ADDRESS 0x5A0Fu
+#define pcm_drum_9_1_patch_ADDRESS 0x5A23u
+#define pcm_drum_9_2_patch_ADDRESS 0x5A37u
+#define pcm_drum_9_3_patch_ADDRESS 0x5A4Bu
+#define pcm_drum_9_4_patch_ADDRESS 0x5A5Fu
+#define pcm_drum_9_5_patch_ADDRESS 0x5A73u
+#define pcm_drum_9_6_patch_ADDRESS 0x5A87u
+#define pcm_drum_9_7_patch_ADDRESS 0x5A9Bu
+#define pcm_drum_9_8_patch_ADDRESS 0x5AAFu
+#define pcm_drum_9_9_patch_ADDRESS 0x5AC3u
+#define pcm_drum_9_a_patch_ADDRESS 0x5AD7u
+#define pcm_drum_9_b_patch_ADDRESS 0x5AEBu
+#define pcm_drum_9_c_patch_ADDRESS 0x5AFFu
+#define pcm_drum_9_d_patch_ADDRESS 0x5B13u
+#define pcm_drum_a_1_patch_ADDRESS 0x5B2Au
+#define pcm_drum_a_2_patch_ADDRESS 0x5B3Eu
+#define pcm_drum_a_3_patch_ADDRESS 0x5B52u
+#define pcm_drum_a_4_patch_ADDRESS 0x5B6Cu
+#define pcm_drum_a_5_patch_ADDRESS 0x5B86u
+#define pcm_drum_a_6_patch_ADDRESS 0x5BA0u
+#define pcm_drum_a_7_patch_ADDRESS 0x5BBAu
+#define pcm_drum_a_8_patch_ADDRESS 0x5BCEu
+#define pcm_drum_a_9_patch_ADDRESS 0x5BE2u
+#define pcm_drum_a_a_patch_ADDRESS 0x5BF6u
+#define pcm_drum_a_b_patch_ADDRESS 0x5C0Au
+#define pcm_drum_a_c_patch_ADDRESS 0x5C1Eu
+#define pcm_drum_a_d_patch_ADDRESS 0x5C32u
+#define pcm_drum_a_e_patch_ADDRESS 0x5C46u
+#define pcm_drum_a_f_patch_ADDRESS 0x5C5Au
+#define pcm_drum_b_1_patch_ADDRESS 0x5C6Eu
+#define pcm_drum_b_2_patch_ADDRESS 0x5C82u
+#define pcm_drum_b_3_patch_ADDRESS 0x5C96u
+#define pcm_drum_b_4_patch_ADDRESS 0x5CB0u
+#define pcm_drum_b_5_patch_ADDRESS 0x5CCAu
+#define pcm_drum_b_6_patch_ADDRESS 0x5CE4u
+#define pcm_drum_b_7_patch_ADDRESS 0x5CFEu
+#define pcm_drum_b_8_patch_ADDRESS 0x5D12u
+#define pcm_drum_b_9_patch_ADDRESS 0x5D26u
+#define pcm_drum_b_a_patch_ADDRESS 0x5D3Au
+#define pcm_drum_b_b_patch_ADDRESS 0x5D4Eu
+#define pcm_drum_b_c_patch_ADDRESS 0x5D62u
+#define pcm_drum_b_d_patch_ADDRESS 0x5D76u
+#define pcm_drum_b_e_patch_ADDRESS 0x5D8Au
+#define pcm_drum_b_f_patch_ADDRESS 0x5D9Eu
+#define CHANNEL_ADDRESS(n) (0xF003u + (n) * 0x50u)    /* the 12 of them, from 0 */
+
 /* chips.c: the records' handlers and the chips: the YM2151's registers, patches, volumes, pitches, keys, LFO and pan; the K053260's voices */
-void stop_channel(uint16_t ix);
-void set_channel_handler(uint16_t hl, uint16_t ix);
+void stop_channel(uint16_t channel);
+void set_channel_handler(uint16_t handler, uint16_t channel);
 void channel_idle(void);
-void write_fm_channel_register(uint16_t bc, uint16_t ix);
-void write_fm_register(uint16_t bc);
+void write_fm_channel_register(uint16_t fm_write, uint16_t channel);
+void write_fm_register(uint16_t fm_write);
 void restart_frame_timer(void);
-void load_patch(uint16_t hl, uint16_t ix);
-void set_volume(uint16_t ix, uint8_t a);
-void update_volume(uint16_t ix);
-uint16_t write_operator_level(uint16_t bc, uint16_t hl, uint16_t ix, uint8_t a);
-void set_pitch(uint16_t hl, uint16_t ix);
-void key_on(uint16_t ix);
-void key_off(uint16_t ix);
-void fast_release(uint16_t ix);
-void unused_0F06(uint16_t ix);
-void set_lfo_pm_depth(uint8_t a);
-void set_lfo_am_depth(uint8_t a);
-void set_channel_pm_sensitivity(uint16_t ix, uint8_t a);
-void set_channel_am_sensitivity(uint16_t ix, uint8_t a);
-void set_lfo_frequency(uint8_t a);
-void set_lfo_waveform(uint8_t a);
-void set_pan(uint16_t ix, uint8_t a);
-void noise_off(uint16_t ix);
-void unused_0FF2(uint16_t ix, uint8_t a);
-uint32_t pcm_voice_playing(uint16_t ix);
-void unused_100D(void);
+void load_patch(uint16_t patch, uint16_t channel);
+void pcm_load_patch(uint16_t patch, uint16_t channel);
+void set_volume(uint16_t channel, uint8_t volume);
+void update_volume(uint16_t channel);
+uint16_t write_operator_level(uint16_t fm_write, uint16_t carriers, uint16_t channel, uint8_t level);
+void pcm_update_volume(uint16_t channel);
+void set_pitch(uint16_t pitch, uint16_t channel);
+void pcm_set_pitch(uint16_t pitch, uint16_t channel);
+void key_on(uint16_t channel);
+void pcm_key_on(uint16_t channel);
+void key_off(uint16_t channel);
+void pcm_key_off(uint16_t channel);
+void fast_release(uint16_t channel);
+void pcm_fast_release(uint16_t channel);
+void restore_release(uint16_t channel);
+void set_lfo_pm_depth(uint8_t depth);
+void set_lfo_am_depth(uint8_t depth);
+void set_channel_pm_sensitivity(uint16_t channel, uint8_t sensitivity);
+void set_channel_am_sensitivity(uint16_t channel, uint8_t sensitivity);
+void set_lfo_frequency(uint8_t frequency);
+void set_lfo_waveform(uint8_t waveform);
+void set_pan(uint16_t channel, uint8_t pan);
+void noise_off(uint16_t channel);
+void noise_on(uint16_t channel, uint8_t noise_frequency);
+uint32_t pcm_voice_playing(uint16_t channel);
+uint8_t next_pointer_byte(void);
 
 /* drums.c: the drum routines: a music note's low nibble on a channel with a drum kit (+12) runs one */
-void fm_drum_1_1(uint16_t ix);
-void fm_drum_1_1_slide(uint16_t ix);
-void fm_drum_1_2(uint16_t ix);
-void fm_drum_1_2_hold(uint16_t ix);
-void fm_drum_1_3(uint16_t ix);
-void fm_drum_1_3_hold(uint16_t ix);
-void fm_drum_1_4(uint16_t ix);
-void fm_drum_1_4_hold(uint16_t ix);
-void fm_drum_1_5(uint16_t ix);
-void fm_drum_1_5_slide(uint16_t ix);
-void fm_drum_1_6(uint16_t ix);
-void fm_drum_1_6_slide(uint16_t ix);
-void fm_drum_1_7(uint16_t ix);
-void fm_drum_1_7_slide(uint16_t ix);
-void fm_drum_1_8(uint16_t ix);
-void fm_drum_1_8_slide(uint16_t ix);
-void fm_drum_1_9(uint16_t ix);
-void fm_drum_2_1(uint16_t ix);
-void fm_drum_2_1_setup(uint16_t ix);
-void fm_drum_2_1_retrigger(uint16_t ix);
-void fm_drum_2_1_slide(uint16_t ix);
-void fm_drum_2_2(uint16_t ix);
-void fm_drum_2_2_setup(uint16_t ix);
-void fm_drum_2_2_retrigger(uint16_t ix);
-void fm_drum_2_2_slide(uint16_t ix);
-void fm_drum_2_3(uint16_t ix);
-void fm_drum_2_3_retrigger(uint16_t ix);
-void fm_drum_2_3_slide(uint16_t ix);
-void fm_drum_2_4(uint16_t ix);
-void fm_drum_2_4_retrigger(uint16_t ix);
-void fm_drum_2_4_slide(uint16_t ix);
-void fm_drum_2_4_update(uint16_t ix);
-void fm_drum_2_4_update_2(uint16_t ix);
-void fm_drum_2_4_transpose(uint16_t ix);
-void fm_drum_2_4_update_3(uint16_t ix);
-uint8_t fm_drum_2_4_update_4(uint16_t ix);
-void fm_drum_2_5(uint16_t ix);
-void fm_drum_2_5_retrigger(uint16_t ix);
-void fm_drum_2_5_slide(uint16_t ix);
-void fm_drum_2_6(uint16_t ix);
-void pcm_drum_1_1(uint16_t ix);
-void pcm_drum_1_2(uint16_t ix);
-void pcm_drum_1_3(uint16_t ix);
-void pcm_drum_1_4(uint16_t ix);
-void pcm_drum_1_5(uint16_t ix);
-void pcm_drum_1_6(uint16_t ix);
-void pcm_drum_1_7(uint16_t ix);
-void pcm_drum_1_8(uint16_t ix);
-void pcm_drum_1_9(uint16_t ix);
-void pcm_drum_1_a(uint16_t ix);
-void pcm_drum_1_b(uint16_t ix);
-void pcm_drum_1_b_note(uint16_t ix);
-void pcm_drum_1_b_note_2(uint16_t ix);
-void pcm_drum_1_c(uint16_t ix);
-void pcm_drum_1_c_note(uint16_t ix);
-void pcm_drum_1_c_note_2(uint16_t ix);
-void pcm_drum_1_c_note_3(uint16_t ix);
-void pcm_drum_1_d(uint16_t ix);
-void pcm_drum_1_f(uint16_t ix);
-void pcm_drum_2_1(uint16_t ix);
-void pcm_drum_2_2(uint16_t ix);
-void pcm_drum_2_3(uint16_t ix);
-void pcm_drum_2_4(uint16_t ix);
-void pcm_drum_2_5(uint16_t ix);
-void pcm_drum_2_6(uint16_t ix);
-void pcm_drum_2_7(uint16_t ix);
-void pcm_drum_2_8(uint16_t ix);
-void pcm_drum_2_9(uint16_t ix);
-void pcm_drum_2_a(uint16_t ix);
-void pcm_drum_2_b(uint16_t ix);
-void pcm_drum_2_c(uint16_t ix);
-void pcm_drum_2_d(uint16_t ix);
-void pcm_drum_2_e(uint16_t ix);
-void pcm_drum_2_f(uint16_t ix);
-void pcm_drum_3_1(uint16_t ix);
-void pcm_drum_3_2(uint16_t ix);
-void pcm_drum_3_3(uint16_t ix);
-void pcm_drum_3_4(uint16_t ix);
-void pcm_drum_3_5(uint16_t ix);
-void pcm_drum_3_6(uint16_t ix);
-void pcm_drum_3_7(uint16_t ix);
-void pcm_drum_3_8(uint16_t ix);
-void pcm_drum_3_9(uint16_t ix);
-void pcm_drum_3_a(uint16_t ix);
-void pcm_drum_3_b(uint16_t ix);
-void pcm_drum_3_c(uint16_t ix);
-void pcm_drum_3_d(uint16_t ix);
-void pcm_drum_3_e(uint16_t ix);
-void pcm_drum_3_f(uint16_t ix);
-void pcm_drum_4_1(uint16_t ix);
-void pcm_drum_4_2(uint16_t ix);
-void pcm_drum_4_3(uint16_t ix);
-void pcm_drum_4_4(uint16_t ix);
-void pcm_drum_4_5(uint16_t ix);
-void pcm_drum_4_6(uint16_t ix);
-void pcm_drum_4_7(uint16_t ix);
-void pcm_drum_4_8(uint16_t ix);
-void pcm_drum_4_9(uint16_t ix);
-void pcm_drum_4_a(uint16_t ix);
-void pcm_drum_4_b(uint16_t ix);
-void pcm_drum_4_c(uint16_t ix);
-void pcm_drum_4_d(uint16_t ix);
-void pcm_drum_4_e(uint16_t ix);
-void pcm_drum_4_f(uint16_t ix);
-void pcm_drum_5_1(uint16_t ix);
-void pcm_drum_5_2(uint16_t ix);
-void pcm_drum_5_3(uint16_t ix);
-void pcm_drum_5_4(uint16_t ix);
-void pcm_drum_5_5(uint16_t ix);
-void pcm_drum_5_6(uint16_t ix);
-void pcm_drum_5_7(uint16_t ix);
-void pcm_drum_5_8(uint16_t ix);
-void pcm_drum_5_9(uint16_t ix);
-void pcm_drum_5_a(uint16_t ix);
-void pcm_drum_5_b(uint16_t ix);
-void pcm_drum_5_c(uint16_t ix);
-void pcm_drum_5_d(uint16_t ix);
-void pcm_drum_5_e(uint16_t ix);
-void pcm_drum_5_f(uint16_t ix);
-void pcm_drum_6_1(uint16_t ix);
-void pcm_drum_6_2(uint16_t ix);
-void pcm_drum_6_3(uint16_t ix);
-void pcm_drum_6_4(uint16_t ix);
-void pcm_drum_6_5(uint16_t ix);
-void pcm_drum_6_6(uint16_t ix);
-void pcm_drum_6_7(uint16_t ix);
-void pcm_drum_6_8(uint16_t ix);
-void pcm_drum_6_9(uint16_t ix);
-void pcm_drum_6_a(uint16_t ix);
-void pcm_drum_6_b(uint16_t ix);
-void pcm_drum_6_c(uint16_t ix);
-void pcm_drum_6_d(uint16_t ix);
-void pcm_drum_6_e(uint16_t ix);
-void pcm_drum_6_f(uint16_t ix);
-void pcm_drum_7_1(uint16_t ix);
-void pcm_drum_7_2(uint16_t ix);
-void pcm_drum_7_3(uint16_t ix);
-void pcm_drum_7_4(uint16_t ix);
-void pcm_drum_7_5(uint16_t ix);
-void pcm_drum_7_6(uint16_t ix);
-void pcm_drum_7_7(uint16_t ix);
-void pcm_drum_7_8(uint16_t ix);
-void pcm_drum_7_9(uint16_t ix);
-void pcm_drum_7_a(uint16_t ix);
-void pcm_drum_7_b(uint16_t ix);
-void pcm_drum_7_c(uint16_t ix);
-void pcm_drum_7_d(uint16_t ix);
-void pcm_drum_7_e(uint16_t ix);
-void pcm_drum_7_f(uint16_t ix);
-void pcm_drum_8_1(uint16_t ix);
-void pcm_drum_8_2(uint16_t ix);
-void pcm_drum_8_3(uint16_t ix);
-void pcm_drum_8_4(uint16_t ix);
-void pcm_drum_8_5(uint16_t ix);
-void pcm_drum_8_6(uint16_t ix);
-void pcm_drum_8_7(uint16_t ix);
-void pcm_drum_8_8(uint16_t ix);
-void pcm_drum_8_9(uint16_t ix);
-void pcm_drum_8_a(uint16_t ix);
-void pcm_drum_8_b(uint16_t ix);
-void pcm_drum_8_c(uint16_t ix);
-void pcm_drum_8_d(uint16_t ix);
-void pcm_drum_8_e(uint16_t ix);
-void pcm_drum_8_f(uint16_t ix);
-void pcm_drum_9_1(uint16_t ix);
-void pcm_drum_9_2(uint16_t ix);
-void pcm_drum_9_3(uint16_t ix);
-void pcm_drum_9_4(uint16_t ix);
-void pcm_drum_9_5(uint16_t ix);
-void pcm_drum_9_6(uint16_t ix);
-void pcm_drum_9_7(uint16_t ix);
-void pcm_drum_9_8(uint16_t ix);
-void pcm_drum_9_9(uint16_t ix);
-void pcm_drum_9_a(uint16_t ix);
-void pcm_drum_9_b(uint16_t ix);
-void pcm_drum_9_c(uint16_t ix);
-void pcm_drum_9_d(uint16_t ix);
-void pcm_drum_9_e(uint16_t ix);
-void pcm_drum_a_1(uint16_t ix);
-void pcm_drum_a_2(uint16_t ix);
-void pcm_drum_a_3(uint16_t ix);
-void pcm_drum_a_4(uint16_t ix);
-void pcm_drum_a_5(uint16_t ix);
-void pcm_drum_a_6(uint16_t ix);
-void pcm_drum_a_7(uint16_t ix);
-void pcm_drum_a_8(uint16_t ix);
-void pcm_drum_a_9(uint16_t ix);
-void pcm_drum_a_a(uint16_t ix);
-void pcm_drum_a_b(uint16_t ix);
-void pcm_drum_a_c(uint16_t ix);
-void pcm_drum_a_d(uint16_t ix);
-void pcm_drum_a_e(uint16_t ix);
-void pcm_drum_a_f(uint16_t ix);
-void pcm_drum_b_1(uint16_t ix);
-void pcm_drum_b_2(uint16_t ix);
-void pcm_drum_b_3(uint16_t ix);
-void pcm_drum_b_4(uint16_t ix);
-void pcm_drum_b_5(uint16_t ix);
-void pcm_drum_b_6(uint16_t ix);
-void pcm_drum_b_7(uint16_t ix);
-void pcm_drum_b_8(uint16_t ix);
-void pcm_drum_b_9(uint16_t ix);
-void pcm_drum_b_a(uint16_t ix);
-void pcm_drum_b_b(uint16_t ix);
-void pcm_drum_b_c(uint16_t ix);
-void pcm_drum_b_d(uint16_t ix);
-void pcm_drum_b_e(uint16_t ix);
-void pcm_drum_b_f(uint16_t ix);
+void fm_drum_1_1(uint16_t channel);
+void fm_drum_1_1_slide(uint16_t channel);
+void fm_drum_1_2(uint16_t channel);
+void fm_drum_1_2_hold(uint16_t channel);
+void fm_drum_1_3(uint16_t channel);
+void fm_drum_1_3_hold(uint16_t channel);
+void fm_drum_1_4(uint16_t channel);
+void fm_drum_1_4_hold(uint16_t channel);
+void fm_drum_1_5(uint16_t channel);
+void fm_drum_1_5_slide(uint16_t channel);
+void fm_drum_1_6(uint16_t channel);
+void fm_drum_1_6_slide(uint16_t channel);
+void fm_drum_1_7(uint16_t channel);
+void fm_drum_1_7_slide(uint16_t channel);
+void fm_drum_1_8(uint16_t channel);
+void fm_drum_1_8_slide(uint16_t channel);
+void fm_drum_1_9(uint16_t channel);
+void fm_drum_2_1(uint16_t channel);
+void fm_drum_2_1_setup(uint16_t channel);
+void fm_drum_2_1_retrigger(uint16_t channel);
+void fm_drum_2_1_slide(uint16_t channel);
+void fm_drum_2_2(uint16_t channel);
+void fm_drum_2_2_setup(uint16_t channel);
+void fm_drum_2_2_retrigger(uint16_t channel);
+void fm_drum_2_2_slide(uint16_t channel);
+void fm_drum_2_3(uint16_t channel);
+void fm_drum_2_3_retrigger(uint16_t channel);
+void fm_drum_2_3_slide(uint16_t channel);
+void fm_drum_2_4(uint16_t channel);
+void fm_drum_2_4_retrigger(uint16_t channel);
+void fm_drum_2_4_slide(uint16_t channel);
+void fm_drum_2_4_random_step(uint16_t channel);
+void fm_drum_2_4_random_step_down(uint16_t channel);
+void fm_drum_2_4_reverse(uint16_t channel);
+void fm_drum_2_4_random_turn(uint16_t channel);
+uint8_t fm_drum_2_4_next_random(uint16_t channel);
+void fm_drum_2_5(uint16_t channel);
+void fm_drum_2_5_retrigger(uint16_t channel);
+void fm_drum_2_5_slide(uint16_t channel);
+void fm_drum_2_6(uint16_t channel);
+void pcm_drum_1_1(uint16_t channel);
+void pcm_drum_1_2(uint16_t channel);
+void pcm_drum_1_3(uint16_t channel);
+void pcm_drum_1_4(uint16_t channel);
+void pcm_drum_1_5(uint16_t channel);
+void pcm_drum_1_6(uint16_t channel);
+void pcm_drum_1_7(uint16_t channel);
+void pcm_drum_1_8(uint16_t channel);
+void pcm_drum_1_9(uint16_t channel);
+void pcm_drum_1_a(uint16_t channel);
+void pcm_drum_1_b(uint16_t channel);
+void pcm_drum_1_b_note(uint16_t channel);
+void pcm_drum_1_b_note_2(uint16_t channel);
+void pcm_drum_1_c(uint16_t channel);
+void pcm_drum_1_c_note(uint16_t channel);
+void pcm_drum_1_c_note_2(uint16_t channel);
+void pcm_drum_1_c_note_3(uint16_t channel);
+void pcm_drum_1_d(uint16_t channel);
+void pcm_drum_1_f(uint16_t channel);
+void pcm_drum_2_1(uint16_t channel);
+void pcm_drum_2_2(uint16_t channel);
+void pcm_drum_2_3(uint16_t channel);
+void pcm_drum_2_4(uint16_t channel);
+void pcm_drum_2_5(uint16_t channel);
+void pcm_drum_2_6(uint16_t channel);
+void pcm_drum_2_7(uint16_t channel);
+void pcm_drum_2_8(uint16_t channel);
+void pcm_drum_2_9(uint16_t channel);
+void pcm_drum_2_a(uint16_t channel);
+void pcm_drum_2_b(uint16_t channel);
+void pcm_drum_2_c(uint16_t channel);
+void pcm_drum_2_d(uint16_t channel);
+void pcm_drum_2_e(uint16_t channel);
+void pcm_drum_2_f(uint16_t channel);
+void pcm_drum_3_1(uint16_t channel);
+void pcm_drum_3_2(uint16_t channel);
+void pcm_drum_3_3(uint16_t channel);
+void pcm_drum_3_4(uint16_t channel);
+void pcm_drum_3_5(uint16_t channel);
+void pcm_drum_3_6(uint16_t channel);
+void pcm_drum_3_7(uint16_t channel);
+void pcm_drum_3_8(uint16_t channel);
+void pcm_drum_3_9(uint16_t channel);
+void pcm_drum_3_a(uint16_t channel);
+void pcm_drum_3_b(uint16_t channel);
+void pcm_drum_3_c(uint16_t channel);
+void pcm_drum_3_d(uint16_t channel);
+void pcm_drum_3_e(uint16_t channel);
+void pcm_drum_3_f(uint16_t channel);
+void pcm_drum_4_1(uint16_t channel);
+void pcm_drum_4_2(uint16_t channel);
+void pcm_drum_4_3(uint16_t channel);
+void pcm_drum_4_4(uint16_t channel);
+void pcm_drum_4_5(uint16_t channel);
+void pcm_drum_4_6(uint16_t channel);
+void pcm_drum_4_7(uint16_t channel);
+void pcm_drum_4_8(uint16_t channel);
+void pcm_drum_4_9(uint16_t channel);
+void pcm_drum_4_a(uint16_t channel);
+void pcm_drum_4_b(uint16_t channel);
+void pcm_drum_4_c(uint16_t channel);
+void pcm_drum_4_d(uint16_t channel);
+void pcm_drum_4_e(uint16_t channel);
+void pcm_drum_4_f(uint16_t channel);
+void pcm_drum_5_1(uint16_t channel);
+void pcm_drum_5_2(uint16_t channel);
+void pcm_drum_5_3(uint16_t channel);
+void pcm_drum_5_4(uint16_t channel);
+void pcm_drum_5_5(uint16_t channel);
+void pcm_drum_5_6(uint16_t channel);
+void pcm_drum_5_7(uint16_t channel);
+void pcm_drum_5_8(uint16_t channel);
+void pcm_drum_5_9(uint16_t channel);
+void pcm_drum_5_a(uint16_t channel);
+void pcm_drum_5_b(uint16_t channel);
+void pcm_drum_5_c(uint16_t channel);
+void pcm_drum_5_d(uint16_t channel);
+void pcm_drum_5_e(uint16_t channel);
+void pcm_drum_5_f(uint16_t channel);
+void pcm_drum_6_1(uint16_t channel);
+void pcm_drum_6_2(uint16_t channel);
+void pcm_drum_6_3(uint16_t channel);
+void pcm_drum_6_4(uint16_t channel);
+void pcm_drum_6_5(uint16_t channel);
+void pcm_drum_6_6(uint16_t channel);
+void pcm_drum_6_7(uint16_t channel);
+void pcm_drum_6_8(uint16_t channel);
+void pcm_drum_6_9(uint16_t channel);
+void pcm_drum_6_a(uint16_t channel);
+void pcm_drum_6_b(uint16_t channel);
+void pcm_drum_6_c(uint16_t channel);
+void pcm_drum_6_d(uint16_t channel);
+void pcm_drum_6_e(uint16_t channel);
+void pcm_drum_6_f(uint16_t channel);
+void pcm_drum_7_1(uint16_t channel);
+void pcm_drum_7_2(uint16_t channel);
+void pcm_drum_7_3(uint16_t channel);
+void pcm_drum_7_4(uint16_t channel);
+void pcm_drum_7_5(uint16_t channel);
+void pcm_drum_7_6(uint16_t channel);
+void pcm_drum_7_7(uint16_t channel);
+void pcm_drum_7_8(uint16_t channel);
+void pcm_drum_7_9(uint16_t channel);
+void pcm_drum_7_a(uint16_t channel);
+void pcm_drum_7_b(uint16_t channel);
+void pcm_drum_7_c(uint16_t channel);
+void pcm_drum_7_d(uint16_t channel);
+void pcm_drum_7_e(uint16_t channel);
+void pcm_drum_7_f(uint16_t channel);
+void pcm_drum_8_1(uint16_t channel);
+void pcm_drum_8_2(uint16_t channel);
+void pcm_drum_8_3(uint16_t channel);
+void pcm_drum_8_4(uint16_t channel);
+void pcm_drum_8_5(uint16_t channel);
+void pcm_drum_8_6(uint16_t channel);
+void pcm_drum_8_7(uint16_t channel);
+void pcm_drum_8_8(uint16_t channel);
+void pcm_drum_8_9(uint16_t channel);
+void pcm_drum_8_a(uint16_t channel);
+void pcm_drum_8_b(uint16_t channel);
+void pcm_drum_8_c(uint16_t channel);
+void pcm_drum_8_d(uint16_t channel);
+void pcm_drum_8_e(uint16_t channel);
+void pcm_drum_8_f(uint16_t channel);
+void pcm_drum_9_1(uint16_t channel);
+void pcm_drum_9_2(uint16_t channel);
+void pcm_drum_9_3(uint16_t channel);
+void pcm_drum_9_4(uint16_t channel);
+void pcm_drum_9_5(uint16_t channel);
+void pcm_drum_9_6(uint16_t channel);
+void pcm_drum_9_7(uint16_t channel);
+void pcm_drum_9_8(uint16_t channel);
+void pcm_drum_9_9(uint16_t channel);
+void pcm_drum_9_a(uint16_t channel);
+void pcm_drum_9_b(uint16_t channel);
+void pcm_drum_9_c(uint16_t channel);
+void pcm_drum_9_d(uint16_t channel);
+void pcm_drum_9_e(uint16_t channel);
+void pcm_drum_a_1(uint16_t channel);
+void pcm_drum_a_2(uint16_t channel);
+void pcm_drum_a_3(uint16_t channel);
+void pcm_drum_a_4(uint16_t channel);
+void pcm_drum_a_5(uint16_t channel);
+void pcm_drum_a_6(uint16_t channel);
+void pcm_drum_a_7(uint16_t channel);
+void pcm_drum_a_8(uint16_t channel);
+void pcm_drum_a_9(uint16_t channel);
+void pcm_drum_a_a(uint16_t channel);
+void pcm_drum_a_b(uint16_t channel);
+void pcm_drum_a_c(uint16_t channel);
+void pcm_drum_a_d(uint16_t channel);
+void pcm_drum_a_e(uint16_t channel);
+void pcm_drum_a_f(uint16_t channel);
+void pcm_drum_b_1(uint16_t channel);
+void pcm_drum_b_2(uint16_t channel);
+void pcm_drum_b_3(uint16_t channel);
+void pcm_drum_b_4(uint16_t channel);
+void pcm_drum_b_5(uint16_t channel);
+void pcm_drum_b_6(uint16_t channel);
+void pcm_drum_b_7(uint16_t channel);
+void pcm_drum_b_8(uint16_t channel);
+void pcm_drum_b_9(uint16_t channel);
+void pcm_drum_b_a(uint16_t channel);
+void pcm_drum_b_b(uint16_t channel);
+void pcm_drum_b_c(uint16_t channel);
+void pcm_drum_b_d(uint16_t channel);
+void pcm_drum_b_e(uint16_t channel);
+void pcm_drum_b_f(uint16_t channel);
 
 /* fm_effects.c: the FM effects (commands 01-38), each a chain of handlers its record runs one pass at a time */
-void fm_effect_02(uint16_t ix);
-void fm_effect_02_delay(uint16_t ix);
-void fm_effect_01(uint16_t ix);
-void fm_effect_01_retrigger(uint16_t ix);
-void fm_effect_01_pitch(uint16_t ix);
-uint32_t fm_effect_01_move_pitch(uint16_t de, uint16_t ix);
-void fm_effect_04(uint16_t ix);
-void fm_effect_04_delay(uint16_t ix);
-void fm_effect_03(uint16_t ix);
-void fm_effect_03_pitch(uint16_t ix);
-void fm_effect_03_move_pitch(uint16_t de, uint16_t ix);
-void fm_effect_06(uint16_t ix);
-void fm_effect_06_delay(uint16_t ix);
-void fm_effect_05(uint16_t ix);
-void fm_effect_05_note(uint16_t ix);
-void fm_effect_05_retrigger(uint16_t ix);
-void fm_effect_05_slide(uint16_t ix);
-void fm_effect_07(uint16_t ix);
-void fm_effect_07_slide(uint16_t ix);
-void fm_effect_09(uint16_t ix);
-void fm_effect_09_delay(uint16_t ix);
-void fm_effect_08(uint16_t ix);
-void fm_effect_08_retrigger(uint16_t ix);
-void fm_effect_08_hold(uint16_t ix);
-void fm_effect_0d(uint16_t ix);
-void fm_effect_0d_delay(uint16_t ix);
-void fm_effect_0c(uint16_t ix);
-void fm_effect_0c_retrigger(uint16_t ix);
-void fm_effect_0c_retrigger_2(uint16_t ix);
-void fm_effect_0c_hold(uint16_t ix);
-void fm_effect_0c_move_pitch(uint16_t de, uint16_t ix);
-void fm_effect_0e(uint16_t ix);
-void fm_effect_0e_pitch(uint16_t ix);
-void fm_effect_0e_pitch_2(uint16_t ix);
-void fm_effect_0e_slide(uint16_t ix);
-void fm_effect_0e_pitch_3(uint16_t ix);
-uint32_t fm_effect_0e_move_pitch(uint16_t de, uint16_t ix);
-void fm_effect_0f(uint16_t ix);
-void fm_effect_0f_slide(uint16_t ix);
-void fm_effect_10(uint16_t ix);
-void fm_effect_10_slide(uint16_t ix);
-void fm_effect_11(uint16_t ix);
-void fm_effect_11_pitch(uint16_t ix);
-void fm_effect_11_move_pitch(uint16_t de, uint16_t ix);
-void fm_effect_12(uint16_t ix);
-void fm_effect_12_delay(uint16_t ix);
-void fm_effect_12_slide(uint16_t ix);
-void fm_effect_13(uint16_t ix);
-void fm_effect_13_slide(uint16_t ix);
-void fm_effect_13_slide_2(uint16_t ix);
-void fm_effect_13_slide_3(uint16_t ix);
-void fm_effect_14(uint16_t ix);
-void fm_effect_14_slide(uint16_t ix);
-void fm_effect_14_slide_2(uint16_t ix);
-void fm_effect_15(uint16_t ix);
-void fm_effect_15_note(uint16_t ix);
-void fm_effect_15_slide(uint16_t ix);
-void fm_effect_17(uint16_t ix);
-void fm_effect_17_delay(uint16_t ix);
-void fm_effect_16(uint16_t ix);
-void fm_effect_16_pitch(uint16_t ix);
-void fm_effect_16_move_pitch(uint16_t de, uint16_t ix);
-void fm_effect_18(uint16_t ix);
-void fm_effect_18_slide(uint16_t ix);
-void fm_effect_19(uint16_t ix);
-void fm_effect_19_retrigger(uint16_t ix);
-void fm_effect_19_slide(uint16_t ix);
-void fm_effect_1a(uint16_t ix);
-void fm_effect_1a_retrigger(uint16_t ix);
-void fm_effect_1a_slide(uint16_t ix);
-void fm_effect_1b(uint16_t ix);
-void fm_effect_1b_pitch(uint16_t ix);
-void fm_effect_1b_pitch_2(uint16_t ix);
-uint32_t fm_effect_1b_move_pitch(uint16_t de, uint16_t ix);
-void fm_effect_1c(uint16_t ix);
-void fm_effect_1c_pitch(uint16_t ix);
-void fm_effect_1c_pitch_2(uint16_t ix);
-void fm_effect_1c_slide(uint16_t ix);
-void fm_effect_1c_pitch_3(uint16_t ix);
-uint32_t fm_effect_1c_move_pitch(uint16_t de, uint16_t ix);
-void fm_effect_1d(uint16_t ix);
-void fm_effect_1d_pitch(uint16_t ix);
-void fm_effect_1d_pitch_2(uint16_t ix);
-void fm_effect_1d_pitch_3(uint16_t ix);
-uint32_t fm_effect_1d_move_pitch(uint16_t de, uint16_t ix);
-void fm_effect_1e(uint16_t ix);
-void fm_effect_1e_slide(uint16_t ix);
-void fm_effect_1f(uint16_t ix);
-void fm_effect_1f_retrigger(uint16_t ix);
-void fm_effect_1f_end(uint16_t ix);
-void fm_effect_20(uint16_t ix);
-void fm_effect_20_pitch(uint16_t ix);
-void fm_effect_20_pitch_2(uint16_t ix);
-uint32_t fm_effect_20_move_pitch(uint16_t de, uint16_t ix);
-void fm_effect_21(uint16_t ix);
-void fm_effect_21_end(uint16_t ix);
-void fm_effect_22(uint16_t ix);
-void fm_effect_22_slide(uint16_t ix);
-void fm_effect_23(uint16_t ix);
-void fm_effect_23_retrigger(uint16_t ix);
-void fm_effect_23_slide(uint16_t ix);
-void fm_effect_24(uint16_t ix);
-void fm_effect_24_retrigger(uint16_t ix);
-void fm_effect_24_hold(uint16_t ix);
-void fm_effect_25(uint16_t ix);
-void fm_effect_25_note(uint16_t ix);
-void fm_effect_25_retrigger(uint16_t ix);
-void fm_effect_25_hold(uint16_t ix);
-void fm_effect_26(uint16_t ix);
-void fm_effect_26_transpose(uint16_t ix);
-void fm_effect_26_slide(uint16_t ix);
-void fm_effect_26_pitch(uint16_t ix);
-uint32_t fm_effect_26_move_pitch(uint16_t ix);
-void fm_effect_27(uint16_t ix);
-void fm_effect_27_retrigger(uint16_t ix);
-void fm_effect_27_hold(uint16_t ix);
-void fm_effect_28(uint16_t ix);
-void fm_effect_28_slide(uint16_t ix);
-void fm_effect_29(uint16_t ix);
-void fm_effect_29_pitch(uint16_t ix);
-void fm_effect_29_setup(uint16_t ix);
-void fm_effect_29_slide(uint16_t ix);
-uint32_t fm_effect_29_move_pitch(uint16_t de, uint16_t ix);
-void fm_effect_2b(uint16_t ix);
-void fm_effect_2b_delay(uint16_t ix);
-void fm_effect_2a(uint16_t ix);
-void fm_effect_2a_retrigger(uint16_t ix);
-void fm_effect_2a_retrigger_2(uint16_t ix);
-void fm_effect_2a_hold(uint16_t ix);
-void fm_effect_2a_move_pitch(uint16_t de, uint16_t ix);
-void fm_effect_2c(uint16_t ix);
-void fm_effect_2c_retrigger(uint16_t ix);
-void fm_effect_2c_delay(uint16_t ix);
-void fm_effect_2c_hold(uint16_t ix);
-void fm_effect_2c_transpose(uint16_t de, uint16_t ix);
-void fm_effect_2c_setup(uint16_t ix);
-void fm_effect_2c_slide(uint16_t hl, uint16_t ix);
-void fm_effect_2d(uint16_t ix);
-void fm_effect_2d_note(uint16_t ix);
-void fm_effect_2d_retrigger(uint16_t ix);
-void fm_effect_2d_delay(uint16_t ix);
-void fm_effect_2d_hold(uint16_t ix);
-void fm_effect_2d_transpose(uint16_t de, uint16_t ix);
-void fm_effect_2d_setup(uint16_t ix);
-void fm_effect_2d_slide(uint16_t hl, uint16_t ix);
-void fm_effect_2e(uint16_t ix);
-void fm_effect_2e_note(uint16_t ix);
-void fm_effect_2e_retrigger(uint16_t ix);
-void fm_effect_2e_delay(uint16_t ix);
-void fm_effect_2e_hold(uint16_t ix);
-void fm_effect_2e_transpose(uint16_t de, uint16_t ix);
-void fm_effect_2e_setup(uint16_t ix);
-void fm_effect_2e_slide(uint16_t hl, uint16_t ix);
-void fm_effect_2f(uint16_t ix);
-void fm_effect_2f_retrigger(uint16_t ix);
-void fm_effect_2f_slide(uint16_t ix);
-void fm_effect_32(uint16_t ix);
-void fm_effect_32_delay(uint16_t ix);
-void fm_effect_31(uint16_t ix);
-void fm_effect_31_delay(uint16_t ix);
-void fm_effect_30(uint16_t ix);
-void fm_effect_30_retrigger(uint16_t ix);
-void fm_effect_30_retrigger_2(uint16_t ix);
-void fm_effect_33(uint16_t ix);
-void fm_effect_33_retrigger(uint16_t ix);
-void fm_effect_33_retrigger_2(uint16_t ix);
-void fm_effect_34(uint16_t ix);
-void fm_effect_34_setup(uint16_t ix);
-void fm_effect_34_retrigger(uint16_t ix);
-void fm_effect_34_slide(uint16_t ix);
-void fm_effect_35(uint16_t ix);
-void fm_effect_35_note(uint16_t ix);
-void fm_effect_35_setup(uint16_t ix);
-void fm_effect_35_retrigger(uint16_t ix);
-void fm_effect_35_slide(uint16_t ix);
-void fm_effect_36(uint16_t ix);
-void fm_effect_36_retrigger(uint16_t ix);
-void fm_effect_36_slide(uint16_t ix);
-void fm_effect_37(uint16_t ix);
-void fm_effect_37_retrigger(uint16_t ix);
-void fm_effect_37_slide(uint16_t ix);
-void fm_effect_38(uint16_t ix);
-void fm_effect_38_retrigger(uint16_t ix);
-void fm_effect_38_slide(uint16_t ix);
+void fm_effect_02(uint16_t channel);
+void fm_effect_02_delay(uint16_t channel);
+void fm_effect_01(uint16_t channel);
+void fm_effect_01_retrigger(uint16_t channel);
+void fm_effect_01_pitch(uint16_t channel);
+uint32_t fm_effect_01_move_pitch(uint16_t step, uint16_t channel);
+void fm_effect_04(uint16_t channel);
+void fm_effect_04_delay(uint16_t channel);
+void fm_effect_03(uint16_t channel);
+void fm_effect_03_pitch(uint16_t channel);
+void fm_effect_03_move_pitch(uint16_t step, uint16_t channel);
+void fm_effect_06(uint16_t channel);
+void fm_effect_06_delay(uint16_t channel);
+void fm_effect_05(uint16_t channel);
+void fm_effect_05_note(uint16_t channel);
+void fm_effect_05_retrigger(uint16_t channel);
+void fm_effect_05_slide(uint16_t channel);
+void fm_effect_07(uint16_t channel);
+void fm_effect_07_slide(uint16_t channel);
+void fm_effect_09(uint16_t channel);
+void fm_effect_09_delay(uint16_t channel);
+void fm_effect_08(uint16_t channel);
+void fm_effect_08_retrigger(uint16_t channel);
+void fm_effect_08_hold(uint16_t channel);
+void fm_effect_0d(uint16_t channel);
+void fm_effect_0d_delay(uint16_t channel);
+void fm_effect_0c(uint16_t channel);
+void fm_effect_0c_retrigger(uint16_t channel);
+void fm_effect_0c_retrigger_2(uint16_t channel);
+void fm_effect_0c_hold(uint16_t channel);
+void fm_effect_0c_move_pitch(uint16_t step, uint16_t channel);
+void fm_effect_0e(uint16_t channel);
+void fm_effect_0e_pitch(uint16_t channel);
+void fm_effect_0e_pitch_2(uint16_t channel);
+void fm_effect_0e_round(uint16_t channel);
+void fm_effect_0e_pitch_3(uint16_t channel);
+uint32_t fm_effect_0e_move_pitch(uint16_t step, uint16_t channel);
+void fm_effect_0f(uint16_t channel);
+void fm_effect_0f_slide(uint16_t channel);
+void fm_effect_10(uint16_t channel);
+void fm_effect_10_slide(uint16_t channel);
+void fm_effect_11(uint16_t channel);
+void fm_effect_11_pitch(uint16_t channel);
+void fm_effect_11_move_pitch(uint16_t step, uint16_t channel);
+void fm_effect_12(uint16_t channel);
+void fm_effect_12_delay(uint16_t channel);
+void fm_effect_12_slide(uint16_t channel);
+void fm_effect_13(uint16_t channel);
+void fm_effect_13_slide(uint16_t channel);
+void fm_effect_13_hold(uint16_t channel);
+void fm_effect_13_fall(uint16_t channel);
+void fm_effect_14(uint16_t channel);
+void fm_effect_14_slide(uint16_t channel);
+void fm_effect_14_hold(uint16_t channel);
+void fm_effect_15(uint16_t channel);
+void fm_effect_15_note(uint16_t channel);
+void fm_effect_15_slide(uint16_t channel);
+void fm_effect_17(uint16_t channel);
+void fm_effect_17_delay(uint16_t channel);
+void fm_effect_16(uint16_t channel);
+void fm_effect_16_pitch(uint16_t channel);
+void fm_effect_16_move_pitch(uint16_t step, uint16_t channel);
+void fm_effect_18(uint16_t channel);
+void fm_effect_18_slide(uint16_t channel);
+void fm_effect_19(uint16_t channel);
+void fm_effect_19_retrigger(uint16_t channel);
+void fm_effect_19_slide(uint16_t channel);
+void fm_effect_1a(uint16_t channel);
+void fm_effect_1a_retrigger(uint16_t channel);
+void fm_effect_1a_slide(uint16_t channel);
+void fm_effect_1b(uint16_t channel);
+void fm_effect_1b_pitch(uint16_t channel);
+void fm_effect_1b_pitch_2(uint16_t channel);
+uint32_t fm_effect_1b_move_pitch(uint16_t step, uint16_t channel);
+void fm_effect_1c(uint16_t channel);
+void fm_effect_1c_pitch(uint16_t channel);
+void fm_effect_1c_pitch_2(uint16_t channel);
+void fm_effect_1c_round(uint16_t channel);
+void fm_effect_1c_pitch_3(uint16_t channel);
+uint32_t fm_effect_1c_move_pitch(uint16_t step, uint16_t channel);
+void fm_effect_1d(uint16_t channel);
+void fm_effect_1d_pitch(uint16_t channel);
+void fm_effect_1d_pitch_2(uint16_t channel);
+void fm_effect_1d_pitch_3(uint16_t channel);
+uint32_t fm_effect_1d_move_pitch(uint16_t step, uint16_t channel);
+void fm_effect_1e(uint16_t channel);
+void fm_effect_1e_slide(uint16_t channel);
+void fm_effect_1f(uint16_t channel);
+void fm_effect_1f_retrigger(uint16_t channel);
+void fm_effect_1f_end(uint16_t channel);
+void fm_effect_20(uint16_t channel);
+void fm_effect_20_pitch(uint16_t channel);
+void fm_effect_20_pitch_2(uint16_t channel);
+uint32_t fm_effect_20_move_pitch(uint16_t step, uint16_t channel);
+void fm_effect_21(uint16_t channel);
+void fm_effect_21_end(uint16_t channel);
+void fm_effect_22(uint16_t channel);
+void fm_effect_22_slide(uint16_t channel);
+void fm_effect_23(uint16_t channel);
+void fm_effect_23_retrigger(uint16_t channel);
+void fm_effect_23_slide(uint16_t channel);
+void fm_effect_24(uint16_t channel);
+void fm_effect_24_retrigger(uint16_t channel);
+void fm_effect_24_hold(uint16_t channel);
+void fm_effect_25(uint16_t channel);
+void fm_effect_25_note(uint16_t channel);
+void fm_effect_25_retrigger(uint16_t channel);
+void fm_effect_25_hold(uint16_t channel);
+void fm_effect_26(uint16_t channel);
+void fm_effect_26_transpose(uint16_t channel);
+void fm_effect_26_slide(uint16_t channel);
+void fm_effect_26_pitch(uint16_t channel);
+uint32_t fm_effect_26_move_pitch(uint16_t channel);
+void fm_effect_27(uint16_t channel);
+void fm_effect_27_retrigger(uint16_t channel);
+void fm_effect_27_hold(uint16_t channel);
+void fm_effect_28(uint16_t channel);
+void fm_effect_28_slide(uint16_t channel);
+void fm_effect_29(uint16_t channel);
+void fm_effect_29_pitch(uint16_t channel);
+void fm_effect_29_setup(uint16_t channel);
+void fm_effect_29_slide(uint16_t channel);
+uint32_t fm_effect_29_move_pitch(uint16_t step, uint16_t channel);
+void fm_effect_2b(uint16_t channel);
+void fm_effect_2b_delay(uint16_t channel);
+void fm_effect_2a(uint16_t channel);
+void fm_effect_2a_retrigger(uint16_t channel);
+void fm_effect_2a_retrigger_2(uint16_t channel);
+void fm_effect_2a_hold(uint16_t channel);
+void fm_effect_2a_move_pitch(uint16_t step, uint16_t channel);
+void fm_effect_2c(uint16_t channel);
+void fm_effect_2c_retrigger(uint16_t channel);
+void fm_effect_2c_step_up(uint16_t channel);
+void fm_effect_2c_step_down(uint16_t channel);
+void fm_effect_2c_transpose(uint16_t step, uint16_t channel);
+void fm_effect_2c_play(uint16_t channel);
+void fm_effect_2c_set_pitch(uint16_t pitch, uint16_t channel);
+void fm_effect_2d(uint16_t channel);
+void fm_effect_2d_note(uint16_t channel);
+void fm_effect_2d_retrigger(uint16_t channel);
+void fm_effect_2d_step_up(uint16_t channel);
+void fm_effect_2d_step_down(uint16_t channel);
+void fm_effect_2d_transpose(uint16_t step, uint16_t channel);
+void fm_effect_2d_play(uint16_t channel);
+void fm_effect_2d_set_pitch(uint16_t pitch, uint16_t channel);
+void fm_effect_2e(uint16_t channel);
+void fm_effect_2e_note(uint16_t channel);
+void fm_effect_2e_retrigger(uint16_t channel);
+void fm_effect_2e_step_up(uint16_t channel);
+void fm_effect_2e_step_down(uint16_t channel);
+void fm_effect_2e_transpose(uint16_t step, uint16_t channel);
+void fm_effect_2e_play(uint16_t channel);
+void fm_effect_2e_set_pitch(uint16_t pitch, uint16_t channel);
+void fm_effect_2f(uint16_t channel);
+void fm_effect_2f_retrigger(uint16_t channel);
+void fm_effect_2f_slide(uint16_t channel);
+void fm_effect_32(uint16_t channel);
+void fm_effect_32_delay(uint16_t channel);
+void fm_effect_31(uint16_t channel);
+void fm_effect_31_delay(uint16_t channel);
+void fm_effect_30(uint16_t channel);
+void fm_effect_30_retrigger(uint16_t channel);
+void fm_effect_30_retrigger_2(uint16_t channel);
+void fm_effect_33(uint16_t channel);
+void fm_effect_33_retrigger(uint16_t channel);
+void fm_effect_33_retrigger_2(uint16_t channel);
+void fm_effect_34(uint16_t channel);
+void fm_effect_34_setup(uint16_t channel);
+void fm_effect_34_retrigger(uint16_t channel);
+void fm_effect_34_slide(uint16_t channel);
+void fm_effect_35(uint16_t channel);
+void fm_effect_35_note(uint16_t channel);
+void fm_effect_35_setup(uint16_t channel);
+void fm_effect_35_retrigger(uint16_t channel);
+void fm_effect_35_slide(uint16_t channel);
+void fm_effect_36(uint16_t channel);
+void fm_effect_36_retrigger(uint16_t channel);
+void fm_effect_36_slide(uint16_t channel);
+void fm_effect_37(uint16_t channel);
+void fm_effect_37_retrigger(uint16_t channel);
+void fm_effect_37_slide(uint16_t channel);
+void fm_effect_38(uint16_t channel);
+void fm_effect_38_retrigger(uint16_t channel);
+void fm_effect_38_slide(uint16_t channel);
 
 /* main.c: the reset and its self test, the commands from the 053248, the main loop */
 uint16_t sound_reset(void);
 uint16_t BOARD_ORIGINAL(sound_reset)(void);
 void sound_command(void);
 void nmi_return(void);
-void start_sound(uint8_t a);
+void start_sound(uint8_t sound);
 uint16_t stop_all_channels(void);
-void stop_music(uint16_t *p_ix, uint8_t *p_a);
-void stop_channel_unless_kept(uint16_t ix);
-void start_song(uint8_t a);
-uint16_t start_music_channel(uint16_t hl, uint16_t ix, uint8_t a);
+void stop_music(uint16_t *p_last_channel, uint8_t *p_cleared);
+void stop_channel_unless_kept(uint16_t channel);
+void start_song(uint8_t song);
+uint16_t start_music_channel(uint16_t header_entry, uint16_t channel, uint8_t song);
 uint16_t check_rom(void);
 uint16_t BOARD_ORIGINAL(check_rom)(void);
 uint16_t sound_main(void);
 void self_test_failed(void);
 void sound_main_loop(void);
-void run_pcm_channel(uint16_t ix);
-void run_channel(uint16_t ix);
+void run_pcm_channel(uint16_t channel);
+void run_channel(uint16_t channel);
 
 /* music.c: the music: a song's tracks, their notes and commands, the pitch envelope, the gate, the fade's volume */
-void start_music_track(uint16_t de, uint16_t ix, uint8_t a);
-void stop_music_channel(uint16_t ix);
-uint32_t music_channel_song(uint16_t ix);
-uint16_t music_tick(uint16_t ix);
-void music_pitch_envelope_1(uint16_t ix);
-void music_pitch_envelope_2(uint16_t ix);
-void music_pitch_envelope_3(uint16_t ix);
-void music_pitch_envelope_4(uint16_t ix);
-void music_note_tick(uint16_t ix);
-uint32_t add_note_length(uint8_t bc, uint16_t ix);
-void set_note_gate(uint16_t ix);
-void update_music_volume(uint16_t ix);
-void set_music_volume(uint16_t ix, uint8_t a);
-uint8_t next_track_byte(uint16_t ix);
-void drum_done(uint16_t ix);
+void start_music_track(uint16_t track, uint16_t channel, uint8_t song);
+void stop_music_channel(uint16_t channel);
+uint32_t music_channel_song(uint16_t channel);
+uint16_t music_tick(uint16_t channel);
+void music_pitch_envelope_1(uint16_t channel);
+void music_pitch_envelope_2(uint16_t channel);
+void music_pitch_envelope_3(uint16_t channel);
+void music_pitch_envelope_4(uint16_t channel);
+void music_note_tick(uint16_t channel);
+uint32_t add_note_length(uint8_t step, uint16_t channel);
+void set_note_gate(uint16_t channel);
+void update_music_volume(uint16_t channel);
+void set_music_volume(uint16_t channel, uint8_t music_volume);
+uint8_t next_track_byte(uint16_t channel);
+void drum_done(uint16_t channel);
 
 /* pcm_effects.c: the PCM effects (commands 40-7E, and 3F by its argument): samples of the K053260 */
-void pcm_effect_3f_00(uint16_t ix);
-void pcm_effect_3f_00_wait_sample(uint16_t ix);
-void pcm_effect_3f_01(uint16_t ix);
-void pcm_effect_3f_01_wait_sample(uint16_t ix);
-void pcm_effect_3f_02(uint16_t ix);
-void pcm_effect_3f_02_wait_sample(uint16_t ix);
-void pcm_effect_3f_03(uint16_t ix);
-void pcm_effect_3f_03_wait_sample(uint16_t ix);
-void pcm_effect_3f_04(uint16_t ix);
-void pcm_effect_3f_04_wait_sample(uint16_t ix);
-void pcm_effect_3f_05(uint16_t ix);
-void pcm_effect_3f_05_wait_sample(uint16_t ix);
-void pcm_effect_3f_06(uint16_t ix);
-void pcm_effect_3f_06_wait_sample(uint16_t ix);
-void pcm_effect_3f_07(uint16_t ix);
-void pcm_effect_3f_07_wait_sample(uint16_t ix);
-void pcm_effect_3f_08(uint16_t ix);
-void pcm_effect_3f_08_wait_sample(uint16_t ix);
-void pcm_effect_3f_09(uint16_t ix);
-void pcm_effect_3f_09_wait_sample(uint16_t ix);
-void pcm_effect_3f_0a(uint16_t ix);
-void pcm_effect_3f_0a_wait_sample(uint16_t ix);
-void pcm_effect_3f_0b(uint16_t ix);
-void pcm_effect_3f_0b_wait_sample(uint16_t ix);
-void pcm_effect_3f_0c(uint16_t ix);
-void pcm_effect_3f_0c_wait_sample(uint16_t ix);
-void pcm_effect_3f_0d(uint16_t ix);
-void pcm_effect_3f_0d_wait_sample(uint16_t ix);
-void pcm_effect_3f_0e(uint16_t ix);
-void pcm_effect_3f_0e_wait_sample(uint16_t ix);
-void pcm_effect_3f_0f(uint16_t ix);
-void pcm_effect_3f_0f_wait_sample(uint16_t ix);
-void pcm_effect_3f_10(uint16_t ix);
-void pcm_effect_3f_10_wait_sample(uint16_t ix);
-void pcm_effect_3f_11(uint16_t ix);
-void pcm_effect_3f_11_wait_sample(uint16_t ix);
-void pcm_effect_3f_12(uint16_t ix);
-void pcm_effect_3f_12_wait_sample(uint16_t ix);
-void pcm_effect_3f_13(uint16_t ix);
-void pcm_effect_3f_13_wait_sample(uint16_t ix);
-void pcm_effect_3f_14(uint16_t ix);
-void pcm_effect_3f_14_wait_sample(uint16_t ix);
-void pcm_effect_3f_15(uint16_t ix);
-void pcm_effect_3f_15_wait_sample(uint16_t ix);
-void pcm_effect_3f_16(uint16_t ix);
-void pcm_effect_3f_16_wait_sample(uint16_t ix);
-void pcm_effect_3f_17(uint16_t ix);
-void pcm_effect_3f_17_wait_sample(uint16_t ix);
-void pcm_effect_3f_18(uint16_t ix);
-void pcm_effect_3f_18_wait_sample(uint16_t ix);
-void pcm_effect_3f_19(uint16_t ix);
-void pcm_effect_3f_19_wait_sample(uint16_t ix);
-void pcm_effect_3f_1a(uint16_t ix);
-void pcm_effect_3f_1a_wait_sample(uint16_t ix);
-void pcm_effect_3f_1b(uint16_t ix);
-void pcm_effect_3f_1b_wait_sample(uint16_t ix);
-void pcm_effect_3f_1c(uint16_t ix);
-void pcm_effect_3f_1c_wait_sample(uint16_t ix);
-void pcm_effect_3f_1d(uint16_t ix);
-void pcm_effect_3f_1d_wait_sample(uint16_t ix);
-void pcm_effect_3f_1e(uint16_t ix);
-void pcm_effect_3f_1e_wait_sample(uint16_t ix);
-void pcm_effect_3f_1f(uint16_t ix);
-void pcm_effect_3f_1f_wait_sample(uint16_t ix);
-void pcm_effect_3f_20(uint16_t ix);
-void pcm_effect_3f_20_wait_sample(uint16_t ix);
-void pcm_effect_3f_21(uint16_t ix);
-void pcm_effect_3f_21_wait_sample(uint16_t ix);
-void pcm_effect_3f_22(uint16_t ix);
-void pcm_effect_3f_22_wait_sample(uint16_t ix);
-void pcm_effect_3f_23(uint16_t ix);
-void pcm_effect_3f_23_wait_sample(uint16_t ix);
-void pcm_effect_3f_24(uint16_t ix);
-void pcm_effect_3f_24_wait_sample(uint16_t ix);
-void pcm_effect_3f_25(uint16_t ix);
-void pcm_effect_3f_25_wait_sample(uint16_t ix);
-void pcm_effect_3f_26(uint16_t ix);
-void pcm_effect_3f_26_wait_sample(uint16_t ix);
-void pcm_effect_3f_27(uint16_t ix);
-void pcm_effect_3f_27_wait_sample(uint16_t ix);
-void pcm_effect_3f_28(uint16_t ix);
-void pcm_effect_3f_28_wait_sample(uint16_t ix);
-void pcm_effect_3f_29(uint16_t ix);
-void pcm_effect_3f_29_wait_sample(uint16_t ix);
-void pcm_effect_3f_2a(uint16_t ix);
-void pcm_effect_3f_2a_wait_sample(uint16_t ix);
-void pcm_effect_3f_2b(uint16_t ix);
-void pcm_effect_3f_2b_wait_sample(uint16_t ix);
-void pcm_effect_3f_2c(uint16_t ix);
-void pcm_effect_3f_2c_wait_sample(uint16_t ix);
-void pcm_effect_3f_2d(uint16_t ix);
-void pcm_effect_3f_2d_wait_sample(uint16_t ix);
-void pcm_effect_3f_2e(uint16_t ix);
-void pcm_effect_3f_2e_wait_sample(uint16_t ix);
-void pcm_effect_3f_2f(uint16_t ix);
-void pcm_effect_3f_30(uint16_t ix);
-void pcm_effect_3f_30_wait_sample(uint16_t ix);
-void pcm_effect_3f_31(uint16_t ix);
-void pcm_effect_3f_31_wait_sample(uint16_t ix);
-void pcm_effect_3f_32(uint16_t ix);
-void pcm_effect_3f_32_wait_sample(uint16_t ix);
-void pcm_effect_3f_33(uint16_t ix);
-void pcm_effect_3f_33_wait_sample(uint16_t ix);
-void pcm_effect_3f_34(uint16_t ix);
-void pcm_effect_3f_34_wait_sample(uint16_t ix);
-void pcm_effect_3f_35(uint16_t ix);
-void pcm_effect_3f_35_wait_sample(uint16_t ix);
-void pcm_effect_3f_36(uint16_t ix);
-void pcm_effect_3f_36_wait_sample(uint16_t ix);
-void pcm_effect_3f_37(uint16_t ix);
-void pcm_effect_3f_37_wait_sample(uint16_t ix);
-void pcm_effect_3f_38(uint16_t ix);
-void pcm_effect_3f_38_wait_sample(uint16_t ix);
-void unused_358A(uint16_t ix, uint8_t a);
-void pcm_effect_3f_39(uint16_t ix);
-void pcm_effect_3f_39_wait_sample(uint16_t ix);
-void pcm_effect_3f_3a(uint16_t ix);
-void pcm_effect_3f_3a_wait_sample(uint16_t ix);
-void pcm_effect_3f_3b(uint16_t ix);
-void pcm_effect_3f_3b_wait_sample(uint16_t ix);
-void pcm_effect_42(uint16_t ix);
-void pcm_effect_41(uint16_t ix);
-void pcm_effect_40(uint16_t ix);
-void pcm_effect_42_setup(uint16_t hl, uint16_t ix);
-void pcm_effect_42_retrigger(uint16_t ix);
-void pcm_effect_42_setup_2(uint16_t ix);
-uint32_t pcm_effect_42_update(uint16_t ix);
-void pcm_effect_43(uint16_t ix);
-void pcm_effect_43_wait_sample(uint16_t ix);
-void pcm_effect_44(uint16_t ix);
-void pcm_effect_44_wait_sample(uint16_t ix);
-void pcm_effect_45(uint16_t ix);
-void pcm_effect_45_wait_sample(uint16_t ix);
-void pcm_effect_46(uint16_t ix);
-void pcm_effect_46_retrigger(uint16_t ix);
-void pcm_effect_47(uint16_t ix);
-void pcm_effect_47_wait_sample(uint16_t ix);
-void pcm_effect_48(uint16_t ix);
-void pcm_effect_48_wait_sample(uint16_t ix);
-void pcm_effect_49(uint16_t ix);
-void pcm_effect_49_wait_sample(uint16_t ix);
-void pcm_effect_4a(uint16_t ix);
-void pcm_effect_4a_wait_sample(uint16_t ix);
-void pcm_effect_4b(uint16_t ix);
-void pcm_effect_4b_wait_sample(uint16_t ix);
-void pcm_effect_4c(uint16_t ix);
-void pcm_effect_4c_wait_sample(uint16_t ix);
-void pcm_effect_4d(uint16_t ix);
-void pcm_effect_4d_wait_sample(uint16_t ix);
-void pcm_effect_4e(uint16_t ix);
-void pcm_effect_4e_wait_sample(uint16_t ix);
-void pcm_effect_4f(uint16_t ix);
-void pcm_effect_4f_wait_sample(uint16_t ix);
-void pcm_effect_50(uint16_t ix);
-void pcm_effect_50_fade(uint16_t ix);
-void pcm_effect_50_wait_sample(uint16_t ix);
-void pcm_effect_51(uint16_t ix);
-void pcm_effect_51_wait_sample(uint16_t ix);
-void pcm_effect_52(uint16_t ix);
-void pcm_effect_52_delay(uint16_t ix);
-void pcm_effect_52_hold(uint16_t ix);
-void pcm_effect_53(uint16_t ix);
-void pcm_effect_53_wait_sample(uint16_t ix);
-void pcm_effect_54(uint16_t ix);
-void pcm_effect_54_modulate(uint16_t ix);
-void pcm_effect_54_wait_sample(uint16_t ix);
-void pcm_effect_55(uint16_t ix);
-void pcm_effect_55_wait_sample(uint16_t ix);
-void pcm_effect_56(uint16_t ix);
-void pcm_effect_56_retrigger(uint16_t ix);
-void pcm_effect_56_retrigger_2(uint16_t ix);
-void pcm_effect_56_wait_sample(uint16_t ix);
-void pcm_effect_57(uint16_t ix);
-void pcm_effect_57_retrigger(uint16_t ix);
-void pcm_effect_57_note(uint16_t ix);
-void pcm_effect_57_wait_sample(uint16_t ix);
-uint32_t pcm_effect_57_update(uint16_t ix);
-void pcm_effect_58(uint16_t ix);
-void pcm_effect_58_retrigger(uint16_t ix);
-void pcm_effect_59(uint16_t ix);
-void pcm_effect_59_wait_sample(uint16_t ix);
-void pcm_effect_5a(uint16_t ix);
-void pcm_effect_5a_wait_sample(uint16_t ix);
-void pcm_effect_5b(uint16_t ix);
-void pcm_effect_5b_wait_sample(uint16_t ix);
-void pcm_effect_5c(uint16_t ix);
-void pcm_effect_5c_delay(uint16_t ix);
-void pcm_effect_5c_hold(uint16_t ix);
-void pcm_effect_5d(uint16_t ix);
-void pcm_effect_5d_delay(uint16_t ix);
-void pcm_effect_5d_hold(uint16_t ix);
-void pcm_effect_5e(uint16_t ix);
-void pcm_effect_5e_wait_sample(uint16_t ix);
-void pcm_effect_5f(uint16_t ix);
-void pcm_effect_5f_wait_sample(uint16_t ix);
-void pcm_effect_60(uint16_t ix);
-void pcm_effect_60_wait_sample(uint16_t ix);
-void pcm_effect_61(uint16_t ix);
-void pcm_effect_61_wait_sample(uint16_t ix);
-void pcm_effect_62(uint16_t ix);
-void pcm_effect_62_wait_sample(uint16_t ix);
-void pcm_effect_63(uint16_t ix);
-void pcm_effect_63_wait_sample(uint16_t ix);
-void pcm_effect_64(uint16_t ix);
-void pcm_effect_64_wait_sample(uint16_t ix);
-void pcm_effect_65(uint16_t ix);
-void pcm_effect_65_wait_sample(uint16_t ix);
-void pcm_effect_66(uint16_t ix);
-void pcm_effect_66_wait_sample(uint16_t ix);
-void pcm_effect_67(uint16_t ix);
-void pcm_effect_67_wait_sample(uint16_t ix);
-void pcm_effect_68(uint16_t ix);
-void pcm_effect_68_wait_sample(uint16_t ix);
-void pcm_effect_69(uint16_t ix);
-void pcm_effect_69_wait_sample(uint16_t ix);
-void pcm_effect_6a(uint16_t ix);
-void pcm_effect_6a_wait_sample(uint16_t ix);
-void pcm_effect_6b(uint16_t ix);
-void pcm_effect_6b_wait_sample(uint16_t ix);
-void pcm_effect_6c(uint16_t ix);
-void pcm_effect_6c_wait_sample(uint16_t ix);
-void pcm_effect_6d(uint16_t ix);
-void pcm_effect_6d_wait_sample(uint16_t ix);
-void pcm_effect_6e(uint16_t ix);
-void pcm_effect_6e_wait_sample(uint16_t ix);
-void pcm_effect_6f(uint16_t ix);
-void pcm_effect_6f_wait_sample(uint16_t ix);
-void pcm_effect_70(uint16_t ix);
-void pcm_effect_70_wait_sample(uint16_t ix);
-void pcm_effect_71(uint16_t ix);
-void pcm_effect_71_wait_sample(uint16_t ix);
-void pcm_effect_72(uint16_t ix);
-void pcm_effect_72_wait_sample(uint16_t ix);
-void pcm_effect_73(uint16_t ix);
-void pcm_effect_73_wait_sample(uint16_t ix);
-void pcm_effect_74(uint16_t ix);
-void pcm_effect_74_wait_sample(uint16_t ix);
-void pcm_effect_75(uint16_t ix);
-void pcm_effect_75_wait_sample(uint16_t ix);
-void pcm_effect_76(uint16_t ix);
-void pcm_effect_76_wait_sample(uint16_t ix);
-void pcm_effect_77(uint16_t ix);
-void pcm_effect_77_delay(uint16_t ix);
-void pcm_effect_77_hold(uint16_t ix);
-void pcm_effect_78(uint16_t ix);
-void pcm_effect_79(uint16_t ix);
-void pcm_effect_79_wait_sample(uint16_t ix);
-void pcm_effect_7a(uint16_t ix);
-void pcm_effect_7a_retrigger(uint16_t ix);
-void pcm_effect_7a_retrigger_2(uint16_t ix);
-void pcm_effect_7a_retrigger_3(uint16_t ix);
-void pcm_effect_7a_retrigger_4(uint16_t ix);
-void pcm_effect_7b(uint16_t ix);
-void pcm_effect_7b_wait_sample(uint16_t ix);
-void pcm_effect_7c(uint16_t ix);
-void pcm_effect_7c_retrigger(uint16_t ix);
-void pcm_effect_7c_retrigger_2(uint16_t ix);
-void pcm_effect_7c_retrigger_3(uint16_t ix);
-void pcm_effect_7c_retrigger_4(uint16_t ix);
-void pcm_effect_7d(uint16_t ix);
-void pcm_effect_7d_wait_sample(uint16_t ix);
-void pcm_effect_7e(uint16_t ix);
-void pcm_effect_7e_retrigger(uint16_t ix);
-void pcm_effect_7e_retrigger_2(uint16_t ix);
-void pcm_effect_7e_retrigger_3(uint16_t ix);
-void pcm_effect_7f(uint16_t ix);
-void pcm_effect_7f_retrigger(uint16_t ix);
-void pcm_effect_7f_set_volume(uint16_t ix);
+void pcm_effect_3f_00(uint16_t channel);
+void pcm_effect_3f_00_wait_sample(uint16_t channel);
+void pcm_effect_3f_01(uint16_t channel);
+void pcm_effect_3f_01_wait_sample(uint16_t channel);
+void pcm_effect_3f_02(uint16_t channel);
+void pcm_effect_3f_02_wait_sample(uint16_t channel);
+void pcm_effect_3f_03(uint16_t channel);
+void pcm_effect_3f_03_wait_sample(uint16_t channel);
+void pcm_effect_3f_04(uint16_t channel);
+void pcm_effect_3f_04_wait_sample(uint16_t channel);
+void pcm_effect_3f_05(uint16_t channel);
+void pcm_effect_3f_05_wait_sample(uint16_t channel);
+void pcm_effect_3f_06(uint16_t channel);
+void pcm_effect_3f_06_wait_sample(uint16_t channel);
+void pcm_effect_3f_07(uint16_t channel);
+void pcm_effect_3f_07_wait_sample(uint16_t channel);
+void pcm_effect_3f_08(uint16_t channel);
+void pcm_effect_3f_08_wait_sample(uint16_t channel);
+void pcm_effect_3f_09(uint16_t channel);
+void pcm_effect_3f_09_wait_sample(uint16_t channel);
+void pcm_effect_3f_0a(uint16_t channel);
+void pcm_effect_3f_0a_wait_sample(uint16_t channel);
+void pcm_effect_3f_0b(uint16_t channel);
+void pcm_effect_3f_0b_wait_sample(uint16_t channel);
+void pcm_effect_3f_0c(uint16_t channel);
+void pcm_effect_3f_0c_wait_sample(uint16_t channel);
+void pcm_effect_3f_0d(uint16_t channel);
+void pcm_effect_3f_0d_wait_sample(uint16_t channel);
+void pcm_effect_3f_0e(uint16_t channel);
+void pcm_effect_3f_0e_wait_sample(uint16_t channel);
+void pcm_effect_3f_0f(uint16_t channel);
+void pcm_effect_3f_0f_wait_sample(uint16_t channel);
+void pcm_effect_3f_10(uint16_t channel);
+void pcm_effect_3f_10_wait_sample(uint16_t channel);
+void pcm_effect_3f_11(uint16_t channel);
+void pcm_effect_3f_11_wait_sample(uint16_t channel);
+void pcm_effect_3f_12(uint16_t channel);
+void pcm_effect_3f_12_wait_sample(uint16_t channel);
+void pcm_effect_3f_13(uint16_t channel);
+void pcm_effect_3f_13_wait_sample(uint16_t channel);
+void pcm_effect_3f_14(uint16_t channel);
+void pcm_effect_3f_14_wait_sample(uint16_t channel);
+void pcm_effect_3f_15(uint16_t channel);
+void pcm_effect_3f_15_wait_sample(uint16_t channel);
+void pcm_effect_3f_16(uint16_t channel);
+void pcm_effect_3f_16_wait_sample(uint16_t channel);
+void pcm_effect_3f_17(uint16_t channel);
+void pcm_effect_3f_17_wait_sample(uint16_t channel);
+void pcm_effect_3f_18(uint16_t channel);
+void pcm_effect_3f_18_wait_sample(uint16_t channel);
+void pcm_effect_3f_19(uint16_t channel);
+void pcm_effect_3f_19_wait_sample(uint16_t channel);
+void pcm_effect_3f_1a(uint16_t channel);
+void pcm_effect_3f_1a_wait_sample(uint16_t channel);
+void pcm_effect_3f_1b(uint16_t channel);
+void pcm_effect_3f_1b_wait_sample(uint16_t channel);
+void pcm_effect_3f_1c(uint16_t channel);
+void pcm_effect_3f_1c_wait_sample(uint16_t channel);
+void pcm_effect_3f_1d(uint16_t channel);
+void pcm_effect_3f_1d_wait_sample(uint16_t channel);
+void pcm_effect_3f_1e(uint16_t channel);
+void pcm_effect_3f_1e_wait_sample(uint16_t channel);
+void pcm_effect_3f_1f(uint16_t channel);
+void pcm_effect_3f_1f_wait_sample(uint16_t channel);
+void pcm_effect_3f_20(uint16_t channel);
+void pcm_effect_3f_20_wait_sample(uint16_t channel);
+void pcm_effect_3f_21(uint16_t channel);
+void pcm_effect_3f_21_wait_sample(uint16_t channel);
+void pcm_effect_3f_22(uint16_t channel);
+void pcm_effect_3f_22_wait_sample(uint16_t channel);
+void pcm_effect_3f_23(uint16_t channel);
+void pcm_effect_3f_23_wait_sample(uint16_t channel);
+void pcm_effect_3f_24(uint16_t channel);
+void pcm_effect_3f_24_wait_sample(uint16_t channel);
+void pcm_effect_3f_25(uint16_t channel);
+void pcm_effect_3f_25_wait_sample(uint16_t channel);
+void pcm_effect_3f_26(uint16_t channel);
+void pcm_effect_3f_26_wait_sample(uint16_t channel);
+void pcm_effect_3f_27(uint16_t channel);
+void pcm_effect_3f_27_wait_sample(uint16_t channel);
+void pcm_effect_3f_28(uint16_t channel);
+void pcm_effect_3f_28_wait_sample(uint16_t channel);
+void pcm_effect_3f_29(uint16_t channel);
+void pcm_effect_3f_29_wait_sample(uint16_t channel);
+void pcm_effect_3f_2a(uint16_t channel);
+void pcm_effect_3f_2a_wait_sample(uint16_t channel);
+void pcm_effect_3f_2b(uint16_t channel);
+void pcm_effect_3f_2b_wait_sample(uint16_t channel);
+void pcm_effect_3f_2c(uint16_t channel);
+void pcm_effect_3f_2c_wait_sample(uint16_t channel);
+void pcm_effect_3f_2d(uint16_t channel);
+void pcm_effect_3f_2d_wait_sample(uint16_t channel);
+void pcm_effect_3f_2e(uint16_t channel);
+void pcm_effect_3f_2e_wait_sample(uint16_t channel);
+void pcm_effect_3f_2f(uint16_t channel);
+void pcm_effect_3f_30(uint16_t channel);
+void pcm_effect_3f_30_wait_sample(uint16_t channel);
+void pcm_effect_3f_31(uint16_t channel);
+void pcm_effect_3f_31_wait_sample(uint16_t channel);
+void pcm_effect_3f_32(uint16_t channel);
+void pcm_effect_3f_32_wait_sample(uint16_t channel);
+void pcm_effect_3f_33(uint16_t channel);
+void pcm_effect_3f_33_wait_sample(uint16_t channel);
+void pcm_effect_3f_34(uint16_t channel);
+void pcm_effect_3f_34_wait_sample(uint16_t channel);
+void pcm_effect_3f_35(uint16_t channel);
+void pcm_effect_3f_35_wait_sample(uint16_t channel);
+void pcm_effect_3f_36(uint16_t channel);
+void pcm_effect_3f_36_wait_sample(uint16_t channel);
+void pcm_effect_3f_37(uint16_t channel);
+void pcm_effect_3f_37_wait_sample(uint16_t channel);
+void pcm_effect_3f_38(uint16_t channel);
+void pcm_effect_3f_38_wait_sample(uint16_t channel);
+void set_volume_stop_at_7f(uint16_t channel, uint8_t volume);
+void pcm_effect_3f_39(uint16_t channel);
+void pcm_effect_3f_39_wait_sample(uint16_t channel);
+void pcm_effect_3f_3a(uint16_t channel);
+void pcm_effect_3f_3a_wait_sample(uint16_t channel);
+void pcm_effect_3f_3b(uint16_t channel);
+void pcm_effect_3f_3b_wait_sample(uint16_t channel);
+void pcm_effect_42(uint16_t channel);
+void pcm_effect_41(uint16_t channel);
+void pcm_effect_40(uint16_t channel);
+void pcm_effect_42_setup(uint16_t notes, uint16_t channel);
+void pcm_effect_42_next_note(uint16_t channel);
+void pcm_effect_42_rest(uint16_t channel);
+uint32_t pcm_effect_42_update(uint16_t channel);
+void pcm_effect_43(uint16_t channel);
+void pcm_effect_43_wait_sample(uint16_t channel);
+void pcm_effect_44(uint16_t channel);
+void pcm_effect_44_wait_sample(uint16_t channel);
+void pcm_effect_45(uint16_t channel);
+void pcm_effect_45_wait_sample(uint16_t channel);
+void pcm_effect_46(uint16_t channel);
+void pcm_effect_46_retrigger(uint16_t channel);
+void pcm_effect_47(uint16_t channel);
+void pcm_effect_47_wait_sample(uint16_t channel);
+void pcm_effect_48(uint16_t channel);
+void pcm_effect_48_wait_sample(uint16_t channel);
+void pcm_effect_49(uint16_t channel);
+void pcm_effect_49_wait_sample(uint16_t channel);
+void pcm_effect_4a(uint16_t channel);
+void pcm_effect_4a_wait_sample(uint16_t channel);
+void pcm_effect_4b(uint16_t channel);
+void pcm_effect_4b_wait_sample(uint16_t channel);
+void pcm_effect_4c(uint16_t channel);
+void pcm_effect_4c_wait_sample(uint16_t channel);
+void pcm_effect_4d(uint16_t channel);
+void pcm_effect_4d_wait_sample(uint16_t channel);
+void pcm_effect_4e(uint16_t channel);
+void pcm_effect_4e_wait_sample(uint16_t channel);
+void pcm_effect_4f(uint16_t channel);
+void pcm_effect_4f_wait_sample(uint16_t channel);
+void pcm_effect_50(uint16_t channel);
+void pcm_effect_50_fade(uint16_t channel);
+void pcm_effect_50_wait_sample(uint16_t channel);
+void pcm_effect_51(uint16_t channel);
+void pcm_effect_51_wait_sample(uint16_t channel);
+void pcm_effect_52(uint16_t channel);
+void pcm_effect_52_delay(uint16_t channel);
+void pcm_effect_52_hold(uint16_t channel);
+void pcm_effect_53(uint16_t channel);
+void pcm_effect_53_wait_sample(uint16_t channel);
+void pcm_effect_54(uint16_t channel);
+void pcm_effect_54_modulate(uint16_t channel);
+void pcm_effect_54_wait_sample(uint16_t channel);
+void pcm_effect_55(uint16_t channel);
+void pcm_effect_55_wait_sample(uint16_t channel);
+void pcm_effect_56(uint16_t channel);
+void pcm_effect_56_retrigger(uint16_t channel);
+void pcm_effect_56_retrigger_2(uint16_t channel);
+void pcm_effect_56_wait_sample(uint16_t channel);
+void pcm_effect_57(uint16_t channel);
+void pcm_effect_57_retrigger(uint16_t channel);
+void pcm_effect_57_note(uint16_t channel);
+void pcm_effect_57_wait_sample(uint16_t channel);
+uint32_t pcm_effect_57_update(uint16_t channel);
+void pcm_effect_58(uint16_t channel);
+void pcm_effect_58_retrigger(uint16_t channel);
+void pcm_effect_59(uint16_t channel);
+void pcm_effect_59_wait_sample(uint16_t channel);
+void pcm_effect_5a(uint16_t channel);
+void pcm_effect_5a_wait_sample(uint16_t channel);
+void pcm_effect_5b(uint16_t channel);
+void pcm_effect_5b_wait_sample(uint16_t channel);
+void pcm_effect_5c(uint16_t channel);
+void pcm_effect_5c_delay(uint16_t channel);
+void pcm_effect_5c_hold(uint16_t channel);
+void pcm_effect_5d(uint16_t channel);
+void pcm_effect_5d_delay(uint16_t channel);
+void pcm_effect_5d_hold(uint16_t channel);
+void pcm_effect_5e(uint16_t channel);
+void pcm_effect_5e_wait_sample(uint16_t channel);
+void pcm_effect_5f(uint16_t channel);
+void pcm_effect_5f_wait_sample(uint16_t channel);
+void pcm_effect_60(uint16_t channel);
+void pcm_effect_60_wait_sample(uint16_t channel);
+void pcm_effect_61(uint16_t channel);
+void pcm_effect_61_wait_sample(uint16_t channel);
+void pcm_effect_62(uint16_t channel);
+void pcm_effect_62_wait_sample(uint16_t channel);
+void pcm_effect_63(uint16_t channel);
+void pcm_effect_63_wait_sample(uint16_t channel);
+void pcm_effect_64(uint16_t channel);
+void pcm_effect_64_wait_sample(uint16_t channel);
+void pcm_effect_65(uint16_t channel);
+void pcm_effect_65_wait_sample(uint16_t channel);
+void pcm_effect_66(uint16_t channel);
+void pcm_effect_66_wait_sample(uint16_t channel);
+void pcm_effect_67(uint16_t channel);
+void pcm_effect_67_wait_sample(uint16_t channel);
+void pcm_effect_68(uint16_t channel);
+void pcm_effect_68_wait_sample(uint16_t channel);
+void pcm_effect_69(uint16_t channel);
+void pcm_effect_69_wait_sample(uint16_t channel);
+void pcm_effect_6a(uint16_t channel);
+void pcm_effect_6a_wait_sample(uint16_t channel);
+void pcm_effect_6b(uint16_t channel);
+void pcm_effect_6b_wait_sample(uint16_t channel);
+void pcm_effect_6c(uint16_t channel);
+void pcm_effect_6c_wait_sample(uint16_t channel);
+void pcm_effect_6d(uint16_t channel);
+void pcm_effect_6d_wait_sample(uint16_t channel);
+void pcm_effect_6e(uint16_t channel);
+void pcm_effect_6e_wait_sample(uint16_t channel);
+void pcm_effect_6f(uint16_t channel);
+void pcm_effect_6f_wait_sample(uint16_t channel);
+void pcm_effect_70(uint16_t channel);
+void pcm_effect_70_wait_sample(uint16_t channel);
+void pcm_effect_71(uint16_t channel);
+void pcm_effect_71_wait_sample(uint16_t channel);
+void pcm_effect_72(uint16_t channel);
+void pcm_effect_72_wait_sample(uint16_t channel);
+void pcm_effect_73(uint16_t channel);
+void pcm_effect_73_wait_sample(uint16_t channel);
+void pcm_effect_74(uint16_t channel);
+void pcm_effect_74_wait_sample(uint16_t channel);
+void pcm_effect_75(uint16_t channel);
+void pcm_effect_75_wait_sample(uint16_t channel);
+void pcm_effect_76(uint16_t channel);
+void pcm_effect_76_wait_sample(uint16_t channel);
+void pcm_effect_77(uint16_t channel);
+void pcm_effect_77_delay(uint16_t channel);
+void pcm_effect_77_hold(uint16_t channel);
+void pcm_effect_78(uint16_t channel);
+void pcm_effect_79(uint16_t channel);
+void pcm_effect_79_wait_sample(uint16_t channel);
+void pcm_effect_7a(uint16_t channel);
+void pcm_effect_7a_fade_in(uint16_t channel);
+void pcm_effect_7a_delay(uint16_t channel);
+void pcm_effect_7a_fade_out(uint16_t channel);
+void pcm_effect_7a_replay(uint16_t channel);
+void pcm_effect_7b(uint16_t channel);
+void pcm_effect_7b_wait_sample(uint16_t channel);
+void pcm_effect_7c(uint16_t channel);
+void pcm_effect_7c_fade_in(uint16_t channel);
+void pcm_effect_7c_delay(uint16_t channel);
+void pcm_effect_7c_fade_out(uint16_t channel);
+void pcm_effect_7c_replay(uint16_t channel);
+void pcm_effect_7d(uint16_t channel);
+void pcm_effect_7d_wait_sample(uint16_t channel);
+void pcm_effect_7e(uint16_t channel);
+void pcm_effect_7e_delay(uint16_t channel);
+void pcm_effect_7e_fade_out(uint16_t channel);
+void pcm_effect_7e_replay(uint16_t channel);
+void pcm_effect_7f(uint16_t channel);
+void pcm_effect_7f_retrigger(uint16_t channel);
+void pcm_effect_7f_set_volume(uint16_t channel);
 
 /* unused_effects.c: a group of four FM effects no command reaches (unused_effect_group) */
-void unused_effect_2799(uint16_t ix);
-void unused_effect_2799_slide(uint16_t ix);
-void unused_effect_280E(uint16_t ix);
-void unused_effect_280E_hold(uint16_t ix);
-void unused_effect_2856(uint16_t ix);
-void unused_effect_2856_end(uint16_t ix);
-void unused_effect_289F(uint16_t ix);
-void unused_effect_289F_step(uint16_t ix);
-void unused_effect_289F_end(uint16_t ix);
-uint32_t unused_effect_289F_update(uint16_t ix);
+void unused_effect_3c(uint16_t channel);
+void unused_effect_3c_slide(uint16_t channel);
+void unused_effect_3d(uint16_t channel);
+void unused_effect_3d_lower_noise(uint16_t channel);
+void unused_effect_3e(uint16_t channel);
+void unused_effect_3e_end(uint16_t channel);
+void unused_effect_3f(uint16_t channel);
+void unused_effect_3f_step(uint16_t channel);
+void unused_effect_3f_end(uint16_t channel);
+uint32_t unused_effect_3f_update(uint16_t channel);
 
 #endif

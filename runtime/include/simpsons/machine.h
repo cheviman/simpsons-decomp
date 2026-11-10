@@ -193,10 +193,19 @@ extern simpsons_machine simpsons_board;
    (the byte at its last address first), so that a big-endian value of the 053248's of any width at any address is a
    little-endian value of the host's there, which the decompiled program reads and writes as plain C variables
    (game/support.h); the bus and the state hash see the bytes at their addresses */
+void *simpsons_shadow_at(uint16_t address, uint32_t size);
+void simpsons_settle_shadow(void);
+extern bool simpsons_shadow_pending;
+
 static inline void *simpsons_work_ram_at(uint16_t address, uint32_t size)
 {
-	return &simpsons_board.work_ram[SIMPSONS_WORK_RAM_SIZE - size - ((address - SIMPSONS_WORK_RAM)
-		& (SIMPSONS_WORK_RAM_SIZE - 1u))];
+	const uint32_t offset = (uint16_t)(address - SIMPSONS_WORK_RAM);
+
+	if (offset + size <= SIMPSONS_WORK_RAM_SIZE)
+		return &simpsons_board.work_ram[SIMPSONS_WORK_RAM_SIZE - size - offset];
+	/* (a structure the program reaches through a pointer outside the work RAM, where the 053248 goes too: a null
+	   pointer reaches the K052109's RAM at 0000) */
+	return simpsons_shadow_at(address, size);
 }
 
 /* The work RAM's byte at 'address' */

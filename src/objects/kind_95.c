@@ -1,0 +1,118 @@
+/**
+ *    Name:        objects/kind_95.c
+ *    Description: the kind 95 character of stage 2
+ *    Version:     0.1.0
+ *    Created:     06-11-2026
+ *    Modified:    09-11-2026
+ *    Author:      Sebastian Toyos
+ *
+ *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
+ *    tools/decompile.py, with the names of symbols.txt.
+ */
+#include "game.h"
+
+/* Beaten: cries out (sound 6300) and runs off to the left. */
+void kind_95_beaten(uint16_t object)
+{
+	uint32_t carry = 0;
+	uint16_t command = 0;
+
+	command = 0x6300u;
+	carry = vector_queue_sound(command);
+	OBJECT(object)->x_speed = -0x200;
+	OBJECT(object)->animation = 0x81u;
+	OBJECT(object)->state = 0xFDu;
+	face_movement(object);
+}
+
+/* Runs its reaction to a hit by its substep. */
+void kind_95_hit_steps(uint16_t object, uint16_t *p_y, uint16_t *p_step_handlers)
+{
+	uint16_t y = (uint16_t)*p_y;
+	uint16_t step_handlers = 0;
+	uint8_t action_step = 0;
+
+	for (;;)
+	{
+		step_handlers = kind_95_hit_step_handlers_ADDRESS;
+		action_step = OBJECT(object)->action_step;
+		switch ((int8_t)(uint8_t)((uint32_t)action_step << 1))
+		{
+		case 0:
+			kind_95_hit(object);
+			break;
+		case 2:
+			kind_95_hit_end(object);
+			break;
+		case -10:
+			kind_95_wait();
+			break;
+		case -8:
+			kind_95_beaten(object);
+			break;
+		case -6:
+			continue;
+		case -4:
+			kind_95_start(object, &y, &step_handlers);
+			break;
+		case -2:
+			kind_95_stand();
+			break;
+		}
+		break;
+	}
+	*p_y = y;
+	*p_step_handlers = step_handlers;
+}
+
+/* Shows its hit animation for 64 frames. */
+void kind_95_hit(uint16_t object)
+{
+	uint8_t action_step = 0;
+
+	OBJECT(object)->animation = 0x82u;
+	OBJECT(object)->timer = 0x40u;
+	action_step = OBJECT(object)->action_step;
+	OBJECT(object)->action_step = action_step + 1u;
+	kind_95_wait();
+}
+
+/* Does nothing. */
+void kind_95_wait(void)
+{
+}
+
+/* After its hit animation, stands again. */
+void kind_95_hit_end(uint16_t object)
+{
+	uint8_t timer = 0;
+
+	timer = OBJECT(object)->timer;
+	OBJECT(object)->timer = timer - 1u;
+	if (timer == 1u)
+	{
+		OBJECT(object)->flags = 0xC0u;
+		OBJECT(object)->state = 1u;
+		OBJECT(object)->animation = 0x80u;
+	}
+}
+
+/* Sets up the kind 95 character. */
+void kind_95_start(uint16_t object, uint16_t *p_box, uint16_t *p_setup)
+{
+	uint16_t box = 0, setup = 0;
+	uint8_t state = 0;
+
+	setup = kind_95_setup_ADDRESS;
+	box = vector_object_setup(object, setup);
+	state = OBJECT(object)->state;
+	OBJECT(object)->state = state + 1u;
+	kind_95_stand();
+	*p_box = box;
+	*p_setup = setup;
+}
+
+/* Does nothing while it stands. */
+void kind_95_stand(void)
+{
+}

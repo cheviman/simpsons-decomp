@@ -13,7 +13,7 @@ you build your own executable, which runs from the assets and opens no ROM.
 
 ## Status
 
-As of 06-11-2026:
+As of 09-11-2026:
 
 - [x] ROM set verification (MAME set `simpsons`, 4 Players World, set 1), by CRC32 and SHA-1 of every file
 - [x] A reference: the original programs on MAME's 053248 and Z80 cores, with MAME's K053260 and ymfm's YM2151,
@@ -53,8 +53,17 @@ As of 06-11-2026:
       sound
 - [x] The 053248 program decompiled to structured C (`src/`, `tools/decompile.py`): no goto, the same as the
       reference in all 25 scenarios in state, picture and sound; the game in its window runs it
-- [ ] The 053248's C made readable: its structures typed, its functions and variables named by what they do, its
-      files by subject (its data is read by name already: below)
+- [x] The 053248's C by subject (`src/attract`, `enemies`, `players`, `stages`, `test_mode`...), its objects as
+      `struct object` with each kind's own fields, every function but 5 named and commented by what it does in the
+      game; still the same as the reference in all 25 scenarios in state, picture and sound
+- [x] The sound program's C named and commented throughout: its 12 channel records as `struct channel` (the YM2151's
+      and the K053260's fields by family), every patch loaded by name, every function commented, no variable named
+      after a register or an address
+- [x] The 053248's work RAM named throughout (the direct page's scratch bytes by the routine that uses them), its data
+      and unused code named by what they are, and most of its parameters and locals named by what they hold
+- [ ] The 053248's C made fully readable: 83 object fields still named after their offset, about 2,900 parameters and
+      locals still named after a register (mostly what a dispatcher hands its handlers unchanged, and the cases of the
+      steps' switches that run on into the next table's)
 - [x] The assets extracted by subject and checked byte for byte (`tools/extract_assets.py --check`): the sprites by
       the objects whose animations show them, the tiles by the stages whose maps show them, the K053260's samples
       as WAV files, the music as Standard MIDI Files (a song a file, as the Z80's driver plays it), and every other

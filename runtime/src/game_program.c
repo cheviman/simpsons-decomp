@@ -311,6 +311,7 @@ void firq_point(void)
 
 void frame_wait(uint32_t wait)
 {
+	simpsons_settle_shadow();    /* (what the program wrote through a pointer outside the work RAM, before the frame) */
 	if (simpsons_frame_idle((uint16_t)wait) && program_frame)
 		program_frame();
 }

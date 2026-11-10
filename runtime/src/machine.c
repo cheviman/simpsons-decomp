@@ -346,8 +346,56 @@ static void program_not_given(int32_t place, uint16_t address)
 	exit(4);
 }
 
+/* ---- a structure reached through a pointer outside the work RAM ---- */
+/* The decompiled program reads and writes a structure as C (game/support.h's ram()); where its pointer is not in the
+   work RAM the 053248 still goes there, through the bus (a null pointer: the K052109's RAM at 0000). Its bytes come
+   from the bus into a copy laid out as the work RAM's are, and what the program changed goes back through the bus
+   before the board is reached again: the next read or write, the next structure, the frame's end */
+
+#define SHADOW_MAX 0x100u
+#define IO_PORTS_FIRST 0x1F80u    /* the ports, whose reads do things (1FC4 interrupts the Z80, 1FCA the watchdog) */
+#define IO_PORTS_END   0x2000u
+
+static uint8_t shadow[SHADOW_MAX], shadow_found[SHADOW_MAX];
+static uint16_t shadow_address;
+static uint32_t shadow_size;
+bool simpsons_shadow_pending;
+
+void simpsons_settle_shadow(void)
+{
+	if (!simpsons_shadow_pending)
+		return;
+	simpsons_shadow_pending = false;
+	for (uint32_t at = 0; at < shadow_size; at++)
+	{
+		const uint32_t index = shadow_size - 1u - at;
+
+		if (shadow[index] != shadow_found[index])
+			simpsons_write((uint16_t)(shadow_address + at), shadow[index]);
+	}
+}
+
+void *simpsons_shadow_at(uint16_t address, uint32_t size)
+{
+	simpsons_settle_shadow();
+	if (size > SHADOW_MAX || (address < IO_PORTS_END && address + size > IO_PORTS_FIRST))
+	{
+		fprintf(stderr, "The program reached a structure of %u bytes at %04X in frame %llu, over the board's ports\n",
+			(unsigned)size, address, (unsigned long long)simpsons_board.frame);
+		exit(4);
+	}
+	for (uint32_t at = 0; at < size; at++)
+		shadow[size - 1u - at] = shadow_found[size - 1u - at] = simpsons_read((uint16_t)(address + at));
+	shadow_address = address;
+	shadow_size = size;
+	simpsons_shadow_pending = true;
+	return shadow;
+}
+
 uint8_t simpsons_read(uint16_t address)
 {
+	if (simpsons_shadow_pending)
+		simpsons_settle_shadow();
 	if (address >= 0x6000u)
 	{
 		const int32_t place = simpsons_program_offset(address);
@@ -430,6 +478,8 @@ static void eeprom_write(uint8_t data)
 
 void simpsons_write(uint16_t address, uint8_t data)
 {
+	if (simpsons_shadow_pending)
+		simpsons_settle_shadow();
 	if (simpsons_board.write_watch)
 		simpsons_board.write_watch(address, data);
 	if (address >= 0x6000u)

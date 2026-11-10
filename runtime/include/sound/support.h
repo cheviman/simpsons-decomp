@@ -60,7 +60,9 @@ extern const size_t sound_table_count;
 /* Where an address of the RAM or the program's data is: the program's structures (sound.h) are laid over
    these bytes, so the RAM compares byte for byte with the reference */
 #define sound_ram_at(address) ((void *)&simpsons_sound.ram[(address) & (SIMPSONS_SOUND_RAM_SIZE - 1u)])
-#define sound_rom_at(address) ((const void *)simpsons_sound_data_at(address))
+/* (a record of the program's data, a patch or a sample's, is a copy of its bytes at the address, as the program reads
+   them from one piece of the assets into the next: simpsons_sound_record) */
+#define sound_rom_at(address) simpsons_sound_record(address)
 
 /* A pointer moved to another place of its 256-byte page: the low byte replaced */
 #define IN_PAGE(pointer, low) ((uint16_t)(((pointer) & 0xFF00u) | (low)))

@@ -3,7 +3,7 @@
  *    Description: the music: a song's tracks, their notes and commands, the pitch envelope, the gate, the fade's volume
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    07-11-2026
+ *    Modified:    09-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the Z80 sound program decompiled into C by
@@ -11,869 +11,836 @@
  */
 #include "sound.h"
 
-/* the record's music from its start: the song A (+10), its state (+11-+3D) cleared, the track at DE
-   (+3E); a music sound on the record is stopped */
-void start_music_track(uint16_t de, uint16_t ix, uint8_t a)
+/* Starts the record's track: the song's command in song, the music's state cleared (tempo 1, time FFFF
+   so that the first pass reads, gate_time 1), the track's place; a music sound playing on the record is
+   stopped. */
+void start_music_track(uint16_t track, uint16_t channel, uint8_t song)
 {
 	z80_block(937);
-	z80_write8((uint16_t)(ix + 0x10u), a);
-	z80_write8((uint16_t)(ix + 0x11u), 0u);
-	z80_write8((uint16_t)(ix + 0x12u), 0u);
-	z80_write8((uint16_t)(ix + 0x13u), 1u);
-	z80_write8((uint16_t)(ix + 0x14u), 0u);
-	z80_write8((uint16_t)(ix + 0x15u), 0u);
-	z80_write8((uint16_t)(ix + 0x16u), 0u);
-	z80_write8((uint16_t)(ix + 0x17u), 0u);
-	z80_write8((uint16_t)(ix + 0x18u), 0u);
-	z80_write8((uint16_t)(ix + 0x19u), 0u);
-	z80_write8((uint16_t)(ix + 0x1Au), 0u);
-	z80_write8((uint16_t)(ix + 0x1Bu), 0u);
-	z80_write8((uint16_t)(ix + 0x1Cu), 0u);
-	z80_write8((uint16_t)(ix + 0x1Du), 0u);
-	z80_write8((uint16_t)(ix + 0x1Eu), 0u);
-	z80_write8((uint16_t)(ix + 0x1Fu), 0u);
-	z80_write8((uint16_t)(ix + 0x20u), 0u);
-	z80_write8((uint16_t)(ix + 0x21u), 0u);
-	z80_write8((uint16_t)(ix + 0x22u), 0u);
-	z80_write8((uint16_t)(ix + 0x23u), 0u);
-	z80_write8((uint16_t)(ix + 0x24u), 0u);
-	z80_write8((uint16_t)(ix + 0x25u), 0u);
-	z80_write8((uint16_t)(ix + 0x26u), 0u);
-	z80_write8((uint16_t)(ix + 0x27u), 0u);
-	z80_write8((uint16_t)(ix + 0x28u), 0u);
-	z80_write8((uint16_t)(ix + 0x29u), 0u);
-	z80_write8((uint16_t)(ix + 0x2Au), 0u);
-	z80_write8((uint16_t)(ix + 0x2Bu), 0u);
-	z80_write8((uint16_t)(ix + 0x2Cu), 0u);
-	z80_write8((uint16_t)(ix + 0x2Du), 0u);
-	z80_write8((uint16_t)(ix + 0x2Eu), 0u);
-	z80_write8((uint16_t)(ix + 0x2Fu), 0u);
-	z80_write8((uint16_t)(ix + 0x30u), 0u);
-	z80_write8((uint16_t)(ix + 0x31u), 0u);
-	z80_write8((uint16_t)(ix + 0x32u), 0u);
-	z80_write8((uint16_t)(ix + 0x33u), 0u);
-	z80_write8((uint16_t)(ix + 0x34u), 0u);
-	z80_write8((uint16_t)(ix + 0x35u), 0u);
-	z80_write8((uint16_t)(ix + 0x36u), 0u);
-	z80_write8((uint16_t)(ix + 0x37u), 0u);
-	z80_write8((uint16_t)(ix + 0x38u), 0u);
-	z80_write8((uint16_t)(ix + 0x39u), 0u);
-	z80_write8((uint16_t)(ix + 0x3Au), 0xFFu);
-	z80_write8((uint16_t)(ix + 0x3Bu), 0xFFu);
-	z80_write8((uint16_t)(ix + 0x3Cu), 1u);
-	z80_write8((uint16_t)(ix + 0x3Du), 0u);
-	z80_write16((uint16_t)(ix + 0x3Eu), de);
-	if (z80_read8((uint16_t)(ix + 0x41u)) >> 7 == 0u)
+	CHANNEL(channel)->song = song;
+	CHANNEL(channel)->music_priority = 0u;
+	CHANNEL(channel)->drum_kit = 0u;
+	CHANNEL(channel)->tempo = 1u;
+	CHANNEL(channel)->gate = 0u;
+	CHANNEL(channel)->octave = 0u;
+	CHANNEL(channel)->detune = 0u;
+	CHANNEL(channel)->music_volume = 0u;
+	CHANNEL(channel)->music_pan = 0u;
+	CHANNEL(channel)->patch = 0u;
+	CHANNEL(channel)->lfo_ramp = 0u;
+	CHANNEL(channel)->envelope_count_1 = 0u;
+	CHANNEL(channel)->envelope_step_1 = 0;
+	CHANNEL(channel)->envelope_count_2 = 0u;
+	CHANNEL(channel)->envelope_step_2 = 0;
+	CHANNEL(channel)->envelope_count_3 = 0u;
+	CHANNEL(channel)->envelope_step_3 = 0;
+	CHANNEL(channel)->envelope_count_4 = 0u;
+	CHANNEL(channel)->envelope_step_4 = 0;
+	CHANNEL(channel)->envelope_period = 0u;
+	CHANNEL(channel)->spare = 0u;
+	CHANNEL(channel)->transposition = 0;
+	CHANNEL(channel)->drum_routines = 0u;
+	CHANNEL(channel)->envelope_timer = 0u;
+	CHANNEL(channel)->envelope_count = 0u;
+	CHANNEL(channel)->note_pitch = 0u;
+	CHANNEL(channel)->lfo_ramp_timer = 0u;
+	CHANNEL(channel)->lfo_ramp_step = 0u;
+	CHANNEL(channel)->jump_count = 0u;
+	CHANNEL(channel)->loop_count = 0u;
+	CHANNEL(channel)->loop_start = 0u;
+	CHANNEL(channel)->loop_2_count = 0u;
+	CHANNEL(channel)->loop_2_start = 0u;
+	CHANNEL(channel)->part_count = 0u;
+	CHANNEL(channel)->part_return = 0u;
+	CHANNEL(channel)->time = 0xFFFFu;
+	CHANNEL(channel)->gate_time = 1u;
+	CHANNEL(channel)->track = track;
+	if (CHANNEL(channel)->sound >> 7 == 0u)
 	{
 		z80_cycles(6);
 		return;
 	}
 	z80_block(39);
-	stop_channel(ix);
+	stop_channel(channel);
 	z80_block(30);
 }
 
-/* no song on the record (+10); a music sound on it stopped */
-void stop_music_channel(uint16_t ix)
+/* No more track on the record (song 0); a music sound playing on it is stopped. */
+void stop_music_channel(uint16_t channel)
 {
 	z80_block(44);
-	z80_write8((uint16_t)(ix + 0x10u), 0u);
-	if (z80_read8((uint16_t)(ix + 0x41u)) >> 7 == 0u)
+	CHANNEL(channel)->song = 0u;
+	if (CHANNEL(channel)->sound >> 7 == 0u)
 	{
 		z80_cycles(6);
 		return;
 	}
 	z80_block(10);
-	stop_channel(ix);
+	stop_channel(channel);
 }
 
-/* the record's song (+10), its flags */
-uint32_t music_channel_song(uint16_t ix)
+/* Whether the record plays a track: its song. */
+uint32_t music_channel_song(uint16_t channel)
 {
 	uint32_t zero = 0;
 
 	z80_block(33);
-	zero = z80_read8((uint16_t)(ix + 0x10u)) == 0u;
+	zero = CHANNEL(channel)->song == 0u;
 	return zero;
 }
 
-/* a record's music, one pass in 8 (its own): the tempo (+13) added to +3A, at each carry the track's
-   next step: a note (its length, a drum routine, the patch, volume and pan, the pitch, key on, the pitch
-   envelope), a rest, an octave, or a command E0-FF (music_commands) */
-uint16_t music_tick(uint16_t ix)
+/* The record's music, on one pass in 8 (by its chip_channel): the tempo added to time, and at its carry
+   the track's next steps up to one that takes time: a note (its length; unless a sound of a higher
+   priority has the record, the patch, volume and pan when the music did not have it, the gate, the pitch
+   of fm_pitches_by_note or pcm_pitches by the note, octave, transposition and detune, key on but for a
+   legato note, the pitch envelope and the LFO ramp from their start, the record's sound and priority the
+   music's and music_pitch_envelope_1 its handler), a drum (the kit's routine for the note as the
+   handler), a rest, an octave, or a command E0-FF (music_commands). */
+uint16_t music_tick(uint16_t channel)
 {
 	bool L_0042C5 = false;
 	uint32_t zero = 0, negative = 0, overflow = 0, carry = 0;
-	uint8_t a = 0, b = 0, bc = 0, c = 0, d = 0, e = 0, element = 0;
-	uint16_t command_entry = 0, hl = 0, patch_entry = 0, pitch_entry = 0;
-	uint8_t stack = 0, saved_c = 0;
-	uint8_t t1 = 0, t2 = 0, t3 = 0, t4 = 0;
+	uint8_t byte = 0, detune = 0, drum_kit = 0, envelope_count = 0, envelope_count_2 = 0, envelope_count_3 = 0, envelope_count_4 = 0, envelope_period = 0, envelope_step = 0, envelope_step_2 = 0, envelope_step_3 = 0, envelope_step_4 = 0, gate = 0, index_high = 0, jump_count = 0, lfo_ramp = 0, loop_2_count = 0, loop_count = 0, music_pan = 0, music_volume = 0, part_count = 0, sensitivity = 0, step = 0, step_2 = 0, tempo_2 = 0;
+	uint16_t command_entry = 0, drum_routines = 0, element = 0, handler = 0, kit_routines = 0, part_return = 0, patch = 0, patch_entry = 0, pitch = 0, pitch_entry = 0, routine_entry = 0, tempo = 0, time = 0, track = 0, transposition = 0;
+	uint8_t stack = 0, saved_step = 0;
+	uint8_t t1 = 0, loop_count_2 = 0, loop_2_count_2 = 0, part_count_2 = 0;
 	uint32_t jump_target = 0;
 
 	z80_block(28);
-	if (z80_read8((uint16_t)(ix + 0x10u)) == 0u)
+	if (CHANNEL(channel)->song == 0u)
 	{
 		z80_cycles(6);
-		return ix;
+		return channel;
 	}
 	z80_block(59);
-	if ((z80_read8((uint16_t)(ix + 0x40u)) & 7u) != (pass_count & 7u))
+	if ((CHANNEL(channel)->chip_channel & 7u) != (pass_count & 7u))
 	{
 		z80_cycles(6);
-		return ix;
+		return channel;
 	}
 	z80_block(118);
-	hl = z80_read16((uint16_t)(ix + 0x3Au));
-	e = z80_read8((uint16_t)(ix + 0x13u));
-	carry = (uint16_t)(hl + e) < hl;
-	hl += e;
-	z80_write16((uint16_t)(ix + 0x3Au), hl);
+	time = CHANNEL(channel)->time;
+	tempo = CHANNEL(channel)->tempo;
+	carry = (uint16_t)(time + tempo) < time;
+	time += tempo;
+	CHANNEL(channel)->time = time;
 	if (carry == 0u)
 	{
 		z80_cycles(6);
-		return ix;
+		return channel;
 	}
 	for (;;)
 	{
 		z80_block(17);
-		a = next_track_byte(ix);
+		byte = next_track_byte(channel);
 		z80_block(21);
-		c = a;
-		if (a < 0xE0u)
+		step = byte;
+		if (byte < 0xE0u)
 		{
 			z80_block(17);
-			if ((a & 0xFu) == 0u)
+			if ((byte & 0xFu) == 0u)
 			{
 				z80_block(17);
-				bc = c;
-				carry = add_note_length(bc, ix);
+				step_2 = step;
+				carry = add_note_length(step_2, channel);
 				z80_block(10);
 				if (carry == 0u)
 					break;
 				continue;
 			}
 			z80_block(21);
-			if (c < 0x10u)
+			if (step < 0x10u)
 			{
 				z80_block(69);
-				c = (((uint32_t)c << 1) << 1) << 1;
-				z80_write8((uint16_t)(ix + 0x15u), c + ((uint32_t)c << 1));
+				step = (((uint32_t)step << 1) << 1) << 1;
+				CHANNEL(channel)->octave = step + ((uint32_t)step << 1);
 				continue;
 			}
 			z80_block(17);
-			bc = c;
-			carry = add_note_length(bc, ix);
+			step_2 = step;
+			carry = add_note_length(step_2, channel);
 			L_0042C5 = true;
 		}
 		if (!L_0042C5)
 		{
 			z80_block(71);
-			command_entry = c * 2u + music_commands_ADDRESS;
+			command_entry = step * 2u + music_commands_ADDRESS;
 		}
 		jump_target = L_0042C5 ? 0x4737u : MUSIC_COMMAND_HANDLER(command_entry)[0];
 		switch (jump_target)
 		{
-		case 0x0046A6u:
+		case track_set_drum_kit_ADDRESS:
 			z80_block(17);
-			a = next_track_byte(ix);
+			drum_kit = next_track_byte(channel);
 			z80_block(33);
-			z80_write8((uint16_t)(ix + 0x12u), a);
-			if (a == 0u)
+			CHANNEL(channel)->drum_kit = drum_kit;
+			if (drum_kit == 0u)
 				continue;
 			z80_block(46);
-			d = 0x49u;
-			e = 0x4Cu;
-			if (z80_read8((uint16_t)(ix + 0x40u)) >= 8u)
+			kit_routines = 0x494Cu;
+			if (CHANNEL(channel)->chip_channel >= 8u)
 			{
 				z80_block(10);
-				d = 0x4Eu;
-				e = 0x4Eu;
+				kit_routines = instrument_routines_ADDRESS;
 			}
 			z80_block(140);
-			hl = z80_read8((uint16_t)(ix + 0x12u)) * 2u * 2u * 2u * 2u * 2u + (((uint32_t)d << 8) | e);
-			z80_write16((uint16_t)(ix + 0x28u), hl);
+			drum_routines = CHANNEL(channel)->drum_kit * 2u * 2u * 2u * 2u * 2u + kit_routines;
+			CHANNEL(channel)->drum_routines = drum_routines;
 			continue;
-		case 0x0046D2u:
+		case track_set_tempo_ADDRESS:
 			z80_block(17);
-			a = next_track_byte(ix);
+			tempo_2 = next_track_byte(channel);
 			z80_block(29);
-			z80_write8((uint16_t)(ix + 0x13u), a);
+			CHANNEL(channel)->tempo = tempo_2;
 			continue;
-		case 0x0046DBu:
+		case track_set_instrument_ADDRESS:
 			z80_block(17);
-			a = next_track_byte(ix);
+			byte = next_track_byte(channel);
 			z80_block(61);
-			c = ((uint32_t)a << 1) | (a >> 7);
-			b = 0u;
+			step = ((uint32_t)byte << 1) | (byte >> 7);
+			index_high = 0u;
 			patch_entry = music_fm_patches_ADDRESS;
-			if (z80_read8((uint16_t)(ix + 0x40u)) >= 8u)
+			if (CHANNEL(channel)->chip_channel >= 8u)
 			{
 				z80_block(89);
-				d = TABLE8(music_pcm_transpositions, 0x1u + (uint16_t)(((uint32_t)b << 8) | c));
-				z80_write8((uint16_t)(ix + 0x26u), TABLE8(music_pcm_transpositions, (uint16_t)(((uint32_t)b << 8) | c)));
-				z80_write8((uint16_t)(ix + 0x27u), d);
+				transposition = TABLE16(music_pcm_transpositions, (uint16_t)(((uint32_t)index_high << 8) | step));
+				CHANNEL(channel)->transposition = transposition;
 				patch_entry = music_pcm_patches_ADDRESS;
 			}
 			z80_block(99);
-			patch_entry += ((uint32_t)b << 8) | c;
-			element = (uint8_t)PATCH_ADDRESS(patch_entry)[0];
-			d = (uint8_t)(PATCH_ADDRESS(patch_entry)[0] >> 8u);
-			z80_write8((uint16_t)(ix + 0x19u), element);
-			z80_write8((uint16_t)(ix + 0x1Au), d);
-			if (z80_read8((uint16_t)(ix + 0x41u)) >> 7 == 0u)
+			patch_entry += ((uint32_t)index_high << 8) | step;
+			element = PATCH_ADDRESS(patch_entry)[0];
+			CHANNEL(channel)->patch = element;
+			if (CHANNEL(channel)->sound >> 7 == 0u)
 				continue;
 			z80_block(21);
-			hl = ((uint32_t)d << 8) | element;
-			load_patch(hl, ix);
+			patch = element;
+			load_patch(patch, channel);
 			z80_block(36);
-			a = z80_read8((uint16_t)(ix + 0x18u));
-			set_pan(ix, a);
+			music_pan = CHANNEL(channel)->music_pan;
+			set_pan(channel, music_pan);
 			z80_block(17);
-			noise_off(ix);
+			noise_off(channel);
 			z80_block(10);
 			continue;
-		case 0x00471Eu:
+		case track_set_volume_ADDRESS:
 			z80_block(17);
-			a = next_track_byte(ix);
+			music_volume = next_track_byte(channel);
 			z80_block(49);
-			z80_write8((uint16_t)(ix + 0x17u), a);
-			if (z80_read8((uint16_t)(ix + 0x41u)) >> 7 != 0u)
+			CHANNEL(channel)->music_volume = music_volume;
+			if (CHANNEL(channel)->sound >> 7 != 0u)
 			{
 				z80_cycles(7);
-				set_music_volume(ix, a);
+				set_music_volume(channel, music_volume);
 			}
 			z80_block(10);
 			continue;
-		case 0x00472Eu:
+		case track_set_gate_ADDRESS:
 			z80_block(17);
-			a = next_track_byte(ix);
+			gate = next_track_byte(channel);
 			z80_block(29);
-			z80_write8((uint16_t)(ix + 0x14u), a);
+			CHANNEL(channel)->gate = gate;
 			continue;
-		case 0x004737u:
+		case track_held_note_ADDRESS:
 			if (!L_0042C5)
 			{
 				z80_block(17);
-				a = next_track_byte(ix);
+				byte = next_track_byte(channel);
 				z80_block(21);
-				c = a;
-				bc = c;
-				carry = add_note_length(bc, ix);
+				step = byte;
+				step_2 = step;
+				carry = add_note_length(step_2, channel);
 				z80_block(11);
-				saved_c = c;
+				saved_step = step;
 				for (;;)
 				{
 					z80_block(17);
-					a = next_track_byte(ix);
+					byte = next_track_byte(channel);
 					z80_block(28);
-					c = a;
-					if ((a & ~0xFu) == 0xF0u)
+					step = byte;
+					if ((byte & ~0xFu) == 0xF0u)
 						break;
 					z80_block(17);
-					bc = c;
-					carry = add_note_length(bc, ix);
+					step_2 = step;
+					carry = add_note_length(step_2, channel);
 					z80_block(28);
-					if ((c & 0xFu) == 0xFu)
+					if ((step & 0xFu) == 0xFu)
 						break;
 					z80_block(49);
-					bc = (uint8_t)(((((uint32_t)c << 1) << 1) << 1) << 1);
-					carry = add_note_length(bc, ix);
+					step_2 = (uint8_t)(((((uint32_t)step << 1) << 1) << 1) << 1);
+					carry = add_note_length(step_2, channel);
 					z80_block(10);
 				}
 				z80_block(20);
-				c = saved_c;
+				step = saved_step;
 			}
 			z80_block(43);
-			if (z80_read8((uint16_t)(ix + 0x11u)) < z80_read8((uint16_t)(ix + 0x42u)))
+			if (CHANNEL(channel)->music_priority < CHANNEL(channel)->priority)
 			{
 				z80_cycles(6);
-				return ix;
+				return channel;
 			}
 			z80_block(33);
-			if (z80_read8((uint16_t)(ix + 0x12u)) != 0u)
+			if (CHANNEL(channel)->drum_kit != 0u)
 			{
 				z80_block(154);
-				z80_write8((uint16_t)(ix + 0x3Cu), 1u);
-				z80_write8((uint16_t)(ix + 0x3Du), 0u);
-				a = c & 0xFu;
-				hl = z80_read16((uint16_t)(ix + 0x28u)) + (uint8_t)(((uint32_t)a << 1) | (a >> 7));
-				hl = z80_read16(hl);
-				set_channel_handler(hl, ix);
+				CHANNEL(channel)->gate_time = 1u;
+				byte = step & 0xFu;
+				routine_entry = CHANNEL(channel)->drum_routines + (uint8_t)(((uint32_t)byte << 1) | (byte >> 7));
+				handler = z80_read16(routine_entry);
+				set_channel_handler(handler, channel);
 				z80_block(17);
-				key_off(ix);
+				key_off(channel);
 				z80_block(36);
-				a = z80_read8((uint16_t)(ix + 0x17u));
-				set_music_volume(ix, a);
+				music_volume = CHANNEL(channel)->music_volume;
+				set_music_volume(channel, music_volume);
 				z80_block(17);
-				noise_off(ix);
+				noise_off(channel);
 				z80_block(21);
-				a = 0u;
-				set_channel_pm_sensitivity(ix, a);
+				sensitivity = 0u;
+				set_channel_pm_sensitivity(channel, sensitivity);
 				z80_block(21);
-				a = 0u;
-				set_channel_am_sensitivity(ix, a);
+				sensitivity = 0u;
+				set_channel_am_sensitivity(channel, sensitivity);
 				z80_block(86);
-				z80_write8((uint16_t)(ix + 0x41u), z80_read8((uint16_t)(ix + 0x10u)));
-				z80_write8((uint16_t)(ix + 0x42u), z80_read8((uint16_t)(ix + 0x11u)));
-				return ix;
+				CHANNEL(channel)->sound = CHANNEL(channel)->song;
+				CHANNEL(channel)->priority = CHANNEL(channel)->music_priority;
+				return channel;
 			}
 			z80_block(30);
-			if (z80_read8((uint16_t)(ix + 0x41u)) >> 7 == 0u)
+			if (CHANNEL(channel)->sound >> 7 == 0u)
 			{
 				z80_block(66);
-				saved_c = c;
-				hl = z80_read16((uint16_t)(ix + 0x19u));
-				load_patch(hl, ix);
+				saved_step = step;
+				patch = CHANNEL(channel)->patch;
+				load_patch(patch, channel);
 				z80_block(36);
-				a = z80_read8((uint16_t)(ix + 0x17u));
-				set_music_volume(ix, a);
+				music_volume = CHANNEL(channel)->music_volume;
+				set_music_volume(channel, music_volume);
 				z80_block(36);
-				a = z80_read8((uint16_t)(ix + 0x18u));
-				set_pan(ix, a);
+				music_pan = CHANNEL(channel)->music_pan;
+				set_pan(channel, music_pan);
 				z80_block(17);
-				noise_off(ix);
+				noise_off(channel);
 				z80_block(10);
-				c = saved_c;
+				step = saved_step;
 			}
 			z80_block(66);
-			t1 = z80_read8((uint16_t)(ix + 0x3Cu)) | z80_read8((uint16_t)(ix + 0x3Du));
+			t1 = (uint8_t)CHANNEL(channel)->gate_time | (uint8_t)(CHANNEL(channel)->gate_time >> 8u);
 			negative = t1 >> 7;
 			zero = t1 == 0u;
 			overflow = parity8(t1);
 			carry = 0u;
 			stack = (negative << 7) | (zero << 6) | (overflow << 2) | (carry << 0);
-			set_note_gate(ix);
+			set_note_gate(channel);
 			z80_block(46);
 			pitch_entry = fm_pitches_by_note_ADDRESS;
-			if (z80_read8((uint16_t)(ix + 0x40u)) >= 8u)
+			if (CHANNEL(channel)->chip_channel >= 8u)
 			{
 				z80_block(10);
 				pitch_entry = pcm_pitches_ADDRESS;
 			}
 			z80_block(217);
-			a = c & 0xFu;
-			pitch_entry = pitch_entry + (uint8_t)((((uint32_t)a << 1) | (a >> 7)) + z80_read8((uint16_t)(ix + 0x15u))) + z80_read16((uint16_t)(ix + 0x26u));
-			hl = z80_read8((uint16_t)(ix + 0x16u)) + PITCH(pitch_entry)[0];
-			z80_write16((uint16_t)(ix + 0x2Cu), hl);
-			set_pitch(hl, ix);
+			byte = step & 0xFu;
+			pitch_entry = pitch_entry + (uint8_t)((((uint32_t)byte << 1) | (byte >> 7)) + CHANNEL(channel)->octave) + CHANNEL(channel)->transposition;
+			pitch = CHANNEL(channel)->detune + PITCH(pitch_entry)[0];
+			CHANNEL(channel)->note_pitch = pitch;
+			set_pitch(pitch, channel);
 			z80_block(20);
 			if ((stack >> 6) & 1u)
 			{
 				z80_block(96);
-				z80_write8((uint16_t)(ix + 0x41u), z80_read8((uint16_t)(ix + 0x10u)));
-				z80_write8((uint16_t)(ix + 0x42u), z80_read8((uint16_t)(ix + 0x11u)));
-				hl = music_pitch_envelope_1_ADDRESS;
-				set_channel_handler(hl, ix);
-				return ix;
+				CHANNEL(channel)->sound = CHANNEL(channel)->song;
+				CHANNEL(channel)->priority = CHANNEL(channel)->music_priority;
+				handler = music_pitch_envelope_1_ADDRESS;
+				set_channel_handler(handler, channel);
+				return channel;
 			}
 			z80_block(17);
-			key_off(ix);
+			key_off(channel);
 			z80_block(78);
-			z80_write8((uint16_t)(ix + 0x2Eu), z80_read8((uint16_t)(ix + 0x1Bu)));
-			z80_write8((uint16_t)(ix + 0x2Fu), 0u);
-			a = 0u;
-			set_channel_pm_sensitivity(ix, a);
+			CHANNEL(channel)->lfo_ramp_timer = CHANNEL(channel)->lfo_ramp;
+			CHANNEL(channel)->lfo_ramp_step = 0u;
+			sensitivity = 0u;
+			set_channel_pm_sensitivity(channel, sensitivity);
 			z80_block(21);
-			a = 0u;
-			set_channel_am_sensitivity(ix, a);
+			sensitivity = 0u;
+			set_channel_am_sensitivity(channel, sensitivity);
 			z80_block(17);
-			key_on(ix);
+			key_on(channel);
 			z80_block(76);
-			z80_write8((uint16_t)(ix + 0x2Au), z80_read8((uint16_t)(ix + 0x24u)));
-			z80_write8((uint16_t)(ix + 0x2Bu), z80_read8((uint16_t)(ix + 0x1Cu)));
+			CHANNEL(channel)->envelope_timer = CHANNEL(channel)->envelope_period;
+			CHANNEL(channel)->envelope_count = CHANNEL(channel)->envelope_count_1;
 			z80_block(96);
-			z80_write8((uint16_t)(ix + 0x41u), z80_read8((uint16_t)(ix + 0x10u)));
-			z80_write8((uint16_t)(ix + 0x42u), z80_read8((uint16_t)(ix + 0x11u)));
-			hl = music_pitch_envelope_1_ADDRESS;
-			set_channel_handler(hl, ix);
-			return ix;
-		case 0x004767u:
+			CHANNEL(channel)->sound = CHANNEL(channel)->song;
+			CHANNEL(channel)->priority = CHANNEL(channel)->music_priority;
+			handler = music_pitch_envelope_1_ADDRESS;
+			set_channel_handler(handler, channel);
+			return channel;
+		case track_set_detune_ADDRESS:
 			z80_block(17);
-			a = next_track_byte(ix);
+			detune = next_track_byte(channel);
 			z80_block(29);
-			z80_write8((uint16_t)(ix + 0x16u), a);
+			CHANNEL(channel)->detune = detune;
 			continue;
-		case 0x004770u:
+		case track_set_pitch_envelope_ADDRESS:
 			z80_block(17);
-			a = next_track_byte(ix);
+			envelope_period = next_track_byte(channel);
 			z80_block(36);
-			z80_write8((uint16_t)(ix + 0x24u), a);
-			a = next_track_byte(ix);
+			CHANNEL(channel)->envelope_period = envelope_period;
+			envelope_count = next_track_byte(channel);
 			z80_block(36);
-			z80_write8((uint16_t)(ix + 0x1Cu), a);
-			a = next_track_byte(ix);
+			CHANNEL(channel)->envelope_count_1 = envelope_count;
+			envelope_step = next_track_byte(channel);
 			z80_block(36);
-			z80_write8((uint16_t)(ix + 0x1Du), a);
-			a = next_track_byte(ix);
+			CHANNEL(channel)->envelope_step_1 = envelope_step;
+			envelope_count_2 = next_track_byte(channel);
 			z80_block(36);
-			z80_write8((uint16_t)(ix + 0x1Eu), a);
-			a = next_track_byte(ix);
+			CHANNEL(channel)->envelope_count_2 = envelope_count_2;
+			envelope_step_2 = next_track_byte(channel);
 			z80_block(36);
-			z80_write8((uint16_t)(ix + 0x1Fu), a);
-			a = next_track_byte(ix);
+			CHANNEL(channel)->envelope_step_2 = envelope_step_2;
+			envelope_count_3 = next_track_byte(channel);
 			z80_block(36);
-			z80_write8((uint16_t)(ix + 0x20u), a);
-			a = next_track_byte(ix);
+			CHANNEL(channel)->envelope_count_3 = envelope_count_3;
+			envelope_step_3 = next_track_byte(channel);
 			z80_block(36);
-			z80_write8((uint16_t)(ix + 0x21u), a);
-			a = next_track_byte(ix);
+			CHANNEL(channel)->envelope_step_3 = envelope_step_3;
+			envelope_count_4 = next_track_byte(channel);
 			z80_block(36);
-			z80_write8((uint16_t)(ix + 0x22u), a);
-			a = next_track_byte(ix);
+			CHANNEL(channel)->envelope_count_4 = envelope_count_4;
+			envelope_step_4 = next_track_byte(channel);
 			z80_block(29);
-			z80_write8((uint16_t)(ix + 0x23u), a);
+			CHANNEL(channel)->envelope_step_4 = envelope_step_4;
 			continue;
-		case 0x0047A9u:
+		case track_reset_e8_ADDRESS:
 			z80_block(10);
 			return sound_reset();
-		case 0x0047ACu:
+		case track_reset_e9_ADDRESS:
 			z80_block(10);
 			return sound_reset();
-		case 0x0047AFu:
+		case track_reset_ea_ADDRESS:
 			z80_block(10);
 			return sound_reset();
-		case 0x0047B2u:
+		case track_reset_eb_ADDRESS:
 			z80_block(10);
 			return sound_reset();
-		case 0x0047B5u:
+		case track_reset_ec_ADDRESS:
 			z80_block(10);
 			return sound_reset();
-		case 0x0047B8u:
+		case track_set_lfo_ADDRESS:
 			z80_block(17);
-			a = next_track_byte(ix);
+			byte = next_track_byte(channel);
 			z80_block(17);
-			set_lfo_frequency(a);
+			set_lfo_frequency(byte);
 			z80_block(17);
-			a = next_track_byte(ix);
+			byte = next_track_byte(channel);
 			z80_block(17);
-			set_lfo_pm_depth(a);
+			set_lfo_pm_depth(byte);
 			z80_block(17);
-			a = next_track_byte(ix);
+			byte = next_track_byte(channel);
 			z80_block(17);
-			set_lfo_am_depth(a);
+			set_lfo_am_depth(byte);
 			z80_block(17);
-			a = next_track_byte(ix);
+			byte = next_track_byte(channel);
 			z80_block(17);
-			set_lfo_waveform(a);
+			set_lfo_waveform(byte);
 			z80_block(10);
 			continue;
-		case 0x0047D3u:
+		case track_set_lfo_ramp_ADDRESS:
 			z80_block(17);
-			a = next_track_byte(ix);
+			lfo_ramp = next_track_byte(channel);
 			z80_block(29);
-			z80_write8((uint16_t)(ix + 0x1Bu), a);
+			CHANNEL(channel)->lfo_ramp = lfo_ramp;
 			continue;
-		case 0x0047DCu:
+		case track_set_pan_ADDRESS:
 			z80_block(17);
-			a = next_track_byte(ix);
+			music_pan = next_track_byte(channel);
 			z80_block(49);
-			z80_write8((uint16_t)(ix + 0x18u), a);
-			if (z80_read8((uint16_t)(ix + 0x41u)) >> 7 != 0u)
+			CHANNEL(channel)->music_pan = music_pan;
+			if (CHANNEL(channel)->sound >> 7 != 0u)
 			{
 				z80_cycles(7);
-				set_pan(ix, a);
+				set_pan(channel, music_pan);
 			}
 			z80_block(10);
 			continue;
-		case 0x0047ECu:
+		case track_jump_ADDRESS:
 			z80_block(17);
-			a = next_track_byte(ix);
+			byte = next_track_byte(channel);
 			z80_block(21);
-			c = a;
-			a = next_track_byte(ix);
+			step = byte;
+			byte = next_track_byte(channel);
 			z80_block(48);
-			z80_write8((uint16_t)(ix + 0x3Eu), c);
-			z80_write8((uint16_t)(ix + 0x3Fu), a);
+			CHANNEL(channel)->track = ((uint32_t)byte << 8) | step;
 			continue;
-		case 0x0047FCu:
+		case track_jump_counted_ADDRESS:
 			z80_block(40);
-			z80_write8((uint16_t)(ix + 0x30u), z80_read8((uint16_t)(ix + 0x30u)) + 1u);
-			a = next_track_byte(ix);
+			CHANNEL(channel)->jump_count++;
+			jump_count = next_track_byte(channel);
 			z80_block(29);
-			if (a == z80_read8((uint16_t)(ix + 0x30u)))
+			if (jump_count == CHANNEL(channel)->jump_count)
 			{
 				z80_block(29);
-				z80_write8((uint16_t)(ix + 0x30u), 0u);
+				CHANNEL(channel)->jump_count = 0u;
 				z80_block(17);
-				a = next_track_byte(ix);
+				byte = next_track_byte(channel);
 				z80_block(21);
-				c = a;
-				a = next_track_byte(ix);
+				step = byte;
+				byte = next_track_byte(channel);
 				z80_block(48);
-				z80_write8((uint16_t)(ix + 0x3Eu), c);
-				z80_write8((uint16_t)(ix + 0x3Fu), a);
+				CHANNEL(channel)->track = ((uint32_t)byte << 8) | step;
 				continue;
 			}
 			z80_block(17);
-			next_track_byte(ix);
+			next_track_byte(channel);
 			z80_block(17);
-			next_track_byte(ix);
+			next_track_byte(channel);
 			z80_block(10);
 			continue;
-		case 0x004818u:
+		case track_loop_start_ADDRESS:
 			z80_block(17);
-			a = next_track_byte(ix);
+			loop_count = next_track_byte(channel);
 			z80_block(105);
-			z80_write8((uint16_t)(ix + 0x31u), a);
-			z80_write8((uint16_t)(ix + 0x32u), z80_read8((uint16_t)(ix + 0x3Eu)));
-			z80_write8((uint16_t)(ix + 0x33u), z80_read8((uint16_t)(ix + 0x3Fu)));
+			CHANNEL(channel)->loop_count = loop_count;
+			CHANNEL(channel)->loop_start = CHANNEL(channel)->track;
 			continue;
-		case 0x00482Du:
+		case track_loop_end_ADDRESS:
 			z80_block(33);
-			t2 = z80_read8((uint16_t)(ix + 0x31u));
-			z80_write8((uint16_t)(ix + 0x31u), t2 - 1u);
-			if (t2 == 1u)
+			loop_count_2 = CHANNEL(channel)->loop_count;
+			CHANNEL(channel)->loop_count = loop_count_2 - 1u;
+			if (loop_count_2 == 1u)
 				continue;
 			z80_block(86);
-			z80_write8((uint16_t)(ix + 0x3Eu), z80_read8((uint16_t)(ix + 0x32u)));
-			z80_write8((uint16_t)(ix + 0x3Fu), z80_read8((uint16_t)(ix + 0x33u)));
+			CHANNEL(channel)->track = CHANNEL(channel)->loop_start;
 			continue;
-		case 0x004842u:
+		case track_loop_2_start_ADDRESS:
 			z80_block(17);
-			a = next_track_byte(ix);
+			loop_2_count = next_track_byte(channel);
 			z80_block(105);
-			z80_write8((uint16_t)(ix + 0x34u), a);
-			z80_write8((uint16_t)(ix + 0x35u), z80_read8((uint16_t)(ix + 0x3Eu)));
-			z80_write8((uint16_t)(ix + 0x36u), z80_read8((uint16_t)(ix + 0x3Fu)));
+			CHANNEL(channel)->loop_2_count = loop_2_count;
+			CHANNEL(channel)->loop_2_start = CHANNEL(channel)->track;
 			continue;
-		case 0x004857u:
+		case track_loop_2_end_ADDRESS:
 			z80_block(33);
-			t3 = z80_read8((uint16_t)(ix + 0x34u));
-			z80_write8((uint16_t)(ix + 0x34u), t3 - 1u);
-			if (t3 == 1u)
+			loop_2_count_2 = CHANNEL(channel)->loop_2_count;
+			CHANNEL(channel)->loop_2_count = loop_2_count_2 - 1u;
+			if (loop_2_count_2 == 1u)
 				continue;
 			z80_block(86);
-			z80_write8((uint16_t)(ix + 0x3Eu), z80_read8((uint16_t)(ix + 0x35u)));
-			z80_write8((uint16_t)(ix + 0x3Fu), z80_read8((uint16_t)(ix + 0x36u)));
+			CHANNEL(channel)->track = CHANNEL(channel)->loop_2_start;
 			continue;
-		case 0x00486Cu:
+		case track_call_part_ADDRESS:
 			z80_block(17);
-			a = next_track_byte(ix);
+			part_count = next_track_byte(channel);
 			z80_block(112);
-			z80_write8((uint16_t)(ix + 0x37u), a);
-			hl = z80_read16((uint16_t)(ix + 0x3Eu));
-			z80_write16((uint16_t)(ix + 0x38u), hl);
-			a = next_track_byte(ix);
+			CHANNEL(channel)->part_count = part_count;
+			track = CHANNEL(channel)->track;
+			CHANNEL(channel)->part_return = track;
+			byte = next_track_byte(channel);
 			z80_block(21);
-			c = a;
-			a = next_track_byte(ix);
+			step = byte;
+			byte = next_track_byte(channel);
 			z80_block(48);
-			z80_write8((uint16_t)(ix + 0x3Eu), c);
-			z80_write8((uint16_t)(ix + 0x3Fu), a);
+			CHANNEL(channel)->track = ((uint32_t)byte << 8) | step;
 			continue;
-		case 0x00488Eu:
+		case track_part_return_ADDRESS:
 			z80_block(93);
-			hl = z80_read16((uint16_t)(ix + 0x38u));
-			z80_write16((uint16_t)(ix + 0x3Eu), hl);
-			a = next_track_byte(ix);
+			part_return = CHANNEL(channel)->part_return;
+			CHANNEL(channel)->track = part_return;
+			byte = next_track_byte(channel);
 			z80_block(21);
-			c = a;
-			a = next_track_byte(ix);
+			step = byte;
+			byte = next_track_byte(channel);
 			z80_block(33);
-			t4 = z80_read8((uint16_t)(ix + 0x37u));
-			z80_write8((uint16_t)(ix + 0x37u), t4 - 1u);
-			if (t4 == 1u)
+			part_count_2 = CHANNEL(channel)->part_count;
+			CHANNEL(channel)->part_count = part_count_2 - 1u;
+			if (part_count_2 == 1u)
 				continue;
 			z80_block(48);
-			z80_write8((uint16_t)(ix + 0x3Eu), c);
-			z80_write8((uint16_t)(ix + 0x3Fu), a);
+			CHANNEL(channel)->track = ((uint32_t)byte << 8) | step;
 			continue;
-		case 0x0048B0u:
+		case track_reset_f8_ADDRESS:
 			z80_block(10);
 			return sound_reset();
-		case 0x0048B3u:
+		case track_reset_fd_ADDRESS:
 			z80_block(10);
 			return sound_reset();
-		case 0x0048B6u:
+		case track_set_priority_ADDRESS:
 			z80_block(17);
-			a = next_track_byte(ix);
+			byte = next_track_byte(channel);
 			z80_block(49);
-			z80_write8((uint16_t)(ix + 0x11u), a);
-			if (z80_read8((uint16_t)(ix + 0x41u)) >> 7 == 0u)
+			CHANNEL(channel)->music_priority = byte;
+			if (CHANNEL(channel)->sound >> 7 == 0u)
 				continue;
 			z80_block(29);
-			z80_write8((uint16_t)(ix + 0x42u), a);
+			CHANNEL(channel)->priority = byte;
 			continue;
-		case 0x0048C9u:
+		case track_end_ADDRESS:
 			z80_block(51);
-			z80_write8((uint16_t)(ix + 0x10u), 0u);
-			if (z80_read8((uint16_t)(ix + 0x41u)) >> 7 == 0u)
+			CHANNEL(channel)->song = 0u;
+			if (CHANNEL(channel)->sound >> 7 == 0u)
 			{
 				z80_cycles(6);
-				return ix;
+				return channel;
 			}
 			z80_block(48);
-			z80_write8((uint16_t)(ix + 0x41u), 0u);
-			z80_write8((uint16_t)(ix + 0x42u), 0u);
-			return ix;
+			CHANNEL(channel)->sound = 0u;
+			CHANNEL(channel)->priority = 0u;
+			return channel;
 		}
 	}
 	z80_block(63);
-	z80_write8((uint16_t)(ix + 0x3Cu), 1u);
-	z80_write8((uint16_t)(ix + 0x3Du), 0u);
-	if (z80_read8((uint16_t)(ix + 0x41u)) >> 7 == 0u)
+	CHANNEL(channel)->gate_time = 1u;
+	if (CHANNEL(channel)->sound >> 7 == 0u)
 	{
 		z80_cycles(6);
-		return ix;
+		return channel;
 	}
 	z80_block(10);
-	key_off(ix);
-	return ix;
+	key_off(channel);
+	return channel;
 }
 
-/* a note's pitch envelope, segment 1: every +24 passes the pitch by +1D, +1E times */
-void music_pitch_envelope_1(uint16_t ix)
+/* A music note's handler while the pitch envelope's first segment runs: music_note_tick, then every
+   envelope_period passes envelope_step added to note_pitch, envelope_count_1 times; then the second
+   segment. */
+void music_pitch_envelope_1(uint16_t channel)
 {
-	uint8_t d = 0, e = 0, h = 0, l = 0;
-	uint16_t hl = 0;
-	uint8_t t1 = 0, t3 = 0;
-	uint16_t t2 = 0;
+	uint8_t envelope_step = 0, step_high = 0;
+	uint16_t handler = 0, pitch = 0;
+	uint8_t envelope_timer = 0, envelope_count = 0;
 
 	z80_block(17);
-	music_note_tick(ix);
+	music_note_tick(channel);
 	z80_block(28);
-	if (z80_read8((uint16_t)(ix + 0x2Au)) == 0u)
+	if (CHANNEL(channel)->envelope_timer == 0u)
 	{
 		z80_cycles(6);
 		return;
 	}
 	z80_block(28);
-	t1 = z80_read8((uint16_t)(ix + 0x2Au));
-	z80_write8((uint16_t)(ix + 0x2Au), t1 - 1u);
-	if (t1 != 1u)
+	envelope_timer = CHANNEL(channel)->envelope_timer;
+	CHANNEL(channel)->envelope_timer = envelope_timer - 1u;
+	if (envelope_timer != 1u)
 	{
 		z80_cycles(6);
 		return;
 	}
 	z80_block(82);
-	z80_write8((uint16_t)(ix + 0x2Au), z80_read8((uint16_t)(ix + 0x24u)));
-	e = z80_read8((uint16_t)(ix + 0x1Du));
-	d = 0u;
-	if (e >> 7)
+	CHANNEL(channel)->envelope_timer = CHANNEL(channel)->envelope_period;
+	envelope_step = CHANNEL(channel)->envelope_step_1;
+	step_high = 0u;
+	if (envelope_step >> 7)
 	{
 		z80_block(4);
-		d--;
+		step_high--;
 	}
 	z80_block(104);
-	t2 = z80_read16((uint16_t)(ix + 0x2Cu)) + (((uint32_t)d << 8) | e);
-	h = (uint8_t)(t2 >> 8);
-	l = (uint8_t)t2;
-	z80_write8((uint16_t)(ix + 0x2Cu), l);
-	z80_write8((uint16_t)(ix + 0x2Du), h);
-	hl = ((uint32_t)h << 8) | l;
-	set_pitch(hl, ix);
+	pitch = CHANNEL(channel)->note_pitch + (((uint32_t)step_high << 8) | envelope_step);
+	CHANNEL(channel)->note_pitch = pitch;
+	set_pitch(pitch, channel);
 	z80_block(28);
-	t3 = z80_read8((uint16_t)(ix + 0x2Bu));
-	z80_write8((uint16_t)(ix + 0x2Bu), t3 - 1u);
-	if (t3 != 1u)
+	envelope_count = CHANNEL(channel)->envelope_count;
+	CHANNEL(channel)->envelope_count = envelope_count - 1u;
+	if (envelope_count != 1u)
 	{
 		z80_cycles(6);
 		return;
 	}
 	z80_block(58);
-	z80_write8((uint16_t)(ix + 0x2Bu), z80_read8((uint16_t)(ix + 0x1Eu)));
-	hl = music_pitch_envelope_2_ADDRESS;
-	set_channel_handler(hl, ix);
+	CHANNEL(channel)->envelope_count = CHANNEL(channel)->envelope_count_2;
+	handler = music_pitch_envelope_2_ADDRESS;
+	set_channel_handler(handler, channel);
 }
 
-/* segment 2: by +1F, +20 times */
-void music_pitch_envelope_2(uint16_t ix)
+/* The second segment: music_note_tick, then every envelope_period passes envelope_step added to
+   note_pitch, envelope_count_2 times; then the third. */
+void music_pitch_envelope_2(uint16_t channel)
 {
-	uint8_t d = 0, e = 0, h = 0, l = 0;
-	uint16_t hl = 0;
-	uint8_t t1 = 0, t3 = 0;
-	uint16_t t2 = 0;
+	uint8_t envelope_step = 0, step_high = 0;
+	uint16_t handler = 0, pitch = 0;
+	uint8_t envelope_timer = 0, envelope_count = 0;
 
 	z80_block(17);
-	music_note_tick(ix);
+	music_note_tick(channel);
 	z80_block(28);
-	if (z80_read8((uint16_t)(ix + 0x2Au)) == 0u)
+	if (CHANNEL(channel)->envelope_timer == 0u)
 	{
 		z80_cycles(6);
 		return;
 	}
 	z80_block(28);
-	t1 = z80_read8((uint16_t)(ix + 0x2Au));
-	z80_write8((uint16_t)(ix + 0x2Au), t1 - 1u);
-	if (t1 != 1u)
+	envelope_timer = CHANNEL(channel)->envelope_timer;
+	CHANNEL(channel)->envelope_timer = envelope_timer - 1u;
+	if (envelope_timer != 1u)
 	{
 		z80_cycles(6);
 		return;
 	}
 	z80_block(82);
-	z80_write8((uint16_t)(ix + 0x2Au), z80_read8((uint16_t)(ix + 0x24u)));
-	e = z80_read8((uint16_t)(ix + 0x1Fu));
-	d = 0u;
-	if (e >> 7)
+	CHANNEL(channel)->envelope_timer = CHANNEL(channel)->envelope_period;
+	envelope_step = CHANNEL(channel)->envelope_step_2;
+	step_high = 0u;
+	if (envelope_step >> 7)
 	{
 		z80_block(4);
-		d--;
+		step_high--;
 	}
 	z80_block(104);
-	t2 = z80_read16((uint16_t)(ix + 0x2Cu)) + (((uint32_t)d << 8) | e);
-	h = (uint8_t)(t2 >> 8);
-	l = (uint8_t)t2;
-	z80_write8((uint16_t)(ix + 0x2Cu), l);
-	z80_write8((uint16_t)(ix + 0x2Du), h);
-	hl = ((uint32_t)h << 8) | l;
-	set_pitch(hl, ix);
+	pitch = CHANNEL(channel)->note_pitch + (((uint32_t)step_high << 8) | envelope_step);
+	CHANNEL(channel)->note_pitch = pitch;
+	set_pitch(pitch, channel);
 	z80_block(28);
-	t3 = z80_read8((uint16_t)(ix + 0x2Bu));
-	z80_write8((uint16_t)(ix + 0x2Bu), t3 - 1u);
-	if (t3 != 1u)
+	envelope_count = CHANNEL(channel)->envelope_count;
+	CHANNEL(channel)->envelope_count = envelope_count - 1u;
+	if (envelope_count != 1u)
 	{
 		z80_cycles(6);
 		return;
 	}
 	z80_block(58);
-	z80_write8((uint16_t)(ix + 0x2Bu), z80_read8((uint16_t)(ix + 0x20u)));
-	hl = music_pitch_envelope_3_ADDRESS;
-	set_channel_handler(hl, ix);
+	CHANNEL(channel)->envelope_count = CHANNEL(channel)->envelope_count_3;
+	handler = music_pitch_envelope_3_ADDRESS;
+	set_channel_handler(handler, channel);
 }
 
-/* segment 3: by +21, +22 times */
-void music_pitch_envelope_3(uint16_t ix)
+/* The third segment: music_note_tick, then every envelope_period passes envelope_step added to
+   note_pitch, envelope_count_3 times; then the fourth. */
+void music_pitch_envelope_3(uint16_t channel)
 {
-	uint8_t d = 0, e = 0, h = 0, l = 0;
-	uint16_t hl = 0;
-	uint8_t t1 = 0, t3 = 0;
-	uint16_t t2 = 0;
+	uint8_t envelope_step = 0, step_high = 0;
+	uint16_t handler = 0, pitch = 0;
+	uint8_t envelope_timer = 0, envelope_count = 0;
 
 	z80_block(17);
-	music_note_tick(ix);
+	music_note_tick(channel);
 	z80_block(28);
-	if (z80_read8((uint16_t)(ix + 0x2Au)) == 0u)
+	if (CHANNEL(channel)->envelope_timer == 0u)
 	{
 		z80_cycles(6);
 		return;
 	}
 	z80_block(28);
-	t1 = z80_read8((uint16_t)(ix + 0x2Au));
-	z80_write8((uint16_t)(ix + 0x2Au), t1 - 1u);
-	if (t1 != 1u)
+	envelope_timer = CHANNEL(channel)->envelope_timer;
+	CHANNEL(channel)->envelope_timer = envelope_timer - 1u;
+	if (envelope_timer != 1u)
 	{
 		z80_cycles(6);
 		return;
 	}
 	z80_block(82);
-	z80_write8((uint16_t)(ix + 0x2Au), z80_read8((uint16_t)(ix + 0x24u)));
-	e = z80_read8((uint16_t)(ix + 0x21u));
-	d = 0u;
-	if (e >> 7)
+	CHANNEL(channel)->envelope_timer = CHANNEL(channel)->envelope_period;
+	envelope_step = CHANNEL(channel)->envelope_step_3;
+	step_high = 0u;
+	if (envelope_step >> 7)
 	{
 		z80_block(4);
-		d--;
+		step_high--;
 	}
 	z80_block(104);
-	t2 = z80_read16((uint16_t)(ix + 0x2Cu)) + (((uint32_t)d << 8) | e);
-	h = (uint8_t)(t2 >> 8);
-	l = (uint8_t)t2;
-	z80_write8((uint16_t)(ix + 0x2Cu), l);
-	z80_write8((uint16_t)(ix + 0x2Du), h);
-	hl = ((uint32_t)h << 8) | l;
-	set_pitch(hl, ix);
+	pitch = CHANNEL(channel)->note_pitch + (((uint32_t)step_high << 8) | envelope_step);
+	CHANNEL(channel)->note_pitch = pitch;
+	set_pitch(pitch, channel);
 	z80_block(28);
-	t3 = z80_read8((uint16_t)(ix + 0x2Bu));
-	z80_write8((uint16_t)(ix + 0x2Bu), t3 - 1u);
-	if (t3 != 1u)
+	envelope_count = CHANNEL(channel)->envelope_count;
+	CHANNEL(channel)->envelope_count = envelope_count - 1u;
+	if (envelope_count != 1u)
 	{
 		z80_cycles(6);
 		return;
 	}
 	z80_block(58);
-	z80_write8((uint16_t)(ix + 0x2Bu), z80_read8((uint16_t)(ix + 0x22u)));
-	hl = music_pitch_envelope_4_ADDRESS;
-	set_channel_handler(hl, ix);
+	CHANNEL(channel)->envelope_count = CHANNEL(channel)->envelope_count_4;
+	handler = music_pitch_envelope_4_ADDRESS;
+	set_channel_handler(handler, channel);
 }
 
-/* segment 4: by +23, then music_note_tick */
-void music_pitch_envelope_4(uint16_t ix)
+/* The fourth segment: music_note_tick, then every envelope_period passes envelope_step added to
+   note_pitch, envelope_count_4 times; then music_note_tick alone. */
+void music_pitch_envelope_4(uint16_t channel)
 {
-	uint8_t d = 0, e = 0, h = 0, l = 0;
-	uint16_t hl = 0;
-	uint8_t t1 = 0, t3 = 0;
-	uint16_t t2 = 0;
+	uint8_t envelope_step = 0, step_high = 0;
+	uint16_t handler = 0, pitch = 0;
+	uint8_t envelope_timer = 0, envelope_count = 0;
 
 	z80_block(17);
-	music_note_tick(ix);
+	music_note_tick(channel);
 	z80_block(28);
-	if (z80_read8((uint16_t)(ix + 0x2Au)) == 0u)
+	if (CHANNEL(channel)->envelope_timer == 0u)
 	{
 		z80_cycles(6);
 		return;
 	}
 	z80_block(28);
-	t1 = z80_read8((uint16_t)(ix + 0x2Au));
-	z80_write8((uint16_t)(ix + 0x2Au), t1 - 1u);
-	if (t1 != 1u)
+	envelope_timer = CHANNEL(channel)->envelope_timer;
+	CHANNEL(channel)->envelope_timer = envelope_timer - 1u;
+	if (envelope_timer != 1u)
 	{
 		z80_cycles(6);
 		return;
 	}
 	z80_block(82);
-	z80_write8((uint16_t)(ix + 0x2Au), z80_read8((uint16_t)(ix + 0x24u)));
-	e = z80_read8((uint16_t)(ix + 0x23u));
-	d = 0u;
-	if (e >> 7)
+	CHANNEL(channel)->envelope_timer = CHANNEL(channel)->envelope_period;
+	envelope_step = CHANNEL(channel)->envelope_step_4;
+	step_high = 0u;
+	if (envelope_step >> 7)
 	{
 		z80_block(4);
-		d--;
+		step_high--;
 	}
 	z80_block(104);
-	t2 = z80_read16((uint16_t)(ix + 0x2Cu)) + (((uint32_t)d << 8) | e);
-	h = (uint8_t)(t2 >> 8);
-	l = (uint8_t)t2;
-	z80_write8((uint16_t)(ix + 0x2Cu), l);
-	z80_write8((uint16_t)(ix + 0x2Du), h);
-	hl = ((uint32_t)h << 8) | l;
-	set_pitch(hl, ix);
+	pitch = CHANNEL(channel)->note_pitch + (((uint32_t)step_high << 8) | envelope_step);
+	CHANNEL(channel)->note_pitch = pitch;
+	set_pitch(pitch, channel);
 	z80_block(28);
-	t3 = z80_read8((uint16_t)(ix + 0x2Bu));
-	z80_write8((uint16_t)(ix + 0x2Bu), t3 - 1u);
-	if (t3 != 1u)
+	envelope_count = CHANNEL(channel)->envelope_count;
+	CHANNEL(channel)->envelope_count = envelope_count - 1u;
+	if (envelope_count != 1u)
 	{
 		z80_cycles(6);
 		return;
 	}
 	z80_block(20);
-	hl = music_note_tick_ADDRESS;
-	set_channel_handler(hl, ix);
+	handler = music_note_tick_ADDRESS;
+	set_channel_handler(handler, channel);
 }
 
-/* a music note's handler: the LFO's ramp (+2E, +2F into the PMS and AMS), the fade's volume, and key off
-   when the note's gate time (+3C) runs out */
-void music_note_tick(uint16_t ix)
+/* A music note's handler: the LFO ramp (every lfo_ramp passes the channel's sensitivities a step up, to
+   7); on the record's own pass in 16 the fade's volume when a fade runs, and key off once the time left
+   is no more than gate_time. */
+void music_note_tick(uint16_t channel)
 {
 	uint32_t carry = 0;
-	uint8_t a = 0;
-	uint16_t hl = 0;
-	uint8_t t1 = 0;
+	uint8_t lfo_ramp_step = 0, sensitivity = 0;
+	uint16_t time = 0;
+	uint8_t lfo_ramp_timer = 0;
 
 	z80_block(33);
-	if (z80_read8((uint16_t)(ix + 0x2Eu)) != 0u)
+	if (CHANNEL(channel)->lfo_ramp_timer != 0u)
 	{
 		z80_block(33);
-		t1 = z80_read8((uint16_t)(ix + 0x2Eu));
-		z80_write8((uint16_t)(ix + 0x2Eu), t1 - 1u);
-		if (t1 == 1u)
+		lfo_ramp_timer = CHANNEL(channel)->lfo_ramp_timer;
+		CHANNEL(channel)->lfo_ramp_timer = lfo_ramp_timer - 1u;
+		if (lfo_ramp_timer == 1u)
 		{
 			z80_block(59);
-			z80_write8((uint16_t)(ix + 0x2Fu), z80_read8((uint16_t)(ix + 0x2Fu)) + 1u);
-			a = z80_read8((uint16_t)(ix + 0x2Fu));
-			set_channel_pm_sensitivity(ix, a);
+			CHANNEL(channel)->lfo_ramp_step++;
+			lfo_ramp_step = CHANNEL(channel)->lfo_ramp_step;
+			set_channel_pm_sensitivity(channel, lfo_ramp_step);
 			z80_block(44);
-			a = z80_read8((uint16_t)(ix + 0x2Fu)) >> 1;
-			set_channel_am_sensitivity(ix, a);
+			sensitivity = CHANNEL(channel)->lfo_ramp_step >> 1;
+			set_channel_am_sensitivity(channel, sensitivity);
 			z80_block(36);
-			if (z80_read8((uint16_t)(ix + 0x2Fu)) != 7u)
+			if (CHANNEL(channel)->lfo_ramp_step != 7u)
 			{
 				z80_block(38);
-				z80_write8((uint16_t)(ix + 0x2Eu), z80_read8((uint16_t)(ix + 0x1Bu)));
+				CHANNEL(channel)->lfo_ramp_timer = CHANNEL(channel)->lfo_ramp;
 			}
 		}
 	}
 	z80_block(44);
-	if ((pass_count & 0xFu) != z80_read8((uint16_t)(ix + 0x40u)))
+	if ((pass_count & 0xFu) != CHANNEL(channel)->chip_channel)
 	{
 		z80_cycles(6);
 		return;
@@ -882,142 +849,144 @@ void music_note_tick(uint16_t ix)
 	if (fade != 0u)
 	{
 		z80_cycles(7);
-		update_music_volume(ix);
+		update_music_volume(channel);
 	}
 	z80_block(92);
-	hl = z80_read16((uint16_t)(ix + 0x3Au));
-	carry = (uint16_t)(hl + z80_read16((uint16_t)(ix + 0x3Cu))) < hl;
+	time = CHANNEL(channel)->time;
+	carry = (uint16_t)(time + CHANNEL(channel)->gate_time) < time;
 	if (carry == 0u)
 	{
 		z80_cycles(6);
 		return;
 	}
 	z80_block(10);
-	key_off(ix);
+	key_off(channel);
 }
 
-/* the length of the note's high nibble (note_lengths) into the track's time (+3A) */
-uint32_t add_note_length(uint8_t bc, uint16_t ix)
+/* Adds a step's length (note_lengths, by its high nibble: negative, so it counts time down) to time;
+   hands back the carry, set when the step ends before the time counted so far. */
+uint32_t add_note_length(uint8_t step, uint16_t channel)
 {
 	uint32_t carry = 0;
-	uint8_t a = 0;
-	uint16_t de = 0, hl = 0;
+	uint8_t code = 0;
+	uint16_t length = 0, time = 0;
 
 	z80_block(172);
-	a = bc & 0xF0u;
-	a = (a >> 1) | ((uint32_t)a << 7);
-	a = (a >> 1) | ((uint32_t)a << 7);
-	de = (uint8_t)((a >> 1) | ((uint32_t)a << 7));
-	de = TABLE16(note_lengths, de);
-	hl = z80_read16((uint16_t)(ix + 0x3Au));
-	carry = (uint16_t)(hl + de) < hl;
-	hl += de;
-	z80_write16((uint16_t)(ix + 0x3Au), hl);
+	code = step & 0xF0u;
+	code = (code >> 1) | ((uint32_t)code << 7);
+	code = (code >> 1) | ((uint32_t)code << 7);
+	length = (uint8_t)((code >> 1) | ((uint32_t)code << 7));
+	length = TABLE16(note_lengths, length);
+	time = CHANNEL(channel)->time;
+	carry = (uint16_t)(time + length) < time;
+	time += length;
+	CHANNEL(channel)->time = time;
 	return carry;
 }
 
-/* the note's gate time (+3C): the gate ratio (+14) of the time left */
-void set_note_gate(uint16_t ix)
+/* The note's gate_time: gate 256ths of what is left of time, at least 1; 0 when gate is 0 (the next note
+   legato). */
+void set_note_gate(uint16_t channel)
 {
 	uint32_t carry = 0;
-	uint8_t a = 0, b = 0, d = 0, e = 0;
-	uint16_t hl = 0;
+	uint8_t count = 0, left_high = 0, left_low = 0, ratio = 0;
+	uint16_t gate_time = 0;
 	uint8_t t1 = 0;
 
 	z80_block(43);
-	hl = 0u;
-	a = z80_read8((uint16_t)(ix + 0x14u));
-	if (a == 0u)
+	gate_time = 0u;
+	ratio = CHANNEL(channel)->gate;
+	if (ratio == 0u)
 	{
 		z80_block(48);
-		z80_write16((uint16_t)(ix + 0x3Cu), hl);
+		CHANNEL(channel)->gate_time = gate_time;
 		return;
 	}
 	z80_block(78);
-	hl -= z80_read16((uint16_t)(ix + 0x3Au));
-	d = (uint8_t)(hl >> 8);
-	e = (uint8_t)hl;
-	hl = 0u;
-	b = 8u;
+	gate_time -= CHANNEL(channel)->time;
+	left_high = (uint8_t)(gate_time >> 8);
+	left_low = (uint8_t)gate_time;
+	gate_time = 0u;
+	count = 8u;
 	for (;;)
 	{
 		z80_block(30);
-		carry = d & 1u;
-		d = d >> 1;
-		e = (e >> 1) | (carry << 7);
-		t1 = a;
-		a = ((uint32_t)t1 << 1) | (t1 >> 7);
+		carry = left_high & 1u;
+		left_high = left_high >> 1;
+		left_low = (left_low >> 1) | (carry << 7);
+		t1 = ratio;
+		ratio = ((uint32_t)t1 << 1) | (t1 >> 7);
 		if (t1 >> 7)
 		{
 			z80_block(11);
-			hl += ((uint32_t)d << 8) | e;
+			gate_time += ((uint32_t)left_high << 8) | left_low;
 		}
 		z80_block(8);
-		b--;
-		if (b == 0u)
+		count--;
+		if (count == 0u)
 			break;
 		z80_cycles(5);
 	}
 	z80_block(18);
-	if ((uint8_t)(hl | (hl >> 8)) == 0u)
+	if ((uint8_t)(gate_time | (gate_time >> 8)) == 0u)
 	{
 		z80_block(6);
-		hl++;
+		gate_time++;
 	}
 	z80_block(48);
-	z80_write16((uint16_t)(ix + 0x3Cu), hl);
+	CHANNEL(channel)->gate_time = gate_time;
 }
 
-/* set_music_volume with the record's music volume (+17) */
-void update_music_volume(uint16_t ix)
+/* set_music_volume with the record's music_volume. */
+void update_music_volume(uint16_t channel)
 {
-	uint8_t a = 0;
+	uint8_t music_volume = 0;
 
 	z80_block(19);
-	a = z80_read8((uint16_t)(ix + 0x17u));
-	set_music_volume(ix, a);
+	music_volume = CHANNEL(channel)->music_volume;
+	set_music_volume(channel, music_volume);
 }
 
-/* A plus the fade (F3CB) as the record's volume (at most 7F) */
-void set_music_volume(uint16_t ix, uint8_t a)
+/* The music's volume on the record: the volume given plus fade_attenuation (at most 7F), then
+   set_volume. */
+void set_music_volume(uint16_t channel, uint8_t music_volume)
 {
-	uint8_t a_2 = 0;
+	uint8_t volume = 0;
 	uint8_t t1 = 0;
 
 	z80_block(31);
-	t1 = fade_attenuation + a;
-	a_2 = t1;
+	t1 = fade_attenuation + music_volume;
+	volume = t1;
 	if ((int8_t)t1 >= 0)
 	{
-		set_volume(ix, a_2);
+		set_volume(channel, volume);
 		return;
 	}
 	z80_block(17);
-	a_2 = 0x7Fu;
-	set_volume(ix, a_2);
+	volume = 0x7Fu;
+	set_volume(channel, volume);
 }
 
-/* the track's next byte (+3E) */
-uint8_t next_track_byte(uint16_t ix)
+/* The track's next byte; track moves on. */
+uint8_t next_track_byte(uint16_t channel)
 {
-	uint8_t a = 0, h = 0, l = 0;
-	uint16_t t1 = 0;
+	uint8_t byte = 0;
+	uint16_t track = 0;
 
 	z80_block(99);
-	l = z80_read8((uint16_t)(ix + 0x3Eu));
-	h = z80_read8((uint16_t)(ix + 0x3Fu));
-	a = z80_read8((uint16_t)(((uint32_t)h << 8) | l));
-	t1 = (((uint32_t)h << 8) | l) + 1u;
-	z80_write16((uint16_t)(ix + 0x3Eu), t1);
-	return a;
+	track = CHANNEL(channel)->track;
+	byte = z80_read8(track);
+	track++;
+	CHANNEL(channel)->track = track;
+	return byte;
 }
 
-/* the record's handler channel_idle, the note left ringing: a drum routine's end */
-void drum_done(uint16_t ix)
+/* A drum routine's end: the record's handler channel_idle, the note left to ring. */
+void drum_done(uint16_t channel)
 {
-	uint16_t hl = 0;
+	uint16_t handler = 0;
 
 	z80_block(20);
-	hl = channel_idle_ADDRESS;
-	set_channel_handler(hl, ix);
+	handler = channel_idle_ADDRESS;
+	set_channel_handler(handler, channel);
 }

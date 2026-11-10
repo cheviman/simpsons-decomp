@@ -3,7 +3,7 @@
  *    Description: a group of four FM effects no command reaches (unused_effect_group)
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    07-11-2026
+ *    Modified:    09-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the Z80 sound program decompiled into C by
@@ -11,182 +11,193 @@
  */
 #include "sound.h"
 
-void unused_effect_2799(uint16_t ix)
+/* Unused: command 3C's handler (unused_effect_group). Loads unused_effect_3c_patch on FM channel 7, the
+   noise on at frequency 0, and keys on pitch 800: 32 steps of 16 passes (unused_effect_3c_slide). */
+void unused_effect_3c(uint16_t channel)
 {
-	uint8_t a = 0;
-	uint16_t hl = 0;
+	uint8_t noise_frequency = 0;
+	uint16_t handler = 0, patch = 0, pitch = 0;
 
 	z80_block(27);
-	hl = 0x2780u;
-	load_patch(hl, ix);
+	patch = unused_effect_3c_patch_ADDRESS;
+	load_patch(patch, channel);
 	z80_block(43);
-	a = 0u;
-	z80_write8((uint16_t)(ix + 1u), 0u);
-	unused_0FF2(ix, a);
+	noise_frequency = 0u;
+	CHANNEL(channel)->unused_effect_3c.noise_frequency = 0u;
+	noise_on(channel, noise_frequency);
 	z80_block(65);
-	hl = 0x800u;
-	z80_write8((uint16_t)(ix + 2u), 0u);
-	z80_write8((uint16_t)(ix + 3u), 8u);
-	set_pitch(hl, ix);
+	pitch = 0x800u;
+	CHANNEL(channel)->pitch = 0x800u;
+	set_pitch(pitch, channel);
 	z80_block(17);
-	key_on(ix);
+	key_on(channel);
 	z80_block(39);
-	z80_write8(ix, 0x10u);
-	hl = unused_effect_2799_slide_ADDRESS;
-	set_channel_handler(hl, ix);
+	CHANNEL(channel)->count = 0x10u;
+	handler = unused_effect_3c_slide_ADDRESS;
+	set_channel_handler(handler, channel);
 }
 
-void unused_effect_2799_slide(uint16_t ix)
+/* The pitch a 16th of a semitone higher each pass, 2 semitones higher while the noise's frequency is
+   odd; every 16 passes the noise's frequency one higher (noise_on), and stop_channel when it reaches 32. */
+void unused_effect_3c_slide(uint16_t channel)
 {
-	uint8_t a = 0;
-	uint16_t hl = 0;
-	uint8_t t1 = 0;
+	uint8_t noise_frequency = 0;
+	uint16_t pitch = 0;
+	uint8_t count = 0;
 
 	z80_block(127);
-	hl = z80_read16((uint16_t)(ix + 2u)) + 4u;
-	z80_write16((uint16_t)(ix + 2u), hl);
-	if (z80_read8((uint16_t)(ix + 1u)) & 1u)
+	pitch = CHANNEL(channel)->pitch + 4u;
+	CHANNEL(channel)->pitch = pitch;
+	if (CHANNEL(channel)->unused_effect_3c.noise_frequency & 1u)
 	{
 		z80_block(21);
-		hl += 0x80u;
+		pitch += 0x80u;
 	}
 	z80_block(17);
-	set_pitch(hl, ix);
+	set_pitch(pitch, channel);
 	z80_block(28);
-	t1 = z80_read8(ix);
-	z80_write8(ix, t1 - 1u);
-	if (t1 != 1u)
+	count = CHANNEL(channel)->count;
+	CHANNEL(channel)->count = count - 1u;
+	if (count != 1u)
 	{
 		z80_cycles(6);
 		return;
 	}
 	z80_block(59);
-	z80_write8(ix, 0x10u);
-	a = z80_read8((uint16_t)(ix + 1u)) + 1u;
-	if (a >= 0x20u)
+	CHANNEL(channel)->count = 0x10u;
+	noise_frequency = CHANNEL(channel)->unused_effect_3c.noise_frequency + 1u;
+	if (noise_frequency >= 0x20u)
 	{
-		stop_channel(ix);
+		stop_channel(channel);
 		return;
 	}
 	z80_block(29);
-	z80_write8((uint16_t)(ix + 1u), a);
-	unused_0FF2(ix, a);
+	CHANNEL(channel)->unused_effect_3c.noise_frequency = noise_frequency;
+	noise_on(channel, noise_frequency);
 }
 
-void unused_effect_280E(uint16_t ix)
+/* Unused: command 3D's handler (unused_effect_group). Loads unused_effect_3d_patch on FM channel 7, the
+   noise on at frequency 0A, and keys on at the pitch the channel has: unused_effect_3d_lower_noise. */
+void unused_effect_3d(uint16_t channel)
 {
-	uint8_t a = 0;
-	uint16_t hl = 0;
+	uint8_t noise_frequency = 0;
+	uint16_t handler = 0, patch = 0;
 
 	z80_block(27);
-	hl = 0x27F5u;
-	load_patch(hl, ix);
+	patch = unused_effect_3d_patch_ADDRESS;
+	load_patch(patch, channel);
 	z80_block(43);
-	a = 0xAu;
-	z80_write8((uint16_t)(ix + 1u), 0xAu);
-	unused_0FF2(ix, a);
+	noise_frequency = 0xAu;
+	CHANNEL(channel)->unused_effect_3d.noise_frequency = 0xAu;
+	noise_on(channel, noise_frequency);
 	z80_block(17);
-	key_on(ix);
+	key_on(channel);
 	z80_block(39);
-	z80_write8(ix, 0x10u);
-	hl = unused_effect_280E_hold_ADDRESS;
-	set_channel_handler(hl, ix);
+	CHANNEL(channel)->count = 0x10u;
+	handler = unused_effect_3d_lower_noise_ADDRESS;
+	set_channel_handler(handler, channel);
 }
 
-void unused_effect_280E_hold(uint16_t ix)
+/* Every 16 passes the noise's frequency one lower (noise_on); stop_channel when it reaches 0. */
+void unused_effect_3d_lower_noise(uint16_t channel)
 {
-	uint8_t a = 0;
-	uint8_t t1 = 0, t2 = 0;
+	uint8_t noise_frequency = 0;
+	uint8_t count = 0, noise_frequency_2 = 0;
 
 	z80_block(28);
-	t1 = z80_read8(ix);
-	z80_write8(ix, t1 - 1u);
-	if (t1 != 1u)
+	count = CHANNEL(channel)->count;
+	CHANNEL(channel)->count = count - 1u;
+	if (count != 1u)
 	{
 		z80_cycles(6);
 		return;
 	}
 	z80_block(52);
-	z80_write8(ix, 0x10u);
-	t2 = z80_read8((uint16_t)(ix + 1u));
-	z80_write8((uint16_t)(ix + 1u), t2 - 1u);
-	if (t2 == 1u)
+	CHANNEL(channel)->count = 0x10u;
+	noise_frequency_2 = CHANNEL(channel)->unused_effect_3d.noise_frequency;
+	CHANNEL(channel)->unused_effect_3d.noise_frequency = noise_frequency_2 - 1u;
+	if (noise_frequency_2 == 1u)
 	{
-		stop_channel(ix);
+		stop_channel(channel);
 		return;
 	}
 	z80_block(29);
-	a = z80_read8((uint16_t)(ix + 1u));
-	unused_0FF2(ix, a);
+	noise_frequency = CHANNEL(channel)->unused_effect_3d.noise_frequency;
+	noise_on(channel, noise_frequency);
 }
 
-void unused_effect_2856(uint16_t ix)
+/* Unused: command 3E's handler (unused_effect_group). Loads unused_effect_3e_patch on FM channel 7, the
+   noise on at frequency 12, and keys on at the pitch the channel has, for 1024 passes
+   (unused_effect_3e_end). */
+void unused_effect_3e(uint16_t channel)
 {
-	uint8_t a = 0;
-	uint16_t hl = 0;
+	uint8_t noise_frequency = 0;
+	uint16_t handler = 0, patch = 0;
 
 	z80_block(27);
-	hl = 0x283Du;
-	load_patch(hl, ix);
+	patch = unused_effect_3e_patch_ADDRESS;
+	load_patch(patch, channel);
 	z80_block(24);
-	a = 0x12u;
-	unused_0FF2(ix, a);
+	noise_frequency = 0x12u;
+	noise_on(channel, noise_frequency);
 	z80_block(17);
-	key_on(ix);
+	key_on(channel);
 	z80_block(68);
-	z80_write8(ix, 0u);
-	z80_write8((uint16_t)(ix + 1u), 4u);
-	hl = unused_effect_2856_end_ADDRESS;
-	set_channel_handler(hl, ix);
+	CHANNEL(channel)->unused_effect_3e.passes = 0x400u;
+	handler = unused_effect_3e_end_ADDRESS;
+	set_channel_handler(handler, channel);
 }
 
-void unused_effect_2856_end(uint16_t ix)
+/* Counts down the 1024 passes, then stop_channel. */
+void unused_effect_3e_end(uint16_t channel)
 {
-	uint8_t h = 0, l = 0;
+	uint8_t passes_high = 0, passes_low = 0;
 	uint16_t t1 = 0;
 
 	z80_block(95);
-	t1 = z80_read16(ix) - 1u;
-	h = (uint8_t)(t1 >> 8);
-	l = (uint8_t)t1;
-	z80_write8(ix, l);
-	z80_write8((uint16_t)(ix + 1u), h);
-	if ((l | h) != 0u)
+	t1 = CHANNEL(channel)->unused_effect_3e.passes - 1u;
+	passes_high = (uint8_t)(t1 >> 8);
+	passes_low = (uint8_t)t1;
+	CHANNEL(channel)->unused_effect_3e.passes = ((uint32_t)passes_high << 8) | passes_low;
+	if ((passes_low | passes_high) != 0u)
 	{
 		z80_cycles(6);
 		return;
 	}
 	z80_block(10);
-	stop_channel(ix);
+	stop_channel(channel);
 }
 
-void unused_effect_289F(uint16_t ix)
+/* Unused: command 3F's handler in unused_effect_group, which no command reaches. Loads
+   unused_effect_3f_patch on FM channel 7, the noise on at frequency 1F, and keys on at the pitch the
+   channel has, for 5632 passes (unused_effect_3f_step). */
+void unused_effect_3f(uint16_t channel)
 {
-	uint8_t a = 0;
-	uint16_t hl = 0;
+	uint8_t noise_frequency = 0;
+	uint16_t handler = 0, patch = 0;
 
 	z80_block(27);
-	hl = 0x2886u;
-	load_patch(hl, ix);
+	patch = unused_effect_3f_patch_ADDRESS;
+	load_patch(patch, channel);
 	z80_block(24);
-	a = 0x1Fu;
-	unused_0FF2(ix, a);
+	noise_frequency = 0x1Fu;
+	noise_on(channel, noise_frequency);
 	z80_block(17);
-	key_on(ix);
+	key_on(channel);
 	z80_block(68);
-	z80_write8(ix, 0u);
-	z80_write8((uint16_t)(ix + 1u), 0x16u);
-	hl = unused_effect_289F_step_ADDRESS;
-	set_channel_handler(hl, ix);
+	CHANNEL(channel)->unused_effect_3f.passes = fm_effect_12_patch_ADDRESS + 0x9u;
+	handler = unused_effect_3f_step_ADDRESS;
+	set_channel_handler(handler, channel);
 }
 
-void unused_effect_289F_step(uint16_t ix)
+/* After the 5632 passes (unused_effect_3f_update), key off and 512 passes of unused_effect_3f_end. */
+void unused_effect_3f_step(uint16_t channel)
 {
 	uint32_t zero = 0;
-	uint16_t hl = 0;
+	uint16_t handler = 0;
 
 	z80_block(17);
-	zero = unused_effect_289F_update(ix);
+	zero = unused_effect_3f_update(channel);
 	z80_block(5);
 	if (zero == 0u)
 	{
@@ -194,20 +205,20 @@ void unused_effect_289F_step(uint16_t ix)
 		return;
 	}
 	z80_block(17);
-	key_off(ix);
+	key_off(channel);
 	z80_block(68);
-	z80_write8(ix, 0u);
-	z80_write8((uint16_t)(ix + 1u), 2u);
-	hl = unused_effect_289F_end_ADDRESS;
-	set_channel_handler(hl, ix);
+	CHANNEL(channel)->unused_effect_3f.passes = 0x200u;
+	handler = unused_effect_3f_end_ADDRESS;
+	set_channel_handler(handler, channel);
 }
 
-void unused_effect_289F_end(uint16_t ix)
+/* Counts down the 512 passes (unused_effect_3f_update), then stop_channel. */
+void unused_effect_3f_end(uint16_t channel)
 {
 	uint32_t zero = 0;
 
 	z80_block(17);
-	zero = unused_effect_289F_update(ix);
+	zero = unused_effect_3f_update(channel);
 	z80_block(5);
 	if (zero == 0u)
 	{
@@ -215,21 +226,21 @@ void unused_effect_289F_end(uint16_t ix)
 		return;
 	}
 	z80_block(10);
-	stop_channel(ix);
+	stop_channel(channel);
 }
 
-uint32_t unused_effect_289F_update(uint16_t ix)
+/* Counts the passes down and tells whether they ran out. */
+uint32_t unused_effect_3f_update(uint16_t channel)
 {
 	uint32_t zero = 0;
-	uint8_t h = 0, l = 0;
+	uint8_t passes_high = 0, passes_low = 0;
 	uint16_t t1 = 0;
 
 	z80_block(100);
-	t1 = z80_read16(ix) - 1u;
-	h = (uint8_t)(t1 >> 8);
-	l = (uint8_t)t1;
-	z80_write8(ix, l);
-	z80_write8((uint16_t)(ix + 1u), h);
-	zero = (l | h) == 0u;
+	t1 = CHANNEL(channel)->unused_effect_3f.passes - 1u;
+	passes_high = (uint8_t)(t1 >> 8);
+	passes_low = (uint8_t)t1;
+	CHANNEL(channel)->unused_effect_3f.passes = ((uint32_t)passes_high << 8) | passes_low;
+	zero = (passes_low | passes_high) == 0u;
 	return zero;
 }

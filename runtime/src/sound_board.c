@@ -196,6 +196,37 @@ const uint8_t *simpsons_sound_data_at(uint32_t address)
 	exit(3);
 }
 
+#define SOUND_RECORD_COPIES 32
+#define SOUND_RECORD_SIZE   32u    /* the largest record the program reads (an FM patch: 25 bytes), and a little more */
+
+const void *simpsons_sound_record(uint32_t address)
+{
+	static uint8_t copies[SOUND_RECORD_COPIES][SOUND_RECORD_SIZE];
+	static unsigned next;
+	uint8_t *copy = copies[next++ % SOUND_RECORD_COPIES];
+
+	/* (the first byte the program asks for must be in the assets; the ones after it, where they give them) */
+	copy[0] = *simpsons_sound_data_at(address);
+	for (uint32_t offset = 1; offset < SOUND_RECORD_SIZE; offset++)
+	{
+		const uint32_t at = (address + offset) & 0xFFFFu;
+		uint32_t place = at;
+		const uint8_t *byte = NULL;
+
+		if (at < 0x8000u)
+			byte = sound_byte(place);
+		else if (at < 0xC000u)
+		{
+			const uint32_t entry = simpsons_sound.bank;
+
+			place = 0x10000u + (entry < 2u ? 0u : (entry - 2u) * 0x4000u) + (at - 0x8000u);
+			byte = sound_byte(place);
+		}
+		copy[offset] = byte ? *byte : 0u;
+	}
+	return copy;
+}
+
 /* A table the program reads by name: a copy of its region's bytes from its place to the end of the fixed program or
    of its bank, as the program reads it (song_headers past its own piece into the next: the copy cut at a piece's end
    made the music read its tracks from the code), 0 where the assets give nothing (code). A table read from past its

@@ -102,6 +102,10 @@ uint64_t simpsons_sound_z80_cycles(void);
 /* The program's data at an address it holds (0000-7FFF the program, 8000-BFFF the bank FE00 chose): the
    program stops where no data is */
 const uint8_t *simpsons_sound_data_at(uint32_t address);
+/* The bytes at an address of the program's data as one record (a patch, a sample's, a song's header), a copy that
+   holds until a few more are made: the assets keep each piece apart, and a record the program reads can run from one
+   piece into the next (an FM patch's 25 bytes past a shorter piece) */
+const void *simpsons_sound_record(uint32_t address);
 
 #ifdef __cplusplus
 }

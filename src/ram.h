@@ -13,298 +13,292 @@
 #define SIMPSONS_RAM_H
 
 /* the game's variables in work RAM (4000-5FFF), which the board keeps the other way round */
-#define unk_4000_ADDRESS 0x4000u
-#define unk_4000 RAM8(unk_4000_ADDRESS)
-#define unk_4800_ADDRESS 0x4800u
-#define unk_4800 RAM8(unk_4800_ADDRESS)
-#define unk_4801_ADDRESS 0x4801u
-#define unk_4801 RAM8(unk_4801_ADDRESS)
-#define unk_4802_ADDRESS 0x4802u
-#define unk_4802 RAM8(unk_4802_ADDRESS)
-#define unk_4803_ADDRESS 0x4803u
-#define unk_4803 RAM8(unk_4803_ADDRESS)
-#define unk_4804_ADDRESS 0x4804u
-#define unk_4804 RAM8(unk_4804_ADDRESS)
-#define unk_4805_ADDRESS 0x4805u
-#define unk_4805 RAM16(unk_4805_ADDRESS)
-#define unk_4807_ADDRESS 0x4807u
-#define unk_4807 RAM16(unk_4807_ADDRESS)
-#define unk_4809_ADDRESS 0x4809u
-#define unk_4809 RAM8(unk_4809_ADDRESS)
-#define unk_480A_ADDRESS 0x480Au
-#define unk_480A RAM8(unk_480A_ADDRESS)
-#define unk_480B_ADDRESS 0x480Bu
-#define unk_480B RAM8(unk_480B_ADDRESS)
-#define unk_480D_ADDRESS 0x480Du
-#define unk_480D RAM8(unk_480D_ADDRESS)
-#define unk_480E_ADDRESS 0x480Eu
-#define unk_480E RAM8(unk_480E_ADDRESS)
-#define unk_480F_ADDRESS 0x480Fu
-#define unk_480F RAM8(unk_480F_ADDRESS)
-#define unk_4810_ADDRESS 0x4810u
-#define unk_4810 RAM8(unk_4810_ADDRESS)
-#define unk_4811_ADDRESS 0x4811u
-#define unk_4811 RAM8(unk_4811_ADDRESS)
-#define unk_4812_ADDRESS 0x4812u
-#define unk_4812 RAM8(unk_4812_ADDRESS)
-#define unk_4813_ADDRESS 0x4813u
-#define unk_4813 RAM8(unk_4813_ADDRESS)
-#define unk_4814_ADDRESS 0x4814u
-#define unk_4814 RAM8(unk_4814_ADDRESS)
-#define unk_4815_ADDRESS 0x4815u
-#define unk_4815 RAM16(unk_4815_ADDRESS)
-#define unk_4817_ADDRESS 0x4817u
-#define unk_4817 RAM16(unk_4817_ADDRESS)
-#define unk_481A_ADDRESS 0x481Au
-#define unk_481A RAM8(unk_481A_ADDRESS)
-#define unk_481B_ADDRESS 0x481Bu
-#define unk_481B RAM8(unk_481B_ADDRESS)
-#define unk_481C_ADDRESS 0x481Cu
-#define unk_481C RAM8(unk_481C_ADDRESS)
-#define unk_481D_ADDRESS 0x481Du
-#define unk_481D RAM8(unk_481D_ADDRESS)
-#define unk_481F_ADDRESS 0x481Fu
-#define unk_481F RAM16(unk_481F_ADDRESS)
-#define unk_4822_ADDRESS 0x4822u
-#define unk_4822 RAM8(unk_4822_ADDRESS)
-#define unk_4823_ADDRESS 0x4823u
-#define unk_4823 RAM8(unk_4823_ADDRESS)
-#define unk_4824_ADDRESS 0x4824u
-#define unk_4824 RAM8(unk_4824_ADDRESS)
-#define unk_4825_ADDRESS 0x4825u
-#define unk_4825 RAM8(unk_4825_ADDRESS)
-#define unk_4827_ADDRESS 0x4827u
-#define unk_4827 RAM16(unk_4827_ADDRESS)
-#define unk_482F_ADDRESS 0x482Fu
-#define unk_482F RAM16(unk_482F_ADDRESS)
-#define unk_4837_ADDRESS 0x4837u
-#define unk_4837 RAM16(unk_4837_ADDRESS)
-#define unk_4839_ADDRESS 0x4839u
-#define unk_4839 RAM8(unk_4839_ADDRESS)
-#define unk_483A_ADDRESS 0x483Au
-#define unk_483A RAM8(unk_483A_ADDRESS)
-#define unk_483B_ADDRESS 0x483Bu
-#define unk_483B RAM8(unk_483B_ADDRESS)
-#define unk_483D_ADDRESS 0x483Du
-#define unk_483D RAM8(unk_483D_ADDRESS)
-#define unk_483E_ADDRESS 0x483Eu
-#define unk_483E RAM8(unk_483E_ADDRESS)
-#define unk_483F_ADDRESS 0x483Fu
-#define unk_483F RAM8(unk_483F_ADDRESS)
-#define unk_4840_ADDRESS 0x4840u
-#define unk_4840 RAM8(unk_4840_ADDRESS)
-#define unk_4842_ADDRESS 0x4842u
-#define unk_4842 RAM8(unk_4842_ADDRESS)
-#define unk_4844_ADDRESS 0x4844u
-#define unk_4844 RAM8(unk_4844_ADDRESS)
-#define unk_4846_ADDRESS 0x4846u
-#define unk_4846 RAM8(unk_4846_ADDRESS)
-#define unk_4848_ADDRESS 0x4848u
-#define unk_4848 RAM8(unk_4848_ADDRESS)
-#define unk_484A_ADDRESS 0x484Au
-#define unk_484A RAM8(unk_484A_ADDRESS)
-#define unk_484C_ADDRESS 0x484Cu
-#define unk_484C RAM8(unk_484C_ADDRESS)
-#define unk_484E_ADDRESS 0x484Eu
-#define unk_484E RAM8(unk_484E_ADDRESS)
-#define unk_4850_ADDRESS 0x4850u
-#define unk_4850 RAM8(unk_4850_ADDRESS)
-#define unk_4851_ADDRESS 0x4851u
-#define unk_4851 RAM8(unk_4851_ADDRESS)
-#define unk_4855_ADDRESS 0x4855u
-#define unk_4855 RAM8(unk_4855_ADDRESS)
-#define unk_4856_ADDRESS 0x4856u
-#define unk_4856 RAM8(unk_4856_ADDRESS)
-#define unk_4857_ADDRESS 0x4857u
-#define unk_4857 RAM8(unk_4857_ADDRESS)
-#define unk_4858_ADDRESS 0x4858u
-#define unk_4858 RAM8(unk_4858_ADDRESS)
-#define unk_485A_ADDRESS 0x485Au
-#define unk_485A RAM8(unk_485A_ADDRESS)
-#define unk_485B_ADDRESS 0x485Bu
-#define unk_485B RAM8(unk_485B_ADDRESS)
-#define unk_485D_ADDRESS 0x485Du
-#define unk_485D RAM8(unk_485D_ADDRESS)
-#define unk_485E_ADDRESS 0x485Eu
-#define unk_485E RAM8(unk_485E_ADDRESS)
-#define unk_485F_ADDRESS 0x485Fu
-#define unk_485F RAM8(unk_485F_ADDRESS)
-#define unk_4860_ADDRESS 0x4860u
-#define unk_4860 RAM8(unk_4860_ADDRESS)
-#define unk_4861_ADDRESS 0x4861u
-#define unk_4861 RAM8(unk_4861_ADDRESS)
-#define unk_4862_ADDRESS 0x4862u
-#define unk_4862 RAM8(unk_4862_ADDRESS)
-#define unk_4863_ADDRESS 0x4863u
-#define unk_4863 RAM16(unk_4863_ADDRESS)
-#define unk_4865_ADDRESS 0x4865u
-#define unk_4865 RAM16(unk_4865_ADDRESS)
-#define unk_4867_ADDRESS 0x4867u
-#define unk_4867 RAM8(unk_4867_ADDRESS)
-#define unk_486A_ADDRESS 0x486Au
-#define unk_486A RAM8(unk_486A_ADDRESS)
-#define unk_486B_ADDRESS 0x486Bu
-#define unk_486B RAM8(unk_486B_ADDRESS)
-#define unk_4870_ADDRESS 0x4870u
-#define unk_4870 RAM8(unk_4870_ADDRESS)
-#define unk_4871_ADDRESS 0x4871u
-#define unk_4871 RAM8(unk_4871_ADDRESS)
-#define unk_4872_ADDRESS 0x4872u
-#define unk_4872 RAM8(unk_4872_ADDRESS)
-#define unk_4873_ADDRESS 0x4873u
-#define unk_4873 RAM16(unk_4873_ADDRESS)
-#define unk_4875_ADDRESS 0x4875u
-#define unk_4875 RAM8(unk_4875_ADDRESS)
-#define unk_4876_ADDRESS 0x4876u
-#define unk_4876 RAM8(unk_4876_ADDRESS)
-#define unk_4877_ADDRESS 0x4877u
-#define unk_4877 RAM8(unk_4877_ADDRESS)
-#define unk_4878_ADDRESS 0x4878u
-#define unk_4878 RAM8(unk_4878_ADDRESS)
-#define unk_4879_ADDRESS 0x4879u
-#define unk_4879 RAM8(unk_4879_ADDRESS)
-#define unk_487A_ADDRESS 0x487Au
-#define unk_487A RAM8(unk_487A_ADDRESS)
-#define unk_487B_ADDRESS 0x487Bu
-#define unk_487B RAM8(unk_487B_ADDRESS)
-#define unk_487C_ADDRESS 0x487Cu
-#define unk_487C RAM8(unk_487C_ADDRESS)
-#define unk_487D_ADDRESS 0x487Du
-#define unk_487D RAM8(unk_487D_ADDRESS)
-#define unk_487E_ADDRESS 0x487Eu
-#define unk_487E RAM8(unk_487E_ADDRESS)
-#define unk_487F_ADDRESS 0x487Fu
-#define unk_487F RAM8(unk_487F_ADDRESS)
-#define unk_4880_ADDRESS 0x4880u
-#define unk_4880 RAM8(unk_4880_ADDRESS)
-#define unk_4881_ADDRESS 0x4881u
-#define unk_4881 RAM8(unk_4881_ADDRESS)
-#define unk_4882_ADDRESS 0x4882u
-#define unk_4882 RAM8(unk_4882_ADDRESS)
-#define unk_4883_ADDRESS 0x4883u
-#define unk_4883 RAM8(unk_4883_ADDRESS)
-#define unk_4884_ADDRESS 0x4884u
-#define unk_4884 RAM8(unk_4884_ADDRESS)
-#define unk_4885_ADDRESS 0x4885u
-#define unk_4885 RAM8(unk_4885_ADDRESS)
-#define unk_4886_ADDRESS 0x4886u
-#define unk_4886 RAM16(unk_4886_ADDRESS)
-#define unk_4888_ADDRESS 0x4888u
-#define unk_4888 RAM8(unk_4888_ADDRESS)
-#define unk_4889_ADDRESS 0x4889u
-#define unk_4889 RAM16(unk_4889_ADDRESS)
-#define unk_488B_ADDRESS 0x488Bu
-#define unk_488B RAM8(unk_488B_ADDRESS)
-#define unk_488D_ADDRESS 0x488Du
-#define unk_488D RAM8(unk_488D_ADDRESS)
-#define unk_488E_ADDRESS 0x488Eu
-#define unk_488E RAM8(unk_488E_ADDRESS)
-#define unk_488F_ADDRESS 0x488Fu
-#define unk_488F RAM8(unk_488F_ADDRESS)
-#define unk_4890_ADDRESS 0x4890u
-#define unk_4890 RAM16(unk_4890_ADDRESS)
-#define unk_4892_ADDRESS 0x4892u
-#define unk_4892 RAM8(unk_4892_ADDRESS)
-#define unk_4893_ADDRESS 0x4893u
-#define unk_4893 RAM16(unk_4893_ADDRESS)
-#define unk_4895_ADDRESS 0x4895u
-#define unk_4895 RAM8(unk_4895_ADDRESS)
-#define unk_4896_ADDRESS 0x4896u
-#define unk_4896 RAM8(unk_4896_ADDRESS)
-#define unk_4897_ADDRESS 0x4897u
-#define unk_4897 RAM8(unk_4897_ADDRESS)
-#define unk_4898_ADDRESS 0x4898u
-#define unk_4898 RAM8(unk_4898_ADDRESS)
-#define unk_4899_ADDRESS 0x4899u
-#define unk_4899 RAM8(unk_4899_ADDRESS)
-#define unk_489A_ADDRESS 0x489Au
-#define unk_489A RAM8(unk_489A_ADDRESS)
-#define unk_489B_ADDRESS 0x489Bu
-#define unk_489B RAM8(unk_489B_ADDRESS)
-#define unk_489C_ADDRESS 0x489Cu
-#define unk_489C RAM8(unk_489C_ADDRESS)
-#define unk_489D_ADDRESS 0x489Du
-#define unk_489D RAM8(unk_489D_ADDRESS)
-#define unk_489E_ADDRESS 0x489Eu
-#define unk_489E RAM8(unk_489E_ADDRESS)
-#define unk_489F_ADDRESS 0x489Fu
-#define unk_489F RAM16(unk_489F_ADDRESS)
-#define unk_48A1_ADDRESS 0x48A1u
-#define unk_48A1 RAM8(unk_48A1_ADDRESS)
-#define unk_48A2_ADDRESS 0x48A2u
-#define unk_48A2 RAM8(unk_48A2_ADDRESS)
-#define unk_48A3_ADDRESS 0x48A3u
-#define unk_48A3 RAM8(unk_48A3_ADDRESS)
-#define unk_48A4_ADDRESS 0x48A4u
-#define unk_48A4 RAM16(unk_48A4_ADDRESS)
-#define unk_48A6_ADDRESS 0x48A6u
-#define unk_48A6 RAM8(unk_48A6_ADDRESS)
-#define unk_48A7_ADDRESS 0x48A7u
-#define unk_48A7 RAM8(unk_48A7_ADDRESS)
-#define unk_48A8_ADDRESS 0x48A8u
-#define unk_48A8 RAM8(unk_48A8_ADDRESS)
-#define unk_48A9_ADDRESS 0x48A9u
-#define unk_48A9 RAM8(unk_48A9_ADDRESS)
-#define unk_48AA_ADDRESS 0x48AAu
-#define unk_48AA RAM8(unk_48AA_ADDRESS)
-#define unk_48AB_ADDRESS 0x48ABu
-#define unk_48AB RAM8(unk_48AB_ADDRESS)
-#define unk_48AC_ADDRESS 0x48ACu
-#define unk_48AC RAM16(unk_48AC_ADDRESS)
-#define unk_48AF_ADDRESS 0x48AFu
-#define unk_48AF RAM8(unk_48AF_ADDRESS)
-#define unk_48B0_ADDRESS 0x48B0u
-#define unk_48B0 RAM8(unk_48B0_ADDRESS)
-#define unk_48B2_ADDRESS 0x48B2u
-#define unk_48B2 RAM16(unk_48B2_ADDRESS)
-#define unk_48B5_ADDRESS 0x48B5u
-#define unk_48B5 RAM8(unk_48B5_ADDRESS)
-#define unk_48B6_ADDRESS 0x48B6u
-#define unk_48B6 RAM8(unk_48B6_ADDRESS)
-#define unk_48B8_ADDRESS 0x48B8u
-#define unk_48B8 RAM16(unk_48B8_ADDRESS)
-#define unk_48BB_ADDRESS 0x48BBu
-#define unk_48BB RAM8(unk_48BB_ADDRESS)
-#define unk_48BC_ADDRESS 0x48BCu
-#define unk_48BC RAM16(unk_48BC_ADDRESS)
-#define unk_48BE_ADDRESS 0x48BEu
-#define unk_48BE RAM16(unk_48BE_ADDRESS)
-#define unk_48C1_ADDRESS 0x48C1u
-#define unk_48C1 RAM16(unk_48C1_ADDRESS)
-#define unk_48C3_ADDRESS 0x48C3u
-#define unk_48C3 RAM16(unk_48C3_ADDRESS)
-#define unk_48C5_ADDRESS 0x48C5u
-#define unk_48C5 RAM16(unk_48C5_ADDRESS)
-#define unk_48C8_ADDRESS 0x48C8u
-#define unk_48C8 RAM16(unk_48C8_ADDRESS)
-#define unk_48CA_ADDRESS 0x48CAu
-#define unk_48CA RAM16(unk_48CA_ADDRESS)
-#define unk_48CC_ADDRESS 0x48CCu
-#define unk_48CC RAM16(unk_48CC_ADDRESS)
-#define unk_48CE_ADDRESS 0x48CEu
-#define unk_48CE RAM16(unk_48CE_ADDRESS)
-#define unk_48D1_ADDRESS 0x48D1u
-#define unk_48D1 RAM16(unk_48D1_ADDRESS)
-#define unk_48D3_ADDRESS 0x48D3u
-#define unk_48D3 RAM16(unk_48D3_ADDRESS)
-#define unk_48D5_ADDRESS 0x48D5u
-#define unk_48D5 RAM16(unk_48D5_ADDRESS)
-#define unk_48D7_ADDRESS 0x48D7u
-#define unk_48D7 RAM8(unk_48D7_ADDRESS)
-#define unk_48D8_ADDRESS 0x48D8u
-#define unk_48D8 RAM16(unk_48D8_ADDRESS)
-#define unk_48DA_ADDRESS 0x48DAu
-#define unk_48DA RAM16(unk_48DA_ADDRESS)
-#define unk_48DE_ADDRESS 0x48DEu
-#define unk_48DE RAM16(unk_48DE_ADDRESS)
-#define unk_48E0_ADDRESS 0x48E0u
-#define unk_48E0 RAM16(unk_48E0_ADDRESS)
-#define unk_48E2_ADDRESS 0x48E2u
-#define unk_48E2 RAM16(unk_48E2_ADDRESS)
-#define unk_48E4_ADDRESS 0x48E4u
-#define unk_48E4 RAM16(unk_48E4_ADDRESS)
-#define unk_48E6_ADDRESS 0x48E6u
-#define unk_48E6 RAM16(unk_48E6_ADDRESS)
+#define floor_map_ADDRESS 0x4000u
+#define floor_map RAM8(floor_map_ADDRESS)
+#define game_mode_ADDRESS 0x4800u
+#define game_mode RAM8(game_mode_ADDRESS)
+#define mode_step_ADDRESS 0x4801u
+#define mode_step RAM8(mode_step_ADDRESS)
+#define mode_phase_ADDRESS 0x4802u
+#define mode_phase RAM8(mode_phase_ADDRESS)
+#define game_step_ADDRESS 0x4803u
+#define game_step RAM8(game_step_ADDRESS)
+#define step_phase_ADDRESS 0x4804u
+#define step_phase RAM8(step_phase_ADDRESS)
+#define step_subphase_ADDRESS 0x4805u
+#define step_subphase RAM8(step_subphase_ADDRESS)
+#define step_countdown_ADDRESS 0x4806u
+#define step_countdown RAM8(step_countdown_ADDRESS)
+#define unused_mode_word_ADDRESS 0x4807u
+#define unused_mode_word RAM16(unused_mode_word_ADDRESS)
+#define attract_timer_ADDRESS 0x4809u
+#define attract_timer RAM8(attract_timer_ADDRESS)
+#define scene_timer_ADDRESS 0x480Au
+#define scene_timer RAM16(scene_timer_ADDRESS)
+#define step_timer_ADDRESS 0x480Bu
+#define step_timer RAM16(step_timer_ADDRESS)
+#define unused_mode_byte_ADDRESS 0x480Du
+#define unused_mode_byte RAM8(unused_mode_byte_ADDRESS)
+#define window_bank_ADDRESS 0x480Eu
+#define window_bank RAM8(window_bank_ADDRESS)
+#define board_control_ADDRESS 0x480Fu
+#define board_control RAM8(board_control_ADDRESS)
+#define board_output_ADDRESS 0x4810u
+#define board_output RAM8(board_output_ADDRESS)
+#define in_attract_ADDRESS 0x4811u
+#define in_attract RAM8(in_attract_ADDRESS)
+#define irq_busy_ADDRESS 0x4812u
+#define irq_busy RAM8(irq_busy_ADDRESS)
+#define attract_sound_ADDRESS 0x4813u
+#define attract_sound RAM8(attract_sound_ADDRESS)
+#define difficulty_setting_ADDRESS 0x4814u
+#define difficulty_setting RAM8(difficulty_setting_ADDRESS)
+#define frame_count_ADDRESS 0x4815u
+#define frame_count RAM16(frame_count_ADDRESS)
+#define slot_credits_ADDRESS 0x4817u
+#define slot_credits RAM16(slot_credits_ADDRESS)
+#define slot_1_coins_ADDRESS 0x4819u
+#define slot_1_coins RAM8(slot_1_coins_ADDRESS)
+#define slot_1_counter_pulses_ADDRESS 0x481Au
+#define slot_1_counter_pulses RAM8(slot_1_counter_pulses_ADDRESS)
+#define slot_1_counter_time_ADDRESS 0x481Bu
+#define slot_1_counter_time RAM8(slot_1_counter_time_ADDRESS)
+#define slot_1_coins_per_credit_ADDRESS 0x481Cu
+#define slot_1_coins_per_credit RAM8(slot_1_coins_per_credit_ADDRESS)
+#define slot_1_credits_per_coins_ADDRESS 0x481Du
+#define slot_1_credits_per_coins RAM8(slot_1_credits_per_coins_ADDRESS)
+#define slot_1_credit_given_ADDRESS 0x481Eu
+#define slot_1_credit_given RAM8(slot_1_credit_given_ADDRESS)
+#define slot_2_credits_ADDRESS 0x481Fu
+#define slot_2_credits RAM16(slot_2_credits_ADDRESS)
+#define slot_2_counter_pulses_ADDRESS 0x4822u
+#define slot_2_counter_pulses RAM8(slot_2_counter_pulses_ADDRESS)
+#define slot_2_counter_time_ADDRESS 0x4823u
+#define slot_2_counter_time RAM8(slot_2_counter_time_ADDRESS)
+#define slot_2_coins_per_credit_ADDRESS 0x4824u
+#define slot_2_coins_per_credit RAM8(slot_2_coins_per_credit_ADDRESS)
+#define slot_2_credits_per_coins_ADDRESS 0x4825u
+#define slot_2_credits_per_coins RAM8(slot_2_credits_per_coins_ADDRESS)
+#define slot_3_credits_ADDRESS 0x4827u
+#define slot_3_credits RAM16(slot_3_credits_ADDRESS)
+#define slot_4_credits_ADDRESS 0x482Fu
+#define slot_4_credits RAM16(slot_4_credits_ADDRESS)
+#define credits_ADDRESS 0x4837u
+#define credits RAM16(credits_ADDRESS)
+#define four_coin_slots_ADDRESS 0x4839u
+#define four_coin_slots RAM8(four_coin_slots_ADDRESS)
+#define first_credit_extra_coins_ADDRESS 0x483Au
+#define first_credit_extra_coins RAM8(first_credit_extra_coins_ADDRESS)
+#define separate_coin_slots_ADDRESS 0x483Bu
+#define separate_coin_slots RAM8(separate_coin_slots_ADDRESS)
+#define coin_inputs_ADDRESS 0x483Du
+#define coin_inputs RAM8(coin_inputs_ADDRESS)
+#define coin_inputs_last_ADDRESS 0x483Eu
+#define coin_inputs_last RAM8(coin_inputs_last_ADDRESS)
+#define coin_inputs_before_ADDRESS 0x483Fu
+#define coin_inputs_before RAM8(coin_inputs_before_ADDRESS)
+#define player_controls_ADDRESS 0x4840u
+#define player_controls(index) RAM8(player_controls_ADDRESS + (index))
+#define players_playing_ADDRESS 0x4850u
+#define players_playing RAM8(players_playing_ADDRESS)
+#define coins_inserted_ADDRESS 0x4851u
+#define coins_inserted RAM8(coins_inserted_ADDRESS)
+#define sprite_chip_control_ADDRESS 0x4855u
+#define sprite_chip_control RAM8(sprite_chip_control_ADDRESS)
+#define dma_pending_ADDRESS 0x4856u
+#define dma_pending RAM8(dma_pending_ADDRESS)
+#define player_count_ADDRESS 0x4857u
+#define player_count RAM8(player_count_ADDRESS)
+#define random_number_ADDRESS 0x4858u
+#define random_number RAM8(random_number_ADDRESS)
+#define lives_per_credit_ADDRESS 0x485Au
+#define lives_per_credit RAM8(lives_per_credit_ADDRESS)
+#define players_joined_ADDRESS 0x485Bu
+#define players_joined RAM8(players_joined_ADDRESS)
+#define layer_clear_pending_ADDRESS 0x485Du
+#define layer_clear_pending RAM8(layer_clear_pending_ADDRESS)
+#define demo_number_ADDRESS 0x485Eu
+#define demo_number RAM8(demo_number_ADDRESS)
+#define flip_screen_ADDRESS 0x485Fu
+#define flip_screen RAM8(flip_screen_ADDRESS)
+#define play_variables_ADDRESS 0x4860u
+#define play_variables RAM8(play_variables_ADDRESS)
+#define rank_ADDRESS 0x4861u
+#define rank RAM8(rank_ADDRESS)
+#define rank_time_step_ADDRESS 0x4862u
+#define rank_time_step RAM8(rank_time_step_ADDRESS)
+#define rank_frames_ADDRESS 0x4863u
+#define rank_frames RAM16(rank_frames_ADDRESS)
+#define camera_wait_frames_ADDRESS 0x4865u
+#define camera_wait_frames RAM16(camera_wait_frames_ADDRESS)
+#define scene_ADDRESS 0x4867u
+#define scene RAM8(scene_ADDRESS)
+#define gauges_shown_ADDRESS 0x486Au
+#define gauges_shown RAM8(gauges_shown_ADDRESS)
+#define difficulty_ADDRESS 0x486Bu
+#define difficulty RAM8(difficulty_ADDRESS)
+#define stage_variables_ADDRESS 0x4870u
+#define stage_variables RAM8(stage_variables_ADDRESS)
+#define text_colour_ADDRESS 0x4871u
+#define text_colour RAM8(text_colour_ADDRESS)
+#define scene_running_ADDRESS 0x4872u
+#define scene_running RAM8(scene_running_ADDRESS)
+#define spawn_next_ADDRESS 0x4873u
+#define spawn_next RAM16(spawn_next_ADDRESS)
+#define map_scene_ADDRESS 0x4875u
+#define map_scene RAM8(map_scene_ADDRESS)
+#define map_area_ADDRESS 0x4876u
+#define map_area RAM8(map_area_ADDRESS)
+#define title_card_step_ADDRESS 0x4877u
+#define title_card_step RAM8(title_card_step_ADDRESS)
+#define skip_wait_ADDRESS 0x4878u
+#define skip_wait RAM8(skip_wait_ADDRESS)
+#define objects_frozen_ADDRESS 0x4879u
+#define objects_frozen RAM8(objects_frozen_ADDRESS)
+#define bonus_seconds_ADDRESS 0x487Au
+#define bonus_seconds RAM8(bonus_seconds_ADDRESS)
+#define bonus_frames_ADDRESS 0x487Bu
+#define bonus_frames RAM8(bonus_frames_ADDRESS)
+#define boss_arrived_ADDRESS 0x487Cu
+#define boss_arrived RAM8(boss_arrived_ADDRESS)
+#define boss_beaten_ADDRESS 0x487Du
+#define boss_beaten RAM8(boss_beaten_ADDRESS)
+#define palette_request_kind_ADDRESS 0x487Eu
+#define palette_request_kind RAM8(palette_request_kind_ADDRESS)
+#define palette_jobs_left_ADDRESS 0x487Fu
+#define palette_jobs_left RAM8(palette_jobs_left_ADDRESS)
+#define stage_part_ADDRESS 0x4880u
+#define stage_part RAM8(stage_part_ADDRESS)
+#define stage_cue_ADDRESS 0x4881u
+#define stage_cue RAM8(stage_cue_ADDRESS)
+#define stage_cue_timer_ADDRESS 0x4882u
+#define stage_cue_timer RAM8(stage_cue_timer_ADDRESS)
+#define profile_typed_ADDRESS 0x4883u
+#define profile_typed RAM8(profile_typed_ADDRESS)
+#define profile_alias_typed_ADDRESS 0x4884u
+#define profile_alias_typed RAM8(profile_alias_typed_ADDRESS)
+#define players_present_ADDRESS 0x4885u
+#define players_present RAM8(players_present_ADDRESS)
+#define sprite_scroll_x_ADDRESS 0x4886u
+#define sprite_scroll_x RAM16(sprite_scroll_x_ADDRESS)
+#define sprite_scroll_x_pad_ADDRESS 0x4888u
+#define sprite_scroll_x_pad RAM8(sprite_scroll_x_pad_ADDRESS)
+#define sprite_scroll_y_ADDRESS 0x4889u
+#define sprite_scroll_y RAM16(sprite_scroll_y_ADDRESS)
+#define sprite_scroll_y_pad_ADDRESS 0x488Bu
+#define sprite_scroll_y_pad RAM8(sprite_scroll_y_pad_ADDRESS)
+#define in_cemetery_ADDRESS 0x488Du
+#define in_cemetery RAM8(in_cemetery_ADDRESS)
+#define cemetery_layer_offset_step_ADDRESS 0x488Eu
+#define cemetery_layer_offset_step RAM8(cemetery_layer_offset_step_ADDRESS)
+#define hurry_up_out_ADDRESS 0x488Fu
+#define hurry_up_out RAM8(hurry_up_out_ADDRESS)
+#define hurry_up_object_ADDRESS 0x4890u
+#define hurry_up_object RAM16(hurry_up_object_ADDRESS)
+#define stage_scrolls_on_ADDRESS 0x4892u
+#define stage_scrolls_on RAM8(stage_scrolls_on_ADDRESS)
+#define hurry_up_frames_ADDRESS 0x4893u
+#define hurry_up_frames RAM16(hurry_up_frames_ADDRESS)
+#define screen_shake_frame_ADDRESS 0x4895u
+#define screen_shake_frame RAM8(screen_shake_frame_ADDRESS)
+#define screen_shake_step_ADDRESS 0x4896u
+#define screen_shake_step RAM8(screen_shake_step_ADDRESS)
+#define screen_shake_on_ADDRESS 0x4897u
+#define screen_shake_on RAM8(screen_shake_on_ADDRESS)
+#define screen_shake_kind_ADDRESS 0x4898u
+#define screen_shake_kind RAM8(screen_shake_kind_ADDRESS)
+#define draw_all_layer_edges_ADDRESS 0x4899u
+#define draw_all_layer_edges RAM8(draw_all_layer_edges_ADDRESS)
+#define layer_columns_to_draw_ADDRESS 0x489Au
+#define layer_columns_to_draw RAM8(layer_columns_to_draw_ADDRESS)
+#define layer_rows_to_draw_ADDRESS 0x489Bu
+#define layer_rows_to_draw RAM8(layer_rows_to_draw_ADDRESS)
+#define layer_columns_on_ADDRESS 0x489Cu
+#define layer_columns_on RAM8(layer_columns_on_ADDRESS)
+#define layer_rows_on_ADDRESS 0x489Du
+#define layer_rows_on RAM8(layer_rows_on_ADDRESS)
+#define map_bank_ADDRESS 0x489Eu
+#define map_bank RAM8(map_bank_ADDRESS)
+#define entry_start_camera_y_ADDRESS 0x489Fu
+#define entry_start_camera_y RAM16(entry_start_camera_y_ADDRESS)
+#define floor_pattern_offset_ADDRESS 0x48A1u
+#define floor_pattern_offset RAM8(floor_pattern_offset_ADDRESS)
+#define floor_pattern_ADDRESS 0x48A2u
+#define floor_pattern RAM8(floor_pattern_ADDRESS)
+#define block_cells_left_ADDRESS 0x48A3u
+#define block_cells_left RAM8(block_cells_left_ADDRESS)
+#define stage_record_entry_ADDRESS 0x48A4u
+#define stage_record_entry RAM16(stage_record_entry_ADDRESS)
+#define camera_main_layer_ADDRESS 0x48A6u
+#define camera_main_layer RAM8(camera_main_layer_ADDRESS)
+#define camera_x_held_ADDRESS 0x48A7u
+#define camera_x_held RAM8(camera_x_held_ADDRESS)
+#define camera_y_held_ADDRESS 0x48A8u
+#define camera_y_held RAM8(camera_y_held_ADDRESS)
+#define layer_a_edges_on_ADDRESS 0x48A9u
+#define layer_a_edges_on RAM8(layer_a_edges_on_ADDRESS)
+#define layer_b_edges_on_ADDRESS 0x48AAu
+#define layer_b_edges_on RAM8(layer_b_edges_on_ADDRESS)
+#define stage_scroll_step_ADDRESS 0x48ABu
+#define stage_scroll_step RAM8(stage_scroll_step_ADDRESS)
+#define camera_x_ADDRESS 0x48ACu
+#define camera_x RAM16(camera_x_ADDRESS)
+#define camera_x_fraction_ADDRESS 0x48AEu
+#define camera_x_fraction RAM8(camera_x_fraction_ADDRESS)
+#define last_stage_scroll_x_ADDRESS 0x48AFu
+#define last_stage_scroll_x RAM16(last_stage_scroll_x_ADDRESS)
+#define camera_y_ADDRESS 0x48B2u
+#define camera_y RAM16(camera_y_ADDRESS)
+#define camera_y_fraction_ADDRESS 0x48B4u
+#define camera_y_fraction RAM8(camera_y_fraction_ADDRESS)
+#define last_stage_scroll_y_ADDRESS 0x48B5u
+#define last_stage_scroll_y RAM16(last_stage_scroll_y_ADDRESS)
+#define cemetery_scroll_ADDRESS 0x48B8u
+#define cemetery_scroll RAM16(cemetery_scroll_ADDRESS)
+#define cemetery_scroll_fraction_ADDRESS 0x48BAu
+#define cemetery_scroll_fraction RAM8(cemetery_scroll_fraction_ADDRESS)
+#define last_cemetery_scroll_high_ADDRESS 0x48BBu
+#define last_cemetery_scroll_high RAM8(last_cemetery_scroll_high_ADDRESS)
+#define last_cemetery_scroll_low_ADDRESS 0x48BCu
+#define last_cemetery_scroll_low RAM16(last_cemetery_scroll_low_ADDRESS)
+#define layer_a_scroll_x_ADDRESS 0x48BEu
+#define layer_a_scroll_x RAM16(layer_a_scroll_x_ADDRESS)
+#define layer_a_last_scroll_x_ADDRESS 0x48C1u
+#define layer_a_last_scroll_x RAM16(layer_a_last_scroll_x_ADDRESS)
+#define layer_a_offset_x_ADDRESS 0x48C3u
+#define layer_a_offset_x RAM16(layer_a_offset_x_ADDRESS)
+#define layer_a_scroll_y_ADDRESS 0x48C5u
+#define layer_a_scroll_y RAM16(layer_a_scroll_y_ADDRESS)
+#define layer_a_last_scroll_y_ADDRESS 0x48C8u
+#define layer_a_last_scroll_y RAM16(layer_a_last_scroll_y_ADDRESS)
+#define layer_a_offset_y_ADDRESS 0x48CAu
+#define layer_a_offset_y RAM16(layer_a_offset_y_ADDRESS)
+#define layer_a_offset_y2_ADDRESS 0x48CCu
+#define layer_a_offset_y2 RAM16(layer_a_offset_y2_ADDRESS)
+#define layer_b_scroll_x_ADDRESS 0x48CEu
+#define layer_b_scroll_x RAM16(layer_b_scroll_x_ADDRESS)
+#define layer_b_last_scroll_x_ADDRESS 0x48D1u
+#define layer_b_last_scroll_x RAM16(layer_b_last_scroll_x_ADDRESS)
+#define layer_b_offset_x_ADDRESS 0x48D3u
+#define layer_b_offset_x RAM16(layer_b_offset_x_ADDRESS)
+#define layer_b_scroll_y_ADDRESS 0x48D5u
+#define layer_b_scroll_y RAM16(layer_b_scroll_y_ADDRESS)
+#define layer_b_scroll_y_fraction_ADDRESS 0x48D7u
+#define layer_b_scroll_y_fraction RAM8(layer_b_scroll_y_fraction_ADDRESS)
+#define layer_b_last_scroll_y_ADDRESS 0x48D8u
+#define layer_b_last_scroll_y RAM16(layer_b_last_scroll_y_ADDRESS)
+#define layer_b_offset_y_ADDRESS 0x48DAu
+#define layer_b_offset_y RAM16(layer_b_offset_y_ADDRESS)
+#define camera_x_speed_ADDRESS 0x48DEu
+#define camera_x_speed RAM16S(camera_x_speed_ADDRESS)
+#define camera_y_speed_ADDRESS 0x48E0u
+#define camera_y_speed RAM16S(camera_y_speed_ADDRESS)
+#define cemetery_scroll_speed_ADDRESS 0x48E2u
+#define cemetery_scroll_speed RAM16(cemetery_scroll_speed_ADDRESS)
+#define players_push_x_ADDRESS 0x48E4u
+#define players_push_x RAM16S(players_push_x_ADDRESS)
+#define players_push_y_ADDRESS 0x48E6u
+#define players_push_y RAM16S(players_push_y_ADDRESS)
 #define unk_48E8_ADDRESS 0x48E8u
 #define unk_48E8 RAM8(unk_48E8_ADDRESS)
 #define unk_48E9_ADDRESS 0x48E9u
@@ -343,94 +337,100 @@
 #define unk_48FC RAM16(unk_48FC_ADDRESS)
 #define unk_48FE_ADDRESS 0x48FEu
 #define unk_48FE RAM16(unk_48FE_ADDRESS)
-#define unk_4900_ADDRESS 0x4900u
-#define unk_4900 RAM16(unk_4900_ADDRESS)
-#define unk_4902_ADDRESS 0x4902u
-#define unk_4902 RAM16(unk_4902_ADDRESS)
-#define unk_4940_ADDRESS 0x4940u
-#define unk_4940 RAM16(unk_4940_ADDRESS)
-#define unk_4942_ADDRESS 0x4942u
-#define unk_4942 RAM16(unk_4942_ADDRESS)
-#define unk_49D0_ADDRESS 0x49D0u
-#define unk_49D0 RAM16(unk_49D0_ADDRESS)
-#define unk_49D3_ADDRESS 0x49D3u
-#define unk_49D3 RAM8(unk_49D3_ADDRESS)
-#define unk_49D4_ADDRESS 0x49D4u
-#define unk_49D4 RAM16(unk_49D4_ADDRESS)
-#define unk_49D6_ADDRESS 0x49D6u
-#define unk_49D6 RAM8(unk_49D6_ADDRESS)
-#define unk_49D7_ADDRESS 0x49D7u
-#define unk_49D7 RAM8(unk_49D7_ADDRESS)
-#define unk_49D8_ADDRESS 0x49D8u
-#define unk_49D8 RAM16(unk_49D8_ADDRESS)
-#define unk_49DB_ADDRESS 0x49DBu
-#define unk_49DB RAM8(unk_49DB_ADDRESS)
-#define unk_49DC_ADDRESS 0x49DCu
-#define unk_49DC RAM16(unk_49DC_ADDRESS)
-#define unk_49DE_ADDRESS 0x49DEu
-#define unk_49DE RAM8(unk_49DE_ADDRESS)
-#define unk_49DF_ADDRESS 0x49DFu
-#define unk_49DF RAM8(unk_49DF_ADDRESS)
-#define unk_49E0_ADDRESS 0x49E0u
-#define unk_49E0 RAM16(unk_49E0_ADDRESS)
-#define unk_49E3_ADDRESS 0x49E3u
-#define unk_49E3 RAM8(unk_49E3_ADDRESS)
-#define unk_49E4_ADDRESS 0x49E4u
-#define unk_49E4 RAM16(unk_49E4_ADDRESS)
-#define unk_49E6_ADDRESS 0x49E6u
-#define unk_49E6 RAM8(unk_49E6_ADDRESS)
-#define unk_49E7_ADDRESS 0x49E7u
-#define unk_49E7 RAM8(unk_49E7_ADDRESS)
-#define unk_49E8_ADDRESS 0x49E8u
-#define unk_49E8 RAM16(unk_49E8_ADDRESS)
-#define unk_49EB_ADDRESS 0x49EBu
-#define unk_49EB RAM8(unk_49EB_ADDRESS)
-#define unk_49EC_ADDRESS 0x49ECu
-#define unk_49EC RAM16(unk_49EC_ADDRESS)
-#define unk_49EE_ADDRESS 0x49EEu
-#define unk_49EE RAM8(unk_49EE_ADDRESS)
-#define unk_49EF_ADDRESS 0x49EFu
-#define unk_49EF RAM8(unk_49EF_ADDRESS)
-#define unk_49F0_ADDRESS 0x49F0u
-#define unk_49F0 RAM8(unk_49F0_ADDRESS)
-#define unk_49F1_ADDRESS 0x49F1u
-#define unk_49F1 RAM8(unk_49F1_ADDRESS)
-#define unk_49F2_ADDRESS 0x49F2u
-#define unk_49F2 RAM8(unk_49F2_ADDRESS)
-#define unk_49F3_ADDRESS 0x49F3u
-#define unk_49F3 RAM8(unk_49F3_ADDRESS)
-#define unk_4A02_ADDRESS 0x4A02u
-#define unk_4A02 RAM16(unk_4A02_ADDRESS)
-#define unk_4A04_ADDRESS 0x4A04u
-#define unk_4A04 RAM16(unk_4A04_ADDRESS)
-#define unk_4A06_ADDRESS 0x4A06u
-#define unk_4A06 RAM8(unk_4A06_ADDRESS)
-#define unk_4A09_ADDRESS 0x4A09u
-#define unk_4A09 RAM16(unk_4A09_ADDRESS)
-#define unk_4A0B_ADDRESS 0x4A0Bu
-#define unk_4A0B RAM16(unk_4A0B_ADDRESS)
-#define unk_4A0D_ADDRESS 0x4A0Du
-#define unk_4A0D RAM8(unk_4A0D_ADDRESS)
-#define unk_4A10_ADDRESS 0x4A10u
-#define unk_4A10 RAM16(unk_4A10_ADDRESS)
-#define unk_4A12_ADDRESS 0x4A12u
-#define unk_4A12 RAM16(unk_4A12_ADDRESS)
-#define unk_4A14_ADDRESS 0x4A14u
-#define unk_4A14 RAM8(unk_4A14_ADDRESS)
-#define unk_4A17_ADDRESS 0x4A17u
-#define unk_4A17 RAM16(unk_4A17_ADDRESS)
-#define unk_4A19_ADDRESS 0x4A19u
-#define unk_4A19 RAM16(unk_4A19_ADDRESS)
-#define unk_4A1B_ADDRESS 0x4A1Bu
-#define unk_4A1B RAM8(unk_4A1B_ADDRESS)
-#define unk_4A1C_ADDRESS 0x4A1Cu
-#define unk_4A1C RAM8(unk_4A1C_ADDRESS)
-#define unk_4A1D_ADDRESS 0x4A1Du
-#define unk_4A1D RAM8(unk_4A1D_ADDRESS)
-#define unk_4A21_ADDRESS 0x4A21u
-#define unk_4A21 RAM8(unk_4A21_ADDRESS)
-#define unk_4A22_ADDRESS 0x4A22u
-#define unk_4A22 RAM8(unk_4A22_ADDRESS)
+#define sound_queue_write_ADDRESS 0x4900u
+#define sound_queue_write RAM16(sound_queue_write_ADDRESS)
+#define sound_queue_read_ADDRESS 0x4902u
+#define sound_queue_read RAM16(sound_queue_read_ADDRESS)
+#define sound_queue_ADDRESS 0x4904u
+#define sound_queue(index) RAM16(sound_queue_ADDRESS + (index) * 2u)
+#define job_queue_write_ADDRESS 0x4940u
+#define job_queue_write RAM16(job_queue_write_ADDRESS)
+#define job_queue_read_ADDRESS 0x4942u
+#define job_queue_read RAM16(job_queue_read_ADDRESS)
+#define job_queue_ADDRESS 0x4944u
+#define job_queue(index) RAM16(job_queue_ADDRESS + (index) * 2u)
+#define high_scores_ADDRESS 0x4980u
+#define high_scores(index) RAM8(high_scores_ADDRESS + (index))
+#define player_variables_ADDRESS 0x49D0u
+#define player_variables RAM8(player_variables_ADDRESS)
+#define marge_entry_status_ADDRESS 0x49D3u
+#define marge_entry_status RAM8(marge_entry_status_ADDRESS)
+#define marge_score_ADDRESS 0x49D4u
+#define marge_score RAM16(marge_score_ADDRESS)
+#define marge_grab_hints_ADDRESS 0x49D6u
+#define marge_grab_hints RAM8(marge_grab_hints_ADDRESS)
+#define marge_state_ADDRESS 0x49D7u
+#define marge_state RAM8(marge_state_ADDRESS)
+#define homer_lives_ADDRESS 0x49D8u
+#define homer_lives RAM16(homer_lives_ADDRESS)
+#define homer_entry_status_ADDRESS 0x49DBu
+#define homer_entry_status RAM8(homer_entry_status_ADDRESS)
+#define homer_score_ADDRESS 0x49DCu
+#define homer_score RAM16(homer_score_ADDRESS)
+#define homer_grab_hints_ADDRESS 0x49DEu
+#define homer_grab_hints RAM8(homer_grab_hints_ADDRESS)
+#define homer_state_ADDRESS 0x49DFu
+#define homer_state RAM8(homer_state_ADDRESS)
+#define bart_lives_ADDRESS 0x49E0u
+#define bart_lives RAM16(bart_lives_ADDRESS)
+#define bart_entry_status_ADDRESS 0x49E3u
+#define bart_entry_status RAM8(bart_entry_status_ADDRESS)
+#define bart_score_ADDRESS 0x49E4u
+#define bart_score RAM16(bart_score_ADDRESS)
+#define bart_grab_hints_ADDRESS 0x49E6u
+#define bart_grab_hints RAM8(bart_grab_hints_ADDRESS)
+#define bart_state_ADDRESS 0x49E7u
+#define bart_state RAM8(bart_state_ADDRESS)
+#define lisa_lives_ADDRESS 0x49E8u
+#define lisa_lives RAM16(lisa_lives_ADDRESS)
+#define lisa_entry_status_ADDRESS 0x49EBu
+#define lisa_entry_status RAM8(lisa_entry_status_ADDRESS)
+#define lisa_score_ADDRESS 0x49ECu
+#define lisa_score RAM16(lisa_score_ADDRESS)
+#define lisa_grab_hints_ADDRESS 0x49EEu
+#define lisa_grab_hints RAM8(lisa_grab_hints_ADDRESS)
+#define lisa_state_ADDRESS 0x49EFu
+#define lisa_state RAM8(lisa_state_ADDRESS)
+#define marge_play_status_ADDRESS 0x49F0u
+#define marge_play_status RAM8(marge_play_status_ADDRESS)
+#define homer_play_status_ADDRESS 0x49F1u
+#define homer_play_status RAM8(homer_play_status_ADDRESS)
+#define bart_play_status_ADDRESS 0x49F2u
+#define bart_play_status RAM8(bart_play_status_ADDRESS)
+#define lisa_play_status_ADDRESS 0x49F3u
+#define lisa_play_status RAM8(lisa_play_status_ADDRESS)
+#define unused_marge_word_1_ADDRESS 0x4A02u
+#define unused_marge_word_1 RAM16(unused_marge_word_1_ADDRESS)
+#define unused_marge_word_2_ADDRESS 0x4A04u
+#define unused_marge_word_2 RAM16(unused_marge_word_2_ADDRESS)
+#define unused_marge_byte_ADDRESS 0x4A06u
+#define unused_marge_byte RAM8(unused_marge_byte_ADDRESS)
+#define unused_homer_word_1_ADDRESS 0x4A09u
+#define unused_homer_word_1 RAM16(unused_homer_word_1_ADDRESS)
+#define unused_homer_word_2_ADDRESS 0x4A0Bu
+#define unused_homer_word_2 RAM16(unused_homer_word_2_ADDRESS)
+#define unused_homer_byte_ADDRESS 0x4A0Du
+#define unused_homer_byte RAM8(unused_homer_byte_ADDRESS)
+#define unused_bart_word_1_ADDRESS 0x4A10u
+#define unused_bart_word_1 RAM16(unused_bart_word_1_ADDRESS)
+#define unused_bart_word_2_ADDRESS 0x4A12u
+#define unused_bart_word_2 RAM16(unused_bart_word_2_ADDRESS)
+#define unused_bart_byte_ADDRESS 0x4A14u
+#define unused_bart_byte RAM8(unused_bart_byte_ADDRESS)
+#define unused_lisa_word_1_ADDRESS 0x4A17u
+#define unused_lisa_word_1 RAM16(unused_lisa_word_1_ADDRESS)
+#define unused_lisa_word_2_ADDRESS 0x4A19u
+#define unused_lisa_word_2 RAM16(unused_lisa_word_2_ADDRESS)
+#define unused_lisa_byte_ADDRESS 0x4A1Bu
+#define unused_lisa_byte RAM8(unused_lisa_byte_ADDRESS)
+#define continue_seconds_ADDRESS 0x4A1Cu
+#define continue_seconds RAM8(continue_seconds_ADDRESS)
+#define continue_player_ADDRESS 0x4A1Du
+#define continue_player RAM8(continue_player_ADDRESS)
+#define continue_seconds_heard_ADDRESS 0x4A21u
+#define continue_seconds_heard RAM8(continue_seconds_heard_ADDRESS)
+#define continue_frames_ADDRESS 0x4A22u
+#define continue_frames RAM8(continue_frames_ADDRESS)
 #define unk_4A40_ADDRESS 0x4A40u
 #define unk_4A40 RAM8(unk_4A40_ADDRESS)
 #define unk_4A42_ADDRESS 0x4A42u
@@ -633,90 +633,1194 @@
 #define unk_5671 RAM16(unk_5671_ADDRESS)
 #define unk_5685_ADDRESS 0x5685u
 #define unk_5685 RAM16(unk_5685_ADDRESS)
-#define unk_5800_ADDRESS 0x5800u
-#define unk_5800 RAM16(unk_5800_ADDRESS)
-#define unk_5813_ADDRESS 0x5813u
-#define unk_5813 RAM8(unk_5813_ADDRESS)
-#define unk_5823_ADDRESS 0x5823u
-#define unk_5823 RAM8(unk_5823_ADDRESS)
-#define unk_5833_ADDRESS 0x5833u
-#define unk_5833 RAM8(unk_5833_ADDRESS)
-#define unk_5843_ADDRESS 0x5843u
-#define unk_5843 RAM8(unk_5843_ADDRESS)
-#define unk_5900_ADDRESS 0x5900u
-#define unk_5900 RAM8(unk_5900_ADDRESS)
-#define unk_5908_ADDRESS 0x5908u
-#define unk_5908 RAM8(unk_5908_ADDRESS)
-#define unk_5909_ADDRESS 0x5909u
-#define unk_5909 RAM8(unk_5909_ADDRESS)
-#define unk_590A_ADDRESS 0x590Au
-#define unk_590A RAM8(unk_590A_ADDRESS)
-#define unk_590B_ADDRESS 0x590Bu
-#define unk_590B RAM16(unk_590B_ADDRESS)
-#define unk_590D_ADDRESS 0x590Du
-#define unk_590D RAM16(unk_590D_ADDRESS)
-#define unk_5912_ADDRESS 0x5912u
-#define unk_5912 RAM8(unk_5912_ADDRESS)
-#define unk_5913_ADDRESS 0x5913u
-#define unk_5913 RAM8(unk_5913_ADDRESS)
-#define unk_5914_ADDRESS 0x5914u
-#define unk_5914 RAM8(unk_5914_ADDRESS)
-#define unk_5915_ADDRESS 0x5915u
-#define unk_5915 RAM8(unk_5915_ADDRESS)
-#define unk_5916_ADDRESS 0x5916u
-#define unk_5916 RAM8(unk_5916_ADDRESS)
-#define unk_5917_ADDRESS 0x5917u
-#define unk_5917 RAM8(unk_5917_ADDRESS)
-#define unk_591A_ADDRESS 0x591Au
-#define unk_591A RAM8(unk_591A_ADDRESS)
-#define unk_591B_ADDRESS 0x591Bu
-#define unk_591B RAM8(unk_591B_ADDRESS)
-#define unk_591C_ADDRESS 0x591Cu
-#define unk_591C RAM8(unk_591C_ADDRESS)
-#define unk_59F1_ADDRESS 0x59F1u
-#define unk_59F1 RAM8(unk_59F1_ADDRESS)
-#define unk_59F8_ADDRESS 0x59F8u
-#define unk_59F8 RAM8(unk_59F8_ADDRESS)
-#define unk_5A00_ADDRESS 0x5A00u
-#define unk_5A00 RAM8(unk_5A00_ADDRESS)
-#define unk_5A01_ADDRESS 0x5A01u
-#define unk_5A01 RAM8(unk_5A01_ADDRESS)
-#define unk_5A02_ADDRESS 0x5A02u
-#define unk_5A02 RAM8(unk_5A02_ADDRESS)
-#define unk_5A10_ADDRESS 0x5A10u
-#define unk_5A10 RAM8(unk_5A10_ADDRESS)
-#define unk_5A11_ADDRESS 0x5A11u
-#define unk_5A11 RAM8(unk_5A11_ADDRESS)
-#define unk_5A12_ADDRESS 0x5A12u
-#define unk_5A12 RAM16(unk_5A12_ADDRESS)
-#define unk_5A14_ADDRESS 0x5A14u
-#define unk_5A14 RAM16(unk_5A14_ADDRESS)
-#define unk_5A16_ADDRESS 0x5A16u
-#define unk_5A16 RAM16(unk_5A16_ADDRESS)
-#define unk_5A18_ADDRESS 0x5A18u
-#define unk_5A18 RAM16(unk_5A18_ADDRESS)
-#define unk_5A1A_ADDRESS 0x5A1Au
-#define unk_5A1A RAM8(unk_5A1A_ADDRESS)
-#define unk_5A1B_ADDRESS 0x5A1Bu
-#define unk_5A1B RAM8(unk_5A1B_ADDRESS)
-#define unk_5D00_ADDRESS 0x5D00u
-#define unk_5D00 RAM16(unk_5D00_ADDRESS)
-#define unk_5D02_ADDRESS 0x5D02u
-#define unk_5D02 RAM8(unk_5D02_ADDRESS)
-#define unk_5D03_ADDRESS 0x5D03u
-#define unk_5D03 RAM8(unk_5D03_ADDRESS)
-#define unk_5D04_ADDRESS 0x5D04u
-#define unk_5D04 RAM8(unk_5D04_ADDRESS)
-#define unk_5D05_ADDRESS 0x5D05u
-#define unk_5D05 RAM8(unk_5D05_ADDRESS)
-#define unk_5D06_ADDRESS 0x5D06u
-#define unk_5D06 RAM8(unk_5D06_ADDRESS)
-#define unk_5D07_ADDRESS 0x5D07u
-#define unk_5D07 RAM8(unk_5D07_ADDRESS)
-#define unk_5D08_ADDRESS 0x5D08u
-#define unk_5D08 RAM8(unk_5D08_ADDRESS)
-#define unk_5D09_ADDRESS 0x5D09u
-#define unk_5D09 RAM8(unk_5D09_ADDRESS)
+#define demo_frames_ADDRESS 0x5800u
+#define demo_frames RAM16(demo_frames_ADDRESS)
+#define marge_demo_controls_ADDRESS 0x5813u
+#define marge_demo_controls RAM8(marge_demo_controls_ADDRESS)
+#define homer_demo_controls_ADDRESS 0x5823u
+#define homer_demo_controls RAM8(homer_demo_controls_ADDRESS)
+#define bart_demo_controls_ADDRESS 0x5833u
+#define bart_demo_controls RAM8(bart_demo_controls_ADDRESS)
+#define lisa_demo_controls_ADDRESS 0x5843u
+#define lisa_demo_controls RAM8(lisa_demo_controls_ADDRESS)
+#define test_mode_variables_ADDRESS 0x5900u
+#define test_mode_variables RAM8(test_mode_variables_ADDRESS)
+#define test_page_ADDRESS 0x5908u
+#define test_page RAM8(test_page_ADDRESS)
+#define test_page_step_ADDRESS 0x5909u
+#define test_page_step RAM8(test_page_step_ADDRESS)
+#define test_menu_length_ADDRESS 0x590Au
+#define test_menu_length RAM8(test_menu_length_ADDRESS)
+#define test_menu_cursor_variable_ADDRESS 0x590Bu
+#define test_menu_cursor_variable RAM16(test_menu_cursor_variable_ADDRESS)
+#define test_menu_lines_ADDRESS 0x590Du
+#define test_menu_lines RAM16(test_menu_lines_ADDRESS)
+#define test_check_cursor_ADDRESS 0x5912u
+#define test_check_cursor RAM8(test_check_cursor_ADDRESS)
+#define test_cursor_ADDRESS 0x5913u
+#define test_cursor RAM8(test_cursor_ADDRESS)
+#define test_cursor_repeat_ADDRESS 0x5914u
+#define test_cursor_repeat RAM8(test_cursor_repeat_ADDRESS)
+#define test_music_number_ADDRESS 0x5915u
+#define test_music_number RAM8(test_music_number_ADDRESS)
+#define test_sound_number_ADDRESS 0x5916u
+#define test_sound_number RAM8(test_sound_number_ADDRESS)
+#define test_sound_timer_ADDRESS 0x5917u
+#define test_sound_timer RAM8(test_sound_timer_ADDRESS)
+#define test_print_down_ADDRESS 0x591Au
+#define test_print_down RAM8(test_print_down_ADDRESS)
+#define test_premium_start_ADDRESS 0x591Bu
+#define test_premium_start RAM8(test_premium_start_ADDRESS)
+#define test_premium_coins_ADDRESS 0x591Cu
+#define test_premium_coins RAM8(test_premium_coins_ADDRESS)
+#define coin_setting_ADDRESS 0x59F1u
+#define coin_setting RAM8(coin_setting_ADDRESS)
+#define coin_slots_setting_ADDRESS 0x59F8u
+#define coin_slots_setting RAM8(coin_slots_setting_ADDRESS)
+#define eeprom_address_ADDRESS 0x5A00u
+#define eeprom_address RAM8(eeprom_address_ADDRESS)
+#define eeprom_data_ADDRESS 0x5A01u
+#define eeprom_data RAM8(eeprom_data_ADDRESS)
+#define eeprom_read_data_ADDRESS 0x5A02u
+#define eeprom_read_data RAM8(eeprom_read_data_ADDRESS)
+#define rom_check_step_ADDRESS 0x5A10u
+#define rom_check_step RAM8(rom_check_step_ADDRESS)
+#define rom_check_chip_ADDRESS 0x5A11u
+#define rom_check_chip RAM8(rom_check_chip_ADDRESS)
+#define rom_check_tile_sums_ADDRESS 0x5A12u
+#define rom_check_tile_sums(index) RAM16(rom_check_tile_sums_ADDRESS + (index) * 2u)
+#define rom_check_line_ADDRESS 0x5A1Au
+#define rom_check_line RAM8(rom_check_line_ADDRESS)
+#define rom_check_no_sound_cpu_ADDRESS 0x5A1Bu
+#define rom_check_no_sound_cpu RAM8(rom_check_no_sound_cpu_ADDRESS)
+#define ram_test_start_ADDRESS 0x5D00u
+#define ram_test_start RAM16(ram_test_start_ADDRESS)
+#define check_failed_ADDRESS 0x5D02u
+#define check_failed RAM8(check_failed_ADDRESS)
+#define check_11f_ADDRESS 0x5D03u
+#define check_11f RAM8(check_11f_ADDRESS)
+#define check_1j_ADDRESS 0x5D04u
+#define check_1j RAM8(check_1j_ADDRESS)
+#define check_16g_ADDRESS 0x5D05u
+#define check_16g RAM8(check_16g_ADDRESS)
+#define check_16f_ADDRESS 0x5D06u
+#define check_16f RAM8(check_16f_ADDRESS)
+#define check_9g_ADDRESS 0x5D07u
+#define check_9g RAM8(check_9g_ADDRESS)
+#define check_8g_ADDRESS 0x5D08u
+#define check_8g RAM8(check_8g_ADDRESS)
+#define check_12c_ADDRESS 0x5D09u
+#define check_12c RAM8(check_12c_ADDRESS)
+
+/* work RAM as one family of functions uses it */
+#define rom_sum_ADDRESS 0x48FAu
+#define rom_sum RAM16(rom_sum_ADDRESS)
+#define rom_sum_ADDRESS 0x48FAu
+#define rom_sum RAM16(rom_sum_ADDRESS)
+#define profile_letter_colour_ADDRESS 0x48F0u
+#define profile_letter_colour RAM8(profile_letter_colour_ADDRESS)
+#define profile_letter_place_ADDRESS 0x48F1u
+#define profile_letter_place RAM16(profile_letter_place_ADDRESS)
+#define profile_count_address_ADDRESS 0x48F3u
+#define profile_count_address RAM16(profile_count_address_ADDRESS)
+#define points_objects_left_ADDRESS 0x48F0u
+#define points_objects_left RAM8(points_objects_left_ADDRESS)
+#define enemy_points_ADDRESS 0x48F1u
+#define enemy_points RAM8(enemy_points_ADDRESS)
+#define boulder_bounce_speed_ADDRESS 0x48F3u
+#define boulder_bounce_speed RAM16S(boulder_bounce_speed_ADDRESS)
+#define cage_parts_left_ADDRESS 0x48F0u
+#define cage_parts_left RAM8(cage_parts_left_ADDRESS)
+#define cage_part_number_ADDRESS 0x48F1u
+#define cage_part_number RAM8(cage_part_number_ADDRESS)
+#define cage_part_offsets_ADDRESS 0x48F8u
+#define cage_part_offsets RAM16(cage_part_offsets_ADDRESS)
+#define cage_parts_left_ADDRESS 0x48F0u
+#define cage_parts_left RAM8(cage_parts_left_ADDRESS)
+#define cage_part_number_ADDRESS 0x48F1u
+#define cage_part_number RAM8(cage_part_number_ADDRESS)
+#define cage_part_offsets_ADDRESS 0x48F8u
+#define cage_part_offsets RAM16(cage_part_offsets_ADDRESS)
+#define reach_x_ADDRESS 0x48F8u
+#define reach_x RAM16S(reach_x_ADDRESS)
+#define reach_y_ADDRESS 0x48FAu
+#define reach_y RAM16S(reach_y_ADDRESS)
+#define blank_width_ADDRESS 0x48E8u
+#define blank_width RAM8(blank_width_ADDRESS)
+#define blank_columns_left_ADDRESS 0x48E9u
+#define blank_columns_left RAM8(blank_columns_left_ADDRESS)
+#define blank_rows_left_ADDRESS 0x48EAu
+#define blank_rows_left RAM8(blank_rows_left_ADDRESS)
+#define blank_player_ADDRESS 0x48EBu
+#define blank_player RAM8(blank_player_ADDRESS)
+#define balloon_growing_ADDRESS 0x48F2u
+#define balloon_growing RAM8(balloon_growing_ADDRESS)
+#define blowing_player_ADDRESS 0x48F3u
+#define blowing_player RAM8(blowing_player_ADDRESS)
+#define blowing_player_number_ADDRESS 0x48F1u
+#define blowing_player_number RAM8(blowing_player_number_ADDRESS)
+#define bonus_draw_x_ADDRESS 0x48F8u
+#define bonus_draw_x RAM16(bonus_draw_x_ADDRESS)
+#define bonus_draw_y_ADDRESS 0x48FAu
+#define bonus_draw_y RAM16(bonus_draw_y_ADDRESS)
+#define portrait_animation_ADDRESS 0x48F0u
+#define portrait_animation RAM8(portrait_animation_ADDRESS)
+#define bonus_draw_x_ADDRESS 0x48F8u
+#define bonus_draw_x RAM16(bonus_draw_x_ADDRESS)
+#define bonus_draw_y_ADDRESS 0x48FAu
+#define bonus_draw_y RAM16(bonus_draw_y_ADDRESS)
+#define intro_player_number_ADDRESS 0x48F1u
+#define intro_player_number RAM8(intro_player_number_ADDRESS)
+#define intro_player_shown_ADDRESS 0x48F2u
+#define intro_player_shown RAM8(intro_player_shown_ADDRESS)
+#define balloon_player_number_ADDRESS 0x48F0u
+#define balloon_player_number RAM8(balloon_player_number_ADDRESS)
+#define balloon_part_ADDRESS 0x48F1u
+#define balloon_part RAM8(balloon_part_ADDRESS)
+#define results_places_ADDRESS 0x48F0u
+#define results_places RAM8(results_places_ADDRESS)
+#define absent_player_seen_ADDRESS 0x48F0u
+#define absent_player_seen RAM8(absent_player_seen_ADDRESS)
+#define balloon_growing_ADDRESS 0x48F2u
+#define balloon_growing RAM8(balloon_growing_ADDRESS)
+#define balloons_growing_ADDRESS 0x48F0u
+#define balloons_growing RAM8(balloons_growing_ADDRESS)
+#define bonus_2_player_number_ADDRESS 0x48F0u
+#define bonus_2_player_number RAM8(bonus_2_player_number_ADDRESS)
+#define bonus_2_player_bits_ADDRESS 0x48F1u
+#define bonus_2_player_bits RAM8(bonus_2_player_bits_ADDRESS)
+#define bonus_2_meter_offset_ADDRESS 0x48F2u
+#define bonus_2_meter_offset RAM8S(bonus_2_meter_offset_ADDRESS)
+#define bonus_draw_x_ADDRESS 0x48F8u
+#define bonus_draw_x RAM16(bonus_draw_x_ADDRESS)
+#define bonus_draw_y_ADDRESS 0x48FAu
+#define bonus_draw_y RAM16(bonus_draw_y_ADDRESS)
+#define bonus_2_move_amount_ADDRESS 0x48F8u
+#define bonus_2_move_amount RAM16(bonus_2_move_amount_ADDRESS)
+#define bonus_2_player_number_ADDRESS 0x48F0u
+#define bonus_2_player_number RAM8(bonus_2_player_number_ADDRESS)
+#define bonus_2_player_bit_ADDRESS 0x48F1u
+#define bonus_2_player_bit RAM8(bonus_2_player_bit_ADDRESS)
+#define bonus_2_meter_offset_ADDRESS 0x48F2u
+#define bonus_2_meter_offset RAM8S(bonus_2_meter_offset_ADDRESS)
+#define bonus_2_player_variables_ADDRESS 0x48F8u
+#define bonus_2_player_variables RAM16(bonus_2_player_variables_ADDRESS)
+#define portrait_animation_ADDRESS 0x48F0u
+#define portrait_animation RAM8(portrait_animation_ADDRESS)
+#define bonus_draw_x_ADDRESS 0x48F8u
+#define bonus_draw_x RAM16(bonus_draw_x_ADDRESS)
+#define bonus_draw_y_ADDRESS 0x48FAu
+#define bonus_draw_y RAM16(bonus_draw_y_ADDRESS)
+#define first_player_slots_left_ADDRESS 0x48F0u
+#define first_player_slots_left RAM8(first_player_slots_left_ADDRESS)
+#define results_number_ADDRESS 0x48F0u
+#define results_number RAM8(results_number_ADDRESS)
+#define results_typed_boxes_left_ADDRESS 0x48F1u
+#define results_typed_boxes_left RAM8(results_typed_boxes_left_ADDRESS)
+#define results_boxes_left_ADDRESS 0x48F0u
+#define results_boxes_left RAM8(results_boxes_left_ADDRESS)
+#define results_counts_done_ADDRESS 0x48F1u
+#define results_counts_done RAM8(results_counts_done_ADDRESS)
+#define results_print_place_ADDRESS 0x48F8u
+#define results_print_place RAM16(results_print_place_ADDRESS)
+#define placed_count_ADDRESS 0x48F0u
+#define placed_count RAM8(placed_count_ADDRESS)
+#define placed_result_ADDRESS 0x48F1u
+#define placed_result RAM8(placed_result_ADDRESS)
+#define placed_sign_ADDRESS 0x48F8u
+#define placed_sign RAM16(placed_sign_ADDRESS)
+#define results_print_place_ADDRESS 0x48F8u
+#define results_print_place RAM16(results_print_place_ADDRESS)
+#define results_marge_place_ADDRESS 0x48F0u
+#define results_marge_place RAM8(results_marge_place_ADDRESS)
+#define results_homer_place_ADDRESS 0x48F1u
+#define results_homer_place RAM8(results_homer_place_ADDRESS)
+#define results_bart_place_ADDRESS 0x48F2u
+#define results_bart_place RAM8(results_bart_place_ADDRESS)
+#define results_lisa_place_ADDRESS 0x48F3u
+#define results_lisa_place RAM8(results_lisa_place_ADDRESS)
+#define results_boxes_left_ADDRESS 0x48F0u
+#define results_boxes_left RAM8(results_boxes_left_ADDRESS)
+#define results_print_place_ADDRESS 0x48F8u
+#define results_print_place RAM16(results_print_place_ADDRESS)
+#define results_number_ADDRESS 0x48F0u
+#define results_number RAM8(results_number_ADDRESS)
+#define results_print_place_ADDRESS 0x48F8u
+#define results_print_place RAM16(results_print_place_ADDRESS)
+#define portrait_animation_ADDRESS 0x48F0u
+#define portrait_animation RAM8(portrait_animation_ADDRESS)
+#define bonus_portrait_player_ADDRESS 0x48F1u
+#define bonus_portrait_player RAM8(bonus_portrait_player_ADDRESS)
+#define bonus_draw_x_ADDRESS 0x48F8u
+#define bonus_draw_x RAM16(bonus_draw_x_ADDRESS)
+#define bonus_draw_y_ADDRESS 0x48FAu
+#define bonus_draw_y RAM16(bonus_draw_y_ADDRESS)
+#define bonus_draw_x_ADDRESS 0x48F8u
+#define bonus_draw_x RAM16(bonus_draw_x_ADDRESS)
+#define bonus_draw_y_ADDRESS 0x48FAu
+#define bonus_draw_y RAM16(bonus_draw_y_ADDRESS)
+#define shade_arguments_ADDRESS 0x48E8u
+#define shade_arguments RAM16(shade_arguments_ADDRESS)
+#define shade_vitality_step_ADDRESS 0x48E8u
+#define shade_vitality_step RAM8(shade_vitality_step_ADDRESS)
+#define shade_effect_row_ADDRESS 0x48E9u
+#define shade_effect_row RAM8(shade_effect_row_ADDRESS)
+#define shade_new_level_ADDRESS 0x48EAu
+#define shade_new_level RAM8(shade_new_level_ADDRESS)
+#define shade_vitality_over_ADDRESS 0x48EEu
+#define shade_vitality_over RAM8(shade_vitality_over_ADDRESS)
+#define box_x_offset_ADDRESS 0x48F4u
+#define box_x_offset RAM16S(box_x_offset_ADDRESS)
+#define box_distance_ADDRESS 0x48F6u
+#define box_distance RAM16(box_distance_ADDRESS)
+#define fade_steps_ADDRESS 0x48E8u
+#define fade_steps RAM16(fade_steps_ADDRESS)
+#define fade_steps_high_ADDRESS 0x48E8u
+#define fade_steps_high RAM8(fade_steps_high_ADDRESS)
+#define fade_steps_low_ADDRESS 0x48E9u
+#define fade_steps_low RAM8(fade_steps_low_ADDRESS)
+#define fade_colour_ADDRESS 0x48EAu
+#define fade_colour RAM16(fade_colour_ADDRESS)
+#define fade_colour_high_ADDRESS 0x48EAu
+#define fade_colour_high RAM8(fade_colour_high_ADDRESS)
+#define fade_colour_low_ADDRESS 0x48EBu
+#define fade_colour_low RAM8(fade_colour_low_ADDRESS)
+#define wall_rows_left_ADDRESS 0x48F0u
+#define wall_rows_left RAM8(wall_rows_left_ADDRESS)
+#define wall_tiles_left_ADDRESS 0x48F1u
+#define wall_tiles_left RAM8(wall_tiles_left_ADDRESS)
+#define held_part_dx_ADDRESS 0x48F0u
+#define held_part_dx RAM16S(held_part_dx_ADDRESS)
+#define chosen_attack_ADDRESS 0x48F0u
+#define chosen_attack RAM8(chosen_attack_ADDRESS)
+#define reach_x_ADDRESS 0x48F8u
+#define reach_x RAM16S(reach_x_ADDRESS)
+#define reach_y_ADDRESS 0x48FAu
+#define reach_y RAM16S(reach_y_ADDRESS)
+#define shot_speed_ADDRESS 0x48F0u
+#define shot_speed RAM16S(shot_speed_ADDRESS)
+#define lob_speed_ADDRESS 0x48F2u
+#define lob_speed RAM16S(lob_speed_ADDRESS)
+#define placed_part_number_ADDRESS 0x48E8u
+#define placed_part_number RAM8(placed_part_number_ADDRESS)
+#define part_dx_ADDRESS 0x48EAu
+#define part_dx RAM16S(part_dx_ADDRESS)
+#define part_dx_low_ADDRESS 0x48EBu
+#define part_dx_low RAM8(part_dx_low_ADDRESS)
+#define wall_probe_dx_ADDRESS 0x48F0u
+#define wall_probe_dx RAM16S(wall_probe_dx_ADDRESS)
+#define floor_probe_dx_ADDRESS 0x48F8u
+#define floor_probe_dx RAM16S(floor_probe_dx_ADDRESS)
+#define floor_probe_dy_ADDRESS 0x48FAu
+#define floor_probe_dy RAM16S(floor_probe_dy_ADDRESS)
+#define chosen_attack_ADDRESS 0x48F0u
+#define chosen_attack RAM8(chosen_attack_ADDRESS)
+#define reach_x_ADDRESS 0x48F8u
+#define reach_x RAM16S(reach_x_ADDRESS)
+#define reach_y_ADDRESS 0x48FAu
+#define reach_y RAM16S(reach_y_ADDRESS)
+#define stagger_speed_ADDRESS 0x48F0u
+#define stagger_speed RAM16S(stagger_speed_ADDRESS)
+#define camera_scaled_move_ADDRESS 0x48F0u
+#define camera_scaled_move RAM16S(camera_scaled_move_ADDRESS)
+#define layer_move_x_ADDRESS 0x48F2u
+#define layer_move_x RAM16S(layer_move_x_ADDRESS)
+#define layer_move_y_ADDRESS 0x48F4u
+#define layer_move_y RAM16S(layer_move_y_ADDRESS)
+#define camera_entry_advance_ADDRESS 0x48FEu
+#define camera_entry_advance RAM8(camera_entry_advance_ADDRESS)
+#define land_at_height_ADDRESS 0x48E8u
+#define land_at_height RAM16(land_at_height_ADDRESS)
+#define thrown_cell_here_ADDRESS 0x48F0u
+#define thrown_cell_here RAM8(thrown_cell_here_ADDRESS)
+#define thrown_cell_ahead_ADDRESS 0x48F1u
+#define thrown_cell_ahead RAM8(thrown_cell_ahead_ADDRESS)
+#define thrown_cell_priority_ADDRESS 0x48F2u
+#define thrown_cell_priority RAM8(thrown_cell_priority_ADDRESS)
+#define cemetery_floor_rows_left_ADDRESS 0x48F0u
+#define cemetery_floor_rows_left RAM8(cemetery_floor_rows_left_ADDRESS)
+#define cemetery_floor_cells_left_ADDRESS 0x48F1u
+#define cemetery_floor_cells_left RAM8(cemetery_floor_cells_left_ADDRESS)
+#define chain_link_dx_ADDRESS 0x48E8u
+#define chain_link_dx RAM16S(chain_link_dx_ADDRESS)
+#define chain_link_dx_high_ADDRESS 0x48E8u
+#define chain_link_dx_high RAM8(chain_link_dx_high_ADDRESS)
+#define chain_link_dx_low_ADDRESS 0x48E9u
+#define chain_link_dx_low RAM8(chain_link_dx_low_ADDRESS)
+#define chain_link_dz_ADDRESS 0x48EAu
+#define chain_link_dz RAM16S(chain_link_dz_ADDRESS)
+#define chain_link_dz_high_ADDRESS 0x48EAu
+#define chain_link_dz_high RAM8(chain_link_dz_high_ADDRESS)
+#define chain_link_dz_low_ADDRESS 0x48EBu
+#define chain_link_dz_low RAM8(chain_link_dz_low_ADDRESS)
+#define chain_direction_and_distance_ADDRESS 0x48ECu
+#define chain_direction_and_distance RAM16(chain_direction_and_distance_ADDRESS)
+#define chain_direction_ADDRESS 0x48ECu
+#define chain_direction RAM8(chain_direction_ADDRESS)
+#define chain_distance_ADDRESS 0x48EDu
+#define chain_distance RAM8(chain_distance_ADDRESS)
+#define chain_quarter_direction_ADDRESS 0x48EFu
+#define chain_quarter_direction RAM8(chain_quarter_direction_ADDRESS)
+#define scenery_floor_column_ADDRESS 0x48F0u
+#define scenery_floor_column RAM8(scenery_floor_column_ADDRESS)
+#define floor_cell_here_ADDRESS 0x48F0u
+#define floor_cell_here RAM8(floor_cell_here_ADDRESS)
+#define floor_cell_ahead_ADDRESS 0x48F1u
+#define floor_cell_ahead RAM8(floor_cell_ahead_ADDRESS)
+#define floor_cell_probe_ADDRESS 0x48F2u
+#define floor_cell_probe RAM8(floor_cell_probe_ADDRESS)
+#define hit_check_enemies_left_ADDRESS 0x48F1u
+#define hit_check_enemies_left RAM8(hit_check_enemies_left_ADDRESS)
+#define skip_player_ADDRESS 0x48F0u
+#define skip_player RAM8(skip_player_ADDRESS)
+#define cleared_objects_left_ADDRESS 0x48E8u
+#define cleared_objects_left RAM8(cleared_objects_left_ADDRESS)
+#define cleared_object_words_left_ADDRESS 0x48E9u
+#define cleared_object_words_left RAM8(cleared_object_words_left_ADDRESS)
+#define cleared_objects_left_ADDRESS 0x48E8u
+#define cleared_objects_left RAM8(cleared_objects_left_ADDRESS)
+#define cleared_object_words_left_ADDRESS 0x48E9u
+#define cleared_object_words_left RAM8(cleared_object_words_left_ADDRESS)
+#define cleared_objects_left_ADDRESS 0x48E8u
+#define cleared_objects_left RAM8(cleared_objects_left_ADDRESS)
+#define cleared_object_words_left_ADDRESS 0x48E9u
+#define cleared_object_words_left RAM8(cleared_object_words_left_ADDRESS)
+#define clear_slots_left_ADDRESS 0x48E8u
+#define clear_slots_left RAM8(clear_slots_left_ADDRESS)
+#define cleared_words_left_ADDRESS 0x48E8u
+#define cleared_words_left RAM8(cleared_words_left_ADDRESS)
+#define steer_dy_high_ADDRESS 0x48F0u
+#define steer_dy_high RAM8S(steer_dy_high_ADDRESS)
+#define hit_check_players_left_ADDRESS 0x48F0u
+#define hit_check_players_left RAM8(hit_check_players_left_ADDRESS)
+#define hit_check_children_left_ADDRESS 0x48F3u
+#define hit_check_children_left RAM8(hit_check_children_left_ADDRESS)
+#define hit_check_players_left_ADDRESS 0x48F0u
+#define hit_check_players_left RAM8(hit_check_players_left_ADDRESS)
+#define hit_check_enemies_left_ADDRESS 0x48F1u
+#define hit_check_enemies_left RAM8(hit_check_enemies_left_ADDRESS)
+#define hit_check_players_left_ADDRESS 0x48F0u
+#define hit_check_players_left RAM8(hit_check_players_left_ADDRESS)
+#define hit_check_list_1_left_ADDRESS 0x48F2u
+#define hit_check_list_1_left RAM8(hit_check_list_1_left_ADDRESS)
+#define hit_check_players_left_ADDRESS 0x48F0u
+#define hit_check_players_left RAM8(hit_check_players_left_ADDRESS)
+#define fade_steps_ADDRESS 0x48E8u
+#define fade_steps RAM16(fade_steps_ADDRESS)
+#define fade_steps_high_ADDRESS 0x48E8u
+#define fade_steps_high RAM8(fade_steps_high_ADDRESS)
+#define fade_steps_low_ADDRESS 0x48E9u
+#define fade_steps_low RAM8(fade_steps_low_ADDRESS)
+#define fade_colour_ADDRESS 0x48EAu
+#define fade_colour RAM16(fade_colour_ADDRESS)
+#define fade_colour_high_ADDRESS 0x48EAu
+#define fade_colour_high RAM8(fade_colour_high_ADDRESS)
+#define fade_colour_low_ADDRESS 0x48EBu
+#define fade_colour_low RAM8(fade_colour_low_ADDRESS)
+#define demo_player_ADDRESS 0x48F0u
+#define demo_player RAM8(demo_player_ADDRESS)
+#define demo_player_bits_ADDRESS 0x48F1u
+#define demo_player_bits RAM8(demo_player_bits_ADDRESS)
+#define priority_bits_ADDRESS 0x48F0u
+#define priority_bits RAM8(priority_bits_ADDRESS)
+#define direction_dx_ADDRESS 0x48E8u
+#define direction_dx RAM16(direction_dx_ADDRESS)
+#define direction_dx_high_ADDRESS 0x48E8u
+#define direction_dx_high RAM8(direction_dx_high_ADDRESS)
+#define direction_dx_low_ADDRESS 0x48E9u
+#define direction_dx_low RAM8(direction_dx_low_ADDRESS)
+#define direction_dy_ADDRESS 0x48EAu
+#define direction_dy RAM16(direction_dy_ADDRESS)
+#define direction_dy_high_ADDRESS 0x48EAu
+#define direction_dy_high RAM8(direction_dy_high_ADDRESS)
+#define direction_dy_low_ADDRESS 0x48EBu
+#define direction_dy_low RAM8(direction_dy_low_ADDRESS)
+#define direction_dx_sign_ADDRESS 0x48ECu
+#define direction_dx_sign RAM8S(direction_dx_sign_ADDRESS)
+#define direction_dy_sign_ADDRESS 0x48EDu
+#define direction_dy_sign RAM8S(direction_dy_sign_ADDRESS)
+#define map_column_blocks_left_ADDRESS 0x48F0u
+#define map_column_blocks_left RAM8(map_column_blocks_left_ADDRESS)
+#define block_tile_column_ADDRESS 0x48F1u
+#define block_tile_column RAM8(block_tile_column_ADDRESS)
+#define column_map_cell_ADDRESS 0x48F2u
+#define column_map_cell RAM16(column_map_cell_ADDRESS)
+#define map_draw_scroll_ADDRESS 0x48F8u
+#define map_draw_scroll RAM16(map_draw_scroll_ADDRESS)
+#define block_tile_row_ADDRESS 0x48F0u
+#define block_tile_row RAM8(block_tile_row_ADDRESS)
+#define map_row_blocks_left_ADDRESS 0x48F1u
+#define map_row_blocks_left RAM8(map_row_blocks_left_ADDRESS)
+#define map_next_scroll_ADDRESS 0x48F4u
+#define map_next_scroll RAM16(map_next_scroll_ADDRESS)
+#define map_draw_scroll_ADDRESS 0x48F8u
+#define map_draw_scroll RAM16(map_draw_scroll_ADDRESS)
+#define map_strip_step_ADDRESS 0x48FCu
+#define map_strip_step RAM16(map_strip_step_ADDRESS)
+#define frame_marked_ADDRESS 0x48F1u
+#define frame_marked RAM8(frame_marked_ADDRESS)
+#define frame_sprites_left_ADDRESS 0x48F2u
+#define frame_sprites_left RAM8(frame_sprites_left_ADDRESS)
+#define sprite_slot_ADDRESS 0x48F3u
+#define sprite_slot RAM8(sprite_slot_ADDRESS)
+#define frame_attributes_ADDRESS 0x48F4u
+#define frame_attributes RAM8(frame_attributes_ADDRESS)
+#define drawn_animation_flags_ADDRESS 0x48F6u
+#define drawn_animation_flags RAM8(drawn_animation_flags_ADDRESS)
+#define draw_shadow_sprite_ADDRESS 0x48F7u
+#define draw_shadow_sprite RAM8(draw_shadow_sprite_ADDRESS)
+#define picture_width_ADDRESS 0x48F0u
+#define picture_width RAM8(picture_width_ADDRESS)
+#define picture_columns_left_ADDRESS 0x48F1u
+#define picture_columns_left RAM8(picture_columns_left_ADDRESS)
+#define picture_rows_left_ADDRESS 0x48F2u
+#define picture_rows_left RAM8(picture_rows_left_ADDRESS)
+#define picture_colour_ADDRESS 0x48F3u
+#define picture_colour RAM8(picture_colour_ADDRESS)
+#define picture_blank_ADDRESS 0x48F4u
+#define picture_blank RAM8(picture_blank_ADDRESS)
+#define lash_number_ADDRESS 0x48F0u
+#define lash_number RAM8(lash_number_ADDRESS)
+#define path_distance_ADDRESS 0x48F1u
+#define path_distance RAM8(path_distance_ADDRESS)
+#define chain_link_dx_ADDRESS 0x48E8u
+#define chain_link_dx RAM16S(chain_link_dx_ADDRESS)
+#define chain_link_dz_ADDRESS 0x48EAu
+#define chain_link_dz RAM16S(chain_link_dz_ADDRESS)
+#define chain_head_link_ADDRESS 0x48F2u
+#define chain_head_link RAM16(chain_head_link_ADDRESS)
+#define chain_pieces_left_ADDRESS 0x48F4u
+#define chain_pieces_left RAM8(chain_pieces_left_ADDRESS)
+#define chain_offset_biased_ADDRESS 0x48F0u
+#define chain_offset_biased RAM16(chain_offset_biased_ADDRESS)
+#define land_at_height_ADDRESS 0x48E8u
+#define land_at_height RAM16(land_at_height_ADDRESS)
+#define eeprom_total_ADDRESS 0x48F0u
+#define eeprom_total RAM16(eeprom_total_ADDRESS)
+#define eeprom_total_high_ADDRESS 0x48F0u
+#define eeprom_total_high RAM8(eeprom_total_high_ADDRESS)
+#define eeprom_total_low_ADDRESS 0x48F1u
+#define eeprom_total_low RAM8(eeprom_total_low_ADDRESS)
+#define eeprom_sum_address_ADDRESS 0x48F2u
+#define eeprom_sum_address RAM8(eeprom_sum_address_ADDRESS)
+#define eeprom_test_address_ADDRESS 0x48F0u
+#define eeprom_test_address RAM8(eeprom_test_address_ADDRESS)
+#define players_going_on_ADDRESS 0x48F0u
+#define players_going_on RAM8(players_going_on_ADDRESS)
+#define target_left_bit_ADDRESS 0x48F0u
+#define target_left_bit RAM8(target_left_bit_ADDRESS)
+#define nearest_player_distance_ADDRESS 0x48ECu
+#define nearest_player_distance RAM16(nearest_player_distance_ADDRESS)
+#define previous_target_ADDRESS 0x48F0u
+#define previous_target RAM16(previous_target_ADDRESS)
+#define grab_facing_ADDRESS 0x48F0u
+#define grab_facing RAM8(grab_facing_ADDRESS)
+#define priority_bits_ADDRESS 0x48F0u
+#define priority_bits RAM8(priority_bits_ADDRESS)
+#define priority_bits_ADDRESS 0x48F0u
+#define priority_bits RAM8(priority_bits_ADDRESS)
+#define cell_seen_ADDRESS 0x48F1u
+#define cell_seen RAM8(cell_seen_ADDRESS)
+#define priority_bits_ADDRESS 0x48F0u
+#define priority_bits RAM8(priority_bits_ADDRESS)
+#define cell_seen_ADDRESS 0x48F1u
+#define cell_seen RAM8(cell_seen_ADDRESS)
+#define map_column_blocks_left_ADDRESS 0x48F0u
+#define map_column_blocks_left RAM8(map_column_blocks_left_ADDRESS)
+#define block_tile_column_ADDRESS 0x48F1u
+#define block_tile_column RAM8(block_tile_column_ADDRESS)
+#define column_map_cell_ADDRESS 0x48F2u
+#define column_map_cell RAM16(column_map_cell_ADDRESS)
+#define map_draw_scroll_ADDRESS 0x48F8u
+#define map_draw_scroll RAM16(map_draw_scroll_ADDRESS)
+#define floor_map_place_ADDRESS 0x48FAu
+#define floor_map_place RAM16(floor_map_place_ADDRESS)
+#define block_tile_row_ADDRESS 0x48F0u
+#define block_tile_row RAM8(block_tile_row_ADDRESS)
+#define map_row_blocks_left_ADDRESS 0x48F1u
+#define map_row_blocks_left RAM8(map_row_blocks_left_ADDRESS)
+#define map_next_scroll_ADDRESS 0x48F4u
+#define map_next_scroll RAM16(map_next_scroll_ADDRESS)
+#define map_draw_scroll_ADDRESS 0x48F8u
+#define map_draw_scroll RAM16(map_draw_scroll_ADDRESS)
+#define floor_map_place_ADDRESS 0x48FAu
+#define floor_map_place RAM16(floor_map_place_ADDRESS)
+#define map_strip_step_ADDRESS 0x48FCu
+#define map_strip_step RAM16(map_strip_step_ADDRESS)
+#define free_slot_sprites_ADDRESS 0x48E8u
+#define free_slot_sprites RAM16(free_slot_sprites_ADDRESS)
+#define map_block_ADDRESS 0x48FEu
+#define map_block RAM16(map_block_ADDRESS)
+#define map_block_ADDRESS 0x48FEu
+#define map_block RAM16(map_block_ADDRESS)
+#define map_layer_ADDRESS 0x48E8u
+#define map_layer RAM8(map_layer_ADDRESS)
+#define map_place_offset_ADDRESS 0x48F0u
+#define map_place_offset RAM16(map_place_offset_ADDRESS)
+#define map_draw_scroll_ADDRESS 0x48F8u
+#define map_draw_scroll RAM16(map_draw_scroll_ADDRESS)
+#define floor_map_place_ADDRESS 0x48FAu
+#define floor_map_place RAM16(floor_map_place_ADDRESS)
+#define map_column_cell_ADDRESS 0x48FCu
+#define map_column_cell RAM16(map_column_cell_ADDRESS)
+#define map_layer_ADDRESS 0x48E8u
+#define map_layer RAM8(map_layer_ADDRESS)
+#define map_place_offset_ADDRESS 0x48F0u
+#define map_place_offset RAM16(map_place_offset_ADDRESS)
+#define map_draw_scroll_ADDRESS 0x48F8u
+#define map_draw_scroll RAM16(map_draw_scroll_ADDRESS)
+#define floor_map_place_ADDRESS 0x48FAu
+#define floor_map_place RAM16(floor_map_place_ADDRESS)
+#define map_strip_step_ADDRESS 0x48FCu
+#define map_strip_step RAM16(map_strip_step_ADDRESS)
+#define map_layer_ADDRESS 0x48E8u
+#define map_layer RAM8(map_layer_ADDRESS)
+#define map_block_ADDRESS 0x48FEu
+#define map_block RAM16(map_block_ADDRESS)
+#define nearest_player_distance_ADDRESS 0x48ECu
+#define nearest_player_distance RAM16(nearest_player_distance_ADDRESS)
+#define nearest_player_distance_high_ADDRESS 0x48ECu
+#define nearest_player_distance_high RAM8(nearest_player_distance_high_ADDRESS)
+#define floor_offset_x_ADDRESS 0x48E9u
+#define floor_offset_x RAM16S(floor_offset_x_ADDRESS)
+#define floor_offset_x_pixels_ADDRESS 0x48E9u
+#define floor_offset_x_pixels RAM8S(floor_offset_x_pixels_ADDRESS)
+#define floor_offset_x_fraction_ADDRESS 0x48EAu
+#define floor_offset_x_fraction RAM8(floor_offset_x_fraction_ADDRESS)
+#define floor_offset_y_ADDRESS 0x48EDu
+#define floor_offset_y RAM16S(floor_offset_y_ADDRESS)
+#define floor_offset_y_pixels_ADDRESS 0x48EDu
+#define floor_offset_y_pixels RAM8S(floor_offset_y_pixels_ADDRESS)
+#define floor_offset_y_fraction_ADDRESS 0x48EEu
+#define floor_offset_y_fraction RAM8(floor_offset_y_fraction_ADDRESS)
+#define floor_probe_dx_ADDRESS 0x48F8u
+#define floor_probe_dx RAM16S(floor_probe_dx_ADDRESS)
+#define floor_probe_dy_ADDRESS 0x48FAu
+#define floor_probe_dy RAM16S(floor_probe_dy_ADDRESS)
+#define floor_columns_left_ADDRESS 0x48F4u
+#define floor_columns_left RAM8(floor_columns_left_ADDRESS)
+#define floor_cell_column_ADDRESS 0x48E8u
+#define floor_cell_column RAM16(floor_cell_column_ADDRESS)
+#define floor_offset_x_sign_ADDRESS 0x48E8u
+#define floor_offset_x_sign RAM8(floor_offset_x_sign_ADDRESS)
+#define floor_offset_x_ADDRESS 0x48E9u
+#define floor_offset_x RAM16S(floor_offset_x_ADDRESS)
+#define floor_cell_column_low_ADDRESS 0x48E9u
+#define floor_cell_column_low RAM8(floor_cell_column_low_ADDRESS)
+#define floor_place_y_ADDRESS 0x48ECu
+#define floor_place_y RAM16(floor_place_y_ADDRESS)
+#define floor_offset_y_sign_ADDRESS 0x48ECu
+#define floor_offset_y_sign RAM8(floor_offset_y_sign_ADDRESS)
+#define floor_offset_y_ADDRESS 0x48EDu
+#define floor_offset_y RAM16S(floor_offset_y_ADDRESS)
+#define reach_x_ADDRESS 0x48F8u
+#define reach_x RAM16S(reach_x_ADDRESS)
+#define reach_y_ADDRESS 0x48FAu
+#define reach_y RAM16S(reach_y_ADDRESS)
+#define players_share_ADDRESS 0x48F0u
+#define players_share RAM8(players_share_ADDRESS)
+#define reach_x_ADDRESS 0x48F8u
+#define reach_x RAM16S(reach_x_ADDRESS)
+#define reach_y_ADDRESS 0x48FAu
+#define reach_y RAM16S(reach_y_ADDRESS)
+#define players_share_ADDRESS 0x48F0u
+#define players_share RAM8(players_share_ADDRESS)
+#define finish_scores_left_ADDRESS 0x48F0u
+#define finish_scores_left RAM8(finish_scores_left_ADDRESS)
+#define portrait_number_ADDRESS 0x48F0u
+#define portrait_number RAM8(portrait_number_ADDRESS)
+#define portrait_columns_left_ADDRESS 0x48F1u
+#define portrait_columns_left RAM8(portrait_columns_left_ADDRESS)
+#define portrait_rows_left_ADDRESS 0x48F2u
+#define portrait_rows_left RAM8(portrait_rows_left_ADDRESS)
+#define join_player_bit_ADDRESS 0x48F0u
+#define join_player_bit RAM8(join_player_bit_ADDRESS)
+#define join_slot_bit_ADDRESS 0x48F1u
+#define join_slot_bit RAM8(join_slot_bit_ADDRESS)
+#define portrait_player_bit_ADDRESS 0x48F0u
+#define portrait_player_bit RAM8(portrait_player_bit_ADDRESS)
+#define portrait_players_left_ADDRESS 0x48F1u
+#define portrait_players_left RAM8(portrait_players_left_ADDRESS)
+#define portrait_player_bit_ADDRESS 0x48F0u
+#define portrait_player_bit RAM8(portrait_player_bit_ADDRESS)
+#define hit_damage_ADDRESS 0x48E8u
+#define hit_damage RAM8(hit_damage_ADDRESS)
+#define priority_bits_ADDRESS 0x48F0u
+#define priority_bits RAM8(priority_bits_ADDRESS)
+#define priority_bits_ADDRESS 0x48F0u
+#define priority_bits RAM8(priority_bits_ADDRESS)
+#define cell_seen_ADDRESS 0x48F1u
+#define cell_seen RAM8(cell_seen_ADDRESS)
+#define grab_facing_ADDRESS 0x48F0u
+#define grab_facing RAM8(grab_facing_ADDRESS)
+#define priority_bits_ADDRESS 0x48F0u
+#define priority_bits RAM8(priority_bits_ADDRESS)
+#define priority_bits_ADDRESS 0x48F0u
+#define priority_bits RAM8(priority_bits_ADDRESS)
+#define cell_seen_ADDRESS 0x48F1u
+#define cell_seen RAM8(cell_seen_ADDRESS)
+#define priority_bits_ADDRESS 0x48F0u
+#define priority_bits RAM8(priority_bits_ADDRESS)
+#define priority_bits_ADDRESS 0x48F0u
+#define priority_bits RAM8(priority_bits_ADDRESS)
+#define cell_seen_ADDRESS 0x48F1u
+#define cell_seen RAM8(cell_seen_ADDRESS)
+#define priority_bits_ADDRESS 0x48F0u
+#define priority_bits RAM8(priority_bits_ADDRESS)
+#define points_player_bits_ADDRESS 0x48F0u
+#define points_player_bits RAM8(points_player_bits_ADDRESS)
+#define ranked_score_ADDRESS 0x48E8u
+#define ranked_score RAM16(ranked_score_ADDRESS)
+#define high_score_place_found_ADDRESS 0x48EAu
+#define high_score_place_found RAM8(high_score_place_found_ADDRESS)
+#define table_place_ADDRESS 0x48F0u
+#define table_place RAM8(table_place_ADDRESS)
+#define table_entries_left_ADDRESS 0x48F1u
+#define table_entries_left RAM8(table_entries_left_ADDRESS)
+#define table_characters_left_ADDRESS 0x48F2u
+#define table_characters_left RAM8(table_characters_left_ADDRESS)
+#define table_digit_shown_ADDRESS 0x48F3u
+#define table_digit_shown RAM8(table_digit_shown_ADDRESS)
+#define sprite_text_x_ADDRESS 0x48F8u
+#define sprite_text_x RAM16(sprite_text_x_ADDRESS)
+#define sprite_text_y_ADDRESS 0x48FAu
+#define sprite_text_y RAM16(sprite_text_y_ADDRESS)
+#define wave_lines_left_ADDRESS 0x48F0u
+#define wave_lines_left RAM8(wave_lines_left_ADDRESS)
+#define table_wave_offset_ADDRESS 0x48F1u
+#define table_wave_offset RAM8(table_wave_offset_ADDRESS)
+#define new_high_score_place_ADDRESS 0x48E8u
+#define new_high_score_place RAM8(new_high_score_place_ADDRESS)
+#define high_score_moved_place_ADDRESS 0x48E9u
+#define high_score_moved_place RAM8(high_score_moved_place_ADDRESS)
+#define high_score_words_left_ADDRESS 0x48EAu
+#define high_score_words_left RAM8(high_score_words_left_ADDRESS)
+#define new_high_score_ADDRESS 0x48F0u
+#define new_high_score RAM16(new_high_score_ADDRESS)
+#define scenery_floor_column_ADDRESS 0x48F0u
+#define scenery_floor_column RAM8(scenery_floor_column_ADDRESS)
+#define floor_columns_left_ADDRESS 0x48F4u
+#define floor_columns_left RAM8(floor_columns_left_ADDRESS)
+#define orbit_x_offset_ADDRESS 0x48E8u
+#define orbit_x_offset RAM16S(orbit_x_offset_ADDRESS)
+#define orbit_y_offset_ADDRESS 0x48EAu
+#define orbit_y_offset RAM16S(orbit_y_offset_ADDRESS)
+#define ride_parts_left_ADDRESS 0x48F0u
+#define ride_parts_left RAM8(ride_parts_left_ADDRESS)
+#define ride_part_angle_ADDRESS 0x48F1u
+#define ride_part_angle RAM8(ride_part_angle_ADDRESS)
+#define priority_bits_ADDRESS 0x48F0u
+#define priority_bits RAM8(priority_bits_ADDRESS)
+#define steer_dy_high_ADDRESS 0x48F0u
+#define steer_dy_high RAM8S(steer_dy_high_ADDRESS)
+#define area_next_x_high_ADDRESS 0x48F0u
+#define area_next_x_high RAM8(area_next_x_high_ADDRESS)
+#define area_next_x_ADDRESS 0x48F1u
+#define area_next_x RAM16(area_next_x_ADDRESS)
+#define area_next_x_pixels_ADDRESS 0x48F1u
+#define area_next_x_pixels RAM8(area_next_x_pixels_ADDRESS)
+#define area_next_y_high_ADDRESS 0x48F0u
+#define area_next_y_high RAM8(area_next_y_high_ADDRESS)
+#define area_next_y_ADDRESS 0x48F1u
+#define area_next_y RAM16(area_next_y_ADDRESS)
+#define area_next_y_pixels_ADDRESS 0x48F1u
+#define area_next_y_pixels RAM8(area_next_y_pixels_ADDRESS)
+#define layer_move_x_ADDRESS 0x48F2u
+#define layer_move_x RAM16S(layer_move_x_ADDRESS)
+#define layer_move_x_high_ADDRESS 0x48F2u
+#define layer_move_x_high RAM8S(layer_move_x_high_ADDRESS)
+#define layer_move_y_ADDRESS 0x48F4u
+#define layer_move_y RAM16S(layer_move_y_ADDRESS)
+#define layer_move_y_high_ADDRESS 0x48F4u
+#define layer_move_y_high RAM8S(layer_move_y_high_ADDRESS)
+#define palettes_to_load_ADDRESS 0x48E8u
+#define palettes_to_load RAM8(palettes_to_load_ADDRESS)
+#define palette_colours_left_ADDRESS 0x48E9u
+#define palette_colours_left RAM8(palette_colours_left_ADDRESS)
+#define camera_move_x_ADDRESS 0x48F0u
+#define camera_move_x RAM16S(camera_move_x_ADDRESS)
+#define camera_move_y_ADDRESS 0x48F2u
+#define camera_move_y RAM16S(camera_move_y_ADDRESS)
+#define move_slots_left_ADDRESS 0x48F6u
+#define move_slots_left RAM8(move_slots_left_ADDRESS)
+#define sprite_move_ADDRESS 0x48FCu
+#define sprite_move RAM16S(sprite_move_ADDRESS)
+#define shadow_move_y_ADDRESS 0x48FEu
+#define shadow_move_y RAM16S(shadow_move_y_ADDRESS)
+#define initials_left_ADDRESS 0x48F1u
+#define initials_left RAM8(initials_left_ADDRESS)
+#define sprite_text_x_ADDRESS 0x48F8u
+#define sprite_text_x RAM16(sprite_text_x_ADDRESS)
+#define entry_player_record_ADDRESS 0x48FCu
+#define entry_player_record RAM16(entry_player_record_ADDRESS)
+#define rank_place_ADDRESS 0x48E8u
+#define rank_place RAM8(rank_place_ADDRESS)
+#define rank_other_place_ADDRESS 0x48E9u
+#define rank_other_place RAM8(rank_other_place_ADDRESS)
+#define rank_other_score_ADDRESS 0x48EAu
+#define rank_other_score RAM16(rank_other_score_ADDRESS)
+#define new_high_score_ADDRESS 0x48F0u
+#define new_high_score RAM16(new_high_score_ADDRESS)
+#define new_high_score_initial_1_ADDRESS 0x48F0u
+#define new_high_score_initial_1 RAM8(new_high_score_initial_1_ADDRESS)
+#define new_high_score_initial_2_ADDRESS 0x48F1u
+#define new_high_score_initial_2 RAM8(new_high_score_initial_2_ADDRESS)
+#define new_high_score_initial_3_ADDRESS 0x48F2u
+#define new_high_score_initial_3 RAM8(new_high_score_initial_3_ADDRESS)
+#define new_high_score_points_ADDRESS 0x48F3u
+#define new_high_score_points RAM16(new_high_score_points_ADDRESS)
+#define new_high_score_player_ADDRESS 0x48F5u
+#define new_high_score_player RAM8(new_high_score_player_ADDRESS)
+#define entry_player_ADDRESS 0x48F0u
+#define entry_player RAM8(entry_player_ADDRESS)
+#define entry_digit_state_ADDRESS 0x48F1u
+#define entry_digit_state RAM8(entry_digit_state_ADDRESS)
+#define maggie_x_offset_ADDRESS 0x48F2u
+#define maggie_x_offset RAM16(maggie_x_offset_ADDRESS)
+#define players_ranked_ADDRESS 0x48F4u
+#define players_ranked RAM8(players_ranked_ADDRESS)
+#define sprite_text_x_ADDRESS 0x48F8u
+#define sprite_text_x RAM16(sprite_text_x_ADDRESS)
+#define sprite_text_y_ADDRESS 0x48FAu
+#define sprite_text_y RAM16(sprite_text_y_ADDRESS)
+#define entry_player_record_ADDRESS 0x48FCu
+#define entry_player_record RAM16(entry_player_record_ADDRESS)
+#define entry_score_ADDRESS 0x48FEu
+#define entry_score RAM16(entry_score_ADDRESS)
+#define entry_player_ADDRESS 0x48F0u
+#define entry_player RAM8(entry_player_ADDRESS)
+#define sprite_text_x_ADDRESS 0x48F8u
+#define sprite_text_x RAM16(sprite_text_x_ADDRESS)
+#define sprite_text_y_ADDRESS 0x48FAu
+#define sprite_text_y RAM16(sprite_text_y_ADDRESS)
+#define reach_x_ADDRESS 0x48F8u
+#define reach_x RAM16S(reach_x_ADDRESS)
+#define reach_y_ADDRESS 0x48FAu
+#define reach_y RAM16S(reach_y_ADDRESS)
+#define floor_columns_left_ADDRESS 0x48F4u
+#define floor_columns_left RAM8(floor_columns_left_ADDRESS)
+#define floor_raise_steps_ADDRESS 0x48F5u
+#define floor_raise_steps RAM8(floor_raise_steps_ADDRESS)
+#define rebound_x_speed_high_ADDRESS 0x48F0u
+#define rebound_x_speed_high RAM8S(rebound_x_speed_high_ADDRESS)
+#define floor_columns_left_ADDRESS 0x48F4u
+#define floor_columns_left RAM8(floor_columns_left_ADDRESS)
+#define points_player_bits_ADDRESS 0x48F0u
+#define points_player_bits RAM8(points_player_bits_ADDRESS)
+#define orbit_x_offset_ADDRESS 0x48E8u
+#define orbit_x_offset RAM16S(orbit_x_offset_ADDRESS)
+#define orbit_x_offset_high_ADDRESS 0x48E8u
+#define orbit_x_offset_high RAM8(orbit_x_offset_high_ADDRESS)
+#define orbit_x_offset_low_ADDRESS 0x48E9u
+#define orbit_x_offset_low RAM8(orbit_x_offset_low_ADDRESS)
+#define orbit_y_offset_ADDRESS 0x48EAu
+#define orbit_y_offset RAM16S(orbit_y_offset_ADDRESS)
+#define orbit_y_offset_high_ADDRESS 0x48EAu
+#define orbit_y_offset_high RAM8(orbit_y_offset_high_ADDRESS)
+#define orbit_y_offset_low_ADDRESS 0x48EBu
+#define orbit_y_offset_low RAM8(orbit_y_offset_low_ADDRESS)
+#define orbit_angle_and_radius_ADDRESS 0x48ECu
+#define orbit_angle_and_radius RAM16(orbit_angle_and_radius_ADDRESS)
+#define orbit_angle_ADDRESS 0x48ECu
+#define orbit_angle RAM8(orbit_angle_ADDRESS)
+#define orbit_radius_ADDRESS 0x48EDu
+#define orbit_radius RAM8(orbit_radius_ADDRESS)
+#define orbit_quarter_angle_ADDRESS 0x48EFu
+#define orbit_quarter_angle RAM8(orbit_quarter_angle_ADDRESS)
+#define palette_effect_colours_left_ADDRESS 0x48F0u
+#define palette_effect_colours_left RAM8(palette_effect_colours_left_ADDRESS)
+#define palette_fade_brightens_ADDRESS 0x48F0u
+#define palette_fade_brightens RAM8(palette_fade_brightens_ADDRESS)
+#define palette_fade_colours_left_ADDRESS 0x48F1u
+#define palette_fade_colours_left RAM8(palette_fade_colours_left_ADDRESS)
+#define palette_clear_range_ADDRESS 0x48F0u
+#define palette_clear_range RAM8(palette_clear_range_ADDRESS)
+#define palette_clear_bits_ADDRESS 0x48F1u
+#define palette_clear_bits RAM8(palette_clear_bits_ADDRESS)
+#define palette_loads_wanted_ADDRESS 0x48F0u
+#define palette_loads_wanted RAM8(palette_loads_wanted_ADDRESS)
+#define palette_loads_left_ADDRESS 0x48F1u
+#define palette_loads_left RAM8(palette_loads_left_ADDRESS)
+#define child_dx_ADDRESS 0x48E8u
+#define child_dx RAM16S(child_dx_ADDRESS)
+#define scenery_floor_column_ADDRESS 0x48F0u
+#define scenery_floor_column RAM8(scenery_floor_column_ADDRESS)
+#define floor_columns_left_ADDRESS 0x48F4u
+#define floor_columns_left RAM8(floor_columns_left_ADDRESS)
+#define team_animation_base_ADDRESS 0x48F2u
+#define team_animation_base RAM8(team_animation_base_ADDRESS)
+#define player_floor_priority_ADDRESS 0x48F2u
+#define player_floor_priority RAM8(player_floor_priority_ADDRESS)
+#define player_x_limit_ADDRESS 0x48F8u
+#define player_x_limit RAM16(player_x_limit_ADDRESS)
+#define edge_floor_priority_ADDRESS 0x48F0u
+#define edge_floor_priority RAM8(edge_floor_priority_ADDRESS)
+#define screen_left_edge_ADDRESS 0x48F8u
+#define screen_left_edge RAM16(screen_left_edge_ADDRESS)
+#define screen_right_edge_ADDRESS 0x48FAu
+#define screen_right_edge RAM16(screen_right_edge_ADDRESS)
+#define entry_places_left_ADDRESS 0x48F2u
+#define entry_places_left RAM8(entry_places_left_ADDRESS)
+#define entry_floor_height_ADDRESS 0x48F3u
+#define entry_floor_height RAM8S(entry_floor_height_ADDRESS)
+#define player_floor_priority_ADDRESS 0x48F2u
+#define player_floor_priority RAM8(player_floor_priority_ADDRESS)
+#define new_high_score_ADDRESS 0x48F0u
+#define new_high_score RAM16(new_high_score_ADDRESS)
+#define new_high_score_initial_1_ADDRESS 0x48F0u
+#define new_high_score_initial_1 RAM8(new_high_score_initial_1_ADDRESS)
+#define new_high_score_initial_2_ADDRESS 0x48F1u
+#define new_high_score_initial_2 RAM8(new_high_score_initial_2_ADDRESS)
+#define new_high_score_initial_3_ADDRESS 0x48F2u
+#define new_high_score_initial_3 RAM8(new_high_score_initial_3_ADDRESS)
+#define new_high_score_points_ADDRESS 0x48F3u
+#define new_high_score_points RAM16(new_high_score_points_ADDRESS)
+#define new_high_score_player_ADDRESS 0x48F5u
+#define new_high_score_player RAM8(new_high_score_player_ADDRESS)
+#define z_speed_sign_ADDRESS 0x48F2u
+#define z_speed_sign RAM8S(z_speed_sign_ADDRESS)
+#define entry_tries_left_ADDRESS 0x48F1u
+#define entry_tries_left RAM8(entry_tries_left_ADDRESS)
+#define entry_floor_height_ADDRESS 0x48F3u
+#define entry_floor_height RAM8S(entry_floor_height_ADDRESS)
+#define team_animation_base_ADDRESS 0x48F2u
+#define team_animation_base RAM8(team_animation_base_ADDRESS)
+#define team_attack_pressed_ADDRESS 0x48F0u
+#define team_attack_pressed RAM8(team_attack_pressed_ADDRESS)
+#define team_animation_base_ADDRESS 0x48F2u
+#define team_animation_base RAM8(team_animation_base_ADDRESS)
+#define team_animation_base_ADDRESS 0x48F2u
+#define team_animation_base RAM8(team_animation_base_ADDRESS)
+#define walk_facing_ADDRESS 0x48F3u
+#define walk_facing RAM8(walk_facing_ADDRESS)
+#define second_sprites_left_ADDRESS 0x48F0u
+#define second_sprites_left RAM8(second_sprites_left_ADDRESS)
+#define shown_player_ADDRESS 0x48F0u
+#define shown_player RAM8(shown_player_ADDRESS)
+#define shown_player_bit_ADDRESS 0x48F1u
+#define shown_player_bit RAM8(shown_player_bit_ADDRESS)
+#define result_letters_left_ADDRESS 0x48F0u
+#define result_letters_left RAM8(result_letters_left_ADDRESS)
+#define game_text_colour_ADDRESS 0x48E8u
+#define game_text_colour RAM8(game_text_colour_ADDRESS)
+#define hex_colour_ADDRESS 0x48F0u
+#define hex_colour RAM8(hex_colour_ADDRESS)
+#define hex_colour_ADDRESS 0x48F0u
+#define hex_colour RAM8(hex_colour_ADDRESS)
+#define rom_sum_ADDRESS 0x48FAu
+#define rom_sum RAM16(rom_sum_ADDRESS)
+#define sprite_text_code_ADDRESS 0x48E8u
+#define sprite_text_code RAM16(sprite_text_code_ADDRESS)
+#define sprite_text_code_ADDRESS 0x48E8u
+#define sprite_text_code RAM16(sprite_text_code_ADDRESS)
+#define sprite_text_x_ADDRESS 0x48F8u
+#define sprite_text_x RAM16(sprite_text_x_ADDRESS)
+#define sprite_text_y_ADDRESS 0x48FAu
+#define sprite_text_y RAM16(sprite_text_y_ADDRESS)
+#define check_wait_loops_ADDRESS 0x48F2u
+#define check_wait_loops RAM8(check_wait_loops_ADDRESS)
+#define rom_sum_ADDRESS 0x48FAu
+#define rom_sum RAM16(rom_sum_ADDRESS)
+#define palette_request_word_ADDRESS 0x48E8u
+#define palette_request_word RAM16(palette_request_word_ADDRESS)
+#define palette_request_bits_ADDRESS 0x48E8u
+#define palette_request_bits RAM8(palette_request_bits_ADDRESS)
+#define palette_request_argument_ADDRESS 0x48E9u
+#define palette_request_argument RAM8(palette_request_argument_ADDRESS)
+#define palette_request_saved_bank_ADDRESS 0x48EAu
+#define palette_request_saved_bank RAM8(palette_request_saved_bank_ADDRESS)
+#define palette_request_word_ADDRESS 0x48E8u
+#define palette_request_word RAM16(palette_request_word_ADDRESS)
+#define palette_request_bits_ADDRESS 0x48E8u
+#define palette_request_bits RAM8(palette_request_bits_ADDRESS)
+#define palette_request_argument_ADDRESS 0x48E9u
+#define palette_request_argument RAM8(palette_request_argument_ADDRESS)
+#define palette_fade_ranges_ADDRESS 0x48EAu
+#define palette_fade_ranges RAM16(palette_fade_ranges_ADDRESS)
+#define palette_fade_ranges_high_ADDRESS 0x48EAu
+#define palette_fade_ranges_high RAM8(palette_fade_ranges_high_ADDRESS)
+#define palette_fade_ranges_low_ADDRESS 0x48EBu
+#define palette_fade_ranges_low RAM8(palette_fade_ranges_low_ADDRESS)
+#define palette_request_word_ADDRESS 0x48E8u
+#define palette_request_word RAM16(palette_request_word_ADDRESS)
+#define palette_request_bits_ADDRESS 0x48E8u
+#define palette_request_bits RAM8(palette_request_bits_ADDRESS)
+#define palette_request_argument_ADDRESS 0x48E9u
+#define palette_request_argument RAM8(palette_request_argument_ADDRESS)
+#define white_flash_priorities_ADDRESS 0x48EAu
+#define white_flash_priorities RAM16(white_flash_priorities_ADDRESS)
+#define white_flash_priorities_high_ADDRESS 0x48EAu
+#define white_flash_priorities_high RAM8(white_flash_priorities_high_ADDRESS)
+#define white_flash_priorities_low_ADDRESS 0x48EBu
+#define white_flash_priorities_low RAM8(white_flash_priorities_low_ADDRESS)
+#define robot_pieces_left_ADDRESS 0x48F4u
+#define robot_pieces_left RAM8(robot_pieces_left_ADDRESS)
+#define thrown_cell_here_ADDRESS 0x48F0u
+#define thrown_cell_here RAM8(thrown_cell_here_ADDRESS)
+#define thrown_cell_ahead_ADDRESS 0x48F1u
+#define thrown_cell_ahead RAM8(thrown_cell_ahead_ADDRESS)
+#define thrown_cell_priority_ADDRESS 0x48F2u
+#define thrown_cell_priority RAM8(thrown_cell_priority_ADDRESS)
+#define sine_direction_ADDRESS 0x48ECu
+#define sine_direction RAM8(sine_direction_ADDRESS)
+#define floor_columns_left_ADDRESS 0x48F4u
+#define floor_columns_left RAM8(floor_columns_left_ADDRESS)
+#define step_sprite_priority_ADDRESS 0x48FAu
+#define step_sprite_priority RAM8(step_sprite_priority_ADDRESS)
+#define object_sprite_priority_ADDRESS 0x48FBu
+#define object_sprite_priority RAM8(object_sprite_priority_ADDRESS)
+#define step_sprite_priority_ADDRESS 0x48FAu
+#define step_sprite_priority RAM8(step_sprite_priority_ADDRESS)
+#define food_state_ADDRESS 0x48F0u
+#define food_state RAM8(food_state_ADDRESS)
+#define depth_rows_left_ADDRESS 0x48F0u
+#define depth_rows_left RAM8(depth_rows_left_ADDRESS)
+#define next_sprite_number_ADDRESS 0x48F1u
+#define next_sprite_number RAM8(next_sprite_number_ADDRESS)
+#define sort_slots_left_ADDRESS 0x48F2u
+#define sort_slots_left RAM8(sort_slots_left_ADDRESS)
+#define scene_player_bit_ADDRESS 0x48F0u
+#define scene_player_bit RAM8(scene_player_bit_ADDRESS)
+#define scene_player_ADDRESS 0x48F1u
+#define scene_player RAM8(scene_player_ADDRESS)
+#define scene_player_bit_ADDRESS 0x48F0u
+#define scene_player_bit RAM8(scene_player_bit_ADDRESS)
+#define scene_player_ADDRESS 0x48F1u
+#define scene_player RAM8(scene_player_ADDRESS)
+#define turning_direction_ADDRESS 0x48F0u
+#define turning_direction RAM8(turning_direction_ADDRESS)
+#define area_next_x_high_ADDRESS 0x48F0u
+#define area_next_x_high RAM8(area_next_x_high_ADDRESS)
+#define area_next_x_ADDRESS 0x48F1u
+#define area_next_x RAM16(area_next_x_ADDRESS)
+#define area_next_x_pixels_ADDRESS 0x48F1u
+#define area_next_x_pixels RAM8(area_next_x_pixels_ADDRESS)
+#define area_next_y_high_ADDRESS 0x48F0u
+#define area_next_y_high RAM8(area_next_y_high_ADDRESS)
+#define area_next_y_ADDRESS 0x48F1u
+#define area_next_y RAM16(area_next_y_ADDRESS)
+#define area_next_y_pixels_ADDRESS 0x48F1u
+#define area_next_y_pixels RAM8(area_next_y_pixels_ADDRESS)
+#define throw_helper_ADDRESS 0x48F0u
+#define throw_helper RAM8(throw_helper_ADDRESS)
+#define helper_throws_left_ADDRESS 0x48F1u
+#define helper_throws_left RAM8(helper_throws_left_ADDRESS)
+#define boss_helper_number_ADDRESS 0x48F0u
+#define boss_helper_number RAM8(boss_helper_number_ADDRESS)
+#define scene_riders_left_ADDRESS 0x48F0u
+#define scene_riders_left RAM8(scene_riders_left_ADDRESS)
+#define rider_bits_ADDRESS 0x48F1u
+#define rider_bits RAM8(rider_bits_ADDRESS)
+#define scene_objects_left_ADDRESS 0x48F0u
+#define scene_objects_left RAM8(scene_objects_left_ADDRESS)
+#define scene_riders_left_ADDRESS 0x48F0u
+#define scene_riders_left RAM8(scene_riders_left_ADDRESS)
+#define rider_bits_ADDRESS 0x48F1u
+#define rider_bits RAM8(rider_bits_ADDRESS)
+#define scene_objects_left_ADDRESS 0x48F0u
+#define scene_objects_left RAM8(scene_objects_left_ADDRESS)
+#define lift_items_left_ADDRESS 0x48F0u
+#define lift_items_left RAM8(lift_items_left_ADDRESS)
+#define chain_links_left_ADDRESS 0x48F0u
+#define chain_links_left RAM8(chain_links_left_ADDRESS)
+#define chain_links_left_ADDRESS 0x48F0u
+#define chain_links_left RAM8(chain_links_left_ADDRESS)
+#define chain_last_link_ADDRESS 0x48FAu
+#define chain_last_link RAM16(chain_last_link_ADDRESS)
+#define scene_x_offset_ADDRESS 0x48F0u
+#define scene_x_offset RAM16S(scene_x_offset_ADDRESS)
+#define bomb_spread_ADDRESS 0x48F0u
+#define bomb_spread RAM8S(bomb_spread_ADDRESS)
+#define bomb_distance_ADDRESS 0x48F8u
+#define bomb_distance RAM16(bomb_distance_ADDRESS)
+#define reach_x_ADDRESS 0x48F8u
+#define reach_x RAM16S(reach_x_ADDRESS)
+#define reach_y_ADDRESS 0x48FAu
+#define reach_y RAM16S(reach_y_ADDRESS)
+#define priority_bits_ADDRESS 0x48F0u
+#define priority_bits RAM8(priority_bits_ADDRESS)
+#define reach_x_ADDRESS 0x48F8u
+#define reach_x RAM16S(reach_x_ADDRESS)
+#define reach_y_ADDRESS 0x48FAu
+#define reach_y RAM16S(reach_y_ADDRESS)
+#define bombs_left_ADDRESS 0x48F0u
+#define bombs_left RAM8(bombs_left_ADDRESS)
+#define bombs_left_ADDRESS 0x48F0u
+#define bombs_left RAM8(bombs_left_ADDRESS)
+#define reunion_player_ADDRESS 0x48F0u
+#define reunion_player RAM8(reunion_player_ADDRESS)
+#define reunion_player_bits_ADDRESS 0x48F1u
+#define reunion_player_bits RAM8(reunion_player_bits_ADDRESS)
+#define reunion_standing_x_ADDRESS 0x48F8u
+#define reunion_standing_x RAM16(reunion_standing_x_ADDRESS)
+#define reunion_walker_x_ADDRESS 0x48FAu
+#define reunion_walker_x RAM16(reunion_walker_x_ADDRESS)
+#define reunion_walker_wait_ADDRESS 0x48FCu
+#define reunion_walker_wait RAM16(reunion_walker_wait_ADDRESS)
+#define scene_objects_left_ADDRESS 0x48F0u
+#define scene_objects_left RAM8(scene_objects_left_ADDRESS)
+#define scene_riders_left_ADDRESS 0x48F0u
+#define scene_riders_left RAM8(scene_riders_left_ADDRESS)
+#define rider_bits_ADDRESS 0x48F1u
+#define rider_bits RAM8(rider_bits_ADDRESS)
+#define rider_kind_ADDRESS 0x48F2u
+#define rider_kind RAM8(rider_kind_ADDRESS)
+#define scene_objects_left_ADDRESS 0x48F0u
+#define scene_objects_left RAM8(scene_objects_left_ADDRESS)
+#define priority_bits_ADDRESS 0x48F0u
+#define priority_bits RAM8(priority_bits_ADDRESS)
+#define reach_x_ADDRESS 0x48F8u
+#define reach_x RAM16S(reach_x_ADDRESS)
+#define reach_y_ADDRESS 0x48FAu
+#define reach_y RAM16S(reach_y_ADDRESS)
+#define turning_direction_ADDRESS 0x48F0u
+#define turning_direction RAM8(turning_direction_ADDRESS)
+#define scene_player_bit_ADDRESS 0x48F0u
+#define scene_player_bit RAM8(scene_player_bit_ADDRESS)
+#define scene_player_ADDRESS 0x48F1u
+#define scene_player RAM8(scene_player_ADDRESS)
+#define jumper_order_ADDRESS 0x48F2u
+#define jumper_order RAM8(jumper_order_ADDRESS)
+#define shown_player_ADDRESS 0x48F0u
+#define shown_player RAM8(shown_player_ADDRESS)
+#define shown_player_bit_ADDRESS 0x48F1u
+#define shown_player_bit RAM8(shown_player_bit_ADDRESS)
+#define setup_attributes_ADDRESS 0x48F0u
+#define setup_attributes RAM8(setup_attributes_ADDRESS)
+#define story_players_left_ADDRESS 0x48F0u
+#define story_players_left RAM8(story_players_left_ADDRESS)
+#define story_player_bits_ADDRESS 0x48F1u
+#define story_player_bits RAM8(story_player_bits_ADDRESS)
+#define place_players_x_ADDRESS 0x48F8u
+#define place_players_x RAM16(place_players_x_ADDRESS)
+#define place_players_y_ADDRESS 0x48FAu
+#define place_players_y RAM16(place_players_y_ADDRESS)
+#define actor_reach_ADDRESS 0x48F8u
+#define actor_reach RAM16(actor_reach_ADDRESS)
+#define actor_reach_centre_x_ADDRESS 0x48FAu
+#define actor_reach_centre_x RAM16(actor_reach_centre_x_ADDRESS)
+#define free_slot_sprites_ADDRESS 0x48E8u
+#define free_slot_sprites RAM16(free_slot_sprites_ADDRESS)
+#define colour_blocks_left_ADDRESS 0x48F0u
+#define colour_blocks_left RAM8(colour_blocks_left_ADDRESS)
+#define colour_block_rows_left_ADDRESS 0x48F1u
+#define colour_block_rows_left RAM8(colour_block_rows_left_ADDRESS)
+#define colour_block_tiles_left_ADDRESS 0x48F2u
+#define colour_block_tiles_left RAM8(colour_block_tiles_left_ADDRESS)
+#define ramp_colours_left_ADDRESS 0x48F0u
+#define ramp_colours_left RAM8(ramp_colours_left_ADDRESS)
+#define ramp_rows_left_ADDRESS 0x48F1u
+#define ramp_rows_left RAM8(ramp_rows_left_ADDRESS)
+#define test_io_unread_byte_ADDRESS 0x48F1u
+#define test_io_unread_byte RAM8(test_io_unread_byte_ADDRESS)
+#define test_coin_bits_ADDRESS 0x48F0u
+#define test_coin_bits RAM8(test_coin_bits_ADDRESS)
+#define test_coinage_line_ADDRESS 0x48F0u
+#define test_coinage_line RAM8(test_coinage_line_ADDRESS)
+#define test_coinage_line_ADDRESS 0x48F0u
+#define test_coinage_line RAM8(test_coinage_line_ADDRESS)
+#define hex_colour_ADDRESS 0x48F0u
+#define hex_colour RAM8(hex_colour_ADDRESS)
+#define sprite_rom_passes_left_ADDRESS 0x48F0u
+#define sprite_rom_passes_left RAM8(sprite_rom_passes_left_ADDRESS)
+#define sprite_rom_address_ADDRESS 0x48F4u
+#define sprite_rom_address RAM16(sprite_rom_address_ADDRESS)
+#define sprite_rom_address_bottom_ADDRESS 0x48F6u
+#define sprite_rom_address_bottom RAM8(sprite_rom_address_bottom_ADDRESS)
+#define tile_rom_address_ADDRESS 0x48F8u
+#define tile_rom_address RAM16(tile_rom_address_ADDRESS)
+#define sprite_rom_address_ADDRESS 0x48F4u
+#define sprite_rom_address RAM16(sprite_rom_address_ADDRESS)
+#define sprite_rom_address_high_ADDRESS 0x48F4u
+#define sprite_rom_address_high RAM8(sprite_rom_address_high_ADDRESS)
+#define sprite_rom_address_low_ADDRESS 0x48F5u
+#define sprite_rom_address_low RAM16(sprite_rom_address_low_ADDRESS)
+#define sprite_rom_address_middle_ADDRESS 0x48F5u
+#define sprite_rom_address_middle RAM8(sprite_rom_address_middle_ADDRESS)
+#define sprite_rom_address_bottom_ADDRESS 0x48F6u
+#define sprite_rom_address_bottom RAM8(sprite_rom_address_bottom_ADDRESS)
+#define tile_rom_pages_left_ADDRESS 0x48E8u
+#define tile_rom_pages_left RAM8(tile_rom_pages_left_ADDRESS)
+#define tile_rom_address_ADDRESS 0x48F8u
+#define tile_rom_address RAM16(tile_rom_address_ADDRESS)
+#define tile_rom_page_ADDRESS 0x48F8u
+#define tile_rom_page RAM8(tile_rom_page_ADDRESS)
+#define thrown_cell_here_ADDRESS 0x48F0u
+#define thrown_cell_here RAM8(thrown_cell_here_ADDRESS)
+#define thrown_cell_ahead_ADDRESS 0x48F1u
+#define thrown_cell_ahead RAM8(thrown_cell_ahead_ADDRESS)
+#define thrown_cell_priority_ADDRESS 0x48F2u
+#define thrown_cell_priority RAM8(thrown_cell_priority_ADDRESS)
+#define priority_bits_ADDRESS 0x48F0u
+#define priority_bits RAM8(priority_bits_ADDRESS)
+#define bonus_draw_x_ADDRESS 0x48F8u
+#define bonus_draw_x RAM16(bonus_draw_x_ADDRESS)
+#define bonus_draw_y_ADDRESS 0x48FAu
+#define bonus_draw_y RAM16(bonus_draw_y_ADDRESS)
+#define hit_check_list_1_left_ADDRESS 0x48F2u
+#define hit_check_list_1_left RAM8(hit_check_list_1_left_ADDRESS)
+#define sprite_text_code_ADDRESS 0x48E8u
+#define sprite_text_code RAM16(sprite_text_code_ADDRESS)
+#define sprite_code_index_ADDRESS 0x48EAu
+#define sprite_code_index RAM8(sprite_code_index_ADDRESS)
+#define debug_value_ADDRESS 0x48F0u
+#define debug_value RAM16(debug_value_ADDRESS)
+#define debug_value_high_ADDRESS 0x48F0u
+#define debug_value_high RAM8(debug_value_high_ADDRESS)
+#define debug_value_low_ADDRESS 0x48F1u
+#define debug_value_low RAM8(debug_value_low_ADDRESS)
+#define floor_priority_bits_ADDRESS 0x48E8u
+#define floor_priority_bits RAM8(floor_priority_bits_ADDRESS)
+#define floor_priority_bits_ADDRESS 0x48E8u
+#define floor_priority_bits RAM8(floor_priority_bits_ADDRESS)
+#define sine_direction_ADDRESS 0x48ECu
+#define sine_direction RAM8(sine_direction_ADDRESS)
+#define wave_sine_angle_ADDRESS 0x48E8u
+#define wave_sine_angle RAM8(wave_sine_angle_ADDRESS)
+#define wave_sine_size_ADDRESS 0x48E9u
+#define wave_sine_size RAM8(wave_sine_size_ADDRESS)
+#define wave_sine_quarter_ADDRESS 0x48EAu
+#define wave_sine_quarter RAM8(wave_sine_quarter_ADDRESS)
+#define wave_sine_value_ADDRESS 0x48ECu
+#define wave_sine_value RAM16S(wave_sine_value_ADDRESS)
+#define wave_sine_high_ADDRESS 0x48ECu
+#define wave_sine_high RAM8(wave_sine_high_ADDRESS)
+#define wave_sine_low_ADDRESS 0x48EDu
+#define wave_sine_low RAM8(wave_sine_low_ADDRESS)
+#define attack_roll_ADDRESS 0x48F0u
+#define attack_roll RAM8(attack_roll_ADDRESS)
+#define area_next_x_high_ADDRESS 0x48F0u
+#define area_next_x_high RAM8(area_next_x_high_ADDRESS)
+#define area_next_x_ADDRESS 0x48F1u
+#define area_next_x RAM16(area_next_x_ADDRESS)
+#define area_next_x_pixels_ADDRESS 0x48F1u
+#define area_next_x_pixels RAM8(area_next_x_pixels_ADDRESS)
+#define zoomed_object_ADDRESS 0x48E9u
+#define zoomed_object RAM16(zoomed_object_ADDRESS)
+#define zoom_offset_ADDRESS 0x48EBu
+#define zoom_offset RAM8(zoom_offset_ADDRESS)
+#define zoom_offset_negative_ADDRESS 0x48F0u
+#define zoom_offset_negative RAM8(zoom_offset_negative_ADDRESS)
+#define frame_sprites_left_ADDRESS 0x48F2u
+#define frame_sprites_left RAM8(frame_sprites_left_ADDRESS)
+#define sprite_slot_ADDRESS 0x48F3u
+#define sprite_slot RAM8(sprite_slot_ADDRESS)
+#define frame_attributes_ADDRESS 0x48F4u
+#define frame_attributes RAM8(frame_attributes_ADDRESS)
+#define sprite_flipped_ADDRESS 0x48F5u
+#define sprite_flipped RAM8(sprite_flipped_ADDRESS)
+#define draw_shadow_sprite_ADDRESS 0x48F7u
+#define draw_shadow_sprite RAM8(draw_shadow_sprite_ADDRESS)
+#define object_sprite_priority_ADDRESS 0x48FBu
+#define object_sprite_priority RAM8(object_sprite_priority_ADDRESS)
+#define zoomed_offset_ADDRESS 0x48FEu
+#define zoomed_offset RAM16(zoomed_offset_ADDRESS)
+#define object_sprite_priority_ADDRESS 0x48FBu
+#define object_sprite_priority RAM8(object_sprite_priority_ADDRESS)
+#define grab_facing_ADDRESS 0x48F0u
+#define grab_facing RAM8(grab_facing_ADDRESS)
+#define priority_bits_ADDRESS 0x48F0u
+#define priority_bits RAM8(priority_bits_ADDRESS)
 
 /* the program's data the code reads by name, which the game loads from its assets (src/table.c) */
 #define bonus_intro_sounds_ADDRESS 0x7BC4u    /* 021BC4: bank 10 */
@@ -1535,9 +2639,9 @@ extern const void *tile_pictures_data;
 #define spawn_list_places_ADDRESS 0xEFBCu    /* 07EFBC: the fixed program */
 extern const void *spawn_list_places_data;
 #define spawn_list_places ((const uint16_t *)spawn_list_places_data)
-#define spawn_ranges_ADDRESS 0xEFD4u    /* 07EFD4: the fixed program */
-extern const void *spawn_ranges_data;
-#define spawn_ranges ((const uint8_t *)spawn_ranges_data)
+#define enemy_speeds_by_rank_ADDRESS 0xEFD4u    /* 07EFD4: the fixed program */
+extern const void *enemy_speeds_by_rank_data;
+#define enemy_speeds_by_rank ((const uint8_t *)enemy_speeds_by_rank_data)
 #define object_list_sizes_ADDRESS 0xEFF4u    /* 07EFF4: the fixed program */
 extern const void *object_list_sizes_data;
 #define object_list_sizes ((const uint8_t *)object_list_sizes_data)
@@ -1666,8 +2770,8 @@ extern const void *reset_vector_data;
 #define VIDEO_188C 0x188Cu
 #define VIDEO_189C 0x189Cu
 #define VIDEO_189E 0x189Eu
-#define VIDEO_18E0 0x18E0u
-#define VIDEO_18E1 0x18E1u
+#define scene_state 0x18E0u
+#define scene_substate 0x18E1u
 #define VIDEO_18E2 0x18E2u
 #define VIDEO_18E4 0x18E4u
 #define VIDEO_18E6 0x18E6u
@@ -2126,33 +3230,33 @@ extern const void *reset_vector_data;
 #define unused_blocks_01FFC8_ADDRESS 0x7FC8u    /* 01FFC8 */
 #define fill_01FFFE_ADDRESS 0x7FFEu    /* 01FFFE */
 #define fill_021A34_ADDRESS 0x7A34u    /* 021A34 */
-#define loaded_table_021B80_ADDRESS 0x7B80u    /* 021B80 */
-#define loaded_table_021B86_ADDRESS 0x7B86u    /* 021B86 */
-#define loaded_table_021B8C_ADDRESS 0x7B8Cu    /* 021B8C */
-#define loaded_table_021B90_ADDRESS 0x7B90u    /* 021B90 */
-#define loaded_table_021B94_ADDRESS 0x7B94u    /* 021B94 */
+#define bonus_1_intro_states_ADDRESS 0x7B80u    /* 021B80 */
+#define bonus_1_contest_states_ADDRESS 0x7B86u    /* 021B86 */
+#define bonus_1_contest_start_steps_ADDRESS 0x7B8Cu    /* 021B8C */
+#define bonus_1_contest_play_steps_ADDRESS 0x7B90u    /* 021B90 */
+#define bonus_1_finish_steps_ADDRESS 0x7B94u    /* 021B94 */
 #define loaded_table_021B9E_ADDRESS 0x7B9Eu    /* 021B9E */
 #define loaded_table_021BA2_ADDRESS 0x7BA2u    /* 021BA2 */
 #define loaded_table_021BAA_ADDRESS 0x7BAAu    /* 021BAA */
-#define loaded_table_021BB2_ADDRESS 0x7BB2u    /* 021BB2 */
-#define loaded_table_021BB6_ADDRESS 0x7BB6u    /* 021BB6 */
-#define loaded_table_021BBE_ADDRESS 0x7BBEu    /* 021BBE */
+#define bonus_pan_steps_ADDRESS 0x7BB2u    /* 021BB2 */
+#define bonus_hint_blink_steps_ADDRESS 0x7BB6u    /* 021BB6 */
+#define bonus_title_steps_ADDRESS 0x7BBEu    /* 021BBE */
 #define loaded_table_021D18_ADDRESS 0x7D18u    /* 021D18 */
 #define loaded_table_021D2C_ADDRESS 0x7D2Cu    /* 021D2C */
-#define loaded_table_021D8D_ADDRESS 0x7D8Du    /* 021D8D */
-#define loaded_table_021DBC_ADDRESS 0x7DBCu    /* 021DBC */
-#define loaded_table_021DCF_ADDRESS 0x7DCFu    /* 021DCF */
-#define loaded_table_021DE3_ADDRESS 0x7DE3u    /* 021DE3 */
-#define indexed_table_021DF1_ADDRESS 0x7DF1u    /* 021DF1 */
-#define loaded_table_021E2F_ADDRESS 0x7E2Fu    /* 021E2F */
-#define loaded_table_021E3F_ADDRESS 0x7E3Fu    /* 021E3F */
-#define loaded_table_021E43_ADDRESS 0x7E43u    /* 021E43 */
-#define loaded_table_021E49_ADDRESS 0x7E49u    /* 021E49 */
-#define loaded_table_021E4D_ADDRESS 0x7E4Du    /* 021E4D */
-#define loaded_table_021E5D_ADDRESS 0x7E5Du    /* 021E5D */
-#define loaded_table_021E63_ADDRESS 0x7E63u    /* 021E63 */
-#define loaded_table_021E65_ADDRESS 0x7E65u    /* 021E65 */
-#define loaded_table_021E6D_ADDRESS 0x7E6Du    /* 021E6D */
+#define bonus_results_states_ADDRESS 0x7D8Du    /* 021D8D */
+#define bonus_result_text_ADDRESS 0x7DBCu    /* 021DBC */
+#define bonus_result_player_text_ADDRESS 0x7DCFu    /* 021DCF */
+#define bonus_result_absent_text_ADDRESS 0x7DE3u    /* 021DE3 */
+#define bonus_result_box_tiles_ADDRESS 0x7DF1u    /* 021DF1 */
+#define wrestler_states_ADDRESS 0x7E2Fu    /* 021E2F */
+#define wrestler_beaten_actions_ADDRESS 0x7E3Fu    /* 021E3F */
+#define wrestler_knocked_down_actions_ADDRESS 0x7E43u    /* 021E43 */
+#define wrestler_flinch_actions_ADDRESS 0x7E49u    /* 021E49 */
+#define wrestler_entrance_actions_ADDRESS 0x7E4Du    /* 021E4D */
+#define wrestler_punch_actions_ADDRESS 0x7E5Du    /* 021E5D */
+#define wrestler_guard_actions_ADDRESS 0x7E63u    /* 021E63 */
+#define wrestler_jump_actions_ADDRESS 0x7E65u    /* 021E65 */
+#define wrestler_idle_actions_ADDRESS 0x7E6Du    /* 021E6D */
 #define loaded_table_021EE1_ADDRESS 0x7EE1u    /* 021EE1 */
 #define fill_021EE5_ADDRESS 0x7EE5u    /* 021EE5 */
 #define fill_0231FF_ADDRESS 0x71FFu    /* 0231FF */
@@ -2202,52 +3306,44 @@ extern const void *reset_vector_data;
 #define text_0239EE_ADDRESS 0x79EEu    /* 0239EE */
 #define text_023A0A_ADDRESS 0x7A0Au    /* 023A0A */
 #define described_023A0D_ADDRESS 0x7A0Du    /* 023A0D */
-#define loaded_table_023A13_ADDRESS 0x7A13u    /* 023A13 */
-#define loaded_table_023A21_ADDRESS 0x7A21u    /* 023A21 */
-#define loaded_table_023A25_ADDRESS 0x7A25u    /* 023A25 */
-#define loaded_table_023A2B_ADDRESS 0x7A2Bu    /* 023A2B */
-#define loaded_table_023A2F_ADDRESS 0x7A2Fu    /* 023A2F */
-#define loaded_table_023A3D_ADDRESS 0x7A3Du    /* 023A3D */
-#define loaded_table_023A43_ADDRESS 0x7A43u    /* 023A43 */
-#define loaded_table_023A47_ADDRESS 0x7A47u    /* 023A47 */
-#define child_object_023AE9_ADDRESS 0x7AE9u    /* 023AE9 */
-#define loaded_table_023AF1_ADDRESS 0x7AF1u    /* 023AF1 */
-#define loaded_table_023B01_ADDRESS 0x7B01u    /* 023B01 */
-#define loaded_table_023B05_ADDRESS 0x7B05u    /* 023B05 */
+#define stage_7_boss_states_ADDRESS 0x7A13u    /* 023A13 */
+#define stage_7_boss_beaten_actions_ADDRESS 0x7A21u    /* 023A21 */
+#define stage_7_boss_knocked_down_actions_ADDRESS 0x7A25u    /* 023A25 */
+#define stage_7_boss_flinch_actions_ADDRESS 0x7A2Bu    /* 023A2B */
+#define stage_7_boss_entrance_actions_ADDRESS 0x7A2Fu    /* 023A2F */
+#define stage_7_boss_attack_actions_ADDRESS 0x7A3Du    /* 023A3D */
+#define stage_7_boss_charge_actions_ADDRESS 0x7A43u    /* 023A43 */
+#define stage_7_boss_jump_away_actions_ADDRESS 0x7A47u    /* 023A47 */
+#define stage_7_boss_order_throw_child_ADDRESS 0x7AE9u    /* 023AE9 */
+#define stage_7_boss_helper_states_ADDRESS 0x7AF1u    /* 023AF1 */
+#define stage_7_boss_helper_move_actions_ADDRESS 0x7B01u    /* 023B01 */
+#define stage_7_boss_helper_attack_actions_ADDRESS 0x7B05u    /* 023B05 */
 #define fill_023B21_ADDRESS 0x7B21u    /* 023B21 */
 #define fill_024023_ADDRESS 0x6023u    /* 024023 */
 #define fill_025558_ADDRESS 0x7558u    /* 025558 */
-#define loaded_table_025700_ADDRESS 0x7700u    /* 025700 */
-#define loaded_table_02570A_ADDRESS 0x770Au    /* 02570A */
-#define loaded_table_02571A_ADDRESS 0x771Au    /* 02571A */
-#define loaded_table_02571E_ADDRESS 0x771Eu    /* 02571E */
-#define loaded_table_025726_ADDRESS 0x7726u    /* 025726 */
-#define loaded_table_025732_ADDRESS 0x7732u    /* 025732 */
-#define loaded_table_025738_ADDRESS 0x7738u    /* 025738 */
-#define loaded_table_025740_ADDRESS 0x7740u    /* 025740 */
-#define loaded_table_02574A_ADDRESS 0x774Au    /* 02574A */
-#define loaded_table_025752_ADDRESS 0x7752u    /* 025752 */
-#define loaded_table_02575A_ADDRESS 0x775Au    /* 02575A */
-#define loaded_table_025766_ADDRESS 0x7766u    /* 025766 */
-#define loaded_table_025774_ADDRESS 0x7774u    /* 025774 */
-#define loaded_table_025780_ADDRESS 0x7780u    /* 025780 */
-#define loaded_table_025790_ADDRESS 0x7790u    /* 025790 */
-#define loaded_table_02579A_ADDRESS 0x779Au    /* 02579A */
-#define loaded_table_0257A2_ADDRESS 0x77A2u    /* 0257A2 */
-#define loaded_table_0257AA_ADDRESS 0x77AAu    /* 0257AA */
-#define loaded_table_0257B2_ADDRESS 0x77B2u    /* 0257B2 */
+#define stage_1_end_states_ADDRESS 0x7700u    /* 025700 */
+#define stage_2_end_states_ADDRESS 0x770Au    /* 02570A */
+#define stage_end_jump_away_steps_ADDRESS 0x771Au    /* 02571A */
+#define stage_end_jumper_steps_ADDRESS 0x771Eu    /* 02571E */
+#define stage_5_end_states_ADDRESS 0x7726u    /* 025726 */
+#define stage_6_end_states_ADDRESS 0x7732u    /* 025732 */
+#define stage_6_wake_states_ADDRESS 0x7738u    /* 025738 */
+#define post_bonus_2_scene_states_ADDRESS 0x7740u    /* 025740 */
+#define stage_7_scene_states_ADDRESS 0x774Au    /* 02574A */
+#define stage_7_scene_steps_ADDRESS 0x7752u    /* 025752 */
+#define stage_7_end_states_ADDRESS 0x775Au    /* 02575A */
+#define stage_8_start_states_ADDRESS 0x7766u    /* 025766 */
+#define stage_8_start_run_players_states_ADDRESS 0x7774u    /* 025774 */
+#define stage_8_end_states_ADDRESS 0x7780u    /* 025780 */
+#define stage_8_end_run_family_states_ADDRESS 0x7790u    /* 025790 */
+#define stage_8_end_walker_actions_ADDRESS 0x779Au    /* 02579A */
+#define stage_8_end_extra_actions_ADDRESS 0x77A2u    /* 0257A2 */
+#define stage_8_end_slow_extra_actions_ADDRESS 0x77AAu    /* 0257AA */
+#define stage_8_end_maggie_taker_actions_ADDRESS 0x77B2u    /* 0257B2 */
 #define indexed_table_02597E_ADDRESS 0x797Eu    /* 02597E */
-#define indexed_table_02597F_ADDRESS 0x797Fu    /* 02597F */
-#define indexed_table_025980_ADDRESS 0x7980u    /* 025980 */
-#define indexed_table_025981_ADDRESS 0x7981u    /* 025981 */
-#define indexed_table_025982_ADDRESS 0x7982u    /* 025982 */
 #define indexed_table_02598A_ADDRESS 0x798Au    /* 02598A */
-#define indexed_table_02598B_ADDRESS 0x798Bu    /* 02598B */
-#define indexed_table_02598C_ADDRESS 0x798Cu    /* 02598C */
-#define indexed_table_02598D_ADDRESS 0x798Du    /* 02598D */
-#define indexed_table_02598E_ADDRESS 0x798Eu    /* 02598E */
-#define loaded_table_025996_ADDRESS 0x7996u    /* 025996 */
-#define loaded_table_02599C_ADDRESS 0x799Cu    /* 02599C */
+#define dream_wave_grow_steps_ADDRESS 0x7996u    /* 025996 */
+#define dream_wave_fade_out_steps_ADDRESS 0x799Cu    /* 02599C */
 #define text_025A0A_ADDRESS 0x7A0Au    /* 025A0A */
 #define text_025A30_ADDRESS 0x7A30u    /* 025A30 */
 #define text_025B05_ADDRESS 0x7B05u    /* 025B05 */
@@ -2273,7 +3369,7 @@ extern const void *reset_vector_data;
 #define loaded_table_027908_ADDRESS 0x7908u    /* 027908 */
 #define loaded_table_02792A_ADDRESS 0x792Au    /* 02792A */
 #define loaded_table_027936_ADDRESS 0x7936u    /* 027936 */
-#define loaded_table_027948_ADDRESS 0x7948u    /* 027948 */
+#define stage_5_scroll_parts_ADDRESS 0x7948u    /* 027948 */
 #define loaded_table_0279F2_ADDRESS 0x79F2u    /* 0279F2 */
 #define loaded_table_0279F6_ADDRESS 0x79F6u    /* 0279F6 */
 #define loaded_table_0279FA_ADDRESS 0x79FAu    /* 0279FA */
@@ -2283,52 +3379,52 @@ extern const void *reset_vector_data;
 #define loaded_table_027A2F_ADDRESS 0x7A2Fu    /* 027A2F */
 #define loaded_table_027A43_ADDRESS 0x7A43u    /* 027A43 */
 #define loaded_table_027A53_ADDRESS 0x7A53u    /* 027A53 */
-#define loaded_table_027C64_ADDRESS 0x7C64u    /* 027C64 */
-#define loaded_table_027C70_ADDRESS 0x7C70u    /* 027C70 */
-#define loaded_table_027C78_ADDRESS 0x7C78u    /* 027C78 */
-#define loaded_table_027C7C_ADDRESS 0x7C7Cu    /* 027C7C */
-#define loaded_table_027C88_ADDRESS 0x7C88u    /* 027C88 */
-#define loaded_table_027C8E_ADDRESS 0x7C8Eu    /* 027C8E */
-#define loaded_table_027C98_ADDRESS 0x7C98u    /* 027C98 */
-#define loaded_table_027C9C_ADDRESS 0x7C9Cu    /* 027C9C */
-#define loaded_table_027CA2_ADDRESS 0x7CA2u    /* 027CA2 */
-#define loaded_table_027CAA_ADDRESS 0x7CAAu    /* 027CAA */
+#define krusty_balloon_states_ADDRESS 0x7C64u    /* 027C64 */
+#define krusty_balloon_beaten_actions_ADDRESS 0x7C70u    /* 027C70 */
+#define krusty_balloon_knocked_up_actions_ADDRESS 0x7C78u    /* 027C78 */
+#define krusty_balloon_come_in_actions_ADDRESS 0x7C7Cu    /* 027C7C */
+#define krusty_balloon_attack_actions_ADDRESS 0x7C88u    /* 027C88 */
+#define krusty_balloon_volley_actions_ADDRESS 0x7C8Eu    /* 027C8E */
+#define krusty_balloon_stomping_actions_ADDRESS 0x7C98u    /* 027C98 */
+#define krusty_balloon_throw_directions_ADDRESS 0x7C9Cu    /* 027C9C */
+#define krusty_balloon_wobble_steps_ADDRESS 0x7CA2u    /* 027CA2 */
+#define krusty_balloon_rebound_steps_ADDRESS 0x7CAAu    /* 027CAA */
 #define described_027D38_ADDRESS 0x7D38u    /* 027D38 */
-#define loaded_table_027D3A_ADDRESS 0x7D3Au    /* 027D3A */
-#define loaded_table_027D42_ADDRESS 0x7D42u    /* 027D42 */
-#define loaded_table_027D5A_ADDRESS 0x7D5Au    /* 027D5A */
-#define loaded_table_027D60_ADDRESS 0x7D60u    /* 027D60 */
-#define loaded_table_027D66_ADDRESS 0x7D66u    /* 027D66 */
-#define loaded_table_027D6C_ADDRESS 0x7D6Cu    /* 027D6C */
-#define loaded_table_027D72_ADDRESS 0x7D72u    /* 027D72 */
-#define loaded_table_027D78_ADDRESS 0x7D78u    /* 027D78 */
-#define loaded_table_027D7E_ADDRESS 0x7D7Eu    /* 027D7E */
-#define loaded_table_027D86_ADDRESS 0x7D86u    /* 027D86 */
-#define text_027D8C_ADDRESS 0x7D8Cu    /* 027D8C */
-#define text_027DAD_ADDRESS 0x7DADu    /* 027DAD */
-#define text_027DC4_ADDRESS 0x7DC4u    /* 027DC4 */
-#define text_027DF0_ADDRESS 0x7DF0u    /* 027DF0 */
-#define text_027E09_ADDRESS 0x7E09u    /* 027E09 */
-#define text_027E27_ADDRESS 0x7E27u    /* 027E27 */
-#define text_027E3D_ADDRESS 0x7E3Du    /* 027E3D */
-#define text_027E53_ADDRESS 0x7E53u    /* 027E53 */
-#define loaded_table_027ED1_ADDRESS 0x7ED1u    /* 027ED1 */
-#define loaded_table_027EDD_ADDRESS 0x7EDDu    /* 027EDD */
-#define loaded_table_027EE3_ADDRESS 0x7EE3u    /* 027EE3 */
-#define loaded_table_027EE7_ADDRESS 0x7EE7u    /* 027EE7 */
-#define loaded_table_027EFD_ADDRESS 0x7EFDu    /* 027EFD */
-#define loaded_table_027F05_ADDRESS 0x7F05u    /* 027F05 */
-#define loaded_table_027F09_ADDRESS 0x7F09u    /* 027F09 */
-#define loaded_table_027F0F_ADDRESS 0x7F0Fu    /* 027F0F */
+#define krusty_balloon_shot_states_ADDRESS 0x7D3Au    /* 027D3A */
+#define title_cards_by_scene_ADDRESS 0x7D42u    /* 027D42 */
+#define stage_1_title_card_steps_ADDRESS 0x7D5Au    /* 027D5A */
+#define stage_2_title_card_steps_ADDRESS 0x7D60u    /* 027D60 */
+#define stage_3_title_card_steps_ADDRESS 0x7D66u    /* 027D66 */
+#define stage_4_title_card_steps_ADDRESS 0x7D6Cu    /* 027D6C */
+#define stage_5_title_card_steps_ADDRESS 0x7D72u    /* 027D72 */
+#define stage_6_title_card_steps_ADDRESS 0x7D78u    /* 027D78 */
+#define stage_7_title_card_steps_ADDRESS 0x7D7Eu    /* 027D7E */
+#define stage_8_title_card_steps_ADDRESS 0x7D86u    /* 027D86 */
+#define stage_1_title_text_ADDRESS 0x7D8Cu    /* 027D8C */
+#define stage_2_title_text_ADDRESS 0x7DADu    /* 027DAD */
+#define stage_3_title_text_ADDRESS 0x7DC4u    /* 027DC4 */
+#define stage_4_title_text_ADDRESS 0x7DF0u    /* 027DF0 */
+#define stage_5_title_text_ADDRESS 0x7E09u    /* 027E09 */
+#define stage_6_title_text_ADDRESS 0x7E27u    /* 027E27 */
+#define stage_7_title_text_ADDRESS 0x7E3Du    /* 027E3D */
+#define stage_8_title_text_ADDRESS 0x7E53u    /* 027E53 */
+#define story_1_states_ADDRESS 0x7ED1u    /* 027ED1 */
+#define story_1_rise_steps_ADDRESS 0x7EDDu    /* 027EDD */
+#define story_1_pan_steps_ADDRESS 0x7EE3u    /* 027EE3 */
+#define story_1_end_steps_ADDRESS 0x7EE7u    /* 027EE7 */
+#define story_1_family_scripts_ADDRESS 0x7EFDu    /* 027EFD */
+#define story_1_marge_steps_ADDRESS 0x7F05u    /* 027F05 */
+#define story_1_homer_steps_ADDRESS 0x7F09u    /* 027F09 */
+#define story_1_bart_steps_ADDRESS 0x7F0Fu    /* 027F0F */
 #define indexed_table_027F11_ADDRESS 0x7F11u    /* 027F11 */
 #define indexed_table_027F12_ADDRESS 0x7F12u    /* 027F12 */
-#define indexed_table_027F13_ADDRESS 0x7F13u    /* 027F13 */
+#define story_1_lisa_steps_ADDRESS 0x7F13u    /* 027F13 */
 #define indexed_table_027F14_ADDRESS 0x7F14u    /* 027F14 */
-#define indexed_table_027F17_ADDRESS 0x7F17u    /* 027F17 */
+#define story_1_runner_scripts_ADDRESS 0x7F17u    /* 027F17 */
 #define indexed_table_027F18_ADDRESS 0x7F18u    /* 027F18 */
 #define indexed_table_027F19_ADDRESS 0x7F19u    /* 027F19 */
 #define indexed_table_027F1A_ADDRESS 0x7F1Au    /* 027F1A */
-#define indexed_table_027F1D_ADDRESS 0x7F1Du    /* 027F1D */
+#define story_1_smithers_steps_ADDRESS 0x7F1Du    /* 027F1D */
 #define indexed_table_027F1E_ADDRESS 0x7F1Eu    /* 027F1E */
 #define indexed_table_027F1F_ADDRESS 0x7F1Fu    /* 027F1F */
 #define indexed_table_027F20_ADDRESS 0x7F20u    /* 027F20 */
@@ -2336,45 +3432,45 @@ extern const void *reset_vector_data;
 #define indexed_table_027F24_ADDRESS 0x7F24u    /* 027F24 */
 #define indexed_table_027F25_ADDRESS 0x7F25u    /* 027F25 */
 #define indexed_table_027F26_ADDRESS 0x7F26u    /* 027F26 */
-#define loaded_table_027F27_ADDRESS 0x7F27u    /* 027F27 */
+#define story_1_first_goon_steps_ADDRESS 0x7F27u    /* 027F27 */
 #define indexed_table_027F29_ADDRESS 0x7F29u    /* 027F29 */
 #define indexed_table_027F2A_ADDRESS 0x7F2Au    /* 027F2A */
 #define indexed_table_027F2B_ADDRESS 0x7F2Bu    /* 027F2B */
 #define indexed_table_027F2C_ADDRESS 0x7F2Cu    /* 027F2C */
-#define indexed_table_027F2F_ADDRESS 0x7F2Fu    /* 027F2F */
+#define story_1_second_goon_steps_ADDRESS 0x7F2Fu    /* 027F2F */
 #define indexed_table_027F30_ADDRESS 0x7F30u    /* 027F30 */
 #define indexed_table_027F31_ADDRESS 0x7F31u    /* 027F31 */
 #define indexed_table_027F32_ADDRESS 0x7F32u    /* 027F32 */
 #define indexed_table_027F35_ADDRESS 0x7F35u    /* 027F35 */
 #define indexed_table_027F36_ADDRESS 0x7F36u    /* 027F36 */
-#define indexed_table_027F37_ADDRESS 0x7F37u    /* 027F37 */
+#define story_1_text_steps_ADDRESS 0x7F37u    /* 027F37 */
 #define indexed_table_027F38_ADDRESS 0x7F38u    /* 027F38 */
 #define indexed_table_027F3B_ADDRESS 0x7F3Bu    /* 027F3B */
 #define indexed_table_027F3C_ADDRESS 0x7F3Cu    /* 027F3C */
 #define indexed_table_027F3D_ADDRESS 0x7F3Du    /* 027F3D */
 #define indexed_table_027F3E_ADDRESS 0x7F3Eu    /* 027F3E */
-#define loaded_table_027F3F_ADDRESS 0x7F3Fu    /* 027F3F */
+#define story_1_dropped_object_steps_ADDRESS 0x7F3Fu    /* 027F3F */
 #define indexed_table_027F41_ADDRESS 0x7F41u    /* 027F41 */
 #define indexed_table_027F42_ADDRESS 0x7F42u    /* 027F42 */
-#define object_start_027F43_ADDRESS 0x7F43u    /* 027F43 */
-#define object_start_027F4D_ADDRESS 0x7F4Du    /* 027F4D */
-#define object_start_027F57_ADDRESS 0x7F57u    /* 027F57 */
-#define object_start_027F61_ADDRESS 0x7F61u    /* 027F61 */
-#define object_start_027F6B_ADDRESS 0x7F6Bu    /* 027F6B */
-#define object_start_027F75_ADDRESS 0x7F75u    /* 027F75 */
-#define object_start_027F7F_ADDRESS 0x7F7Fu    /* 027F7F */
-#define object_start_027F89_ADDRESS 0x7F89u    /* 027F89 */
+#define story_1_marge_start_ADDRESS 0x7F43u    /* 027F43 */
+#define story_1_homer_start_ADDRESS 0x7F4Du    /* 027F4D */
+#define story_1_bart_start_ADDRESS 0x7F57u    /* 027F57 */
+#define story_1_lisa_start_ADDRESS 0x7F61u    /* 027F61 */
+#define story_1_text_start_ADDRESS 0x7F6Bu    /* 027F6B */
+#define story_1_smithers_start_ADDRESS 0x7F75u    /* 027F75 */
+#define story_1_first_goon_start_ADDRESS 0x7F7Fu    /* 027F7F */
+#define story_1_second_goon_start_ADDRESS 0x7F89u    /* 027F89 */
 #define object_start_027F93_ADDRESS 0x7F93u    /* 027F93 */
-#define object_start_027F9D_ADDRESS 0x7F9Du    /* 027F9D */
+#define story_1_street_object_start_1_ADDRESS 0x7F9Du    /* 027F9D */
 #define object_start_027FA7_ADDRESS 0x7FA7u    /* 027FA7 */
-#define object_start_027FB1_ADDRESS 0x7FB1u    /* 027FB1 */
-#define object_start_027FBB_ADDRESS 0x7FBBu    /* 027FBB */
-#define object_start_027FC5_ADDRESS 0x7FC5u    /* 027FC5 */
-#define object_start_027FCF_ADDRESS 0x7FCFu    /* 027FCF */
-#define object_start_027FD9_ADDRESS 0x7FD9u    /* 027FD9 */
-#define object_start_027FE3_ADDRESS 0x7FE3u    /* 027FE3 */
-#define loaded_table_027FED_ADDRESS 0x7FEDu    /* 027FED */
-#define loaded_table_027FF3_ADDRESS 0x7FF3u    /* 027FF3 */
+#define story_1_street_object_start_2_ADDRESS 0x7FB1u    /* 027FB1 */
+#define story_1_street_text_start_ADDRESS 0x7FBBu    /* 027FBB */
+#define story_1_redraw_text_start_ADDRESS 0x7FC5u    /* 027FC5 */
+#define story_1_pan_text_start_ADDRESS 0x7FCFu    /* 027FCF */
+#define story_1_last_view_text_start_ADDRESS 0x7FD9u    /* 027FD9 */
+#define story_1_smithers_drop_start_ADDRESS 0x7FE3u    /* 027FE3 */
+#define boss_door_states_ADDRESS 0x7FEDu    /* 027FED */
+#define boss_door_stage_8_states_ADDRESS 0x7FF3u    /* 027FF3 */
 #define fill_0295C1_ADDRESS 0x75C1u    /* 0295C1 */
 #define hit_box_029800_ADDRESS 0x7800u    /* 029800 */
 #define enemy_behaviour_029808_ADDRESS 0x7808u    /* 029808 */
@@ -2386,36 +3482,36 @@ extern const void *reset_vector_data;
 #define loaded_table_02998C_ADDRESS 0x798Cu    /* 02998C */
 #define loaded_table_029998_ADDRESS 0x7998u    /* 029998 */
 #define loaded_table_0299A4_ADDRESS 0x79A4u    /* 0299A4 */
-#define object_setup_0299B0_ADDRESS 0x79B0u    /* 0299B0 */
-#define hit_box_0299B6_ADDRESS 0x79B6u    /* 0299B6 */
-#define hit_box_0299BE_ADDRESS 0x79BEu    /* 0299BE */
-#define hit_box_0299C6_ADDRESS 0x79C6u    /* 0299C6 */
-#define hit_box_0299CE_ADDRESS 0x79CEu    /* 0299CE */
-#define object_setup_0299D6_ADDRESS 0x79D6u    /* 0299D6 */
+#define goon_base_object_setup_ADDRESS 0x79B0u    /* 0299B0 */
+#define goon_entrance_body_box_ADDRESS 0x79B6u    /* 0299B6 */
+#define hat_goon_entrance_box_ADDRESS 0x79BEu    /* 0299BE */
+#define shovel_goon_rush_in_swing_box_ADDRESS 0x79C6u    /* 0299C6 */
+#define goon_balloon_states_ADDRESS 0x79CEu    /* 0299CE */
+#define goon_balloon_setup_ADDRESS 0x79D6u    /* 0299D6 */
 #define loaded_table_0299DC_ADDRESS 0x79DCu    /* 0299DC */
-#define loaded_table_0299E8_ADDRESS 0x79E8u    /* 0299E8 */
-#define child_object_0299EC_ADDRESS 0x79ECu    /* 0299EC */
+#define goon_descent_steps_ADDRESS 0x79E8u    /* 0299E8 */
+#define goon_descent_child_ADDRESS 0x79ECu    /* 0299EC */
 #define loaded_table_029A14_ADDRESS 0x7A14u    /* 029A14 */
-#define loaded_table_029A20_ADDRESS 0x7A20u    /* 029A20 */
+#define hat_goon_run_across_steps_ADDRESS 0x7A20u    /* 029A20 */
 #define loaded_table_029A28_ADDRESS 0x7A28u    /* 029A28 */
 #define loaded_table_029A34_ADDRESS 0x7A34u    /* 029A34 */
-#define loaded_table_029A40_ADDRESS 0x7A40u    /* 029A40 */
+#define shovel_goon_rush_in_steps_ADDRESS 0x7A40u    /* 029A40 */
 #define loaded_table_029A44_ADDRESS 0x7A44u    /* 029A44 */
 #define loaded_table_029A50_ADDRESS 0x7A50u    /* 029A50 */
-#define loaded_table_029A5C_ADDRESS 0x7A5Cu    /* 029A5C */
+#define goon_rush_in_steps_ADDRESS 0x7A5Cu    /* 029A5C */
 #define loaded_table_029A60_ADDRESS 0x7A60u    /* 029A60 */
-#define loaded_table_029A6C_ADDRESS 0x7A6Cu    /* 029A6C */
+#define goon_from_back_steps_ADDRESS 0x7A6Cu    /* 029A6C */
 #define loaded_table_029A7A_ADDRESS 0x7A7Au    /* 029A7A */
 #define loaded_table_029A92_ADDRESS 0x7A92u    /* 029A92 */
 #define loaded_table_029A9C_ADDRESS 0x7A9Cu    /* 029A9C */
-#define object_setup_029AA8_ADDRESS 0x7AA8u    /* 029AA8 */
+#define goon_walk_in_setup_ADDRESS 0x7AA8u    /* 029AA8 */
 #define loaded_table_029ABE_ADDRESS 0x7ABEu    /* 029ABE */
 #define loaded_table_029AC6_ADDRESS 0x7AC6u    /* 029AC6 */
-#define loaded_table_029AE2_ADDRESS 0x7AE2u    /* 029AE2 */
-#define loaded_table_029AE8_ADDRESS 0x7AE8u    /* 029AE8 */
-#define loaded_table_029AF4_ADDRESS 0x7AF4u    /* 029AF4 */
-#define loaded_table_029AFE_ADDRESS 0x7AFEu    /* 029AFE */
-#define loaded_table_029B0A_ADDRESS 0x7B0Au    /* 029B0A */
+#define goon_delayed_steps_ADDRESS 0x7AE2u    /* 029AE2 */
+#define shovel_goon_step_out_states_ADDRESS 0x7AE8u    /* 029AE8 */
+#define shovel_goon_step_out_steps_ADDRESS 0x7AF4u    /* 029AF4 */
+#define hat_goon_step_out_states_ADDRESS 0x7AFEu    /* 029AFE */
+#define goon_step_out_states_ADDRESS 0x7B0Au    /* 029B0A */
 #define loaded_table_029B30_ADDRESS 0x7B30u    /* 029B30 */
 #define loaded_table_029B3C_ADDRESS 0x7B3Cu    /* 029B3C */
 #define loaded_table_029B48_ADDRESS 0x7B48u    /* 029B48 */
@@ -2430,68 +3526,68 @@ extern const void *reset_vector_data;
 #define loaded_table_029BCC_ADDRESS 0x7BCCu    /* 029BCC */
 #define loaded_table_029BD4_ADDRESS 0x7BD4u    /* 029BD4 */
 #define loaded_table_029BE8_ADDRESS 0x7BE8u    /* 029BE8 */
-#define hit_box_029BEE_ADDRESS 0x7BEEu    /* 029BEE */
-#define hit_box_029BF6_ADDRESS 0x7BF6u    /* 029BF6 */
-#define hit_box_029BFE_ADDRESS 0x7BFEu    /* 029BFE */
-#define hit_box_029C06_ADDRESS 0x7C06u    /* 029C06 */
-#define hit_box_029C0E_ADDRESS 0x7C0Eu    /* 029C0E */
-#define hit_box_029C16_ADDRESS 0x7C16u    /* 029C16 */
-#define hit_box_029C1E_ADDRESS 0x7C1Eu    /* 029C1E */
+#define goon_strike_hit_box_ADDRESS 0x7BEEu    /* 029BEE */
+#define goon_action_body_box_ADDRESS 0x7BF6u    /* 029BF6 */
+#define goon_quick_strike_hit_box_ADDRESS 0x7BFEu    /* 029BFE */
+#define goon_quick_strike_2_hit_box_ADDRESS 0x7C06u    /* 029C06 */
+#define goon_jump_attack_fall_box_ADDRESS 0x7C0Eu    /* 029C0E */
+#define goon_dash_strike_hit_box_ADDRESS 0x7C16u    /* 029C16 */
+#define goon_approach_strike_hit_box_ADDRESS 0x7C1Eu    /* 029C1E */
 #define hit_box_029C26_ADDRESS 0x7C26u    /* 029C26 */
-#define loaded_table_029C4E_ADDRESS 0x7C4Eu    /* 029C4E */
-#define loaded_table_029C5A_ADDRESS 0x7C5Au    /* 029C5A */
-#define loaded_table_029C5E_ADDRESS 0x7C5Eu    /* 029C5E */
-#define loaded_table_029C68_ADDRESS 0x7C68u    /* 029C68 */
-#define loaded_table_029C70_ADDRESS 0x7C70u    /* 029C70 */
-#define loaded_table_029C7F_ADDRESS 0x7C7Fu    /* 029C7F */
-#define loaded_table_029C89_ADDRESS 0x7C89u    /* 029C89 */
-#define loaded_table_029C91_ADDRESS 0x7C91u    /* 029C91 */
-#define loaded_table_029C99_ADDRESS 0x7C99u    /* 029C99 */
-#define loaded_table_029CC3_ADDRESS 0x7CC3u    /* 029CC3 */
-#define loaded_table_029CCB_ADDRESS 0x7CCBu    /* 029CCB */
+#define goon_approach_strike_steps_ADDRESS 0x7C4Eu    /* 029C4E */
+#define goon_back_off_steps_ADDRESS 0x7C5Au    /* 029C5A */
+#define goon_dash_strike_steps_ADDRESS 0x7C5Eu    /* 029C5E */
+#define goon_keep_distance_steps_ADDRESS 0x7C68u    /* 029C68 */
+#define goon_wait_then_strike_steps_ADDRESS 0x7C70u    /* 029C70 */
+#define goon_wait_then_strike_2_steps_ADDRESS 0x7C7Fu    /* 029C7F */
+#define goon_quick_strike_steps_ADDRESS 0x7C89u    /* 029C89 */
+#define goon_quick_strike_2_steps_ADDRESS 0x7C91u    /* 029C91 */
+#define goon_jump_attack_steps_ADDRESS 0x7C99u    /* 029C99 */
+#define goon_jump_up_or_grab_steps_ADDRESS 0x7CC3u    /* 029CC3 */
+#define goon_grab_steps_ADDRESS 0x7CCBu    /* 029CCB */
 #define hit_box_029CD7_ADDRESS 0x7CD7u    /* 029CD7 */
 #define enemy_behaviour_029CDF_ADDRESS 0x7CDFu    /* 029CDF */
 #define enemy_behaviour_029D37_ADDRESS 0x7D37u    /* 029D37 */
 #define enemy_behaviour_029D8F_ADDRESS 0x7D8Fu    /* 029D8F */
 #define enemy_behaviour_029DE7_ADDRESS 0x7DE7u    /* 029DE7 */
 #define loaded_table_029E3F_ADDRESS 0x7E3Fu    /* 029E3F */
-#define object_setup_029E4B_ADDRESS 0x7E4Bu    /* 029E4B */
+#define bomb_goon_setup_ADDRESS 0x7E4Bu    /* 029E4B */
 #define loaded_table_029E51_ADDRESS 0x7E51u    /* 029E51 */
-#define object_setup_029E5D_ADDRESS 0x7E5Du    /* 029E5D */
+#define hat_goon_setup_ADDRESS 0x7E5Du    /* 029E5D */
 #define loaded_table_029E63_ADDRESS 0x7E63u    /* 029E63 */
-#define object_setup_029E6F_ADDRESS 0x7E6Fu    /* 029E6F */
+#define umbrella_goon_setup_ADDRESS 0x7E6Fu    /* 029E6F */
 #define loaded_table_029E75_ADDRESS 0x7E75u    /* 029E75 */
-#define object_setup_029E81_ADDRESS 0x7E81u    /* 029E81 */
-#define hit_box_029E87_ADDRESS 0x7E87u    /* 029E87 */
-#define hit_box_029E8F_ADDRESS 0x7E8Fu    /* 029E8F */
-#define hit_box_029E97_ADDRESS 0x7E97u    /* 029E97 */
-#define hit_box_029E9F_ADDRESS 0x7E9Fu    /* 029E9F */
-#define hit_box_029EA7_ADDRESS 0x7EA7u    /* 029EA7 */
-#define hit_box_029EAF_ADDRESS 0x7EAFu    /* 029EAF */
-#define hit_box_029EB7_ADDRESS 0x7EB7u    /* 029EB7 */
-#define hit_box_029EBF_ADDRESS 0x7EBFu    /* 029EBF */
-#define hit_box_029EC7_ADDRESS 0x7EC7u    /* 029EC7 */
-#define loaded_table_029ECF_ADDRESS 0x7ECFu    /* 029ECF */
-#define child_object_029ED5_ADDRESS 0x7ED5u    /* 029ED5 */
-#define loaded_table_029EDB_ADDRESS 0x7EDBu    /* 029EDB */
-#define loaded_table_029EEA_ADDRESS 0x7EEAu    /* 029EEA */
-#define loaded_table_029EF9_ADDRESS 0x7EF9u    /* 029EF9 */
-#define loaded_table_029F03_ADDRESS 0x7F03u    /* 029F03 */
-#define loaded_table_029F0B_ADDRESS 0x7F0Bu    /* 029F0B */
-#define loaded_table_029F13_ADDRESS 0x7F13u    /* 029F13 */
-#define loaded_table_029F1B_ADDRESS 0x7F1Bu    /* 029F1B */
-#define loaded_table_029F21_ADDRESS 0x7F21u    /* 029F21 */
-#define loaded_table_029F27_ADDRESS 0x7F27u    /* 029F27 */
-#define child_object_029F2F_ADDRESS 0x7F2Fu    /* 029F2F */
+#define shovel_goon_setup_ADDRESS 0x7E81u    /* 029E81 */
+#define armed_goon_body_box_ADDRESS 0x7E87u    /* 029E87 */
+#define shovel_goon_close_hit_box_ADDRESS 0x7E8Fu    /* 029E8F */
+#define shovel_goon_hit_box_ADDRESS 0x7E97u    /* 029E97 */
+#define shovel_goon_far_hit_box_ADDRESS 0x7E9Fu    /* 029E9F */
+#define goon_strike_and_run_hit_box_ADDRESS 0x7EA7u    /* 029EA7 */
+#define umbrella_goon_hit_box_ADDRESS 0x7EAFu    /* 029EAF */
+#define umbrella_goon_charge_hit_box_ADDRESS 0x7EB7u    /* 029EB7 */
+#define umbrella_goon_quick_hit_box_ADDRESS 0x7EBFu    /* 029EBF */
+#define umbrella_goon_long_hit_box_ADDRESS 0x7EC7u    /* 029EC7 */
+#define bomb_goon_throw_steps_ADDRESS 0x7ECFu    /* 029ECF */
+#define bomb_goon_throw_release_child_ADDRESS 0x7ED5u    /* 029ED5 */
+#define shovel_goon_close_strike_steps_ADDRESS 0x7EDBu    /* 029EDB */
+#define shovel_goon_far_strike_steps_ADDRESS 0x7EEAu    /* 029EEA */
+#define shovel_goon_strike_steps_ADDRESS 0x7EF9u    /* 029EF9 */
+#define umbrella_goon_quick_strike_steps_ADDRESS 0x7F03u    /* 029F03 */
+#define umbrella_goon_long_strike_steps_ADDRESS 0x7F0Bu    /* 029F0B */
+#define umbrella_goon_strike_steps_ADDRESS 0x7F13u    /* 029F13 */
+#define umbrella_goon_charge_steps_ADDRESS 0x7F1Bu    /* 029F1B */
+#define goon_strike_and_run_steps_ADDRESS 0x7F21u    /* 029F21 */
+#define hat_goon_throw_hat_steps_ADDRESS 0x7F27u    /* 029F27 */
+#define hat_goon_throw_release_child_ADDRESS 0x7F2Fu    /* 029F2F */
 #define hit_box_029F35_ADDRESS 0x7F35u    /* 029F35 */
-#define hit_box_029F3D_ADDRESS 0x7F3Du    /* 029F3D */
+#define goon_bomb_fly_box_ADDRESS 0x7F3Du    /* 029F3D */
 #define hit_box_029F45_ADDRESS 0x7F45u    /* 029F45 */
-#define object_setup_029F55_ADDRESS 0x7F55u    /* 029F55 */
+#define goon_bomb_setup_ADDRESS 0x7F55u    /* 029F55 */
 #define loaded_table_029F5B_ADDRESS 0x7F5Bu    /* 029F5B */
 #define loaded_table_029F67_ADDRESS 0x7F67u    /* 029F67 */
-#define child_object_029F6D_ADDRESS 0x7F6Du    /* 029F6D */
-#define hit_box_029F73_ADDRESS 0x7F73u    /* 029F73 */
-#define hit_box_029F7B_ADDRESS 0x7F7Bu    /* 029F7B */
+#define goon_bomb_run_in_throw_child_ADDRESS 0x7F6Du    /* 029F6D */
+#define goon_from_below_body_box_ADDRESS 0x7F73u    /* 029F73 */
+#define goon_from_below_entrance_box_ADDRESS 0x7F7Bu    /* 029F7B */
 #define hit_box_029F83_ADDRESS 0x7F83u    /* 029F83 */
 #define loaded_table_029F9F_ADDRESS 0x7F9Fu    /* 029F9F */
 #define loaded_table_029FA3_ADDRESS 0x7FA3u    /* 029FA3 */
@@ -2501,16 +3597,16 @@ extern const void *reset_vector_data;
 #define fill_02A224_ADDRESS 0x6224u    /* 02A224 */
 #define fill_02B518_ADDRESS 0x7518u    /* 02B518 */
 #define hit_box_02B5E0_ADDRESS 0x75E0u    /* 02B5E0 */
-#define enemy_behaviour_02B5E8_ADDRESS 0x75E8u    /* 02B5E8 */
+#define fat_goon_behaviour_ADDRESS 0x75E8u    /* 02B5E8 */
 #define loaded_table_02B640_ADDRESS 0x7640u    /* 02B640 */
-#define object_setup_02B64C_ADDRESS 0x764Cu    /* 02B64C */
+#define fat_goon_object_setup_ADDRESS 0x764Cu    /* 02B64C */
 #define hit_box_02B652_ADDRESS 0x7652u    /* 02B652 */
 #define enemy_behaviour_02B65A_ADDRESS 0x765Au    /* 02B65A */
 #define enemy_behaviour_02B6B2_ADDRESS 0x76B2u    /* 02B6B2 */
 #define enemy_behaviour_02B70A_ADDRESS 0x770Au    /* 02B70A */
 #define enemy_behaviour_02B762_ADDRESS 0x7762u    /* 02B762 */
 #define loaded_table_02B7BA_ADDRESS 0x77BAu    /* 02B7BA */
-#define object_setup_02B7C6_ADDRESS 0x77C6u    /* 02B7C6 */
+#define fat_goon_base_object_setup_ADDRESS 0x77C6u    /* 02B7C6 */
 #define loaded_table_02B7CC_ADDRESS 0x77CCu    /* 02B7CC */
 #define loaded_table_02B7D8_ADDRESS 0x77D8u    /* 02B7D8 */
 #define loaded_table_02B7E4_ADDRESS 0x77E4u    /* 02B7E4 */
@@ -2523,40 +3619,40 @@ extern const void *reset_vector_data;
 #define loaded_table_02B83E_ADDRESS 0x783Eu    /* 02B83E */
 #define loaded_table_02B862_ADDRESS 0x7862u    /* 02B862 */
 #define loaded_table_02B86E_ADDRESS 0x786Eu    /* 02B86E */
-#define loaded_table_02B87A_ADDRESS 0x787Au    /* 02B87A */
+#define fat_goon_walk_in_step_handlers_ADDRESS 0x787Au    /* 02B87A */
 #define loaded_table_02B87E_ADDRESS 0x787Eu    /* 02B87E */
-#define loaded_table_02B88A_ADDRESS 0x788Au    /* 02B88A */
+#define fat_goon_from_back_step_handlers_ADDRESS 0x788Au    /* 02B88A */
 #define loaded_table_02B898_ADDRESS 0x7898u    /* 02B898 */
-#define loaded_table_02B8A4_ADDRESS 0x78A4u    /* 02B8A4 */
-#define child_object_02B8AC_ADDRESS 0x78ACu    /* 02B8AC */
+#define fat_goon_thrower_step_handlers_ADDRESS 0x78A4u    /* 02B8A4 */
+#define fat_goon_thrower_pick_up_child_ADDRESS 0x78ACu    /* 02B8AC */
 #define loaded_table_02B8B4_ADDRESS 0x78B4u    /* 02B8B4 */
-#define loaded_table_02B8D0_ADDRESS 0x78D0u    /* 02B8D0 */
-#define loaded_table_02B8D6_ADDRESS 0x78D6u    /* 02B8D6 */
-#define loaded_table_02B8E2_ADDRESS 0x78E2u    /* 02B8E2 */
-#define child_object_02B8E6_ADDRESS 0x78E6u    /* 02B8E6 */
-#define loaded_table_02B8F6_ADDRESS 0x78F6u    /* 02B8F6 */
-#define object_setup_02B8FE_ADDRESS 0x78FEu    /* 02B8FE */
-#define hit_box_02B904_ADDRESS 0x7904u    /* 02B904 */
-#define hit_box_02B90C_ADDRESS 0x790Cu    /* 02B90C */
-#define hit_box_02B914_ADDRESS 0x7914u    /* 02B914 */
-#define hit_box_02B91C_ADDRESS 0x791Cu    /* 02B91C */
-#define hit_box_02B924_ADDRESS 0x7924u    /* 02B924 */
-#define hit_box_02B92C_ADDRESS 0x792Cu    /* 02B92C */
-#define hit_box_02B934_ADDRESS 0x7934u    /* 02B934 */
+#define fat_goon_delayed_step_handlers_ADDRESS 0x78D0u    /* 02B8D0 */
+#define fat_goon_descent_states_ADDRESS 0x78D6u    /* 02B8D6 */
+#define fat_goon_descent_step_handlers_ADDRESS 0x78E2u    /* 02B8E2 */
+#define fat_goon_descent_child_ADDRESS 0x78E6u    /* 02B8E6 */
+#define descent_balloon_states_ADDRESS 0x78F6u    /* 02B8F6 */
+#define descent_balloon_setup_ADDRESS 0x78FEu    /* 02B8FE */
+#define fat_goon_body_box_ADDRESS 0x7904u    /* 02B904 */
+#define fat_goon_bump_move_box_ADDRESS 0x790Cu    /* 02B90C */
+#define fat_goon_walk_up_hit_box_ADDRESS 0x7914u    /* 02B914 */
+#define fat_goon_body_slam_fall_box_ADDRESS 0x791Cu    /* 02B91C */
+#define fat_goon_strike_hit_box_ADDRESS 0x7924u    /* 02B924 */
+#define fat_goon_reach_strike_hit_box_ADDRESS 0x792Cu    /* 02B92C */
+#define fat_goon_heavy_strike_hit_box_ADDRESS 0x7934u    /* 02B934 */
 #define hit_box_02B93C_ADDRESS 0x793Cu    /* 02B93C */
-#define loaded_table_02B979_ADDRESS 0x7979u    /* 02B979 */
-#define loaded_table_02B983_ADDRESS 0x7983u    /* 02B983 */
-#define loaded_table_02B985_ADDRESS 0x7985u    /* 02B985 */
-#define loaded_table_02B98D_ADDRESS 0x798Du    /* 02B98D */
+#define fat_goon_reach_strike_steps_ADDRESS 0x7979u    /* 02B979 */
+#define fat_goon_idle_action_steps_ADDRESS 0x7983u    /* 02B983 */
+#define fat_goon_heavy_strike_steps_ADDRESS 0x7985u    /* 02B985 */
+#define fat_goon_grab_steps_ADDRESS 0x798Du    /* 02B98D */
 #define loaded_table_02B999_ADDRESS 0x7999u    /* 02B999 */
 #define loaded_table_02B9A9_ADDRESS 0x79A9u    /* 02B9A9 */
 #define loaded_table_02B9AD_ADDRESS 0x79ADu    /* 02B9AD */
 #define loaded_table_02B9BD_ADDRESS 0x79BDu    /* 02B9BD */
 #define loaded_table_02B9C1_ADDRESS 0x79C1u    /* 02B9C1 */
-#define child_object_02B9C5_ADDRESS 0x79C5u    /* 02B9C5 */
-#define child_object_02B9CD_ADDRESS 0x79CDu    /* 02B9CD */
-#define child_object_02B9D5_ADDRESS 0x79D5u    /* 02B9D5 */
-#define child_object_02B9DD_ADDRESS 0x79DDu    /* 02B9DD */
+#define cleared_wave_child_1_ADDRESS 0x79C5u    /* 02B9C5 */
+#define cleared_wave_child_2_ADDRESS 0x79CDu    /* 02B9CD */
+#define cleared_wave_child_3_ADDRESS 0x79D5u    /* 02B9D5 */
+#define cleared_wave_child_4_ADDRESS 0x79DDu    /* 02B9DD */
 #define loaded_table_02B9E5_ADDRESS 0x79E5u    /* 02B9E5 */
 #define loaded_table_02B9E9_ADDRESS 0x79E9u    /* 02B9E9 */
 #define spawn_list_02BA4C_ADDRESS 0x7A4Cu    /* 02BA4C */
@@ -2576,177 +3672,177 @@ extern const void *reset_vector_data;
 #define hit_box_02BD54_ADDRESS 0x7D54u    /* 02BD54 */
 #define hit_box_02BD5C_ADDRESS 0x7D5Cu    /* 02BD5C */
 #define hit_box_02BD64_ADDRESS 0x7D64u    /* 02BD64 */
-#define loaded_table_02BD6C_ADDRESS 0x7D6Cu    /* 02BD6C */
-#define object_setup_02BD72_ADDRESS 0x7D72u    /* 02BD72 */
-#define child_object_02BD78_ADDRESS 0x7D78u    /* 02BD78 */
-#define loaded_table_02BD80_ADDRESS 0x7D80u    /* 02BD80 */
-#define object_setup_02BD88_ADDRESS 0x7D88u    /* 02BD88 */
-#define child_object_02BD8E_ADDRESS 0x7D8Eu    /* 02BD8E */
-#define loaded_table_02BD96_ADDRESS 0x7D96u    /* 02BD96 */
-#define object_setup_02BDA2_ADDRESS 0x7DA2u    /* 02BDA2 */
-#define child_object_02BDA8_ADDRESS 0x7DA8u    /* 02BDA8 */
-#define loaded_table_02BDB0_ADDRESS 0x7DB0u    /* 02BDB0 */
-#define object_setup_02BDBC_ADDRESS 0x7DBCu    /* 02BDBC */
-#define loaded_table_02BDFD_ADDRESS 0x7DFDu    /* 02BDFD */
-#define child_object_02BE0B_ADDRESS 0x7E0Bu    /* 02BE0B */
-#define object_setup_02BE13_ADDRESS 0x7E13u    /* 02BE13 */
-#define loaded_table_02BE19_ADDRESS 0x7E19u    /* 02BE19 */
-#define object_setup_02BE1D_ADDRESS 0x7E1Du    /* 02BE1D */
-#define loaded_table_02BE53_ADDRESS 0x7E53u    /* 02BE53 */
-#define object_setup_02BE57_ADDRESS 0x7E57u    /* 02BE57 */
-#define loaded_table_02BE5D_ADDRESS 0x7E5Du    /* 02BE5D */
-#define object_setup_02BE61_ADDRESS 0x7E61u    /* 02BE61 */
-#define child_object_02BE67_ADDRESS 0x7E67u    /* 02BE67 */
-#define loaded_table_02BE6F_ADDRESS 0x7E6Fu    /* 02BE6F */
-#define object_setup_02BE79_ADDRESS 0x7E79u    /* 02BE79 */
-#define loaded_table_02BE7F_ADDRESS 0x7E7Fu    /* 02BE7F */
-#define object_setup_02BE83_ADDRESS 0x7E83u    /* 02BE83 */
+#define kind_9e_spawner_states_ADDRESS 0x7D6Cu    /* 02BD6C */
+#define kind_9e_spawner_setup_ADDRESS 0x7D72u    /* 02BD72 */
+#define kind_9e_spawner_object_child_ADDRESS 0x7D78u    /* 02BD78 */
+#define kind_ac_states_ADDRESS 0x7D80u    /* 02BD80 */
+#define kind_ac_setup_ADDRESS 0x7D88u    /* 02BD88 */
+#define kind_ac_drop_food_child_ADDRESS 0x7D8Eu    /* 02BD8E */
+#define kind_ab_states_ADDRESS 0x7D96u    /* 02BD96 */
+#define kind_ab_setup_ADDRESS 0x7DA2u    /* 02BDA2 */
+#define kind_ab_let_out_child_ADDRESS 0x7DA8u    /* 02BDA8 */
+#define krustyland_door_states_ADDRESS 0x7DB0u    /* 02BDB0 */
+#define krustyland_door_setup_ADDRESS 0x7DBCu    /* 02BDBC */
+#define kind_b2_leaper_states_ADDRESS 0x7DFDu    /* 02BDFD */
+#define kind_b2_leaper_child_ADDRESS 0x7E0Bu    /* 02BE0B */
+#define kind_b2_leaper_setup_ADDRESS 0x7E13u    /* 02BE13 */
+#define prop_states_ADDRESS 0x7E19u    /* 02BE19 */
+#define prop_setup_ADDRESS 0x7E1Du    /* 02BE1D */
+#define kind_aa_states_ADDRESS 0x7E53u    /* 02BE53 */
+#define kind_aa_setup_ADDRESS 0x7E57u    /* 02BE57 */
+#define kind_aa_pair_states_ADDRESS 0x7E5Du    /* 02BE5D */
+#define kind_aa_pair_setup_ADDRESS 0x7E61u    /* 02BE61 */
+#define kind_aa_pair_child_ADDRESS 0x7E67u    /* 02BE67 */
+#define kind_cb_states_ADDRESS 0x7E6Fu    /* 02BE6F */
+#define kind_cb_setup_ADDRESS 0x7E79u    /* 02BE79 */
+#define kind_d1_fling_states_ADDRESS 0x7E7Fu    /* 02BE7F */
+#define kind_d1_fling_setup_ADDRESS 0x7E83u    /* 02BE83 */
 #define hit_box_02BE99_ADDRESS 0x7E99u    /* 02BE99 */
-#define loaded_table_02BEA1_ADDRESS 0x7EA1u    /* 02BEA1 */
-#define object_setup_02BED1_ADDRESS 0x7ED1u    /* 02BED1 */
+#define cemetery_piece_states_ADDRESS 0x7EA1u    /* 02BEA1 */
+#define cemetery_piece_setup_ADDRESS 0x7ED1u    /* 02BED1 */
 #define hit_box_02BED7_ADDRESS 0x7ED7u    /* 02BED7 */
-#define loaded_table_02BEDF_ADDRESS 0x7EDFu    /* 02BEDF */
-#define object_setup_02BEE5_ADDRESS 0x7EE5u    /* 02BEE5 */
-#define loaded_table_02BEEB_ADDRESS 0x7EEBu    /* 02BEEB */
-#define loaded_table_02BEF3_ADDRESS 0x7EF3u    /* 02BEF3 */
-#define loaded_table_02BEFF_ADDRESS 0x7EFFu    /* 02BEFF */
-#define loaded_table_02BF0B_ADDRESS 0x7F0Bu    /* 02BF0B */
+#define floor_blocker_states_ADDRESS 0x7EDFu    /* 02BEDF */
+#define floor_blocker_setup_ADDRESS 0x7EE5u    /* 02BEE5 */
+#define floor_blocker_parts_ADDRESS 0x7EEBu    /* 02BEEB */
+#define floor_blocker_shape_1_ADDRESS 0x7EF3u    /* 02BEF3 */
+#define floor_blocker_shape_2_ADDRESS 0x7EFFu    /* 02BEFF */
+#define floor_blocker_shape_3_ADDRESS 0x7F0Bu    /* 02BF0B */
 #define hit_box_02BF17_ADDRESS 0x7F17u    /* 02BF17 */
 #define hit_box_02BF1F_ADDRESS 0x7F1Fu    /* 02BF1F */
-#define object_setup_02BF3F_ADDRESS 0x7F3Fu    /* 02BF3F */
+#define goon_hat_throw_setup_ADDRESS 0x7F3Fu    /* 02BF3F */
 #define hit_box_02BF45_ADDRESS 0x7F45u    /* 02BF45 */
 #define described_02BF4D_ADDRESS 0x7F4Du    /* 02BF4D */
-#define loaded_table_02BF51_ADDRESS 0x7F51u    /* 02BF51 */
-#define loaded_table_02BF5D_ADDRESS 0x7F5Du    /* 02BF5D */
-#define object_setup_02BF63_ADDRESS 0x7F63u    /* 02BF63 */
+#define police_car_states_ADDRESS 0x7F51u    /* 02BF51 */
+#define police_car_hit_step_handlers_ADDRESS 0x7F5Du    /* 02BF5D */
+#define police_car_setup_ADDRESS 0x7F63u    /* 02BF63 */
 #define fill_02BF71_ADDRESS 0x7F71u    /* 02BF71 */
 #define fill_02DA14_ADDRESS 0x7A14u    /* 02DA14 */
-#define hit_box_02DA98_ADDRESS 0x7A98u    /* 02DA98 */
-#define hit_box_02DAA0_ADDRESS 0x7AA0u    /* 02DAA0 */
-#define hit_box_02DAA8_ADDRESS 0x7AA8u    /* 02DAA8 */
+#define obstacle_settle_box_ADDRESS 0x7A98u    /* 02DA98 */
+#define obstacle_knocked_box_ADDRESS 0x7AA0u    /* 02DAA0 */
+#define carried_obstacle_fly_box_ADDRESS 0x7AA8u    /* 02DAA8 */
 #define hit_box_02DAB0_ADDRESS 0x7AB0u    /* 02DAB0 */
-#define hit_box_02DAB8_ADDRESS 0x7AB8u    /* 02DAB8 */
-#define hit_box_02DAC0_ADDRESS 0x7AC0u    /* 02DAC0 */
+#define throwable_throw_box_ADDRESS 0x7AB8u    /* 02DAB8 */
+#define throwable_rebound_box_ADDRESS 0x7AC0u    /* 02DAC0 */
 #define hit_box_02DAC8_ADDRESS 0x7AC8u    /* 02DAC8 */
-#define hit_box_02DAD0_ADDRESS 0x7AD0u    /* 02DAD0 */
-#define hit_box_02DAD8_ADDRESS 0x7AD8u    /* 02DAD8 */
+#define timed_throwable_throw_box_ADDRESS 0x7AD0u    /* 02DAD0 */
+#define obstacle_smash_box_ADDRESS 0x7AD8u    /* 02DAD8 */
 #define hit_box_02DAE0_ADDRESS 0x7AE0u    /* 02DAE0 */
 #define hit_box_02DAE8_ADDRESS 0x7AE8u    /* 02DAE8 */
 #define hit_box_02DAF0_ADDRESS 0x7AF0u    /* 02DAF0 */
 #define hit_box_02DAF8_ADDRESS 0x7AF8u    /* 02DAF8 */
 #define hit_box_02DB00_ADDRESS 0x7B00u    /* 02DB00 */
 #define hit_box_02DB08_ADDRESS 0x7B08u    /* 02DB08 */
-#define hit_box_02DB10_ADDRESS 0x7B10u    /* 02DB10 */
+#define platform_scenery_launch_box_ADDRESS 0x7B10u    /* 02DB10 */
 #define hit_box_02DB18_ADDRESS 0x7B18u    /* 02DB18 */
-#define hit_box_02DB20_ADDRESS 0x7B20u    /* 02DB20 */
+#define running_animal_thrown_box_ADDRESS 0x7B20u    /* 02DB20 */
 #define hit_box_02DB28_ADDRESS 0x7B28u    /* 02DB28 */
-#define hit_box_02DB30_ADDRESS 0x7B30u    /* 02DB30 */
+#define bouncing_throwable_throw_box_ADDRESS 0x7B30u    /* 02DB30 */
 #define hit_box_02DB38_ADDRESS 0x7B38u    /* 02DB38 */
 #define described_02DB40_ADDRESS 0x7B40u    /* 02DB40 */
-#define loaded_table_02DB44_ADDRESS 0x7B44u    /* 02DB44 */
-#define loaded_table_02DB4C_ADDRESS 0x7B4Cu    /* 02DB4C */
-#define child_object_02DB52_ADDRESS 0x7B52u    /* 02DB52 */
-#define object_setup_02DBA8_ADDRESS 0x7BA8u    /* 02DBA8 */
+#define cemetery_obstacle_states_ADDRESS 0x7B44u    /* 02DB44 */
+#define cemetery_obstacle_broken_step_handlers_ADDRESS 0x7B4Cu    /* 02DB4C */
+#define cemetery_obstacle_break_child_ADDRESS 0x7B52u    /* 02DB52 */
+#define cemetery_obstacle_setup_ADDRESS 0x7BA8u    /* 02DBA8 */
 #define described_02DBAE_ADDRESS 0x7BAEu    /* 02DBAE */
-#define loaded_table_02DBB2_ADDRESS 0x7BB2u    /* 02DBB2 */
-#define loaded_table_02DBBA_ADDRESS 0x7BBAu    /* 02DBBA */
-#define loaded_table_02DBCC_ADDRESS 0x7BCCu    /* 02DBCC */
-#define loaded_table_02DBD0_ADDRESS 0x7BD0u    /* 02DBD0 */
-#define object_setup_02DBDC_ADDRESS 0x7BDCu    /* 02DBDC */
-#define loaded_table_02DBE2_ADDRESS 0x7BE2u    /* 02DBE2 */
-#define object_setup_02DBEC_ADDRESS 0x7BECu    /* 02DBEC */
-#define loaded_table_02DC1E_ADDRESS 0x7C1Eu    /* 02DC1E */
-#define object_setup_02DC28_ADDRESS 0x7C28u    /* 02DC28 */
+#define heavy_obstacle_states_ADDRESS 0x7BB2u    /* 02DBB2 */
+#define timed_throwable_states_ADDRESS 0x7BBAu    /* 02DBBA */
+#define heavy_obstacle_hit_actions_ADDRESS 0x7BCCu    /* 02DBCC */
+#define kind_10_riser_states_ADDRESS 0x7BD0u    /* 02DBD0 */
+#define kind_10_riser_setup_ADDRESS 0x7BDCu    /* 02DBDC */
+#define kind_10_dropper_states_ADDRESS 0x7BE2u    /* 02DBE2 */
+#define kind_10_dropper_setup_ADDRESS 0x7BECu    /* 02DBEC */
+#define police_car_door_states_ADDRESS 0x7C1Eu    /* 02DC1E */
+#define police_car_door_setup_ADDRESS 0x7C28u    /* 02DC28 */
 #define described_02DC6D_ADDRESS 0x7C6Du    /* 02DC6D */
-#define loaded_table_02DC71_ADDRESS 0x7C71u    /* 02DC71 */
-#define loaded_table_02DC83_ADDRESS 0x7C83u    /* 02DC83 */
-#define object_setup_02DC91_ADDRESS 0x7C91u    /* 02DC91 */
-#define loaded_table_02DC97_ADDRESS 0x7C97u    /* 02DC97 */
-#define loaded_table_02DC9B_ADDRESS 0x7C9Bu    /* 02DC9B */
-#define loaded_table_02DCA5_ADDRESS 0x7CA5u    /* 02DCA5 */
-#define loaded_table_02DCB5_ADDRESS 0x7CB5u    /* 02DCB5 */
-#define object_setup_02DCB9_ADDRESS 0x7CB9u    /* 02DCB9 */
+#define carried_obstacle_states_ADDRESS 0x7C71u    /* 02DC71 */
+#define tossed_obstacle_states_ADDRESS 0x7C83u    /* 02DC83 */
+#define carried_obstacle_setup_ADDRESS 0x7C91u    /* 02DC91 */
+#define carried_obstacle_break_actions_ADDRESS 0x7C97u    /* 02DC97 */
+#define carried_obstacle_drop_actions_ADDRESS 0x7C9Bu    /* 02DC9B */
+#define throwable_states_ADDRESS 0x7CA5u    /* 02DCA5 */
+#define throwable_stop_actions_ADDRESS 0x7CB5u    /* 02DCB5 */
+#define throwable_setup_ADDRESS 0x7CB9u    /* 02DCB9 */
 #define loaded_table_02DCBF_ADDRESS 0x7CBFu    /* 02DCBF */
-#define loaded_table_02DCD1_ADDRESS 0x7CD1u    /* 02DCD1 */
-#define object_setup_02DCDB_ADDRESS 0x7CDBu    /* 02DCDB */
-#define loaded_table_02DCE1_ADDRESS 0x7CE1u    /* 02DCE1 */
-#define loaded_table_02DCED_ADDRESS 0x7CEDu    /* 02DCED */
-#define loaded_table_02DCF9_ADDRESS 0x7CF9u    /* 02DCF9 */
-#define loaded_table_02DD05_ADDRESS 0x7D05u    /* 02DD05 */
-#define loaded_table_02DD11_ADDRESS 0x7D11u    /* 02DD11 */
-#define loaded_table_02DD1D_ADDRESS 0x7D1Du    /* 02DD1D */
-#define child_object_02DD23_ADDRESS 0x7D23u    /* 02DD23 */
-#define child_object_02DD29_ADDRESS 0x7D29u    /* 02DD29 */
-#define loaded_table_02DD2F_ADDRESS 0x7D2Fu    /* 02DD2F */
-#define object_setup_02DD37_ADDRESS 0x7D37u    /* 02DD37 */
+#define platform_scenery_parts_ADDRESS 0x7CD1u    /* 02DCD1 */
+#define platform_scenery_setup_ADDRESS 0x7CDBu    /* 02DCDB */
+#define platform_scenery_shape_1_ADDRESS 0x7CE1u    /* 02DCE1 */
+#define platform_scenery_shape_2_ADDRESS 0x7CEDu    /* 02DCED */
+#define platform_scenery_shape_3_ADDRESS 0x7CF9u    /* 02DCF9 */
+#define platform_scenery_shape_4_ADDRESS 0x7D05u    /* 02DD05 */
+#define platform_scenery_shape_5_ADDRESS 0x7D11u    /* 02DD11 */
+#define platform_scenery_react_actions_ADDRESS 0x7D1Du    /* 02DD1D */
+#define platform_scenery_crash_debris_1_ADDRESS 0x7D23u    /* 02DD23 */
+#define platform_scenery_crash_debris_2_ADDRESS 0x7D29u    /* 02DD29 */
+#define scenery_debris_states_ADDRESS 0x7D2Fu    /* 02DD2F */
+#define scenery_debris_setup_ADDRESS 0x7D37u    /* 02DD37 */
 #define loaded_table_02DD3D_ADDRESS 0x7D3Du    /* 02DD3D */
-#define loaded_table_02DD45_ADDRESS 0x7D45u    /* 02DD45 */
-#define loaded_table_02DD4D_ADDRESS 0x7D4Du    /* 02DD4D */
-#define loaded_table_02DD59_ADDRESS 0x7D59u    /* 02DD59 */
-#define loaded_table_02DD65_ADDRESS 0x7D65u    /* 02DD65 */
-#define loaded_table_02DD71_ADDRESS 0x7D71u    /* 02DD71 */
-#define object_setup_02DD7D_ADDRESS 0x7D7Du    /* 02DD7D */
-#define child_object_02DD8B_ADDRESS 0x7D8Bu    /* 02DD8B */
-#define child_object_02DD93_ADDRESS 0x7D93u    /* 02DD93 */
+#define charging_scenery_parts_ADDRESS 0x7D45u    /* 02DD45 */
+#define charging_scenery_shape_1_ADDRESS 0x7D4Du    /* 02DD4D */
+#define charging_scenery_shape_2_ADDRESS 0x7D59u    /* 02DD59 */
+#define charging_scenery_shape_3_ADDRESS 0x7D65u    /* 02DD65 */
+#define plain_floor_shape_ADDRESS 0x7D71u    /* 02DD71 */
+#define charging_scenery_setup_ADDRESS 0x7D7Du    /* 02DD7D */
+#define charging_scenery_goon_left_ADDRESS 0x7D8Bu    /* 02DD8B */
+#define charging_scenery_goon_right_ADDRESS 0x7D93u    /* 02DD93 */
 #define described_02DD9B_ADDRESS 0x7D9Bu    /* 02DD9B */
-#define loaded_table_02DD9F_ADDRESS 0x7D9Fu    /* 02DD9F */
-#define object_setup_02DDCD_ADDRESS 0x7DCDu    /* 02DDCD */
-#define loaded_table_02DDD3_ADDRESS 0x7DD3u    /* 02DDD3 */
-#define loaded_table_02DDD7_ADDRESS 0x7DD7u    /* 02DDD7 */
-#define loaded_table_02DDDB_ADDRESS 0x7DDBu    /* 02DDDB */
-#define object_setup_02DDDF_ADDRESS 0x7DDFu    /* 02DDDF */
-#define loaded_table_02DDE5_ADDRESS 0x7DE5u    /* 02DDE5 */
-#define object_setup_02DDEF_ADDRESS 0x7DEFu    /* 02DDEF */
-#define loaded_table_02DE05_ADDRESS 0x7E05u    /* 02DE05 */
-#define object_setup_02DE0B_ADDRESS 0x7E0Bu    /* 02DE0B */
-#define loaded_table_02DE11_ADDRESS 0x7E11u    /* 02DE11 */
-#define object_setup_02DE15_ADDRESS 0x7E15u    /* 02DE15 */
-#define loaded_table_02DE1B_ADDRESS 0x7E1Bu    /* 02DE1B */
-#define object_setup_02DE23_ADDRESS 0x7E23u    /* 02DE23 */
-#define child_object_02DE29_ADDRESS 0x7E29u    /* 02DE29 */
+#define obstacle_states_ADDRESS 0x7D9Fu    /* 02DD9F */
+#define heavy_obstacle_setup_ADDRESS 0x7DCDu    /* 02DDCD */
+#define obstacle_smashed_step_handlers_ADDRESS 0x7DD3u    /* 02DDD3 */
+#define obstacle_knocked_actions_ADDRESS 0x7DD7u    /* 02DDD7 */
+#define solid_scenery_states_ADDRESS 0x7DDBu    /* 02DDDB */
+#define solid_scenery_setup_ADDRESS 0x7DDFu    /* 02DDDF */
+#define boulder_states_ADDRESS 0x7DE5u    /* 02DDE5 */
+#define boulder_setup_ADDRESS 0x7DEFu    /* 02DDEF */
+#define gorge_rock_states_ADDRESS 0x7E05u    /* 02DE05 */
+#define gorge_rock_setup_ADDRESS 0x7E0Bu    /* 02DE0B */
+#define shaken_bit_states_ADDRESS 0x7E11u    /* 02DE11 */
+#define shaken_bit_setup_ADDRESS 0x7E15u    /* 02DE15 */
+#define shaken_object_states_ADDRESS 0x7E1Bu    /* 02DE1B */
+#define shaken_object_setup_ADDRESS 0x7E23u    /* 02DE23 */
+#define shaken_object_land_child_ADDRESS 0x7E29u    /* 02DE29 */
 #define described_02DE2F_ADDRESS 0x7E2Fu    /* 02DE2F */
-#define loaded_table_02DE35_ADDRESS 0x7E35u    /* 02DE35 */
-#define child_object_02DE75_ADDRESS 0x7E75u    /* 02DE75 */
-#define child_object_02DE7D_ADDRESS 0x7E7Du    /* 02DE7D */
-#define child_object_02DE85_ADDRESS 0x7E85u    /* 02DE85 */
-#define child_object_02DE8D_ADDRESS 0x7E8Du    /* 02DE8D */
-#define object_setup_02DEAD_ADDRESS 0x7EADu    /* 02DEAD */
-#define loaded_table_02DEB3_ADDRESS 0x7EB3u    /* 02DEB3 */
-#define loaded_table_02DEBD_ADDRESS 0x7EBDu    /* 02DEBD */
-#define child_object_02DEC1_ADDRESS 0x7EC1u    /* 02DEC1 */
-#define child_object_02DEC9_ADDRESS 0x7EC9u    /* 02DEC9 */
-#define loaded_table_02DED1_ADDRESS 0x7ED1u    /* 02DED1 */
-#define child_object_02DED5_ADDRESS 0x7ED5u    /* 02DED5 */
+#define shaking_scenery_states_ADDRESS 0x7E35u    /* 02DE35 */
+#define shaking_scenery_child_1_ADDRESS 0x7E75u    /* 02DE75 */
+#define shaking_scenery_child_2_ADDRESS 0x7E7Du    /* 02DE7D */
+#define shaking_scenery_child_3_ADDRESS 0x7E85u    /* 02DE85 */
+#define shaking_scenery_child_4_ADDRESS 0x7E8Du    /* 02DE8D */
+#define shaking_scenery_setup_ADDRESS 0x7EADu    /* 02DEAD */
+#define shaking_scenery_shake_step_handlers_ADDRESS 0x7EB3u    /* 02DEB3 */
+#define shaking_scenery_hit_from_above_actions_ADDRESS 0x7EBDu    /* 02DEBD */
+#define shaking_scenery_bit_1_ADDRESS 0x7EC1u    /* 02DEC1 */
+#define shaking_scenery_bit_2_ADDRESS 0x7EC9u    /* 02DEC9 */
+#define shaking_scenery_hit_actions_ADDRESS 0x7ED1u    /* 02DED1 */
+#define shaking_scenery_drop_food_child_ADDRESS 0x7ED5u    /* 02DED5 */
 #define described_02DEDD_ADDRESS 0x7EDDu    /* 02DEDD */
-#define loaded_table_02DEE1_ADDRESS 0x7EE1u    /* 02DEE1 */
-#define loaded_table_02DEF1_ADDRESS 0x7EF1u    /* 02DEF1 */
-#define object_setup_02DF0B_ADDRESS 0x7F0Bu    /* 02DF0B */
+#define running_animal_states_ADDRESS 0x7EE1u    /* 02DEE1 */
+#define running_animal_hit_step_handlers_ADDRESS 0x7EF1u    /* 02DEF1 */
+#define running_animal_setup_ADDRESS 0x7F0Bu    /* 02DF0B */
 #define described_02DF11_ADDRESS 0x7F11u    /* 02DF11 */
-#define loaded_table_02DF15_ADDRESS 0x7F15u    /* 02DF15 */
-#define object_setup_02DF25_ADDRESS 0x7F25u    /* 02DF25 */
+#define bouncing_throwable_states_ADDRESS 0x7F15u    /* 02DF15 */
+#define bouncing_throwable_setup_ADDRESS 0x7F25u    /* 02DF25 */
 #define described_02DF2B_ADDRESS 0x7F2Bu    /* 02DF2B */
-#define loaded_table_02DF2F_ADDRESS 0x7F2Fu    /* 02DF2F */
-#define object_setup_02DF41_ADDRESS 0x7F41u    /* 02DF41 */
-#define loaded_table_02DF67_ADDRESS 0x7F67u    /* 02DF67 */
+#define dreamland_obstacle_states_ADDRESS 0x7F2Fu    /* 02DF2F */
+#define dreamland_obstacle_setup_ADDRESS 0x7F41u    /* 02DF41 */
+#define dreamland_obstacle_drop_step_handlers_ADDRESS 0x7F67u    /* 02DF67 */
 #define hit_box_02DF6D_ADDRESS 0x7F6Du    /* 02DF6D */
-#define hit_box_02DF75_ADDRESS 0x7F75u    /* 02DF75 */
-#define object_setup_02DF7D_ADDRESS 0x7F7Du    /* 02DF7D */
-#define hit_box_02DF83_ADDRESS 0x7F83u    /* 02DF83 */
-#define hit_box_02DF8B_ADDRESS 0x7F8Bu    /* 02DF8B */
+#define bird_item_states_ADDRESS 0x7F75u    /* 02DF75 */
+#define bird_item_setup_ADDRESS 0x7F7Du    /* 02DF7D */
+#define kind_87_body_box_ADDRESS 0x7F83u    /* 02DF83 */
+#define kind_87_device_strike_box_ADDRESS 0x7F8Bu    /* 02DF8B */
 #define hit_box_02DF93_ADDRESS 0x7F93u    /* 02DF93 */
-#define hit_box_02DF9B_ADDRESS 0x7F9Bu    /* 02DF9B */
+#define rising_scenery_steps_ADDRESS 0x7F9Bu    /* 02DF9B */
 #define indexed_table_02DFA3_ADDRESS 0x7FA3u    /* 02DFA3 */
-#define object_setup_02DFA5_ADDRESS 0x7FA5u    /* 02DFA5 */
-#define loaded_table_02DFAB_ADDRESS 0x7FABu    /* 02DFAB */
-#define object_setup_02DFBB_ADDRESS 0x7FBBu    /* 02DFBB */
-#define loaded_table_02DFC1_ADDRESS 0x7FC1u    /* 02DFC1 */
+#define rising_scenery_setup_ADDRESS 0x7FA5u    /* 02DFA5 */
+#define kind_87_device_states_ADDRESS 0x7FABu    /* 02DFAB */
+#define kind_87_device_setup_ADDRESS 0x7FBBu    /* 02DFBB */
+#define kind_87_states_ADDRESS 0x7FC1u    /* 02DFC1 */
 #define described_02DFCD_ADDRESS 0x7FCDu    /* 02DFCD */
-#define child_object_02DFD1_ADDRESS 0x7FD1u    /* 02DFD1 */
-#define object_setup_02DFD9_ADDRESS 0x7FD9u    /* 02DFD9 */
+#define kind_87_child_ADDRESS 0x7FD1u    /* 02DFD1 */
+#define kind_87_setup_ADDRESS 0x7FD9u    /* 02DFD9 */
 #define described_02DFDF_ADDRESS 0x7FDFu    /* 02DFDF */
-#define loaded_table_02DFE5_ADDRESS 0x7FE5u    /* 02DFE5 */
-#define loaded_table_02DFE9_ADDRESS 0x7FE9u    /* 02DFE9 */
-#define object_setup_02DFED_ADDRESS 0x7FEDu    /* 02DFED */
+#define kind_95_states_ADDRESS 0x7FE5u    /* 02DFE5 */
+#define kind_95_hit_step_handlers_ADDRESS 0x7FE9u    /* 02DFE9 */
+#define kind_95_setup_ADDRESS 0x7FEDu    /* 02DFED */
 #define fill_02DFF3_ADDRESS 0x7FF3u    /* 02DFF3 */
 #define hit_box_02E151_ADDRESS 0x6151u    /* 02E151 */
 #define hit_box_02E159_ADDRESS 0x6159u    /* 02E159 */
@@ -2761,27 +3857,27 @@ extern const void *reset_vector_data;
 #define hit_box_02E1A1_ADDRESS 0x61A1u    /* 02E1A1 */
 #define fill_02F85F_ADDRESS 0x785Fu    /* 02F85F */
 #define hit_box_02FA00_ADDRESS 0x7A00u    /* 02FA00 */
-#define loaded_table_02FA08_ADDRESS 0x7A08u    /* 02FA08 */
-#define object_setup_02FA0C_ADDRESS 0x7A0Cu    /* 02FA0C */
-#define loaded_table_02FA3A_ADDRESS 0x7A3Au    /* 02FA3A */
+#define looping_scenery_states_ADDRESS 0x7A08u    /* 02FA08 */
+#define looping_scenery_setup_ADDRESS 0x7A0Cu    /* 02FA0C */
+#define looping_scenery_leaving_states_ADDRESS 0x7A3Au    /* 02FA3A */
 #define hit_box_02FA40_ADDRESS 0x7A40u    /* 02FA40 */
 #define hit_box_02FA48_ADDRESS 0x7A48u    /* 02FA48 */
-#define object_setup_02FA50_ADDRESS 0x7A50u    /* 02FA50 */
+#define unused_kind_b7_setup_ADDRESS 0x7A50u    /* 02FA50 */
 #define described_02FA56_ADDRESS 0x7A56u    /* 02FA56 */
 #define loaded_table_02FA5A_ADDRESS 0x7A5Au    /* 02FA5A */
 #define loaded_table_02FA5E_ADDRESS 0x7A5Eu    /* 02FA5E */
-#define object_setup_02FA62_ADDRESS 0x7A62u    /* 02FA62 */
-#define loaded_table_02FA68_ADDRESS 0x7A68u    /* 02FA68 */
+#define unused_obstacle_setup_ADDRESS 0x7A62u    /* 02FA62 */
+#define item_states_ADDRESS 0x7A68u    /* 02FA68 */
 #define object_setup_02FA76_ADDRESS 0x7A76u    /* 02FA76 */
 #define object_setup_02FA7C_ADDRESS 0x7A7Cu    /* 02FA7C */
 #define object_setup_02FA82_ADDRESS 0x7A82u    /* 02FA82 */
-#define loaded_table_02FA88_ADDRESS 0x7A88u    /* 02FA88 */
-#define object_setup_02FA96_ADDRESS 0x7A96u    /* 02FA96 */
-#define loaded_table_02FAC4_ADDRESS 0x7AC4u    /* 02FAC4 */
-#define object_setup_02FADE_ADDRESS 0x7ADEu    /* 02FADE */
-#define loaded_table_02FAE4_ADDRESS 0x7AE4u    /* 02FAE4 */
-#define loaded_table_02FAEC_ADDRESS 0x7AECu    /* 02FAEC */
-#define object_setup_02FAFA_ADDRESS 0x7AFAu    /* 02FAFA */
+#define food_jump_out_states_ADDRESS 0x7A88u    /* 02FA88 */
+#define food_jump_out_setup_ADDRESS 0x7A96u    /* 02FA96 */
+#define food_states_ADDRESS 0x7AC4u    /* 02FAC4 */
+#define food_setup_ADDRESS 0x7ADEu    /* 02FADE */
+#define dropped_food_states_ADDRESS 0x7AE4u    /* 02FAE4 */
+#define kind_a5_states_ADDRESS 0x7AECu    /* 02FAEC */
+#define kind_a5_setup_ADDRESS 0x7AFAu    /* 02FAFA */
 #define child_object_02FB08_ADDRESS 0x7B08u    /* 02FB08 */
 #define child_object_02FB10_ADDRESS 0x7B10u    /* 02FB10 */
 #define child_object_02FB18_ADDRESS 0x7B18u    /* 02FB18 */
@@ -2790,163 +3886,163 @@ extern const void *reset_vector_data;
 #define child_object_02FB38_ADDRESS 0x7B38u    /* 02FB38 */
 #define child_object_02FB40_ADDRESS 0x7B40u    /* 02FB40 */
 #define child_object_02FB48_ADDRESS 0x7B48u    /* 02FB48 */
-#define loaded_table_02FB50_ADDRESS 0x7B50u    /* 02FB50 */
-#define object_setup_02FB5E_ADDRESS 0x7B5Eu    /* 02FB5E */
-#define child_object_02FB64_ADDRESS 0x7B64u    /* 02FB64 */
-#define loaded_table_02FB6C_ADDRESS 0x7B6Cu    /* 02FB6C */
-#define object_setup_02FB80_ADDRESS 0x7B80u    /* 02FB80 */
+#define kind_a9_states_ADDRESS 0x7B50u    /* 02FB50 */
+#define kind_a9_setup_ADDRESS 0x7B5Eu    /* 02FB5E */
+#define kind_a9_drop_food_child_ADDRESS 0x7B64u    /* 02FB64 */
+#define item_carrier_states_ADDRESS 0x7B6Cu    /* 02FB6C */
+#define carried_item_setup_ADDRESS 0x7B80u    /* 02FB80 */
 #define object_setup_02FB86_ADDRESS 0x7B86u    /* 02FB86 */
 #define object_setup_02FB8C_ADDRESS 0x7B8Cu    /* 02FB8C */
 #define child_object_02FB98_ADDRESS 0x7B98u    /* 02FB98 */
 #define child_object_02FBA0_ADDRESS 0x7BA0u    /* 02FBA0 */
 #define child_object_02FBA8_ADDRESS 0x7BA8u    /* 02FBA8 */
-#define loaded_table_02FBB0_ADDRESS 0x7BB0u    /* 02FBB0 */
+#define carried_item_states_ADDRESS 0x7BB0u    /* 02FBB0 */
 #define hit_box_02FBBB_ADDRESS 0x7BBBu    /* 02FBBB */
-#define hit_box_02FBC3_ADDRESS 0x7BC3u    /* 02FBC3 */
-#define object_setup_02FBD9_ADDRESS 0x7BD9u    /* 02FBD9 */
+#define bystander_states_ADDRESS 0x7BC3u    /* 02FBC3 */
+#define bystander_setup_ADDRESS 0x7BD9u    /* 02FBD9 */
 #define hit_box_02FBDF_ADDRESS 0x7BDFu    /* 02FBDF */
 #define hit_box_02FBE7_ADDRESS 0x7BE7u    /* 02FBE7 */
 #define enemy_behaviour_02FBEF_ADDRESS 0x7BEFu    /* 02FBEF */
 #define loaded_table_02FC47_ADDRESS 0x7C47u    /* 02FC47 */
-#define object_setup_02FC53_ADDRESS 0x7C53u    /* 02FC53 */
+#define kind_90_object_setup_ADDRESS 0x7C53u    /* 02FC53 */
 #define loaded_table_02FC65_ADDRESS 0x7C65u    /* 02FC65 */
-#define loaded_table_02FC6D_ADDRESS 0x7C6Du    /* 02FC6D */
-#define child_object_02FC73_ADDRESS 0x7C73u    /* 02FC73 */
-#define loaded_table_02FC79_ADDRESS 0x7C79u    /* 02FC79 */
-#define object_setup_02FC81_ADDRESS 0x7C81u    /* 02FC81 */
+#define kind_90_throw_steps_ADDRESS 0x7C6Du    /* 02FC6D */
+#define kind_90_put_in_missile_child_ADDRESS 0x7C73u    /* 02FC73 */
+#define kind_90_missile_states_ADDRESS 0x7C79u    /* 02FC79 */
+#define kind_90_missile_setup_ADDRESS 0x7C81u    /* 02FC81 */
 #define hit_box_02FC87_ADDRESS 0x7C87u    /* 02FC87 */
-#define loaded_table_02FC8F_ADDRESS 0x7C8Fu    /* 02FC8F */
-#define object_setup_02FC99_ADDRESS 0x7C99u    /* 02FC99 */
-#define hit_box_02FCA6_ADDRESS 0x7CA6u    /* 02FCA6 */
+#define kind_b3_states_ADDRESS 0x7C8Fu    /* 02FC8F */
+#define kind_b3_setup_ADDRESS 0x7C99u    /* 02FC99 */
+#define kind_98_body_box_ADDRESS 0x7CA6u    /* 02FCA6 */
 #define hit_box_02FCAE_ADDRESS 0x7CAEu    /* 02FCAE */
-#define hit_box_02FCB6_ADDRESS 0x7CB6u    /* 02FCB6 */
-#define hit_box_02FCBE_ADDRESS 0x7CBEu    /* 02FCBE */
-#define hit_box_02FCC6_ADDRESS 0x7CC6u    /* 02FCC6 */
-#define hit_box_02FCCE_ADDRESS 0x7CCEu    /* 02FCCE */
-#define hit_box_02FCD6_ADDRESS 0x7CD6u    /* 02FCD6 */
+#define kind_98_strike_hit_box_ADDRESS 0x7CB6u    /* 02FCB6 */
+#define clown_on_ball_body_box_ADDRESS 0x7CBEu    /* 02FCBE */
+#define clown_on_ball_strike_box_ADDRESS 0x7CC6u    /* 02FCC6 */
+#define kind_88_body_box_ADDRESS 0x7CCEu    /* 02FCCE */
+#define kind_88_leap_off_box_ADDRESS 0x7CD6u    /* 02FCD6 */
 #define hit_box_02FCDE_ADDRESS 0x7CDEu    /* 02FCDE */
 #define enemy_behaviour_02FCE6_ADDRESS 0x7CE6u    /* 02FCE6 */
 #define enemy_behaviour_02FD3E_ADDRESS 0x7D3Eu    /* 02FD3E */
-#define loaded_table_02FD96_ADDRESS 0x7D96u    /* 02FD96 */
-#define child_object_02FDA7_ADDRESS 0x7DA7u    /* 02FDA7 */
-#define child_object_02FDAD_ADDRESS 0x7DADu    /* 02FDAD */
-#define loaded_table_02FDB5_ADDRESS 0x7DB5u    /* 02FDB5 */
-#define object_setup_02FDBF_ADDRESS 0x7DBFu    /* 02FDBF */
-#define child_object_02FDC5_ADDRESS 0x7DC5u    /* 02FDC5 */
-#define loaded_table_02FDCD_ADDRESS 0x7DCDu    /* 02FDCD */
-#define object_setup_02FDD3_ADDRESS 0x7DD3u    /* 02FDD3 */
+#define kind_88_ride_states_ADDRESS 0x7D96u    /* 02FD96 */
+#define kind_88_ride_put_in_arms_child_ADDRESS 0x7DA7u    /* 02FDA7 */
+#define kind_88_ride_end_child_ADDRESS 0x7DADu    /* 02FDAD */
+#define kind_88_ride_arm_states_ADDRESS 0x7DB5u    /* 02FDB5 */
+#define kind_88_ride_setup_ADDRESS 0x7DBFu    /* 02FDBF */
+#define kind_88_ride_arm_put_in_riders_child_ADDRESS 0x7DC5u    /* 02FDC5 */
+#define kind_88_piece_states_ADDRESS 0x7DCDu    /* 02FDCD */
+#define kind_88_piece_setup_ADDRESS 0x7DD3u    /* 02FDD3 */
 #define described_02FDD9_ADDRESS 0x7DD9u    /* 02FDD9 */
 #define loaded_table_02FDDD_ADDRESS 0x7DDDu    /* 02FDDD */
-#define child_object_02FDF3_ADDRESS 0x7DF3u    /* 02FDF3 */
+#define kind_88_beaten_child_ADDRESS 0x7DF3u    /* 02FDF3 */
 #define loaded_table_02FDF9_ADDRESS 0x7DF9u    /* 02FDF9 */
-#define object_setup_02FE01_ADDRESS 0x7E01u    /* 02FE01 */
+#define kind_88_setup_ADDRESS 0x7E01u    /* 02FE01 */
 #define loaded_table_02FE07_ADDRESS 0x7E07u    /* 02FE07 */
-#define loaded_table_02FE0F_ADDRESS 0x7E0Fu    /* 02FE0F */
+#define unused_goon_states_ADDRESS 0x7E0Fu    /* 02FE0F */
 #define loaded_table_02FE1B_ADDRESS 0x7E1Bu    /* 02FE1B */
-#define object_setup_02FE27_ADDRESS 0x7E27u    /* 02FE27 */
-#define loaded_table_02FE2D_ADDRESS 0x7E2Du    /* 02FE2D */
-#define loaded_table_02FE37_ADDRESS 0x7E37u    /* 02FE37 */
-#define loaded_table_02FE3B_ADDRESS 0x7E3Bu    /* 02FE3B */
-#define loaded_table_02FE47_ADDRESS 0x7E47u    /* 02FE47 */
-#define loaded_table_02FE4F_ADDRESS 0x7E4Fu    /* 02FE4F */
-#define object_setup_02FE53_ADDRESS 0x7E53u    /* 02FE53 */
+#define kind_98_setup_ADDRESS 0x7E27u    /* 02FE27 */
+#define kind_98_entrance_step_handlers_ADDRESS 0x7E2Du    /* 02FE2D */
+#define kind_98_step_back_steps_ADDRESS 0x7E37u    /* 02FE37 */
+#define kind_98_strike_steps_ADDRESS 0x7E3Bu    /* 02FE3B */
+#define clown_ball_states_ADDRESS 0x7E47u    /* 02FE47 */
+#define clown_ball_burst_actions_ADDRESS 0x7E4Fu    /* 02FE4F */
+#define clown_ball_setup_ADDRESS 0x7E53u    /* 02FE53 */
 #define loaded_table_02FE59_ADDRESS 0x7E59u    /* 02FE59 */
-#define object_setup_02FE65_ADDRESS 0x7E65u    /* 02FE65 */
-#define loaded_table_02FE73_ADDRESS 0x7E73u    /* 02FE73 */
-#define loaded_table_02FE77_ADDRESS 0x7E77u    /* 02FE77 */
-#define loaded_table_02FE7B_ADDRESS 0x7E7Bu    /* 02FE7B */
-#define loaded_table_02FE83_ADDRESS 0x7E83u    /* 02FE83 */
-#define loaded_table_02FE8B_ADDRESS 0x7E8Bu    /* 02FE8B */
+#define clown_on_ball_setup_ADDRESS 0x7E65u    /* 02FE65 */
+#define clown_on_ball_strike_steps_ADDRESS 0x7E73u    /* 02FE73 */
+#define clown_on_ball_jump_steps_ADDRESS 0x7E77u    /* 02FE77 */
+#define clown_on_ball_charge_steps_ADDRESS 0x7E7Bu    /* 02FE7B */
+#define clown_on_ball_pause_steps_ADDRESS 0x7E83u    /* 02FE83 */
+#define clown_on_ball_hop_steps_ADDRESS 0x7E8Bu    /* 02FE8B */
 #define hit_box_02FECF_ADDRESS 0x7ECFu    /* 02FECF */
-#define hit_box_02FED7_ADDRESS 0x7ED7u    /* 02FED7 */
-#define hit_box_02FEDF_ADDRESS 0x7EDFu    /* 02FEDF */
+#define kind_b2_body_box_ADDRESS 0x7ED7u    /* 02FED7 */
+#define kind_b2_hit_box_ADDRESS 0x7EDFu    /* 02FEDF */
 #define hit_box_02FEE7_ADDRESS 0x7EE7u    /* 02FEE7 */
 #define hit_box_02FEEF_ADDRESS 0x7EEFu    /* 02FEEF */
 #define hit_box_02FEF7_ADDRESS 0x7EF7u    /* 02FEF7 */
 #define hit_box_02FEFF_ADDRESS 0x7EFFu    /* 02FEFF */
 #define hit_box_02FF0F_ADDRESS 0x7F0Fu    /* 02FF0F */
-#define loaded_table_02FF17_ADDRESS 0x7F17u    /* 02FF17 */
-#define object_setup_02FF23_ADDRESS 0x7F23u    /* 02FF23 */
-#define loaded_table_02FF29_ADDRESS 0x7F29u    /* 02FF29 */
-#define object_setup_02FF35_ADDRESS 0x7F35u    /* 02FF35 */
-#define loaded_table_02FF3D_ADDRESS 0x7F3Du    /* 02FF3D */
-#define object_setup_02FF49_ADDRESS 0x7F49u    /* 02FF49 */
-#define loaded_table_02FF4F_ADDRESS 0x7F4Fu    /* 02FF4F */
-#define object_setup_02FF65_ADDRESS 0x7F65u    /* 02FF65 */
-#define loaded_table_02FFA3_ADDRESS 0x7FA3u    /* 02FFA3 */
-#define object_setup_02FFA7_ADDRESS 0x7FA7u    /* 02FFA7 */
+#define krustyland_bear_states_ADDRESS 0x7F17u    /* 02FF17 */
+#define krustyland_bear_setup_ADDRESS 0x7F23u    /* 02FF23 */
+#define kind_b2_states_ADDRESS 0x7F29u    /* 02FF29 */
+#define kind_b2_setup_ADDRESS 0x7F35u    /* 02FF35 */
+#define buzzing_chaser_states_ADDRESS 0x7F3Du    /* 02FF3D */
+#define buzzing_chaser_setup_ADDRESS 0x7F49u    /* 02FF49 */
+#define kind_a0_states_ADDRESS 0x7F4Fu    /* 02FF4F */
+#define kind_a0_setup_ADDRESS 0x7F65u    /* 02FF65 */
+#define random_pose_figure_states_ADDRESS 0x7FA3u    /* 02FFA3 */
+#define random_pose_figure_setup_ADDRESS 0x7FA7u    /* 02FFA7 */
 #define described_02FFC5_ADDRESS 0x7FC5u    /* 02FFC5 */
-#define loaded_table_02FFC9_ADDRESS 0x7FC9u    /* 02FFC9 */
-#define object_setup_02FFD5_ADDRESS 0x7FD5u    /* 02FFD5 */
+#define unused_homer_object_states_ADDRESS 0x7FC9u    /* 02FFC9 */
+#define unused_homer_object_setup_ADDRESS 0x7FD5u    /* 02FFD5 */
 #define fill_02FFDB_ADDRESS 0x7FDBu    /* 02FFDB */
-#define child_object_030FAE_ADDRESS 0x6FAEu    /* 030FAE */
+#define cloud_devil_drop_bolt_child_ADDRESS 0x6FAEu    /* 030FAE */
 #define fill_0316C3_ADDRESS 0x76C3u    /* 0316C3 */
 #define hit_box_031880_ADDRESS 0x7880u    /* 031880 */
 #define hit_box_031888_ADDRESS 0x7888u    /* 031888 */
-#define hit_box_031890_ADDRESS 0x7890u    /* 031890 */
-#define hit_box_031898_ADDRESS 0x7898u    /* 031898 */
-#define hit_box_0318A0_ADDRESS 0x78A0u    /* 0318A0 */
-#define hit_box_0318A8_ADDRESS 0x78A8u    /* 0318A8 */
-#define hit_box_0318B0_ADDRESS 0x78B0u    /* 0318B0 */
+#define zombie_body_box_ADDRESS 0x7890u    /* 031890 */
+#define zombie_swipe_hit_box_ADDRESS 0x7898u    /* 031898 */
+#define zombie_leap_rise_box_ADDRESS 0x78A0u    /* 0318A0 */
+#define kind_9a_dropper_body_box_ADDRESS 0x78A8u    /* 0318A8 */
+#define kind_9a_dropper_drop_box_ADDRESS 0x78B0u    /* 0318B0 */
 #define hit_box_0318B8_ADDRESS 0x78B8u    /* 0318B8 */
-#define enemy_behaviour_0318C0_ADDRESS 0x78C0u    /* 0318C0 */
+#define zombie_behaviour_ADDRESS 0x78C0u    /* 0318C0 */
 #define enemy_behaviour_031918_ADDRESS 0x7918u    /* 031918 */
 #define described_031970_ADDRESS 0x7970u    /* 031970 */
 #define loaded_table_031974_ADDRESS 0x7974u    /* 031974 */
 #define loaded_table_03197E_ADDRESS 0x797Eu    /* 03197E */
-#define object_setup_031982_ADDRESS 0x7982u    /* 031982 */
+#define wandering_zombie_object_setup_ADDRESS 0x7982u    /* 031982 */
 #define loaded_table_0319C8_ADDRESS 0x79C8u    /* 0319C8 */
-#define object_setup_0319D4_ADDRESS 0x79D4u    /* 0319D4 */
+#define zombie_object_setup_ADDRESS 0x79D4u    /* 0319D4 */
 #define loaded_table_0319EE_ADDRESS 0x79EEu    /* 0319EE */
-#define loaded_table_0319F8_ADDRESS 0x79F8u    /* 0319F8 */
-#define loaded_table_031A00_ADDRESS 0x7A00u    /* 031A00 */
-#define loaded_table_031A0C_ADDRESS 0x7A0Cu    /* 031A0C */
+#define zombie_burrow_steps_ADDRESS 0x79F8u    /* 0319F8 */
+#define zombie_leap_steps_ADDRESS 0x7A00u    /* 031A00 */
+#define zombie_swipe_steps_ADDRESS 0x7A0Cu    /* 031A0C */
 #define loaded_table_031A1A_ADDRESS 0x7A1Au    /* 031A1A */
-#define loaded_table_031A26_ADDRESS 0x7A26u    /* 031A26 */
-#define object_setup_031A2A_ADDRESS 0x7A2Au    /* 031A2A */
-#define loaded_table_031A38_ADDRESS 0x7A38u    /* 031A38 */
-#define object_setup_031A72_ADDRESS 0x7A72u    /* 031A72 */
+#define kind_9a_dropper_hurt_steps_ADDRESS 0x7A26u    /* 031A26 */
+#define kind_9a_dropper_object_setup_ADDRESS 0x7A2Au    /* 031A2A */
+#define rising_zombie_states_ADDRESS 0x7A38u    /* 031A38 */
+#define rising_zombie_object_setup_ADDRESS 0x7A72u    /* 031A72 */
 #define hit_box_031A78_ADDRESS 0x7A78u    /* 031A78 */
 #define hit_box_031A80_ADDRESS 0x7A80u    /* 031A80 */
-#define enemy_behaviour_031A88_ADDRESS 0x7A88u    /* 031A88 */
+#define grabbing_zombie_behaviour_ADDRESS 0x7A88u    /* 031A88 */
 #define loaded_table_031AE0_ADDRESS 0x7AE0u    /* 031AE0 */
-#define object_setup_031AEC_ADDRESS 0x7AECu    /* 031AEC */
+#define grabbing_zombie_object_setup_ADDRESS 0x7AECu    /* 031AEC */
 #define loaded_table_031AF2_ADDRESS 0x7AF2u    /* 031AF2 */
 #define loaded_table_031B02_ADDRESS 0x7B02u    /* 031B02 */
-#define hit_box_031B0E_ADDRESS 0x7B0Eu    /* 031B0E */
-#define hit_box_031B16_ADDRESS 0x7B16u    /* 031B16 */
-#define hit_box_031B1E_ADDRESS 0x7B1Eu    /* 031B1E */
-#define hit_box_031B26_ADDRESS 0x7B26u    /* 031B26 */
-#define hit_box_031B2E_ADDRESS 0x7B2Eu    /* 031B2E */
-#define enemy_behaviour_031B36_ADDRESS 0x7B36u    /* 031B36 */
-#define enemy_behaviour_031B8E_ADDRESS 0x7B8Eu    /* 031B8E */
+#define lumberjack_body_box_ADDRESS 0x7B0Eu    /* 031B0E */
+#define lumberjack_axe_swing_box_ADDRESS 0x7B16u    /* 031B16 */
+#define gorilla_body_box_ADDRESS 0x7B1Eu    /* 031B1E */
+#define gorilla_punch_hit_box_ADDRESS 0x7B26u    /* 031B26 */
+#define gorilla_leap_rise_box_ADDRESS 0x7B2Eu    /* 031B2E */
+#define lumberjack_behaviour_ADDRESS 0x7B36u    /* 031B36 */
+#define gorilla_behaviour_ADDRESS 0x7B8Eu    /* 031B8E */
 #define loaded_table_031BE6_ADDRESS 0x7BE6u    /* 031BE6 */
-#define object_setup_031BF2_ADDRESS 0x7BF2u    /* 031BF2 */
+#define lumberjack_object_setup_ADDRESS 0x7BF2u    /* 031BF2 */
 #define loaded_table_031BF8_ADDRESS 0x7BF8u    /* 031BF8 */
-#define loaded_table_031BFE_ADDRESS 0x7BFEu    /* 031BFE */
+#define lumberjack_axe_steps_ADDRESS 0x7BFEu    /* 031BFE */
 #define loaded_table_031C11_ADDRESS 0x7C11u    /* 031C11 */
-#define object_setup_031C1D_ADDRESS 0x7C1Du    /* 031C1D */
+#define gorilla_object_setup_ADDRESS 0x7C1Du    /* 031C1D */
 #define loaded_table_031C23_ADDRESS 0x7C23u    /* 031C23 */
-#define loaded_table_031C4F_ADDRESS 0x7C4Fu    /* 031C4F */
-#define loaded_table_031C57_ADDRESS 0x7C57u    /* 031C57 */
-#define loaded_table_031C6B_ADDRESS 0x7C6Bu    /* 031C6B */
-#define hit_box_031C6F_ADDRESS 0x7C6Fu    /* 031C6F */
-#define hit_box_031C77_ADDRESS 0x7C77u    /* 031C77 */
-#define enemy_behaviour_031C7F_ADDRESS 0x7C7Fu    /* 031C7F */
+#define gorilla_punch_steps_ADDRESS 0x7C4Fu    /* 031C4F */
+#define gorilla_leap_steps_ADDRESS 0x7C57u    /* 031C57 */
+#define gorilla_back_off_steps_ADDRESS 0x7C6Bu    /* 031C6B */
+#define knight_body_box_ADDRESS 0x7C6Fu    /* 031C6F */
+#define knight_strike_hit_box_ADDRESS 0x7C77u    /* 031C77 */
+#define knight_behaviour_ADDRESS 0x7C7Fu    /* 031C7F */
 #define described_031CD7_ADDRESS 0x7CD7u    /* 031CD7 */
 #define loaded_table_031CD9_ADDRESS 0x7CD9u    /* 031CD9 */
 #define loaded_table_031CE5_ADDRESS 0x7CE5u    /* 031CE5 */
-#define child_object_031CE9_ADDRESS 0x7CE9u    /* 031CE9 */
-#define object_setup_031CF1_ADDRESS 0x7CF1u    /* 031CF1 */
+#define knight_fall_child_ADDRESS 0x7CE9u    /* 031CE9 */
+#define knight_object_setup_ADDRESS 0x7CF1u    /* 031CF1 */
 #define loaded_table_031D37_ADDRESS 0x7D37u    /* 031D37 */
-#define loaded_table_031D71_ADDRESS 0x7D71u    /* 031D71 */
+#define knight_strike_steps_ADDRESS 0x7D71u    /* 031D71 */
 #define hit_box_031D77_ADDRESS 0x7D77u    /* 031D77 */
 #define hit_box_031D7F_ADDRESS 0x7D7Fu    /* 031D7F */
-#define loaded_table_031D87_ADDRESS 0x7D87u    /* 031D87 */
-#define object_setup_031D8B_ADDRESS 0x7D8Bu    /* 031D8B */
+#define lightning_bolt_states_ADDRESS 0x7D87u    /* 031D87 */
+#define lightning_bolt_object_setup_ADDRESS 0x7D8Bu    /* 031D8B */
 #define described_031D91_ADDRESS 0x7D91u    /* 031D91 */
 #define loaded_table_031D95_ADDRESS 0x7D95u    /* 031D95 */
-#define object_setup_031DC2_ADDRESS 0x7DC2u    /* 031DC2 */
+#define cloud_devil_object_setup_ADDRESS 0x7DC2u    /* 031DC2 */
 #define loaded_table_031DC8_ADDRESS 0x7DC8u    /* 031DC8 */
 #define loaded_table_031DCE_ADDRESS 0x7DCEu    /* 031DCE */
 #define loaded_table_031DD2_ADDRESS 0x7DD2u    /* 031DD2 */
@@ -2959,125 +4055,124 @@ extern const void *reset_vector_data;
 #define hit_box_031ED0_ADDRESS 0x7ED0u    /* 031ED0 */
 #define fill_031EE0_ADDRESS 0x7EE0u    /* 031EE0 */
 #define described_031EE8_ADDRESS 0x7EE8u    /* 031EE8 */
-#define loaded_table_031EEC_ADDRESS 0x7EECu    /* 031EEC */
-#define loaded_table_031EF0_ADDRESS 0x7EF0u    /* 031EF0 */
-#define object_setup_031EF4_ADDRESS 0x7EF4u    /* 031EF4 */
+#define spark_shot_states_ADDRESS 0x7EECu    /* 031EEC */
+#define spark_shot_burst_steps_ADDRESS 0x7EF0u    /* 031EF0 */
+#define spark_shot_object_setup_ADDRESS 0x7EF4u    /* 031EF4 */
 #define described_031EFA_ADDRESS 0x7EFAu    /* 031EFA */
 #define loaded_table_031EFC_ADDRESS 0x7EFCu    /* 031EFC */
 #define loaded_table_031F08_ADDRESS 0x7F08u    /* 031F08 */
 #define loaded_table_031F0C_ADDRESS 0x7F0Cu    /* 031F0C */
-#define object_setup_031F10_ADDRESS 0x7F10u    /* 031F10 */
-#define child_object_031F16_ADDRESS 0x7F16u    /* 031F16 */
-#define loaded_table_031F1C_ADDRESS 0x7F1Cu    /* 031F1C */
-#define object_setup_031F2A_ADDRESS 0x7F2Au    /* 031F2A */
-#define loaded_table_031F30_ADDRESS 0x7F30u    /* 031F30 */
-#define object_setup_031F44_ADDRESS 0x7F44u    /* 031F44 */
-#define loaded_table_031F4A_ADDRESS 0x7F4Au    /* 031F4A */
-#define object_setup_031F58_ADDRESS 0x7F58u    /* 031F58 */
+#define kind_8e_thrower_object_setup_ADDRESS 0x7F10u    /* 031F10 */
+#define kind_8e_thrower_throw_child_ADDRESS 0x7F16u    /* 031F16 */
+#define walking_kind_87_states_ADDRESS 0x7F1Cu    /* 031F1C */
+#define walking_kind_87_object_setup_ADDRESS 0x7F2Au    /* 031F2A */
+#define kind_9e_states_ADDRESS 0x7F30u    /* 031F30 */
+#define kind_9e_object_setup_ADDRESS 0x7F44u    /* 031F44 */
+#define kind_8e_watcher_states_ADDRESS 0x7F4Au    /* 031F4A */
+#define kind_8e_watcher_object_setup_ADDRESS 0x7F58u    /* 031F58 */
 #define described_031F5E_ADDRESS 0x7F5Eu    /* 031F5E */
 #define loaded_table_031F64_ADDRESS 0x7F64u    /* 031F64 */
 #define loaded_table_031F68_ADDRESS 0x7F68u    /* 031F68 */
 #define loaded_table_031F6E_ADDRESS 0x7F6Eu    /* 031F6E */
-#define object_setup_031F74_ADDRESS 0x7F74u    /* 031F74 */
+#define kind_8c_bystander_object_setup_ADDRESS 0x7F74u    /* 031F74 */
 #define loaded_table_031F82_ADDRESS 0x7F82u    /* 031F82 */
 #define loaded_table_031F8E_ADDRESS 0x7F8Eu    /* 031F8E */
-#define object_setup_031F92_ADDRESS 0x7F92u    /* 031F92 */
-#define child_object_031F98_ADDRESS 0x7F98u    /* 031F98 */
+#define kind_8a_carrier_object_setup_ADDRESS 0x7F92u    /* 031F92 */
+#define kind_8a_carrier_pick_up_child_ADDRESS 0x7F98u    /* 031F98 */
 #define fill_031FA0_ADDRESS 0x7FA0u    /* 031FA0 */
 #define fill_0336B2_ADDRESS 0x76B2u    /* 0336B2 */
-#define hit_box_0338A4_ADDRESS 0x78A4u    /* 0338A4 */
-#define hit_box_0338AC_ADDRESS 0x78ACu    /* 0338AC */
+#define bouncing_prop_bounce_off_edge_box_ADDRESS 0x78A4u    /* 0338A4 */
+#define bouncing_prop_bounce_start_box_ADDRESS 0x78ACu    /* 0338AC */
 #define described_0338B4_ADDRESS 0x78B4u    /* 0338B4 */
-#define loaded_table_0338B8_ADDRESS 0x78B8u    /* 0338B8 */
-#define loaded_table_0338C6_ADDRESS 0x78C6u    /* 0338C6 */
-#define object_setup_0338CE_ADDRESS 0x78CEu    /* 0338CE */
-#define loaded_table_0338D4_ADDRESS 0x78D4u    /* 0338D4 */
-#define hit_box_0338D8_ADDRESS 0x78D8u    /* 0338D8 */
+#define bouncing_prop_states_ADDRESS 0x78B8u    /* 0338B8 */
+#define bouncing_prop_leave_steps_ADDRESS 0x78C6u    /* 0338C6 */
+#define bouncing_prop_object_setup_ADDRESS 0x78CEu    /* 0338CE */
+#define bouncing_prop_bounce_steps_ADDRESS 0x78D4u    /* 0338D4 */
+#define ninja_body_box_ADDRESS 0x78D8u    /* 0338D8 */
 #define hit_box_0338E0_ADDRESS 0x78E0u    /* 0338E0 */
-#define hit_box_0338E8_ADDRESS 0x78E8u    /* 0338E8 */
-#define hit_box_0338F0_ADDRESS 0x78F0u    /* 0338F0 */
-#define hit_box_0338F8_ADDRESS 0x78F8u    /* 0338F8 */
-#define enemy_behaviour_033900_ADDRESS 0x7900u    /* 033900 */
-#define enemy_behaviour_033958_ADDRESS 0x7958u    /* 033958 */
-#define enemy_behaviour_0339B0_ADDRESS 0x79B0u    /* 0339B0 */
+#define ninja_hop_strike_hit_box_ADDRESS 0x78E8u    /* 0338E8 */
+#define ninja_jump_attack_dive_box_ADDRESS 0x78F0u    /* 0338F0 */
+#define ninja_crouch_strike_hit_box_ADDRESS 0x78F8u    /* 0338F8 */
+#define ninja_fighter_behaviour_ADDRESS 0x7900u    /* 033900 */
+#define ninja_behaviour_ADDRESS 0x7958u    /* 033958 */
+#define ninja_thrower_behaviour_ADDRESS 0x79B0u    /* 0339B0 */
 #define loaded_table_033A08_ADDRESS 0x7A08u    /* 033A08 */
 #define loaded_table_033A14_ADDRESS 0x7A14u    /* 033A14 */
 #define loaded_table_033A20_ADDRESS 0x7A20u    /* 033A20 */
 #define loaded_table_033A2E_ADDRESS 0x7A2Eu    /* 033A2E */
-#define object_setup_033A32_ADDRESS 0x7A32u    /* 033A32 */
+#define ninja_object_setup_ADDRESS 0x7A32u    /* 033A32 */
 #define loaded_table_033A38_ADDRESS 0x7A38u    /* 033A38 */
-#define child_object_033A7D_ADDRESS 0x7A7Du    /* 033A7D */
-#define loaded_table_033A85_ADDRESS 0x7A85u    /* 033A85 */
-#define loaded_table_033A8D_ADDRESS 0x7A8Du    /* 033A8D */
-#define child_object_033A93_ADDRESS 0x7A93u    /* 033A93 */
-#define loaded_table_033A99_ADDRESS 0x7A99u    /* 033A99 */
-#define object_setup_033A9D_ADDRESS 0x7A9Du    /* 033A9D */
-#define loaded_table_033AA3_ADDRESS 0x7AA3u    /* 033AA3 */
-#define loaded_table_033AAB_ADDRESS 0x7AABu    /* 033AAB */
-#define loaded_table_033ABA_ADDRESS 0x7ABAu    /* 033ABA */
-#define loaded_table_033AC4_ADDRESS 0x7AC4u    /* 033AC4 */
-#define loaded_table_033ACC_ADDRESS 0x7ACCu    /* 033ACC */
+#define ninja_split_child_ADDRESS 0x7A7Du    /* 033A7D */
+#define ninja_hop_strike_steps_ADDRESS 0x7A85u    /* 033A85 */
+#define ninja_throw_steps_ADDRESS 0x7A8Du    /* 033A8D */
+#define ninja_throw_release_child_ADDRESS 0x7A93u    /* 033A93 */
+#define ninja_star_states_ADDRESS 0x7A99u    /* 033A99 */
+#define ninja_star_object_setup_ADDRESS 0x7A9Du    /* 033A9D */
+#define ninja_slash_steps_ADDRESS 0x7AA3u    /* 033AA3 */
+#define ninja_crouch_strike_steps_ADDRESS 0x7AABu    /* 033AAB */
+#define ninja_jump_attack_steps_ADDRESS 0x7ABAu    /* 033ABA */
+#define ninja_rush_steps_ADDRESS 0x7AC4u    /* 033AC4 */
+#define ninja_vanish_steps_ADDRESS 0x7ACCu    /* 033ACC */
 #define hit_box_033AD8_ADDRESS 0x7AD8u    /* 033AD8 */
-#define hit_box_033AE0_ADDRESS 0x7AE0u    /* 033AE0 */
+#define robot_scrap_throw_box_ADDRESS 0x7AE0u    /* 033AE0 */
 #define hit_box_033AE8_ADDRESS 0x7AE8u    /* 033AE8 */
-#define object_setup_033B00_ADDRESS 0x7B00u    /* 033B00 */
-#define loaded_table_033B06_ADDRESS 0x7B06u    /* 033B06 */
+#define robot_piece_object_setup_ADDRESS 0x7B00u    /* 033B00 */
+#define robot_piece_states_ADDRESS 0x7B06u    /* 033B06 */
 #define hit_box_033B30_ADDRESS 0x7B30u    /* 033B30 */
-#define hit_box_033B38_ADDRESS 0x7B38u    /* 033B38 */
-#define hit_box_033B40_ADDRESS 0x7B40u    /* 033B40 */
-#define hit_box_033B48_ADDRESS 0x7B48u    /* 033B48 */
+#define robot_body_box_ADDRESS 0x7B38u    /* 033B38 */
+#define robot_punch_first_hit_box_ADDRESS 0x7B40u    /* 033B40 */
+#define robot_punch_second_hit_box_ADDRESS 0x7B48u    /* 033B48 */
 #define hit_box_033B50_ADDRESS 0x7B50u    /* 033B50 */
 #define hit_box_033B60_ADDRESS 0x7B60u    /* 033B60 */
 #define hit_box_033B68_ADDRESS 0x7B68u    /* 033B68 */
-#define enemy_behaviour_033B70_ADDRESS 0x7B70u    /* 033B70 */
-#define loaded_table_033BC8_ADDRESS 0x7BC8u    /* 033BC8 */
-#define object_setup_033BD0_ADDRESS 0x7BD0u    /* 033BD0 */
+#define robot_behaviour_ADDRESS 0x7B70u    /* 033B70 */
+#define robot_spark_states_ADDRESS 0x7BC8u    /* 033BC8 */
+#define robot_spark_object_setup_ADDRESS 0x7BD0u    /* 033BD0 */
 #define loaded_table_033BD6_ADDRESS 0x7BD6u    /* 033BD6 */
-#define object_setup_033BE2_ADDRESS 0x7BE2u    /* 033BE2 */
-#define loaded_table_033BE8_ADDRESS 0x7BE8u    /* 033BE8 */
-#define loaded_table_033C04_ADDRESS 0x7C04u    /* 033C04 */
-#define loaded_table_033C10_ADDRESS 0x7C10u    /* 033C10 */
-#define loaded_table_033C36_ADDRESS 0x7C36u    /* 033C36 */
+#define robot_object_setup_ADDRESS 0x7BE2u    /* 033BE2 */
+#define robot_combo_steps_ADDRESS 0x7BE8u    /* 033BE8 */
+#define robot_punch_steps_ADDRESS 0x7C04u    /* 033C04 */
+#define robot_advance_shock_steps_ADDRESS 0x7C10u    /* 033C10 */
+#define robot_shock_92_steps_ADDRESS 0x7C36u    /* 033C36 */
 #define child_object_033C50_ADDRESS 0x7C50u    /* 033C50 */
 #define child_object_033C58_ADDRESS 0x7C58u    /* 033C58 */
 #define child_object_033C60_ADDRESS 0x7C60u    /* 033C60 */
 #define child_object_033C68_ADDRESS 0x7C68u    /* 033C68 */
-#define loaded_table_033C70_ADDRESS 0x7C70u    /* 033C70 */
+#define robot_shock_91_steps_ADDRESS 0x7C70u    /* 033C70 */
 #define child_object_033C8A_ADDRESS 0x7C8Au    /* 033C8A */
 #define child_object_033C92_ADDRESS 0x7C92u    /* 033C92 */
 #define child_object_033C9A_ADDRESS 0x7C9Au    /* 033C9A */
 #define child_object_033CA2_ADDRESS 0x7CA2u    /* 033CA2 */
 #define loaded_table_033CAA_ADDRESS 0x7CAAu    /* 033CAA */
-#define loaded_table_033CC8_ADDRESS 0x7CC8u    /* 033CC8 */
-#define loaded_table_033D08_ADDRESS 0x7D08u    /* 033D08 */
-#define child_object_033D10_ADDRESS 0x7D10u    /* 033D10 */
-#define loaded_table_033D16_ADDRESS 0x7D16u    /* 033D16 */
-#define object_setup_033D1C_ADDRESS 0x7D1Cu    /* 033D1C */
-#define loaded_table_033D52_ADDRESS 0x7D52u    /* 033D52 */
-#define object_setup_033D62_ADDRESS 0x7D62u    /* 033D62 */
-#define child_object_033D68_ADDRESS 0x7D68u    /* 033D68 */
-#define child_object_033D70_ADDRESS 0x7D70u    /* 033D70 */
-#define child_object_033D78_ADDRESS 0x7D78u    /* 033D78 */
-#define child_object_033D80_ADDRESS 0x7D80u    /* 033D80 */
-#define loaded_table_033D88_ADDRESS 0x7D88u    /* 033D88 */
-#define object_setup_033D90_ADDRESS 0x7D90u    /* 033D90 */
-#define hit_box_033D9E_ADDRESS 0x7D9Eu    /* 033D9E */
-#define hit_box_033DA6_ADDRESS 0x7DA6u    /* 033DA6 */
+#define robot_launch_part_steps_ADDRESS 0x7D08u    /* 033D08 */
+#define robot_launch_part_release_child_ADDRESS 0x7D10u    /* 033D10 */
+#define robot_part_states_ADDRESS 0x7D16u    /* 033D16 */
+#define robot_part_object_setup_ADDRESS 0x7D1Cu    /* 033D1C */
+#define goon_lift_states_ADDRESS 0x7D52u    /* 033D52 */
+#define goon_lift_object_setup_ADDRESS 0x7D62u    /* 033D62 */
+#define goon_lift_part_child_1_ADDRESS 0x7D68u    /* 033D68 */
+#define goon_lift_part_child_2_ADDRESS 0x7D70u    /* 033D70 */
+#define goon_lift_goon_1_ADDRESS 0x7D78u    /* 033D78 */
+#define goon_lift_goon_2_ADDRESS 0x7D80u    /* 033D80 */
+#define goon_lift_part_states_ADDRESS 0x7D88u    /* 033D88 */
+#define goon_lift_part_object_setup_ADDRESS 0x7D90u    /* 033D90 */
+#define donut_body_box_ADDRESS 0x7D9Eu    /* 033D9E */
+#define donut_roll_go_box_ADDRESS 0x7DA6u    /* 033DA6 */
 #define hit_box_033DAE_ADDRESS 0x7DAEu    /* 033DAE */
-#define enemy_behaviour_033DB6_ADDRESS 0x7DB6u    /* 033DB6 */
+#define donut_behaviour_ADDRESS 0x7DB6u    /* 033DB6 */
 #define loaded_table_033E0E_ADDRESS 0x7E0Eu    /* 033E0E */
-#define object_setup_033E1A_ADDRESS 0x7E1Au    /* 033E1A */
+#define donut_object_setup_ADDRESS 0x7E1Au    /* 033E1A */
 #define loaded_table_033E20_ADDRESS 0x7E20u    /* 033E20 */
-#define loaded_table_033E4A_ADDRESS 0x7E4Au    /* 033E4A */
-#define loaded_table_033E50_ADDRESS 0x7E50u    /* 033E50 */
-#define child_object_033E56_ADDRESS 0x7E56u    /* 033E56 */
-#define loaded_table_033E5E_ADDRESS 0x7E5Eu    /* 033E5E */
-#define object_setup_033E62_ADDRESS 0x7E62u    /* 033E62 */
+#define donut_roll_steps_ADDRESS 0x7E4Au    /* 033E4A */
+#define donut_throw_steps_ADDRESS 0x7E50u    /* 033E50 */
+#define donut_throw_release_child_ADDRESS 0x7E56u    /* 033E56 */
+#define donut_shot_states_ADDRESS 0x7E5Eu    /* 033E5E */
+#define donut_shot_object_setup_ADDRESS 0x7E62u    /* 033E62 */
 #define hit_box_033E68_ADDRESS 0x7E68u    /* 033E68 */
 #define hit_box_033E70_ADDRESS 0x7E70u    /* 033E70 */
 #define described_033E78_ADDRESS 0x7E78u    /* 033E78 */
 #define loaded_table_033E7C_ADDRESS 0x7E7Cu    /* 033E7C */
-#define object_setup_033EB7_ADDRESS 0x7EB7u    /* 033EB7 */
+#define kind_b8_flyer_object_setup_ADDRESS 0x7EB7u    /* 033EB7 */
 #define loaded_table_033EBD_ADDRESS 0x7EBDu    /* 033EBD */
 #define child_object_033ECF_ADDRESS 0x7ECFu    /* 033ECF */
 #define child_object_033ED7_ADDRESS 0x7ED7u    /* 033ED7 */
@@ -3087,26 +4182,26 @@ extern const void *reset_vector_data;
 #define child_object_033EFB_ADDRESS 0x7EFBu    /* 033EFB */
 #define loaded_table_033F03_ADDRESS 0x7F03u    /* 033F03 */
 #define loaded_table_033F07_ADDRESS 0x7F07u    /* 033F07 */
-#define loaded_table_033FD5_ADDRESS 0x7FD5u    /* 033FD5 */
-#define object_setup_033FDD_ADDRESS 0x7FDDu    /* 033FDD */
+#define kind_b8_shot_states_ADDRESS 0x7FD5u    /* 033FD5 */
+#define kind_b8_shot_object_setup_ADDRESS 0x7FDDu    /* 033FDD */
 #define fill_033FFF_ADDRESS 0x7FFFu    /* 033FFF */
 #define fill_034C82_ADDRESS 0x6C82u    /* 034C82 */
 #define described_0352FC_ADDRESS 0x72FCu    /* 0352FC */
 #define loaded_table_035300_ADDRESS 0x7300u    /* 035300 */
-#define hit_box_035768_ADDRESS 0x7768u    /* 035768 */
-#define hit_box_035770_ADDRESS 0x7770u    /* 035770 */
-#define hit_box_035778_ADDRESS 0x7778u    /* 035778 */
+#define dreamland_boss_body_box_ADDRESS 0x7768u    /* 035768 */
+#define dreamland_boss_attack_box_ADDRESS 0x7770u    /* 035770 */
+#define dreamland_boss_defeat_burst_box_ADDRESS 0x7778u    /* 035778 */
 #define hit_box_035780_ADDRESS 0x7780u    /* 035780 */
-#define hit_box_035788_ADDRESS 0x7788u    /* 035788 */
+#define boss_ball_land_box_ADDRESS 0x7788u    /* 035788 */
 #define described_035790_ADDRESS 0x7790u    /* 035790 */
 #define loaded_table_035794_ADDRESS 0x7794u    /* 035794 */
-#define object_setup_0357D0_ADDRESS 0x77D0u    /* 0357D0 */
+#define dreamland_boss_object_setup_ADDRESS 0x77D0u    /* 0357D0 */
 #define loaded_table_0357D6_ADDRESS 0x77D6u    /* 0357D6 */
 #define loaded_table_0357E6_ADDRESS 0x77E6u    /* 0357E6 */
 #define loaded_table_0357EA_ADDRESS 0x77EAu    /* 0357EA */
 #define loaded_table_035806_ADDRESS 0x7806u    /* 035806 */
 #define loaded_table_03580C_ADDRESS 0x780Cu    /* 03580C */
-#define child_object_035812_ADDRESS 0x7812u    /* 035812 */
+#define dreamland_boss_second_change_flash_child_ADDRESS 0x7812u    /* 035812 */
 #define described_03581A_ADDRESS 0x781Au    /* 03581A */
 #define loaded_table_03581E_ADDRESS 0x781Eu    /* 03581E */
 #define loaded_table_03582E_ADDRESS 0x782Eu    /* 03582E */
@@ -3115,12 +4210,12 @@ extern const void *reset_vector_data;
 #define loaded_table_035876_ADDRESS 0x7876u    /* 035876 */
 #define loaded_table_035880_ADDRESS 0x7880u    /* 035880 */
 #define loaded_table_035886_ADDRESS 0x7886u    /* 035886 */
-#define child_object_03588C_ADDRESS 0x788Cu    /* 03588C */
+#define dreamland_boss_spit_ball_child_ADDRESS 0x788Cu    /* 03588C */
 #define described_035892_ADDRESS 0x7892u    /* 035892 */
 #define loaded_table_035896_ADDRESS 0x7896u    /* 035896 */
 #define loaded_table_0358A4_ADDRESS 0x78A4u    /* 0358A4 */
 #define loaded_table_0358AC_ADDRESS 0x78ACu    /* 0358AC */
-#define child_object_0358BC_ADDRESS 0x78BCu    /* 0358BC */
+#define dreamland_boss_put_out_chain_child_ADDRESS 0x78BCu    /* 0358BC */
 #define loaded_table_0358C4_ADDRESS 0x78C4u    /* 0358C4 */
 #define loaded_table_0358D8_ADDRESS 0x78D8u    /* 0358D8 */
 #define loaded_table_0358DC_ADDRESS 0x78DCu    /* 0358DC */
@@ -3128,23 +4223,23 @@ extern const void *reset_vector_data;
 #define child_object_0358FC_ADDRESS 0x78FCu    /* 0358FC */
 #define child_object_035904_ADDRESS 0x7904u    /* 035904 */
 #define child_object_03590C_ADDRESS 0x790Cu    /* 03590C */
-#define loaded_table_035914_ADDRESS 0x7914u    /* 035914 */
-#define object_setup_03592E_ADDRESS 0x792Eu    /* 03592E */
-#define child_object_03593C_ADDRESS 0x793Cu    /* 03593C */
-#define loaded_table_035944_ADDRESS 0x7944u    /* 035944 */
-#define object_setup_035948_ADDRESS 0x7948u    /* 035948 */
+#define boss_ball_states_ADDRESS 0x7914u    /* 035914 */
+#define boss_ball_object_setup_ADDRESS 0x792Eu    /* 03592E */
+#define boss_ball_fly_out_child_ADDRESS 0x793Cu    /* 03593C */
+#define boss_ball_trail_states_ADDRESS 0x7944u    /* 035944 */
+#define boss_ball_trail_object_setup_ADDRESS 0x7948u    /* 035948 */
 #define loaded_table_03594E_ADDRESS 0x794Eu    /* 03594E */
-#define object_setup_035952_ADDRESS 0x7952u    /* 035952 */
+#define dreamland_boss_shadow_object_setup_ADDRESS 0x7952u    /* 035952 */
 #define hit_box_035958_ADDRESS 0x7958u    /* 035958 */
 #define loaded_table_035960_ADDRESS 0x7960u    /* 035960 */
-#define child_object_035966_ADDRESS 0x7966u    /* 035966 */
-#define object_setup_03596E_ADDRESS 0x796Eu    /* 03596E */
+#define chain_holder_put_out_chain_child_ADDRESS 0x7966u    /* 035966 */
+#define chain_holder_object_setup_ADDRESS 0x796Eu    /* 03596E */
 #define described_035974_ADDRESS 0x7974u    /* 035974 */
 #define loaded_table_035978_ADDRESS 0x7978u    /* 035978 */
 #define loaded_table_035982_ADDRESS 0x7982u    /* 035982 */
-#define object_setup_035988_ADDRESS 0x7988u    /* 035988 */
-#define loaded_table_03598E_ADDRESS 0x798Eu    /* 03598E */
-#define object_setup_0359D6_ADDRESS 0x79D6u    /* 0359D6 */
+#define dreamland_boss_chain_object_setup_ADDRESS 0x7988u    /* 035988 */
+#define dreamland_boss_chain_link_parameters_ADDRESS 0x798Eu    /* 03598E */
+#define dreamland_boss_chain_head_object_setup_ADDRESS 0x79D6u    /* 0359D6 */
 #define object_1a_path_ADDRESS 0x79F3u    /* 0359F3 */
 #define object_path_035A5A_ADDRESS 0x7A5Au    /* 035A5A */
 #define object_path_035A81_ADDRESS 0x7A81u    /* 035A81 */
@@ -3166,26 +4261,26 @@ extern const void *reset_vector_data;
 #define hit_box_036400_ADDRESS 0x6400u    /* 036400 */
 #define hit_box_036408_ADDRESS 0x6408u    /* 036408 */
 #define hit_box_036410_ADDRESS 0x6410u    /* 036410 */
-#define hit_box_036418_ADDRESS 0x6418u    /* 036418 */
-#define object_setup_036430_ADDRESS 0x6430u    /* 036430 */
-#define loaded_table_036436_ADDRESS 0x6436u    /* 036436 */
-#define object_setup_03644E_ADDRESS 0x644Eu    /* 03644E */
-#define loaded_table_036474_ADDRESS 0x6474u    /* 036474 */
-#define object_setup_036482_ADDRESS 0x6482u    /* 036482 */
-#define indexed_table_036498_ADDRESS 0x6498u    /* 036498 */
+#define kind_93_states_ADDRESS 0x6418u    /* 036418 */
+#define kind_93_setup_ADDRESS 0x6430u    /* 036430 */
+#define car_doors_states_ADDRESS 0x6436u    /* 036436 */
+#define car_doors_setup_ADDRESS 0x644Eu    /* 03644E */
+#define door_kind_12_states_ADDRESS 0x6474u    /* 036474 */
+#define door_kind_12_setup_ADDRESS 0x6482u    /* 036482 */
+#define door_kind_12_enemy_lists_ADDRESS 0x6498u    /* 036498 */
 #define indexed_table_0364A0_ADDRESS 0x64A0u    /* 0364A0 */
 #define indexed_table_0364B3_ADDRESS 0x64B3u    /* 0364B3 */
 #define indexed_table_0364C6_ADDRESS 0x64C6u    /* 0364C6 */
 #define indexed_table_0364D9_ADDRESS 0x64D9u    /* 0364D9 */
-#define loaded_table_0364EC_ADDRESS 0x64ECu    /* 0364EC */
-#define object_setup_0364F8_ADDRESS 0x64F8u    /* 0364F8 */
-#define indexed_table_03650A_ADDRESS 0x650Au    /* 03650A */
+#define door_kind_10_states_ADDRESS 0x64ECu    /* 0364EC */
+#define door_kind_10_setup_ADDRESS 0x64F8u    /* 0364F8 */
+#define door_kind_10_enemy_lists_ADDRESS 0x650Au    /* 03650A */
 #define indexed_table_036512_ADDRESS 0x6512u    /* 036512 */
 #define indexed_table_03651C_ADDRESS 0x651Cu    /* 03651C */
 #define indexed_table_036526_ADDRESS 0x6526u    /* 036526 */
-#define loaded_table_036539_ADDRESS 0x6539u    /* 036539 */
-#define object_setup_036547_ADDRESS 0x6547u    /* 036547 */
-#define indexed_table_03655D_ADDRESS 0x655Du    /* 03655D */
+#define door_kind_0f_states_ADDRESS 0x6539u    /* 036539 */
+#define door_kind_0f_setup_ADDRESS 0x6547u    /* 036547 */
+#define door_kind_0f_enemy_lists_ADDRESS 0x655Du    /* 03655D */
 #define indexed_table_036565_ADDRESS 0x6565u    /* 036565 */
 #define indexed_table_036577_ADDRESS 0x6577u    /* 036577 */
 #define indexed_table_036578_ADDRESS 0x6578u    /* 036578 */
@@ -3203,10 +4298,10 @@ extern const void *reset_vector_data;
 #define spawn_list_037E9D_ADDRESS 0x7E9Du    /* 037E9D */
 #define fill_037ECD_ADDRESS 0x7ECDu    /* 037ECD */
 #define fill_039C5C_ADDRESS 0x7C5Cu    /* 039C5C */
-#define loaded_table_039D51_ADDRESS 0x7D51u    /* 039D51 */
-#define loaded_table_039DD9_ADDRESS 0x7DD9u    /* 039DD9 */
-#define loaded_table_039DE1_ADDRESS 0x7DE1u    /* 039DE1 */
-#define indexed_table_039E07_ADDRESS 0x7E07u    /* 039E07 */
+#define player_state_handlers_ADDRESS 0x7D51u    /* 039D51 */
+#define carry_offsets_picking_up_ADDRESS 0x7DD9u    /* 039DD9 */
+#define player_use_held_by_kind_ADDRESS 0x7DE1u    /* 039DE1 */
+#define player_jump_attack_settings_ADDRESS 0x7E07u    /* 039E07 */
 #define indexed_table_039E09_ADDRESS 0x7E09u    /* 039E09 */
 #define indexed_table_039E0B_ADDRESS 0x7E0Bu    /* 039E0B */
 #define record_039E0D_ADDRESS 0x7E0Du    /* 039E0D */
@@ -3216,115 +4311,115 @@ extern const void *reset_vector_data;
 #define indexed_table_039E15_ADDRESS 0x7E15u    /* 039E15 */
 #define record_039E17_ADDRESS 0x7E17u    /* 039E17 */
 #define record_039E19_ADDRESS 0x7E19u    /* 039E19 */
-#define loaded_table_039E1B_ADDRESS 0x7E1Bu    /* 039E1B */
-#define loaded_table_039E23_ADDRESS 0x7E23u    /* 039E23 */
-#define loaded_table_039E3B_ADDRESS 0x7E3Bu    /* 039E3B */
-#define loaded_table_039E3C_ADDRESS 0x7E3Cu    /* 039E3C */
-#define loaded_table_039E45_ADDRESS 0x7E45u    /* 039E45 */
-#define loaded_table_039E55_ADDRESS 0x7E55u    /* 039E55 */
+#define carry_offsets_throwing_ADDRESS 0x7E1Bu    /* 039E1B */
+#define throw_release_offsets_ADDRESS 0x7E23u    /* 039E23 */
+#define hit_spark_height_ADDRESS 0x7E3Bu    /* 039E3B */
+#define hit_spark_height_in_air_ADDRESS 0x7E3Cu    /* 039E3C */
+#define carry_offsets_still_ADDRESS 0x7E45u    /* 039E45 */
+#define carry_offsets_walking_ADDRESS 0x7E55u    /* 039E55 */
 #define loaded_table_039E8D_ADDRESS 0x7E8Du    /* 039E8D */
-#define loaded_table_039EA9_ADDRESS 0x7EA9u    /* 039EA9 */
-#define loaded_table_039F5D_ADDRESS 0x7F5Du    /* 039F5D */
+#define team_moves_by_characters_ADDRESS 0x7EA9u    /* 039EA9 */
+#define team_walk_velocities_ADDRESS 0x7F5Du    /* 039F5D */
 #define fill_03A00C_ADDRESS 0x600Cu    /* 03A00C */
 #define fill_03A02C_ADDRESS 0x602Cu    /* 03A02C */
 #define fill_03A924_ADDRESS 0x6924u    /* 03A924 */
 #define fill_03B9E3_ADDRESS 0x79E3u    /* 03B9E3 */
 #define bank_1d_states_ADDRESS 0x7A00u    /* 03BA00 */
-#define child_object_03BA78_ADDRESS 0x7A78u    /* 03BA78 */
-#define child_object_03BA7E_ADDRESS 0x7A7Eu    /* 03BA7E */
-#define child_object_03BA84_ADDRESS 0x7A84u    /* 03BA84 */
-#define child_object_03BA8C_ADDRESS 0x7A8Cu    /* 03BA8C */
-#define indexed_table_03BA94_ADDRESS 0x7A94u    /* 03BA94 */
+#define stage_8_boss_speak_child_ADDRESS 0x7A78u    /* 03BA78 */
+#define stage_8_boss_throw_child_1_ADDRESS 0x7A7Eu    /* 03BA7E */
+#define stage_8_boss_throw_child_2_ADDRESS 0x7A84u    /* 03BA84 */
+#define stage_8_boss_throw_child_3_ADDRESS 0x7A8Cu    /* 03BA8C */
+#define stage_8_boss_box_ADDRESS 0x7A94u    /* 03BA94 */
 #define record_03BA96_ADDRESS 0x7A96u    /* 03BA96 */
-#define indexed_table_03BA98_ADDRESS 0x7A98u    /* 03BA98 */
+#define stage_8_boss_wind_up_box_ADDRESS 0x7A98u    /* 03BA98 */
 #define record_03BA9A_ADDRESS 0x7A9Au    /* 03BA9A */
 #define loaded_table_03BA9C_ADDRESS 0x7A9Cu    /* 03BA9C */
 #define fill_03BAB3_ADDRESS 0x7AB3u    /* 03BAB3 */
-#define loaded_table_03BAD6_ADDRESS 0x7AD6u    /* 03BAD6 */
-#define indexed_table_03BADE_ADDRESS 0x7ADEu    /* 03BADE */
+#define stage_8_boss_bomb_states_ADDRESS 0x7AD6u    /* 03BAD6 */
+#define stage_8_boss_bomb_blast_box_ADDRESS 0x7ADEu    /* 03BADE */
 #define record_03BAE0_ADDRESS 0x7AE0u    /* 03BAE0 */
 #define described_03BAE2_ADDRESS 0x7AE2u    /* 03BAE2 */
-#define loaded_table_03BAEE_ADDRESS 0x7AEEu    /* 03BAEE */
-#define loaded_table_03BB0A_ADDRESS 0x7B0Au    /* 03BB0A */
-#define loaded_table_03BB14_ADDRESS 0x7B14u    /* 03BB14 */
-#define loaded_table_03BB18_ADDRESS 0x7B18u    /* 03BB18 */
-#define loaded_table_03BB1C_ADDRESS 0x7B1Cu    /* 03BB1C */
-#define loaded_table_03BB2A_ADDRESS 0x7B2Au    /* 03BB2A */
-#define loaded_table_03BB38_ADDRESS 0x7B38u    /* 03BB38 */
-#define loaded_table_03BB3C_ADDRESS 0x7B3Cu    /* 03BB3C */
-#define loaded_table_03BB4C_ADDRESS 0x7B4Cu    /* 03BB4C */
-#define loaded_table_03BB52_ADDRESS 0x7B52u    /* 03BB52 */
+#define burns_robot_states_ADDRESS 0x7AEEu    /* 03BAEE */
+#define burns_robot_final_defeat_actions_ADDRESS 0x7B0Au    /* 03BB0A */
+#define burns_robot_form_3_broken_actions_ADDRESS 0x7B14u    /* 03BB14 */
+#define burns_robot_form_2_broken_actions_ADDRESS 0x7B18u    /* 03BB18 */
+#define burns_robot_form_1_broken_actions_ADDRESS 0x7B1Cu    /* 03BB1C */
+#define burns_robot_form_0_broken_actions_ADDRESS 0x7B2Au    /* 03BB2A */
+#define burns_robot_hurt_actions_ADDRESS 0x7B38u    /* 03BB38 */
+#define burns_robot_entrance_actions_ADDRESS 0x7B3Cu    /* 03BB3C */
+#define burns_robot_swing_actions_ADDRESS 0x7B4Cu    /* 03BB4C */
+#define burns_robot_volley_actions_ADDRESS 0x7B52u    /* 03BB52 */
 #define loaded_table_03BB5E_ADDRESS 0x7B5Eu    /* 03BB5E */
 #define loaded_table_03BB66_ADDRESS 0x7B66u    /* 03BB66 */
 #define loaded_table_03BB6E_ADDRESS 0x7B6Eu    /* 03BB6E */
 #define loaded_table_03BB7C_ADDRESS 0x7B7Cu    /* 03BB7C */
-#define loaded_table_03BD99_ADDRESS 0x7D99u    /* 03BD99 */
-#define loaded_table_03BDA1_ADDRESS 0x7DA1u    /* 03BDA1 */
-#define loaded_table_03BDA5_ADDRESS 0x7DA5u    /* 03BDA5 */
-#define loaded_table_03BDAD_ADDRESS 0x7DADu    /* 03BDAD */
-#define loaded_table_03BDCF_ADDRESS 0x7DCFu    /* 03BDCF */
-#define loaded_table_03BDD7_ADDRESS 0x7DD7u    /* 03BDD7 */
-#define loaded_table_03BDDB_ADDRESS 0x7DDBu    /* 03BDDB */
+#define burns_breakout_states_ADDRESS 0x7D99u    /* 03BD99 */
+#define burns_tossed_part_states_ADDRESS 0x7DA1u    /* 03BDA1 */
+#define burns_debris_steps_ADDRESS 0x7DA5u    /* 03BDA5 */
+#define rescued_maggie_states_ADDRESS 0x7DADu    /* 03BDAD */
+#define burns_bomb_states_ADDRESS 0x7DCFu    /* 03BDCF */
+#define burns_shot_states_ADDRESS 0x7DD7u    /* 03BDD7 */
+#define mr_burns_states_ADDRESS 0x7DDBu    /* 03BDDB */
 #define fill_03BFC7_ADDRESS 0x7FC7u    /* 03BFC7 */
 #define fill_03C61A_ADDRESS 0x661Au    /* 03C61A */
 #define fill_03DCE7_ADDRESS 0x7CE7u    /* 03DCE7 */
-#define loaded_table_03DD70_ADDRESS 0x7D70u    /* 03DD70 */
-#define child_object_03DD9A_ADDRESS 0x7D9Au    /* 03DD9A */
-#define indexed_table_03DDA2_ADDRESS 0x7DA2u    /* 03DDA2 */
+#define football_player_states_ADDRESS 0x7D70u    /* 03DD70 */
+#define football_player_child_ADDRESS 0x7D9Au    /* 03DD9A */
+#define football_player_box_ADDRESS 0x7DA2u    /* 03DDA2 */
 #define record_03DDA4_ADDRESS 0x7DA4u    /* 03DDA4 */
-#define indexed_table_03DDB9_ADDRESS 0x7DB9u    /* 03DDB9 */
-#define indexed_table_03DDBD_ADDRESS 0x7DBDu    /* 03DDBD */
-#define child_object_03DDC2_ADDRESS 0x7DC2u    /* 03DDC2 */
-#define child_object_03DDC8_ADDRESS 0x7DC8u    /* 03DDC8 */
-#define indexed_table_03DDCE_ADDRESS 0x7DCEu    /* 03DDCE */
+#define football_player_beaten_vitality_ADDRESS 0x7DB9u    /* 03DDB9 */
+#define football_player_gauge_healths_ADDRESS 0x7DBDu    /* 03DDBD */
+#define football_player_throw_child_ADDRESS 0x7DC2u    /* 03DDC2 */
+#define football_player_charge_child_ADDRESS 0x7DC8u    /* 03DDC8 */
+#define football_box_ADDRESS 0x7DCEu    /* 03DDCE */
 #define record_03DDD0_ADDRESS 0x7DD0u    /* 03DDD0 */
-#define indexed_table_03DDD2_ADDRESS 0x7DD2u    /* 03DDD2 */
+#define football_line_piece_box_ADDRESS 0x7DD2u    /* 03DDD2 */
 #define record_03DDD4_ADDRESS 0x7DD4u    /* 03DDD4 */
-#define child_object_03DDE6_ADDRESS 0x7DE6u    /* 03DDE6 */
-#define loaded_table_03DDEC_ADDRESS 0x7DECu    /* 03DDEC */
-#define child_object_03DE14_ADDRESS 0x7E14u    /* 03DE14 */
-#define child_object_03DE1C_ADDRESS 0x7E1Cu    /* 03DE1C */
-#define child_object_03DE24_ADDRESS 0x7E24u    /* 03DE24 */
-#define indexed_table_03DE50_ADDRESS 0x7E50u    /* 03DE50 */
+#define football_line_piece_child_ADDRESS 0x7DE6u    /* 03DDE6 */
+#define bear_states_ADDRESS 0x7DECu    /* 03DDEC */
+#define bear_start_child_1_ADDRESS 0x7E14u    /* 03DE14 */
+#define bear_start_child_2_ADDRESS 0x7E1Cu    /* 03DE1C */
+#define bear_start_child_3_ADDRESS 0x7E24u    /* 03DE24 */
+#define bear_box_ADDRESS 0x7E50u    /* 03DE50 */
 #define record_03DE52_ADDRESS 0x7E52u    /* 03DE52 */
-#define child_object_03DE54_ADDRESS 0x7E54u    /* 03DE54 */
-#define child_object_03DE5C_ADDRESS 0x7E5Cu    /* 03DE5C */
-#define indexed_table_03DE67_ADDRESS 0x7E67u    /* 03DE67 */
-#define indexed_table_03DE6B_ADDRESS 0x7E6Bu    /* 03DE6B */
-#define indexed_table_03DE70_ADDRESS 0x7E70u    /* 03DE70 */
-#define indexed_table_03DE90_ADDRESS 0x7E90u    /* 03DE90 */
+#define bear_boulder_child_1_ADDRESS 0x7E54u    /* 03DE54 */
+#define bear_boulder_child_2_ADDRESS 0x7E5Cu    /* 03DE5C */
+#define bear_beaten_vitality_ADDRESS 0x7E67u    /* 03DE67 */
+#define bear_gauge_healths_ADDRESS 0x7E6Bu    /* 03DE6B */
+#define bear_walk_speeds_ADDRESS 0x7E70u    /* 03DE70 */
+#define bear_charge_box_ADDRESS 0x7E90u    /* 03DE90 */
 #define record_03DE92_ADDRESS 0x7E92u    /* 03DE92 */
-#define child_object_03DE94_ADDRESS 0x7E94u    /* 03DE94 */
+#define bear_change_child_ADDRESS 0x7E94u    /* 03DE94 */
 #define loaded_table_03DECC_ADDRESS 0x7ECCu    /* 03DECC */
-#define loaded_table_03DEDC_ADDRESS 0x7EDCu    /* 03DEDC */
-#define child_object_03DF08_ADDRESS 0x7F08u    /* 03DF08 */
-#define child_object_03DF10_ADDRESS 0x7F10u    /* 03DF10 */
-#define indexed_table_03DF16_ADDRESS 0x7F16u    /* 03DF16 */
+#define stage_3_boss_states_ADDRESS 0x7EDCu    /* 03DEDC */
+#define stage_3_boss_child_ADDRESS 0x7F08u    /* 03DF08 */
+#define stage_3_boss_arrive_child_ADDRESS 0x7F10u    /* 03DF10 */
+#define stage_3_boss_box_ADDRESS 0x7F16u    /* 03DF16 */
 #define record_03DF18_ADDRESS 0x7F18u    /* 03DF18 */
 #define indexed_table_03DF1A_ADDRESS 0x7F1Au    /* 03DF1A */
 #define record_03DF1C_ADDRESS 0x7F1Cu    /* 03DF1C */
 #define indexed_table_03DF1E_ADDRESS 0x7F1Eu    /* 03DF1E */
 #define record_03DF20_ADDRESS 0x7F20u    /* 03DF20 */
-#define indexed_table_03DF22_ADDRESS 0x7F22u    /* 03DF22 */
+#define stage_3_boss_attack_box_ADDRESS 0x7F22u    /* 03DF22 */
 #define record_03DF24_ADDRESS 0x7F24u    /* 03DF24 */
 #define indexed_table_03DF26_ADDRESS 0x7F26u    /* 03DF26 */
 #define record_03DF28_ADDRESS 0x7F28u    /* 03DF28 */
 #define indexed_table_03DF2A_ADDRESS 0x7F2Au    /* 03DF2A */
 #define record_03DF2C_ADDRESS 0x7F2Cu    /* 03DF2C */
-#define indexed_table_03DF2E_ADDRESS 0x7F2Eu    /* 03DF2E */
+#define stage_3_bosses_joined_box_ADDRESS 0x7F2Eu    /* 03DF2E */
 #define record_03DF30_ADDRESS 0x7F30u    /* 03DF30 */
-#define indexed_table_03DF32_ADDRESS 0x7F32u    /* 03DF32 */
+#define stage_3_boss_strike_box_ADDRESS 0x7F32u    /* 03DF32 */
 #define record_03DF34_ADDRESS 0x7F34u    /* 03DF34 */
-#define indexed_table_03DF3D_ADDRESS 0x7F3Du    /* 03DF3D */
-#define indexed_table_03DF42_ADDRESS 0x7F42u    /* 03DF42 */
-#define indexed_table_03DF52_ADDRESS 0x7F52u    /* 03DF52 */
+#define stage_3_boss_beaten_vitality_ADDRESS 0x7F3Du    /* 03DF3D */
+#define stage_3_boss_walk_speeds_1_ADDRESS 0x7F42u    /* 03DF42 */
+#define stage_3_boss_walk_speeds_2_ADDRESS 0x7F52u    /* 03DF52 */
 #define bank_1e_states_ADDRESS 0x7F62u    /* 03DF62 */
-#define indexed_table_03DF9A_ADDRESS 0x7F9Au    /* 03DF9A */
+#define object_f9_box_ADDRESS 0x7F9Au    /* 03DF9A */
 #define record_03DF9C_ADDRESS 0x7F9Cu    /* 03DF9C */
-#define indexed_table_03DF9E_ADDRESS 0x7F9Eu    /* 03DF9E */
+#define object_f9_windup_box_ADDRESS 0x7F9Eu    /* 03DF9E */
 #define record_03DFA0_ADDRESS 0x7FA0u    /* 03DFA0 */
 #define indexed_table_03DFA2_ADDRESS 0x7FA2u    /* 03DFA2 */
-#define loaded_table_03DFAA_ADDRESS 0x7FAAu    /* 03DFAA */
+#define scripted_object_commands_ADDRESS 0x7FAAu    /* 03DFAA */
 #define story_script_03E62E_ADDRESS 0x662Eu    /* 03E62E */
 #define story_script_03E8A7_ADDRESS 0x68A7u    /* 03E8A7 */
 #define story_script_03E8C0_ADDRESS 0x68C0u    /* 03E8C0 */
@@ -3334,9 +4429,9 @@ extern const void *reset_vector_data;
 #define story_script_03E993_ADDRESS 0x6993u    /* 03E993 */
 #define fill_03E9BA_ADDRESS 0x69BAu    /* 03E9BA */
 #define fill_03ED54_ADDRESS 0x6D54u    /* 03ED54 */
-#define loaded_table_03F000_ADDRESS 0x7000u    /* 03F000 */
-#define loaded_table_03F04C_ADDRESS 0x704Cu    /* 03F04C */
-#define loaded_table_03F05C_ADDRESS 0x705Cu    /* 03F05C */
+#define story_actor_operations_ADDRESS 0x7000u    /* 03F000 */
+#define player_line_up_orders_ADDRESS 0x704Cu    /* 03F04C */
+#define story_player_place_offsets_ADDRESS 0x705Cu    /* 03F05C */
 #define story_script_03F06C_ADDRESS 0x706Cu    /* 03F06C */
 #define story_script_03F150_ADDRESS 0x7150u    /* 03F150 */
 #define story_script_03F1BD_ADDRESS 0x71BDu    /* 03F1BD */
@@ -3366,36 +4461,36 @@ extern const void *reset_vector_data;
 #define story_script_03FE31_ADDRESS 0x7E31u    /* 03FE31 */
 #define story_script_03FE4D_ADDRESS 0x7E4Du    /* 03FE4D */
 #define loaded_table_03FE5B_ADDRESS 0x7E5Bu    /* 03FE5B */
-#define loaded_table_03FEDC_ADDRESS 0x7EDCu    /* 03FEDC */
+#define story_scene_settings_ADDRESS 0x7EDCu    /* 03FEDC */
 #define fill_040D4C_ADDRESS 0x6D4Cu    /* 040D4C */
-#define loaded_table_041000_ADDRESS 0x7000u    /* 041000 */
-#define loaded_table_041010_ADDRESS 0x7010u    /* 041010 */
-#define loaded_table_041014_ADDRESS 0x7014u    /* 041014 */
-#define loaded_table_04101A_ADDRESS 0x701Au    /* 04101A */
-#define loaded_table_041026_ADDRESS 0x7026u    /* 041026 */
-#define loaded_table_041032_ADDRESS 0x7032u    /* 041032 */
-#define loaded_table_04103E_ADDRESS 0x703Eu    /* 04103E */
-#define loaded_table_04104C_ADDRESS 0x704Cu    /* 04104C */
-#define loaded_table_041056_ADDRESS 0x7056u    /* 041056 */
-#define loaded_table_04105A_ADDRESS 0x705Au    /* 04105A */
-#define loaded_table_041066_ADDRESS 0x7066u    /* 041066 */
-#define loaded_table_04106B_ADDRESS 0x706Bu    /* 04106B */
-#define loaded_table_041070_ADDRESS 0x7070u    /* 041070 */
-#define loaded_table_041075_ADDRESS 0x7075u    /* 041075 */
-#define loaded_table_04107A_ADDRESS 0x707Au    /* 04107A */
-#define loaded_table_041089_ADDRESS 0x7089u    /* 041089 */
-#define loaded_table_04108E_ADDRESS 0x708Eu    /* 04108E */
-#define loaded_table_041093_ADDRESS 0x7093u    /* 041093 */
-#define loaded_table_041098_ADDRESS 0x7098u    /* 041098 */
-#define loaded_table_04109D_ADDRESS 0x709Du    /* 04109D */
-#define loaded_table_0410A2_ADDRESS 0x70A2u    /* 0410A2 */
-#define loaded_table_0410A7_ADDRESS 0x70A7u    /* 0410A7 */
-#define loaded_table_0410AC_ADDRESS 0x70ACu    /* 0410AC */
-#define loaded_table_0410B1_ADDRESS 0x70B1u    /* 0410B1 */
-#define loaded_table_0410BB_ADDRESS 0x70BBu    /* 0410BB */
-#define loaded_table_0410C5_ADDRESS 0x70C5u    /* 0410C5 */
-#define loaded_table_0410CF_ADDRESS 0x70CFu    /* 0410CF */
-#define loaded_table_0410D9_ADDRESS 0x70D9u    /* 0410D9 */
+#define attract_opening_scenes_ADDRESS 0x7000u    /* 041000 */
+#define attract_opening_phases_ADDRESS 0x7010u    /* 041010 */
+#define attract_opening_end_phases_ADDRESS 0x7014u    /* 041014 */
+#define attract_bart_phases_ADDRESS 0x701Au    /* 04101A */
+#define attract_homer_phases_ADDRESS 0x7026u    /* 041026 */
+#define attract_lisa_phases_ADDRESS 0x7032u    /* 041032 */
+#define attract_marge_phases_ADDRESS 0x703Eu    /* 04103E */
+#define attract_leap_phases_ADDRESS 0x704Cu    /* 04104C */
+#define attract_last_screen_phases_ADDRESS 0x7056u    /* 041056 */
+#define attract_profile_move_steps_ADDRESS 0x705Au    /* 04105A */
+#define attract_opening_picture_ADDRESS 0x7066u    /* 041066 */
+#define attract_bart_scene_picture_ADDRESS 0x706Bu    /* 04106B */
+#define attract_homer_scene_picture_ADDRESS 0x7070u    /* 041070 */
+#define attract_lisa_scene_picture_1_ADDRESS 0x7075u    /* 041075 */
+#define attract_lisa_scene_picture_2_ADDRESS 0x707Au    /* 04107A */
+#define attract_marge_scene_picture_2_ADDRESS 0x7089u    /* 041089 */
+#define attract_marge_scene_picture_1_ADDRESS 0x708Eu    /* 04108E */
+#define attract_marge_scene_moving_picture_ADDRESS 0x7093u    /* 041093 */
+#define attract_leap_picture_2_ADDRESS 0x7098u    /* 041098 */
+#define attract_marge_scene_picture_3_ADDRESS 0x709Du    /* 04109D */
+#define attract_marge_scene_picture_4_ADDRESS 0x70A2u    /* 0410A2 */
+#define attract_leap_picture_1_ADDRESS 0x70A7u    /* 0410A7 */
+#define attract_leap_picture_3_ADDRESS 0x70ACu    /* 0410AC */
+#define attract_bart_profile_pictures_ADDRESS 0x70B1u    /* 0410B1 */
+#define attract_homer_profile_pictures_ADDRESS 0x70BBu    /* 0410BB */
+#define attract_lisa_profile_pictures_ADDRESS 0x70C5u    /* 0410C5 */
+#define attract_marge_profile_pictures_ADDRESS 0x70CFu    /* 0410CF */
+#define attract_maggie_profile_pictures_ADDRESS 0x70D9u    /* 0410D9 */
 #define profile_text_041118_ADDRESS 0x7118u    /* 041118 */
 #define profile_text_04114A_ADDRESS 0x714Au    /* 04114A */
 #define profile_text_041170_ADDRESS 0x7170u    /* 041170 */
@@ -3416,7 +4511,7 @@ extern const void *reset_vector_data;
 #define indexed_table_0413C4_ADDRESS 0x73C4u    /* 0413C4 */
 #define indexed_table_0413D3_ADDRESS 0x73D3u    /* 0413D3 */
 #define indexed_table_0413E2_ADDRESS 0x73E2u    /* 0413E2 */
-#define indexed_table_041405_ADDRESS 0x7405u    /* 041405 */
+#define continue_count_blank_picture_ADDRESS 0x7405u    /* 041405 */
 #define indexed_table_041448_ADDRESS 0x7448u    /* 041448 */
 #define indexed_table_04148B_ADDRESS 0x748Bu    /* 04148B */
 #define indexed_table_0414CE_ADDRESS 0x74CEu    /* 0414CE */
@@ -3426,10 +4521,10 @@ extern const void *reset_vector_data;
 #define indexed_table_0415DA_ADDRESS 0x75DAu    /* 0415DA */
 #define indexed_table_04161D_ADDRESS 0x761Du    /* 04161D */
 #define indexed_table_041660_ADDRESS 0x7660u    /* 041660 */
-#define indexed_table_0416A3_ADDRESS 0x76A3u    /* 0416A3 */
-#define indexed_table_0416F4_ADDRESS 0x76F4u    /* 0416F4 */
-#define indexed_table_041745_ADDRESS 0x7745u    /* 041745 */
-#define loaded_table_04177A_ADDRESS 0x777Au    /* 04177A */
+#define continue_picture_ADDRESS 0x76A3u    /* 0416A3 */
+#define game_over_picture_ADDRESS 0x76F4u    /* 0416F4 */
+#define credit_picture_ADDRESS 0x7745u    /* 041745 */
+#define bcd_bit_values_ADDRESS 0x777Au    /* 04177A */
 #define fill_0417C4_ADDRESS 0x77C4u    /* 0417C4 */
 #define set_index_042000_ADDRESS 0x6000u    /* 042000 */
 #define animation_table_042016_ADDRESS 0x6016u    /* 042016 */
@@ -6708,20 +7803,20 @@ extern const void *reset_vector_data;
 #define palette_effect_05DE00_ADDRESS 0x7E00u    /* 05DE00 */
 #define palette_effect_05DE40_ADDRESS 0x7E40u    /* 05DE40 */
 #define fill_05DE6D_ADDRESS 0x7E6Du    /* 05DE6D */
-#define loaded_table_05E047_ADDRESS 0x6047u    /* 05E047 */
-#define loaded_table_05E0A1_ADDRESS 0x60A1u    /* 05E0A1 */
-#define loaded_table_05E0C9_ADDRESS 0x60C9u    /* 05E0C9 */
-#define loaded_table_05E0F2_ADDRESS 0x60F2u    /* 05E0F2 */
-#define loaded_table_05E17D_ADDRESS 0x617Du    /* 05E17D */
-#define loaded_table_05E21B_ADDRESS 0x621Bu    /* 05E21B */
-#define loaded_table_05E277_ADDRESS 0x6277u    /* 05E277 */
-#define loaded_table_05E2C9_ADDRESS 0x62C9u    /* 05E2C9 */
-#define loaded_table_05E42B_ADDRESS 0x642Bu    /* 05E42B */
-#define loaded_table_05E46D_ADDRESS 0x646Du    /* 05E46D */
+#define test_menu_page_steps_ADDRESS 0x6047u    /* 05E047 */
+#define test_rom_check_page_steps_ADDRESS 0x60A1u    /* 05E0A1 */
+#define test_screen_check_page_steps_ADDRESS 0x60C9u    /* 05E0C9 */
+#define test_color_check_page_steps_ADDRESS 0x60F2u    /* 05E0F2 */
+#define test_io_check_page_steps_ADDRESS 0x617Du    /* 05E17D */
+#define test_music_page_steps_ADDRESS 0x621Bu    /* 05E21B */
+#define test_sound_page_steps_ADDRESS 0x6277u    /* 05E277 */
+#define test_options_page_steps_ADDRESS 0x62C9u    /* 05E2C9 */
+#define test_choose_setting_steps_ADDRESS 0x642Bu    /* 05E42B */
+#define test_factory_setting_page_steps_ADDRESS 0x646Du    /* 05E46D */
 #define loaded_table_05E691_ADDRESS 0x6691u    /* 05E691 */
 #define fill_05EFA8_ADDRESS 0x6FA8u    /* 05EFA8 */
 #define loaded_table_05F1E0_ADDRESS 0x71E0u    /* 05F1E0 */
-#define loaded_table_05F580_ADDRESS 0x7580u    /* 05F580 */
+#define test_pages_ADDRESS 0x7580u    /* 05F580 */
 #define test_mode_page_05F5EE_ADDRESS 0x75EEu    /* 05F5EE */
 #define test_mode_page_05F634_ADDRESS 0x7634u    /* 05F634 */
 #define test_mode_page_05F640_ADDRESS 0x7640u    /* 05F640 */
@@ -6747,7 +7842,7 @@ extern const void *reset_vector_data;
 #define test_mode_text_05F96B_ADDRESS 0x796Bu    /* 05F96B */
 #define test_mode_text_05F977_ADDRESS 0x7977u    /* 05F977 */
 #define test_mode_text_05F97F_ADDRESS 0x797Fu    /* 05F97F */
-#define test_mode_text_05F984_ADDRESS 0x7984u    /* 05F984 */
+#define test_text_player_ADDRESS 0x7984u    /* 05F984 */
 #define test_mode_text_05F98C_ADDRESS 0x798Cu    /* 05F98C */
 #define test_mode_text_05F9BA_ADDRESS 0x79BAu    /* 05F9BA */
 #define test_mode_text_05F9C2_ADDRESS 0x79C2u    /* 05F9C2 */
@@ -6767,19 +7862,19 @@ extern const void *reset_vector_data;
 #define test_mode_text_05FA8A_ADDRESS 0x7A8Au    /* 05FA8A */
 #define test_mode_text_05FA8F_ADDRESS 0x7A8Fu    /* 05FA8F */
 #define test_mode_text_05FA95_ADDRESS 0x7A95u    /* 05FA95 */
-#define test_mode_text_05FA9B_ADDRESS 0x7A9Bu    /* 05FA9B */
-#define test_mode_text_05FAA0_ADDRESS 0x7AA0u    /* 05FAA0 */
+#define test_text_coin_ADDRESS 0x7A9Bu    /* 05FA9B */
+#define test_text_credit_ADDRESS 0x7AA0u    /* 05FAA0 */
 #define test_mode_text_05FAA8_ADDRESS 0x7AA8u    /* 05FAA8 */
 #define test_mode_text_05FAB2_ADDRESS 0x7AB2u    /* 05FAB2 */
 #define test_mode_text_05FAB5_ADDRESS 0x7AB5u    /* 05FAB5 */
-#define test_mode_text_05FABA_ADDRESS 0x7ABAu    /* 05FABA */
+#define test_text_normal_ADDRESS 0x7ABAu    /* 05FABA */
 #define test_mode_text_05FAC1_ADDRESS 0x7AC1u    /* 05FAC1 */
 #define test_mode_text_05FAC8_ADDRESS 0x7AC8u    /* 05FAC8 */
 #define test_mode_text_05FACE_ADDRESS 0x7ACEu    /* 05FACE */
 #define test_mode_text_05FAD5_ADDRESS 0x7AD5u    /* 05FAD5 */
-#define test_mode_text_05FADE_ADDRESS 0x7ADEu    /* 05FADE */
-#define test_mode_text_05FAE7_ADDRESS 0x7AE7u    /* 05FAE7 */
-#define test_mode_text_05FAEE_ADDRESS 0x7AEEu    /* 05FAEE */
+#define test_text_monaural_ADDRESS 0x7ADEu    /* 05FADE */
+#define test_text_stereo_ADDRESS 0x7AE7u    /* 05FAE7 */
+#define test_text_factory_setting_ADDRESS 0x7AEEu    /* 05FAEE */
 #define test_mode_text_05FAF2_ADDRESS 0x7AF2u    /* 05FAF2 */
 #define test_mode_text_05FAF7_ADDRESS 0x7AF7u    /* 05FAF7 */
 #define test_mode_text_05FAFA_ADDRESS 0x7AFAu    /* 05FAFA */
@@ -6790,22 +7885,22 @@ extern const void *reset_vector_data;
 #define test_mode_text_05FB2F_ADDRESS 0x7B2Fu    /* 05FB2F */
 #define test_mode_text_05FB35_ADDRESS 0x7B35u    /* 05FB35 */
 #define test_mode_text_05FB39_ADDRESS 0x7B39u    /* 05FB39 */
-#define test_mode_text_05FB3D_ADDRESS 0x7B3Du    /* 05FB3D */
+#define test_text_upside_down_ADDRESS 0x7B3Du    /* 05FB3D */
 #define test_mode_text_05FB49_ADDRESS 0x7B49u    /* 05FB49 */
-#define test_mode_text_05FB52_ADDRESS 0x7B52u    /* 05FB52 */
-#define test_mode_text_05FB5A_ADDRESS 0x7B5Au    /* 05FB5A */
-#define loaded_table_05FB65_ADDRESS 0x7B65u    /* 05FB65 */
-#define loaded_table_05FB68_ADDRESS 0x7B68u    /* 05FB68 */
-#define indexed_table_05FC7C_ADDRESS 0x7C7Cu    /* 05FC7C */
-#define indexed_table_05FC9A_ADDRESS 0x7C9Au    /* 05FC9A */
-#define indexed_table_05FCC7_ADDRESS 0x7CC7u    /* 05FCC7 */
-#define indexed_table_05FCCC_ADDRESS 0x7CCCu    /* 05FCCC */
-#define indexed_table_05FCF7_ADDRESS 0x7CF7u    /* 05FCF7 */
-#define indexed_table_05FD08_ADDRESS 0x7D08u    /* 05FD08 */
-#define loaded_table_05FD23_ADDRESS 0x7D23u    /* 05FD23 */
-#define loaded_table_05FD36_ADDRESS 0x7D36u    /* 05FD36 */
+#define test_text_with_ADDRESS 0x7B52u    /* 05FB52 */
+#define test_text_without_ADDRESS 0x7B5Au    /* 05FB5A */
+#define test_text_on_ADDRESS 0x7B65u    /* 05FB65 */
+#define test_text_off_ADDRESS 0x7B68u    /* 05FB68 */
+#define eeprom_unlock_bits_ADDRESS 0x7C7Cu    /* 05FC7C */
+#define eeprom_write_bits_ADDRESS 0x7C9Au    /* 05FC9A */
+#define eeprom_deselect_bits_ADDRESS 0x7CC7u    /* 05FCC7 */
+#define eeprom_lock_bits_ADDRESS 0x7CCCu    /* 05FCCC */
+#define eeprom_ones_bits_ADDRESS 0x7CF7u    /* 05FCF7 */
+#define eeprom_read_bits_ADDRESS 0x7D08u    /* 05FD08 */
+#define eeprom_receive_bits_ADDRESS 0x7D23u    /* 05FD23 */
+#define eeprom_factory_settings_ADDRESS 0x7D36u    /* 05FD36 */
 #define loaded_table_05FD42_ADDRESS 0x7D42u    /* 05FD42 */
-#define loaded_table_05FD78_ADDRESS 0x7D78u    /* 05FD78 */
+#define game_start_portraits_steps_ADDRESS 0x7D78u    /* 05FD78 */
 #define loaded_table_05FD7C_ADDRESS 0x7D7Cu    /* 05FD7C */
 #define fill_05FDE8_ADDRESS 0x7DE8u    /* 05FDE8 */
 #define set_index_060000_ADDRESS 0x6000u    /* 060000 */
@@ -11482,7 +12577,7 @@ extern const void *reset_vector_data;
 #define animation_077C92_ADDRESS 0x7C92u    /* 077C92 */
 #define sprite_list_077C9A_ADDRESS 0x7C9Au    /* 077C9A */
 #define fill_077CA6_ADDRESS 0x7CA6u    /* 077CA6 */
-#define loaded_table_078000_ADDRESS 0x8000u    /* 078000 */
+#define fixed_program_start_ADDRESS 0x8000u    /* 078000 */
 #define code_read_as_tiles_078593_ADDRESS 0x8593u    /* 078593 */
 #define code_read_as_tiles_0785DB_ADDRESS 0x85DBu    /* 0785DB */
 #define code_read_as_tiles_0785F9_ADDRESS 0x85F9u    /* 0785F9 */
@@ -11494,10 +12589,10 @@ extern const void *reset_vector_data;
 #define fill_07D8B9_ADDRESS 0xD8B9u    /* 07D8B9 */
 #define code_read_as_a_map_07DA7B_ADDRESS 0xDA7Bu    /* 07DA7B */
 #define fill_07E2DB_ADDRESS 0xE2DBu    /* 07E2DB */
-#define loaded_table_07E380_ADDRESS 0xE380u    /* 07E380 */
-#define loaded_table_07E3D0_ADDRESS 0xE3D0u    /* 07E3D0 */
+#define default_high_scores_ADDRESS 0xE380u    /* 07E380 */
+#define ram_check_bad_texts_ADDRESS 0xE3D0u    /* 07E3D0 */
 #define loaded_table_07E3FB_ADDRESS 0xE3FBu    /* 07E3FB */
-#define loaded_table_07E41B_ADDRESS 0xE41Bu    /* 07E41B */
+#define check_result_texts_ADDRESS 0xE41Bu    /* 07E41B */
 #define loaded_table_07E42B_ADDRESS 0xE42Bu    /* 07E42B */
 #define loaded_table_07E431_ADDRESS 0xE431u    /* 07E431 */
 #define indexed_table_07E530_ADDRESS 0xE530u    /* 07E530 */
@@ -11535,13 +12630,13 @@ extern const void *reset_vector_data;
 #define loaded_table_07E7C1_ADDRESS 0xE7C1u    /* 07E7C1 */
 #define loaded_table_07E7C7_ADDRESS 0xE7C7u    /* 07E7C7 */
 #define loaded_table_07E7CD_ADDRESS 0xE7CDu    /* 07E7CD */
-#define loaded_table_07E803_ADDRESS 0xE803u    /* 07E803 */
-#define loaded_table_07E80F_ADDRESS 0xE80Fu    /* 07E80F */
-#define indexed_table_07E89D_ADDRESS 0xE89Du    /* 07E89D */
-#define indexed_table_07E8B5_ADDRESS 0xE8B5u    /* 07E8B5 */
-#define loaded_table_07E971_ADDRESS 0xE971u    /* 07E971 */
-#define loaded_table_07E975_ADDRESS 0xE975u    /* 07E975 */
-#define loaded_table_07E97B_ADDRESS 0xE97Bu    /* 07E97B */
+#define player_status_handlers_ADDRESS 0xE803u    /* 07E803 */
+#define game_phase_checks_ADDRESS 0xE80Fu    /* 07E80F */
+#define stage_music_lists_ADDRESS 0xE89Du    /* 07E89D */
+#define resumed_stage_music_lists_ADDRESS 0xE8B5u    /* 07E8B5 */
+#define palette_effect_directions_ADDRESS 0xE971u    /* 07E971 */
+#define palette_effect_commands_ADDRESS 0xE975u    /* 07E975 */
+#define palette_fade_directions_ADDRESS 0xE97Bu    /* 07E97B */
 #define palette_sets_07E9E7_ADDRESS 0xE9E7u    /* 07E9E7 */
 #define palette_sets_07E9FB_ADDRESS 0xE9FBu    /* 07E9FB */
 #define palette_sets_07EA0F_ADDRESS 0xEA0Fu    /* 07EA0F */
@@ -11663,57 +12758,54 @@ extern const void *reset_vector_data;
 #define layer_mode_list_07EFB3_ADDRESS 0xEFB3u    /* 07EFB3 */
 #define tile_picture_place_07EFB7_ADDRESS 0xEFB7u    /* 07EFB7 */
 #define loaded_table_07F019_ADDRESS 0xF019u    /* 07F019 */
-#define loaded_table_07F134_ADDRESS 0xF134u    /* 07F134 */
-#define hit_box_07F13C_ADDRESS 0xF13Cu    /* 07F13C */
-#define enemy_behaviour_07F144_ADDRESS 0xF144u    /* 07F144 */
+#define enemy_hit_kind_reactions_ADDRESS 0xF134u    /* 07F134 */
 #define loaded_table_07F19C_ADDRESS 0xF19Cu    /* 07F19C */
-#define object_setup_07F1A8_ADDRESS 0xF1A8u    /* 07F1A8 */
-#define loaded_table_07F1AE_ADDRESS 0xF1AEu    /* 07F1AE */
-#define loaded_table_07F1BE_ADDRESS 0xF1BEu    /* 07F1BE */
-#define loaded_table_07F1C4_ADDRESS 0xF1C4u    /* 07F1C4 */
-#define loaded_table_07F1CA_ADDRESS 0xF1CAu    /* 07F1CA */
-#define loaded_table_07F1D0_ADDRESS 0xF1D0u    /* 07F1D0 */
-#define loaded_table_07F1D6_ADDRESS 0xF1D6u    /* 07F1D6 */
-#define loaded_table_07F1DC_ADDRESS 0xF1DCu    /* 07F1DC */
-#define loaded_table_07F1E2_ADDRESS 0xF1E2u    /* 07F1E2 */
-#define loaded_table_07F1E8_ADDRESS 0xF1E8u    /* 07F1E8 */
-#define loaded_table_07F1EE_ADDRESS 0xF1EEu    /* 07F1EE */
-#define loaded_table_07F1F4_ADDRESS 0xF1F4u    /* 07F1F4 */
-#define loaded_table_07F1F8_ADDRESS 0xF1F8u    /* 07F1F8 */
-#define loaded_table_07F1FE_ADDRESS 0xF1FEu    /* 07F1FE */
-#define loaded_table_07F202_ADDRESS 0xF202u    /* 07F202 */
-#define loaded_table_07F208_ADDRESS 0xF208u    /* 07F208 */
-#define loaded_table_07F210_ADDRESS 0xF210u    /* 07F210 */
-#define loaded_table_07F214_ADDRESS 0xF214u    /* 07F214 */
-#define loaded_table_07F21A_ADDRESS 0xF21Au    /* 07F21A */
-#define loaded_table_07F21E_ADDRESS 0xF21Eu    /* 07F21E */
-#define loaded_table_07F222_ADDRESS 0xF222u    /* 07F222 */
-#define loaded_table_07F228_ADDRESS 0xF228u    /* 07F228 */
-#define loaded_table_07F22E_ADDRESS 0xF22Eu    /* 07F22E */
-#define loaded_table_07F248_ADDRESS 0xF248u    /* 07F248 */
-#define loaded_table_07F24C_ADDRESS 0xF24Cu    /* 07F24C */
-#define loaded_table_07F250_ADDRESS 0xF250u    /* 07F250 */
-#define loaded_table_07F254_ADDRESS 0xF254u    /* 07F254 */
-#define loaded_table_07F258_ADDRESS 0xF258u    /* 07F258 */
-#define loaded_table_07F25E_ADDRESS 0xF25Eu    /* 07F25E */
-#define loaded_table_07F262_ADDRESS 0xF262u    /* 07F262 */
-#define loaded_table_07F266_ADDRESS 0xF266u    /* 07F266 */
-#define loaded_table_07F268_ADDRESS 0xF268u    /* 07F268 */
-#define loaded_table_07F26E_ADDRESS 0xF26Eu    /* 07F26E */
-#define loaded_table_07F274_ADDRESS 0xF274u    /* 07F274 */
-#define loaded_table_07F27A_ADDRESS 0xF27Au    /* 07F27A */
-#define loaded_table_07F280_ADDRESS 0xF280u    /* 07F280 */
+#define enemy_climb_actions_ADDRESS 0xF1AEu    /* 07F1AE */
+#define enemy_climb_up_front_steps_ADDRESS 0xF1BEu    /* 07F1BE */
+#define enemy_climb_up_back_steps_ADDRESS 0xF1C4u    /* 07F1C4 */
+#define enemy_climb_up_left_steps_ADDRESS 0xF1CAu    /* 07F1CA */
+#define enemy_climb_up_right_steps_ADDRESS 0xF1D0u    /* 07F1D0 */
+#define enemy_hop_down_front_steps_ADDRESS 0xF1D6u    /* 07F1D6 */
+#define enemy_hop_down_back_steps_ADDRESS 0xF1DCu    /* 07F1DC */
+#define enemy_hop_down_left_steps_ADDRESS 0xF1E2u    /* 07F1E2 */
+#define enemy_hop_down_right_steps_ADDRESS 0xF1E8u    /* 07F1E8 */
+#define enemy_get_around_steps_ADDRESS 0xF1EEu    /* 07F1EE */
+#define enemy_walk_to_target_side_steps_ADDRESS 0xF1F4u    /* 07F1F4 */
+#define enemy_line_up_near_target_steps_ADDRESS 0xF1F8u    /* 07F1F8 */
+#define enemy_walk_to_target_steps_ADDRESS 0xF1FEu    /* 07F1FE */
+#define enemy_line_up_with_target_steps_ADDRESS 0xF202u    /* 07F202 */
+#define enemy_keep_distance_steps_ADDRESS 0xF208u    /* 07F208 */
+#define enemy_wait_while_target_down_steps_ADDRESS 0xF210u    /* 07F210 */
+#define enemy_back_off_steps_ADDRESS 0xF214u    /* 07F214 */
+#define enemy_step_toward_target_steps_ADDRESS 0xF21Au    /* 07F21A */
+#define enemy_circle_target_steps_ADDRESS 0xF21Eu    /* 07F21E */
+#define enemy_wander_steps_ADDRESS 0xF222u    /* 07F222 */
+#define enemy_rush_at_target_steps_ADDRESS 0xF228u    /* 07F228 */
+#define enemy_line_up_and_pace_steps_ADDRESS 0xF22Eu    /* 07F22E */
+#define enemy_flinch_from_behind_steps_ADDRESS 0xF248u    /* 07F248 */
+#define enemy_flinch_kind_12_steps_ADDRESS 0xF24Cu    /* 07F24C */
+#define enemy_flinch_kind_11_steps_ADDRESS 0xF250u    /* 07F250 */
+#define enemy_knocked_forward_steps_ADDRESS 0xF254u    /* 07F254 */
+#define enemy_knocked_back_steps_ADDRESS 0xF258u    /* 07F258 */
+#define enemy_get_up_steps_ADDRESS 0xF25Eu    /* 07F25E */
+#define enemy_die_steps_ADDRESS 0xF262u    /* 07F262 */
+#define enemy_drop_steps_ADDRESS 0xF266u    /* 07F266 */
+#define enemy_sent_flying_steps_ADDRESS 0xF268u    /* 07F268 */
+#define enemy_spin_backward_steps_ADDRESS 0xF26Eu    /* 07F26E */
+#define enemy_defeated_forward_steps_ADDRESS 0xF274u    /* 07F274 */
+#define enemy_defeated_backward_steps_ADDRESS 0xF27Au    /* 07F27A */
+#define enemy_pit_steps_ADDRESS 0xF280u    /* 07F280 */
 #define hit_box_07F284_ADDRESS 0xF284u    /* 07F284 */
-#define loaded_table_07F28C_ADDRESS 0xF28Cu    /* 07F28C */
-#define object_setup_07F290_ADDRESS 0xF290u    /* 07F290 */
-#define loaded_table_07F296_ADDRESS 0xF296u    /* 07F296 */
-#define loaded_table_07F29E_ADDRESS 0xF29Eu    /* 07F29E */
-#define loaded_table_07F2EC_ADDRESS 0xF2ECu    /* 07F2EC */
-#define loaded_table_07F40D_ADDRESS 0xF40Du    /* 07F40D */
-#define loaded_table_07F4F4_ADDRESS 0xF4F4u    /* 07F4F4 */
+#define kind_90_effect_steps_ADDRESS 0xF28Cu    /* 07F28C */
+#define kind_90_effect_setup_ADDRESS 0xF290u    /* 07F290 */
+#define kind_90_effect_child_ADDRESS 0xF296u    /* 07F296 */
+#define enemy_hurt_steps_ADDRESS 0xF29Eu    /* 07F29E */
+#define enemy_type_handlers_ADDRESS 0xF2ECu    /* 07F2EC */
+#define object_list_1_type_handlers_ADDRESS 0xF40Du    /* 07F40D */
+#define child_object_type_handlers_ADDRESS 0xF4F4u    /* 07F4F4 */
 #define loaded_table_07F577_ADDRESS 0xF577u    /* 07F577 */
-#define loaded_table_07F586_ADDRESS 0xF586u    /* 07F586 */
-#define loaded_table_07F5A2_ADDRESS 0xF5A2u    /* 07F5A2 */
+#define enemy_think_actions_ADDRESS 0xF586u    /* 07F586 */
+#define enemy_action_handlers_ADDRESS 0xF5A2u    /* 07F5A2 */
 #define unused_object_handlers_ADDRESS 0xF65Fu    /* 07F65F */
 #define loaded_table_07F662_ADDRESS 0xF662u    /* 07F662 */
 
@@ -12562,6 +13654,1482 @@ struct tile_picture
 	uint8_t width;
 };
 
+struct object
+{
+	union
+	{
+		struct
+		{
+			uint16_t draw_next;
+			uint16_t floor_z;
+			uint8_t shadow_player;
+			uint16_t sprites;
+			uint8_t unk_58;
+			uint8_t entrance_pending;
+			uint8_t unk_56;
+			uint16_t unk_54;
+			uint8_t unk_53;
+			uint8_t unk_52;
+			uint8_t unk_51;
+			uint8_t unk_50;
+			uint8_t unk_4F;
+			uint8_t unk_4E;
+			uint8_t unk_4D;
+			uint16_t unk_4B;
+			uint8_t pad_15[0x1];
+			uint16_t hit_box;
+			uint8_t next_floor_cell;
+			uint8_t floor_cell;
+			uint8_t unk_45;
+			uint8_t unk_44;
+			uint8_t unk_43;
+			int8_t enemy_class;
+			uint16_t parent;
+			uint8_t unk_3F;
+			uint8_t unk_3E;
+			uint8_t unk_3D;
+			uint8_t unk_3C;
+			uint8_t timer;
+			uint8_t retarget_time;
+			uint16_t target;
+			uint8_t unk_37;
+			uint8_t target_direction;
+			uint8_t unk_35;
+			uint8_t unk_34;
+			uint8_t hit_from_behind;
+			uint8_t unk_32;
+			uint8_t blocked;
+			uint8_t parameter;
+			uint16_t target_dy;
+			uint16_t target_dx;
+			uint16_t behaviour;
+			uint8_t action_step;
+			uint8_t action;
+			uint8_t points;
+			uint16_t hit_by;
+			uint8_t box_dz;
+			int8_t box_dy;
+			int8_t box_dx;
+			uint8_t box_height;
+			uint8_t box_depth;
+			uint8_t box_width;
+			uint8_t hit;
+			uint8_t attack;
+			uint8_t damage;
+			uint8_t vitality;
+			int16_t z_speed;
+			uint8_t z_fraction;
+			uint16_t z;
+			int16_t y_speed;
+			uint8_t y_fraction;
+			uint16_t y;
+			int16_t x_speed;
+			uint8_t x_fraction;
+			uint16_t x;
+			uint8_t zoom_y;
+			uint8_t zoom_x;
+			uint8_t attributes;
+			uint8_t frame_time;
+			uint8_t frame;
+			uint8_t animation_flags;
+			uint8_t animation;
+			uint8_t kind;
+			uint8_t pad_5C[0x1];
+			uint8_t state;
+			int8_t type;
+		};
+		struct
+		{
+			uint8_t pad_00[0x36];
+			uint16_t zoom;
+		} attract_opening;
+		struct
+		{
+			uint8_t pad_00[0x37];
+			uint8_t move_frames;
+			uint8_t pad_38[0x26];
+			uint8_t move_step;
+		} attract_profile;
+		struct
+		{
+			uint8_t pad_00[0x18];
+			uint8_t attack_health;
+			uint8_t flinch_health;
+			uint8_t pad_1A[0x6];
+			uint8_t bounces;
+			uint8_t pad_21[0x4];
+			uint8_t charge_timer;
+			uint8_t pad_26[0x3];
+			uint8_t charged;
+			uint16_t chase_target;
+			uint8_t pad_2C[0x4];
+			uint8_t wait;
+			uint8_t phase;
+		} bear;
+		struct
+		{
+			uint8_t pad_00[0x18];
+			uint8_t attack_health;
+			uint8_t flinch_health;
+			uint8_t pad_1A[0x6];
+			uint8_t bounces;
+			uint8_t pad_21[0x4];
+			uint8_t charge_timer;
+			uint8_t pad_26[0x3];
+			uint8_t charged;
+			uint16_t chase_target;
+			uint8_t pad_2C[0x4];
+			uint8_t wait;
+			uint8_t landed;
+		} bear_boulder;
+		struct
+		{
+			uint8_t pad_00[0xA];
+			uint16_t rest_height;
+			uint8_t pad_0C[0xC];
+			uint8_t attack_health;
+			uint8_t flinch_health;
+			uint8_t pad_1A[0x6];
+			uint8_t bounces;
+			uint8_t pad_21[0x4];
+			uint8_t charge_timer;
+			uint8_t pad_26[0x3];
+			uint8_t charged;
+			uint16_t chase_target;
+			uint8_t pad_2C[0x4];
+			uint8_t wait;
+			uint8_t phase;
+			uint8_t number;
+		} bear_part;
+		struct
+		{
+			uint8_t pad_00[0x22];
+			uint8_t carried;
+		} bird_item;
+		struct
+		{
+			uint8_t pad_00[0x1B];
+			uint8_t flight_step;
+			uint8_t flight;
+			uint8_t press_rate;
+			uint8_t press_wait;
+			uint8_t lie_time;
+			uint8_t too_small;
+			uint8_t in_game;
+			uint8_t lift_time;
+			uint8_t pad_23[0x4];
+			uint16_t blower;
+			uint16_t middle_part;
+			uint16_t flyer;
+			uint8_t growing;
+			uint16_t size;
+			uint8_t pad_30[0x1];
+			int16_t growth;
+			uint16_t height_zoom;
+			uint16_t width_zoom;
+		} bonus_1;
+		struct
+		{
+			uint8_t pad_00[0x20];
+			uint8_t quiet_frames;
+			uint8_t pad_21[0xD];
+			uint8_t reaction_time;
+			uint8_t reaction;
+			uint8_t pad_30[0x2D];
+			uint16_t level;
+		} bonus_2;
+		struct
+		{
+			uint8_t pad_00[0x17];
+			uint8_t no_points;
+			uint8_t hop;
+			uint8_t points_shown;
+			uint8_t place;
+			uint16_t text;
+			uint8_t text_wait;
+			uint16_t text_cursor;
+			uint8_t pad_20[0x10];
+			uint8_t look;
+		} bonus_results;
+		struct
+		{
+			uint8_t pad_00[0x20];
+			uint8_t turn;
+			uint8_t heading;
+		} boss_ball;
+		struct
+		{
+			uint8_t pad_00[0x35];
+			uint8_t open;
+			uint16_t other_half;
+		} boss_door;
+		struct
+		{
+			uint8_t pad_00[0x9];
+			uint8_t full_vitality;
+			uint16_t shade_job;
+			uint8_t shade_level;
+		} boss_shade;
+		struct
+		{
+			uint8_t pad_00[0x30];
+			uint8_t frames_left;
+		} boss_speech_balloon;
+		struct
+		{
+			uint8_t pad_00[0x22];
+			uint8_t wait_count;
+		} boulder;
+		struct
+		{
+			uint8_t pad_00[0x7];
+			uint8_t carrier_kind;
+			uint8_t pad_08[0x1B];
+			uint8_t bounces_left;
+			uint8_t pad_24[0x4];
+			uint8_t done;
+			uint8_t pad_29[0xB];
+			uint16_t owner;
+		} bouncing_prop;
+		struct
+		{
+			uint8_t pad_00[0x7];
+			uint8_t carrier_kind;
+			uint8_t pad_08[0x1A];
+			uint8_t carried;
+			uint8_t flight_count;
+		} bouncing_throwable;
+		struct
+		{
+			uint8_t pad_00[0x24];
+			uint8_t fuse;
+		} burns_bomb;
+		struct
+		{
+			uint8_t pad_00[0x36];
+			uint16_t piece;
+		} burns_breakout;
+		struct
+		{
+			uint8_t pad_00[0x37];
+			uint8_t blink_frames;
+		} burns_debris;
+		struct
+		{
+			uint8_t pad_00[0x35];
+			uint16_t robot;
+		} burns_held_part;
+		struct
+		{
+			uint8_t pad_00[0x18];
+			uint16_t walk_frames;
+			uint16_t held_part;
+			uint8_t holding_part;
+			uint16_t part_frames;
+			uint8_t shots_fired;
+			uint16_t volley_frames;
+			uint8_t bombs_lobbed;
+			uint16_t lob_frames;
+			uint8_t pad_25[0x1];
+			uint16_t maggie;
+			uint8_t pad_28[0x2];
+			uint8_t attack_choice;
+			uint8_t form_extra;
+			uint8_t pad_2C[0x2];
+			uint8_t walk_direction;
+			uint8_t form_base;
+			uint8_t health_mark;
+			uint8_t target_heading;
+			uint8_t aim;
+			uint16_t target_player;
+			uint8_t target_frames;
+			uint8_t wait_frames;
+			uint8_t step;
+		} burns_robot;
+		struct
+		{
+			uint8_t pad_00[0x36];
+			uint8_t arm_frames;
+		} burns_shot;
+		struct
+		{
+			uint8_t pad_00[0x37];
+			uint8_t flight_frames;
+		} burns_tossed_part;
+		struct
+		{
+			uint8_t pad_00[0x20];
+			uint8_t turn;
+			uint8_t direction;
+			uint8_t speed;
+			uint8_t chases_left;
+		} buzzing_chaser;
+		struct
+		{
+			uint8_t pad_00[0x20];
+			uint16_t trigger_x;
+			uint8_t pad_22[0x12];
+			uint16_t animations;
+		} bystander;
+		struct
+		{
+			uint8_t pad_00[0x24];
+			uint8_t timer;
+			uint8_t spawned;
+			uint8_t pad_26[0x9];
+			uint8_t spawn_list;
+		} car_doors;
+		struct
+		{
+			uint8_t pad_00[0x22];
+			uint8_t carried;
+		} carried_obstacle;
+		struct
+		{
+			uint8_t pad_00[0x1B];
+			uint8_t holds_food;
+			uint8_t pad_1C[0xA];
+			uint16_t floor_row;
+			uint8_t pad_28[0x3];
+			uint8_t floor_column;
+			uint8_t floor_cell;
+		} cemetery_obstacle;
+		struct
+		{
+			uint8_t pad_00[0x26];
+			uint16_t floor_row;
+			uint8_t part;
+			uint8_t pad_29[0x2];
+			uint8_t floor_column;
+			uint8_t floor_cell;
+			uint8_t pad_2D[0x7];
+			uint16_t floor_start;
+		} charging_scenery;
+		struct
+		{
+			uint8_t pad_00[0xE];
+			uint16_t kept_height;
+			uint8_t pad_10[0x12];
+			uint8_t sweep_way;
+			uint8_t pad_23[0x2];
+			uint8_t sweep_rate;
+			uint8_t pad_26[0x2];
+			uint8_t bob_phase;
+			uint8_t pad_29[0x7];
+			uint16_t heading;
+			uint16_t stay_time;
+		} cloud_devil;
+		struct
+		{
+			uint8_t pad_00[0x1B];
+			uint8_t setup_count;
+			uint8_t vanishes;
+			uint8_t pad_1D[0x6];
+			uint8_t hops_left;
+		} clown_on_ball;
+		struct
+		{
+			uint8_t pad_00[0x1C];
+			uint8_t vanishes;
+		} donut;
+		struct
+		{
+			uint8_t pad_00[0x20];
+			uint16_t open_x;
+			uint8_t pad_22[0x2];
+			uint8_t timer;
+			uint8_t spawned;
+			uint8_t pad_26[0x9];
+			uint8_t spawn_list;
+		} door;
+		struct
+		{
+			uint8_t pad_00[0xC];
+			uint8_t flash_time;
+			uint8_t routine_step;
+			uint8_t bounced_in_depth;
+			uint8_t bounced_across;
+			uint8_t hit_count;
+			uint8_t change_step;
+			uint8_t pad_12[0x8];
+			uint8_t resume_step;
+			uint8_t leap_distance;
+			uint8_t keeps_acting;
+			uint8_t pad_1D[0x1];
+			uint16_t chain;
+			uint8_t pad_20[0x3];
+			uint8_t legs_left;
+			uint8_t pad_24[0x4];
+			uint8_t side_flip;
+			uint8_t pad_29[0x5];
+			uint8_t phase;
+		} dreamland_boss;
+		struct
+		{
+			uint8_t pad_00[0xC];
+			int16_t next_dz;
+			int16_t next_dx;
+			uint8_t hit_count;
+			uint8_t change_step;
+			uint8_t pad_12[0x8];
+			uint8_t resume_step;
+			uint8_t leap_distance;
+			uint8_t keeps_acting;
+			uint8_t pad_1D[0x1];
+			uint16_t chain_head;
+			uint8_t next_distance;
+			uint8_t next_direction;
+			uint8_t pad_22[0x1];
+			uint8_t legs_left;
+			uint8_t pad_24[0x4];
+			uint8_t direction;
+			uint8_t pad_29[0x1];
+			uint8_t queued_direction;
+			uint8_t lead_attributes;
+			uint8_t pad_2C[0x1];
+			uint8_t link_index;
+			uint8_t phase;
+			uint8_t pad_2F[0x1];
+			uint16_t previous_link;
+			uint16_t next_link;
+			uint16_t chain_base;
+		} dreamland_boss_chain;
+		struct
+		{
+			uint8_t pad_00[0xC];
+			int16_t next_dz;
+			uint8_t bounced_in_depth;
+			uint8_t lash_index;
+			uint8_t sound_time;
+			uint8_t change_step;
+			uint8_t pad_12[0x6];
+			uint8_t holder_attributes;
+			uint8_t pad_19[0x1];
+			uint8_t resume_step;
+			uint8_t leap_distance;
+			uint8_t keeps_acting;
+			uint8_t pad_1D[0x1];
+			uint16_t chain_head;
+			uint8_t next_distance;
+			uint8_t next_direction;
+			uint8_t pad_22[0x1];
+			uint8_t legs_left;
+			uint8_t pad_24[0x1];
+			uint8_t lash_time;
+			uint8_t pad_26[0x2];
+			uint8_t direction;
+			uint8_t pad_29[0x1];
+			uint8_t queued_direction;
+			uint8_t lead_attributes;
+			uint8_t path_loops;
+			uint8_t link_index;
+			uint8_t phase;
+			uint8_t pad_2F[0x1];
+			uint16_t previous_link;
+			uint16_t path;
+			uint16_t chain_base;
+		} dreamland_boss_chain_head;
+		struct
+		{
+			uint8_t pad_00[0x2D];
+			uint8_t drop_animation;
+		} dreamland_obstacle;
+		struct
+		{
+			uint8_t pad_00[0x1A];
+			uint8_t step_level;
+			uint8_t pad_1B[0x7];
+			uint8_t way_round;
+			uint8_t count;
+			uint8_t pad_24[0x4];
+			uint8_t side;
+			uint8_t pad_29[0x1];
+			uint8_t aimed_direction;
+			uint8_t walk_quarter;
+			uint8_t pad_2C[0x1];
+			uint8_t not_behind_target;
+		} enemy;
+		struct
+		{
+			uint8_t pad_00[0x12];
+			uint16_t frame_sound;
+			uint8_t pad_14[0x4];
+			uint8_t kept_attributes;
+			uint8_t pad_19[0x1];
+			uint8_t step_level;
+			uint8_t pad_1B[0x1];
+			uint8_t vanishes;
+			uint8_t pad_1D[0x5];
+			uint8_t way_round;
+			uint8_t count;
+			uint8_t pad_24[0x4];
+			uint8_t side;
+			uint8_t pad_29[0x1];
+			uint8_t aimed_direction;
+			uint8_t walk_quarter;
+			uint8_t pad_2C[0x1];
+			uint8_t not_behind_target;
+		} enemy_hurt;
+		struct
+		{
+			uint8_t pad_00[0x1A];
+			uint8_t step_level;
+			uint8_t pad_1B[0x5];
+			int16_t slow_down;
+			uint8_t way_round;
+			uint8_t count;
+			uint8_t pad_24[0x4];
+			uint8_t side;
+			uint8_t pad_29[0x1];
+			uint8_t aimed_direction;
+			uint8_t walk_quarter;
+			uint8_t pad_2C[0x1];
+			uint8_t not_behind_target;
+		} enemy_rush;
+		struct
+		{
+			uint8_t pad_00[0x1A];
+			uint8_t step_level;
+			uint8_t pad_1B[0x5];
+			int16_t flight_x_speed;
+			uint8_t way_round;
+			uint8_t count;
+			uint8_t pad_24[0x4];
+			uint8_t side;
+			uint8_t pad_29[0x1];
+			uint8_t aimed_direction;
+			uint8_t walk_quarter;
+			uint8_t pad_2C[0x1];
+			uint8_t not_behind_target;
+		} enemy_sent_flying;
+		struct
+		{
+			uint8_t pad_00[0x1A];
+			uint8_t step_level;
+			uint8_t pad_1B[0x5];
+			int16_t spin_x_speed;
+			uint8_t way_round;
+			uint8_t count;
+			uint8_t pad_24[0x4];
+			uint8_t side;
+			uint8_t pad_29[0x1];
+			uint8_t aimed_direction;
+			uint8_t walk_quarter;
+			uint8_t pad_2C[0x1];
+			uint8_t not_behind_target;
+		} enemy_spin;
+		struct
+		{
+			uint8_t pad_00[0x1A];
+			uint8_t step_level;
+			uint8_t pad_1B[0x6];
+			uint8_t wander_direction;
+			uint8_t way_round;
+			uint8_t count;
+			uint8_t pad_24[0x4];
+			uint8_t side;
+			uint8_t pad_29[0x1];
+			uint8_t aimed_direction;
+			uint8_t walk_quarter;
+			uint8_t pad_2C[0x1];
+			uint8_t not_behind_target;
+		} enemy_wander;
+		struct
+		{
+			uint8_t pad_00[0x1A];
+			uint8_t step_level;
+			uint8_t pad_1B[0x7];
+			uint8_t end_enemies;
+			uint8_t count;
+			uint8_t pad_24[0x4];
+			uint8_t side;
+			uint8_t pad_29[0x1];
+			uint8_t aimed_direction;
+			uint8_t walk_quarter;
+			uint8_t pad_2C[0x1];
+			uint8_t not_behind_target;
+			uint8_t pad_2E[0x1];
+			uint8_t next_wave_enemies;
+			uint8_t pad_30[0x4];
+			uint16_t spawns;
+			uint8_t pad_36[0x1];
+			uint8_t wave;
+		} enemy_waves;
+		struct
+		{
+			uint8_t pad_00[0x7];
+			uint8_t squeeze_step;
+			uint8_t pad_08[0x16];
+			uint16_t carried_object;
+			uint8_t speed;
+			uint8_t direction;
+			uint8_t route_floor;
+		} fat_goon;
+		struct
+		{
+			uint8_t pad_00[0x7];
+			uint8_t squeeze_step;
+			uint8_t pad_08[0x16];
+			uint16_t carried_object;
+			uint8_t speed;
+			uint8_t direction;
+			uint8_t route_floor;
+			uint8_t appear_wait;
+		} fat_goon_delayed;
+		struct
+		{
+			uint8_t pad_00[0x7];
+			uint8_t squeeze_step;
+			uint8_t pad_08[0x16];
+			uint16_t carried_object;
+			uint8_t speed;
+			uint8_t direction;
+			uint8_t route_floor;
+			uint8_t route_wait;
+		} fat_goon_drop;
+		struct
+		{
+			uint8_t pad_00[0x7];
+			uint8_t squeeze_step;
+			uint8_t pad_08[0x16];
+			uint16_t carried_object;
+			uint8_t speed;
+			uint8_t direction;
+			uint8_t route_floor;
+			uint8_t entrance_wait;
+		} fat_goon_entrance;
+		struct
+		{
+			uint8_t pad_00[0x7];
+			uint8_t squeeze_step;
+			uint8_t pad_08[0x12];
+			uint8_t start_cell;
+			uint8_t pad_1B[0x3];
+			uint16_t carried_object;
+			uint8_t speed;
+			uint8_t direction;
+			uint8_t route_floor;
+			uint8_t carry_time;
+		} fat_goon_thrower;
+		struct
+		{
+			uint8_t pad_00[0x26];
+			uint16_t floor_row;
+			uint8_t part;
+			uint8_t pad_29[0x2];
+			uint8_t floor_column;
+			uint8_t floor_cell;
+			uint8_t pad_2D[0x7];
+			uint16_t floor_start;
+		} floor_blocker;
+		struct
+		{
+			uint8_t pad_00[0x20];
+			uint16_t bounce_speed;
+			uint8_t pad_22[0x1];
+			uint8_t bounces_left;
+		} food_jump_out;
+		struct
+		{
+			uint8_t pad_00[0x20];
+			uint8_t life_frames;
+		} football_line_piece;
+		struct
+		{
+			uint8_t pad_00[0x19];
+			uint8_t attack_health;
+			uint8_t flinch_health;
+			uint8_t pad_1B[0x3];
+			uint8_t throw_wait;
+			uint8_t pad_1F[0x1];
+			uint8_t charge_wait;
+			uint8_t hurt_pose;
+			uint8_t pad_22[0x1];
+			uint8_t runs_to_rest;
+			uint8_t pad_24[0x4];
+			uint8_t wrong_way;
+			uint8_t speed;
+			uint16_t chase_target;
+			int8_t turn;
+			uint8_t direction;
+			uint8_t pad_2E[0x2];
+			uint8_t wait;
+			uint8_t phase;
+		} football_player;
+		struct
+		{
+			uint8_t pad_00[0x20];
+			uint8_t flight_frames;
+		} football_thrown;
+		struct
+		{
+			uint8_t pad_00[0x7];
+			uint8_t squeeze_step;
+			uint8_t pad_08[0x18];
+			uint16_t trigger_x;
+			uint8_t pad_22[0x1];
+			uint8_t entrance_wait;
+			uint8_t pad_24[0x9];
+			uint8_t not_behind_target;
+		} goon;
+		struct
+		{
+			uint8_t pad_00[0x7];
+			uint8_t squeeze_step;
+			uint8_t pad_08[0x18];
+			uint16_t heading;
+			uint8_t pad_22[0x1];
+			uint8_t entrance_wait;
+			uint8_t pad_24[0x9];
+			uint8_t not_behind_target;
+		} goon_delayed;
+		struct
+		{
+			uint8_t pad_00[0x7];
+			uint8_t squeeze_step;
+			uint8_t pad_08[0x16];
+			uint16_t balloon;
+			uint16_t trigger_x;
+			uint8_t pad_22[0x1];
+			uint8_t entrance_wait;
+			uint8_t pad_24[0x9];
+			uint8_t not_behind_target;
+		} goon_descent;
+		struct
+		{
+			uint8_t pad_00[0x7];
+			uint8_t squeeze_step;
+			uint8_t pad_08[0x18];
+			uint16_t trigger_x;
+			uint8_t pad_22[0x1];
+			uint8_t entrance_wait;
+			uint8_t pad_24[0x9];
+			uint8_t not_behind_target;
+			uint8_t flight;
+		} goon_hat;
+		struct
+		{
+			uint8_t pad_00[0x7];
+			uint8_t squeeze_step;
+			uint8_t pad_08[0x18];
+			uint16_t trigger_x;
+			uint8_t lift_step;
+			uint8_t wait;
+			uint8_t pad_24[0x9];
+			uint8_t not_behind_target;
+		} goon_lift_part;
+		struct
+		{
+			uint8_t pad_00[0x1C];
+			uint8_t vanishes;
+			uint8_t pad_1D[0x3];
+			uint16_t entrance_x;
+		} gorilla;
+		struct
+		{
+			uint8_t pad_00[0x12];
+			uint16_t frame_sound;
+			uint8_t pad_14[0x8];
+			uint8_t vanishes;
+		} grabbing_zombie;
+		struct
+		{
+			uint8_t pad_00[0x20];
+			uint16_t trigger_x;
+			uint8_t pad_22[0x1];
+			uint8_t entrance_wait;
+		} hat_goon;
+		struct
+		{
+			uint8_t pad_00[0x1E];
+			uint16_t hat;
+			uint16_t trigger_x;
+			uint8_t pad_22[0x1];
+			uint8_t entrance_wait;
+		} hat_goon_throw;
+		struct
+		{
+			uint8_t pad_00[0x20];
+			uint16_t trigger_x;
+			uint8_t start_flags;
+			uint8_t entrance_wait;
+		} hat_goon_waiting;
+		struct
+		{
+			uint8_t pad_00[0x26];
+			uint16_t floor_row;
+			uint8_t pad_28[0x3];
+			uint8_t floor_column;
+			uint8_t floor_cell;
+		} heavy_obstacle;
+		struct
+		{
+			uint8_t pad_00[0x2A];
+			uint16_t player_height;
+			uint16_t player_y;
+			uint8_t pad_2E[0x2];
+			uint16_t time;
+			uint8_t step;
+			uint16_t player;
+			uint16_t scroll_x;
+			uint8_t tries;
+		} hurry_up;
+		struct
+		{
+			uint8_t pad_00[0x22];
+			uint8_t food_dropped;
+		} item_carrier;
+		struct
+		{
+			uint8_t pad_00[0x26];
+			uint16_t floor_row;
+			uint8_t pad_28[0x3];
+			uint8_t floor_column;
+			uint8_t floor_cell;
+			uint8_t pad_2D[0x7];
+			uint16_t floor_start;
+		} kind_10_dropper;
+		struct
+		{
+			uint8_t pad_00[0x23];
+			uint8_t rise_steps;
+		} kind_10_riser;
+		struct
+		{
+			uint8_t pad_00[0x1E];
+			uint16_t device;
+			uint16_t home_x;
+		} kind_87;
+		struct
+		{
+			uint8_t pad_00[0x1E];
+			uint16_t keeper;
+			uint16_t home_x;
+			uint8_t pad_22[0x1];
+			uint8_t strike_frames;
+		} kind_87_device;
+		struct
+		{
+			uint8_t pad_00[0x20];
+			uint8_t radius;
+			uint8_t angle;
+			uint8_t leave_turn;
+			uint8_t pad_23[0x5];
+			uint8_t approach_side;
+			uint8_t pad_29[0x4];
+			uint8_t frame_offset;
+			uint8_t pad_2E[0x6];
+			uint16_t hub;
+		} kind_88;
+		struct
+		{
+			uint8_t pad_00[0x20];
+			uint8_t radius;
+			uint8_t angle;
+			uint8_t second_look;
+			uint8_t pad_23[0x5];
+			uint8_t approach_side;
+			uint8_t pad_29[0x4];
+			uint8_t frame_offset;
+			uint8_t pad_2E[0x6];
+			uint16_t hub;
+		} kind_88_piece;
+		struct
+		{
+			uint8_t pad_00[0x20];
+			uint8_t radius;
+			uint8_t angle;
+			uint8_t too_many_out;
+			uint8_t pad_23[0x2];
+			uint8_t arms;
+			uint8_t pad_26[0x2];
+			uint8_t approach_side;
+			uint8_t pad_29[0x4];
+			uint8_t frame_offset;
+			uint8_t riders_out;
+			uint8_t pad_2F[0x5];
+			uint16_t hub;
+		} kind_88_ride;
+		struct
+		{
+			uint8_t pad_00[0x20];
+			uint8_t radius;
+			uint8_t angle;
+			uint8_t too_many_out;
+			uint8_t turn_time;
+			uint8_t pad_24[0x1];
+			uint8_t riders;
+			uint16_t ride_hub;
+			uint8_t approach_side;
+			uint8_t pad_29[0x4];
+			uint8_t frame_offset;
+			uint8_t riders_out;
+			uint8_t riders_on;
+			uint8_t pad_30[0x4];
+			uint16_t hub;
+		} kind_88_ride_arm;
+		struct
+		{
+			uint8_t pad_00[0x1E];
+			uint16_t carried_goon;
+		} kind_8a_carrier;
+		struct
+		{
+			uint8_t pad_00[0x23];
+			uint8_t pose;
+		} kind_8c_bystander;
+		struct
+		{
+			uint8_t pad_00[0x1C];
+			uint8_t vanishes;
+			uint8_t pad_1D[0x3];
+			uint16_t start_x;
+			uint8_t pad_22[0x1];
+			uint8_t throws_left;
+		} kind_90;
+		struct
+		{
+			uint8_t pad_00[0x24];
+			uint8_t timer;
+		} kind_93;
+		struct
+		{
+			uint8_t pad_00[0x1B];
+			uint8_t setup_count;
+			uint8_t vanishes;
+		} kind_98;
+		struct
+		{
+			uint8_t pad_00[0x20];
+			int16_t drop_x_offset;
+			uint8_t drop_unused;
+			uint8_t pad_23[0x11];
+			uint16_t stage_x;
+		} kind_9a_dropper;
+		struct
+		{
+			uint8_t pad_00[0x22];
+			uint8_t stopped;
+		} kind_9e;
+		struct
+		{
+			uint8_t pad_00[0x20];
+			uint16_t parent_x;
+		} kind_a0;
+		struct
+		{
+			uint8_t pad_00[0x22];
+			uint8_t food_dropped;
+		} kind_a5;
+		struct
+		{
+			uint8_t pad_00[0x22];
+			uint8_t food_dropped;
+		} kind_a9;
+		struct
+		{
+			uint8_t pad_00[0x22];
+			uint8_t child_out;
+			uint8_t let_outs_left;
+		} kind_ab;
+		struct
+		{
+			uint8_t pad_00[0x1B];
+			uint8_t idle_frames;
+			uint8_t pad_1C[0x6];
+			uint8_t idle_number;
+		} kind_b2;
+		struct
+		{
+			uint8_t pad_00[0x23];
+			uint8_t hits_left;
+		} kind_b3;
+		struct
+		{
+			uint8_t pad_00[0xC];
+			int16_t descent_y_speed;
+			uint16_t kept_height;
+			uint8_t pad_10[0x10];
+			uint16_t descent_slowdown;
+			uint8_t sweep_way;
+			uint8_t shots_left;
+			uint8_t pad_24[0x1];
+			uint8_t sweep_rate;
+			uint8_t pad_26[0x2];
+			uint8_t bob_phase;
+			uint8_t pad_29[0x7];
+			uint16_t heading;
+			uint16_t stay_time;
+		} kind_b8_flyer;
+		struct
+		{
+			uint8_t pad_00[0x23];
+			uint8_t hits_left;
+		} kind_cb;
+		struct
+		{
+			uint8_t pad_00[0xF];
+			uint8_t fighting_kind;
+			uint8_t pad_10[0xB];
+			uint8_t first_form;
+			uint8_t vanishes;
+			uint8_t pad_1D[0x3];
+			uint16_t entrance_slowdown;
+		} knight;
+		struct
+		{
+			uint8_t pad_00[0x26];
+			uint16_t attack_object;
+			uint8_t pad_28[0x1];
+			uint8_t volleys;
+			uint8_t squash_step;
+			uint8_t saved_step;
+			uint8_t saved_state;
+			uint8_t throw_side;
+			uint8_t throws;
+			uint8_t hits;
+			uint8_t last_attack_health;
+			uint8_t pad_31[0x1];
+			uint8_t direction;
+			uint16_t target;
+			uint8_t target_time;
+			uint8_t balloon_timer;
+			uint8_t step;
+		} krusty_balloon;
+		struct
+		{
+			uint8_t pad_00[0x26];
+			uint16_t attack_object;
+			uint8_t pad_28[0x1];
+			uint8_t volleys;
+			uint8_t squash_step;
+			uint8_t saved_step;
+			uint8_t saved_state;
+			uint8_t throw_side;
+			uint8_t throws;
+			uint8_t hits;
+			uint8_t last_attack_health;
+			uint8_t pad_31[0x1];
+			uint8_t direction;
+			uint16_t target;
+			uint8_t target_time;
+			uint8_t balloon_timer;
+			uint8_t shot_timer;
+		} krusty_balloon_shot;
+		struct
+		{
+			uint8_t pad_00[0x20];
+			uint16_t trigger_x;
+			uint8_t list_ended;
+			uint8_t open_time;
+			uint8_t pad_24[0x2];
+			uint16_t released_object;
+			uint8_t pad_28[0xC];
+			uint16_t release;
+		} krustyland_door;
+		struct
+		{
+			uint8_t pad_00[0x1C];
+			uint8_t vanishes;
+			uint8_t pad_1D[0x5];
+			uint8_t swings;
+			uint8_t pause_loops;
+		} lumberjack;
+		struct
+		{
+			uint8_t pad_00[0x25];
+			uint8_t maggie_landed;
+			uint8_t pad_26[0xE];
+			uint8_t wait_frames;
+			uint16_t maggie;
+		} mr_burns;
+		struct
+		{
+			uint8_t pad_00[0x1C];
+			uint8_t vanishes;
+			uint8_t pad_1D[0x5];
+			uint8_t bounced;
+			uint8_t loops;
+			uint8_t pad_24[0x6];
+			uint8_t jump_direction;
+		} ninja;
+		struct
+		{
+			uint8_t pad_00[0x2B];
+			uint16_t wander_x;
+			uint8_t actions;
+			uint8_t pad_2E[0x2];
+			uint8_t wait;
+			uint8_t phase;
+		} object_f9;
+		struct
+		{
+			uint8_t pad_00[0x18];
+			uint8_t height;
+			uint8_t pad_19[0x9];
+			uint8_t carried;
+			uint8_t pad_23[0x3];
+			uint16_t floor_row;
+			uint8_t pad_28[0x3];
+			uint8_t floor_column;
+			uint8_t floor_cell;
+			uint8_t pad_2D[0x1];
+			uint8_t floor_raised;
+		} obstacle;
+		struct
+		{
+			uint8_t pad_00[0x22];
+			uint8_t held_up;
+			uint8_t pad_23[0x3];
+			uint16_t floor_row;
+			uint8_t part;
+			uint8_t pad_29[0x2];
+			uint8_t floor_column;
+			uint8_t floor_cell;
+			uint8_t pad_2D[0x7];
+			uint16_t floor_start;
+		} platform_scenery;
+		struct
+		{
+			uint8_t pad_00[0xA];
+			uint8_t voice_timer;
+			uint16_t attack_gravity;
+			uint8_t last_life;
+			uint8_t pad_0E[0x1];
+			uint8_t quick_presses;
+			uint8_t frames_since_press;
+			uint8_t jump_attack;
+			uint8_t combo_step;
+			uint16_t holder;
+			uint16_t object_hit;
+			uint8_t pad_17[0x2];
+			uint8_t sides_taken;
+			uint8_t attackers;
+			uint8_t pose_animation;
+			uint16_t move_hit;
+			uint8_t heavy_object_presses;
+			uint16_t held;
+			uint8_t blink_frames;
+			uint8_t hold_presses;
+			uint8_t attack_started;
+			uint8_t pad_24[0x2];
+			uint8_t teamed;
+			uint8_t state_frames;
+			uint8_t team_spare;
+			uint8_t team_direction;
+			uint8_t team_move_number;
+			uint8_t status;
+			uint16_t partner;
+			uint8_t state_timer;
+			uint8_t player_state;
+			uint8_t controls_pressed;
+			uint8_t controls;
+			uint8_t attack_facing;
+			uint8_t blows_taken;
+			uint8_t swings;
+			uint8_t blow_landed;
+		} player;
+		struct
+		{
+			uint8_t pad_00[0x20];
+			uint16_t trigger_x;
+		} police_car_door;
+		struct
+		{
+			uint8_t pad_00[0x2F];
+			uint8_t wait;
+			uint8_t pad_30[0x6];
+			uint8_t portrait_frame;
+			uint8_t frame_wait;
+			uint8_t pad_38[0x26];
+			uint8_t step;
+		} portrait;
+		struct
+		{
+			uint8_t pad_00[0x20];
+			uint16_t leave_x;
+		} prop;
+		struct
+		{
+			uint8_t pad_00[0x34];
+			uint16_t burns;
+			uint8_t wait_frames;
+		} rescued_maggie;
+		struct
+		{
+			uint8_t pad_00[0x20];
+			uint16_t trigger_x;
+		} rising_scenery;
+		struct
+		{
+			uint8_t pad_00[0x1E];
+			uint16_t drift_target;
+			uint8_t pad_20[0x1];
+			uint8_t direction;
+		} rising_zombie;
+		struct
+		{
+			uint8_t pad_00[0x1C];
+			uint8_t flashing;
+			uint8_t pad_1D[0x5];
+			uint8_t hit_round;
+			uint8_t spare_count;
+		} robot;
+		struct
+		{
+			uint8_t pad_00[0x1C];
+			uint8_t flashing;
+			uint8_t pad_1D[0x5];
+			uint8_t carried;
+			uint8_t spare_count;
+			uint8_t pad_24[0xA];
+			uint8_t lying;
+		} robot_scrap;
+		struct
+		{
+			uint8_t pad_00[0xE];
+			uint8_t fast;
+			uint8_t stop_frames;
+			uint8_t pad_10[0xB];
+			uint8_t quiet;
+			uint8_t pad_1C[0x4];
+			uint16_t run_speed;
+			uint8_t carried;
+			uint8_t stops_left;
+			uint8_t pad_24[0xE];
+			uint16_t look;
+		} running_animal;
+		struct
+		{
+			uint8_t pad_00[0x26];
+			uint16_t floor_row;
+			uint8_t pad_28[0x3];
+			uint8_t floor_column;
+			uint8_t floor_cell;
+			uint8_t pad_2D[0x7];
+			uint16_t floor_start;
+		} scenery;
+		struct
+		{
+			uint8_t pad_00[0x1C];
+			uint16_t wait_x;
+			uint8_t pad_1E[0x3];
+			int8_t zoom_step;
+			uint8_t zoom_flags;
+			int8_t landing_floor;
+			int16_t acceleration_z;
+			int16_t acceleration_y;
+			int16_t acceleration_x;
+			uint8_t pad_2A[0x1];
+			uint8_t wait;
+			uint16_t script;
+		} scripted_object;
+		struct
+		{
+			uint8_t pad_00[0x2F];
+			uint8_t enemies_left;
+		} scroll_lock;
+		struct
+		{
+			uint8_t pad_00[0xB];
+			uint8_t kept_animation;
+			uint8_t shake_animation_4;
+			uint8_t shake_animation_3;
+			uint8_t shake_animation_2;
+			uint8_t shake_animation_1;
+			uint8_t pad_10[0x8];
+			uint8_t food_flags;
+			uint8_t pad_19[0x7];
+			uint16_t pattern;
+			uint8_t standing_animation;
+			uint8_t food_left;
+		} shaking_scenery;
+		struct
+		{
+			uint8_t pad_00[0x23];
+			uint8_t entrance_wait;
+		} shovel_goon;
+		struct
+		{
+			uint8_t pad_00[0x35];
+			uint16_t speaker;
+			uint8_t time;
+		} speech_balloon;
+		struct
+		{
+			uint8_t pad_00[0x1C];
+			uint8_t together;
+			uint16_t partner;
+			uint8_t join_wait;
+			uint8_t pad_20[0x5];
+			uint8_t apart_time;
+			uint8_t pad_26[0x3];
+			uint8_t walk_time;
+			uint16_t chase_target;
+			uint8_t pad_2C[0x1];
+			uint8_t direction;
+			uint8_t pad_2E[0x1];
+			uint8_t second;
+			uint8_t wait;
+			uint8_t phase;
+		} stage_3_boss;
+		struct
+		{
+			uint8_t pad_00[0x1F];
+			uint16_t charge_time;
+			uint16_t walk_time;
+			uint16_t throw_wait;
+			uint16_t helper_4;
+			uint16_t helper_2;
+			uint16_t helper_1;
+			uint16_t helper_3;
+			uint8_t charge_direction;
+			uint8_t pad_2E[0x1];
+			uint8_t hits;
+			uint8_t last_health;
+			uint8_t direction;
+			uint8_t side_direction;
+			uint8_t pad_33[0x2];
+			uint8_t target_wait;
+		} stage_7_boss;
+		struct
+		{
+			uint8_t pad_00[0x1F];
+			uint16_t charge_time;
+			uint16_t walk_time;
+			uint16_t throw_wait;
+			uint16_t helper_4;
+			uint16_t helper_2;
+			uint16_t helper_1;
+			uint16_t helper_3;
+			uint8_t charge_direction;
+			uint8_t pad_2E[0x1];
+			uint8_t hits;
+			uint8_t last_health;
+			uint8_t direction;
+			uint8_t side_direction;
+			uint8_t pad_33[0x2];
+			uint16_t distance;
+		} stage_7_boss_helper;
+		struct
+		{
+			uint8_t pad_00[0x21];
+			uint8_t steps;
+			uint8_t health_mark;
+			uint8_t laugh_frames;
+			uint16_t marked_player;
+			uint16_t random;
+			uint8_t pad_28[0x1];
+			uint8_t run_speed;
+			uint8_t phase_1_hits;
+			uint8_t steps_left;
+			uint8_t count;
+			uint8_t count_down;
+			uint8_t pad_2E[0x2];
+			uint8_t state_timer;
+			uint8_t phase;
+			uint8_t phases_left;
+		} stage_8_boss;
+		struct
+		{
+			uint8_t pad_00[0x1E];
+			uint16_t thrower;
+			uint8_t pad_20[0x1];
+			uint8_t steps;
+			uint8_t health_mark;
+			uint8_t laugh_frames;
+			uint16_t marked_player;
+			uint16_t random;
+			uint8_t pad_28[0x1];
+			uint8_t run_speed;
+			uint8_t phase_1_hits;
+			uint8_t steps_left;
+			uint8_t count;
+			uint8_t count_down;
+			uint8_t pad_2E[0x2];
+			uint8_t state_timer;
+			uint8_t phase;
+			uint8_t phases_left;
+		} stage_8_boss_bomb;
+		struct
+		{
+			uint8_t pad_00[0x2D];
+			uint8_t jumper_player;
+		} stage_end_jumper;
+		struct
+		{
+			uint8_t pad_00[0x1B];
+			uint16_t child_actors;
+			uint8_t script_flags;
+			uint8_t pad_1E[0x2];
+			uint16_t x_wait;
+			uint16_t camera_wait;
+			uint8_t landing_height;
+			uint8_t walk_speed;
+			uint8_t target_margin;
+			uint16_t script_target;
+			int16_t acceleration_z;
+			int16_t acceleration_y;
+			int16_t acceleration_x;
+			uint8_t script_number;
+			uint16_t script;
+			uint8_t wait;
+		} story_actor;
+		struct
+		{
+			uint8_t pad_00[0x7];
+			uint8_t carrier_kind;
+			uint8_t pad_08[0x1A];
+			uint8_t carried;
+		} throwable;
+		struct
+		{
+			uint8_t pad_00[0x22];
+			uint8_t carried;
+		} timed_throwable;
+		struct
+		{
+			uint8_t pad_00[0x21];
+			uint8_t direction;
+			uint8_t pad_22[0x1];
+			uint8_t wait;
+		} wandering_zombie;
+		struct
+		{
+			uint8_t pad_00[0x2B];
+			uint16_t partner;
+			uint8_t pad_2D[0x2];
+			uint8_t hits;
+			uint8_t last_health;
+			uint8_t direction;
+			uint8_t side_direction;
+			uint8_t pad_33[0x2];
+			uint8_t target_wait;
+		} wrestler;
+		struct
+		{
+			uint8_t pad_00[0x1C];
+			uint8_t vanishes;
+		} zombie;
+		struct
+		{
+			uint8_t pad_00[0x7];
+			uint8_t squeeze_step;
+			uint8_t pad_08[0x14];
+			uint8_t vanishes;
+		} zombie_grab;
+	};
+	uint8_t flags;
+};
+
+struct object_setup
+{
+	uint8_t points;
+	uint8_t life;
+	uint16_t box;
+	uint16_t kind_and_animation;
+};
+
 #pragma pack(pop)
 
 _Static_assert(sizeof(struct animation_set) == 0x2, "struct animation_set has the size of the program ROM's records");
@@ -12672,6 +15240,8 @@ _Static_assert(sizeof(struct hurt_effect_row) == 0xC, "struct hurt_effect_row ha
 _Static_assert(sizeof(struct scene_area) == 0x4, "struct scene_area has the size of the program ROM's records");
 _Static_assert(sizeof(struct layer_mode) == 0x2, "struct layer_mode has the size of the program ROM's records");
 _Static_assert(sizeof(struct tile_picture) == 0x3, "struct tile_picture has the size of the program ROM's records");
+_Static_assert(sizeof(struct object) == 0x60, "struct object has the size of the game's blocks");
+_Static_assert(sizeof(struct object_setup) == 0x6, "struct object_setup has the size of the program ROM's records");
 
 #define ANIMATION_SET(address) ((const struct animation_set *)data_record((address), sizeof(struct animation_set)))
 #define SHADOW_SPRITE(address) ((const struct shadow_sprite *)data_record((address), sizeof(struct shadow_sprite)))
@@ -12850,6 +15420,8 @@ _Static_assert(sizeof(struct tile_picture) == 0x3, "struct tile_picture has the 
 #define HIT_ANIMATION(address) (*(const uint8_t *)data_record((address), 1))
 #define HIT_ANIMATION_16(address) (*(const uint16_t *)data_record((address), 2))
 #define HIT_ANIMATION_32(address) (*(const uint32_t *)data_record((address), 4))
+#define OBJECT(address) ((struct object *)ram((address), sizeof(struct object)))
+#define OBJECT_SETUP(address) ((const struct object_setup *)data_record((address), sizeof(struct object_setup)))
 
 /* the program ROM's tables of records, by name: name[i].field */
 #define bonus_1_players_ADDRESS 0x7BD0u    /* 021BD0 */
@@ -13071,6 +15643,9 @@ extern const void *empty_vector_032024_data;
 #define robot_pieces_ADDRESS 0x7B10u    /* 033B10 */
 extern const void *robot_pieces_data;
 #define robot_pieces ((const struct robot_piece *)(robot_pieces_data))
+#define robot_piece_children_ADDRESS 0x7CC8u    /* 033CC8 */
+extern const void *robot_piece_children_data;
+#define robot_piece_children ((const struct child_object *)(robot_piece_children_data))
 #define kind_12_parts_ADDRESS 0x7D96u    /* 033D96 */
 extern const void *kind_12_parts_data;
 #define kind_12_parts ((const struct kind_12_part *)(kind_12_parts_data))
@@ -13206,5 +15781,15 @@ extern const void *palette_clears_data;
 #define layers_ADDRESS 0xECA1u    /* 07ECA1 */
 extern const void *layers_data;
 #define layers ((const struct layer_map *)(layers_data))
+#define goon_hit_box_ADDRESS 0xF13Cu    /* 07F13C */
+extern const void *goon_hit_box_data;
+#define goon_hit_box ((const struct hit_box *)(goon_hit_box_data))
+#define goon_behaviour_ADDRESS 0xF144u    /* 07F144 */
+extern const void *goon_behaviour_data;
+#define goon_behaviour ((const struct enemy_behaviour *)(goon_behaviour_data))
+#define goon_setup_ADDRESS 0xF1A8u    /* 07F1A8 */
+extern const void *goon_setup_data;
+#define goon_setup ((const struct object_setup *)(goon_setup_data))
+#define OBJECT_ADDRESS(n) (0x4A40u + (n) * 0x60u)    /* the 33 of them, from 0 */
 
 #endif
