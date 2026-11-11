@@ -18,7 +18,7 @@ uint32_t run_enemies(uint32_t left_caller)
 {
 	uint8_t object_type = 0, state = 0;
 	uint16_t enemy_handlers = 0, object = 0;
-	uint8_t stack = 0;
+	uint8_t kept_state = 0;
 	uint8_t enemies_last_frame = 0, old_enemy_count = 0, old_entered_count = 0, old_walk_delays = 0, enemy_class = 0, enemies_so_far = 0, entrance_pending = 0, entered_so_far = 0;
 	uint16_t type = 0;
 
@@ -41,12 +41,12 @@ uint32_t run_enemies(uint32_t left_caller)
 		{
 			type = (((uint32_t)(uint8_t)OBJECT(object)->type << 8u) | OBJECT(object)->state);
 			object_type = (uint8_t)(type >> 8);
-			stack = type;
+			kept_state = type;
 			window_bank = enemy_banks[(int8_t)object_type];
 			set_lines(window_bank);
 			enemy_handlers = enemy_type_handlers_ADDRESS;
 			object_type = (uint32_t)object_type << 1;
-			state = stack;
+			state = kept_state;
 			switch ((int8_t)object_type)
 			{
 			case 0:
@@ -348,7 +348,7 @@ void run_list_1_objects(uint16_t *p_list_1_handlers, uint32_t *p_left_caller)
 	uint32_t carry = 0;
 	uint8_t object_type = 0, state = 0;
 	uint16_t object = 0;
-	uint8_t stack = 0;
+	uint8_t kept_state = 0;
 	uint8_t old_list_1_count = 0, list_1_count = 0;
 	uint16_t type = 0;
 
@@ -361,13 +361,13 @@ void run_list_1_objects(uint16_t *p_list_1_handlers, uint32_t *p_left_caller)
 		{
 			type = (((uint32_t)(uint8_t)OBJECT(object)->type << 8u) | OBJECT(object)->state);
 			object_type = (uint8_t)(type >> 8);
-			stack = type;
+			kept_state = type;
 			window_bank = object_list_1_banks[(int8_t)object_type];
 			set_lines(window_bank);
 			list_1_handlers = object_list_1_type_handlers_ADDRESS;
 			carry = (int8_t)object_type < 0;
 			object_type = (uint32_t)object_type << 1;
-			state = stack;
+			state = kept_state;
 			switch ((int8_t)object_type)
 			{
 			case 0:
@@ -678,7 +678,7 @@ uint16_t run_child_objects(uint16_t child_handlers)
 {
 	uint8_t object_type = 0, state = 0;
 	uint16_t object = 0;
-	uint8_t stack = 0;
+	uint8_t kept_state = 0;
 	uint8_t old_child_count = 0, child_count = 0;
 	uint16_t type = 0;
 
@@ -691,12 +691,12 @@ uint16_t run_child_objects(uint16_t child_handlers)
 		{
 			type = (((uint32_t)(uint8_t)OBJECT(object)->type << 8u) | OBJECT(object)->state);
 			object_type = (uint8_t)(type >> 8);
-			stack = type;
+			kept_state = type;
 			window_bank = child_object_banks[(int8_t)object_type];
 			set_lines(window_bank);
 			child_handlers = child_object_type_handlers_ADDRESS;
 			object_type = (uint32_t)object_type << 1;
-			state = stack;
+			state = kept_state;
 			switch ((int8_t)object_type)
 			{
 			case 0:
@@ -839,7 +839,7 @@ void run_stage_event(void)
 {
 	uint8_t object_type = 0, state = 0;
 	uint16_t object = 0;
-	uint8_t stack = 0;
+	uint8_t kept_state = 0;
 	uint16_t type = 0;
 
 	object = OBJECT_ADDRESS(32);
@@ -849,11 +849,11 @@ void run_stage_event(void)
 		{
 			type = (((uint32_t)(uint8_t)OBJECT(object)->type << 8u) | OBJECT(object)->state);
 			object_type = (uint8_t)(type >> 8);
-			stack = type;
+			kept_state = type;
 			window_bank = stage_event_banks[(int8_t)object_type];
 			set_lines(window_bank);
 			object_type = (uint32_t)object_type << 1;
-			state = stack;
+			state = kept_state;
 			switch ((int8_t)object_type)
 			{
 			case 0:
@@ -889,11 +889,11 @@ void find_least_attacked_player(void)
 {
 	uint8_t attackers = 0, players_left = 0;
 	uint16_t player = 0;
-	uint8_t stack = 0;
+	uint8_t fewest_attackers = 0;
 	uint8_t attackers_2 = 0, players_to_check = 0;
 
 	players_left = 4u;
-	stack = 0x7Fu;
+	fewest_attackers = 0x7Fu;
 	player = OBJECT_ADDRESS(0);
 	do
 	{
@@ -901,9 +901,9 @@ void find_least_attacked_player(void)
 		{
 			attackers_2 = OBJECT(player)->player.attackers;
 			attackers = attackers_2;
-			if (attackers < stack)
+			if (attackers < fewest_attackers)
 			{
-				stack = attackers;
+				fewest_attackers = attackers;
 				io_write16(least_attacked_player, player);
 			}
 		}

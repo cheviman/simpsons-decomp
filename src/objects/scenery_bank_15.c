@@ -70,14 +70,14 @@ void kind_ac_wait(void)
 /* Drops a piece of food and shows its next animation. */
 uint16_t kind_ac_drop_food(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t slot_found = 0;
 	uint16_t food = 0, ignored16 = 0, ignored16_2 = 0;
 	uint8_t state = 0;
 
 	OBJECT(object)->flags = 0x80u;
 	leftover_y = kind_ac_drop_food_child_ADDRESS;
-	vector_spawn_child(object, &ignored16, &food, &ignored16_2, &carry);
-	if (carry == 0u)
+	vector_spawn_child(object, &ignored16, &food, &ignored16_2, &slot_found);
+	if (slot_found == 0u)
 	{
 		kind_ac_done();
 		return food;
@@ -126,7 +126,7 @@ void kind_ab_wait_hit(uint16_t object)
 /* When the hit animation ends, lets out bank 16's list 1 type 01 object; after the third it stays still. */
 uint16_t kind_ab_let_out(uint16_t object, uint16_t child)
 {
-	uint32_t carry = 0;
+	uint32_t slot_found = 0;
 	uint16_t ignored16 = 0, ignored16_2 = 0;
 	uint8_t animation_flags = 0, child_out = 0, let_outs_left = 0, state = 0;
 
@@ -135,8 +135,8 @@ uint16_t kind_ab_let_out(uint16_t object, uint16_t child)
 		return child;
 	OBJECT(object)->kind_ab.child_out = 0u;
 	leftover_y = kind_ab_let_out_child_ADDRESS;
-	vector_spawn_child(object, &ignored16, &child, &ignored16_2, &carry);
-	if (carry)
+	vector_spawn_child(object, &ignored16, &child, &ignored16_2, &slot_found);
+	if (slot_found)
 	{
 		OBJECT(object)->parent = child;
 		child_out = OBJECT(object)->kind_ab.child_out;
@@ -343,7 +343,7 @@ void krustyland_door_closed(uint16_t object)
 /* Sets up the kind B2 object with the bear (bank 17's kind A2) beside it. */
 uint16_t kind_b2_leaper_start(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t slot_found = 0;
 	uint16_t ignored16 = 0, ignored16_2 = 0, parent = 0, setup = 0;
 	uint8_t state = 0;
 
@@ -353,8 +353,8 @@ uint16_t kind_b2_leaper_start(uint16_t object)
 	OBJECT(object)->shadow_player = 0x40u;
 	OBJECT(object)->attributes = 0x10u;
 	leftover_y = kind_b2_leaper_child_ADDRESS;
-	vector_spawn_child(object, &ignored16, &parent, &ignored16_2, &carry);
-	if (carry == 0u)
+	vector_spawn_child(object, &ignored16, &parent, &ignored16_2, &slot_found);
+	if (slot_found == 0u)
 	{
 		OBJECT(object)->state = 6u;
 		kind_b2_leaper_idle();
@@ -398,12 +398,12 @@ uint16_t kind_b2_leaper_jump(uint16_t object)
 /* Falls; on landing plays sound 5D00 and stops. */
 void kind_b2_leaper_fall(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t landed = 0;
 	uint16_t command = 0, ignored16 = 0;
 	uint8_t timer = 0, state = 0;
 
-	vector_apply_gravity(object, &ignored16, &carry);
-	if (carry == 0u)
+	vector_apply_gravity(object, &ignored16, &landed);
+	if (landed == 0u)
 	{
 		timer = OBJECT(object)->timer;
 		OBJECT(object)->timer = timer - 1u;
@@ -519,7 +519,7 @@ void kind_aa_idle(void)
 /* Sets up the kind AA object of stage 7; the first puts in its pair ahead of it. */
 uint16_t kind_aa_pair_start(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t slot_found = 0;
 	uint16_t ignored16 = 0, ignored16_2 = 0, u = 0;
 	uint8_t state = 0, parameter = 0;
 
@@ -538,7 +538,7 @@ uint16_t kind_aa_pair_start(uint16_t object)
 	}
 	OBJECT(object)->attributes = 0x20u;
 	leftover_y = kind_aa_pair_child_ADDRESS;
-	vector_spawn_child(object, &ignored16, &u, &ignored16_2, &carry);
+	vector_spawn_child(object, &ignored16, &u, &ignored16_2, &slot_found);
 	return u;
 }
 

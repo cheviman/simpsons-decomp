@@ -120,15 +120,15 @@ void lumberjack_jump_down(uint16_t object)
 /* Pulls the lumberjack down until it lands, then makes it hittable and lets it fight. */
 void lumberjack_land(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t landed = 0;
 	uint8_t timer = 0, attributes = 0;
 	uint16_t z_speed = 0, falling_z_speed = 0;
 
 	z_speed = OBJECT(object)->z_speed;
 	falling_z_speed = z_speed - 0x30u;
 	OBJECT(object)->z_speed = falling_z_speed;
-	carry = vector_check_landing(object);
-	if (carry == 0u)
+	landed = vector_check_landing(object);
+	if (landed == 0u)
 	{
 		timer = OBJECT(object)->timer;
 		OBJECT(object)->timer = timer - 1u;

@@ -3,7 +3,7 @@
  *    Description: the sound program's ports, variables, tables, structures and functions
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the Z80 sound program decompiled into C by

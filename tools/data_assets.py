@@ -3,15 +3,16 @@ Name:        data_assets.py
 Description: the 053248 program's data as text by subject, every piece by name, and back byte for byte
 Version:     0.1.0
 Created:     06-11-2026
-Modified:    06-11-2026
+Modified:    11-11-2026
 Author:      Sebastian Toyos
 
 For tools/extract_assets.py, which writes them into assets/data. Every byte of the program that is not code is in a
 piece: what tools/data_walk.py walks (animations, sprite lists, maps, tile blocks, palettes, texts, scripts...), the
 tables of code addresses the static analysis reads, the vectors, the fill, and what nothing explains yet. A piece is
-one walked span, or a run of bytes of one class, named by the symbols.txt name it starts at, or by its kind and its
-place (a name only: nothing reads the place back but --check). A piece is written as lines of typed items, which give
-its bytes back in order:
+one walked span, or a run of bytes of one class, named by the symbols.txt name it starts at, else by what names it
+in the program (name_pieces): the function whose instructions name its place, the named piece that points at it
+(an entry of a table by its index), the named piece it follows (its rest, its fill), the function whose code it is.
+A piece is written as lines of typed items, which give its bytes back in order:
 
     u8 0A 00 ...                      bytes, hex
     sprite CODE COLOUR ATTRIBUTES X Y  a sprite of a sprite list (CODE: 16 bits, bit 15 its flip)
@@ -42,7 +43,8 @@ its bytes back in order:
 files: data/<family>.txt, one a family of kinds (code_read.txt: the fixed program's code the map engines read as
 tiles or as a map past a map's edges, tools/data_walk.py's code_read_as_data: data too, for the game has no code); data/structures.txt, the structures the record lines name (a
 structure a line: its name and its values' types in byte order, u8 s8 u16 s16), so that the files read back without
-symbols.txt; and data/layout.txt: each piece's name, place and length, for --check only.
+symbols.txt; and data/layout.txt: each piece's name, place and length, by which the game (runtime/src/assets.c) and
+the decompiler (the names of the tables the C reads) find the pieces.
 """
 import re
 from collections import defaultdict
@@ -454,58 +456,164 @@ def pieces(image, code, walked, described, fill, names):
     return found
 
 
-def export(image, code, walk_spans, described, fill, names, folder, names_of_code=(), layouts=None, code_reads=None):
+# the word a piece's name ends with, after what names it (the function that reads it, the piece that points at it), by
+# its kind; any other kind by its own words
+ROLES = {"sprite list": "sprites", "unreached animation": "animation", "animation table": "animations",
+         "map strip": "strip", "unreached map": "map", "loaded table": "table", "indexed table": "table",
+         "constant table": "table", "hit box": "box", "described": "data", "unknown": "data"}
+# the kinds of piece that are tables of addresses or records, whose pointers name what they point at by entry
+ENTRY_KINDS = {"animation table", "set index", "animation sets", "scene list", "scene table", "text table",
+               "tile picture table", "spawn list table", "story script table", "palette set table", "demo table",
+               "path starts", "loaded table", "indexed table", "constant table", "described", "palette sets",
+               "layer mode list", "map"}
+
+
+def role(kind):
+    return ROLES.get(kind, re.sub(r"[^a-z0-9]+", "_", kind.lower()).strip("_"))
+
+
+def name_pieces(found, provisional, references, readers, taken, function_at):
+    """Names for the pieces symbols.txt and the walks do not name ('provisional': their indexes), by what names them in
+    the program, as TMNT's data_assets does: the function whose instructions name the piece's place ('readers'), else
+    the named piece that points at it ('references': (holder index, n-th pointer of the holder, target place)), an
+    entry of a table by its index, taken again until nothing more gets a name; then a piece right after a named one,
+    which nothing else names, as that one's rest (fill: its fill); the code an engine reads as data by its function;
+    none by its place where anything names it. Returns {index: name}"""
+    used = set(taken) | {found[index][0] for index in range(len(found)) if index not in provisional}
+    names = {}
+
+    def unique(name):
+        name = re.sub(r"[^A-Za-z0-9_]+", "_", name).strip("_")
+        candidate, count = name, 1
+        while candidate in used:
+            count += 1
+            candidate = f"{name}_{count}"
+        used.add(candidate)
+        return candidate
+
+    def current(index):
+        return names.get(index) if index in provisional else found[index][0]
+
+    by_place = {found[index][1]: index for index in range(len(found))}
+    for index in sorted(provisional):
+        _, place, _, kind = found[index]
+        if readers.get(place):
+            names[index] = unique(f"{sorted(readers[place])[0]}_{role(kind)}")
+    pointed = defaultdict(list)    # target index -> [(holder index, n)]
+    for holder, number, target in references:
+        if target in by_place and by_place[target] != holder:
+            pointed[by_place[target]].append((holder, number))
+    changed = True
+    while changed:
+        changed = False
+        for index in sorted(provisional):
+            if index in names:
+                continue
+            for holder, number in sorted(pointed.get(index, ())):
+                holder_name = current(holder)
+                if holder_name is None:
+                    continue
+                holder_kind = found[holder][3]
+                suffix = str(number) if holder_kind in ENTRY_KINDS else role(found[index][3])
+                names[index] = unique(f"{holder_name}_{suffix}")
+                changed = True
+                break
+    rest_of = {}    # index -> the named piece a run of rests follows
+    for index in sorted(provisional):
+        if index in names or index == 0:
+            continue
+        before = rest_of.get(index - 1) or current(index - 1)
+        if before is not None and found[index - 1][1] + found[index - 1][2] == found[index][1]:
+            rest_of[index] = before
+            names[index] = unique(f"{before}_{'fill' if found[index][3] == 'fill' else 'rest'}")
+    for index in sorted(provisional):
+        if index not in names:
+            _, place, _, kind = found[index]
+            owner = function_at(place) if function_at is not None else None
+            names[index] = unique(f"{owner}_{role(kind)}" if owner else f"{role(kind)}_{place:06X}")
+    return names
+
+
+def export(image, code, walk_spans, described, fill, names, folder, names_of_code=(), layouts=None, code_reads=None,
+           readers=None, taken=(), function_at=None):
     folder.mkdir(parents=True, exist_ok=True)
     walked = {}
     for first, (stop, kind) in walk_spans.items():
         for place in range(first, stop):
             walked[place] = (first, stop, kind)
     found = pieces(image, code, walked, described, fill, names)
-    starts = sorted((place, name, length) for name, place, length, _ in found)
-    firsts = [place for place, _, _ in starts]
+    provisional = {index for index, (_, place, _, _) in enumerate(found) if place not in names}
     from bisect import bisect_right
-
-    def resolve(target):
-        """A piece's name (+ offset) or code_PLACE for a place, or None"""
-        if target in code:
-            return f"code_{target:06X}" if target in instruction_starts else None
-        index = bisect_right(firsts, target) - 1
-        if index < 0:
-            return None
-        place, name, length = starts[index]
-        if not place <= target < place + length:
-            return None
-        return name if target == place else f"{name}+{target - place:X}"
-
     instruction_starts = set(names_of_code)
-    by_family = defaultdict(list)
-    layout = []
-    used = set()
-    for name, place, length, kind in found:
+    references = []
+    holder_now = [None, 0]    # (the piece whose lines are being written, how many pointers it has resolved)
+
+    def resolver(starts):
+        firsts = [place for place, _, _ in starts]
+
+        def resolve(target):
+            """A piece's name (+ offset) or code_PLACE for a place, or None"""
+            if holder_now[0] is not None:
+                references.append((holder_now[0], holder_now[1], target))
+                holder_now[1] += 1
+            if target in code:
+                return f"code_{target:06X}" if target in instruction_starts else None
+            index = bisect_right(firsts, target) - 1
+            if index < 0:
+                return None
+            place, name, length = starts[index]
+            if not place <= target < place + length:
+                return None
+            return name if target == place else f"{name}+{target - place:X}"
+        return resolve
+
+    def piece_lines(index, name, place, length, kind, resolve):
         data = image[place:place + length]
         typed = table_lines(data, place, resolve, layouts) \
             if layouts is not None and place in layouts.tables and kind in GENERIC_KINDS else None
         if typed is not None:
-            lines = typed
-        elif layouts is not None and kind in KIND_STRUCTS and KIND_STRUCTS[kind] in layouts.structs:
-            lines = struct_lines(data, place, resolve, layouts, KIND_STRUCTS[kind])
-        elif kind == "object path":
-            lines = path_lines(data, place, resolve)
-        elif kind in POINTER_KINDS:
-            lines = pointer_lines(data, place, resolve)
-        elif kind in RECORD_LINES:
-            lines = record_lines(data, place, resolve, *RECORD_LINES[kind])
-        elif kind in ("animation", "unreached animation"):
-            lines = animation_lines(data, place, resolve)
-        else:
-            lines = FORMATS.get(kind, hex_lines)(data)
+            return typed
+        if layouts is not None and kind in KIND_STRUCTS and KIND_STRUCTS[kind] in layouts.structs:
+            return struct_lines(data, place, resolve, layouts, KIND_STRUCTS[kind])
+        if kind == "object path":
+            return path_lines(data, place, resolve)
+        if kind in POINTER_KINDS:
+            return pointer_lines(data, place, resolve)
+        if kind in RECORD_LINES:
+            return record_lines(data, place, resolve, *RECORD_LINES[kind])
+        if kind in ("animation", "unreached animation"):
+            return animation_lines(data, place, resolve)
+        return FORMATS.get(kind, hex_lines)(data)
+
+    # (first the pointers between the pieces, under their provisional names; then the names; then the lines)
+    resolve = resolver(sorted((place, name, length) for name, place, length, _ in found))
+    for index, (name, place, length, kind) in enumerate(found):
+        holder_now[:] = [index, 0]
+        piece_lines(index, name, place, length, kind, resolve)
+    holder_now[:] = [None, 0]
+    given = name_pieces(found, provisional, references, readers or {}, taken, function_at)
+    found = [(given.get(index, name), place, length, kind) for index, (name, place, length, kind) in enumerate(found)]
+    resolve = resolver(sorted((place, name, length) for name, place, length, _ in found))
+    by_family = defaultdict(list)
+    layout = []
+    used = set()
+    for index, (name, place, length, kind) in enumerate(found):
+        lines = piece_lines(index, name, place, length, kind, resolve)
         family = FAMILIES.get(kind, "fill" if kind == "fill" else "unknown" if kind == "unknown" else "tables")
         by_family[family].append(f"[{name}] {kind}\n" + "\n".join(lines))
         layout.append(f"{name} {place:06X} {length} {family}")
         used.update(line.split()[1] for line in lines if line.startswith("record "))
-    # the code the engines read as data (tools/data_walk.py's code_read_as_data): pieces of their own, over the code
+    # the code the engines read as data (tools/data_walk.py's code_read_as_data): pieces of their own, over the code,
+    # by the function whose code it is
+    names_used = {name for name, _, _, _ in found}
     for place, (stop, kind) in sorted((code_reads or {}).items()):
-        name = f"{kind.replace(' ', '_')}_{place:06X}"
+        owner = function_at(place) if function_at is not None else None
+        base = re.sub(r"[^a-z0-9]+", "_", f"{owner}_as_{kind}" if owner else f"{kind}_{place:06X}")
+        name, count = base, 1
+        while name in names_used:
+            count += 1
+            name = f"{base}_{count}"
+        names_used.add(name)
         by_family["code_read"].append(f"[{name}] {kind}\n" + "\n".join(hex_lines(image[place:stop])))
         layout.append(f"{name} {place:06X} {stop - place} code_read")
     for family, sections in by_family.items():

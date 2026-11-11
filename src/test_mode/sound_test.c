@@ -92,35 +92,35 @@ void test_music_page(uint16_t d)
 }
 
 /* Waits for the first choice, then plays the music number */
-void test_music_first_choice(uint16_t *p_d, uint32_t *p_carry)
+void test_music_first_choice(uint16_t *p_d, uint32_t *p_line_chosen)
 {
 	uint16_t d = (uint16_t)*p_d;
-	uint32_t carry = *p_carry;
+	uint32_t line_chosen = *p_line_chosen;
 
-	test_sound_test_first_press(&d, &carry);
-	if (carry)
-		test_music_play(&d, &carry);
+	test_sound_test_first_press(&d, &line_chosen);
+	if (line_chosen)
+		test_music_play(&d, &line_chosen);
 	*p_d = d;
-	*p_carry = carry;
+	*p_line_chosen = line_chosen;
 }
 
 /* NEXT MUSIC steps the number (wrapping past 30), REPLAY MUSIC replays it */
-void test_music_choice(uint16_t *p_d, uint32_t *p_carry)
+void test_music_choice(uint16_t *p_d, uint32_t *p_line_chosen)
 {
 	uint16_t d = (uint16_t)*p_d;
-	uint32_t carry = *p_carry;
+	uint32_t line_chosen = *p_line_chosen;
 	uint16_t number_variable = 0;
 
-	test_menu_update(&d, &carry);
-	if (carry)
+	test_menu_update(&d, &line_chosen);
+	if (line_chosen)
 	{
 		number_variable = test_music_number_ADDRESS;
 		d = (d & 0xFFu) | 0x3000u;
 		d = test_sound_test_next(number_variable, d);
-		carry = test_music_open(number_variable);
+		line_chosen = test_music_open(number_variable);
 	}
 	*p_d = d;
-	*p_carry = carry;
+	*p_line_chosen = line_chosen;
 }
 
 /* Prints the music page */
@@ -164,7 +164,7 @@ void test_music_play(uint16_t *p_d, uint32_t *p_carry)
 uint16_t test_sound_test_next(uint16_t number_variable, uint16_t last_and_line)
 {
 	uint8_t last_number = 0, number = 0;
-	uint8_t stack = 0;
+	uint8_t saved_last_number = 0;
 
 	last_number = (uint8_t)(last_and_line >> 8);
 	if ((uint8_t)last_and_line != 0u)
@@ -172,9 +172,9 @@ uint16_t test_sound_test_next(uint16_t number_variable, uint16_t last_and_line)
 		test_sound_timer = 0xFAu;
 		return test_silence();
 	}
-	stack = last_number;
+	saved_last_number = last_number;
 	number = mem_read8(number_variable) + 1u;
-	if (stack < number)
+	if (saved_last_number < number)
 		number = 0u;
 	mem_write8(number_variable, number);
 	test_sound_timer = 0xFAu;
@@ -182,16 +182,16 @@ uint16_t test_sound_test_next(uint16_t number_variable, uint16_t last_and_line)
 }
 
 /* On a choice in the menu, restarts the timer and goes to the page's next step */
-void test_sound_test_first_press(uint16_t *p_d, uint32_t *p_carry)
+void test_sound_test_first_press(uint16_t *p_d, uint32_t *p_line_chosen)
 {
 	uint16_t d = (uint16_t)*p_d;
-	uint32_t carry = *p_carry;
+	uint32_t line_chosen = *p_line_chosen;
 	uint8_t a = 0;
 	uint16_t d_2 = 0;
 
-	test_menu_update(&d, &carry);
+	test_menu_update(&d, &line_chosen);
 	a = (uint8_t)(d >> 8);
-	if (carry)
+	if (line_chosen)
 	{
 		a = 0xFAu;
 		test_sound_timer = 0xFAu;
@@ -199,7 +199,7 @@ void test_sound_test_first_press(uint16_t *p_d, uint32_t *p_carry)
 	}
 	d_2 = (d & 0xFFu) | ((uint32_t)a << 8);
 	*p_d = d_2;
-	*p_carry = carry;
+	*p_line_chosen = line_chosen;
 }
 
 /* The 6 SOUND CHECK page, by its step */
@@ -283,23 +283,23 @@ void test_sound_page(uint16_t d)
 }
 
 /* Waits for the first choice, then plays the sound number */
-void test_sound_first_choice(uint16_t *p_d, uint32_t *p_carry)
+void test_sound_first_choice(uint16_t *p_d, uint32_t *p_line_chosen)
 {
 	uint16_t d = (uint16_t)*p_d;
-	uint32_t carry = *p_carry;
+	uint32_t line_chosen = *p_line_chosen;
 
-	test_sound_test_first_press(&d, &carry);
-	if (carry)
-		test_sound_play(&d, &carry);
+	test_sound_test_first_press(&d, &line_chosen);
+	if (line_chosen)
+		test_sound_play(&d, &line_chosen);
 	*p_d = d;
-	*p_carry = carry;
+	*p_line_chosen = line_chosen;
 }
 
 /* NEXT SOUND or REPLAY SOUND; the timer running out steps to the next sound by itself */
-void test_sound_choice(uint16_t *p_d, uint32_t *p_carry)
+void test_sound_choice(uint16_t *p_d, uint32_t *p_line_chosen)
 {
 	uint16_t d = (uint16_t)*p_d;
-	uint32_t carry = *p_carry;
+	uint32_t line_chosen = *p_line_chosen;
 	uint16_t number_variable = 0;
 	uint8_t timer_before = 0;
 
@@ -310,21 +310,21 @@ void test_sound_choice(uint16_t *p_d, uint32_t *p_carry)
 		number_variable = test_sound_number_ADDRESS;
 		d = (d & 0xFFu) | 0xAA00u;
 		d = test_sound_test_next(number_variable, d);
-		carry = test_sound_open(number_variable);
+		line_chosen = test_sound_open(number_variable);
 	}
 	else
 	{
-		test_menu_update(&d, &carry);
-		if (carry)
+		test_menu_update(&d, &line_chosen);
+		if (line_chosen)
 		{
 			number_variable = test_sound_number_ADDRESS;
 			d = (d & 0xFFu) | 0xAA00u;
 			d = test_sound_test_next(number_variable, d);
-			carry = test_sound_open(number_variable);
+			line_chosen = test_sound_open(number_variable);
 		}
 	}
 	*p_d = d;
-	*p_carry = carry;
+	*p_line_chosen = line_chosen;
 }
 
 /* Prints the sound page */

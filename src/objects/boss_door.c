@@ -73,7 +73,7 @@ uint16_t boss_door_stage_8(uint16_t object)
    both kind 13, closed (animation 85). */
 uint16_t boss_door_set_up(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t slot_found = 0;
 	uint8_t list = 0;
 	uint16_t other_half = 0;
 	uint8_t state = 0;
@@ -81,8 +81,8 @@ uint16_t boss_door_set_up(uint16_t object)
 
 	io_write16(stage_kept_object, object);
 	list = 1u;
-	vector_find_free_slot(list, &other_half, &carry);
-	if (carry)
+	vector_find_free_slot(list, &other_half, &slot_found);
+	if (slot_found)
 	{
 		OBJECT(other_half)->type = -0xC;
 		OBJECT(object)->boss_door.other_half = other_half;
@@ -151,7 +151,7 @@ uint16_t boss_door_open(uint16_t object, uint16_t half)
 /* Stage 8's door: keeps itself in 1852 and puts in its other half in list 2, both kind 13, closed. */
 uint16_t boss_door_stage_8_set_up(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t slot_found = 0;
 	uint8_t list = 0;
 	uint16_t other_half = 0;
 	uint8_t state = 0;
@@ -159,8 +159,8 @@ uint16_t boss_door_stage_8_set_up(uint16_t object)
 
 	io_write16(stage_kept_object, object);
 	list = 2u;
-	vector_find_free_slot(list, &other_half, &carry);
-	if (carry)
+	vector_find_free_slot(list, &other_half, &slot_found);
+	if (slot_found)
 	{
 		OBJECT(object)->boss_door.other_half = other_half;
 		OBJECT(object)->flags = 0x80u;

@@ -3,7 +3,7 @@
  *    Description: the PCM effects (commands 40-7E, and 3F by its argument): samples of the K053260
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the Z80 sound program decompiled into C by
@@ -34,12 +34,12 @@ void pcm_effect_3f_00(uint16_t channel)
 /* When sample 16 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_3f_00_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -71,12 +71,12 @@ void pcm_effect_3f_01(uint16_t channel)
 /* When sample 17 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_3f_01_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -108,12 +108,12 @@ void pcm_effect_3f_02(uint16_t channel)
 /* When sample 18 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_3f_02_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -145,12 +145,12 @@ void pcm_effect_3f_03(uint16_t channel)
 /* When sample 19 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_3f_03_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -182,12 +182,12 @@ void pcm_effect_3f_04(uint16_t channel)
 /* When sample 20 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_3f_04_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -219,12 +219,12 @@ void pcm_effect_3f_05(uint16_t channel)
 /* When sample 21 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_3f_05_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -256,12 +256,12 @@ void pcm_effect_3f_06(uint16_t channel)
 /* When sample 22 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_3f_06_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -293,12 +293,12 @@ void pcm_effect_3f_07(uint16_t channel)
 /* When sample 23 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_3f_07_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -330,12 +330,12 @@ void pcm_effect_3f_08(uint16_t channel)
 /* When sample 24 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_3f_08_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -367,12 +367,12 @@ void pcm_effect_3f_09(uint16_t channel)
 /* When sample 25 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_3f_09_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -404,12 +404,12 @@ void pcm_effect_3f_0a(uint16_t channel)
 /* When sample 26 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_3f_0a_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -441,12 +441,12 @@ void pcm_effect_3f_0b(uint16_t channel)
 /* When sample 27 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_3f_0b_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -478,12 +478,12 @@ void pcm_effect_3f_0c(uint16_t channel)
 /* When sample 28 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_3f_0c_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -515,12 +515,12 @@ void pcm_effect_3f_0d(uint16_t channel)
 /* When sample 29 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_3f_0d_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -552,12 +552,12 @@ void pcm_effect_3f_0e(uint16_t channel)
 /* When sample 30 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_3f_0e_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -589,12 +589,12 @@ void pcm_effect_3f_0f(uint16_t channel)
 /* When sample 31 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_3f_0f_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -626,12 +626,12 @@ void pcm_effect_3f_10(uint16_t channel)
 /* When sample 32 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_3f_10_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -663,12 +663,12 @@ void pcm_effect_3f_11(uint16_t channel)
 /* When sample 33 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_3f_11_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -700,12 +700,12 @@ void pcm_effect_3f_12(uint16_t channel)
 /* When sample 34 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_3f_12_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -737,12 +737,12 @@ void pcm_effect_3f_13(uint16_t channel)
 /* When sample 35 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_3f_13_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -774,12 +774,12 @@ void pcm_effect_3f_14(uint16_t channel)
 /* When sample 36 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_3f_14_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -811,12 +811,12 @@ void pcm_effect_3f_15(uint16_t channel)
 /* When sample 37 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_3f_15_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -848,12 +848,12 @@ void pcm_effect_3f_16(uint16_t channel)
 /* When sample 38 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_3f_16_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -885,12 +885,12 @@ void pcm_effect_3f_17(uint16_t channel)
 /* When sample 39 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_3f_17_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -922,12 +922,12 @@ void pcm_effect_3f_18(uint16_t channel)
 /* When sample 0 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_3f_18_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -959,12 +959,12 @@ void pcm_effect_3f_19(uint16_t channel)
 /* When sample 1 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_3f_19_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -996,12 +996,12 @@ void pcm_effect_3f_1a(uint16_t channel)
 /* When sample 2 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_3f_1a_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -1033,12 +1033,12 @@ void pcm_effect_3f_1b(uint16_t channel)
 /* When sample 3 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_3f_1b_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -1070,12 +1070,12 @@ void pcm_effect_3f_1c(uint16_t channel)
 /* When sample 40 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_3f_1c_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -1107,12 +1107,12 @@ void pcm_effect_3f_1d(uint16_t channel)
 /* When sample 41 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_3f_1d_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -1144,12 +1144,12 @@ void pcm_effect_3f_1e(uint16_t channel)
 /* When sample 42 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_3f_1e_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -1181,12 +1181,12 @@ void pcm_effect_3f_1f(uint16_t channel)
 /* When sample 43 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_3f_1f_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -1218,12 +1218,12 @@ void pcm_effect_3f_20(uint16_t channel)
 /* When sample 4 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_3f_20_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -1255,12 +1255,12 @@ void pcm_effect_3f_21(uint16_t channel)
 /* When sample 5 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_3f_21_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -1292,12 +1292,12 @@ void pcm_effect_3f_22(uint16_t channel)
 /* When sample 6 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_3f_22_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -1329,12 +1329,12 @@ void pcm_effect_3f_23(uint16_t channel)
 /* When sample 7 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_3f_23_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -1366,12 +1366,12 @@ void pcm_effect_3f_24(uint16_t channel)
 /* When sample 8 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_3f_24_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -1403,12 +1403,12 @@ void pcm_effect_3f_25(uint16_t channel)
 /* When sample 9 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_3f_25_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -1440,12 +1440,12 @@ void pcm_effect_3f_26(uint16_t channel)
 /* When sample 10 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_3f_26_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -1477,12 +1477,12 @@ void pcm_effect_3f_27(uint16_t channel)
 /* When sample 11 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_3f_27_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -1514,12 +1514,12 @@ void pcm_effect_3f_28(uint16_t channel)
 /* When sample 12 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_3f_28_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -1551,12 +1551,12 @@ void pcm_effect_3f_29(uint16_t channel)
 /* When sample 13 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_3f_29_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -1588,12 +1588,12 @@ void pcm_effect_3f_2a(uint16_t channel)
 /* When sample 14 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_3f_2a_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -1625,12 +1625,12 @@ void pcm_effect_3f_2b(uint16_t channel)
 /* When sample 15 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_3f_2b_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -1665,12 +1665,12 @@ void pcm_effect_3f_2c(uint16_t channel)
 /* When sample 100 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_3f_2c_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -1705,12 +1705,12 @@ void pcm_effect_3f_2d(uint16_t channel)
 /* When sample 101 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_3f_2d_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -1745,12 +1745,12 @@ void pcm_effect_3f_2e(uint16_t channel)
 /* When sample 101 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_3f_2e_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -1793,12 +1793,12 @@ void pcm_effect_3f_30(uint16_t channel)
 /* When sample 45 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_3f_30_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -1833,12 +1833,12 @@ void pcm_effect_3f_31(uint16_t channel)
 /* When sample 46 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_3f_31_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -1873,12 +1873,12 @@ void pcm_effect_3f_32(uint16_t channel)
 /* When sample 47 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_3f_32_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -1913,12 +1913,12 @@ void pcm_effect_3f_33(uint16_t channel)
 /* When sample 48 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_3f_33_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -1953,12 +1953,12 @@ void pcm_effect_3f_34(uint16_t channel)
 /* When sample 50 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_3f_34_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -1993,12 +1993,12 @@ void pcm_effect_3f_35(uint16_t channel)
 /* When sample 51 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_3f_35_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -2033,12 +2033,12 @@ void pcm_effect_3f_36(uint16_t channel)
 /* When sample 52 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_3f_36_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -2073,12 +2073,12 @@ void pcm_effect_3f_37(uint16_t channel)
 /* When sample 49 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_3f_37_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -2110,12 +2110,12 @@ void pcm_effect_3f_38(uint16_t channel)
 /* When sample 98 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_3f_38_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -2164,12 +2164,12 @@ void pcm_effect_3f_39(uint16_t channel)
 /* When sample 97 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_3f_39_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -2201,12 +2201,12 @@ void pcm_effect_3f_3a(uint16_t channel)
 /* When sample 78 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_3f_3a_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -2238,12 +2238,12 @@ void pcm_effect_3f_3b(uint16_t channel)
 /* When sample 95 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_3f_3b_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -2325,15 +2325,15 @@ void pcm_effect_42_setup(uint16_t notes, uint16_t channel)
    pcm_effect_42_rest. */
 void pcm_effect_42_next_note(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t passes_ran_out = 0;
 	uint8_t word_high = 0, word_low = 0;
 	uint16_t handler = 0, note = 0, notes = 0, pitch = 0;
 	uint16_t saved_note = 0;
 
 	z80_block(17);
-	zero = pcm_effect_42_update(channel);
+	passes_ran_out = pcm_effect_42_update(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (passes_ran_out == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -2371,14 +2371,14 @@ void pcm_effect_42_next_note(uint16_t channel)
    voice decays by its patch's decay step every 16 passes); then pcm_effect_42_next_note. */
 void pcm_effect_42_rest(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t passes_ran_out = 0;
 	uint8_t word_high = 0, word_low = 0;
 	uint16_t handler = 0, notes = 0;
 
 	z80_block(17);
-	zero = pcm_effect_42_update(channel);
+	passes_ran_out = pcm_effect_42_update(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (passes_ran_out == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -2400,17 +2400,17 @@ void pcm_effect_42_rest(uint16_t channel)
 /* One pass less of the note or the rest (passes); true when none is left. */
 uint32_t pcm_effect_42_update(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t passes_ran_out = 0;
 	uint8_t passes_high = 0, passes_low = 0;
-	uint16_t t1 = 0;
+	uint16_t passes_left = 0;
 
 	z80_block(100);
-	t1 = CHANNEL(channel)->pcm_effect_42.passes - 1u;
-	passes_high = (uint8_t)(t1 >> 8);
-	passes_low = (uint8_t)t1;
+	passes_left = CHANNEL(channel)->pcm_effect_42.passes - 1u;
+	passes_high = (uint8_t)(passes_left >> 8);
+	passes_low = (uint8_t)passes_left;
 	CHANNEL(channel)->pcm_effect_42.passes = ((uint32_t)passes_high << 8) | passes_low;
-	zero = (passes_low | passes_high) == 0u;
-	return zero;
+	passes_ran_out = (passes_low | passes_high) == 0u;
+	return passes_ran_out;
 }
 
 /* Command 43: sample 145 (pcm_effect_43_patch, level 40) at its own pitch, pan 4 (centred), keyed on;
@@ -2436,12 +2436,12 @@ void pcm_effect_43(uint16_t channel)
 /* When sample 145 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_43_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -2473,12 +2473,12 @@ void pcm_effect_44(uint16_t channel)
 /* When sample 53 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_44_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -2510,12 +2510,12 @@ void pcm_effect_45(uint16_t channel)
 /* When sample 54 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_45_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -2549,13 +2549,13 @@ void pcm_effect_46(uint16_t channel)
    key off and on (the sample again from its start). */
 void pcm_effect_46_retrigger(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 	uint8_t count = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -2597,12 +2597,12 @@ void pcm_effect_47(uint16_t channel)
 /* When sample 81 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_47_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -2634,12 +2634,12 @@ void pcm_effect_48(uint16_t channel)
 /* When sample 70 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_48_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -2671,12 +2671,12 @@ void pcm_effect_49(uint16_t channel)
 /* When sample 91 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_49_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -2708,12 +2708,12 @@ void pcm_effect_4a(uint16_t channel)
 /* When sample 54 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_4a_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -2745,12 +2745,12 @@ void pcm_effect_4b(uint16_t channel)
 /* When sample 44 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_4b_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -2782,12 +2782,12 @@ void pcm_effect_4c(uint16_t channel)
 /* When sample 72 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_4c_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -2819,12 +2819,12 @@ void pcm_effect_4d(uint16_t channel)
 /* When sample 73 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_4d_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -2856,12 +2856,12 @@ void pcm_effect_4e(uint16_t channel)
 /* When sample 90 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_4e_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -2893,12 +2893,12 @@ void pcm_effect_4f(uint16_t channel)
 /* When sample 69 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_4f_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -2970,12 +2970,12 @@ void pcm_effect_50_fade(uint16_t channel)
 /* When sample 147 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_50_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -3010,12 +3010,12 @@ void pcm_effect_51(uint16_t channel)
 /* When sample 146 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_51_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -3111,12 +3111,12 @@ void pcm_effect_53(uint16_t channel)
 /* When sample 92 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_53_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -3182,12 +3182,12 @@ void pcm_effect_54_modulate(uint16_t channel)
 /* When sample 55 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_54_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -3222,12 +3222,12 @@ void pcm_effect_55(uint16_t channel)
 /* When sample 68 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_55_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -3266,14 +3266,14 @@ void pcm_effect_56(uint16_t channel)
    left): an echo; then pcm_effect_56_retrigger_2. */
 void pcm_effect_56_retrigger(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 	uint8_t pan = 0, volume = 0;
 	uint16_t handler = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -3296,14 +3296,14 @@ void pcm_effect_56_retrigger(uint16_t channel)
 /* When it ends, a third time at volume 70, pan 2 (to the left); then pcm_effect_56_wait_sample. */
 void pcm_effect_56_retrigger_2(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 	uint8_t pan = 0, volume = 0;
 	uint16_t handler = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -3326,12 +3326,12 @@ void pcm_effect_56_retrigger_2(uint16_t channel)
 /* When sample 79 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_56_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -3369,13 +3369,13 @@ void pcm_effect_57(uint16_t channel)
    pcm_effect_57_note. */
 void pcm_effect_57_retrigger(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t passes_ran_out = 0;
 	uint16_t handler = 0, pitch = 0;
 
 	z80_block(17);
-	zero = pcm_effect_57_update(channel);
+	passes_ran_out = pcm_effect_57_update(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (passes_ran_out == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -3399,14 +3399,14 @@ void pcm_effect_57_retrigger(uint16_t channel)
    keyed on; then pcm_effect_57_wait_sample. */
 void pcm_effect_57_note(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t passes_ran_out = 0;
 	uint8_t pan = 0;
 	uint16_t handler = 0, patch = 0, pitch = 0;
 
 	z80_block(17);
-	zero = pcm_effect_57_update(channel);
+	passes_ran_out = pcm_effect_57_update(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (passes_ran_out == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -3430,12 +3430,12 @@ void pcm_effect_57_note(uint16_t channel)
 /* When sample 17 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_57_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -3447,17 +3447,17 @@ void pcm_effect_57_wait_sample(uint16_t channel)
 /* One pass less (passes); true when none is left. */
 uint32_t pcm_effect_57_update(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t passes_ran_out = 0;
 	uint8_t passes_high = 0, passes_low = 0;
-	uint16_t t1 = 0;
+	uint16_t passes_left = 0;
 
 	z80_block(100);
-	t1 = CHANNEL(channel)->pcm_effect_57.passes - 1u;
-	passes_high = (uint8_t)(t1 >> 8);
-	passes_low = (uint8_t)t1;
+	passes_left = CHANNEL(channel)->pcm_effect_57.passes - 1u;
+	passes_high = (uint8_t)(passes_left >> 8);
+	passes_low = (uint8_t)passes_left;
 	CHANNEL(channel)->pcm_effect_57.passes = ((uint32_t)passes_high << 8) | passes_low;
-	zero = (passes_high | passes_low) == 0u;
-	return zero;
+	passes_ran_out = (passes_high | passes_low) == 0u;
+	return passes_ran_out;
 }
 
 /* Command 58: sample 77 (pcm_effect_58_patch, level 0) at pitch FA0, pan 4 (centred), keyed on, to play
@@ -3488,13 +3488,13 @@ void pcm_effect_58(uint16_t channel)
    key off and on (the sample again from its start). */
 void pcm_effect_58_retrigger(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 	uint8_t count = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -3536,12 +3536,12 @@ void pcm_effect_59(uint16_t channel)
 /* When sample 144 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_59_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -3573,12 +3573,12 @@ void pcm_effect_5a(uint16_t channel)
 /* When sample 74 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_5a_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -3613,12 +3613,12 @@ void pcm_effect_5b(uint16_t channel)
 /* When sample 74 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_5b_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -3775,12 +3775,12 @@ void pcm_effect_5e(uint16_t channel)
 /* When sample 77 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_5e_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -3812,12 +3812,12 @@ void pcm_effect_5f(uint16_t channel)
 /* When sample 58 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_5f_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -3849,12 +3849,12 @@ void pcm_effect_60(uint16_t channel)
 /* When sample 57 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_60_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -3886,12 +3886,12 @@ void pcm_effect_61(uint16_t channel)
 /* When sample 60 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_61_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -3923,12 +3923,12 @@ void pcm_effect_62(uint16_t channel)
 /* When sample 76 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_62_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -3960,12 +3960,12 @@ void pcm_effect_63(uint16_t channel)
 /* When sample 56 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_63_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -3997,12 +3997,12 @@ void pcm_effect_64(uint16_t channel)
 /* When sample 64 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_64_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -4034,12 +4034,12 @@ void pcm_effect_65(uint16_t channel)
 /* When sample 122 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_65_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -4071,12 +4071,12 @@ void pcm_effect_66(uint16_t channel)
 /* When sample 102 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_66_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -4108,12 +4108,12 @@ void pcm_effect_67(uint16_t channel)
 /* When sample 61 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_67_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -4145,12 +4145,12 @@ void pcm_effect_68(uint16_t channel)
 /* When sample 62 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_68_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -4182,12 +4182,12 @@ void pcm_effect_69(uint16_t channel)
 /* When sample 63 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_69_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -4219,12 +4219,12 @@ void pcm_effect_6a(uint16_t channel)
 /* When sample 83 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_6a_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -4256,12 +4256,12 @@ void pcm_effect_6b(uint16_t channel)
 /* When sample 66 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_6b_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -4293,12 +4293,12 @@ void pcm_effect_6c(uint16_t channel)
 /* When sample 67 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_6c_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -4330,12 +4330,12 @@ void pcm_effect_6d(uint16_t channel)
 /* When sample 75 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_6d_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -4367,12 +4367,12 @@ void pcm_effect_6e(uint16_t channel)
 /* When sample 94 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_6e_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -4404,12 +4404,12 @@ void pcm_effect_6f(uint16_t channel)
 /* When sample 65 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_6f_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -4441,12 +4441,12 @@ void pcm_effect_70(uint16_t channel)
 /* When sample 84 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_70_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -4478,12 +4478,12 @@ void pcm_effect_71(uint16_t channel)
 /* When sample 93 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_71_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -4515,12 +4515,12 @@ void pcm_effect_72(uint16_t channel)
 /* When sample 80 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_72_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -4552,12 +4552,12 @@ void pcm_effect_73(uint16_t channel)
 /* When sample 85 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_73_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -4589,12 +4589,12 @@ void pcm_effect_74(uint16_t channel)
 /* When sample 86 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_74_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -4626,12 +4626,12 @@ void pcm_effect_75(uint16_t channel)
 /* When sample 87 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_75_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -4663,12 +4663,12 @@ void pcm_effect_76(uint16_t channel)
 /* When sample 96 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_76_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -4769,12 +4769,12 @@ void pcm_effect_79(uint16_t channel)
 /* When sample 68 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_79_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -4850,14 +4850,14 @@ void pcm_effect_7a_delay(uint16_t channel)
 {
 	uint8_t passes_high = 0, passes_low = 0;
 	uint16_t handler = 0;
-	uint16_t t1 = 0;
+	uint16_t passes_left = 0;
 
 	z80_block(17);
 	pcm_effect_7a_replay(channel);
 	z80_block(95);
-	t1 = CHANNEL(channel)->pcm_effect_7a.passes - 1u;
-	passes_high = (uint8_t)(t1 >> 8);
-	passes_low = (uint8_t)t1;
+	passes_left = CHANNEL(channel)->pcm_effect_7a.passes - 1u;
+	passes_high = (uint8_t)(passes_left >> 8);
+	passes_low = (uint8_t)passes_left;
 	CHANNEL(channel)->pcm_effect_7a.passes = ((uint32_t)passes_high << 8) | passes_low;
 	if ((passes_low | passes_high) != 0u)
 	{
@@ -4905,12 +4905,12 @@ void pcm_effect_7a_fade_out(uint16_t channel)
 /* When the sample has ended (pcm_voice_playing), key off and on: the sample again from its start. */
 void pcm_effect_7a_replay(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -4944,12 +4944,12 @@ void pcm_effect_7b(uint16_t channel)
 /* When sample 71 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_7b_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -5025,14 +5025,14 @@ void pcm_effect_7c_delay(uint16_t channel)
 {
 	uint8_t passes_high = 0, passes_low = 0;
 	uint16_t handler = 0;
-	uint16_t t1 = 0;
+	uint16_t passes_left = 0;
 
 	z80_block(17);
 	pcm_effect_7c_replay(channel);
 	z80_block(95);
-	t1 = CHANNEL(channel)->pcm_effect_7c.passes - 1u;
-	passes_high = (uint8_t)(t1 >> 8);
-	passes_low = (uint8_t)t1;
+	passes_left = CHANNEL(channel)->pcm_effect_7c.passes - 1u;
+	passes_high = (uint8_t)(passes_left >> 8);
+	passes_low = (uint8_t)passes_left;
 	CHANNEL(channel)->pcm_effect_7c.passes = ((uint32_t)passes_high << 8) | passes_low;
 	if ((passes_low | passes_high) != 0u)
 	{
@@ -5080,12 +5080,12 @@ void pcm_effect_7c_fade_out(uint16_t channel)
 /* When the sample has ended (pcm_voice_playing), key off and on: the sample again from its start. */
 void pcm_effect_7c_replay(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -5119,12 +5119,12 @@ void pcm_effect_7d(uint16_t channel)
 /* When sample 99 has ended (pcm_voice_playing), stop_channel. */
 void pcm_effect_7d_wait_sample(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -5160,14 +5160,14 @@ void pcm_effect_7e_delay(uint16_t channel)
 {
 	uint8_t passes_high = 0, passes_low = 0;
 	uint16_t handler = 0;
-	uint16_t t1 = 0;
+	uint16_t passes_left = 0;
 
 	z80_block(17);
 	pcm_effect_7e_replay(channel);
 	z80_block(95);
-	t1 = CHANNEL(channel)->pcm_effect_7e.passes - 1u;
-	passes_high = (uint8_t)(t1 >> 8);
-	passes_low = (uint8_t)t1;
+	passes_left = CHANNEL(channel)->pcm_effect_7e.passes - 1u;
+	passes_high = (uint8_t)(passes_left >> 8);
+	passes_low = (uint8_t)passes_left;
 	CHANNEL(channel)->pcm_effect_7e.passes = ((uint32_t)passes_high << 8) | passes_low;
 	if ((passes_low | passes_high) != 0u)
 	{
@@ -5215,12 +5215,12 @@ void pcm_effect_7e_fade_out(uint16_t channel)
 /* When the sample has ended (pcm_voice_playing), key off and on: the sample again from its start. */
 void pcm_effect_7e_replay(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -5253,12 +5253,12 @@ void pcm_effect_7f(uint16_t channel)
    until position 0); then pcm_effect_7f_set_volume. */
 void pcm_effect_7f_retrigger(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(10);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		pcm_effect_7f_set_volume(channel);
 		return;

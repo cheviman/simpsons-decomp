@@ -3247,3 +3247,160 @@ local   start_music_channel 03D2 d track_high
 # sound_main runs on from the reset with the IX it was left (it hands it back when the RAM test failed: 0B1C "jp
 # nz,$0B28"), else the last record stop_all_channels leaves there
 local   sound_main entry ix channel
+
+# ======== names, batch 6: what the sound program's flags say, its temporaries (build/names6/names_sound.txt; merged by the lead) ========
+# batch 6, sound: names for the flags' variables and the temporaries of src/sound/ (sound_symbols.txt syntax)
+# (evidence: build/names6/sound_c/listing.s and the C of src/sound/; the callers listed in work_sound.txt as "caller"
+# take a source's name by themselves: none needs a line of its own)
+
+# ======== flag sources ========
+
+# pcm_voice_playing 1000-100C "ld a,(ix+$40); cp $08; ret c; ld a,($FC29); and (ix+$4d); ret": Z set when the
+# voice's bit of the K053260's status (FC29) is clear, the sample has ended (a YM2151 record: cp $08 with A < 8 leaves
+# NZ, "still playing"); the callers' "call $1000; ret nz" then stop_channel or key the sample again
+# (pcm_effect_3f_00_wait_sample 2ECC: "When sample 16 has ended (pcm_voice_playing), stop_channel"; the drums' "when
+# the voice has ended")
+flag pcm_voice_playing z voice_ended
+# the move_pitch routines end "dec (ix+$01); ret" (fm_effect_01_move_pitch 1159, 0e 1488, 1b 1AE4, 1c 1B84, 1d 1C0C,
+# 26 1FDA, 29 2148): Z when the timer reaches 0 ("counts the timer down and tells whether it ran out"); the callers'
+# "ret nz" go on to the next round or stop_channel only then
+flag fm_effect_01_move_pitch z timer_ran_out
+flag fm_effect_0e_move_pitch z timer_ran_out
+flag fm_effect_1b_move_pitch z timer_ran_out
+flag fm_effect_1c_move_pitch z timer_ran_out
+flag fm_effect_1d_move_pitch z timer_ran_out
+flag fm_effect_26_move_pitch z timer_ran_out
+flag fm_effect_29_move_pitch z timer_ran_out
+# fm_effect_20_move_pitch 1D3E "dec (ix+$00); ret": the same on count ("counts the count down and tells whether it ran
+# out")
+flag fm_effect_20_move_pitch z count_ran_out
+# music_channel_song 4284 "ld a,(ix+$10); or a; ret": Z when the record plays no song; start_sound's C0-EF walk
+# (zero = music_channel_song(FM_0); if (zero) ... FM_1 ...) starts the song at once only when every record says so
+flag music_channel_song z no_song
+# add_note_length 48EC-48F9 "ld l,(ix+$3a); ld h,(ix+$3b); add hl,de; ... ret": the length is negative (note_lengths),
+# so the carry is set when time is still past 0 after the step: the next step is due at once; music_tick's rests
+# (4633 "call $48DC; jp c,$42AE", back to the next byte) read on only then, as at the tempo's carry (42AD "ret nc")
+flag add_note_length cy next_step_due
+# pcm_effect_42_update 37B8 "dec de ... ld a,e; or d; ret" (pcm_effect_57_update 3B55, unused_effect_3f_update 28DF
+# "dec hl ... ld a,l; or h"): Z when the passes are down to 0 ("true when none is left"); the callers' "ret nz"
+flag pcm_effect_42_update z passes_ran_out
+flag pcm_effect_57_update z passes_ran_out
+flag unused_effect_3f_update z passes_ran_out
+
+# ======== local flags ========
+
+# write_operator_level 0DA7 "sla l; jp nc,$0DB4": the carriers' mask's top bit, set when this operator is a carrier
+# (then 0DAC "add a,(ix+$45)": the volume added to its total level)
+flag write_operator_level cy carrier
+# fm_effect_13_slide 16BF.. and fm_effect_14_slide 17AD..: the pitch's fraction and low byte as a word plus 1E0 / C0
+# ("add hl,de"), and at its carry "inc" of the pitch's high byte (AT8(...pitch, 1)++): a 24-bit sum done in parts,
+# its carry into the pitch's high byte
+# (left: an arithmetic carry) flag fm_effect_13_slide cy pitch_high_carry
+# (left: an arithmetic carry) flag fm_effect_14_slide cy pitch_high_carry
+# music_tick 42F4-42FA "ld a,(ix+$3c); or (ix+$3d); push af": Z when the previous note's gate_time is 0, which
+# set_note_gate gives when gate is 0 ("the next note legato"); the AF popped after set_pitch (stack bit 6) skips the
+# key off and key on and the envelope's restart: the note slurs on ("key on but for a legato note")
+flag music_tick z legato
+# music_tick 429B-42AD "ld l,(ix+$3a) ... add hl,de; ld (ix+$3a),l; ld (ix+$3b),h; ret nc": the tempo added to time,
+# the track's next step read at its carry (field time: "the next step read at its carry"); the rests' add_note_length
+# carry the same: read on while it is set (the "carry = 0u" of 42F7's "or" only goes into the pushed AF)
+flag music_tick cy next_step_due
+# music_note_tick 4494-44A2 "ld l,(ix+$3a) ... ld e,(ix+$3c) ... add hl,de; ret nc; jp $0EBE": time plus gate_time
+# carries once the time left is no more than gate_time: then key_off ("key off once the time left is no more than
+# gate_time")
+flag music_note_tick cy key_off_due
+# set_note_gate 492F "srl d; rr e": the time left halved, the bit that srl moves out of its high byte into the top of
+# its low byte (left_low = (left_low >> 1) | (carry << 7))
+# (left: the bit of a 16-bit shift) flag set_note_gate cy bit_into_low
+
+# ======== temporaries ========
+
+# write_operator_level 0DAC "add a,(ix+$45)": the operator's total level plus the record's volume (an attenuation),
+# 7F at most (0DAF "jp p")
+local write_operator_level 0DAC t3 attenuated_level
+# pcm_update_volume 0DC0-0DC3 "ld a,(ix+$45); add a,(ix+$46)": the volume plus the patch's level (scoped pcm level),
+# 7F at most; 0DCB "add a,(ix+$48)": that plus the decay, 7F at most
+local pcm_update_volume 0DC3 t3 patch_attenuation
+local pcm_update_volume 0DCB t3 decayed_attenuation
+# set_pitch 0DF3-0DF5 "sub $18; jp nc,$0DF3": the pitch's high byte before 18 (8 octaves) is taken off it once more
+local set_pitch 0DF3 t1 unwrapped_note
+# the move_pitch routines' "dec (ix+$01)" (fm_effect_20_move_pitch "dec (ix+$00)"): the timer (count) after this pass,
+# stored back and tested for 0
+local fm_effect_01_move_pitch 1159 t2 timer_left
+local fm_effect_0e_move_pitch 1488 t2 timer_left
+local fm_effect_1b_move_pitch 1AE4 t2 timer_left
+local fm_effect_1c_move_pitch 1B84 t2 timer_left
+local fm_effect_1d_move_pitch 1C0C t2 timer_left
+local fm_effect_20_move_pitch 1D3E t2 count_left
+local fm_effect_26_move_pitch 1FDA t2 timer_left
+local fm_effect_29_move_pitch 2148 t2 timer_left
+# the pass counters' "ld l,(ix+$00); ld h,(ix+$01); dec hl" (pcm_effect_42_update 37B2-37B8 "ld e,(ix+$02); ld
+# d,(ix+$03); dec de"): the passes after this one, stored back and tested for 0 ("ld a,l; or h")
+local fm_effect_11_pitch 15CF p1 passes_left
+local fm_effect_12_delay 1639 p1 passes_left
+local fm_effect_1f_end 1CC3 p1 passes_left
+local fm_effect_21_end 1D7F p1 passes_left
+local unused_effect_3e_end 2879 p1 passes_left
+local unused_effect_3f_update 28DF p1 passes_left
+local pcm_effect_42_update 37B8 p1 passes_left
+local pcm_effect_57_update 3B55 p1 passes_left
+local pcm_effect_7a_delay 3FEF p1 passes_left
+local pcm_effect_7c_delay 40A0 p1 passes_left
+local pcm_effect_7e_delay 4126 p1 passes_left
+# sound_main_loop 0BB5-0BB8 "ld hl,$F3CD; dec (hl); jp nz" and 0BA7-0BAA "ld hl,$F3CF; dec (hl); jp nz": fade_timer
+# and fade_hold before the pass takes one off (the C tests the old value against 1)
+# (left as comments: sound_main_loop is a "loop" line, not a "func" one, and check_sound_lines.py only knows func
+# lines; decompile_sound.py keys local sites by place and value alone, and its names include the loop's, so the two
+# lines would work once the check takes loop lines too)
+local sound_main_loop 0BB8 t1 old_fade_timer
+local sound_main_loop 0BAA t1 old_fade_hold
+# run_pcm_channel 0C07-0C0A "ld a,(ix+$48); add a,(ix+$47)": the decay one decay_step on, 7F at most (0C0D "jp p")
+local run_pcm_channel 0C0A t3 next_decay
+# music_tick 42F4-42F7 "ld a,(ix+$3c); or (ix+$3d)": the previous note's gate_time, its two bytes or-ed (0 for a legato
+# note)
+local music_tick 42F7 t2 previous_gate_bits
+# set_note_gate 4933 "rlca; jp nc,$4938": gate before this turn's rotation, whose top bit says whether the halved time
+# left is added in
+local set_note_gate 4933 t1 unrotated_ratio
+# set_music_volume 494B-494E "ld a,($F3CB); add a,c": the music's volume plus fade_attenuation, 7F at most (494F "jp p")
+local set_music_volume 494E t3 faded_volume
+# check_rom 09E6-09ED "ld a,l; exx; ld c,a; exx; ld a,h; exx; ld b,a; exx" (the C's BOARD_ORIGINAL(check_rom)): the sum
+# in HL while its low byte goes to program_rom_sum's (BC'), sample_rom_2_sum (HL') held while the main set is back, the
+# sum again while its high byte goes over (then 09EE "ld de,$072E; sbc hl,de": the one checked), sample_rom_2_sum back
+local check_rom 09E7 t3 sum_for_low_byte
+local check_rom 09E9 t3 sample_2_sum_aside
+local check_rom 09EB t3 final_sum
+local check_rom 09ED t3 sample_2_sum_back
+# sound_command F2-F7 (04CE "exx; ld a,c; exx; ld c,a; ld ($FC02),bc", 04DF b, 04F0 e, 0501 d, 0512 l, 0523 h): the
+# command word in BC (its high byte the argument, echoed to FC03) set aside while a byte of the alternate set's sums
+# is read, and program_rom_sum (BC') put back by the second exx
+local sound_command 04CE t1 f2_command_aside
+local sound_command 04D0 t1 f2_program_sum_back
+local sound_command 04DF t1 f3_command_aside
+local sound_command 04E1 t1 f3_program_sum_back
+local sound_command 04F0 t1 f4_command_aside
+local sound_command 04F2 t1 f4_program_sum_back
+local sound_command 0501 t1 f5_command_aside
+local sound_command 0503 t1 f5_program_sum_back
+local sound_command 0512 t1 f6_command_aside
+local sound_command 0514 t1 f6_program_sum_back
+local sound_command 0523 t1 f7_command_aside
+local sound_command 0525 t1 f7_program_sum_back
+# sound_command FE 0771-0778 "ld a,l; exx; ld e,a; exx; ld a,h; exx; ld d,a; exx" (then 0779 "ld de,$93AB; sbc
+# hl,de"): the sample ROM 1's sum while its low byte goes to sample_rom_1_sum (DE'), sample_rom_2_sum (HL') held while
+# the main set is back, the sum again while its high byte goes over (the one checked), sample_rom_2_sum back
+local sound_command 0772 t3 sample_1_sum_for_low_byte
+local sound_command 0774 t3 sample_2_sum_aside
+local sound_command 0776 t3 final_sample_1_sum
+local sound_command 0778 t3 sample_2_sum_back
+# sound_command FE 081F-0826 "ld a,l; exx; ld l,a; exx; ld a,h; exx; ld h,a; exx" (then 0827 "ld de,$A5A5; sbc
+# hl,de"): the sample ROM 2's sum, its low byte for HL', the sum checked, the new sample_rom_2_sum
+local sound_command 0822 t3 sample_2_sum_low_byte
+local sound_command 0824 t3 final_sample_2_sum
+local sound_command 0826 t3 new_sample_2_sum
+# sound_command 049C-049F "ex af,af'; ld e,a; ex af,af'; bit 0,e" (F8-FD) and 007B-007E (a sound command): the
+# command in A set aside while self_test_failures (A') is read, and A' put back
+local sound_command 049C t1 f8_fd_command_aside
+local sound_command 049E t1 f8_fd_failures_back
+local sound_command 007B t1 sound_aside
+local sound_command 007D t1 sound_failures_back

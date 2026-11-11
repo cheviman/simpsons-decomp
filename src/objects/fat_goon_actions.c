@@ -272,14 +272,14 @@ void fat_goon_body_slam_jump(uint16_t object)
 /* Falls with the body slam's hit box once the jump has risen; on landing takes the body's hit box. */
 void fat_goon_body_slam_fall(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t landed = 0;
 	uint8_t timer = 0, action_step = 0;
 	uint16_t z_speed = 0;
 
 	z_speed = OBJECT(object)->z_speed;
 	OBJECT(object)->z_speed = z_speed - 0x40u;
-	carry = vector_check_landing(object);
-	if (carry == 0u)
+	landed = vector_check_landing(object);
+	if (landed == 0u)
 	{
 		timer = OBJECT(object)->timer;
 		OBJECT(object)->timer = timer - 1u;
@@ -493,7 +493,7 @@ uint16_t fat_goon_grab(uint16_t object)
 {
 	uint8_t action_or_floor_high = 0, action_or_floor_low = 0, direction = 0;
 	uint16_t direction_word = 0, heading = 0, target = 0;
-	uint8_t stack = 0;
+	uint8_t target_player_bits = 0;
 	uint8_t state = 0, timer = 0, blink_frames = 0, hold_presses = 0, attributes = 0, attributes_2 = 0, shadow_player = 0, points = 0, shadow_player_2 = 0, action_step = 0;
 	uint16_t target_2 = 0, hit_by = 0, target_dx = 0, target_dy = 0, floor_z = 0, z = 0, floor_z_2 = 0, target_x = 0, target_y = 0;
 	uint32_t action_halfword = 0, action_halfword_2 = 0;
@@ -692,9 +692,9 @@ uint16_t fat_goon_grab(uint16_t object)
 	attributes_2 = OBJECT(object)->attributes;
 	OBJECT(object)->attributes = (attributes_2 & 0xBFu) | grab_facing;
 	shadow_player = OBJECT(target)->shadow_player;
-	stack = shadow_player & 0x70u;
+	target_player_bits = shadow_player & 0x70u;
 	points = OBJECT(object)->points;
-	OBJECT(object)->points = (points & 0x8Fu) | stack;
+	OBJECT(object)->points = (points & 0x8Fu) | target_player_bits;
 	shadow_player_2 = OBJECT(target)->shadow_player;
 	OBJECT(object)->animation = fat_goon_hold_animations[(((shadow_player_2 >> 1) >> 1) >> 1) >> 1] | 0x80u;
 	OBJECT(object)->timer = 6u;

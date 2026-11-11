@@ -17,8 +17,8 @@ void player_run_all(void)
 {
 	uint8_t idle_players = 0, players_left = 0;
 	uint16_t bit_and_number = 0, controls = 0, held_object = 0, player = 0, player_2 = 0, record = 0;
-	uint8_t stack = 0, stack_10002 = 0;
-	uint8_t last_idle_players = 0, last_heavy_workers = 0, last_all_idle = 0, stage_is_over = 0, t1 = 0, held_high = 0, players_before = 0;
+	uint8_t buttons_now = 0, pressed_buttons = 0;
+	uint8_t last_idle_players = 0, last_heavy_workers = 0, last_all_idle = 0, stage_is_over = 0, idle_count = 0, held_high = 0, players_before = 0;
 	uint16_t held = 0;
 
 	last_idle_players = io_read8(players_idle_count);
@@ -26,33 +26,33 @@ void player_run_all(void)
 	last_heavy_workers = io_read8(heavy_object_workers);
 	io_write8(heavy_object_workers, 0u);
 	players_push_y = 0;
-	stack = player_controls(0);
-	stack_10002 = player_controls(2);
-	controls = ((uint32_t)stack << 8) | stack_10002;
+	buttons_now = player_controls(0);
+	pressed_buttons = player_controls(2);
+	controls = ((uint32_t)buttons_now << 8) | pressed_buttons;
 	player = OBJECT_ADDRESS(0);
 	record = player_variables_ADDRESS;
 	io_write16(running_player_values, player_variables_ADDRESS);
 	bit_and_number = 0x100u;
 	player_run(record, controls, player, bit_and_number);
-	stack = player_controls(4);
-	stack_10002 = player_controls(6);
-	controls = ((uint32_t)stack << 8) | stack_10002;
+	buttons_now = player_controls(4);
+	pressed_buttons = player_controls(6);
+	controls = ((uint32_t)buttons_now << 8) | pressed_buttons;
 	player = OBJECT_ADDRESS(2);
 	record = homer_lives_ADDRESS;
 	io_write16(running_player_values, homer_lives_ADDRESS);
 	bit_and_number = 0x201u;
 	player_run(record, controls, player, bit_and_number);
-	stack = player_controls(8);
-	stack_10002 = player_controls(10);
-	controls = ((uint32_t)stack << 8) | stack_10002;
+	buttons_now = player_controls(8);
+	pressed_buttons = player_controls(10);
+	controls = ((uint32_t)buttons_now << 8) | pressed_buttons;
 	player = OBJECT_ADDRESS(4);
 	record = bart_lives_ADDRESS;
 	io_write16(running_player_values, bart_lives_ADDRESS);
 	bit_and_number = 0x402u;
 	player_run(record, controls, player, bit_and_number);
-	stack = player_controls(12);
-	stack_10002 = player_controls(14);
-	controls = ((uint32_t)stack << 8) | stack_10002;
+	buttons_now = player_controls(12);
+	pressed_buttons = player_controls(14);
+	controls = ((uint32_t)buttons_now << 8) | pressed_buttons;
 	player = OBJECT_ADDRESS(6);
 	record = lisa_lives_ADDRESS;
 	io_write16(running_player_values, lisa_lives_ADDRESS);
@@ -63,8 +63,8 @@ void player_run_all(void)
 	stage_is_over = io_read8(players_stop_request);
 	if (stage_is_over != 0u)
 	{
-		t1 = io_read8(players_idle_count);
-		idle_players = t1;
+		idle_count = io_read8(players_idle_count);
+		idle_players = idle_count;
 		if (idle_players != 4u)
 			return;
 		io_write8(players_all_idle, idle_players);
@@ -97,13 +97,13 @@ void player_run_all(void)
 void player_run(uint16_t record, uint16_t controls, uint16_t player, uint16_t bit_and_number)
 {
 	bool L_038159 = false;
-	uint32_t negative = 0, carry = 0;
+	uint32_t negative = 0, wall = 0;
 	uint8_t clear_value = 0, drop_x_high = 0, drop_x_low = 0, floor_value = 0, player_number = 0, scene_number = 0, shadow_player = 0, status = 0;
 	uint16_t bytes_left = 0, command = 0, cursor = 0, floor_cell = 0, state_handlers = 0;
-	uint8_t stack_10004 = 0;
-	uint16_t stack = 0, stack_6 = 0;
-	uint8_t idle_players = 0, entry_status = 0, all_idle = 0, status_2 = 0, shadow_player_2 = 0, kept_life = 0, status_3 = 0, status_4 = 0, tries_before = 0, kind = 0, t2 = 0, kind_2 = 0, t4 = 0, state_frames = 0, stage_is_over = 0, blink_frames = 0, animation_flags = 0, teamed = 0, frames_since_press = 0, frames_since_press_2 = 0, player_state = 0;
-	uint16_t player_y = 0, entry_z = 0, kind_offset = 0, entry_x = 0, t1 = 0, t3 = 0, drop_x = 0, player_x = 0, moved_x = 0, first_drop_x = 0, t5 = 0, t6 = 0, partner = 0;
+	uint8_t saved_player_number = 0;
+	uint16_t saved_record = 0, saved_player = 0;
+	uint8_t idle_players = 0, entry_status = 0, all_idle = 0, status_2 = 0, shadow_player_2 = 0, kept_life = 0, status_3 = 0, status_4 = 0, tries_before = 0, kind = 0, second_tries_before = 0, kind_2 = 0, drop_tries_before = 0, state_frames = 0, stage_is_over = 0, blink_frames = 0, animation_flags = 0, teamed = 0, frames_since_press = 0, frames_since_press_2 = 0, player_state = 0;
+	uint16_t player_y = 0, entry_z = 0, kind_offset = 0, entry_x = 0, tried_y = 0, drop_offset = 0, drop_x = 0, player_x = 0, moved_x = 0, first_drop_x = 0, scan_x = 0, next_scan_x = 0, partner = 0;
 
 	player_number = (uint8_t)bit_and_number;
 	if (((bit_and_number >> 8) & players_playing) == 0u)
@@ -122,12 +122,12 @@ void player_run(uint16_t record, uint16_t controls, uint16_t player, uint16_t bi
 			io_write8(players_idle_count, idle_players + 1u);
 			return;
 		}
-		stack = record;
-		stack_10004 = player_number;
+		saved_record = record;
+		saved_player_number = player_number;
 		status_2 = OBJECT(player)->player.status;
 		status = status_2;
 		OBJECT(player)->animation = 0x80u;
-		stack_6 = player;
+		saved_player = player;
 		cursor = player + 0x1Cu;
 		bytes_left = 0x3Du;
 		clear_value = 0u;
@@ -137,17 +137,17 @@ void player_run(uint16_t record, uint16_t controls, uint16_t player, uint16_t bi
 			cursor++;
 			bytes_left--;
 		}
-		player = stack_6;
+		player = saved_player;
 		OBJECT(player)->player.status = status;
 		if ((status & 2u) == 0u)
 		{
 			OBJECT(player)->attributes = 0u;
 			OBJECT(player)->vitality = 0x28u;
-			mem_write8(stack + 2u, 0x28u);
+			mem_write8(saved_record + 2u, 0x28u);
 		}
-		record = stack;
+		record = saved_record;
 		shadow_player_2 = OBJECT(player)->shadow_player;
-		shadow_player = (((((uint32_t)stack_10004 << 1) << 1) << 1) << 1) | shadow_player_2;
+		shadow_player = (((((uint32_t)saved_player_number << 1) << 1) << 1) << 1) | shadow_player_2;
 		OBJECT(player)->shadow_player = shadow_player;
 		OBJECT(player + 0x60u)->shadow_player = shadow_player;
 		kept_life = PLAYER_VALUES(record)->kept_life;
@@ -171,10 +171,10 @@ void player_run(uint16_t record, uint16_t controls, uint16_t player, uint16_t bi
 			{
 				OBJECT(player)->y = 0xB8u;
 				entry_tries_left = 4u;
-				carry = player_find_entry_floor(player);
+				wall = player_find_entry_floor(player);
 				for (;;)
 				{
-					if (carry)
+					if (wall)
 					{
 						player_y = OBJECT(player)->y;
 						OBJECT(player)->y = player_y - 8u;
@@ -182,15 +182,15 @@ void player_run(uint16_t record, uint16_t controls, uint16_t player, uint16_t bi
 						entry_tries_left = tries_before - 1u;
 						if (tries_before != 1u)
 						{
-							carry = player_find_entry_floor(player);
+							wall = player_find_entry_floor(player);
 							continue;
 						}
 						entry_tries_left = 9u;
 						OBJECT(player)->y = 0xB8u;
-						carry = player_find_entry_floor(player);
+						wall = player_find_entry_floor(player);
 						for (;;)
 						{
-							if (carry == 0u)
+							if (wall == 0u)
 							{
 								entry_z = (uint8_t)entry_floor_height + 0x20u;
 								OBJECT(player)->z = entry_z;
@@ -207,13 +207,13 @@ void player_run(uint16_t record, uint16_t controls, uint16_t player, uint16_t bi
 								vector_queue_sound(command);
 								break;
 							}
-							t1 = OBJECT(player)->y;
-							OBJECT(player)->y = t1 + 8u;
-							t2 = entry_tries_left;
-							entry_tries_left = t2 - 1u;
-							if (t2 != 1u)
+							tried_y = OBJECT(player)->y;
+							OBJECT(player)->y = tried_y + 8u;
+							second_tries_before = entry_tries_left;
+							entry_tries_left = second_tries_before - 1u;
+							if (second_tries_before != 1u)
 							{
-								carry = player_find_entry_floor(player);
+								wall = player_find_entry_floor(player);
 								continue;
 							}
 							L_038159 = true;
@@ -243,8 +243,8 @@ void player_run(uint16_t record, uint16_t controls, uint16_t player, uint16_t bi
 			if (L_038159)
 			{
 				kind_2 = OBJECT(player)->kind;
-				t3 = (int8_t)((((((uint32_t)kind_2 << 1) << 1) << 1) << 1) << 1);
-				drop_x = t3 + 0xD0u;
+				drop_offset = (int8_t)((((((uint32_t)kind_2 << 1) << 1) << 1) << 1) << 1);
+				drop_x = drop_offset + 0xD0u;
 				drop_x_high = (uint8_t)(drop_x >> 8);
 				drop_x_low = (uint8_t)drop_x;
 				OBJECT(player)->x = ((uint32_t)drop_x_high << 8) | drop_x_low;
@@ -268,9 +268,9 @@ void player_run(uint16_t record, uint16_t controls, uint16_t player, uint16_t bi
 					player_x = OBJECT(player)->x;
 					moved_x = player_x - 0x10u;
 					OBJECT(player)->x = moved_x;
-					t4 = entry_tries_left;
-					entry_tries_left = t4 - 1u;
-					if (t4 != 1u)
+					drop_tries_before = entry_tries_left;
+					entry_tries_left = drop_tries_before - 1u;
+					if (drop_tries_before != 1u)
 					{
 						record = player;
 						vector_floor_ahead(record, &floor_cell, &negative);
@@ -281,9 +281,9 @@ void player_run(uint16_t record, uint16_t controls, uint16_t player, uint16_t bi
 					OBJECT(player)->x = first_drop_x;
 					do
 					{
-						t5 = OBJECT(player)->x;
-						t6 = t5 + 0x10u;
-						OBJECT(player)->x = t6;
+						scan_x = OBJECT(player)->x;
+						next_scan_x = scan_x + 0x10u;
+						OBJECT(player)->x = next_scan_x;
 						record = player;
 						vector_floor_ahead(record, &floor_cell, &negative);
 						floor_value = (uint8_t)(floor_cell >> 8);
@@ -519,7 +519,7 @@ void player_run(uint16_t record, uint16_t controls, uint16_t player, uint16_t bi
    wall; the highest floor met in F3. */
 uint32_t player_find_entry_floor(uint16_t player)
 {
-	uint32_t carry = 0;
+	uint32_t wall = 0;
 	uint16_t floor_height = 0;
 	uint8_t places_before = 0;
 	uint16_t player_x = 0;
@@ -529,9 +529,9 @@ uint32_t player_find_entry_floor(uint16_t player)
 	entry_places_left = 8u;
 	do
 	{
-		player_floor_at_next_place(player, &floor_height, &carry);
-		if (carry)
-			return carry;
+		player_floor_at_next_place(player, &floor_height, &wall);
+		if (wall)
+			return wall;
 		if (entry_floor_height < (int8_t)floor_height)
 			entry_floor_height = (uint8_t)floor_height;
 		player_x = OBJECT(player)->x;
@@ -539,8 +539,8 @@ uint32_t player_find_entry_floor(uint16_t player)
 		places_before = entry_places_left;
 		entry_places_left = places_before - 1u;
 	} while (places_before != 1u);
-	carry = 0u;
-	return carry;
+	wall = 0u;
+	return wall;
 }
 
 /* Player state 40: when its animation ends, the next state with bit 2 of its flags off; then takes its
@@ -582,14 +582,14 @@ void update_players(uint16_t *p_player, uint16_t *p_slot, uint16_t *p_d, uint32_
 	uint32_t carry = *p_carry;
 	uint8_t players_done = 0;
 	uint16_t d_2 = 0, player = 0, slot = 0;
-	uint8_t stack = 0;
+	uint8_t player_counter = 0;
 	uint16_t state = 0;
 
 	slot = slot_credits_ADDRESS;
-	stack = 0u;
+	player_counter = 0u;
 	do
 	{
-		player = player_records[(int8_t)((uint8_t)((uint32_t)stack << 1)) / 2];
+		player = player_records[(int8_t)((uint8_t)((uint32_t)player_counter << 1)) / 2];
 		leftover_y = player_status_handlers_ADDRESS;
 		state = PLAYER(player)->state;
 		switch ((int8_t)(uint8_t)((uint32_t)mem_read8(state) << 1))
@@ -623,11 +623,11 @@ void update_players(uint16_t *p_player, uint16_t *p_slot, uint16_t *p_d, uint32_
 			break;
 		}
 		slot += 8u;
-		stack = stack + 1u;
-		players_done = stack;
+		player_counter = player_counter + 1u;
+		players_done = player_counter;
 		carry = players_done < 4u;
 	} while (players_done != 4u);
-	d_2 = (d & 0xFFu) | ((uint32_t)stack << 8);
+	d_2 = (d & 0xFFu) | ((uint32_t)player_counter << 8);
 	*p_player = player;
 	*p_slot = slot;
 	*p_d = d_2;
@@ -675,12 +675,12 @@ uint16_t player_out(uint16_t player, uint16_t slot)
    plays */
 uint16_t player_join(uint16_t player, uint16_t slot, uint8_t d)
 {
-	uint32_t carry = 0;
+	uint32_t in_high_scores = 0;
 	uint8_t a = 0, b = 0, new_lives = 0;
 	uint16_t coins = 0, d_2 = 0;
-	uint8_t stack = 0;
-	uint8_t start_pressed = 0, lives_added = 0, lives_before = 0, t1 = 0, bit = 0, initial_3 = 0, number = 0;
-	uint16_t play_status = 0, lives = 0, coins_left = 0, lives_2 = 0, shared_credits = 0, state = 0, t2 = 0, credits_left = 0, lives_3 = 0, lives_4 = 0, life = 0, object_life = 0, countdown = 0, state_2 = 0, play_status_2 = 0, state_3 = 0, score = 0, last_score = 0, score_2 = 0, initial = 0;
+	uint8_t high_score_place = 0;
+	uint8_t start_pressed = 0, lives_added = 0, lives_before = 0, start_buttons = 0, bit = 0, initial_3 = 0, number = 0;
+	uint16_t play_status = 0, lives = 0, coins_left = 0, lives_2 = 0, shared_credits = 0, state = 0, credits_before = 0, credits_left = 0, lives_3 = 0, lives_4 = 0, life = 0, object_life = 0, countdown = 0, state_2 = 0, play_status_2 = 0, state_3 = 0, score = 0, last_score = 0, score_2 = 0, initial = 0;
 
 	b = (uint8_t)d;
 	play_status = PLAYER(player)->play_status;
@@ -724,15 +724,15 @@ uint16_t player_join(uint16_t player, uint16_t slot, uint8_t d)
 			d_2 = ((uint32_t)a << 8) | b;
 			return d_2;
 		}
-		t1 = mem_read8(PLAYER(player)->pressed) & 0xB0u;
-		a = t1;
-		if (t1 == 0u)
+		start_buttons = mem_read8(PLAYER(player)->pressed) & 0xB0u;
+		a = start_buttons;
+		if (start_buttons == 0u)
 		{
 			d_2 = ((uint32_t)a << 8) | b;
 			return d_2;
 		}
-		t2 = credits;
-		credits_left = t2 - 1u;
+		credits_before = credits;
+		credits_left = credits_before - 1u;
 		credits = credits_left;
 		lives_3 = PLAYER(player)->lives;
 		lives_4 = PLAYER(player)->lives;
@@ -767,10 +767,10 @@ uint16_t player_join(uint16_t player, uint16_t slot, uint8_t d)
 	score_2 = PLAYER(player)->score;
 	mem_write16(score_2, 0u);
 	d_2 = ((uint32_t)a << 8) | b;
-	high_score_rank(&d_2, &carry);
+	high_score_rank(&d_2, &in_high_scores);
 	a = (uint8_t)(d_2 >> 8);
 	b = (uint8_t)d_2;
-	if (carry == 0u)
+	if (in_high_scores == 0u)
 	{
 		play_status_2 = PLAYER(player)->play_status;
 		mem_write8(play_status_2, 2u);
@@ -780,7 +780,7 @@ uint16_t player_join(uint16_t player, uint16_t slot, uint8_t d)
 		d_2 = ((uint32_t)a << 8) | b;
 		return d_2;
 	}
-	stack = a;
+	high_score_place = a;
 	initial = (((uint32_t)PLAYER(player)->initial_1 << 8u) | PLAYER(player)->initial_2);
 	b = (uint8_t)initial;
 	new_high_score = ((uint32_t)(initial >> 8) << 8) | b;
@@ -788,7 +788,7 @@ uint16_t player_join(uint16_t player, uint16_t slot, uint8_t d)
 	new_high_score_initial_3 = initial_3;
 	number = PLAYER(player)->number;
 	new_high_score_player = number;
-	d_2 = ((uint32_t)stack << 8) | b;
+	d_2 = ((uint32_t)high_score_place << 8) | b;
 	d_2 = insert_high_score(d_2);
 	b = (uint8_t)d_2;
 	play_status_2 = PLAYER(player)->play_status;

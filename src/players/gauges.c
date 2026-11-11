@@ -14,10 +14,10 @@
 /* Draws the top line while it is on: each player's score and quarter, and the credits unless free play */
 void gauges_draw(void)
 {
-	uint32_t carry = 0;
+	uint32_t past_99 = 0;
 	uint8_t credits_bcd = 0, credits_shown = 0, player_index = 0;
 	uint16_t bcd_value = 0, blank = 0, gauge_player = 0, ignored16 = 0, picture = 0, place = 0, player_number = 0, tiles = 0, value = 0;
-	uint8_t stack = 0;
+	uint8_t player_counter = 0;
 	uint16_t credits_count = 0;
 
 	if (gauges_shown == 0u)
@@ -25,12 +25,12 @@ void gauges_draw(void)
 	player_index = 0u;
 	do
 	{
-		stack = player_index;
+		player_counter = player_index;
 		gauge_player = gauge_player_records[(int8_t)((uint8_t)((uint32_t)player_index << 1)) / 2];
 		gauge_print_score(gauge_player);
-		player_number = (uint32_t)stack << 8;
+		player_number = (uint32_t)player_counter << 8;
 		gauge_draw_player(player_number);
-		player_index = stack + 1u;
+		player_index = player_counter + 1u;
 	} while (player_index != 4u);
 	if (separate_coin_slots != 0u)
 		return;
@@ -43,9 +43,9 @@ void gauges_draw(void)
 	if ((uint16_t)(((uint32_t)(credits_count >> 8) << 8) | credits_shown) > 0xFFu)
 		credits_shown = 0xFFu;
 	bcd_value = credits_shown;
-	gauges_byte_to_bcd(&ignored16, &bcd_value, &carry);
+	gauges_byte_to_bcd(&ignored16, &bcd_value, &past_99);
 	credits_bcd = (uint8_t)(bcd_value >> 8);
-	if (carry)
+	if (past_99)
 		credits_bcd = 0x99u;
 	place = 0x276Du;
 	value = (uint32_t)credits_bcd << 8;
@@ -69,9 +69,9 @@ void continue_end(void)
 {
 	uint8_t d = 0;
 	uint16_t blank = 0, picture = 0, tiles = 0;
-	uint8_t stack = 0;
+	uint8_t saved_caller_byte = 0;
 
-	stack = d;
+	saved_caller_byte = d;
 	tiles = 0x2213u;
 	picture = continue_picture_ADDRESS;
 	blank = 0x8000u;
@@ -99,12 +99,12 @@ void gauges_count_delays(void)
 {
 	uint8_t delay = 0, player_index = 0;
 	uint16_t gauge_counters = 0;
-	uint8_t stack = 0;
+	uint8_t player_counter = 0;
 	uint8_t old_delay = 0;
 	uint16_t counters = 0;
 
 	player_index = 0u;
-	stack = 0u;
+	player_counter = 0u;
 	do
 	{
 		counters = GAUGE_PLAYER(gauge_player_records[(int8_t)((uint8_t)((uint32_t)player_index << 1)) / 2])->counters;
@@ -114,8 +114,8 @@ void gauges_count_delays(void)
 		if (old_delay != 0u)
 			delay--;
 		PLAYER_COUNTERS(gauge_counters)->gauge_delay = delay;
-		stack = stack + 1u;
-		player_index = stack;
+		player_counter = player_counter + 1u;
+		player_index = player_counter;
 	} while (player_index != 4u);
 	leftover_y = gauge_counters;
 }
@@ -136,7 +136,7 @@ void gauge_print_score(uint16_t gauge_player)
 /* Draws a player's quarter by its status: playing, continue count, game over or waiting */
 void gauge_draw_player(uint16_t player_number)
 {
-	uint32_t carry = 0;
+	uint32_t past_99 = 0;
 	uint8_t lives_bcd = 0, lives_shown = 0, player_status = 0;
 	uint16_t bcd_value = 0, count = 0, gauge_player = 0, quarter_and_picture = 0, tiles = 0;
 	uint8_t quarter = 0, number = 0, number_2 = 0, number_3 = 0, number_4 = 0, number_5 = 0, number_6 = 0;
@@ -154,9 +154,9 @@ void gauge_draw_player(uint16_t player_number)
 		if ((uint16_t)(((uint32_t)(lives_count >> 8) << 8) | lives_shown) > 0xFFu)
 			lives_shown = 0xFFu;
 		bcd_value = (uint8_t)(lives_shown - 1u);
-		gauges_byte_to_bcd(&tiles, &bcd_value, &carry);
+		gauges_byte_to_bcd(&tiles, &bcd_value, &past_99);
 		lives_bcd = (uint8_t)(bcd_value >> 8);
-		if (carry)
+		if (past_99)
 			lives_bcd = 0x99u;
 		count = (bcd_value & 0xFFu) | ((uint32_t)lives_bcd << 8);
 		gauge_print_count(gauge_player, tiles, count);
@@ -207,23 +207,23 @@ void gauge_draw_player(uint16_t player_number)
 }
 
 /* B in BCD in A (carry set past 99) */
-void gauges_byte_to_bcd(uint16_t *p_bcd_powers, uint16_t *p_value, uint32_t *p_carry)
+void gauges_byte_to_bcd(uint16_t *p_bcd_powers, uint16_t *p_value, uint32_t *p_past_99)
 {
 	uint16_t bcd_powers = (uint16_t)*p_bcd_powers;
 	uint8_t value = (uint8_t)*p_value;
-	uint32_t carry = *p_carry;
+	uint32_t past_99 = *p_past_99;
 	uint32_t half_carry = 0;
 	uint8_t bcd = 0, bits = 0;
 	uint16_t bcd_word = 0;
-	uint8_t stack = 0, stack_2 = 0, stack_4 = 0;
+	uint8_t saved_tiles_low = 0, saved_tiles_high = 0, bit_count = 0;
 	uint8_t bit_value = 0, bcd_sum = 0, adjusted_bcd = 0, bits_before = 0;
 
 	bits = (uint8_t)value;
-	stack_2 = bcd_powers >> 8;
-	stack = (uint8_t)bcd_powers;
+	saved_tiles_high = bcd_powers >> 8;
+	saved_tiles_low = (uint8_t)bcd_powers;
 	bcd_powers = bcd_bit_values_ADDRESS;
-	stack_4 = 8u;
-	carry = 0u;
+	bit_count = 8u;
+	past_99 = 0u;
 	bcd = 0u;
 	do
 	{
@@ -232,34 +232,34 @@ void gauges_byte_to_bcd(uint16_t *p_bcd_powers, uint16_t *p_value, uint32_t *p_c
 			bit_value = mem_read8(bcd_powers);
 			bcd_sum = bcd + bit_value;
 			half_carry = ((bcd ^ bit_value ^ bcd_sum) >> 4) & 1u;
-			carry = (uint8_t)(bcd + bit_value) < bcd;
+			past_99 = (uint8_t)(bcd + bit_value) < bcd;
 			bcd = bcd_sum;
-			adjusted_bcd = konami_daa(bcd, half_carry, carry);
-			carry = konami_daa_carry(bcd, half_carry, carry);
+			adjusted_bcd = konami_daa(bcd, half_carry, past_99);
+			past_99 = konami_daa_carry(bcd, half_carry, past_99);
 			bcd = adjusted_bcd;
 		}
-		if (carry)
+		if (past_99)
 			break;
 		bcd_powers++;
 		bits = bits >> 1;
-		carry = 0u;
-		bits_before = stack_4;
-		stack_4 = bits_before - 1u;
+		past_99 = 0u;
+		bits_before = bit_count;
+		bit_count = bits_before - 1u;
 	} while (bits_before != 1u);
-	bcd_powers = ((uint32_t)stack_2 << 8) | stack;
+	bcd_powers = ((uint32_t)saved_tiles_high << 8) | saved_tiles_low;
 	bcd_word = ((uint32_t)bcd << 8) | bits;
 	*p_bcd_powers = bcd_powers;
 	*p_value = bcd_word;
-	*p_carry = carry;
+	*p_past_99 = past_99;
 }
 
 /* Moves the health gauge one step toward the player's health and draws its four tiles */
 uint16_t gauge_draw_health(uint16_t gauge_player)
 {
-	uint32_t zero = 0, carry = 0;
+	uint32_t gauge_at_health = 0, gauge_above_health = 0;
 	uint8_t bottom = 0, gauge_scale = 0, gauge_steps = 0, step_change = 0, target_step = 0;
 	uint16_t gauge_counters = 0, gauge_tile = 0;
-	uint8_t stack = 0, stack_2 = 0, stack_3 = 0, stack_4 = 0;
+	uint8_t player_low_or_tiles_left = 0, player_high_or_steps = 0, division_low = 0, division_high = 0;
 	uint8_t health_value = 0, shown_step = 0, gauge_step = 0, step_delay = 0, steps_before = 0, tiles_before = 0;
 	uint16_t counters = 0, health = 0, scaled_health = 0, first_tile = 0, step_record = 0;
 
@@ -272,20 +272,20 @@ uint16_t gauge_draw_health(uint16_t gauge_player)
 	if (health_value != 0u)
 	{
 		scaled_health = (uint32_t)gauge_scale * target_step;
-		stack_2 = gauge_player >> 8;
-		stack = (uint8_t)gauge_player;
-		stack_3 = scaled_health;
-		stack_4 = scaled_health >> 8;
-		stack_3 = konami_divx((uint16_t)(((uint32_t)stack_4 << 8) | stack_3), 0x28u);
-		target_step = stack_3 + 1u;
-		gauge_player = ((uint32_t)stack_2 << 8) | stack;
+		player_high_or_steps = gauge_player >> 8;
+		player_low_or_tiles_left = (uint8_t)gauge_player;
+		division_low = scaled_health;
+		division_high = scaled_health >> 8;
+		division_low = konami_divx((uint16_t)(((uint32_t)division_high << 8) | division_low), 0x28u);
+		target_step = division_low + 1u;
+		gauge_player = ((uint32_t)player_high_or_steps << 8) | player_low_or_tiles_left;
 	}
 	shown_step = PLAYER_COUNTERS(gauge_counters)->gauge_step;
-	zero = (uint8_t)(target_step - shown_step) == 0u;
-	carry = target_step < shown_step;
+	gauge_at_health = (uint8_t)(target_step - shown_step) == 0u;
+	gauge_above_health = target_step < shown_step;
 	if (target_step == shown_step)
 		step_change = 2u;
-	else if (carry | zero)
+	else if (gauge_above_health | gauge_at_health)
 		step_change = 1u;
 	else
 		step_change = 0u;
@@ -305,39 +305,39 @@ uint16_t gauge_draw_health(uint16_t gauge_player)
 	}
 	first_tile = GAUGE_PLAYER(gauge_player)->gauge_tiles;
 	gauge_tile = first_tile;
-	stack = 4u;
+	player_low_or_tiles_left = 4u;
 	do
 	{
 		if (gauge_steps == 0u)
 		{
-			stack_2 = gauge_steps;
+			player_high_or_steps = gauge_steps;
 			mem_write8(gauge_tile, 0x8Du);
 			mem_write8(gauge_tile - 0x2000u, 0xC0u);
 			mem_write8(gauge_tile + 0x40u, 0x9Du);
 			mem_write8(gauge_tile - 0x1FC0u, 0xC0u);
-			gauge_steps = stack_2;
+			gauge_steps = player_high_or_steps;
 		}
 		else
 		{
 			if (gauge_steps > 8u)
 			{
-				stack_2 = gauge_steps;
+				player_high_or_steps = gauge_steps;
 				mem_write8(gauge_tile, 0x85u);
 				mem_write8(gauge_tile - 0x2000u, 0xC0u);
 				mem_write8(gauge_tile + 0x40u, 0x95u);
 				mem_write8(gauge_tile - 0x1FC0u, 0xC0u);
-				gauge_steps = stack_2;
+				gauge_steps = player_high_or_steps;
 			}
 			else
 			{
-				stack_2 = gauge_steps;
+				player_high_or_steps = gauge_steps;
 				step_record = gauge_step_tiles_ADDRESS + (int8_t)((uint32_t)gauge_steps << 1);
 				mem_write8(gauge_tile, GAUGE_STEP(step_record)->top);
 				mem_write8(gauge_tile - 0x2000u, 0xC0u);
 				bottom = GAUGE_STEP(step_record)->bottom;
 				mem_write8(gauge_tile + 0x40u, bottom);
 				mem_write8(gauge_tile - 0x1FC0u, 0xC0u);
-				gauge_steps = stack_2;
+				gauge_steps = player_high_or_steps;
 			}
 			steps_before = gauge_steps;
 			gauge_steps = steps_before - 8u;
@@ -345,8 +345,8 @@ uint16_t gauge_draw_health(uint16_t gauge_player)
 				gauge_steps = 0u;
 		}
 		gauge_tile++;
-		tiles_before = stack;
-		stack = tiles_before - 1u;
+		tiles_before = player_low_or_tiles_left;
+		player_low_or_tiles_left = tiles_before - 1u;
 	} while (tiles_before != 1u);
 	return gauge_player;
 }
@@ -356,20 +356,20 @@ void gauge_print_count(uint16_t gauge_player, uint16_t tiles, uint16_t count)
 {
 	uint8_t bottom = 0, digit_attribute = 0, tens_index = 0;
 	uint16_t digits = 0;
-	uint8_t stack_F = 0, stack = 0;
+	uint8_t player_colour = 0, bcd_count = 0;
 	uint8_t number = 0, tens_nibble = 0;
 	uint16_t tens_record = 0, tens_cursor = 0, units_record = 0, units_cursor = 0;
 
-	stack = count >> 8;
+	bcd_count = count >> 8;
 	number = GAUGE_PLAYER(gauge_player)->number;
-	stack_F = GAUGE_COLUMN(gauge_player_columns_ADDRESS + (int8_t)(((uint32_t)number << 1) + 1u))->column;
+	player_colour = GAUGE_COLUMN(gauge_player_columns_ADDRESS + (int8_t)(((uint32_t)number << 1) + 1u))->column;
 	digits = big_digits_ADDRESS;
-	tens_nibble = stack & ~0xFu;
+	tens_nibble = bcd_count & ~0xFu;
 	tens_index = tens_nibble;
 	if (tens_nibble == 0u)
 		tens_index = 0xA0u;
 	tens_record = digits + ((tens_index >> 1) >> 1);
-	digit_attribute = BIG_DIGIT(tens_record)->attribute | stack_F;
+	digit_attribute = BIG_DIGIT(tens_record)->attribute | player_colour;
 	mem_write8(tiles - 0x2000u, digit_attribute);
 	mem_write8(tiles - 0x1FC0u, digit_attribute);
 	tens_cursor = tens_record + 1u;
@@ -377,8 +377,8 @@ void gauge_print_count(uint16_t gauge_player, uint16_t tiles, uint16_t count)
 	bottom = BIG_DIGIT(tens_cursor - 0x1u)->bottom;
 	mem_write8(tiles + 0x40u, bottom);
 	tiles++;
-	units_record = big_digits_ADDRESS + (uint8_t)(((stack & 0xFu) << 1) << 1);
-	digit_attribute = BIG_DIGIT(units_record)->attribute | stack_F;
+	units_record = big_digits_ADDRESS + (uint8_t)(((bcd_count & 0xFu) << 1) << 1);
+	digit_attribute = BIG_DIGIT(units_record)->attribute | player_colour;
 	mem_write8(tiles - 0x2000u, digit_attribute);
 	mem_write8(tiles - 0x1FC0u, digit_attribute);
 	units_cursor = units_record + 1u;
@@ -403,20 +403,20 @@ void continue_draw_count(void)
 {
 	uint8_t seconds = 0, tens_or_blank = 0;
 	uint16_t blank = 0, picture = 0, tiles = 0;
-	uint8_t stack = 0, stack_2 = 0;
+	uint8_t seconds_bcd = 0, tens_digit = 0;
 
 	seconds = continue_seconds;
-	stack = seconds;
+	seconds_bcd = seconds;
 	seconds = (((seconds >> 1) >> 1) >> 1) >> 1;
-	stack_2 = seconds;
+	tens_digit = seconds;
 	picture = continue_digit_pictures[seconds & 0x7Fu];
 	tiles = 0x2418u;
-	tens_or_blank = stack_2;
+	tens_or_blank = tens_digit;
 	if (tens_or_blank == 0u)
 		tens_or_blank = 0x80u;
 	blank = (uint32_t)tens_or_blank << 8;
 	gauges_put_picture(tiles, picture, blank);
-	picture = continue_digit_pictures[stack & 0xFu];
+	picture = continue_digit_pictures[seconds_bcd & 0xFu];
 	tiles = 0x2420u;
 	blank = 0u;
 	gauges_put_picture(tiles, picture, blank);
@@ -442,22 +442,22 @@ void gauges_put_picture(uint16_t tiles, uint16_t picture, uint16_t blank)
 {
 	uint8_t blank_tile = 0, colour = 0;
 	uint16_t cursor = 0;
-	uint8_t stack = 0, stack_2 = 0, stack_3 = 0, stack_4 = 0, stack_5 = 0;
-	uint8_t columns_before = 0, t1 = 0, rows_before = 0;
+	uint8_t blank_flag = 0, rows_left = 0, columns_wide = 0, columns_left = 0, tile_colour = 0;
+	uint8_t columns_before = 0, copy_columns_before = 0, rows_before = 0;
 	uint16_t header = 0, picture_size = 0, colour_address = 0, blank_place = 0, source = 0, tile_place = 0;
 
-	stack = blank >> 8;
+	blank_flag = blank >> 8;
 	header = picture;
 	picture_size = mem_read16(header);
-	stack_2 = picture_size;
-	stack_3 = picture_size >> 8;
+	rows_left = picture_size;
+	columns_wide = picture_size >> 8;
 	colour_address = header + 2u;
 	cursor = colour_address + 1u;
-	stack_5 = mem_read8(colour_address);
+	tile_colour = mem_read8(colour_address);
 	do
 	{
-		stack_4 = stack_3;
-		if ((int8_t)stack < 0)
+		columns_left = columns_wide;
+		if ((int8_t)blank_flag < 0)
 		{
 			blank_tile = 0x10u;
 			colour = 0u;
@@ -467,13 +467,13 @@ void gauges_put_picture(uint16_t tiles, uint16_t picture, uint16_t blank)
 				blank_place = tiles;
 				tiles = blank_place + 1u;
 				mem_write8(blank_place, blank_tile);
-				columns_before = stack_4;
-				stack_4 = columns_before - 1u;
+				columns_before = columns_left;
+				columns_left = columns_before - 1u;
 			} while (columns_before != 1u);
 		}
 		else
 		{
-			colour = stack_5;
+			colour = tile_colour;
 			do
 			{
 				mem_write8(tiles - 0x2000u, colour);
@@ -482,13 +482,13 @@ void gauges_put_picture(uint16_t tiles, uint16_t picture, uint16_t blank)
 				tile_place = tiles;
 				tiles = tile_place + 1u;
 				mem_write8(tile_place, mem_read8(source));
-				t1 = stack_4;
-				stack_4 = t1 - 1u;
-			} while (t1 != 1u);
+				copy_columns_before = columns_left;
+				columns_left = copy_columns_before - 1u;
+			} while (copy_columns_before != 1u);
 		}
-		tiles += (int8_t)(0x40u - stack_3);
-		rows_before = stack_2;
-		stack_2 = rows_before - 1u;
+		tiles += (int8_t)(0x40u - columns_wide);
+		rows_before = rows_left;
+		rows_left = rows_before - 1u;
 	} while (rows_before != 1u);
 }
 
@@ -497,36 +497,36 @@ void gauge_draw_picture(uint16_t quarter_and_picture)
 {
 	uint8_t colour = 0, part_colour = 0, quarter_byte = 0;
 	uint16_t cursor = 0, tile = 0;
-	uint8_t stack_E = 0, stack_F = 0, stack = 0, stack_11 = 0, stack_12 = 0, stack_13 = 0, stack_14 = 0, stack_15 = 0, stack_16 = 0;
+	uint8_t draw_colour = 0, picture_number = 0, quarter_number = 0, quarter_column = 0, columns_left = 0, quarter_colour = 0, rows_left = 0, part_width = 0, quarter_and_blank = 0;
 	uint8_t columns_before = 0, rows_before = 0;
 	uint16_t column = 0, part = 0, columns_address = 0, rows_address = 0, colour_address = 0, source = 0, tile_place = 0, end_mark = 0;
 
 	quarter_byte = (uint8_t)(quarter_and_picture >> 8);
-	stack_16 = quarter_byte;
-	stack = quarter_byte & 0x7Fu;
-	stack_F = (uint8_t)quarter_and_picture;
-	column = (((uint32_t)GAUGE_COLUMN(gauge_player_columns_ADDRESS + (int8_t)((uint32_t)stack << 1))->column << 8u) | GAUGE_COLUMN(gauge_player_columns_ADDRESS + (int8_t)((uint32_t)stack << 1))->colour);
-	stack_11 = column >> 8;
-	stack_13 = column;
-	cursor = gauge_pictures[(int8_t)((uint8_t)((uint32_t)stack_F << 1)) / 2];
+	quarter_and_blank = quarter_byte;
+	quarter_number = quarter_byte & 0x7Fu;
+	picture_number = (uint8_t)quarter_and_picture;
+	column = (((uint32_t)GAUGE_COLUMN(gauge_player_columns_ADDRESS + (int8_t)((uint32_t)quarter_number << 1))->column << 8u) | GAUGE_COLUMN(gauge_player_columns_ADDRESS + (int8_t)((uint32_t)quarter_number << 1))->colour);
+	quarter_column = column >> 8;
+	quarter_colour = column;
+	cursor = gauge_pictures[(int8_t)((uint8_t)((uint32_t)picture_number << 1)) / 2];
 	do
 	{
 		part = cursor;
-		tile = mem_read16(part) + (int8_t)stack_11;
+		tile = mem_read16(part) + (int8_t)quarter_column;
 		columns_address = part + 2u;
-		stack_15 = mem_read8(columns_address);
+		part_width = mem_read8(columns_address);
 		rows_address = columns_address + 1u;
-		stack_14 = mem_read8(rows_address);
+		rows_left = mem_read8(rows_address);
 		colour_address = rows_address + 1u;
 		cursor = colour_address + 1u;
-		part_colour = mem_read8(colour_address) | stack_13;
-		if ((int8_t)stack_16 < 0)
+		part_colour = mem_read8(colour_address) | quarter_colour;
+		if ((int8_t)quarter_and_blank < 0)
 			part_colour = 0u;
-		stack_E = part_colour;
+		draw_colour = part_colour;
 		do
 		{
-			stack_12 = stack_15;
-			colour = stack_E;
+			columns_left = part_width;
+			colour = draw_colour;
 			do
 			{
 				mem_write8(tile - 0x2000u, colour);
@@ -535,12 +535,12 @@ void gauge_draw_picture(uint16_t quarter_and_picture)
 				tile_place = tile;
 				tile = tile_place + 1u;
 				mem_write8(tile_place, mem_read8(source));
-				columns_before = stack_12;
-				stack_12 = columns_before - 1u;
+				columns_before = columns_left;
+				columns_left = columns_before - 1u;
 			} while (columns_before != 1u);
-			tile += (int8_t)(0x40u - stack_15);
-			rows_before = stack_14;
-			stack_14 = rows_before - 1u;
+			tile += (int8_t)(0x40u - part_width);
+			rows_before = rows_left;
+			rows_left = rows_before - 1u;
 		} while (rows_before != 1u);
 		end_mark = cursor;
 		cursor = end_mark + 1u;

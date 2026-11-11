@@ -18,9 +18,9 @@ void player_take_touches(uint16_t kind, uint16_t player)
 {
 	uint8_t box_width = 0, hit_kind = 0, move = 0;
 	uint16_t balloon_value = 0, effect_state = 0, facing = 0, other = 0, partner = 0, player_vars = 0, team_member = 0, team_move = 0, team_sound = 0;
-	uint16_t stack = 0;
+	uint16_t saved_team_member = 0;
 	uint8_t blink_frames = 0, blink_frames_2 = 0, hit = 0, blink_frames_3 = 0, teamed = 0, teamed_2 = 0, hit_2 = 0, kind_2 = 0, team_move_number = 0, kind_3 = 0, kind_4 = 0, team_move_number_2 = 0, attributes = 0;
-	uint16_t t1 = 0, hit_by = 0, team_move_record = 0, sound = 0, first_object_address = 0, first_object_offset = 0, first_direction_address = 0, second_object_offset = 0, second_direction_address = 0, second_x = 0, first_x = 0, partner_2 = 0, hit_offset = 0;
+	uint16_t running_values = 0, hit_by = 0, team_move_record = 0, sound = 0, first_object_address = 0, first_object_offset = 0, first_direction_address = 0, second_object_offset = 0, second_direction_address = 0, second_x = 0, first_x = 0, partner_2 = 0, hit_offset = 0;
 
 	blink_frames = OBJECT(player)->player.blink_frames;
 	if (blink_frames != 0u)
@@ -30,8 +30,8 @@ void player_take_touches(uint16_t kind, uint16_t player)
 		if (blink_frames_2 == 1u)
 		{
 			OBJECT(player)->flags = 0xC0u;
-			t1 = io_read16(running_player_values);
-			player_vars = t1;
+			running_values = io_read16(running_player_values);
+			player_vars = running_values;
 			PLAYER_VALUES(player_vars)->entry_status = 2u;
 			effect_state = 0xD00u;
 			player_start_effect(kind, player, effect_state);
@@ -126,7 +126,7 @@ void player_take_touches(uint16_t kind, uint16_t player)
 		team_move_number_2 = OBJECT(player)->player.team_move_number;
 		OBJECT(team_member)->animation = team_move_number_2 - 0x20u;
 		OBJECT(team_member)->parameter = 0x30u;
-		stack = team_member;
+		saved_team_member = team_member;
 		second_object_offset = (uint32_t)TEAM_MOVE(team_move - 0x3u)->second_object << 2;
 		team_member = OBJECT_ADDRESS(0) + second_object_offset;
 		second_direction_address = team_move - 1u;
@@ -137,7 +137,7 @@ void player_take_touches(uint16_t kind, uint16_t player)
 		balloon_value = (team_sound & 0xFFu) | 0x300u;
 		player_show_balloon(facing, player, balloon_value);
 		second_x = OBJECT(team_member)->x;
-		team_member = stack;
+		team_member = saved_team_member;
 		facing += 4u;
 		first_x = OBJECT(team_member)->x;
 		if ((int16_t)second_x < (int16_t)first_x)
@@ -262,7 +262,7 @@ void player_take_pose_blow(uint16_t player)
 void player_pick_up_item(uint16_t player)
 {
 	uint16_t held_object = 0, picked_up = 0;
-	uint16_t stack = 0;
+	uint16_t saved_player = 0;
 	uint8_t controls_pressed = 0, teamed = 0, state = 0, status = 0, teamed_2 = 0, held_high = 0;
 	uint16_t held = 0, hit_by = 0, held_2 = 0;
 
@@ -283,7 +283,7 @@ void player_pick_up_item(uint16_t player)
 					player_check_motion(player);
 					return;
 				}
-				stack = player;
+				saved_player = player;
 				status = OBJECT(player)->player.status;
 				OBJECT(player)->player.status = status & ~1u;
 				teamed_2 = OBJECT(player)->player.teamed;
@@ -297,7 +297,7 @@ void player_pick_up_item(uint16_t player)
 				OBJECT(picked_up)->carried = 1u;
 				OBJECT(picked_up)->flags &= 0xBFu;
 				player_stop(player);
-				player = stack;
+				player = saved_player;
 				held_2 = OBJECT(player)->player.held;
 				held_object = held_2;
 				if (held_2 != 0u)
@@ -322,7 +322,7 @@ void player_pick_up_item(uint16_t player)
 void player_pick_up_weapon(uint16_t player)
 {
 	uint16_t held_object = 0, picked_up = 0;
-	uint16_t stack = 0;
+	uint16_t saved_player = 0;
 	uint8_t controls_pressed = 0, teamed = 0, state = 0, hit = 0, status = 0, teamed_2 = 0, held_high = 0;
 	uint16_t held = 0, hit_by = 0, held_2 = 0;
 
@@ -346,7 +346,7 @@ void player_pick_up_weapon(uint16_t player)
 				OBJECT(player + 0x60u)->player.held = (OBJECT(player + 0x60u)->player.held & 0xFFu) | 0x1400u;
 				hit = OBJECT(player)->hit;
 				OBJECT(player)->player.held = (uint8_t)(hit + 0x10u);
-				stack = player;
+				saved_player = player;
 				status = OBJECT(player)->player.status;
 				OBJECT(player)->player.status = status & ~1u;
 				teamed_2 = OBJECT(player)->player.teamed;
@@ -360,7 +360,7 @@ void player_pick_up_weapon(uint16_t player)
 				OBJECT(picked_up)->carried = 1u;
 				OBJECT(picked_up)->flags &= 0xBFu;
 				player_stop(player);
-				player = stack;
+				player = saved_player;
 				held_2 = OBJECT(player)->player.held;
 				held_object = held_2;
 				if (held_2 != 0u)
@@ -385,11 +385,11 @@ void player_pick_up_weapon(uint16_t player)
    when teamed, with its voice and a balloon; it picks it up (state 1D). */
 void player_eat_food(uint16_t player)
 {
-	uint32_t zero = 0, carry = 0;
+	uint32_t same_vitality = 0, less_vitality = 0;
 	uint8_t vitality = 0, vitality_2 = 0;
 	uint16_t balloon_value = 0, command = 0, held_object = 0, partner = 0, picked_up = 0;
-	uint8_t stack_3 = 0;
-	uint16_t stack = 0;
+	uint8_t food_kind = 0;
+	uint16_t saved_player = 0;
 	uint8_t state = 0, hit = 0, teamed = 0, vitality_3 = 0, vitality_4 = 0, vitality_5 = 0, status = 0, teamed_2 = 0, held_high = 0;
 	uint16_t hit_by = 0, partner_2 = 0, held = 0;
 
@@ -401,9 +401,9 @@ void player_eat_food(uint16_t player)
 		player_check_motion(player);
 		return;
 	}
-	stack = player;
+	saved_player = player;
 	hit = OBJECT(player)->hit;
-	stack_3 = hit;
+	food_kind = hit;
 	teamed = OBJECT(player)->player.teamed;
 	if ((int8_t)teamed < 0)
 	{
@@ -415,9 +415,9 @@ void player_eat_food(uint16_t player)
 		vitality_3 = OBJECT(player)->vitality;
 		vitality = vitality_3;
 		vitality_4 = OBJECT(partner)->vitality;
-		zero = (uint8_t)(vitality - vitality_4) == 0u;
-		carry = vitality < vitality_4;
-		if (vitality_4 <= vitality && ((carry | zero) == 0u || (int8_t)random_number < 0))
+		same_vitality = (uint8_t)(vitality - vitality_4) == 0u;
+		less_vitality = vitality < vitality_4;
+		if (vitality_4 <= vitality && ((less_vitality | same_vitality) == 0u || (int8_t)random_number < 0))
 			player = partner;
 	}
 	command = 0x3F0Cu;
@@ -425,7 +425,7 @@ void player_eat_food(uint16_t player)
 	balloon_value = 0x10Cu;
 	player_show_balloon(picked_up, player, balloon_value);
 	vitality_5 = OBJECT(player)->vitality;
-	vitality_2 = vitality_5 + pickup_vitality[(int8_t)((uint8_t)(stack_3 + 7u))];
+	vitality_2 = vitality_5 + pickup_vitality[(int8_t)((uint8_t)(food_kind + 7u))];
 	if (vitality_2 > 0x28u)
 		vitality_2 = 0x28u;
 	OBJECT(player)->vitality = vitality_2;
@@ -442,7 +442,7 @@ void player_eat_food(uint16_t player)
 	OBJECT(picked_up)->carried = 1u;
 	OBJECT(picked_up)->flags &= 0xBFu;
 	player_stop(player);
-	player = stack;
+	player = saved_player;
 	held = OBJECT(player)->player.held;
 	held_object = held;
 	if (held != 0u)
@@ -478,7 +478,7 @@ void player_take_blow(uint16_t player)
 {
 	uint8_t animation = 0;
 	uint16_t floor_z = 0, object = 0, state_and_time = 0;
-	uint16_t stack = 0;
+	uint16_t player_z = 0;
 	uint8_t vitality = 0, blows_taken = 0, blows_taken_2 = 0, attributes = 0, attributes_2 = 0, blows_taken_3 = 0, blows_taken_4 = 0, x_low = 0;
 	uint16_t z = 0, floor_z_2 = 0, hit_by = 0, z_above = 0, z_2 = 0, z_speed = 0, floor_z_3 = 0;
 
@@ -501,8 +501,8 @@ void player_take_blow(uint16_t player)
 	object = hit_by;
 	blows_taken = OBJECT(player)->player.blows_taken;
 	OBJECT(player)->player.blows_taken = blows_taken + 1u;
-	stack = floor_z;
-	z_above = stack + 0x10u;
+	player_z = floor_z;
+	z_above = player_z + 0x10u;
 	z_2 = OBJECT(object)->z;
 	if ((int16_t)z_above < (int16_t)z_2)
 	{
@@ -728,13 +728,13 @@ void player_get_grabbed(uint16_t player)
 	uint8_t animation = 0, grab_animation = 0;
 	uint16_t effect_state = 0, holder = 0, player_vars = 0, state_and_time = 0;
 	uint8_t hints_shown = 0, hints_before = 0, vitality = 0;
-	uint16_t holder_2 = 0, t1 = 0;
+	uint16_t holder_2 = 0, running_values = 0;
 
 	holder_2 = OBJECT(player)->player.holder;
 	holder = holder_2;
 	OBJECT(holder)->grabber.squeeze_step = 1u;
-	t1 = io_read16(running_player_values);
-	player_vars = t1;
+	running_values = io_read16(running_player_values);
+	player_vars = running_values;
 	hints_shown = PLAYER_VALUES(player_vars)->grab_hints;
 	if ((int8_t)hints_shown < 5)
 	{
@@ -891,7 +891,7 @@ void player_break_team(uint16_t player)
 	uint32_t zero = 0, carry = 0;
 	uint8_t life_lost = 0, state_value = 0, timer_value = 0, vitality = 0;
 	uint16_t object = 0, partner = 0;
-	uint16_t stack = 0, stack_4 = 0;
+	uint16_t saved_player = 0, saved_partner = 0;
 	uint8_t teamed = 0, animation = 0, vitality_2 = 0, last_life = 0, life_now = 0, vitality_3 = 0, lost_life = 0;
 	uint16_t partner_2 = 0, state_and_timer = 0;
 	uint32_t player_state_halfword = 0, player_state_halfword_2 = 0;
@@ -926,12 +926,12 @@ void player_break_team(uint16_t player)
 	}
 	OBJECT(partner)->flags = OBJECT(player)->flags;
 	player_team_follow(partner, player);
-	stack = player;
-	stack_4 = partner;
+	saved_player = player;
+	saved_partner = partner;
 	player = partner;
 	player_check_screen_edges(player, &zero, &carry);
-	object = stack_4;
-	player = stack;
+	object = saved_partner;
+	player = saved_player;
 	vitality_2 = OBJECT(player)->vitality;
 	last_life = OBJECT(player)->player.last_life;
 	life_now = vitality_2;

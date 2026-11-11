@@ -202,11 +202,11 @@ void donut_drop_slow(uint16_t object)
 /* Pulls the donut down until it lands, then lets it fight. */
 void donut_land(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t landed = 0;
 	uint16_t ignored16 = 0;
 
-	vector_apply_gravity(object, &ignored16, &carry);
-	if (carry)
+	vector_apply_gravity(object, &ignored16, &landed);
+	if (landed)
 	{
 		OBJECT(object)->flags = 0xC0u;
 		OBJECT(object)->state = 2u;
@@ -318,7 +318,7 @@ void donut_throw_start(uint16_t object)
 /* On the marked frame, puts in the small donut (5280 type DE). */
 uint16_t donut_throw_release(uint16_t object, uint16_t steps)
 {
-	uint32_t carry = 0;
+	uint32_t slot_found = 0;
 	uint16_t ignored16 = 0, ignored16_2 = 0, small_donut = 0;
 	uint8_t animation_flags = 0, action_step = 0;
 
@@ -331,7 +331,7 @@ uint16_t donut_throw_release(uint16_t object, uint16_t steps)
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step + 1u;
 	leftover_y = donut_throw_release_child_ADDRESS;
-	vector_spawn_child(object, &ignored16, &small_donut, &ignored16_2, &carry);
+	vector_spawn_child(object, &ignored16, &small_donut, &ignored16_2, &slot_found);
 	return small_donut;
 }
 

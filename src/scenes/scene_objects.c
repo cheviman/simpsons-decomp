@@ -14,23 +14,23 @@
 /* A scripted scene: puts the given record of object_12_placements and hands back its object. */
 uint16_t scene_put_placement(uint16_t default_object, uint16_t record_number)
 {
-	uint32_t carry = 0;
+	uint32_t shifted_bit = 0;
 	uint8_t value_high = 0, value_low = 0;
 	uint16_t object = 0, place = 0, placement = 0;
-	uint16_t exchanged = 0, placement_record = 0, kind_at = 0, kind = 0, x_at = 0, t1 = 0, placement_z = 0;
+	uint16_t exchanged = 0, placement_record = 0, kind_at = 0, kind = 0, x_at = 0, placement_x = 0, placement_z = 0;
 	uint32_t kind_halfword = 0;
 
 	value_high = (uint8_t)(record_number >> 8);
 	exchanged = value_high | 0x1000u;
 	value_low = (uint8_t)exchanged;
-	carry = (int8_t)value_low < 0;
+	shifted_bit = (int8_t)value_low < 0;
 	value_low = (uint32_t)value_low << 1;
-	value_high = (uint8_t)(((uint32_t)(uint8_t)((uint32_t)value_high << 8) << 1) | carry);
-	carry = (int8_t)value_low < 0;
+	value_high = (uint8_t)(((uint32_t)(uint8_t)((uint32_t)value_high << 8) << 1) | shifted_bit);
+	shifted_bit = (int8_t)value_low < 0;
 	value_low = (uint32_t)value_low << 1;
-	value_high = (uint8_t)(((uint32_t)value_high << 1) | carry);
-	carry = (int8_t)value_low < 0;
-	placement_record = object_12_placements_ADDRESS + (((((uint32_t)value_high << 1) | carry) << 8) | (uint8_t)((uint32_t)value_low << 1));
+	value_high = (uint8_t)(((uint32_t)value_high << 1) | shifted_bit);
+	shifted_bit = (int8_t)value_low < 0;
+	placement_record = object_12_placements_ADDRESS + (((((uint32_t)value_high << 1) | shifted_bit) << 8) | (uint8_t)((uint32_t)value_low << 1));
 	place = placement_record + 2u;
 	object = PLACEMENT(placement_record)->object;
 	if (object == 0xFFFFu)
@@ -43,9 +43,9 @@ uint16_t scene_put_placement(uint16_t default_object, uint16_t record_number)
 	OBJECT(object)->animation = (uint8_t)kind_halfword;
 	x_at = kind_at + 2u;
 	placement = x_at + 2u;
-	t1 = PLACEMENT(x_at - 0x4u)->x;
-	value_high = (uint8_t)(t1 >> 8);
-	value_low = (uint8_t)t1;
+	placement_x = PLACEMENT(x_at - 0x4u)->x;
+	value_high = (uint8_t)(placement_x >> 8);
+	value_low = (uint8_t)placement_x;
 	if ((uint16_t)(((uint32_t)value_high << 8) | value_low) != 0xFFFFu)
 		OBJECT(object)->x = ((uint32_t)value_high << 8) | value_low;
 	OBJECT(object)->y = 0x80u;
@@ -62,7 +62,7 @@ void blank_absent_player(uint16_t player_and_blank)
 {
 	uint8_t colour = 0, tile = 0;
 	uint16_t place = 0;
-	uint8_t stack = 0;
+	uint8_t saved_tile_or_colour = 0;
 	uint8_t columns_left = 0, rows_left = 0;
 	uint16_t blank = 0, height_at = 0, tile_at = 0, colour_at = 0, tile_place = 0;
 
@@ -74,14 +74,14 @@ void blank_absent_player(uint16_t player_and_blank)
 	tile_at = height_at + 1u;
 	colour_at = tile_at + 1u;
 	colour = PLAYER_BLANK(colour_at - 0x3u)->colour;
-	stack = PLAYER_BLANK(tile_at - 0x2u)->tile;
+	saved_tile_or_colour = PLAYER_BLANK(tile_at - 0x2u)->tile;
 	place = PLAYER_BLANK(colour_at + (int8_t)((uint32_t)blank_player << 1) - 0x3u)->marge_place;
-	tile = stack;
+	tile = saved_tile_or_colour;
 	do
 	{
-		stack = tile;
+		saved_tile_or_colour = tile;
 		blank_columns_left = blank_width;
-		tile = stack;
+		tile = saved_tile_or_colour;
 		do
 		{
 			mem_write8(place - 0x2000u, colour);
@@ -91,9 +91,9 @@ void blank_absent_player(uint16_t player_and_blank)
 			columns_left = blank_columns_left;
 			blank_columns_left = columns_left - 1u;
 		} while (columns_left != 1u);
-		stack = colour;
+		saved_tile_or_colour = colour;
 		place += (int8_t)(0x40u - blank_width);
-		colour = stack;
+		colour = saved_tile_or_colour;
 		rows_left = blank_rows_left;
 		blank_rows_left = rows_left - 1u;
 	} while (rows_left != 1u);

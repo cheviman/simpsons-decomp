@@ -81,28 +81,28 @@ void kind_a0_enter(uint16_t object)
 /* Takes the height of the floor under it. */
 void kind_a0_take_floor(uint16_t object)
 {
-	uint32_t negative = 0;
+	uint32_t no_floor = 0;
 	uint8_t floor_value = 0;
 	uint16_t floor_cell = 0;
 
 	floor_cell = 0u;
-	vector_floor_at_offset(object, &floor_cell, &negative);
+	vector_floor_at_offset(object, &floor_cell, &no_floor);
 	floor_value = (uint8_t)(floor_cell >> 8);
-	if (negative == 0u)
+	if (no_floor == 0u)
 		OBJECT(object)->floor_z = (OBJECT(object)->floor_z & 0xFF00u) | ((((floor_value & 0xFu) << 1) << 1) << 1 & 0xFFu);
 }
 
 /* Falls and, on landing, sits. */
 void kind_a0_land(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t landed = 0;
 	uint16_t z_speed = 0, new_z_speed = 0;
 
 	z_speed = OBJECT(object)->z_speed;
 	new_z_speed = z_speed - 0x20u;
 	OBJECT(object)->z_speed = new_z_speed;
-	carry = vector_check_landing(object);
-	if (carry)
+	landed = vector_check_landing(object);
+	if (landed)
 	{
 		OBJECT(object)->animation = 0x81u;
 		OBJECT(object)->flags = 0xC0u;

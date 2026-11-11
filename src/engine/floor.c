@@ -13,10 +13,10 @@
 
 /* The floor map's cell at the object's place moved A pixels across and B on the floor: bits 0-3 the
    floor's height in steps of 8, bits 4-5 the sprites' priority there, bit 7 no floor. */
-void floor_at_offset(uint16_t object, uint16_t *p_offsets, uint32_t *p_negative)
+void floor_at_offset(uint16_t object, uint16_t *p_offsets, uint32_t *p_no_floor)
 {
 	uint16_t offsets = (uint16_t)*p_offsets;
-	uint32_t negative = *p_negative;
+	uint32_t no_floor = *p_no_floor;
 	uint16_t cell = 0, ignored16 = 0;
 
 	floor_offset_x_pixels = offsets >> 8;
@@ -24,14 +24,14 @@ void floor_at_offset(uint16_t object, uint16_t *p_offsets, uint32_t *p_negative)
 	floor_offset_y_pixels = (uint8_t)offsets;
 	floor_offset_y_fraction = 0u;
 	*p_offsets = cell;
-	floor_cell_at(object, &ignored16, p_offsets, &negative);
-	*p_negative = negative;
+	floor_cell_at(object, &ignored16, p_offsets, &no_floor);
+	*p_no_floor = no_floor;
 }
 
 /* The floor map's cell where the object's x speed takes it next. */
-void floor_ahead_x(uint16_t object, uint16_t *p_cell, uint32_t *p_negative)
+void floor_ahead_x(uint16_t object, uint16_t *p_cell, uint32_t *p_no_floor)
 {
-	uint32_t negative = *p_negative;
+	uint32_t no_floor = *p_no_floor;
 	uint16_t cell = 0, ignored16 = 0;
 	uint16_t x_speed = 0;
 
@@ -39,14 +39,14 @@ void floor_ahead_x(uint16_t object, uint16_t *p_cell, uint32_t *p_negative)
 	floor_offset_x = x_speed;
 	floor_offset_y = 0;
 	*p_cell = cell;
-	floor_cell_at(object, &ignored16, p_cell, &negative);
-	*p_negative = negative;
+	floor_cell_at(object, &ignored16, p_cell, &no_floor);
+	*p_no_floor = no_floor;
 }
 
 /* The floor map's cell where the object's y speed takes it next. */
-void floor_ahead_y(uint16_t object, uint16_t *p_cell, uint32_t *p_negative)
+void floor_ahead_y(uint16_t object, uint16_t *p_cell, uint32_t *p_no_floor)
 {
-	uint32_t negative = *p_negative;
+	uint32_t no_floor = *p_no_floor;
 	uint16_t cell = 0, ignored16 = 0;
 	uint16_t y_speed = 0;
 
@@ -54,14 +54,14 @@ void floor_ahead_y(uint16_t object, uint16_t *p_cell, uint32_t *p_negative)
 	y_speed = OBJECT(object)->y_speed;
 	floor_offset_y = y_speed;
 	*p_cell = cell;
-	floor_cell_at(object, &ignored16, p_cell, &negative);
-	*p_negative = negative;
+	floor_cell_at(object, &ignored16, p_cell, &no_floor);
+	*p_no_floor = no_floor;
 }
 
 /* The floor map's cell where the object's x and y speeds take it next. */
-void floor_ahead(uint16_t object, uint16_t *p_cell, uint32_t *p_negative)
+void floor_ahead(uint16_t object, uint16_t *p_cell, uint32_t *p_no_floor)
 {
-	uint32_t negative = *p_negative;
+	uint32_t no_floor = *p_no_floor;
 	uint16_t cell = 0, ignored16 = 0;
 	uint16_t x_speed = 0, y_speed = 0;
 
@@ -70,16 +70,16 @@ void floor_ahead(uint16_t object, uint16_t *p_cell, uint32_t *p_negative)
 	y_speed = OBJECT(object)->y_speed;
 	floor_offset_y = y_speed;
 	*p_cell = cell;
-	floor_cell_at(object, &ignored16, p_cell, &negative);
-	*p_negative = negative;
+	floor_cell_at(object, &ignored16, p_cell, &no_floor);
+	*p_no_floor = no_floor;
 }
 
 /* The floor map's cell (work RAM 4000: 40 cells of 8 pixels a row) at the object's place moved by the
    8.8 offsets at 48E9 (across) and 48ED (on the floor): its address in U, its value in A (negative: no
    floor). */
-void floor_cell_at(uint16_t object, uint16_t *p_cell_address, uint16_t *p_cell, uint32_t *p_negative)
+void floor_cell_at(uint16_t object, uint16_t *p_cell_address, uint16_t *p_cell, uint32_t *p_no_floor)
 {
-	uint32_t negative = *p_negative;
+	uint32_t no_floor = *p_no_floor;
 	uint32_t carry = 0;
 	uint8_t offset_high = 0, offset_low = 0;
 	uint16_t cell = 0, cell_address = 0;
@@ -118,11 +118,11 @@ void floor_cell_at(uint16_t object, uint16_t *p_cell_address, uint16_t *p_cell, 
 	offset_low = (uint8_t)cell_offset;
 	cell_address = floor_map_ADDRESS + (((uint32_t)(cell_offset >> 8) << 8) | offset_low);
 	cell_byte = mem_read8(cell_address);
-	negative = cell_byte >> 7;
+	no_floor = cell_byte >> 7;
 	cell = ((uint32_t)cell_byte << 8) | offset_low;
 	*p_cell_address = cell_address;
 	*p_cell = cell;
-	*p_negative = negative;
+	*p_no_floor = no_floor;
 }
 
 /* Unused: on a floor, takes the floor cell's sprite priority under the object and marks it active. */
@@ -150,14 +150,14 @@ void unused_take_floor_priority(uint16_t object)
 uint16_t set_climb_speed(uint16_t object, uint16_t target_level)
 {
 	uint16_t climb_speed_table = 0;
-	uint8_t stack = 0;
+	uint8_t current_level = 0;
 	uint8_t floor_height = 0;
 	uint16_t climb_z_speed = 0;
 
 	climb_speed_table = climb_speeds_ADDRESS;
 	floor_height = (uint8_t)OBJECT(object)->floor_z;
-	stack = ((floor_height >> 1) >> 1) >> 1;
-	climb_z_speed = (uint32_t)climb_speeds[(int8_t)((uint8_t)((target_level >> 8) - stack))] << 4;
+	current_level = ((floor_height >> 1) >> 1) >> 1;
+	climb_z_speed = (uint32_t)climb_speeds[(int8_t)((uint8_t)((target_level >> 8) - current_level))] << 4;
 	OBJECT(object)->z_speed = climb_z_speed;
 	return climb_speed_table;
 }
@@ -227,7 +227,7 @@ uint16_t check_floor(uint16_t object, uint16_t object_2)
    wall it stops (sliding along one way first when it was already looking for a way round). */
 uint16_t check_floor_ahead(uint16_t object, uint16_t object_2)
 {
-	uint32_t zero = 0, negative = 0;
+	uint32_t no_enemy_class = 0, negative = 0;
 	uint8_t blocked = 0, floor_cell = 0;
 	uint16_t cell = 0;
 	uint8_t x_speed = 0, enemy_class = 0, state = 0, action = 0, y_speed_2 = 0, blocked_2 = 0, blocked_3 = 0, blocked_4 = 0, blocked_5 = 0, step_level = 0;
@@ -257,8 +257,8 @@ uint16_t check_floor_ahead(uint16_t object, uint16_t object_2)
 				if (((floor_cell_ahead ^ floor_cell_here) & 0xFu) == 0u)
 				{
 					enemy_class = OBJECT(object)->enemy_class;
-					zero = enemy_class == 0u;
-					if ((int8_t)enemy_class >= 0 && zero == 0u)
+					no_enemy_class = enemy_class == 0u;
+					if ((int8_t)enemy_class >= 0 && no_enemy_class == 0u)
 					{
 						state = OBJECT(object)->state;
 						action = OBJECT(object)->action;
@@ -272,8 +272,8 @@ uint16_t check_floor_ahead(uint16_t object, uint16_t object_2)
 					if (y_speed == 0u)
 					{
 						enemy_class = OBJECT(object)->enemy_class;
-						zero = enemy_class == 0u;
-						if ((int8_t)enemy_class >= 0 && zero == 0u)
+						no_enemy_class = enemy_class == 0u;
+						if ((int8_t)enemy_class >= 0 && no_enemy_class == 0u)
 						{
 							state = OBJECT(object)->state;
 							action = OBJECT(object)->action;
@@ -332,8 +332,8 @@ uint16_t check_floor_ahead(uint16_t object, uint16_t object_2)
 			if (((floor_cell ^ floor_cell_here) & 0xFu) == 0u)
 			{
 				enemy_class = OBJECT(object)->enemy_class;
-				zero = enemy_class == 0u;
-				if ((int8_t)enemy_class >= 0 && zero == 0u)
+				no_enemy_class = enemy_class == 0u;
+				if ((int8_t)enemy_class >= 0 && no_enemy_class == 0u)
 				{
 					state = OBJECT(object)->state;
 					action = OBJECT(object)->action;
@@ -355,8 +355,8 @@ uint16_t check_floor_ahead(uint16_t object, uint16_t object_2)
 			if (((floor_cell ^ floor_cell_here) & 0xFu) == 0u)
 			{
 				enemy_class = OBJECT(object)->enemy_class;
-				zero = enemy_class == 0u;
-				if ((int8_t)enemy_class >= 0 && zero == 0u)
+				no_enemy_class = enemy_class == 0u;
+				if ((int8_t)enemy_class >= 0 && no_enemy_class == 0u)
 				{
 					state = OBJECT(object)->state;
 					action = OBJECT(object)->action;
@@ -387,8 +387,8 @@ uint16_t check_floor_ahead(uint16_t object, uint16_t object_2)
 			blocked_4 = OBJECT(object)->blocked;
 			OBJECT(object)->blocked = blocked_4 | 0x20u;
 			enemy_class = OBJECT(object)->enemy_class;
-			zero = enemy_class == 0u;
-			if ((int8_t)enemy_class >= 0 && zero == 0u)
+			no_enemy_class = enemy_class == 0u;
+			if ((int8_t)enemy_class >= 0 && no_enemy_class == 0u)
 			{
 				state = OBJECT(object)->state;
 				action = OBJECT(object)->action;
@@ -406,8 +406,8 @@ uint16_t check_floor_ahead(uint16_t object, uint16_t object_2)
 		OBJECT(object)->x_speed = 0;
 		OBJECT(object)->y_speed = 0;
 		enemy_class = OBJECT(object)->enemy_class;
-		zero = enemy_class == 0u;
-		if ((int8_t)enemy_class >= 0 && zero == 0u)
+		no_enemy_class = enemy_class == 0u;
+		if ((int8_t)enemy_class >= 0 && no_enemy_class == 0u)
 		{
 			state = OBJECT(object)->state;
 			action = OBJECT(object)->action;
@@ -423,8 +423,8 @@ uint16_t check_floor_ahead(uint16_t object, uint16_t object_2)
 		OBJECT(object)->x_speed = 0;
 		OBJECT(object)->y_speed = 0;
 		enemy_class = OBJECT(object)->enemy_class;
-		zero = enemy_class == 0u;
-		if ((int8_t)enemy_class >= 0 && zero == 0u)
+		no_enemy_class = enemy_class == 0u;
+		if ((int8_t)enemy_class >= 0 && no_enemy_class == 0u)
 		{
 			state = OBJECT(object)->state;
 			action = OBJECT(object)->action;
@@ -432,8 +432,8 @@ uint16_t check_floor_ahead(uint16_t object, uint16_t object_2)
 		return object_2;
 	}
 	enemy_class = OBJECT(object)->enemy_class;
-	zero = enemy_class == 0u;
-	if ((int8_t)enemy_class >= 0 && zero == 0u)
+	no_enemy_class = enemy_class == 0u;
+	if ((int8_t)enemy_class >= 0 && no_enemy_class == 0u)
 	{
 		state = OBJECT(object)->state;
 		action = OBJECT(object)->action;

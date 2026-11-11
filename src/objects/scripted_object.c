@@ -695,7 +695,7 @@ uint16_t scripted_object_play_sound(uint16_t object)
 {
 	uint8_t sound = 0, sound_argument = 0;
 	uint16_t command = 0, command_handlers = 0, script_cursor = 0;
-	uint16_t stack = 0;
+	uint16_t saved_script_cursor = 0;
 	uint8_t parameter = 0;
 	uint16_t sound_word = 0, command_place = 0;
 
@@ -708,10 +708,10 @@ uint16_t scripted_object_play_sound(uint16_t object)
 		parameter = OBJECT(object)->parameter;
 		if ((int8_t)parameter >= 0)
 		{
-			stack = script_cursor;
+			saved_script_cursor = script_cursor;
 			command = (sound_argument & 0xFFu) | ((uint32_t)sound << 8);
 			vector_queue_sound(command);
-			script_cursor = stack;
+			script_cursor = saved_script_cursor;
 		}
 		command_place = script_cursor;
 		leftover_y = command_place + 1u;

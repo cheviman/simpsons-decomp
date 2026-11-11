@@ -34,207 +34,6 @@ uint32_t name_entry(void)
 	unreachable();
 }
 
-/* Runs the ending by the scene's state: the family, the staff roll and the last fade; after 192 frames a
-   player's button skips it. */
-void ending(uint16_t u)
-{
-	uint32_t carry = 0;
-	uint16_t ignored16 = 0, ignored16_2 = 0, wait = 0;
-	uint8_t ending_state = 0;
-
-	wait = 0xC000u;
-	vector_check_skip(wait, &ignored16, &carry);
-	if (carry)
-	{
-		vector_clear_objects(&ignored16, &ignored16_2);
-		scene_running = 0u;
-		return;
-	}
-	gauges_shown = 0u;
-	ending_state = io_read8(scene_state);
-	switch ((int8_t)(uint8_t)((uint32_t)ending_state << 1))
-	{
-	case 0:
-		ending_set_up(u);
-		return;
-	case 2:
-		ending_show_family();
-		return;
-	case 4:
-		ending_roll_credits();
-		return;
-	case 6:
-		ending_toss();
-		return;
-	case 8:
-		ending_catch();
-		return;
-	case 10:
-		ending_fade_start(u);
-		return;
-	case 12:
-		ending_fade(u);
-		return;
-	}
-}
-
-/* Runs stage 7's boss each frame: reacts to a hit, runs its state, keeps it inside its area, sends its
-   helpers and draws its health gauge. */
-void stage_7_boss_update(uint16_t object)
-{
-	uint32_t carry = 0;
-	uint8_t state = 0;
-	uint16_t boss_states = 0, step_and_row = 0;
-	uint8_t state_2 = 0;
-
-	stage_7_boss_check_hit(object);
-	boss_states = stage_7_boss_states_ADDRESS;
-	state_2 = OBJECT(object)->state;
-	state = state_2;
-	carry = (int8_t)state < 0;
-	switch ((int8_t)(uint8_t)((uint32_t)state << 1))
-	{
-	case 0:
-		stage_7_boss_entrance(object);
-		break;
-	case 2:
-		stage_7_boss_walk(object);
-		break;
-	case 4:
-		stage_7_boss_attack(object);
-		break;
-	case 6:
-		stage_7_boss_charge(object);
-		break;
-	case 8:
-		stage_7_boss_jump_away(object);
-		break;
-	case 10:
-		stage_7_boss_idle(object, boss_states);
-		break;
-	case 12:
-		stage_7_boss_wait_target_up(object);
-		break;
-	case 14:
-		stage_7_boss_beaten_wait(object);
-		break;
-	case 16:
-		stage_7_boss_blink_out(object, carry);
-		break;
-	case 18:
-		stage_7_boss_fall(object);
-		break;
-	case 20:
-		stage_7_boss_lie(object);
-		break;
-	case 22:
-		stage_7_boss_get_up(object);
-		break;
-	case 24:
-		stage_7_boss_flinch_wait(object);
-		break;
-	case 26:
-		stage_7_boss_flinch_land(object);
-		break;
-	case 28:
-		stage_7_boss_put_in(object);
-		break;
-	case 30:
-		stage_7_boss_start_entrance(object);
-		break;
-	case 32:
-		stage_7_boss_move_helpers(object);
-		break;
-	case 34:
-		stage_7_boss_step_forward(object);
-		break;
-	case 36:
-		stage_7_boss_arrive(object);
-		break;
-	case 38:
-		stage_7_boss_entrance_pose(object);
-		break;
-	case 40:
-		stage_7_boss_entrance_end(object);
-		break;
-	case 42:
-		stage_7_boss_wind_up(object);
-		break;
-	case 44:
-		stage_7_boss_strike(object);
-		break;
-	case 46:
-		stage_7_boss_recover(object);
-		break;
-	case 48:
-		stage_7_boss_charging(object);
-		break;
-	case 50:
-		stage_7_boss_charge_end(object);
-		break;
-	case 52:
-		stage_7_boss_jump_rise(object);
-		break;
-	case 54:
-		stage_7_boss_jump_land(object);
-		break;
-	case 56:
-		stage_7_boss_jump_end(object);
-		break;
-	case -6:
-		stage_7_boss_beaten(object);
-		break;
-	case -4:
-		stage_7_boss_knocked_down(object);
-		break;
-	case -2:
-		stage_7_boss_flinch(object);
-		break;
-	}
-	stage_7_boss_keep_in_x(object);
-	stage_7_boss_keep_in_y(object);
-	stage_7_boss_order_throws(object);
-	step_and_row = ((uint32_t)stage_7_boss_gauge_piece_health_by_players[(int8_t)((uint8_t)(player_count - 1u))] << 8) | 4u;
-	boss_shade_by_vitality(object, step_and_row);
-}
-
-/* Runs one of stage 7's boss' four helpers by its state: waits, moves as the boss says, or throws. */
-uint16_t stage_7_boss_helper_update(uint16_t object)
-{
-	uint16_t helper_states = 0;
-	uint8_t state = 0;
-
-	helper_states = stage_7_boss_helper_states_ADDRESS;
-	state = OBJECT(object)->state;
-	switch ((int8_t)(uint8_t)((uint32_t)state << 1))
-	{
-	case 0:
-		stage_7_boss_helper_idle();
-		return helper_states;
-	case 2:
-	case 4:
-	case 6:
-	case 8:
-	case 10:
-	case 12:
-		return stage_7_boss_helper_move(object);
-	case 14:
-		return stage_7_boss_helper_attack(object);
-	case 16:
-		return stage_7_boss_helper_start_move(object);
-	case 18:
-		stage_7_boss_helper_moving(object);
-		return helper_states;
-	case 20:
-		stage_7_boss_helper_throw_start(object);
-		return helper_states;
-	case 22:
-		stage_7_boss_helper_throw_end(object);
-		return helper_states;
-	}
-	unreachable();
-}
-
 /* The name entry: ranks the players by score, draws each one who made the table a column with its face,
    place and score, starts its initials at the letter A, and sets Maggies walking along the bottom. */
 uint32_t name_entry_set_up(void)
@@ -435,10 +234,10 @@ uint32_t name_entry_set_up(void)
    the sound stopped near the end. */
 uint32_t name_entry_type_initials(void)
 {
-	uint32_t carry = 0;
+	uint32_t done = 0;
 	uint8_t all_done = 0, count = 0, timer_high = 0, timer_low = 0;
 	uint16_t command = 0, entry = 0, name_entry_player = 0, object = 0;
-	uint8_t stack = 0, stack_10002 = 0;
+	uint8_t kept_word_high = 0, kept_word_low = 0;
 	uint8_t maggies_left = 0, entries_left = 0, old_entry_phase = 0;
 	uint16_t entry_time = 0, new_entry_time = 0, maggie_x = 0, player_text_x = 0, next_player_text_x = 0;
 
@@ -451,12 +250,12 @@ uint32_t name_entry_type_initials(void)
 		return name_entry_save();
 	if ((uint16_t)(((uint32_t)timer_high << 8) | timer_low) == 0x6C0u)
 	{
-		stack = timer_high;
-		stack_10002 = timer_low;
+		kept_word_high = timer_high;
+		kept_word_low = timer_low;
 		command = 0xFD00u;
 		vector_queue_sound_always(command);
-		timer_high = stack;
-		timer_low = stack_10002;
+		timer_high = kept_word_high;
+		timer_low = kept_word_low;
 	}
 	if ((int16_t)(((uint32_t)timer_high << 8) | timer_low) <= 0x580)
 	{
@@ -487,8 +286,8 @@ uint32_t name_entry_type_initials(void)
 		io_write16(name_entry_time, 0u);
 		old_entry_phase = io_read8(name_entry_state);
 		io_write8(name_entry_state, old_entry_phase + 1u);
-		carry = 0u;
-		return carry;
+		done = 0u;
+		return done;
 	}
 	entry = name_entry_records;
 	entry_player = 0u;
@@ -498,23 +297,23 @@ uint32_t name_entry_type_initials(void)
 	{
 		name_entry_player = name_entry_player_records[(int8_t)((uint8_t)((uint32_t)entry_player << 1)) / 2];
 		player_text_x = sprite_text_x;
-		stack = player_text_x >> 8;
-		stack_10002 = player_text_x;
+		kept_word_high = player_text_x >> 8;
+		kept_word_low = player_text_x;
 		if ((int8_t)mem_read8(entry) >= 0)
 			entry = name_entry_edit_initials(entry, name_entry_player);
-		next_player_text_x = (((uint32_t)stack << 8) | stack_10002) + 0x48u;
+		next_player_text_x = (((uint32_t)kept_word_high << 8) | kept_word_low) + 0x48u;
 		sprite_text_x = next_player_text_x;
 		entry += 4u;
 		entry_player++;
 	} while (entry_player != 4u);
-	carry = 0u;
-	return carry;
+	done = 0u;
+	return done;
 }
 
 /* The name entry: everyone done, waits 256 frames before saving. */
 uint32_t name_entry_linger(void)
 {
-	uint32_t carry = 0;
+	uint32_t done = 0;
 	uint16_t command = 0, timer = 0;
 	uint16_t entry_time = 0;
 
@@ -528,22 +327,22 @@ uint32_t name_entry_linger(void)
 		command = 0xFD00u;
 		vector_queue_sound_always(command);
 	}
-	carry = 0u;
-	return carry;
+	done = 0u;
+	return done;
 }
 
 /* The name entry: puts each player who made the table into it with its initials and score (carry: done). */
 uint32_t name_entry_save(void)
 {
-	uint32_t carry = 0;
+	uint32_t done = 0;
 	uint8_t player = 0, score_low = 0, third_initial = 0;
 	uint16_t name_entry_player = 0, place = 0, ranked = 0;
-	uint8_t stack = 0;
+	uint8_t entries_to_save = 0;
 	uint8_t ranked_place = 0, insert_place = 0, players_left = 0;
 	uint16_t initials = 0, initials_at = 0, first_initials = 0, score = 0, player_score = 0;
 
 	ranked = name_entry_ranking;
-	stack = 4u;
+	entries_to_save = 4u;
 	do
 	{
 		ranked_place = mem_read8(ranked + 1u);
@@ -567,11 +366,11 @@ uint32_t name_entry_save(void)
 			vector_insert_high_score(place);
 		}
 		ranked += 2u;
-		players_left = stack;
-		stack = players_left - 1u;
+		players_left = entries_to_save;
+		entries_to_save = players_left - 1u;
 	} while (players_left != 1u);
-	carry = 1u;
-	return carry;
+	done = 1u;
+	return done;
 }
 
 /* The name entry: orders the four players by their scores, best first. */
@@ -622,7 +421,7 @@ uint16_t name_entry_edit_initials(uint16_t entry, uint16_t name_entry_player)
 	bool L_022382 = false, L_0223B2 = false;
 	uint8_t control = 0, initial = 0, letter = 0;
 	uint16_t command = 0, initials = 0, letter_and_colour = 0, sprite = 0;
-	uint8_t stack = 0, stack_2 = 0;
+	uint8_t kept_pointer_low = 0, kept_pointer_high = 0;
 	uint8_t up_initial = 0, down_initial = 0, next_initial = 0, last_initial = 0, player_colour = 0, letters_left = 0;
 	uint16_t repeat_wait = 0, repeat_wait_2 = 0, controls_pressed = 0, repeat_wait_3 = 0, controls_held = 0, repeat_wait_4 = 0, initials_2 = 0, letter_up_at = 0, controls_pressed_2 = 0, repeat_wait_5 = 0, controls_held_2 = 0, repeat_wait_6 = 0, initials_3 = 0, letter_down_at = 0, controls_pressed_3 = 0, initials_4 = 0, initials_5 = 0, letter_at = 0, letter_x = 0, next_letter_x = 0;
 
@@ -715,12 +514,12 @@ uint16_t name_entry_edit_initials(uint16_t entry, uint16_t name_entry_player)
 	initials_left = last_initial + 1u;
 	do
 	{
-		stack_2 = sprite >> 8;
-		stack = (uint8_t)sprite;
+		kept_pointer_high = sprite >> 8;
+		kept_pointer_low = (uint8_t)sprite;
 		letter_at = initials;
 		initials = letter_at + 1u;
 		player_colour = io_read8(entry_player_record + 0x18u);
-		sprite = ((uint32_t)stack_2 << 8) | stack;
+		sprite = ((uint32_t)kept_pointer_high << 8) | kept_pointer_low;
 		letter_and_colour = ((uint32_t)mem_read8(letter_at) << 8) | (uint8_t)(player_colour + 0xAu);
 		sprite = print_sprite_letter(sprite, letter_and_colour);
 		if (mem_read8(entry) != 0xFFu && initials_left == 1u)
@@ -728,10 +527,10 @@ uint16_t name_entry_edit_initials(uint16_t entry, uint16_t name_entry_player)
 			control = board_control | 2u;
 			board_control = control;
 			io_write8(board_control_register, control);
-			stack_2 = entry >> 8;
-			stack = (uint8_t)entry;
+			kept_pointer_high = entry >> 8;
+			kept_pointer_low = (uint8_t)entry;
 			mem_write8(sprite - 7u, name_entry_cursor_zooms[((uint8_t)frame_count & 0x1Fu) >> 1]);
-			entry = ((uint32_t)stack_2 << 8) | stack;
+			entry = ((uint32_t)kept_pointer_high << 8) | kept_pointer_low;
 			control = board_control & ~3u;
 			board_control = control;
 			io_write8(board_control_register, control);
@@ -767,36 +566,36 @@ void name_entry_draw_picture(uint16_t column_and_picture)
 {
 	uint8_t colour = 0, colour_2 = 0, column = 0;
 	uint16_t picture = 0, tile = 0;
-	uint8_t stack_E = 0, stack_F = 0, stack = 0, stack_11 = 0, stack_12 = 0, stack_13 = 0, stack_14 = 0, stack_15 = 0, stack_16 = 0;
+	uint8_t block_colour = 0, picture_number = 0, column_number = 0, column_tiles = 0, columns_to_draw = 0, column_palette = 0, rows_to_draw = 0, block_width = 0, column_and_blank = 0;
 	uint8_t columns_left = 0, rows_left = 0;
 	uint16_t column_2 = 0, block = 0, width_at = 0, height_at = 0, colour_at = 0, tile_code_at = 0, tile_place = 0, end_mark_at = 0;
 
 	column = (uint8_t)(column_and_picture >> 8);
-	stack_16 = column;
-	stack = column & 0x7Fu;
-	stack_F = (uint8_t)column_and_picture;
-	column_2 = (((uint32_t)NAME_ENTRY_COLUMN(name_entry_columns_ADDRESS + (int8_t)((uint32_t)stack << 1))->column << 8u) | NAME_ENTRY_COLUMN(name_entry_columns_ADDRESS + (int8_t)((uint32_t)stack << 1))->palette);
-	stack_11 = column_2 >> 8;
-	stack_13 = column_2;
-	picture = name_entry_pictures[(int8_t)((uint8_t)((uint32_t)stack_F << 1)) / 2];
+	column_and_blank = column;
+	column_number = column & 0x7Fu;
+	picture_number = (uint8_t)column_and_picture;
+	column_2 = (((uint32_t)NAME_ENTRY_COLUMN(name_entry_columns_ADDRESS + (int8_t)((uint32_t)column_number << 1))->column << 8u) | NAME_ENTRY_COLUMN(name_entry_columns_ADDRESS + (int8_t)((uint32_t)column_number << 1))->palette);
+	column_tiles = column_2 >> 8;
+	column_palette = column_2;
+	picture = name_entry_pictures[(int8_t)((uint8_t)((uint32_t)picture_number << 1)) / 2];
 	do
 	{
 		block = picture;
-		tile = mem_read16(block) + (int8_t)stack_11;
+		tile = mem_read16(block) + (int8_t)column_tiles;
 		width_at = block + 2u;
-		stack_15 = mem_read8(width_at);
+		block_width = mem_read8(width_at);
 		height_at = width_at + 1u;
-		stack_14 = mem_read8(height_at);
+		rows_to_draw = mem_read8(height_at);
 		colour_at = height_at + 1u;
 		picture = colour_at + 1u;
-		colour = mem_read8(colour_at) | stack_13;
-		if ((int8_t)stack_16 < 0)
+		colour = mem_read8(colour_at) | column_palette;
+		if ((int8_t)column_and_blank < 0)
 			colour = 0u;
-		stack_E = colour;
+		block_colour = colour;
 		do
 		{
-			stack_12 = stack_15;
-			colour_2 = stack_E;
+			columns_to_draw = block_width;
+			colour_2 = block_colour;
 			do
 			{
 				mem_write8(tile - 0x2000u, colour_2);
@@ -805,12 +604,12 @@ void name_entry_draw_picture(uint16_t column_and_picture)
 				tile_place = tile;
 				tile = tile_place + 1u;
 				mem_write8(tile_place, mem_read8(tile_code_at));
-				columns_left = stack_12;
-				stack_12 = columns_left - 1u;
+				columns_left = columns_to_draw;
+				columns_to_draw = columns_left - 1u;
 			} while (columns_left != 1u);
-			tile += (int8_t)(0x40u - stack_15);
-			rows_left = stack_14;
-			stack_14 = rows_left - 1u;
+			tile += (int8_t)(0x40u - block_width);
+			rows_left = rows_to_draw;
+			rows_to_draw = rows_left - 1u;
 		} while (rows_left != 1u);
 		end_mark_at = picture;
 		picture = end_mark_at + 1u;
@@ -979,7 +778,7 @@ void high_scores_print_entries(uint16_t entry, uint16_t first_place)
 	uint32_t carry = 0, half_carry = 0;
 	uint8_t icon_frame = 0, place = 0, tens = 0;
 	uint16_t entry_icon = 0, icons = 0, letter_and_colour = 0, sprite = 0;
-	uint8_t stack = 0, stack_2 = 0, stack_3 = 0, stack_4 = 0, stack_5 = 0;
+	uint8_t saved_entry_low = 0, saved_entry_high = 0, digits_low_then_icon = 0, digits_high_then_sprite_low = 0, sprite_high = 0;
 	uint8_t place_tens = 0, initials_to_print = 0, digits_left = 0, entries_left = 0;
 	uint16_t place_tens_x = 0, x_after_tens = 0, initial_at = 0, initial_x = 0, x_after_initial = 0, score_at = 0, bcd_score = 0, digits = 0, digits_shifted = 0, stored_digits = 0, digit_x = 0, x_after_digit = 0, entry_y = 0, next_entry_y = 0;
 
@@ -990,8 +789,8 @@ void high_scores_print_entries(uint16_t entry, uint16_t first_place)
 	sprite_text_y = 0x130u;
 	do
 	{
-		stack_2 = entry >> 8;
-		stack = (uint8_t)entry;
+		saved_entry_high = entry >> 8;
+		saved_entry_low = (uint8_t)entry;
 		place_tens = (((table_place >> 1) >> 1) >> 1) >> 1;
 		tens = place_tens;
 		if (place_tens != 0u)
@@ -1023,22 +822,22 @@ void high_scores_print_entries(uint16_t entry, uint16_t first_place)
 		score_at = entry;
 		entry_icon = score_at + 2u;
 		bcd_score = mem_read16(score_at);
-		stack_3 = bcd_score;
-		stack_4 = bcd_score >> 8;
+		digits_low_then_icon = bcd_score;
+		digits_high_then_sprite_low = bcd_score >> 8;
 		table_digit_shown = 0u;
 		do
 		{
-			if (table_digit_shown != 0u || table_characters_left == 1u || (stack_4 & ~0xFu) != 0u)
+			if (table_digit_shown != 0u || table_characters_left == 1u || (digits_high_then_sprite_low & ~0xFu) != 0u)
 			{
-				letter_and_colour = (uint32_t)(uint8_t)(((((stack_4 >> 1) >> 1) >> 1) >> 1) + 0x30u) << 8;
+				letter_and_colour = (uint32_t)(uint8_t)(((((digits_high_then_sprite_low >> 1) >> 1) >> 1) >> 1) + 0x30u) << 8;
 				sprite = print_sprite_letter(sprite, letter_and_colour);
 				table_digit_shown++;
 			}
-			digits = ((uint32_t)stack_4 << 8) | stack_3;
+			digits = ((uint32_t)digits_high_then_sprite_low << 8) | digits_low_then_icon;
 			digits_shifted = (uint32_t)digits << 4;
 			stored_digits = digits_shifted;
-			stack_4 = stored_digits >> 8;
-			stack_3 = stored_digits;
+			digits_high_then_sprite_low = stored_digits >> 8;
+			digits_low_then_icon = stored_digits;
 			digit_x = sprite_text_x;
 			x_after_digit = digit_x + 0x10u;
 			sprite_text_x = x_after_digit;
@@ -1046,14 +845,14 @@ void high_scores_print_entries(uint16_t entry, uint16_t first_place)
 			table_characters_left = digits_left - 1u;
 		} while (digits_left != 1u);
 		sprite_text_x = 0x128u;
-		stack_3 = mem_read8(entry_icon);
+		digits_low_then_icon = mem_read8(entry_icon);
 		icons = high_score_icons_ADDRESS;
-		stack_5 = sprite >> 8;
-		stack_4 = (uint8_t)sprite;
-		icon_frame = ((((uint8_t)(((uint16_t)(((uint32_t)stack_5 << 8) | stack_4) >> 3) + (uint8_t)frame_count) >> 1) >> 1) >> 1) >> 1;
+		sprite_high = sprite >> 8;
+		digits_high_then_sprite_low = (uint8_t)sprite;
+		icon_frame = ((((uint8_t)(((uint16_t)(((uint32_t)sprite_high << 8) | digits_high_then_sprite_low) >> 3) + (uint8_t)frame_count) >> 1) >> 1) >> 1) >> 1;
 		if ((icon_frame & 4u) == 0u)
 			icon_frame = 0u;
-		letter_and_colour = (uint32_t)(uint8_t)((icon_frame & 3u) + HIGH_SCORE_ICON(icons + (int8_t)stack_3)) << 8;
+		letter_and_colour = (uint32_t)(uint8_t)((icon_frame & 3u) + HIGH_SCORE_ICON(icons + (int8_t)digits_low_then_icon)) << 8;
 		sprite = print_sprite_letter(sprite, letter_and_colour);
 		sprite_text_x = 0x88u;
 		entry_y = sprite_text_y;
@@ -1063,7 +862,7 @@ void high_scores_print_entries(uint16_t entry, uint16_t first_place)
 		half_carry = ((uint8_t)(place ^ 1u ^ (place + 1u)) >> 4) & 1u;
 		carry = (uint8_t)(place + 1u) < place;
 		table_place = konami_daa((uint8_t)(place + 1u), half_carry, carry);
-		entry = (((uint32_t)stack_2 << 8) | stack) + 8u;
+		entry = (((uint32_t)saved_entry_high << 8) | saved_entry_low) + 8u;
 		entries_left = table_entries_left;
 		table_entries_left = entries_left - 1u;
 	} while (entries_left != 1u);
@@ -1074,11 +873,11 @@ void high_scores_print_entries(uint16_t entry, uint16_t first_place)
 uint16_t print_sprite_letter(uint16_t sprite, uint16_t letter_and_colour)
 {
 	uint16_t colour = 0;
-	uint8_t stack = 0;
+	uint8_t saved_colour = 0;
 
-	stack = (uint8_t)letter_and_colour;
+	saved_colour = (uint8_t)letter_and_colour;
 	sprite_text_code = ((uint32_t)sprite_font_code_high[0] << 8) | sprite_font_codes[(int8_t)((uint8_t)((letter_and_colour >> 8) - 0x30u))];
-	colour = stack;
+	colour = saved_colour;
 	sprite = put_sprite(sprite, colour);
 	return sprite;
 }
@@ -1100,14 +899,14 @@ void unused_print_sprite_code(uint16_t sprite_codes, uint16_t sprite)
 uint16_t put_sprite(uint16_t sprite, uint16_t colour)
 {
 	uint8_t control = 0;
-	uint8_t stack = 0;
+	uint8_t saved_flags = 0;
 	uint16_t sprite_code = 0, sprite_x = 0, sprite_y = 0;
 
-	stack = colour >> 8;
+	saved_flags = colour >> 8;
 	control = board_control | 2u;
 	board_control = control;
 	io_write8(board_control_register, control);
-	io_write8(sprite, stack | 0x80u);
+	io_write8(sprite, saved_flags | 0x80u);
 	mem_write16(sprite + 0xCu, colour | 0x20u);
 	sprite_code = sprite_text_code;
 	mem_write16(sprite + 2u, sprite_code);

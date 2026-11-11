@@ -126,7 +126,7 @@ void game_start_join_players(void)
 void game_start_draw_portraits(uint16_t palette_job)
 {
 	uint16_t ignored16 = 0, ignored16_2 = 0, layer_and_columns = 0, portrait_area = 0, request = 0, tile = 0;
-	uint8_t stack = 0, stack_2 = 0;
+	uint8_t tile_low = 0, tile_high = 0;
 	uint8_t columns_left = 0, rows_left = 0;
 	uint16_t area_record = 0;
 
@@ -159,18 +159,18 @@ void game_start_draw_portraits(uint16_t palette_job)
 			{
 				mem_write8(tile - 0x2000u, PORTRAIT_AREA(portrait_area - 0x2u)->colour);
 				tile++;
-				stack_2 = tile >> 8;
-				stack = (uint8_t)tile;
-				stack_2 = (stack_2 & 7u) | 0x28u;
-				tile = ((uint32_t)stack_2 << 8) | stack;
+				tile_high = tile >> 8;
+				tile_low = (uint8_t)tile;
+				tile_high = (tile_high & 7u) | 0x28u;
+				tile = ((uint32_t)tile_high << 8) | tile_low;
 				columns_left = portrait_columns_left;
 				portrait_columns_left = columns_left - 1u;
 			} while (columns_left != 1u);
 			tile += 0x37u;
-			stack_2 = tile >> 8;
-			stack = (uint8_t)tile;
-			stack_2 = (stack_2 & 7u) | 0x28u;
-			tile = ((uint32_t)stack_2 << 8) | stack;
+			tile_high = tile >> 8;
+			tile_low = (uint8_t)tile;
+			tile_high = (tile_high & 7u) | 0x28u;
+			tile = ((uint32_t)tile_high << 8) | tile_low;
 			rows_left = portrait_rows_left;
 			portrait_rows_left = rows_left - 1u;
 		} while (rows_left != 1u);
@@ -185,19 +185,19 @@ void game_start_draw_portraits(uint16_t palette_job)
 void game_start_run_portraits(void)
 {
 	uint16_t object = 0, test_player = 0;
-	uint8_t stack = 0;
+	uint8_t portrait_index = 0;
 
 	object = OBJECT_ADDRESS(14);
 	portrait_player_bit = 1u;
-	stack = 0u;
+	portrait_index = 0u;
 	do
 	{
-		test_player = test_player_records[(int8_t)((uint8_t)((uint32_t)stack << 1)) / 2];
+		test_player = test_player_records[(int8_t)((uint8_t)((uint32_t)portrait_index << 1)) / 2];
 		portrait_run(object, test_player);
 		object += 0xC0u;
 		portrait_player_bit = (uint32_t)portrait_player_bit << 1;
-		stack = stack + 1u;
-	} while (stack != 4u);
+		portrait_index = portrait_index + 1u;
+	} while (portrait_index != 4u);
 }
 
 /* Runs a portrait by its step */
@@ -293,7 +293,7 @@ void portrait_come_alive(uint16_t object, uint16_t test_player)
 {
 	uint8_t frame = 0;
 	uint16_t command = 0, request = 0, test_player_again = 0;
-	uint8_t stack = 0;
+	uint8_t saved_frame = 0;
 	uint16_t saved_test_player = 0;
 	uint8_t wait_left = 0, portrait_frame = 0, portrait_frame_2 = 0, palette_set = 0, step = 0;
 	uint16_t palette_effect = 0, start_sound = 0;
@@ -313,7 +313,7 @@ void portrait_come_alive(uint16_t object, uint16_t test_player)
 		return;
 	}
 	OBJECT(object + 0x60u)->flags = 0x80u;
-	stack = frame;
+	saved_frame = frame;
 	saved_test_player = test_player;
 	palette_request_kind = 1u;
 	palette_set = TEST_PLAYER(test_player)->palette_set;
@@ -328,7 +328,7 @@ void portrait_come_alive(uint16_t object, uint16_t test_player)
 	start_sound = TEST_PLAYER(test_player_again)->sound;
 	command = start_sound;
 	vector_queue_sound_always(command);
-	frame = stack;
+	frame = saved_frame;
 	step = OBJECT(object)->portrait.step;
 	OBJECT(object)->portrait.step = step + 1u;
 	OBJECT(object)->animation = frame | 0x80u;
@@ -337,11 +337,11 @@ void portrait_come_alive(uint16_t object, uint16_t test_player)
 /* Now and then (at random) plays its idle animation */
 void portrait_blink_now_and_then(uint16_t object)
 {
-	uint16_t stack = 0;
+	uint16_t object_as_number = 0;
 	uint8_t step = 0;
 
-	stack = object;
-	if (((stack + random_number) & 0xF7u) == 0u)
+	object_as_number = object;
+	if (((object_as_number + random_number) & 0xF7u) == 0u)
 	{
 		OBJECT(object)->animation = 0x8Bu;
 		step = OBJECT(object)->portrait.step;

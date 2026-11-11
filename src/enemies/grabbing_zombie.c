@@ -151,7 +151,7 @@ uint16_t zombie_grab_reach(uint16_t object)
 {
 	uint8_t angle = 0, floor_high = 0, floor_low = 0;
 	uint16_t direction = 0, heading = 0, target_player = 0;
-	uint8_t stack = 0;
+	uint8_t target_player_bits = 0;
 	uint8_t state = 0, timer = 0, blink_frames = 0, hold_presses = 0, attributes = 0, attributes_2 = 0, shadow_player = 0, points = 0, shadow_player_2 = 0, action_step = 0;
 	uint16_t target = 0, hit_by = 0, target_dx = 0, target_dy = 0, floor_z = 0, z = 0, floor_z_2 = 0, player_x = 0, player_y = 0;
 
@@ -375,9 +375,9 @@ uint16_t zombie_grab_reach(uint16_t object)
 	attributes_2 = OBJECT(object)->attributes;
 	OBJECT(object)->attributes = (attributes_2 & 0xBFu) | grab_facing;
 	shadow_player = OBJECT(target_player)->shadow_player;
-	stack = shadow_player & 0x70u;
+	target_player_bits = shadow_player & 0x70u;
 	points = OBJECT(object)->points;
-	OBJECT(object)->points = (points & 0x8Fu) | stack;
+	OBJECT(object)->points = (points & 0x8Fu) | target_player_bits;
 	shadow_player_2 = OBJECT(target_player)->shadow_player;
 	OBJECT(object)->animation = kind_97_hold_animations[(((shadow_player_2 >> 1) >> 1) >> 1) >> 1] | 0x80u;
 	action_step = OBJECT(object)->action_step;

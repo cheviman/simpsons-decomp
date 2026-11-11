@@ -151,9 +151,9 @@ uint16_t stage_over(void)
 
 /* A frame of the players leaving the stage: when they are all out the stage's players are noted again,
    the next phase starts and it returns done (carry) */
-void stage_players_exit(uint16_t *p_u, uint32_t *p_left_caller, uint32_t *p_carry)
+void stage_players_exit(uint16_t *p_u, uint32_t *p_left_caller, uint32_t *p_players_out)
 {
-	uint32_t carry = *p_carry;
+	uint32_t players_out = *p_players_out;
 	uint16_t ignored16 = 0, ignored16_2 = 0, ignored16_3 = 0, u = 0;
 	uint8_t players_signal = 0;
 
@@ -163,27 +163,27 @@ void stage_players_exit(uint16_t *p_u, uint32_t *p_left_caller, uint32_t *p_carr
 	window_bank = 0x1Cu;
 	set_lines(window_bank);
 	player_run_all();
-	update_players(&ignored16_2, &u, &ignored16_3, &carry);
+	update_players(&ignored16_2, &u, &ignored16_3, &players_out);
 	players_signal = io_read8(players_all_idle);
 	if (players_signal == 0u)
-		carry = scene_routine_nothing();
+		players_out = scene_routine_nothing();
 	else
 	{
 		players_present = players_playing;
 		step_phase++;
-		carry = 1u;
+		players_out = 1u;
 	}
 	*p_u = u;
-	*p_carry = carry;
+	*p_players_out = players_out;
 }
 
 /* Does nothing and returns not done: the story scenes' routine, and the players not all out yet */
 uint32_t scene_routine_nothing(void)
 {
-	uint32_t carry = 0;
+	uint32_t players_out = 0;
 
-	carry = 0u;
-	return carry;
+	players_out = 0u;
+	return players_out;
 }
 
 /* Sets current_scene from step_scenes by game_step */

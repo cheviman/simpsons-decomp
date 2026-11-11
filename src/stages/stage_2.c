@@ -370,13 +370,13 @@ void stage_2_closing_scene(void)
    step */
 void stage_2_end_phase(uint16_t u)
 {
-	uint32_t carry = 0;
+	uint32_t skipped = 0;
 	uint8_t b = 0;
 	uint16_t command = 0, ignored16 = 0, wait = 0;
 
 	wait = 0xF000u | b;
-	check_skip(wait, &ignored16, &carry);
-	if (carry)
+	check_skip(wait, &ignored16, &skipped);
+	if (skipped)
 	{
 		command = 0u;
 		queue_sound_always(command);

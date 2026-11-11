@@ -319,13 +319,13 @@ void wrestler_knocked_down(uint16_t object, uint8_t d)
 /* The wrestler knocked down: falls; landing with too little health it is beaten, else it lies. */
 void wrestler_fall(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t landed = 0;
 	uint16_t animation_number = 0, command = 0, ignored16 = 0, partner_object = 0;
 	uint8_t vitality = 0, shadow_player = 0, action = 0;
 	uint16_t partner = 0, hit_by = 0;
 
-	vector_apply_gravity(object, &ignored16, &carry);
-	if (carry == 0u)
+	vector_apply_gravity(object, &ignored16, &landed);
+	if (landed == 0u)
 		return;
 	OBJECT(object)->x_speed = 0;
 	OBJECT(object)->y_speed = 0;
@@ -339,7 +339,7 @@ void wrestler_fall(uint16_t object)
 		partner_object = partner;
 		OBJECT(partner_object)->z_speed = 0x100;
 		animation_number = 0x600u;
-		wrestler_set_animation(object, &animation_number, &carry);
+		wrestler_set_animation(object, &animation_number, &landed);
 		hit_by = OBJECT(object)->hit_by;
 		shadow_player = OBJECT(hit_by)->shadow_player;
 		OBJECT(object)->points = shadow_player & ~0xFu;
@@ -350,7 +350,7 @@ void wrestler_fall(uint16_t object)
 		return;
 	}
 	animation_number = 0xD00u;
-	wrestler_set_animation(object, &animation_number, &carry);
+	wrestler_set_animation(object, &animation_number, &landed);
 	OBJECT(object)->action_step = 0x40u;
 	action = OBJECT(object)->action;
 	OBJECT(object)->action = action + 1u;
@@ -528,11 +528,11 @@ void wrestler_flinch_wait(uint16_t object)
 /* The wrestler hit: once back on the floor, stands and picks its target again. */
 void wrestler_flinch_land(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t landed = 0;
 	uint16_t box_end = 0, ignored16 = 0;
 
-	vector_apply_gravity(object, &ignored16, &carry);
-	if (carry == 0u)
+	vector_apply_gravity(object, &ignored16, &landed);
+	if (landed == 0u)
 		return;
 	box_end = wrestler_stand(object);
 	wrestler_pick_target(object, box_end);
@@ -782,12 +782,12 @@ void wrestler_entrance_step_out(uint16_t object)
 /* The wrestler's entrance: lands shaking the screen, with a thud (6400). */
 void wrestler_entrance_land(uint16_t object, uint16_t palette_job)
 {
-	uint32_t carry = 0;
+	uint32_t landed = 0;
 	uint16_t animation_number = 0, command = 0, ignored16 = 0, palette_effect_number = 0;
 	uint8_t action = 0;
 
-	vector_apply_gravity(object, &ignored16, &carry);
-	if (carry == 0u)
+	vector_apply_gravity(object, &ignored16, &landed);
+	if (landed == 0u)
 		return;
 	palette_request_kind = 2u;
 	palette_effect_number = 0x21u;
@@ -800,7 +800,7 @@ void wrestler_entrance_land(uint16_t object, uint16_t palette_job)
 	vector_queue_sound(command);
 	OBJECT(object)->y_speed = 0;
 	animation_number = 0xB00u;
-	wrestler_set_animation(object, &animation_number, &carry);
+	wrestler_set_animation(object, &animation_number, &landed);
 	OBJECT(object)->action_step = 0x40u;
 	action = OBJECT(object)->action;
 	OBJECT(object)->action = action + 1u;
@@ -860,19 +860,19 @@ void wrestler_entrance_end(uint16_t object)
 /* The wrestler walks toward its target at its speed by rank, until it reaches it. */
 void wrestler_walk(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t action_started = 0;
 	uint16_t animation_number = 0, heading = 0, u = 0;
 	uint8_t animation = 0, side_direction = 0;
 
-	wrestler_approach(object, &u, &carry);
-	if (carry)
+	wrestler_approach(object, &u, &action_started);
+	if (action_started)
 		return;
 	wrestler_pick_target(object, u);
 	animation = OBJECT(object)->animation;
 	if (animation != 0u)
 	{
 		animation_number = 0x100u;
-		wrestler_set_animation(object, &animation_number, &carry);
+		wrestler_set_animation(object, &animation_number, &action_started);
 	}
 	wrestler_aim(object);
 	side_direction = OBJECT(object)->wrestler.side_direction;
@@ -1364,12 +1364,12 @@ void wrestler_jump_rise(uint16_t object)
 /* The wrestler jumps: lands shaking the screen (6400), hitting around it. */
 void wrestler_jump_land(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t landed = 0;
 	uint16_t box_number = 0, command = 0, ignored16 = 0;
 	uint8_t action = 0;
 
-	vector_apply_gravity(object, &ignored16, &carry);
-	if (carry == 0u)
+	vector_apply_gravity(object, &ignored16, &landed);
+	if (landed == 0u)
 		return;
 	OBJECT(object)->flags |= 0x40u;
 	screen_shake_on = 1u;
@@ -1555,19 +1555,19 @@ void wrestler_idle(uint16_t object, uint8_t d)
 /* The wrestler with no target: waits for a player; one there, taunts. */
 void wrestler_idle_look(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t player_found = 0;
 	uint16_t animation_number = 0, ignored16 = 0, ignored16_2 = 0;
 	uint8_t action = 0;
 
 	OBJECT(object)->x_speed = 0;
 	OBJECT(object)->y_speed = 0;
-	find_nearest_player(object, &ignored16, &ignored16_2, &carry);
-	if (carry == 0u)
+	find_nearest_player(object, &ignored16, &ignored16_2, &player_found);
+	if (player_found == 0u)
 		return;
 	OBJECT(object)->flags |= 0x40u;
 	OBJECT(object)->action_step = 0x60u;
 	animation_number = 0xA00u;
-	wrestler_set_animation(object, &animation_number, &carry);
+	wrestler_set_animation(object, &animation_number, &player_found);
 	action = OBJECT(object)->action;
 	OBJECT(object)->action = action + 1u;
 }
@@ -1609,7 +1609,7 @@ void wrestler_wait_target_up(uint16_t object)
 /* The wrestler: when hit, takes the hit. */
 uint16_t wrestler_check_hit(uint16_t object, uint8_t state)
 {
-	uint32_t negative = 0;
+	uint32_t negative_hit = 0;
 	uint8_t a = 0, b = 0;
 	uint16_t d = 0, d_2 = 0;
 	uint8_t hit = 0;
@@ -1619,9 +1619,9 @@ uint16_t wrestler_check_hit(uint16_t object, uint8_t state)
 	if ((a & 0x20u) != 0u)
 	{
 		hit = OBJECT(object)->hit;
-		negative = hit >> 7;
+		negative_hit = hit >> 7;
 		b = hit;
-		if (hit != 0u && negative == 0u)
+		if (hit != 0u && negative_hit == 0u)
 		{
 			d = wrestler_take_hit(object);
 			a = (uint8_t)(d >> 8);
@@ -1914,7 +1914,7 @@ void wrestler_keep_in_area(uint16_t object)
 /* The wrestler: whether the given object is within its reach (carry). */
 uint32_t wrestler_within_reach(uint16_t object, uint16_t object_2)
 {
-	uint32_t carry = 0;
+	uint32_t in_reach = 0;
 	uint16_t distance = 0;
 	uint16_t own_x = 0, player_at_x = 0, own_y = 0, player_at_y = 0;
 
@@ -1928,12 +1928,12 @@ uint32_t wrestler_within_reach(uint16_t object, uint16_t object_2)
 		distance = own_y - player_at_y;
 		if ((int16_t)(distance >> 15 ? 0u - distance : distance) <= 4)
 		{
-			carry = 1u;
-			return carry;
+			in_reach = 1u;
+			return in_reach;
 		}
 	}
-	carry = 0u;
-	return carry;
+	in_reach = 0u;
+	return in_reach;
 }
 
 /* The wrestler: whether it should guard: alone with one player, or with two or more players within reach
@@ -1942,7 +1942,7 @@ uint32_t wrestler_surrounded(uint16_t object)
 {
 	uint32_t carry = 0;
 	uint16_t object_2 = 0;
-	uint8_t stack = 0, stack_2 = 0;
+	uint8_t players_in_reach = 0, slots_left = 0;
 	uint8_t state = 0, players_to_check = 0;
 
 	if (player_count == 1u)
@@ -1951,8 +1951,8 @@ uint32_t wrestler_surrounded(uint16_t object)
 		return carry;
 	}
 	object_2 = OBJECT_ADDRESS(0);
-	stack = 0u;
-	stack_2 = 4u;
+	players_in_reach = 0u;
+	slots_left = 4u;
 	do
 	{
 		if (OBJECT(object_2)->flags != 0u)
@@ -1962,14 +1962,14 @@ uint32_t wrestler_surrounded(uint16_t object)
 			{
 				carry = wrestler_within_reach(object, object_2);
 				if (carry)
-					stack = stack + 1u;
+					players_in_reach = players_in_reach + 1u;
 			}
 		}
 		object_2 += 0xC0u;
-		players_to_check = stack_2;
-		stack_2 = players_to_check - 1u;
+		players_to_check = slots_left;
+		slots_left = players_to_check - 1u;
 	} while (players_to_check != 1u);
-	if (stack < 2u)
+	if (players_in_reach < 2u)
 	{
 		carry = 0u;
 		return carry;

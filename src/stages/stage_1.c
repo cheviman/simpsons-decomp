@@ -433,10 +433,10 @@ void stage_1_over(void)
 /* Stage 1's players leaving */
 uint32_t stage_1_exit(uint32_t left_caller)
 {
-	uint32_t carry = 0;
+	uint32_t players_out = 0;
 	uint16_t ignored16 = 0;
 
-	stage_players_exit(&ignored16, &left_caller, &carry);
+	stage_players_exit(&ignored16, &left_caller, &players_out);
 	return left_caller;
 }
 

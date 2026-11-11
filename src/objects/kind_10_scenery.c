@@ -127,7 +127,7 @@ uint16_t kind_10_dropper_start(uint16_t object)
 {
 	uint8_t floor_cell_2 = 0, floor_place_low = 0;
 	uint16_t floor_cell = 0, floor_start = 0;
-	uint16_t stack = 0;
+	uint16_t floor_place = 0;
 	uint8_t animation_flags = 0, parameter = 0, animation = 0, attributes = 0, state = 0;
 	uint16_t old_x = 0, new_x = 0;
 
@@ -148,10 +148,10 @@ uint16_t kind_10_dropper_start(uint16_t object)
 		floor_cell_2 = (uint8_t)(floor_cell >> 8);
 		OBJECT(object)->kind_10_dropper.floor_start = floor_start;
 		OBJECT(object)->kind_10_dropper.floor_cell = floor_cell_2;
-		stack = floor_start;
-		floor_place_low = (uint8_t)stack;
+		floor_place = floor_start;
+		floor_place_low = (uint8_t)floor_place;
 		scenery_floor_column = floor_place_low;
-		OBJECT(object)->kind_10_dropper.floor_row = ((uint32_t)(stack >> 8) << 8) | (floor_place_low & 0xC0u);
+		OBJECT(object)->kind_10_dropper.floor_row = ((uint32_t)(floor_place >> 8) << 8) | (floor_place_low & 0xC0u);
 	}
 	OBJECT(object)->floor_z = 0u;
 	attributes = OBJECT(object)->attributes;
@@ -234,7 +234,7 @@ uint16_t kind_10_dropper_write_floor(uint16_t object)
 {
 	uint8_t control = 0, floor_column = 0;
 	uint16_t column = 0, floor_place = 0;
-	uint8_t stack = 0;
+	uint8_t start_place_low = 0;
 	uint8_t row = 0, row_2 = 0, row_3 = 0, row_4 = 0, row_5 = 0, columns_to_write = 0;
 	uint16_t floor_start = 0, floor_row = 0;
 
@@ -243,8 +243,8 @@ uint16_t kind_10_dropper_write_floor(uint16_t object)
 	io_write8(board_control_register, control);
 	floor_columns_left = 0x20u;
 	floor_start = OBJECT(object)->kind_10_dropper.floor_start;
-	stack = floor_start;
-	floor_column = stack;
+	start_place_low = floor_start;
+	floor_column = start_place_low;
 	OBJECT(object)->kind_10_dropper.floor_column = floor_column;
 	floor_column -= 5u;
 	do

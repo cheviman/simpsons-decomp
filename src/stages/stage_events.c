@@ -14,14 +14,14 @@
 /* Puts in one or two of bank 19's list 1 type FB objects (two from difficulty 3), then waits. */
 void cleared_wave_start(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t slot_found = 0;
 	uint16_t child = 0, ignored16 = 0, ignored16_2 = 0;
 	uint8_t state = 0;
 
 	OBJECT(object)->x = 0xE0u;
 	leftover_y = cleared_wave_child_1_ADDRESS;
-	vector_spawn_child(object, &ignored16, &child, &ignored16_2, &carry);
-	if (carry)
+	vector_spawn_child(object, &ignored16, &child, &ignored16_2, &slot_found);
+	if (slot_found)
 		OBJECT(child)->behaviour = object;
 	if (difficulty < 3u)
 	{
@@ -31,8 +31,8 @@ void cleared_wave_start(uint16_t object)
 		return;
 	}
 	leftover_y = cleared_wave_child_2_ADDRESS;
-	vector_spawn_child(object, &ignored16, &child, &ignored16_2, &carry);
-	if (carry)
+	vector_spawn_child(object, &ignored16, &child, &ignored16_2, &slot_found);
+	if (slot_found)
 		OBJECT(child)->behaviour = object;
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
@@ -43,7 +43,7 @@ void cleared_wave_start(uint16_t object)
    goons. */
 void cleared_wave_wait(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t slot_found = 0;
 	uint16_t command = 0, ignored16 = 0, ignored16_2 = 0, ignored16_3 = 0;
 	uint8_t enemies_in_play = 0;
 
@@ -58,9 +58,9 @@ void cleared_wave_wait(uint16_t object)
 	vector_queue_sound(command);
 	OBJECT(object)->flags = 0u;
 	leftover_y = cleared_wave_child_3_ADDRESS;
-	vector_spawn_child(object, &ignored16, &ignored16_2, &ignored16_3, &carry);
+	vector_spawn_child(object, &ignored16, &ignored16_2, &ignored16_3, &slot_found);
 	leftover_y = cleared_wave_child_4_ADDRESS;
-	vector_spawn_child(object, &ignored16, &ignored16_2, &ignored16_3, &carry);
+	vector_spawn_child(object, &ignored16, &ignored16_2, &ignored16_3, &slot_found);
 }
 
 /* Starts holding the scroll. */
@@ -108,7 +108,7 @@ void enemy_waves_start(uint16_t object)
 /* Puts in the spawns of the current wave for which enough players are present. */
 void enemy_waves_spawn(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t slot_found = 0;
 	uint8_t enemy_z = 0, spawn_flags = 0;
 	uint16_t enemy = 0, spawn = 0;
 	uint8_t wave = 0, players = 0, players_present_now = 0, flags = 0, spawn_x = 0, spawn_y = 0, z = 0, state_2 = 0;
@@ -132,8 +132,8 @@ void enemy_waves_spawn(uint16_t object)
 		{
 			flags = TIMED_SPAWN(spawn)->flags;
 			spawn_flags = flags;
-			vector_find_free_slot_by_flags(spawn_flags, &enemy, &carry);
-			if (carry)
+			vector_find_free_slot_by_flags(spawn_flags, &enemy, &slot_found);
+			if (slot_found)
 			{
 				state = (((uint32_t)TIMED_SPAWN(spawn)->state << 8u) | TIMED_SPAWN(spawn)->type);
 				OBJECT(enemy)->parameter = state >> 8;

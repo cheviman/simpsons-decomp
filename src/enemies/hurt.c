@@ -33,7 +33,7 @@ uint16_t enemy_hurt_become_goon(uint16_t object)
    actions 0 and 1, else knocked up and away from the hitter; with no vitality left, the defeat. */
 uint16_t enemy_hurt_start(uint16_t object, uint16_t hurt_step_table)
 {
-	uint32_t zero = 0;
+	uint32_t hitter_still = 0;
 	uint8_t reaction = 0;
 	uint16_t animations = 0, command = 0, hitter = 0;
 	uint8_t vitality = 0, action = 0, action_step = 0;
@@ -67,13 +67,13 @@ uint16_t enemy_hurt_start(uint16_t object, uint16_t hurt_step_table)
 	hit_by = OBJECT(object)->hit_by;
 	hitter = hit_by;
 	x_speed = OBJECT(hitter)->x_speed;
-	zero = x_speed == 0u;
+	hitter_still = x_speed == 0u;
 	if ((int16_t)x_speed < 0)
 	{
 		OBJECT(object)->action_step = 5u;
 		return hitter;
 	}
-	if (zero)
+	if (hitter_still)
 	{
 		hitter_x = OBJECT(hitter)->x;
 		enemy_x = OBJECT(object)->x;
@@ -113,12 +113,12 @@ void enemy_hurt_recover(uint16_t object)
 /* Lets the defeated enemy fall; once it lands it lies down. */
 void enemy_hurt_fall_defeated(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t landed = 0;
 	uint16_t ignored16 = 0;
 	uint8_t action_step = 0;
 
-	apply_gravity(object, &ignored16, &carry);
-	if (carry)
+	apply_gravity(object, &ignored16, &landed);
+	if (landed)
 	{
 		OBJECT(object)->x_speed = 0;
 		OBJECT(object)->y_speed = 0;
@@ -199,12 +199,12 @@ uint16_t enemy_hurt_vanish(uint16_t object, uint16_t target)
 /* Lets the knocked enemy fall; once it lands it stays down for 10 frames. */
 void enemy_hurt_fall(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t landed = 0;
 	uint16_t ignored16 = 0;
 	uint8_t action_step = 0;
 
-	apply_gravity(object, &ignored16, &carry);
-	if (carry)
+	apply_gravity(object, &ignored16, &landed);
+	if (landed)
 	{
 		OBJECT(object)->x_speed = 0;
 		OBJECT(object)->timer = 0x10u;

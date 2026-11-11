@@ -933,12 +933,12 @@ void enemy_move_right_until_landed(uint16_t object)
 /* Falls with gravity; once it lands, stops and waits 4 frames. */
 void enemy_fall_until_landed(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t landed = 0;
 	uint16_t ignored16 = 0;
 	uint8_t action_step = 0;
 
-	apply_gravity(object, &ignored16, &carry);
-	if (carry)
+	apply_gravity(object, &ignored16, &landed);
+	if (landed)
 	{
 		OBJECT(object)->x_speed = 0;
 		OBJECT(object)->y_speed = 0;

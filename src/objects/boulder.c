@@ -87,15 +87,15 @@ void boulder_wait(uint16_t object)
 /* Falls; on landing (sound 6500) bounces, far into the distance or a little. */
 void boulder_fall(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t landed = 0;
 	uint16_t command = 0;
 	uint8_t state = 0, parameter = 0;
 	uint16_t z_speed = 0;
 
 	z_speed = OBJECT(object)->z_speed;
 	OBJECT(object)->z_speed = z_speed - 0x30u;
-	carry = vector_check_landing(object);
-	if (carry == 0u)
+	landed = vector_check_landing(object);
+	if (landed == 0u)
 	{
 		boulder_hurt(object);
 		return;
@@ -136,7 +136,7 @@ void boulder_hurt(uint16_t object)
 /* Bounces along (shrinking into the distance for one that bounces away) until it falls off the floor. */
 void boulder_bounce(uint16_t object)
 {
-	uint32_t negative = 0, carry = 0;
+	uint32_t negative = 0, landed = 0;
 	uint8_t cell = 0, new_zoom_x = 0, new_zoom_y = 0, z_speed_high = 0;
 	uint16_t command = 0, floor_cell = 0;
 	uint8_t parameter = 0, timer = 0;
@@ -193,8 +193,8 @@ void boulder_bounce(uint16_t object)
 	z_speed_2 = OBJECT(object)->z_speed;
 	next_z_speed = z_speed_2 - 0x20u;
 	OBJECT(object)->z_speed = next_z_speed;
-	carry = vector_check_landing(object);
-	if (carry == 0u)
+	landed = vector_check_landing(object);
+	if (landed == 0u)
 	{
 		boulder_hurt(object);
 		return;

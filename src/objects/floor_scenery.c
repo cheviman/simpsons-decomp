@@ -15,7 +15,7 @@
 uint16_t floor_blocker_start(uint16_t object)
 {
 	uint16_t cell_value = 0, floor_start = 0, setup = 0;
-	uint16_t stack = 0;
+	uint16_t floor_place = 0;
 	uint8_t blocked = 0, state = 0;
 	uint16_t blocker_y = 0;
 
@@ -30,8 +30,8 @@ uint16_t floor_blocker_start(uint16_t object)
 	floor_cell_under(object, &floor_start, &cell_value);
 	OBJECT(object)->floor_blocker.floor_cell = cell_value >> 8;
 	OBJECT(object)->floor_blocker.floor_start = floor_start;
-	stack = floor_start;
-	OBJECT(object)->floor_blocker.floor_row = stack & ~0x3Fu;
+	floor_place = floor_start;
+	OBJECT(object)->floor_blocker.floor_row = floor_place & ~0x3Fu;
 	OBJECT(object)->floor_blocker.part = 0u;
 	OBJECT(object)->blocked = 0u;
 	state = OBJECT(object)->state;
@@ -131,7 +131,7 @@ uint16_t floor_blocker_write_cells(uint16_t object)
 {
 	uint8_t control = 0, floor_column = 0;
 	uint16_t place = 0;
-	uint8_t stack = 0;
+	uint8_t part_place_low = 0;
 	uint8_t part = 0, cell_in_middle = 0, cell_at_bottom = 0, columns_left = 0;
 	uint16_t floor_start = 0, floor_row = 0;
 
@@ -140,8 +140,8 @@ uint16_t floor_blocker_write_cells(uint16_t object)
 	io_write8(board_control_register, control);
 	floor_start = OBJECT(object)->floor_blocker.floor_start;
 	part = OBJECT(object)->floor_blocker.part;
-	stack = floor_start + (int8_t)(((uint32_t)part << 1) << 1);
-	floor_column = stack;
+	part_place_low = floor_start + (int8_t)(((uint32_t)part << 1) << 1);
+	floor_column = part_place_low;
 	OBJECT(object)->floor_blocker.floor_column = floor_column;
 	floor_column -= 3u;
 	floor_columns_left = 4u;
@@ -259,7 +259,7 @@ uint16_t platform_scenery_write_cells(uint16_t object)
 {
 	uint8_t control = 0, floor_column = 0;
 	uint16_t place = 0;
-	uint8_t stack = 0;
+	uint8_t part_place_low = 0;
 	uint8_t part = 0, cell_in_middle = 0, cell_at_bottom = 0, columns_left = 0;
 	uint16_t floor_start = 0, floor_row = 0;
 
@@ -268,8 +268,8 @@ uint16_t platform_scenery_write_cells(uint16_t object)
 	io_write8(board_control_register, control);
 	floor_start = OBJECT(object)->platform_scenery.floor_start;
 	part = OBJECT(object)->platform_scenery.part;
-	stack = floor_start + (int8_t)(((uint32_t)part << 1) << 1);
-	floor_column = stack;
+	part_place_low = floor_start + (int8_t)(((uint32_t)part << 1) << 1);
+	floor_column = part_place_low;
 	OBJECT(object)->platform_scenery.floor_column = floor_column;
 	floor_column -= 3u;
 	floor_columns_left = 4u;
@@ -299,8 +299,8 @@ uint16_t platform_scenery_start(uint16_t object)
 {
 	uint8_t cell_low = 0, floor_cell = 0;
 	uint16_t cell_place = 0, cell_value = 0, floor_start = 0, setup = 0;
-	uint8_t stack_10001 = 0, stack_10002 = 0;
-	uint16_t stack = 0;
+	uint8_t floor_start_high = 0, floor_start_low = 0;
+	uint16_t floor_place = 0;
 	uint8_t state = 0;
 	uint16_t scenery_y = 0, raised_y = 0, floor_row = 0;
 
@@ -315,15 +315,15 @@ uint16_t platform_scenery_start(uint16_t object)
 	floor_cell_under(object, &cell_place, &cell_value);
 	floor_cell = (uint8_t)(cell_value >> 8);
 	OBJECT(object)->platform_scenery.floor_cell = floor_cell;
-	stack = cell_place;
-	cell_low = (uint8_t)stack;
+	floor_place = cell_place;
+	cell_low = (uint8_t)floor_place;
 	scenery_floor_column = cell_low;
-	OBJECT(object)->platform_scenery.floor_row = ((uint32_t)(stack >> 8) << 8) | (cell_low & 0xC0u);
+	OBJECT(object)->platform_scenery.floor_row = ((uint32_t)(floor_place >> 8) << 8) | (cell_low & 0xC0u);
 	scenery_floor_column = (scenery_floor_column - 2u) & 0x3Fu;
 	floor_row = OBJECT(object)->platform_scenery.floor_row;
-	stack_10001 = floor_row >> 8;
-	stack_10002 = floor_row | scenery_floor_column;
-	floor_start = ((uint32_t)stack_10001 << 8) | stack_10002;
+	floor_start_high = floor_row >> 8;
+	floor_start_low = floor_row | scenery_floor_column;
+	floor_start = ((uint32_t)floor_start_high << 8) | floor_start_low;
 	OBJECT(object)->platform_scenery.floor_start = floor_start;
 	OBJECT(object)->platform_scenery.part = 0xFFu;
 	state = OBJECT(object)->state;
@@ -336,7 +336,7 @@ uint16_t platform_scenery_clear_floor(uint16_t object, uint16_t piece)
 {
 	uint8_t floor_column = 0, stood_cell = 0;
 	uint16_t place = 0;
-	uint16_t stack = 0;
+	uint16_t floor_place = 0;
 	uint8_t held_up = 0, state = 0, floor_cell = 0, columns_left = 0;
 	uint16_t floor_start = 0, floor_row = 0;
 
@@ -351,8 +351,8 @@ uint16_t platform_scenery_clear_floor(uint16_t object, uint16_t piece)
 	OBJECT(object)->action = 0u;
 	OBJECT(object)->attack = 0u;
 	floor_start = OBJECT(object)->platform_scenery.floor_start;
-	stack = floor_start;
-	floor_column = (uint8_t)stack;
+	floor_place = floor_start;
+	floor_column = (uint8_t)floor_place;
 	OBJECT(object)->platform_scenery.floor_column = floor_column;
 	floor_column -= 7u;
 	floor_columns_left = 0x14u;
@@ -458,12 +458,12 @@ void platform_scenery_launch(uint16_t object)
 /* Lands with a crash (sound 6E00), throwing off two pieces, hurting the enemies it touches. */
 uint16_t platform_scenery_crash(uint16_t object, uint16_t piece)
 {
-	uint32_t carry = 0;
+	uint32_t landed = 0;
 	uint16_t child_object = 0, command = 0, ignored16 = 0, ignored16_2 = 0, record = 0;
 	uint8_t state = 0;
 
-	vector_apply_gravity(object, &ignored16, &carry);
-	if (carry == 0u)
+	vector_apply_gravity(object, &ignored16, &landed);
+	if (landed == 0u)
 	{
 		check_hits_with_enemies(object);
 		return piece;
@@ -473,10 +473,10 @@ uint16_t platform_scenery_crash(uint16_t object, uint16_t piece)
 	OBJECT(object)->animation = 0x81u;
 	OBJECT(object)->timer = 4u;
 	record = platform_scenery_crash_debris_1_ADDRESS;
-	spawn_list_2_child(object, record, &ignored16_2, &carry);
+	spawn_list_2_child(object, record, &ignored16_2, &landed);
 	leftover_y = platform_scenery_crash_debris_2_ADDRESS;
 	child_object = platform_scenery_crash_debris_2_ADDRESS;
-	spawn_list_2_child(object, child_object, &piece, &carry);
+	spawn_list_2_child(object, child_object, &piece, &landed);
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
 	check_hits_with_enemies(object);
@@ -532,12 +532,12 @@ uint16_t scenery_debris_start(uint16_t object)
 /* Bounces the piece once on landing. */
 void scenery_debris_bounce(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t landed = 0;
 	uint16_t ignored16 = 0;
 	uint8_t state = 0;
 
-	vector_apply_gravity(object, &ignored16, &carry);
-	if (carry)
+	vector_apply_gravity(object, &ignored16, &landed);
+	if (landed)
 	{
 		OBJECT(object)->z_speed = 0x200;
 		state = OBJECT(object)->state;
@@ -548,12 +548,12 @@ void scenery_debris_bounce(uint16_t object)
 /* Lands the piece for good. */
 void scenery_debris_land(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t landed = 0;
 	uint16_t ignored16 = 0;
 	uint8_t state = 0;
 
-	vector_apply_gravity(object, &ignored16, &carry);
-	if (carry == 0u)
+	vector_apply_gravity(object, &ignored16, &landed);
+	if (landed == 0u)
 	{
 		scenery_debris_idle();
 		return;
@@ -648,8 +648,8 @@ uint16_t charging_scenery_start(uint16_t object)
 {
 	uint8_t cell_low = 0, floor_cell = 0;
 	uint16_t cell_place = 0, cell_value = 0, floor_start = 0, setup = 0;
-	uint8_t stack_10001 = 0, stack_10002 = 0;
-	uint16_t stack = 0;
+	uint8_t floor_start_high = 0, floor_start_low = 0;
+	uint16_t floor_place = 0;
 	uint8_t attributes = 0, state = 0;
 	uint16_t scenery_y = 0, raised_y = 0, floor_row = 0;
 
@@ -665,15 +665,15 @@ uint16_t charging_scenery_start(uint16_t object)
 	floor_cell_under(object, &cell_place, &cell_value);
 	floor_cell = (uint8_t)(cell_value >> 8);
 	OBJECT(object)->charging_scenery.floor_cell = floor_cell;
-	stack = cell_place;
-	cell_low = (uint8_t)stack;
+	floor_place = cell_place;
+	cell_low = (uint8_t)floor_place;
 	scenery_floor_column = cell_low;
-	OBJECT(object)->charging_scenery.floor_row = ((uint32_t)(stack >> 8) << 8) | (cell_low & 0xC0u);
+	OBJECT(object)->charging_scenery.floor_row = ((uint32_t)(floor_place >> 8) << 8) | (cell_low & 0xC0u);
 	scenery_floor_column = (scenery_floor_column - 2u) & 0x3Fu;
 	floor_row = OBJECT(object)->charging_scenery.floor_row;
-	stack_10001 = floor_row >> 8;
-	stack_10002 = floor_row | scenery_floor_column;
-	floor_start = ((uint32_t)stack_10001 << 8) | stack_10002;
+	floor_start_high = floor_row >> 8;
+	floor_start_low = floor_row | scenery_floor_column;
+	floor_start = ((uint32_t)floor_start_high << 8) | floor_start_low;
 	OBJECT(object)->charging_scenery.floor_start = floor_start;
 	OBJECT(object)->charging_scenery.part = 0u;
 	state = OBJECT(object)->state;
@@ -721,7 +721,7 @@ uint16_t pick_random_player(void)
    with hats. */
 uint16_t charging_scenery_wait_target(uint16_t object, uint16_t u)
 {
-	uint32_t carry = 0;
+	uint32_t slot_found = 0;
 	uint16_t ignored16 = 0, ignored16_2 = 0, u_2 = 0;
 	uint8_t target_direction = 0, state = 0;
 	uint16_t scenery_x = 0;
@@ -741,11 +741,11 @@ uint16_t charging_scenery_wait_target(uint16_t object, uint16_t u)
 	OBJECT(object)->state = state + 1u;
 	charging_scenery_clear_floor(object);
 	leftover_y = charging_scenery_goon_left_ADDRESS;
-	vector_spawn_child(object, &ignored16, &u_2, &ignored16_2, &carry);
+	vector_spawn_child(object, &ignored16, &u_2, &ignored16_2, &slot_found);
 	if (player_count <= 2u)
 		return u_2;
 	leftover_y = charging_scenery_goon_right_ADDRESS;
-	vector_spawn_child(object, &ignored16, &u_2, &ignored16_2, &carry);
+	vector_spawn_child(object, &ignored16, &u_2, &ignored16_2, &slot_found);
 	return u_2;
 }
 

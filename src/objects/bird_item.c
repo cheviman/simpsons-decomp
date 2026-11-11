@@ -72,11 +72,11 @@ void bird_item_flutter(uint16_t object)
 /* Comes down as a kind 05 object (animation 8C) lying as a throwable (list 1 type 01). */
 void bird_item_land(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t landed = 0;
 	uint16_t ignored16 = 0;
 
-	vector_apply_gravity(object, &ignored16, &carry);
-	if (carry)
+	vector_apply_gravity(object, &ignored16, &landed);
+	if (landed)
 	{
 		OBJECT(object)->flags = 0xC0u;
 		OBJECT(object)->y_speed = 0;

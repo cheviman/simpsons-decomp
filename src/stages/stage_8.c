@@ -458,11 +458,11 @@ uint32_t stage_8_play(uint32_t left_caller)
 /* Marks the first part over for the players' objects and runs their leaving */
 uint32_t stage_8_first_part_exit(uint32_t left_caller)
 {
-	uint32_t carry = 0;
+	uint32_t players_out = 0;
 	uint16_t ignored16 = 0;
 
 	io_write8(players_stop_request, 1u);
-	stage_players_exit(&ignored16, &left_caller, &carry);
+	stage_players_exit(&ignored16, &left_caller, &players_out);
 	return left_caller;
 }
 
@@ -536,10 +536,10 @@ void stage_8_over(void)
 /* Stage 8's players leaving */
 uint32_t stage_8_exit(uint32_t left_caller)
 {
-	uint32_t carry = 0;
+	uint32_t players_out = 0;
 	uint16_t ignored16 = 0;
 
-	stage_players_exit(&ignored16, &left_caller, &carry);
+	stage_players_exit(&ignored16, &left_caller, &players_out);
 	return left_caller;
 }
 

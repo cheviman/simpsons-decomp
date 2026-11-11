@@ -3,7 +3,7 @@
  *    Description: the music: a song's tracks, their notes and commands, the pitch envelope, the gate, the fade's volume
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the Z80 sound program decompiled into C by
@@ -82,11 +82,11 @@ void stop_music_channel(uint16_t channel)
 /* Whether the record plays a track: its song. */
 uint32_t music_channel_song(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t no_song = 0;
 
 	z80_block(33);
-	zero = CHANNEL(channel)->song == 0u;
-	return zero;
+	no_song = CHANNEL(channel)->song == 0u;
+	return no_song;
 }
 
 /* The record's music, on one pass in 8 (by its chip_channel): the tempo added to time, and at its carry
@@ -99,11 +99,11 @@ uint32_t music_channel_song(uint16_t channel)
 uint16_t music_tick(uint16_t channel)
 {
 	bool L_0042C5 = false;
-	uint32_t zero = 0, negative = 0, overflow = 0, carry = 0;
+	uint32_t legato = 0, negative = 0, overflow = 0, next_step_due = 0;
 	uint8_t byte = 0, detune = 0, drum_kit = 0, envelope_count = 0, envelope_count_2 = 0, envelope_count_3 = 0, envelope_count_4 = 0, envelope_period = 0, envelope_step = 0, envelope_step_2 = 0, envelope_step_3 = 0, envelope_step_4 = 0, gate = 0, index_high = 0, jump_count = 0, lfo_ramp = 0, loop_2_count = 0, loop_count = 0, music_pan = 0, music_volume = 0, part_count = 0, sensitivity = 0, step = 0, step_2 = 0, tempo_2 = 0;
 	uint16_t command_entry = 0, drum_routines = 0, element = 0, handler = 0, kit_routines = 0, part_return = 0, patch = 0, patch_entry = 0, pitch = 0, pitch_entry = 0, routine_entry = 0, tempo = 0, time = 0, track = 0, transposition = 0;
 	uint8_t stack = 0, saved_step = 0;
-	uint8_t t1 = 0, loop_count_2 = 0, loop_2_count_2 = 0, part_count_2 = 0;
+	uint8_t previous_gate_bits = 0, loop_count_2 = 0, loop_2_count_2 = 0, part_count_2 = 0;
 	uint32_t jump_target = 0;
 
 	z80_block(28);
@@ -121,10 +121,10 @@ uint16_t music_tick(uint16_t channel)
 	z80_block(118);
 	time = CHANNEL(channel)->time;
 	tempo = CHANNEL(channel)->tempo;
-	carry = (uint16_t)(time + tempo) < time;
+	next_step_due = (uint16_t)(time + tempo) < time;
 	time += tempo;
 	CHANNEL(channel)->time = time;
-	if (carry == 0u)
+	if (next_step_due == 0u)
 	{
 		z80_cycles(6);
 		return channel;
@@ -142,9 +142,9 @@ uint16_t music_tick(uint16_t channel)
 			{
 				z80_block(17);
 				step_2 = step;
-				carry = add_note_length(step_2, channel);
+				next_step_due = add_note_length(step_2, channel);
 				z80_block(10);
-				if (carry == 0u)
+				if (next_step_due == 0u)
 					break;
 				continue;
 			}
@@ -158,7 +158,7 @@ uint16_t music_tick(uint16_t channel)
 			}
 			z80_block(17);
 			step_2 = step;
-			carry = add_note_length(step_2, channel);
+			next_step_due = add_note_length(step_2, channel);
 			L_0042C5 = true;
 		}
 		if (!L_0042C5)
@@ -249,7 +249,7 @@ uint16_t music_tick(uint16_t channel)
 				z80_block(21);
 				step = byte;
 				step_2 = step;
-				carry = add_note_length(step_2, channel);
+				next_step_due = add_note_length(step_2, channel);
 				z80_block(11);
 				saved_step = step;
 				for (;;)
@@ -262,13 +262,13 @@ uint16_t music_tick(uint16_t channel)
 						break;
 					z80_block(17);
 					step_2 = step;
-					carry = add_note_length(step_2, channel);
+					next_step_due = add_note_length(step_2, channel);
 					z80_block(28);
 					if ((step & 0xFu) == 0xFu)
 						break;
 					z80_block(49);
 					step_2 = (uint8_t)(((((uint32_t)step << 1) << 1) << 1) << 1);
-					carry = add_note_length(step_2, channel);
+					next_step_due = add_note_length(step_2, channel);
 					z80_block(10);
 				}
 				z80_block(20);
@@ -326,12 +326,12 @@ uint16_t music_tick(uint16_t channel)
 				step = saved_step;
 			}
 			z80_block(66);
-			t1 = (uint8_t)CHANNEL(channel)->gate_time | (uint8_t)(CHANNEL(channel)->gate_time >> 8u);
-			negative = t1 >> 7;
-			zero = t1 == 0u;
-			overflow = parity8(t1);
-			carry = 0u;
-			stack = (negative << 7) | (zero << 6) | (overflow << 2) | (carry << 0);
+			previous_gate_bits = (uint8_t)CHANNEL(channel)->gate_time | (uint8_t)(CHANNEL(channel)->gate_time >> 8u);
+			negative = previous_gate_bits >> 7;
+			legato = previous_gate_bits == 0u;
+			overflow = parity8(previous_gate_bits);
+			next_step_due = 0u;
+			stack = (negative << 7) | (legato << 6) | (overflow << 2) | (next_step_due << 0);
 			set_note_gate(channel);
 			z80_block(46);
 			pitch_entry = fm_pitches_by_note_ADDRESS;
@@ -811,7 +811,7 @@ void music_pitch_envelope_4(uint16_t channel)
    is no more than gate_time. */
 void music_note_tick(uint16_t channel)
 {
-	uint32_t carry = 0;
+	uint32_t key_off_due = 0;
 	uint8_t lfo_ramp_step = 0, sensitivity = 0;
 	uint16_t time = 0;
 	uint8_t lfo_ramp_timer = 0;
@@ -853,8 +853,8 @@ void music_note_tick(uint16_t channel)
 	}
 	z80_block(92);
 	time = CHANNEL(channel)->time;
-	carry = (uint16_t)(time + CHANNEL(channel)->gate_time) < time;
-	if (carry == 0u)
+	key_off_due = (uint16_t)(time + CHANNEL(channel)->gate_time) < time;
+	if (key_off_due == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -867,7 +867,7 @@ void music_note_tick(uint16_t channel)
    hands back the carry, set when the step ends before the time counted so far. */
 uint32_t add_note_length(uint8_t step, uint16_t channel)
 {
-	uint32_t carry = 0;
+	uint32_t next_step_due = 0;
 	uint8_t code = 0;
 	uint16_t length = 0, time = 0;
 
@@ -878,10 +878,10 @@ uint32_t add_note_length(uint8_t step, uint16_t channel)
 	length = (uint8_t)((code >> 1) | ((uint32_t)code << 7));
 	length = TABLE16(note_lengths, length);
 	time = CHANNEL(channel)->time;
-	carry = (uint16_t)(time + length) < time;
+	next_step_due = (uint16_t)(time + length) < time;
 	time += length;
 	CHANNEL(channel)->time = time;
-	return carry;
+	return next_step_due;
 }
 
 /* The note's gate_time: gate 256ths of what is left of time, at least 1; 0 when gate is 0 (the next note
@@ -891,7 +891,7 @@ void set_note_gate(uint16_t channel)
 	uint32_t carry = 0;
 	uint8_t count = 0, left_high = 0, left_low = 0, ratio = 0;
 	uint16_t gate_time = 0;
-	uint8_t t1 = 0;
+	uint8_t unrotated_ratio = 0;
 
 	z80_block(43);
 	gate_time = 0u;
@@ -914,9 +914,9 @@ void set_note_gate(uint16_t channel)
 		carry = left_high & 1u;
 		left_high = left_high >> 1;
 		left_low = (left_low >> 1) | (carry << 7);
-		t1 = ratio;
-		ratio = ((uint32_t)t1 << 1) | (t1 >> 7);
-		if (t1 >> 7)
+		unrotated_ratio = ratio;
+		ratio = ((uint32_t)unrotated_ratio << 1) | (unrotated_ratio >> 7);
+		if (unrotated_ratio >> 7)
 		{
 			z80_block(11);
 			gate_time += ((uint32_t)left_high << 8) | left_low;
@@ -952,12 +952,12 @@ void update_music_volume(uint16_t channel)
 void set_music_volume(uint16_t channel, uint8_t music_volume)
 {
 	uint8_t volume = 0;
-	uint8_t t1 = 0;
+	uint8_t faded_volume = 0;
 
 	z80_block(31);
-	t1 = fade_attenuation + music_volume;
-	volume = t1;
-	if ((int8_t)t1 >= 0)
+	faded_volume = fade_attenuation + music_volume;
+	volume = faded_volume;
+	if ((int8_t)faded_volume >= 0)
 	{
 		set_volume(channel, volume);
 		return;

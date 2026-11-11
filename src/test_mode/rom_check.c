@@ -153,7 +153,7 @@ uint16_t test_rom_check_sum_sprites(void)
 /* Prints the sound board's 6G result and sum the sound CPU reports */
 uint16_t test_rom_check_6g(uint16_t d)
 {
-	uint32_t zero = 0;
+	uint32_t answered = 0;
 	uint8_t answer_bits = 0, no_sound_cpu = 0, sprite_control = 0;
 	uint16_t d_2 = 0, place = 0, sample_sum = 0;
 	uint8_t sound_cpu_missing = 0;
@@ -169,8 +169,8 @@ uint16_t test_rom_check_6g(uint16_t d)
 		d_2 = (d & 0xFFu) | ((uint32_t)no_sound_cpu << 8);
 		return d_2;
 	}
-	sample_rom_check_answered(&d, &zero);
-	if (zero == 0u)
+	sample_rom_check_answered(&d, &answered);
+	if (answered == 0u)
 	{
 		d_2 = (d & 0xFFu) | ((uint32_t)no_sound_cpu << 8);
 		return d_2;
@@ -235,7 +235,7 @@ void test_sum_tile_rom(uint16_t *p_sum, uint16_t *p_d)
 	uint16_t sum = (uint16_t)*p_sum;
 	uint8_t control = 0, output = 0, rom_byte = 0;
 	uint16_t bytes_left = 0, d = 0, rom_place = 0;
-	uint8_t stack = 0;
+	uint8_t saved_output = 0;
 	uint8_t watchdog_read = 0, pages_to_go = 0;
 	uint16_t remaining_bytes = 0;
 
@@ -273,7 +273,7 @@ void test_sum_tile_rom(uint16_t *p_sum, uint16_t *p_d)
 	enable_irq();
 	leftover_y = bytes_left;
 	take_interrupts();
-	stack = output;
+	saved_output = output;
 	io_write8(tile_chip_irq_control, 0xFFu);
 	enable_firq();
 	leftover_y = bytes_left;
@@ -281,7 +281,7 @@ void test_sum_tile_rom(uint16_t *p_sum, uint16_t *p_d)
 	control = board_control | 4u;
 	board_control = control;
 	io_write8(board_control_register, control);
-	d = ((uint32_t)stack << 8) | rom_byte;
+	d = ((uint32_t)saved_output << 8) | rom_byte;
 	*p_sum = sum;
 	*p_d = d;
 }
@@ -356,7 +356,7 @@ uint16_t test_print_rom_ok(uint16_t sum, uint16_t place)
 {
 	uint8_t a = 0, b = 0;
 	uint16_t d = 0, place_2 = 0;
-	uint16_t stack = 0;
+	uint16_t printed_sum = 0;
 	uint16_t letter_o_place = 0, letter_k_place = 0;
 
 	io_write8(place - 0x2000u, 0u);
@@ -368,9 +368,9 @@ uint16_t test_print_rom_ok(uint16_t sum, uint16_t place)
 	mem_write8(letter_k_place, 0x1Bu);
 	hex_colour = 0u;
 	place = letter_k_place + 2u;
-	stack = sum;
+	printed_sum = sum;
 	place_2 = place + 2u;
-	d = stack;
+	d = printed_sum;
 	d = vector_print_hex_word(place_2, d);
 	a = (uint8_t)(d >> 8);
 	b = (uint8_t)d;
@@ -384,7 +384,7 @@ uint16_t test_print_rom_bad(uint16_t sum, uint16_t place)
 {
 	uint8_t a = 0, b = 0;
 	uint16_t d = 0, place_2 = 0;
-	uint16_t stack = 0;
+	uint16_t printed_sum = 0;
 	uint16_t letter_b_place = 0, letter_a_place = 0, letter_d_place = 0;
 
 	io_write8(place - 0x2000u, 0x40u);
@@ -399,9 +399,9 @@ uint16_t test_print_rom_bad(uint16_t sum, uint16_t place)
 	letter_d_place = place;
 	mem_write8(letter_d_place, 0x14u);
 	hex_colour = 0x40u;
-	stack = sum;
+	printed_sum = sum;
 	place_2 = letter_d_place + 3u;
-	d = stack;
+	d = printed_sum;
 	d = vector_print_hex_word(place_2, d);
 	a = (uint8_t)(d >> 8);
 	b = (uint8_t)d;

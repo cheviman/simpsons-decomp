@@ -46,9 +46,9 @@ void enemy_think(uint16_t object, uint16_t *p_object_2, uint32_t *p_left_caller)
 	uint32_t carry = 0;
 	uint8_t action_offset = 0, attack_chance = 0, choice = 0, roll = 0, sides = 0, step = 0;
 	uint16_t action_handlers = 0, d = 0, range = 0, state_record = 0, target = 0, target_player = 0;
-	uint8_t stack = 0;
-	uint8_t retarget_time = 0, attackers = 0, attackers_left = 0, nearest_attackers = 0, attackers_limit = 0, old_attackers = 0, parameter = 0, parameter_2 = 0, parameter_3 = 0, taken_sides = 0, sides_taken = 0, target_direction = 0, sides_taken_2 = 0, sides_taken_3 = 0, side = 0, side_2 = 0, target_state = 0, parameter_4 = 0, timer = 0, timer_2 = 0, state = 0, action_chance = 0, remaining_roll = 0, choices_left = 0, parameter_5 = 0, behaviour_chance = 0, t2 = 0, t3 = 0;
-	uint16_t target_2 = 0, least_attacked = 0, target_3 = 0, z = 0, floor_z = 0, target_dx = 0, target_dy = 0, target_dx_2 = 0, target_dy_2 = 0, action = 0, target_floor = 0, floor_z_2 = 0, floor_difference = 0, t1 = 0, floor_distance = 0, z_2 = 0, floor_z_3 = 0, behaviour = 0, behaviour_2 = 0;
+	uint8_t attack_odds = 0;
+	uint8_t retarget_time = 0, attackers = 0, attackers_left = 0, nearest_attackers = 0, attackers_limit = 0, old_attackers = 0, parameter = 0, parameter_2 = 0, parameter_3 = 0, taken_sides = 0, sides_taken = 0, target_direction = 0, sides_taken_2 = 0, sides_taken_3 = 0, side = 0, side_2 = 0, target_state = 0, parameter_4 = 0, timer = 0, timer_2 = 0, state = 0, action_chance = 0, remaining_roll = 0, choices_left = 0, parameter_5 = 0, behaviour_chance = 0, roll_before = 0, choice_before = 0;
+	uint16_t target_2 = 0, least_attacked = 0, target_3 = 0, z = 0, floor_z = 0, target_dx = 0, target_dy = 0, target_dx_2 = 0, target_dy_2 = 0, action = 0, target_floor = 0, floor_z_2 = 0, floor_difference = 0, floor_gap = 0, floor_distance = 0, z_2 = 0, floor_z_3 = 0, behaviour = 0, behaviour_2 = 0;
 
 	target_2 = OBJECT(object)->target;
 	target_player = target_2;
@@ -270,8 +270,8 @@ void enemy_think(uint16_t object, uint16_t *p_object_2, uint32_t *p_left_caller)
 					target_floor = OBJECT(target_player)->floor_z;
 					floor_z_2 = OBJECT(object)->floor_z;
 					floor_difference = target_floor - floor_z_2;
-					t1 = floor_difference;
-					floor_distance = t1 >> 15 ? 0u - t1 : t1;
+					floor_gap = floor_difference;
+					floor_distance = floor_gap >> 15 ? 0u - floor_gap : floor_gap;
 					if (floor_distance <= 0x20u)
 					{
 						z_2 = OBJECT(object)->z;
@@ -284,10 +284,10 @@ void enemy_think(uint16_t object, uint16_t *p_object_2, uint32_t *p_left_caller)
 							attack_chance = (uint8_t)(d >> 8);
 							if (carry)
 							{
-								stack = attack_chance;
+								attack_odds = attack_chance;
 								d = enemy_random((uint8_t)d);
 								roll = (uint8_t)(d >> 8);
-								if (roll < stack)
+								if (roll < attack_odds)
 								{
 									d = enemy_random((uint8_t)d);
 									roll = (uint8_t)(d >> 8);
@@ -388,16 +388,16 @@ void enemy_think(uint16_t object, uint16_t *p_object_2, uint32_t *p_left_caller)
 	do
 	{
 		behaviour_chance = BEHAVIOUR_CHANCE(state_record + (int8_t)choice);
-		t2 = roll;
-		roll = t2 - behaviour_chance;
-		if (t2 < behaviour_chance)
+		roll_before = roll;
+		roll = roll_before - behaviour_chance;
+		if (roll_before < behaviour_chance)
 		{
 			choice--;
 			break;
 		}
-		t3 = choice;
-		choice = t3 - 1u;
-	} while (t3 != 1u);
+		choice_before = choice;
+		choice = choice_before - 1u;
+	} while (choice_before != 1u);
 	state_record -= 3u;
 	OBJECT(object)->action = BEHAVIOUR_ACTION(state_record + (int8_t)choice);
 	OBJECT(object)->action_step = 0u;
@@ -461,7 +461,7 @@ void enemy_attack(uint16_t object, uint16_t *p_attack_handlers, uint32_t *p_left
 {
 	uint8_t attack = 0, step = 0;
 	uint16_t attack_handlers = 0, target = 0;
-	uint8_t stack = 0;
+	uint8_t saved_action_step = 0;
 	uint16_t z = 0, floor_z = 0, target_2 = 0, action = 0;
 
 	z = OBJECT(object)->z;
@@ -473,12 +473,12 @@ void enemy_attack(uint16_t object, uint16_t *p_attack_handlers, uint32_t *p_left
 	enemy_look_at_target(object, target);
 	action = (((uint32_t)OBJECT(object)->action << 8u) | OBJECT(object)->action_step);
 	attack = (uint8_t)(action >> 8);
-	stack = action;
+	saved_action_step = action;
 	window_bank = action_banks[(int8_t)attack];
 	set_lines(window_bank);
 	attack_handlers = enemy_action_handlers_ADDRESS;
 	attack = (uint32_t)attack << 1;
-	step = stack;
+	step = saved_action_step;
 	switch ((int8_t)attack)
 	{
 	case 0:

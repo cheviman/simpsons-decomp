@@ -635,13 +635,13 @@ void kind_8a_carrier_setup(uint16_t object)
 /* Puts in the goon it carries (5280 type 17) and walks in with it; with no free slot it runs off. */
 void kind_8a_carrier_pick_up(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t slot_found = 0;
 	uint16_t carried_goon = 0, ignored16 = 0, ignored16_2 = 0;
 	uint8_t state = 0;
 
 	leftover_y = kind_8a_carrier_pick_up_child_ADDRESS;
-	vector_spawn_child(object, &ignored16, &carried_goon, &ignored16_2, &carry);
-	if (carry == 0u)
+	vector_spawn_child(object, &ignored16, &carried_goon, &ignored16_2, &slot_found);
+	if (slot_found == 0u)
 	{
 		OBJECT(object)->state = 0xFEu;
 		OBJECT(object)->action = 0u;

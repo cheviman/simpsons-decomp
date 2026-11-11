@@ -37,7 +37,7 @@ uint16_t kind_88_ride_start(uint16_t object)
    apart. */
 uint16_t kind_88_ride_put_in_arms(uint16_t object, uint16_t states)
 {
-	uint32_t carry = 0;
+	uint32_t child_placed = 0;
 	uint8_t angle = 0;
 	uint16_t arm = 0, child_object = 0;
 	uint8_t enemies = 0, state = 0, arms = 0, arms_to_put = 0;
@@ -55,8 +55,8 @@ uint16_t kind_88_ride_put_in_arms(uint16_t object, uint16_t states)
 	{
 		leftover_y = kind_88_ride_put_in_arms_child_ADDRESS;
 		child_object = kind_88_ride_put_in_arms_child_ADDRESS;
-		spawn_list_2_child(object, child_object, &arm, &carry);
-		if (carry == 0u)
+		spawn_list_2_child(object, child_object, &arm, &child_placed);
+		if (child_placed == 0u)
 			break;
 		OBJECT(arm)->kind_88_ride_arm.ride_hub = object;
 		arms = OBJECT(object)->kind_88_ride.arms;
@@ -116,7 +116,7 @@ void kind_88_ride_wait_enemies(uint16_t object)
 /* Once its arms and riders are gone, goes away, putting in a last goon. */
 uint16_t kind_88_ride_end(uint16_t object, uint16_t states)
 {
-	uint32_t carry = 0;
+	uint32_t slot_found = 0;
 	uint16_t ignored16 = 0, ignored16_2 = 0, u = 0;
 	uint8_t arms = 0, riders_out = 0;
 
@@ -128,7 +128,7 @@ uint16_t kind_88_ride_end(uint16_t object, uint16_t states)
 		{
 			OBJECT(object)->flags = 0u;
 			leftover_y = kind_88_ride_end_child_ADDRESS;
-			vector_spawn_child(object, &ignored16, &u, &ignored16_2, &carry);
+			vector_spawn_child(object, &ignored16, &u, &ignored16_2, &slot_found);
 			return u;
 		}
 	}
@@ -158,7 +158,7 @@ uint16_t kind_88_ride_arm_start(uint16_t object)
 /* Puts in the arm's two kind 88 riders, half a turn apart, counting them in field 3A. */
 void kind_88_ride_arm_put_in_riders(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t slot_found = 0;
 	uint8_t angle = 0, riders_left = 0;
 	uint16_t ignored16 = 0, ignored16_2 = 0, rider = 0;
 	uint8_t riders = 0, riders_on = 0, frame_offset = 0, riders_to_put = 0;
@@ -170,8 +170,8 @@ void kind_88_ride_arm_put_in_riders(uint16_t object)
 	do
 	{
 		leftover_y = kind_88_ride_arm_put_in_riders_child_ADDRESS;
-		vector_spawn_child(object, &ignored16, &rider, &ignored16_2, &carry);
-		if (carry == 0u)
+		vector_spawn_child(object, &ignored16, &rider, &ignored16_2, &slot_found);
+		if (slot_found == 0u)
 			break;
 		riders = OBJECT(object)->kind_88_ride_arm.riders;
 		OBJECT(object)->kind_88_ride_arm.riders = riders + 1u;
@@ -350,15 +350,15 @@ uint16_t kind_88_piece_start(uint16_t object)
 /* Falls and lands, lying with its landed look. */
 void kind_88_piece_fall(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t landed = 0;
 	uint8_t second_look = 0, state = 0;
 	uint16_t z_speed = 0, new_z_speed = 0;
 
 	z_speed = OBJECT(object)->z_speed;
 	new_z_speed = z_speed - 0x18u;
 	OBJECT(object)->z_speed = new_z_speed;
-	carry = vector_check_landing(object);
-	if (carry == 0u)
+	landed = vector_check_landing(object);
+	if (landed == 0u)
 		return;
 	second_look = OBJECT(object)->kind_88_piece.second_look;
 	if (second_look == 0u)
@@ -484,7 +484,7 @@ void kind_88_knocked(uint16_t object)
 /* Falls back (blinking at the end) and lands with sound 6B00. */
 void kind_88_knocked_fall(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t landed = 0;
 	uint16_t command = 0;
 	uint8_t timer = 0, timer_2 = 0, attributes = 0, animation_flags = 0, action_step = 0;
 	uint16_t z_speed = 0, new_z_speed = 0;
@@ -504,8 +504,8 @@ void kind_88_knocked_fall(uint16_t object)
 	z_speed = OBJECT(object)->z_speed;
 	new_z_speed = z_speed - 0x20u;
 	OBJECT(object)->z_speed = new_z_speed;
-	carry = vector_check_landing(object);
-	if (carry == 0u)
+	landed = vector_check_landing(object);
+	if (landed == 0u)
 	{
 		kind_88_knocked_wait();
 		return;
@@ -719,7 +719,7 @@ void kind_88_leap_off(uint16_t object)
 /* Lands with sound 6B00, counted off its arm, and is in play. */
 void kind_88_leap_land(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t landed = 0;
 	uint16_t arm = 0, command = 0;
 	uint8_t riders = 0, state = 0;
 	uint16_t z_speed = 0, new_z_speed = 0, parent = 0;
@@ -727,8 +727,8 @@ void kind_88_leap_land(uint16_t object)
 	z_speed = OBJECT(object)->z_speed;
 	new_z_speed = z_speed - 0x20u;
 	OBJECT(object)->z_speed = new_z_speed;
-	carry = vector_check_landing(object);
-	if (carry == 0u)
+	landed = vector_check_landing(object);
+	if (landed == 0u)
 		return;
 	command = 0x6B00u;
 	vector_queue_sound(command);
@@ -1032,12 +1032,12 @@ void kind_88_charge_hit(uint16_t object)
 /* Lands from its hop with sound 6B00. */
 void kind_88_hop_land(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t landed = 0;
 	uint16_t command = 0, ignored16 = 0;
 	uint8_t state = 0;
 
-	vector_apply_gravity(object, &ignored16, &carry);
-	if (carry == 0u)
+	vector_apply_gravity(object, &ignored16, &landed);
+	if (landed == 0u)
 	{
 		kind_88_keep_on_screen(object);
 		return;

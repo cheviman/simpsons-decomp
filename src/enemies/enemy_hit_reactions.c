@@ -538,15 +538,15 @@ void enemy_knocked_forward_start(uint16_t object)
 /* Falls with gravity; landed, it dies or lies to get up; stopped by a wall in the air, it drops. */
 void enemy_knocked_fall(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t landed = 0;
 	uint8_t enemy_class = 0;
 	uint16_t z_speed = 0, falling_z_speed = 0, x_speed = 0;
 
 	z_speed = OBJECT(object)->z_speed;
 	falling_z_speed = z_speed - 0x20u;
 	OBJECT(object)->z_speed = falling_z_speed;
-	carry = vector_check_landing(object);
-	if (carry)
+	landed = vector_check_landing(object);
+	if (landed)
 	{
 		OBJECT(object)->x_speed = 0;
 		OBJECT(object)->y_speed = 0;
@@ -708,15 +708,15 @@ void enemy_knocked_back_start(uint16_t object)
    in the air, it drops. */
 void enemy_knocked_back_fall(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t landed = 0;
 	uint8_t vitality = 0, action_step = 0, enemy_class = 0;
 	uint16_t z_speed = 0, falling_z_speed = 0, x_speed = 0;
 
 	z_speed = OBJECT(object)->z_speed;
 	falling_z_speed = z_speed - 0x20u;
 	OBJECT(object)->z_speed = falling_z_speed;
-	carry = vector_check_landing(object);
-	if (carry)
+	landed = vector_check_landing(object);
+	if (landed)
 	{
 		OBJECT(object)->x_speed = 0;
 		OBJECT(object)->y_speed = 0;
@@ -1146,13 +1146,13 @@ void enemy_drop(uint16_t object, uint8_t step, uint16_t *p_step_handlers, uint32
    get up. */
 void enemy_drop_fall(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t landed = 0;
 	uint16_t z_speed = 0;
 
 	z_speed = OBJECT(object)->z_speed;
 	OBJECT(object)->z_speed = z_speed - 0x10u;
-	carry = vector_check_landing(object);
-	if (carry)
+	landed = vector_check_landing(object);
+	if (landed)
 	{
 		enemy_die_or_get_up(object);
 		return;

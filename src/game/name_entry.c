@@ -235,12 +235,12 @@ void name_entry_start(uint16_t palette_job)
 /* A frame of the name entry, run by bank 11 until it is done */
 void name_entry_run(void)
 {
-	uint32_t carry = 0;
+	uint32_t done = 0;
 
 	window_bank = 0x11u;
 	set_lines(window_bank);
-	carry = name_entry();
-	if (carry)
+	done = name_entry();
+	if (done)
 		game_step++;
 }
 

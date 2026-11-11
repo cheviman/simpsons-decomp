@@ -130,7 +130,7 @@ void wandering_zombie_set_off(uint16_t object)
 	OBJECT(object)->flags = 0xC0u;
 	direction_2 = OBJECT(object)->wandering_zombie.direction;
 	direction = (uint32_t)direction_2 << 8;
-	vector_set_walk_speed_by_direction(object, 0u, direction);
+	vector_set_walk_speed_by_direction(object, direction);
 	parameter = OBJECT(object)->parameter;
 	OBJECT(object)->animation = (parameter + 1u) | 0x80u;
 	state = OBJECT(object)->state;
@@ -594,12 +594,12 @@ void zombie_leap_fall(uint16_t object)
    a wait. */
 void zombie_leap_land(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t landed = 0;
 	uint16_t command = 0;
 	uint8_t action_step = 0;
 
-	carry = vector_check_landing(object);
-	if (carry == 0u)
+	landed = vector_check_landing(object);
+	if (landed == 0u)
 		return;
 	leftover_y = zombie_body_box_ADDRESS;
 	vector_set_hit_box(object);

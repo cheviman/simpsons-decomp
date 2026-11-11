@@ -1383,7 +1383,7 @@ void attract_lisa_scene_animate(void)
 {
 	uint8_t pose = 0;
 	uint16_t object = 0;
-	uint8_t stack = 0;
+	uint8_t saved_pose = 0;
 	uint8_t action = 0;
 	uint16_t random_product = 0;
 
@@ -1394,9 +1394,9 @@ void attract_lisa_scene_animate(void)
 		random_product = action * 0xDu;
 		OBJECT(object)->action = random_product + 7u;
 		pose = (random_product >> 8) & 1u;
-		stack = pose;
+		saved_pose = pose;
 		OBJECT(object)->animation = (pose + 0x1Au) | 0x80u;
-		OBJECT(object + 0x60u)->animation = (stack + 0x1Cu) | 0x80u;
+		OBJECT(object + 0x60u)->animation = (saved_pose + 0x1Cu) | 0x80u;
 	}
 }
 
@@ -2455,7 +2455,7 @@ void attract_profile_move(uint16_t object, uint16_t move_number)
 void attract_profile_move_out(uint16_t object, uint16_t move, uint16_t move_number)
 {
 	uint16_t profile_move = 0, speed_x = 0, speed_y = 0;
-	uint8_t stack = 0;
+	uint8_t saved_move_number = 0;
 	uint8_t move_frames = 0, move_step = 0;
 	uint16_t speed_x_at = 0, speed_y_at = 0;
 
@@ -2463,7 +2463,7 @@ void attract_profile_move_out(uint16_t object, uint16_t move, uint16_t move_numb
 	OBJECT(object)->attract_profile.move_frames = move_frames - 1u;
 	if (move_frames != 1u)
 		return;
-	stack = move_number >> 8;
+	saved_move_number = move_number >> 8;
 	speed_x_at = move;
 	speed_x = PROFILE_MOVE(speed_x_at)->speed_x;
 	OBJECT(object)->x_speed = speed_x;
@@ -2473,7 +2473,7 @@ void attract_profile_move_out(uint16_t object, uint16_t move, uint16_t move_numb
 	speed_y = PROFILE_MOVE(speed_y_at - 0x2u)->speed_y;
 	OBJECT(object)->y_speed = speed_y;
 	OBJECT(object + 0x60u)->y_speed = speed_y;
-	if ((uint16_t)((uint32_t)stack << 8) >> 8 == 4u)
+	if ((uint16_t)((uint32_t)saved_move_number << 8) >> 8 == 4u)
 		OBJECT(object + 0x60u)->x_speed = -0x100;
 	OBJECT(object)->attract_profile.move_frames = (uint16_t)((uint32_t)PROFILE_MOVE(profile_move - 0x4u)->frames << 8) >> 8;
 	move_step = OBJECT(object)->attract_profile.move_step;

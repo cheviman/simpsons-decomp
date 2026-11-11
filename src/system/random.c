@@ -15,11 +15,11 @@
 void next_random(void)
 {
 	uint16_t old_random = 0;
-	uint16_t stack = 0;
+	uint16_t saved_random = 0;
 
 	old_random = AT16(random_number, -1);
-	stack = old_random;
+	saved_random = old_random;
 	old_random += AT16(random_number, -1);
 	AT16(random_number, -1) = old_random;
-	AT16(random_number, -1) = old_random + AT16(random_number, -1) + stack + 0x3711u;
+	AT16(random_number, -1) = old_random + AT16(random_number, -1) + saved_random + 0x3711u;
 }

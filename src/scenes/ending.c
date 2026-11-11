@@ -1,6 +1,6 @@
 /**
  *    Name:        scenes/ending.c
- *    Description: the ending: the family, the staff roll and the fade
+ *    Description: the ending
  *    Version:     0.1.0
  *    Created:     06-11-2026
  *    Modified:    11-11-2026
@@ -10,6 +10,50 @@
  *    tools/decompile.py, with the names of symbols.txt.
  */
 #include "game.h"
+
+/* Runs the ending by the scene's state: the family, the staff roll and the last fade; after 192 frames a
+   player's button skips it. */
+void ending(uint16_t u)
+{
+	uint32_t skipped = 0;
+	uint16_t ignored16 = 0, ignored16_2 = 0, wait = 0;
+	uint8_t ending_state = 0;
+
+	wait = 0xC000u;
+	vector_check_skip(wait, &ignored16, &skipped);
+	if (skipped)
+	{
+		vector_clear_objects(&ignored16, &ignored16_2);
+		scene_running = 0u;
+		return;
+	}
+	gauges_shown = 0u;
+	ending_state = io_read8(scene_state);
+	switch ((int8_t)(uint8_t)((uint32_t)ending_state << 1))
+	{
+	case 0:
+		ending_set_up(u);
+		return;
+	case 2:
+		ending_show_family();
+		return;
+	case 4:
+		ending_roll_credits();
+		return;
+	case 6:
+		ending_toss();
+		return;
+	case 8:
+		ending_catch();
+		return;
+	case 10:
+		ending_fade_start(u);
+		return;
+	case 12:
+		ending_fade(u);
+		return;
+	}
+}
 
 /* The ending: clears the screen and loads its colours. */
 void ending_set_up(uint16_t palette_job)
@@ -73,14 +117,14 @@ void ending_show_family(void)
    next pose. */
 void ending_roll_credits(void)
 {
-	uint32_t carry = 0;
+	uint32_t at_top = 0;
 	uint16_t record_number = 0;
 	uint8_t old_scene_state = 0;
 
 	ending_staff_roll(0u);
 	ending_family_animations();
-	carry = ending_scroll_up();
-	if (carry == 0u)
+	at_top = ending_scroll_up();
+	if (at_top == 0u)
 		return;
 	record_number = 0x400u;
 	ending_put_placement(record_number);
@@ -131,14 +175,14 @@ void ending_catch(void)
 /* The ending: when the tossed object is gone, the family floats away and the colours start to fade. */
 void ending_fade_start(uint16_t u)
 {
-	uint32_t carry = 0;
+	uint32_t gone = 0;
 	uint16_t request = 0;
 	uint8_t old_scene_state = 0;
 
 	OBJECT(OBJECT_ADDRESS(9))->animation_flags = 0x40u;
 	u = ending_staff_roll(u);
-	carry = ending_tossed_rise();
-	if (carry)
+	gone = ending_tossed_rise();
+	if (gone)
 	{
 		palette_request_kind = 4u;
 		request = 0x440u;
@@ -185,7 +229,7 @@ void ending_fade(uint16_t palette_job)
 /* The ending: raises the view a pixel every 104 frames, up to 27 (carry: there). */
 uint32_t ending_scroll_up(void)
 {
-	uint32_t carry = 0;
+	uint32_t at_top = 0;
 	uint8_t scroll_y_high = 0, scroll_y_low = 0;
 	uint8_t scroll_wait = 0, old_scroll_wait = 0, discarded_read = 0;
 	uint16_t layer_a_y = 0, new_layer_a_y = 0;
@@ -195,8 +239,8 @@ uint32_t ending_scroll_up(void)
 	{
 		old_scroll_wait = io_read8(dream_wave_line);
 		io_write8(dream_wave_line, old_scroll_wait + 1u);
-		carry = 0u;
-		return carry;
+		at_top = 0u;
+		return at_top;
 	}
 	discarded_read = io_read8(dream_wave_line);
 	io_write8(dream_wave_line, 0u);
@@ -205,15 +249,15 @@ uint32_t ending_scroll_up(void)
 	scroll_y_high = (uint8_t)(layer_a_y >> 8);
 	if ((uint16_t)(((uint32_t)scroll_y_high << 8) | (scroll_y_low & 0xFFu)) == 0x1Bu)
 	{
-		carry = 1u;
-		return carry;
+		at_top = 1u;
+		return at_top;
 	}
 	new_layer_a_y = (((uint32_t)scroll_y_high << 8) | (scroll_y_low & 0xFFu)) + 1u;
 	layer_a_scroll_y = new_layer_a_y;
 	old_scroll_wait = io_read8(dream_wave_line);
 	io_write8(dream_wave_line, old_scroll_wait + 1u);
-	carry = 0u;
-	return carry;
+	at_top = 0u;
+	return at_top;
 }
 
 /* The ending: every 160 frames, replaces the staff roll's title and name with the next ones. */
@@ -283,7 +327,7 @@ void ending_family_animations(void)
    (carry). */
 uint32_t ending_tossed_rise(void)
 {
-	uint32_t carry = 0;
+	uint32_t gone = 0;
 	uint8_t zoom = 0;
 	uint16_t object = 0;
 	uint8_t zoom_x = 0, animation = 0, animation_2 = 0;
@@ -297,8 +341,8 @@ uint32_t ending_tossed_rise(void)
 	OBJECT(OBJECT_ADDRESS(10))->action++;
 	if (OBJECT(OBJECT_ADDRESS(10))->action != 3u)
 	{
-		carry = 0u;
-		return carry;
+		gone = 0u;
+		return gone;
 	}
 	OBJECT(object)->action = 0u;
 	zoom_x = OBJECT(object)->zoom_x;
@@ -307,23 +351,23 @@ uint32_t ending_tossed_rise(void)
 	{
 		OBJECT(object)->zoom_x = zoom;
 		OBJECT(object)->zoom_y = zoom;
-		carry = 0u;
-		return carry;
+		gone = 0u;
+		return gone;
 	}
 	animation = OBJECT(object)->animation;
 	if (animation == 7u)
 	{
 		OBJECT(object)->flags = 0u;
-		carry = 1u;
-		return carry;
+		gone = 1u;
+		return gone;
 	}
 	animation_2 = OBJECT(object)->animation;
 	OBJECT(object)->animation = animation_2 + 1u;
 	zoom = 0x60u;
 	OBJECT(object)->zoom_x = zoom;
 	OBJECT(object)->zoom_y = zoom;
-	carry = 0u;
-	return carry;
+	gone = 0u;
+	return gone;
 }
 
 /* The ending: the family floats up, slowly getting smaller. */
@@ -347,7 +391,7 @@ void ending_family_float(void)
 /* The ending: puts the given record of ending_placements and hands back its object. */
 uint16_t ending_put_placement(uint16_t record_number)
 {
-	uint32_t carry = 0;
+	uint32_t shifted_bit = 0;
 	uint8_t offset_high = 0, offset_low = 0;
 	uint16_t object = 0;
 	uint16_t exchanged = 0, placement_record = 0, kind_at = 0, kind = 0, x_at = 0, placement_x = 0, z = 0;
@@ -356,14 +400,14 @@ uint16_t ending_put_placement(uint16_t record_number)
 	offset_high = (uint8_t)(record_number >> 8);
 	exchanged = offset_high | 0x1000u;
 	offset_low = (uint8_t)exchanged;
-	carry = (int8_t)offset_low < 0;
+	shifted_bit = (int8_t)offset_low < 0;
 	offset_low = (uint32_t)offset_low << 1;
-	offset_high = (uint8_t)(((uint32_t)(uint8_t)((uint32_t)offset_high << 8) << 1) | carry);
-	carry = (int8_t)offset_low < 0;
+	offset_high = (uint8_t)(((uint32_t)(uint8_t)((uint32_t)offset_high << 8) << 1) | shifted_bit);
+	shifted_bit = (int8_t)offset_low < 0;
 	offset_low = (uint32_t)offset_low << 1;
-	offset_high = (uint8_t)(((uint32_t)offset_high << 1) | carry);
-	carry = (int8_t)offset_low < 0;
-	placement_record = ending_placements_ADDRESS + (((((uint32_t)offset_high << 1) | carry) << 8) | (uint8_t)((uint32_t)offset_low << 1));
+	offset_high = (uint8_t)(((uint32_t)offset_high << 1) | shifted_bit);
+	shifted_bit = (int8_t)offset_low < 0;
+	placement_record = ending_placements_ADDRESS + (((((uint32_t)offset_high << 1) | shifted_bit) << 8) | (uint8_t)((uint32_t)offset_low << 1));
 	object = PLACEMENT(placement_record)->object;
 	OBJECT(object)->flags = 0x80u;
 	kind_at = placement_record + 2u;

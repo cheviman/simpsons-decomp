@@ -264,7 +264,7 @@ void kind_b8_flyer_fly(uint16_t object)
 /* Throws three shots in a row, 7 frames apart, with a sound at the first, still flying. */
 void kind_b8_flyer_volley(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t slot_found = 0;
 	uint16_t command = 0, ignored16 = 0, ignored16_2 = 0, ignored16_3 = 0;
 	uint8_t timer = 0, shots_left = 0, shots_left_2 = 0, shots_left_3 = 0;
 
@@ -295,7 +295,7 @@ void kind_b8_flyer_volley(uint16_t object)
 	OBJECT(object)->animation = 0x95u;
 	shots_left_3 = OBJECT(object)->kind_b8_flyer.shots_left;
 	leftover_y = kind_b8_volley_shots[shots_left_3 & 3u];
-	vector_spawn_child(object, &ignored16, &ignored16_2, &ignored16_3, &carry);
+	vector_spawn_child(object, &ignored16, &ignored16_2, &ignored16_3, &slot_found);
 	kind_b8_flyer_next_throw_wait(object);
 }
 
@@ -465,12 +465,12 @@ void kind_b8_flyer_die_start(uint16_t object)
 /* Pulls the beaten flyer down; when it lands, plays a sound. */
 void kind_b8_flyer_die_fall(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t landed = 0;
 	uint16_t command = 0, ignored16 = 0;
 	uint8_t action_step = 0;
 
-	vector_apply_gravity(object, &ignored16, &carry);
-	if (carry == 0u)
+	vector_apply_gravity(object, &ignored16, &landed);
+	if (landed == 0u)
 	{
 		kind_b8_flyer_die_end(object);
 		return;
@@ -516,7 +516,7 @@ void kind_b8_flyer_steer(uint16_t object)
 	uint8_t dy_high = 0, goal_x_high = 0, goal_x_low = 0, goal_y_high = 0, goal_y_low = 0, heading_whole = 0;
 	uint16_t target_player = 0;
 	uint8_t sweep_way = 0, sweep_rate = 0, sweep_way_2 = 0, sweep_rate_2 = 0, sweep_way_3 = 0, sweep_way_4 = 0, sweep_rate_3 = 0, sweep_way_5 = 0, sweep_rate_4 = 0, sweep_way_6 = 0;
-	uint16_t target = 0, flyer_x = 0, player_x = 0, turn = 0, heading = 0, new_heading = 0, heading_2 = 0, t1 = 0, t2 = 0, heading_3 = 0, t3 = 0, heading_4 = 0, t4 = 0, target_2 = 0, flyer_y = 0, player_y = 0, dy = 0, t5 = 0, depth_distance = 0, y_speed = 0, t6 = 0, t7 = 0, t8 = 0, t9 = 0;
+	uint16_t target = 0, flyer_x = 0, player_x = 0, turn = 0, heading = 0, new_heading = 0, heading_2 = 0, right_heading_up = 0, left_minus_rate = 0, heading_3 = 0, left_heading_down = 0, heading_4 = 0, left_heading_up = 0, target_2 = 0, flyer_y = 0, player_y = 0, dy = 0, depth_difference = 0, depth_distance = 0, y_speed = 0, checked_x = 0, old_x = 0, checked_y = 0, old_y = 0;
 
 	target = OBJECT(object)->target;
 	target_player = target;
@@ -545,9 +545,9 @@ void kind_b8_flyer_steer(uint16_t object)
 		{
 			sweep_rate_2 = OBJECT(object)->kind_b8_flyer.sweep_rate;
 			heading_2 = OBJECT(object)->kind_b8_flyer.heading;
-			t1 = sweep_rate_2 + heading_2;
-			heading_whole = (t1 >> 8) & 0xFu;
-			OBJECT(object)->kind_b8_flyer.heading = ((uint32_t)heading_whole << 8) | (uint8_t)t1;
+			right_heading_up = sweep_rate_2 + heading_2;
+			heading_whole = (right_heading_up >> 8) & 0xFu;
+			OBJECT(object)->kind_b8_flyer.heading = ((uint32_t)heading_whole << 8) | (uint8_t)right_heading_up;
 			if (heading_whole == 4u)
 			{
 				sweep_way_3 = OBJECT(object)->kind_b8_flyer.sweep_way;
@@ -561,11 +561,11 @@ void kind_b8_flyer_steer(uint16_t object)
 		if (sweep_way_4 != 0u)
 		{
 			sweep_rate_3 = OBJECT(object)->kind_b8_flyer.sweep_rate;
-			t2 = 0u - sweep_rate_3;
+			left_minus_rate = 0u - sweep_rate_3;
 			heading_3 = OBJECT(object)->kind_b8_flyer.heading;
-			t3 = t2 + heading_3;
-			heading_whole = (t3 >> 8) & 0xFu;
-			OBJECT(object)->kind_b8_flyer.heading = ((uint32_t)heading_whole << 8) | (uint8_t)t3;
+			left_heading_down = left_minus_rate + heading_3;
+			heading_whole = (left_heading_down >> 8) & 0xFu;
+			OBJECT(object)->kind_b8_flyer.heading = ((uint32_t)heading_whole << 8) | (uint8_t)left_heading_down;
 			if (heading_whole == 4u)
 			{
 				sweep_way_5 = OBJECT(object)->kind_b8_flyer.sweep_way;
@@ -576,9 +576,9 @@ void kind_b8_flyer_steer(uint16_t object)
 		{
 			sweep_rate_4 = OBJECT(object)->kind_b8_flyer.sweep_rate;
 			heading_4 = OBJECT(object)->kind_b8_flyer.heading;
-			t4 = sweep_rate_4 + heading_4;
-			heading_whole = (t4 >> 8) & 0xFu;
-			OBJECT(object)->kind_b8_flyer.heading = ((uint32_t)heading_whole << 8) | (uint8_t)t4;
+			left_heading_up = sweep_rate_4 + heading_4;
+			heading_whole = (left_heading_up >> 8) & 0xFu;
+			OBJECT(object)->kind_b8_flyer.heading = ((uint32_t)heading_whole << 8) | (uint8_t)left_heading_up;
 			if (heading_whole == 0xCu)
 			{
 				sweep_way_6 = OBJECT(object)->kind_b8_flyer.sweep_way;
@@ -594,8 +594,8 @@ void kind_b8_flyer_steer(uint16_t object)
 	dy = flyer_y - player_y;
 	dy_high = (uint8_t)(dy >> 8);
 	steer_dy_high = dy_high;
-	t5 = ((uint32_t)dy_high << 8) | (uint8_t)dy;
-	depth_distance = t5 >> 15 ? 0u - t5 : t5;
+	depth_difference = ((uint32_t)dy_high << 8) | (uint8_t)dy;
+	depth_distance = depth_difference >> 15 ? 0u - depth_difference : depth_difference;
 	if (depth_distance >= 4u)
 	{
 		OBJECT(object)->y_speed = 0x100;
@@ -605,53 +605,53 @@ void kind_b8_flyer_steer(uint16_t object)
 			OBJECT(object)->y_speed = 0u - y_speed;
 		}
 	}
-	t6 = OBJECT(object)->x;
-	goal_x_high = (uint8_t)(t6 >> 8);
-	goal_x_low = (uint8_t)t6;
+	checked_x = OBJECT(object)->x;
+	goal_x_high = (uint8_t)(checked_x >> 8);
+	goal_x_low = (uint8_t)checked_x;
 	if ((uint16_t)(((uint32_t)goal_x_high << 8) | goal_x_low) < 0x40u)
 	{
 		goal_x_low = 0x40u;
-		t7 = OBJECT(object)->x;
-		OBJECT(object)->x_speed = (uint32_t)(uint8_t)((((uint32_t)goal_x_high << 8) | goal_x_low) - t7) << 8;
-		t8 = OBJECT(object)->y;
-		goal_y_high = (uint8_t)(t8 >> 8);
-		goal_y_low = (uint8_t)t8;
+		old_x = OBJECT(object)->x;
+		OBJECT(object)->x_speed = (uint32_t)(uint8_t)((((uint32_t)goal_x_high << 8) | goal_x_low) - old_x) << 8;
+		checked_y = OBJECT(object)->y;
+		goal_y_high = (uint8_t)(checked_y >> 8);
+		goal_y_low = (uint8_t)checked_y;
 		if ((uint16_t)(((uint32_t)goal_y_high << 8) | goal_y_low) < 0x90u)
 		{
 			goal_y_low = 0x90u;
-			t9 = OBJECT(object)->y;
-			OBJECT(object)->y_speed = (uint32_t)(uint8_t)((((uint32_t)goal_y_high << 8) | goal_y_low) - t9) << 8;
+			old_y = OBJECT(object)->y;
+			OBJECT(object)->y_speed = (uint32_t)(uint8_t)((((uint32_t)goal_y_high << 8) | goal_y_low) - old_y) << 8;
 			return;
 		}
 		if ((uint16_t)(((uint32_t)goal_y_high << 8) | goal_y_low) >= 0x100u)
 		{
 			goal_y_low = 0xFFu;
-			t9 = OBJECT(object)->y;
-			OBJECT(object)->y_speed = (uint32_t)(uint8_t)((((uint32_t)goal_y_high << 8) | goal_y_low) - t9) << 8;
+			old_y = OBJECT(object)->y;
+			OBJECT(object)->y_speed = (uint32_t)(uint8_t)((((uint32_t)goal_y_high << 8) | goal_y_low) - old_y) << 8;
 		}
 		return;
 	}
 	if ((uint16_t)(((uint32_t)goal_x_high << 8) | goal_x_low) >= 0x180u)
 	{
 		goal_x_low = 0x7Fu;
-		t7 = OBJECT(object)->x;
-		OBJECT(object)->x_speed = (uint32_t)(uint8_t)((((uint32_t)goal_x_high << 8) | goal_x_low) - t7) << 8;
+		old_x = OBJECT(object)->x;
+		OBJECT(object)->x_speed = (uint32_t)(uint8_t)((((uint32_t)goal_x_high << 8) | goal_x_low) - old_x) << 8;
 	}
-	t8 = OBJECT(object)->y;
-	goal_y_high = (uint8_t)(t8 >> 8);
-	goal_y_low = (uint8_t)t8;
+	checked_y = OBJECT(object)->y;
+	goal_y_high = (uint8_t)(checked_y >> 8);
+	goal_y_low = (uint8_t)checked_y;
 	if ((uint16_t)(((uint32_t)goal_y_high << 8) | goal_y_low) < 0x90u)
 	{
 		goal_y_low = 0x90u;
-		t9 = OBJECT(object)->y;
-		OBJECT(object)->y_speed = (uint32_t)(uint8_t)((((uint32_t)goal_y_high << 8) | goal_y_low) - t9) << 8;
+		old_y = OBJECT(object)->y;
+		OBJECT(object)->y_speed = (uint32_t)(uint8_t)((((uint32_t)goal_y_high << 8) | goal_y_low) - old_y) << 8;
 		return;
 	}
 	if ((uint16_t)(((uint32_t)goal_y_high << 8) | goal_y_low) >= 0x100u)
 	{
 		goal_y_low = 0xFFu;
-		t9 = OBJECT(object)->y;
-		OBJECT(object)->y_speed = (uint32_t)(uint8_t)((((uint32_t)goal_y_high << 8) | goal_y_low) - t9) << 8;
+		old_y = OBJECT(object)->y;
+		OBJECT(object)->y_speed = (uint32_t)(uint8_t)((((uint32_t)goal_y_high << 8) | goal_y_low) - old_y) << 8;
 	}
 }
 
@@ -748,12 +748,12 @@ uint16_t kind_b8_shot_setup(uint16_t object)
 /* Pulls the shot down; where it lands it bursts (hit sparks), able to hurt for 2 frames. */
 void kind_b8_shot_fall(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t landed = 0;
 	uint16_t ignored16 = 0;
 	uint8_t state = 0;
 
-	vector_apply_gravity(object, &ignored16, &carry);
-	if (carry)
+	vector_apply_gravity(object, &ignored16, &landed);
+	if (landed)
 	{
 		OBJECT(object)->x_speed = 0;
 		OBJECT(object)->z_speed = 0x100;

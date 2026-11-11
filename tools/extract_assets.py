@@ -30,8 +30,10 @@ With --check, the tile, sprite and sample ROM files are rebuilt from the assets 
 and the programs' data bytes with the programs' (the sound program's music from the MIDI files; nothing is written),
 and the EEPROM's with the set's.
 """
+import bisect
+import re
 import sys
-from collections import Counter
+from collections import Counter, defaultdict
 from pathlib import Path
 
 TOOLS = Path(__file__).resolve().parent
@@ -143,8 +145,9 @@ def list_cells(image, place, count):
     return cells, palettes
 
 
-def sprite_subjects(walk, image):
-    """[(sheet name, [cells], palette)]: by animation set, then what nothing shows"""
+def animation_set_names(walk, image):
+    """{(bank, offset): the set's name}: each object kind's animation set (animation_sets, animation_sets_high), by
+    what its animations show (SET_NAMES), the first kind's where two share one"""
     names = {}
     for name, high in (("animation_sets", False), ("animation_sets_high", True)):
         table, count, _ = walk.tables_named[name]
@@ -152,6 +155,12 @@ def sprite_subjects(walk, image):
             bank, offset = image[table + 2 * index] & 0x3F, image[table + 2 * index + 1]
             kind = index | (0x80 if high else 0)
             names.setdefault((bank, offset), SET_NAMES.get(kind, f"kind_{kind:02X}"))
+    return names
+
+
+def sprite_subjects(walk, image):
+    """[(sheet name, [cells], palette)]: by animation set, then what nothing shows"""
+    names = animation_set_names(walk, image)
     subjects = []
     for (bank, offset), name in names.items():
         table = walk.sets.get((bank, offset))
@@ -345,11 +354,46 @@ def main():
     classes = coverage.classify(analysis, coverage.data_references(analysis, reads), reads)
     names = {place: symbol.name for place, symbol in analysis.symbols.items()}
     names.update({place: name for name, (place, _, _) in data_walk.table_places().items()})
+    # what names a piece in the program: the functions whose instructions name its place, by the function an
+    # instruction is in (the nearest function before it in its bank, or in the fixed program)
+    functions = {place: symbol.name for place, symbol in analysis.symbols.items() if symbol.kind == "func"}
+    entries = sorted(functions)
+
+    def function_at(place):
+        index = bisect.bisect_right(entries, place) - 1
+        if index < 0:
+            return None
+        entry = entries[index]
+        same = (entry >= 0x78000) == (place >= 0x78000) and (place >= 0x78000 or entry >> 13 == place >> 13)
+        return functions[entry] if same else None
+
+    readers = defaultdict(set)
+    for at, places in analysis.named_by.items():
+        function = function_at(at)
+        if function is not None:
+            for place in places:
+                readers[place].add(function)
+    taken = set(names.values()) | set(functions.values()) | set(re.findall(
+        r"^[0-9A-Fa-f]{4,6}\s+(?:var|io|table|data|func|code)\s+(\w+)",
+        (ROOT / "symbols.txt").read_text(encoding="utf-8"), re.M))
+    # each object kind's animation table by its set's name (the fixed program reaches it through a bank and an offset,
+    # which no ref line follows): its animations, their frames' sprite lists, take their names from it
+    for (bank, offset), set_name in sorted(animation_set_names(walk, image).items()):
+        table = walk.sets.get((bank, offset))
+        if table is None or table in names:
+            continue
+        name, count = f"{set_name}_animations", 1
+        while name in taken:
+            count += 1
+            name = f"{set_name}_animations_{count}"
+        names[table] = name
+        taken.add(name)
     count, families = data_assets.export(image, set(analysis.owner), walk.spans,
                                          {place for place, kind in classes.items() if kind == coverage.DESCRIBED},
                                          {place for place, kind in classes.items() if kind == coverage.FILL}, names,
                                          out / "data", set(analysis.instructions),
-                                         data_assets.Layouts(ROOT / "symbols.txt"), walk.code_reads)
+                                         data_assets.Layouts(ROOT / "symbols.txt"), walk.code_reads,
+                                         readers=readers, taken=taken, function_at=function_at)
     print(f"data: {count} pieces in {len(families)} files")
     sound = rom.build_sound(found_set)
     program = z80_analysis.load_program(sound, ROOT / "sound_symbols.txt")

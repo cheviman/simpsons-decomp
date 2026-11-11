@@ -99,11 +99,11 @@ void cemetery_obstacle_vanish(uint16_t object)
 /* Lets the food fall and, on landing, turns the object into food lying on the floor. */
 void cemetery_obstacle_food_fall(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t landed = 0;
 	uint16_t ignored16 = 0;
 
-	vector_apply_gravity(object, &ignored16, &carry);
-	if (carry)
+	vector_apply_gravity(object, &ignored16, &landed);
+	if (landed)
 	{
 		OBJECT(object)->type = 0x27;
 		OBJECT(object)->state = 0u;
@@ -374,12 +374,12 @@ void timed_throwable_throw(uint16_t object)
 /* Falls and, on landing, smashes (kind 9C, animation 8A) with sound 6C00. */
 void timed_throwable_fall(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t landed = 0;
 	uint16_t command = 0, ignored16 = 0;
 	uint8_t state = 0;
 
-	vector_apply_gravity(object, &ignored16, &carry);
-	if (carry == 0u)
+	vector_apply_gravity(object, &ignored16, &landed);
+	if (landed == 0u)
 		return;
 	command = 0x6C00u;
 	vector_queue_sound(command);
@@ -666,12 +666,12 @@ uint16_t carried_obstacle_drop_steps(uint16_t object)
 /* Falls and, on landing, plays sound 6500 and goes on to break. */
 void obstacle_fall_and_break(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t landed = 0;
 	uint16_t command = 0, ignored16 = 0;
 	uint8_t action = 0;
 
-	vector_apply_gravity(object, &ignored16, &carry);
-	if (carry == 0u)
+	vector_apply_gravity(object, &ignored16, &landed);
+	if (landed == 0u)
 		return;
 	command = 0x6500u;
 	vector_queue_sound(command);
@@ -733,12 +733,12 @@ void carried_obstacle_fly(uint16_t object)
 /* Falls and, on landing, bounces up again with sound 6500. */
 void carried_obstacle_bounce(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t landed = 0;
 	uint16_t command = 0, ignored16 = 0;
 	uint8_t state = 0;
 
-	vector_apply_gravity(object, &ignored16, &carry);
-	if (carry == 0u)
+	vector_apply_gravity(object, &ignored16, &landed);
+	if (landed == 0u)
 		return;
 	OBJECT(object)->z_speed = 0x500;
 	OBJECT(object)->flags |= 8u;
@@ -751,12 +751,12 @@ void carried_obstacle_bounce(uint16_t object)
 /* Falls and lands again with sound 6500. */
 void carried_obstacle_land(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t landed = 0;
 	uint16_t command = 0, ignored16 = 0;
 	uint8_t state = 0;
 
-	vector_apply_gravity(object, &ignored16, &carry);
-	if (carry == 0u)
+	vector_apply_gravity(object, &ignored16, &landed);
+	if (landed == 0u)
 		return;
 	command = 0x6500u;
 	vector_queue_sound(command);
@@ -975,12 +975,12 @@ uint16_t throwable_rebound(uint16_t object)
 /* Falls back to the floor, hurting enemies on the way up, then ends. */
 void throwable_fall(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t landed = 0;
 	uint16_t ignored16 = 0;
 	uint16_t z_speed = 0;
 
-	vector_apply_gravity(object, &ignored16, &carry);
-	if (carry)
+	vector_apply_gravity(object, &ignored16, &landed);
+	if (landed)
 	{
 		OBJECT(object)->state = 0xFFu;
 		OBJECT(object)->action = 0u;
@@ -1246,10 +1246,10 @@ uint16_t obstacle_knocked(uint16_t object)
 /* Falls while sliding, hurting the enemies it touches. */
 void obstacle_knocked_fall(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t landed = 0;
 	uint16_t ignored16 = 0;
 
-	vector_apply_gravity(object, &ignored16, &carry);
+	vector_apply_gravity(object, &ignored16, &landed);
 	check_hits_with_enemies(object);
 }
 
@@ -1260,23 +1260,23 @@ void obstacle_raise_floor(uint16_t object, uint16_t raise_steps, uint16_t *p_flo
 	uint8_t column = 0, control = 0, floor_column = 0, old_cell = 0, raised_cell = 0;
 	uint16_t floor_cell = 0, floor_place = 0;
 	uint32_t left_caller = 0;
-	uint8_t stack = 0, stack_2 = 0;
+	uint8_t cell_or_column = 0, floor_row_high = 0;
 	uint8_t floor_column_2 = 0, floor_cell_2 = 0, cell_below = 0, floor_cell_3 = 0, columns_to_check = 0, floor_cell_4 = 0, raise_height = 0, columns_to_raise = 0, floor_raised = 0;
 	uint16_t floor_row = 0, floor_row_2 = 0;
 
 	io_write8(floor_raise_height, raise_steps >> 8);
 	floor_cell_under(object, &floor_place, &floor_cell);
 	old_cell = (uint8_t)(floor_cell >> 8);
-	stack = old_cell;
+	cell_or_column = old_cell;
 	control = board_control | 2u;
 	board_control = control;
 	io_write8(board_control_register, control);
-	OBJECT(object)->obstacle.floor_cell = stack;
-	stack_2 = floor_place >> 8;
-	stack = (uint8_t)floor_place;
-	floor_column = stack;
+	OBJECT(object)->obstacle.floor_cell = cell_or_column;
+	floor_row_high = floor_place >> 8;
+	cell_or_column = (uint8_t)floor_place;
+	floor_column = cell_or_column;
 	OBJECT(object)->obstacle.floor_column = floor_column;
-	OBJECT(object)->obstacle.floor_row = ((uint32_t)stack_2 << 8) | (floor_column & 0xC0u);
+	OBJECT(object)->obstacle.floor_row = ((uint32_t)floor_row_high << 8) | (floor_column & 0xC0u);
 	floor_columns_left = 3u;
 	floor_column_2 = OBJECT(object)->obstacle.floor_column;
 	column = floor_column_2 - 1u;
@@ -1475,12 +1475,12 @@ void obstacle_throw(uint16_t object)
 /* Flies until it lands, then bounces once more. */
 void obstacle_fly(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t landed = 0;
 	uint16_t ignored16 = 0;
 	uint8_t parameter = 0;
 
-	vector_apply_gravity(object, &ignored16, &carry);
-	if (carry)
+	vector_apply_gravity(object, &ignored16, &landed);
+	if (landed)
 	{
 		OBJECT(object)->z_speed = 0x400;
 		parameter = OBJECT(object)->parameter;
@@ -1537,13 +1537,13 @@ void obstacle_rebound_rise(uint16_t object)
 /* Falls and, on landing, bounces on the way it was going. */
 void obstacle_rebound_fall(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t landed = 0;
 	uint16_t ignored16 = 0;
 	uint8_t x_speed = 0, parameter = 0;
 	uint16_t x_speed_2 = 0;
 
-	vector_apply_gravity(object, &ignored16, &carry);
-	if (carry == 0u)
+	vector_apply_gravity(object, &ignored16, &landed);
+	if (landed == 0u)
 	{
 		check_hits_with_enemies(object);
 		return;
@@ -1567,13 +1567,13 @@ void obstacle_rebound_fall(uint16_t object)
 /* Unused: clears field 3D and falls; the next state once it lands. */
 void unused_obstacle_fall(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t landed = 0;
 	uint16_t ignored16 = 0;
 	uint8_t state = 0;
 
 	OBJECT(object)->carried = 0u;
-	vector_apply_gravity(object, &ignored16, &carry);
-	if (carry)
+	vector_apply_gravity(object, &ignored16, &landed);
+	if (landed)
 	{
 		state = OBJECT(object)->state;
 		OBJECT(object)->state = state + 1u;
@@ -1583,12 +1583,12 @@ void unused_obstacle_fall(uint16_t object)
 /* Unused: falls; the next state once it lands. */
 void unused_obstacle_keep_falling(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t landed = 0;
 	uint16_t ignored16 = 0;
 	uint8_t state = 0;
 
-	vector_apply_gravity(object, &ignored16, &carry);
-	if (carry)
+	vector_apply_gravity(object, &ignored16, &landed);
+	if (landed)
 	{
 		state = OBJECT(object)->state;
 		OBJECT(object)->state = state + 1u;
@@ -1672,12 +1672,12 @@ void bouncing_throwable_throw(uint16_t object)
 /* Flies, bouncing once on landing, hurting the enemies it touches. */
 void bouncing_throwable_fly(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t landed = 0;
 	uint16_t ignored16 = 0;
 	uint8_t flight_count = 0, flight_count_2 = 0;
 
-	vector_apply_gravity(object, &ignored16, &carry);
-	if (carry)
+	vector_apply_gravity(object, &ignored16, &landed);
+	if (landed)
 	{
 		flight_count = OBJECT(object)->bouncing_throwable.flight_count;
 		if (flight_count != 0u)
@@ -1772,12 +1772,12 @@ void dreamland_obstacle_throw_in(uint16_t object)
 /* Lands with sound 2000 and stops. */
 void dreamland_obstacle_land(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t landed = 0;
 	uint16_t command = 0, ignored16 = 0;
 	uint8_t drop_animation = 0, action_step = 0;
 
-	vector_apply_gravity(object, &ignored16, &carry);
-	if (carry == 0u)
+	vector_apply_gravity(object, &ignored16, &landed);
+	if (landed == 0u)
 		return;
 	drop_animation = OBJECT(object)->dreamland_obstacle.drop_animation;
 	OBJECT(object)->animation = drop_animation + 1u;

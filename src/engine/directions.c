@@ -16,12 +16,12 @@
 void set_speeds_from_direction(uint16_t object, uint16_t heading)
 {
 	uint16_t quarter_wave = 0, x_speed = 0;
-	uint16_t stack = 0;
+	uint16_t saved_heading = 0;
 
-	stack = heading;
+	saved_heading = heading;
 	scaled_sine(&quarter_wave, &heading);
 	OBJECT(object)->y_speed = heading;
-	x_speed = (stack & 0xFFu) | ((uint32_t)(uint8_t)((stack >> 8) + 0x40u) << 8);
+	x_speed = (saved_heading & 0xFFu) | ((uint32_t)(uint8_t)((saved_heading >> 8) + 0x40u) << 8);
 	x_speed = scaled_sine_from_table(quarter_wave, x_speed);
 	OBJECT(object)->x_speed = x_speed;
 }
@@ -112,21 +112,21 @@ uint16_t set_walk_speeds_from_direction(uint16_t object, uint16_t u, uint16_t he
 {
 	uint8_t speed_high = 0, speed_low = 0;
 	uint16_t across_heading = 0, quarter_wave = 0, u_2 = 0;
-	uint8_t stack = 0, stack_2 = 0, stack_4 = 0;
+	uint8_t saved_u_low = 0, saved_u_high = 0, heading_angle = 0;
 
-	stack_2 = u >> 8;
-	stack = (uint8_t)u;
-	stack_4 = heading >> 8;
+	saved_u_high = u >> 8;
+	saved_u_low = (uint8_t)u;
+	heading_angle = heading >> 8;
 	walk_sine(&quarter_wave, &heading);
 	speed_high = (uint8_t)(heading >> 8);
 	speed_low = (uint8_t)heading;
 	OBJECT(object)->y_speed = ((uint32_t)speed_high << 8) | speed_low;
-	across_heading = (heading & 0xFFu) | ((uint32_t)(uint8_t)(stack_4 + 0x40u) << 8);
+	across_heading = (heading & 0xFFu) | ((uint32_t)(uint8_t)(heading_angle + 0x40u) << 8);
 	across_heading = walk_sine_from_table(quarter_wave, across_heading);
 	speed_high = (uint8_t)(across_heading >> 8);
 	speed_low = (uint8_t)across_heading;
 	OBJECT(object)->x_speed = ((uint32_t)speed_high << 8) | speed_low;
-	u_2 = ((uint32_t)stack_2 << 8) | stack;
+	u_2 = ((uint32_t)saved_u_high << 8) | saved_u_low;
 	return u_2;
 }
 
@@ -136,12 +136,12 @@ uint16_t direction_to_beside(uint16_t object, uint16_t other, uint8_t x_offset)
 {
 	uint8_t angle = 0, difference_high = 0, difference_low = 0, shifts = 0;
 	uint16_t direction = 0;
-	uint8_t stack = 0;
+	uint8_t saved_x_offset = 0;
 	uint8_t shifts_left_2 = 0, shifts_to_go_2 = 0, shifts_left = 0, shifts_to_go = 0;
 	uint16_t x_offset_word = 0, other_x = 0, beside_x = 0, own_x = 0, x_difference = 0, signed_x_difference = 0, x_distance = 0, other_y = 0, own_y = 0, y_difference = 0, signed_y_difference = 0, y_distance = 0;
 
 	difference_low = (uint8_t)x_offset;
-	stack = difference_low;
+	saved_x_offset = difference_low;
 	x_offset_word = (int8_t)difference_low;
 	other_x = OBJECT(other)->x;
 	beside_x = x_offset_word + other_x;
@@ -229,13 +229,13 @@ uint16_t direction_to_beside(uint16_t object, uint16_t other, uint8_t x_offset)
 	{
 		if (direction_dy_sign < 0)
 			angle = 0u - angle;
-		direction = ((uint32_t)angle << 8) | stack;
+		direction = ((uint32_t)angle << 8) | saved_x_offset;
 		return direction;
 	}
 	angle += 0x80u;
 	if (direction_dy_sign >= 0)
 		angle = 0u - angle;
-	direction = ((uint32_t)angle << 8) | stack;
+	direction = ((uint32_t)angle << 8) | saved_x_offset;
 	return direction;
 }
 
@@ -245,11 +245,11 @@ uint16_t direction_to(uint16_t object, uint16_t other)
 {
 	uint8_t angle = 0, b = 0, difference_high = 0, difference_low = 0, shifts = 0;
 	uint16_t direction = 0;
-	uint8_t stack = 0;
+	uint8_t direction_low = 0;
 	uint8_t shifts_left_2 = 0, shifts_to_go_2 = 0, shifts_left = 0, shifts_to_go = 0;
 	uint16_t other_x = 0, own_x = 0, x_difference = 0, signed_x_difference = 0, x_distance = 0, other_y = 0, own_y = 0, y_difference = 0, signed_y_difference = 0, y_distance = 0;
 
-	stack = b;
+	direction_low = b;
 	other_x = OBJECT(other)->x;
 	own_x = OBJECT(object)->x;
 	x_difference = other_x - own_x;
@@ -334,12 +334,12 @@ uint16_t direction_to(uint16_t object, uint16_t other)
 	{
 		if (direction_dy_sign < 0)
 			angle = 0u - angle;
-		direction = ((uint32_t)angle << 8) | stack;
+		direction = ((uint32_t)angle << 8) | direction_low;
 		return direction;
 	}
 	angle += 0x80u;
 	if (direction_dy_sign >= 0)
 		angle = 0u - angle;
-	direction = ((uint32_t)angle << 8) | stack;
+	direction = ((uint32_t)angle << 8) | direction_low;
 	return direction;
 }

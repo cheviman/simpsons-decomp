@@ -3,7 +3,7 @@
  *    Description: a group of four FM effects no command reaches (unused_effect_group)
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the Z80 sound program decompiled into C by
@@ -152,12 +152,12 @@ void unused_effect_3e(uint16_t channel)
 void unused_effect_3e_end(uint16_t channel)
 {
 	uint8_t passes_high = 0, passes_low = 0;
-	uint16_t t1 = 0;
+	uint16_t passes_left = 0;
 
 	z80_block(95);
-	t1 = CHANNEL(channel)->unused_effect_3e.passes - 1u;
-	passes_high = (uint8_t)(t1 >> 8);
-	passes_low = (uint8_t)t1;
+	passes_left = CHANNEL(channel)->unused_effect_3e.passes - 1u;
+	passes_high = (uint8_t)(passes_left >> 8);
+	passes_low = (uint8_t)passes_left;
 	CHANNEL(channel)->unused_effect_3e.passes = ((uint32_t)passes_high << 8) | passes_low;
 	if ((passes_low | passes_high) != 0u)
 	{
@@ -193,13 +193,13 @@ void unused_effect_3f(uint16_t channel)
 /* After the 5632 passes (unused_effect_3f_update), key off and 512 passes of unused_effect_3f_end. */
 void unused_effect_3f_step(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t passes_ran_out = 0;
 	uint16_t handler = 0;
 
 	z80_block(17);
-	zero = unused_effect_3f_update(channel);
+	passes_ran_out = unused_effect_3f_update(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (passes_ran_out == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -215,12 +215,12 @@ void unused_effect_3f_step(uint16_t channel)
 /* Counts down the 512 passes (unused_effect_3f_update), then stop_channel. */
 void unused_effect_3f_end(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t passes_ran_out = 0;
 
 	z80_block(17);
-	zero = unused_effect_3f_update(channel);
+	passes_ran_out = unused_effect_3f_update(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (passes_ran_out == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -232,15 +232,15 @@ void unused_effect_3f_end(uint16_t channel)
 /* Counts the passes down and tells whether they ran out. */
 uint32_t unused_effect_3f_update(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t passes_ran_out = 0;
 	uint8_t passes_high = 0, passes_low = 0;
-	uint16_t t1 = 0;
+	uint16_t passes_left = 0;
 
 	z80_block(100);
-	t1 = CHANNEL(channel)->unused_effect_3f.passes - 1u;
-	passes_high = (uint8_t)(t1 >> 8);
-	passes_low = (uint8_t)t1;
+	passes_left = CHANNEL(channel)->unused_effect_3f.passes - 1u;
+	passes_high = (uint8_t)(passes_left >> 8);
+	passes_low = (uint8_t)passes_left;
 	CHANNEL(channel)->unused_effect_3f.passes = ((uint32_t)passes_high << 8) | passes_low;
-	zero = (passes_low | passes_high) == 0u;
-	return zero;
+	passes_ran_out = (passes_low | passes_high) == 0u;
+	return passes_ran_out;
 }

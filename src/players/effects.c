@@ -30,31 +30,31 @@ void player_start_blinking(uint16_t player)
 }
 
 /* Compares the player's height after its height speed with its floor (above, at or below). */
-void player_next_height_against_floor(uint16_t player, uint32_t *p_zero, uint32_t *p_negative, uint32_t *p_overflow)
+void player_next_height_against_floor(uint16_t player, uint32_t *p_at_floor, uint32_t *p_below_floor, uint32_t *p_compare_overflow)
 {
-	uint32_t zero = *p_zero;
-	uint32_t negative = *p_negative;
-	uint32_t overflow = *p_overflow;
+	uint32_t at_floor = *p_at_floor;
+	uint32_t below_floor = *p_below_floor;
+	uint32_t compare_overflow = *p_compare_overflow;
 	uint32_t carry = 0;
 	uint8_t z_speed = 0, z = 0;
-	uint16_t z_and_fraction = 0, z_speed_2 = 0, t1 = 0, floor_z = 0, next_z = 0, next_height_above_floor = 0;
+	uint16_t z_and_fraction = 0, z_speed_2 = 0, z_low_and_fraction = 0, floor_z = 0, next_z = 0, next_height_above_floor = 0;
 
 	z_speed = (uint8_t)(OBJECT(player)->z_speed >> 8u);
 	z_speed_sign = (uint16_t)(int8_t)z_speed >> 8;
 	z_and_fraction = (((uint32_t)(OBJECT(player)->z & 0xFFu) << 8u) | OBJECT(player)->z_fraction);
 	z_speed_2 = OBJECT(player)->z_speed;
-	t1 = z_and_fraction;
-	carry = (uint16_t)(t1 + z_speed_2) < t1;
+	z_low_and_fraction = z_and_fraction;
+	carry = (uint16_t)(z_low_and_fraction + z_speed_2) < z_low_and_fraction;
 	z = (uint8_t)(OBJECT(player)->z >> 8u);
 	floor_z = OBJECT(player)->floor_z;
-	next_z = ((uint32_t)(uint8_t)(z + z_speed_sign + carry) << 8) | ((uint16_t)(t1 + z_speed_2) >> 8);
+	next_z = ((uint32_t)(uint8_t)(z + z_speed_sign + carry) << 8) | ((uint16_t)(z_low_and_fraction + z_speed_2) >> 8);
 	next_height_above_floor = next_z - floor_z;
-	negative = next_height_above_floor >> 15;
-	zero = next_height_above_floor == 0u;
-	overflow = (uint32_t)(int16_t)next_z - (int16_t)floor_z != (uint32_t)(int16_t)(next_z - floor_z);
-	*p_zero = zero;
-	*p_negative = negative;
-	*p_overflow = overflow;
+	below_floor = next_height_above_floor >> 15;
+	at_floor = next_height_above_floor == 0u;
+	compare_overflow = (uint32_t)(int16_t)next_z - (int16_t)floor_z != (uint32_t)(int16_t)(next_z - floor_z);
+	*p_at_floor = at_floor;
+	*p_below_floor = below_floor;
+	*p_compare_overflow = compare_overflow;
 }
 
 /* Shows or hides the player every other call, safe meanwhile. */
@@ -70,7 +70,7 @@ uint16_t player_face_heavy_object(uint16_t player, uint8_t first_animation)
 	uint8_t animation = 0;
 	uint16_t held = 0, left_of_held = 0;
 	uint8_t attributes = 0;
-	uint16_t held_2 = 0, held_x = 0, player_x = 0, t1 = 0;
+	uint16_t held_2 = 0, held_x = 0, player_x = 0, rechecked_player_x = 0;
 
 	animation = (uint8_t)first_animation;
 	held_2 = OBJECT(player)->player.held;
@@ -82,8 +82,8 @@ uint16_t player_face_heavy_object(uint16_t player, uint8_t first_animation)
 		animation++;
 	else
 	{
-		t1 = OBJECT(player)->x;
-		if ((int16_t)left_of_held <= (int16_t)t1)
+		rechecked_player_x = OBJECT(player)->x;
+		if ((int16_t)left_of_held <= (int16_t)rechecked_player_x)
 		{
 			attributes = OBJECT(player)->attributes;
 			OBJECT(player)->attributes = attributes | 0x40u;
@@ -110,15 +110,15 @@ void player_hurt_voice(uint16_t player)
 uint16_t player_flash_palette(uint16_t y, uint16_t player)
 {
 	uint16_t palette = 0, y_2 = 0;
-	uint16_t stack = 0;
+	uint16_t saved_y = 0;
 	uint8_t kind = 0;
 
-	stack = y;
+	saved_y = y;
 	palette_request_kind = 2u;
 	kind = OBJECT(player)->kind;
 	palette = (uint8_t)(0x22u + kind);
 	vector_palette_request(player, palette);
-	y_2 = stack;
+	y_2 = saved_y;
 	return y_2;
 }
 
@@ -152,15 +152,15 @@ uint16_t player_reset_box(uint16_t player)
 void player_show_hurt_spark(uint16_t player, uint16_t *p_object, uint16_t *p_effect)
 {
 	uint16_t object = (uint16_t)*p_object;
-	uint32_t carry = 0;
+	uint32_t effect_busy = 0;
 	uint16_t effect = 0, effect_state = 0, spark_x = 0;
 	uint8_t player_state = 0, box_dz = 0;
 	uint16_t hit_by = 0, player_x = 0, hitter_x = 0, player_y = 0, z = 0;
 
 	effect_state = 0x600u;
 	effect = 0xEBFu;
-	carry = player_start_effect(effect, player, effect_state);
-	if (carry == 0u)
+	effect_busy = player_start_effect(effect, player, effect_state);
+	if (effect_busy == 0u)
 	{
 		player_state = OBJECT(player + 0x60u)->player.player_state;
 		if ((int8_t)((uint16_t)((uint32_t)player_state << 8) >> 8) <= 6)
@@ -190,18 +190,18 @@ void player_show_hurt_spark(uint16_t player, uint16_t *p_object, uint16_t *p_eff
    points at. */
 uint16_t player_show_hit_spark(uint16_t spark_height, uint16_t player)
 {
-	uint32_t carry = 0;
+	uint32_t effect_busy = 0;
 	uint16_t effect_state = 0, hit_object = 0, kind = 0;
-	uint16_t stack = 0;
+	uint16_t saved_spark_height = 0;
 	uint16_t player_y = 0, z = 0, object_hit = 0, hit_x = 0;
 
 	OBJECT(player)->player.blow_landed = 0u;
-	stack = spark_height;
+	saved_spark_height = spark_height;
 	effect_state = 0x600u;
 	kind = 0xEBFu;
-	carry = player_start_effect(kind, player, effect_state);
-	spark_height = stack;
-	if (carry)
+	effect_busy = player_start_effect(kind, player, effect_state);
+	spark_height = saved_spark_height;
+	if (effect_busy)
 		return spark_height;
 	player_y = OBJECT(player)->y;
 	OBJECT(player + 0x60u)->y = player_y - 0x20u;
@@ -228,7 +228,7 @@ void player_show_balloon(uint16_t kind, uint16_t player, uint16_t balloon_value)
    an effect of a higher number runs (carry). */
 uint32_t player_start_effect(uint16_t kind, uint16_t player, uint16_t effect_state)
 {
-	uint32_t carry = 0;
+	uint32_t effect_busy = 0;
 	uint8_t player_state = 0;
 	uint8_t player_state_2 = 0;
 
@@ -236,8 +236,8 @@ uint32_t player_start_effect(uint16_t kind, uint16_t player, uint16_t effect_sta
 	player_state_2 = OBJECT(player + 0x60u)->player.player_state;
 	if ((int8_t)player_state < (int8_t)player_state_2)
 	{
-		carry = 1u;
-		return carry;
+		effect_busy = 1u;
+		return effect_busy;
 	}
 	OBJECT(player + 0x60u)->player.player_state = player_state;
 	OBJECT(player + 0x60u)->kind = (uint8_t)(kind >> 8u);
@@ -246,9 +246,9 @@ uint32_t player_start_effect(uint16_t kind, uint16_t player, uint16_t effect_sta
 	OBJECT(player + 0x60u)->animation_flags = 0u;
 	OBJECT(player + 0x60u)->x_speed = 0;
 	OBJECT(player + 0x60u)->y_speed = 0;
-	carry = 0u;
+	effect_busy = 0u;
 	OBJECT(player + 0x60u)->z_speed = 0;
-	return carry;
+	return effect_busy;
 }
 
 /* Plays the sound in D for the player's character (its number added to B). */

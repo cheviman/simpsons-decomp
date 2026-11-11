@@ -144,27 +144,27 @@ void spawn_stage_objects(void)
 }
 
 /* Takes a free object in the list a spawn's flags name (bits 2-3). */
-void take_free_object_for_spawn(uint16_t spawn_flags, uint16_t *p_slot, uint32_t *p_carry)
+void take_free_object_for_spawn(uint16_t spawn_flags, uint16_t *p_slot, uint32_t *p_slot_found)
 {
-	uint32_t carry = *p_carry;
+	uint32_t slot_found = *p_slot_found;
 	uint16_t slot = 0;
 
 	spawn_flags = ((spawn_flags & 0xCu) >> 1) >> 1;
 	*p_slot = slot;
-	take_free_object(p_slot, &spawn_flags, &carry);
-	*p_carry = carry;
+	take_free_object(p_slot, &spawn_flags, &slot_found);
+	*p_slot_found = slot_found;
 }
 
 /* Finds the first free object of an object list (0 enemies, 1, 2 child objects, 3 the stage's event),
    clears it but for its sprite RAM place and marks it taken (carry set); carry clear when the list is
    full. */
-void take_free_object(uint16_t *p_slot, uint16_t *p_list_number, uint32_t *p_carry)
+void take_free_object(uint16_t *p_slot, uint16_t *p_list_number, uint32_t *p_slot_found)
 {
 	uint8_t list_number = (uint8_t)*p_list_number;
-	uint32_t carry = *p_carry;
+	uint32_t slot_found = *p_slot_found;
 	uint8_t fill = 0, fill_2 = 0, list_index = 0, slots_left = 0, sprite_place_high = 0;
 	uint16_t clear_place = 0, d = 0, slot_object = 0, words_left = 0;
-	uint16_t stack = 0;
+	uint16_t saved_slot_object = 0;
 	uint8_t slots_to_check = 0;
 	uint16_t kept_sprites = 0, restored_sprites = 0;
 
@@ -180,13 +180,13 @@ void take_free_object(uint16_t *p_slot, uint16_t *p_list_number, uint32_t *p_car
 			slots_left = slots_to_check - 1u;
 			if (slots_to_check != 1u)
 				continue;
-			carry = 0u;
+			slot_found = 0u;
 			d = (uint32_t)slots_left << 8;
 			break;
 		}
 		kept_sprites = OBJECT(slot_object)->sprites;
 		free_slot_sprites = kept_sprites;
-		stack = slot_object;
+		saved_slot_object = slot_object;
 		fill_2 = 0u;
 		fill = 0u;
 		clear_place = slot_object;
@@ -198,25 +198,25 @@ void take_free_object(uint16_t *p_slot, uint16_t *p_list_number, uint32_t *p_car
 			clear_place += 2u;
 			words_left--;
 		}
-		slot_object = stack;
+		slot_object = saved_slot_object;
 		restored_sprites = free_slot_sprites;
 		sprite_place_high = (uint8_t)(restored_sprites >> 8);
 		OBJECT(slot_object)->sprites = ((uint32_t)sprite_place_high << 8) | (uint8_t)restored_sprites;
 		OBJECT(slot_object)->flags = 4u;
-		carry = 1u;
+		slot_found = 1u;
 		d = ((uint32_t)sprite_place_high << 8) | 0xFBu;
 		break;
 	}
 	*p_slot = slot_object;
 	*p_list_number = d;
-	*p_carry = carry;
+	*p_slot_found = slot_found;
 }
 
 /* Puts in a child object a record describes (child_object: its list, state and type) at an offset from
    the object. */
-void spawn_child_object(uint16_t object, uint16_t record, uint16_t *p_child, uint16_t *p_list_number, uint32_t *p_carry)
+void spawn_child_object(uint16_t object, uint16_t record, uint16_t *p_child, uint16_t *p_list_number, uint32_t *p_slot_found)
 {
-	uint32_t carry = *p_carry;
+	uint32_t slot_found = *p_slot_found;
 	uint8_t child_type = 0;
 	uint16_t child = 0, list_number = 0;
 	uint8_t list = 0;
@@ -224,25 +224,25 @@ void spawn_child_object(uint16_t object, uint16_t record, uint16_t *p_child, uin
 
 	list = CHILD_OBJECT(record)->list;
 	list_number = list;
-	take_free_object(&child, &list_number, &carry);
-	if (carry)
+	take_free_object(&child, &list_number, &slot_found);
+	if (slot_found)
 	{
 		state = (((uint32_t)CHILD_OBJECT(record)->state << 8u) | CHILD_OBJECT(record)->type);
 		child_type = (uint8_t)state;
 		OBJECT(child)->parameter = ((state & ~0xFFu) | child_type) >> 8;
 		OBJECT(child)->type = child_type;
-		place_child_object(object, record, child, &list_number, &carry);
+		place_child_object(object, record, child, &list_number, &slot_found);
 	}
 	*p_child = child;
 	*p_list_number = list_number;
-	*p_carry = carry;
+	*p_slot_found = slot_found;
 }
 
 /* Places a new child object at the record's offset from its parent (the x offset mirrored, and the child
    turned, when the parent faces left), keeping the parent in it. */
-void place_child_object(uint16_t object, uint16_t record, uint16_t child, uint16_t *p_d, uint32_t *p_carry)
+void place_child_object(uint16_t object, uint16_t record, uint16_t child, uint16_t *p_d, uint32_t *p_slot_found)
 {
-	uint32_t carry = *p_carry;
+	uint32_t slot_found = *p_slot_found;
 	uint8_t child_z_high = 0, child_z_low = 0;
 	uint16_t d = 0;
 	uint8_t attributes = 0, attributes_2 = 0, dz = 0;
@@ -274,16 +274,16 @@ void place_child_object(uint16_t object, uint16_t record, uint16_t child, uint16
 	child_z_low = (uint8_t)child_z;
 	OBJECT(child)->z = ((uint32_t)child_z_high << 8) | child_z_low;
 	OBJECT(child)->carried = 0u;
-	carry = 1u;
+	slot_found = 1u;
 	d = ((uint32_t)(uint8_t)~child_z_high << 8) | child_z_low;
 	*p_d = d;
-	*p_carry = carry;
+	*p_slot_found = slot_found;
 }
 
 /* Works out how many enemies the stage holds at most (by the difficulty and the scene, in the cemetery
    by the players) and whether there are more (carry set); in most scenes holding the camera's x scroll
    while there are; with a hold flag set (one nothing writes), holds both scrolls instead. */
-uint32_t check_enemy_limit(uint32_t carry)
+uint32_t check_enemy_limit(uint32_t too_many_enemies)
 {
 	uint8_t limit = 0;
 	uint16_t enemy_limit = 0;
@@ -318,7 +318,7 @@ uint32_t check_enemy_limit(uint32_t carry)
 	{
 		camera_x_held = 1u;
 		camera_y_held = 1u;
-		return carry;
+		return too_many_enemies;
 	}
 	io_write8(enemies_allowed, enemy_limits_by_difficulty[(int8_t)difficulty]);
 	difficulty_limit = io_read8(enemies_allowed);
@@ -350,27 +350,27 @@ uint32_t check_enemy_limit(uint32_t carry)
    otherwise. */
 uint32_t hold_scroll_over_enemy_limit(uint16_t enemy_limit)
 {
-	uint32_t carry = 0;
+	uint32_t too_many_enemies = 0;
 	uint8_t held = 0;
 	uint8_t enemies = 0, limit_value = 0;
 
 	held = 0u;
 	enemies = io_read8(enemies_present);
 	limit_value = enemy_limit >> 8;
-	carry = limit_value < enemies;
+	too_many_enemies = limit_value < enemies;
 	if (limit_value < enemies)
 		held--;
 	camera_x_held = held;
-	return carry;
+	return too_many_enemies;
 }
 
 /* Whether there are more enemies than the limit (carry set), without touching the scroll. */
 uint32_t compare_enemy_limit(uint16_t enemy_limit)
 {
-	uint32_t carry = 0;
+	uint32_t too_many_enemies = 0;
 	uint8_t enemies = 0;
 
 	enemies = io_read8(enemies_present);
-	carry = enemy_limit >> 8 < enemies;
-	return carry;
+	too_many_enemies = enemy_limit >> 8 < enemies;
+	return too_many_enemies;
 }

@@ -125,12 +125,12 @@ uint16_t clown_ball_start(uint16_t object)
 /* Falls and bursts on landing. */
 void clown_ball_fall(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t landed = 0;
 	uint16_t ignored16 = 0;
 	uint8_t state = 0;
 
-	vector_apply_gravity(object, &ignored16, &carry);
-	if (carry)
+	vector_apply_gravity(object, &ignored16, &landed);
+	if (landed)
 	{
 		OBJECT(object)->kind = 4u;
 		OBJECT(object)->animation = 0x80u;
@@ -262,15 +262,15 @@ void clown_on_ball_jump(uint16_t object)
 /* Falls with its hit box and goes back to the fight on landing. */
 void clown_on_ball_jump_fall(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t landed = 0;
 	uint8_t animation_flags = 0;
 	uint16_t z_speed = 0, next_z_speed = 0;
 
 	z_speed = OBJECT(object)->z_speed;
 	next_z_speed = z_speed - 0x20u;
 	OBJECT(object)->z_speed = next_z_speed;
-	carry = vector_check_landing(object);
-	if (carry == 0u)
+	landed = vector_check_landing(object);
+	if (landed == 0u)
 	{
 		animation_flags = OBJECT(object)->animation_flags;
 		if ((animation_flags & 2u) == 0u)
@@ -464,13 +464,13 @@ void clown_on_ball_hop_away(uint16_t object)
 /* Hops on until the fourth landing, staying within the screen, then goes back to the fight. */
 void clown_on_ball_hop(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t landed = 0;
 	uint16_t ignored16 = 0;
 	uint8_t hops_left = 0;
 	uint16_t clown_x = 0;
 
-	vector_apply_gravity(object, &ignored16, &carry);
-	if (carry == 0u)
+	vector_apply_gravity(object, &ignored16, &landed);
+	if (landed == 0u)
 	{
 		clown_x = OBJECT(object)->x;
 		if (clown_x < 0x40 || clown_x > 0x17F)

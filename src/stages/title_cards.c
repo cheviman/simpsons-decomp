@@ -162,7 +162,7 @@ void stage_1_title_card(uint16_t *p_x, uint16_t *p_u)
 {
 	uint16_t x = (uint16_t)*p_x;
 	uint16_t u = (uint16_t)*p_u;
-	uint32_t carry = 0;
+	uint32_t skipped = 0;
 	uint16_t wait = 0;
 
 	for (;;)
@@ -174,8 +174,8 @@ void stage_1_title_card(uint16_t *p_x, uint16_t *p_u)
 			break;
 		}
 		wait = 0x4000u;
-		vector_check_skip(wait, &x, &carry);
-		if (carry)
+		vector_check_skip(wait, &x, &skipped);
+		if (skipped)
 		{
 			title_card_end(&x, &u);
 			break;
@@ -470,7 +470,7 @@ void stage_2_title_card(uint16_t *p_x, uint16_t *p_u)
 {
 	uint16_t x = (uint16_t)*p_x;
 	uint16_t u = (uint16_t)*p_u;
-	uint32_t carry = 0;
+	uint32_t skipped = 0;
 	uint16_t wait = 0;
 
 	for (;;)
@@ -482,8 +482,8 @@ void stage_2_title_card(uint16_t *p_x, uint16_t *p_u)
 			break;
 		}
 		wait = 0x4000u;
-		vector_check_skip(wait, &x, &carry);
-		if (carry)
+		vector_check_skip(wait, &x, &skipped);
+		if (skipped)
 		{
 			title_card_end(&x, &u);
 			break;
@@ -638,7 +638,7 @@ void stage_3_title_card(uint16_t *p_x, uint16_t *p_u)
 {
 	uint16_t x = (uint16_t)*p_x;
 	uint16_t u = (uint16_t)*p_u;
-	uint32_t carry = 0;
+	uint32_t skipped = 0;
 	uint16_t wait = 0;
 
 	for (;;)
@@ -650,8 +650,8 @@ void stage_3_title_card(uint16_t *p_x, uint16_t *p_u)
 			break;
 		}
 		wait = 0x4000u;
-		vector_check_skip(wait, &x, &carry);
-		if (carry)
+		vector_check_skip(wait, &x, &skipped);
+		if (skipped)
 		{
 			title_card_end(&x, &u);
 			break;
@@ -818,7 +818,7 @@ void stage_4_title_card(uint16_t *p_x, uint16_t *p_u)
 {
 	uint16_t x = (uint16_t)*p_x;
 	uint16_t u = (uint16_t)*p_u;
-	uint32_t carry = 0;
+	uint32_t skipped = 0;
 	uint16_t wait = 0;
 
 	for (;;)
@@ -830,8 +830,8 @@ void stage_4_title_card(uint16_t *p_x, uint16_t *p_u)
 			break;
 		}
 		wait = 0x4000u;
-		vector_check_skip(wait, &x, &carry);
-		if (carry)
+		vector_check_skip(wait, &x, &skipped);
+		if (skipped)
 		{
 			title_card_end(&x, &u);
 			break;
@@ -986,7 +986,7 @@ void stage_5_title_card(uint16_t *p_x, uint16_t *p_u)
 {
 	uint16_t x = (uint16_t)*p_x;
 	uint16_t u = (uint16_t)*p_u;
-	uint32_t carry = 0;
+	uint32_t skipped = 0;
 	uint16_t wait = 0;
 
 	for (;;)
@@ -998,8 +998,8 @@ void stage_5_title_card(uint16_t *p_x, uint16_t *p_u)
 			break;
 		}
 		wait = 0x4000u;
-		vector_check_skip(wait, &x, &carry);
-		if (carry)
+		vector_check_skip(wait, &x, &skipped);
+		if (skipped)
 		{
 			title_card_end(&x, &u);
 			break;
@@ -1167,7 +1167,7 @@ void stage_6_title_card(uint16_t *p_x, uint16_t *p_u)
 {
 	uint16_t x = (uint16_t)*p_x;
 	uint16_t u = (uint16_t)*p_u;
-	uint32_t carry = 0;
+	uint32_t skipped = 0;
 	uint16_t wait = 0;
 
 	for (;;)
@@ -1179,8 +1179,8 @@ void stage_6_title_card(uint16_t *p_x, uint16_t *p_u)
 			break;
 		}
 		wait = 0x4000u;
-		vector_check_skip(wait, &x, &carry);
-		if (carry)
+		vector_check_skip(wait, &x, &skipped);
+		if (skipped)
 		{
 			title_card_end(&x, &u);
 			break;
@@ -1335,7 +1335,7 @@ void stage_7_title_card(uint16_t *p_x, uint16_t *p_u)
 {
 	uint16_t x = (uint16_t)*p_x;
 	uint16_t u = (uint16_t)*p_u;
-	uint32_t carry = 0;
+	uint32_t skipped = 0;
 	uint16_t wait = 0;
 
 	for (;;)
@@ -1347,8 +1347,8 @@ void stage_7_title_card(uint16_t *p_x, uint16_t *p_u)
 			break;
 		}
 		wait = 0x4000u;
-		vector_check_skip(wait, &x, &carry);
-		if (carry)
+		vector_check_skip(wait, &x, &skipped);
+		if (skipped)
 		{
 			title_card_end(&x, &u);
 			break;
@@ -1539,7 +1539,7 @@ void stage_8_title_card(uint16_t *p_x, uint16_t *p_u)
 {
 	uint16_t x = (uint16_t)*p_x;
 	uint16_t u = (uint16_t)*p_u;
-	uint32_t carry = 0;
+	uint32_t skipped = 0;
 	uint16_t wait = 0;
 
 	for (;;)
@@ -1551,8 +1551,8 @@ void stage_8_title_card(uint16_t *p_x, uint16_t *p_u)
 			break;
 		}
 		wait = 0x4000u;
-		vector_check_skip(wait, &x, &carry);
-		if (carry)
+		vector_check_skip(wait, &x, &skipped);
+		if (skipped)
 		{
 			title_card_end(&x, &u);
 			break;
@@ -1724,7 +1724,7 @@ void title_card_end(uint16_t *p_x, uint16_t *p_u)
    animation; 9 an object of kind 0F, animation 1F, at 4DA0) and leaves its object in Y. */
 uint16_t title_card_put_picture(uint16_t record_number)
 {
-	uint32_t carry = 0;
+	uint32_t shifted_bit = 0;
 	uint8_t offset_high = 0, offset_low = 0;
 	uint16_t object = 0;
 	uint16_t exchanged = 0, placement_record = 0, kind_at = 0, kind = 0, x_at = 0, placement_x = 0, z = 0;
@@ -1733,14 +1733,14 @@ uint16_t title_card_put_picture(uint16_t record_number)
 	offset_high = (uint8_t)(record_number >> 8);
 	exchanged = offset_high | 0x1000u;
 	offset_low = (uint8_t)exchanged;
-	carry = (int8_t)offset_low < 0;
+	shifted_bit = (int8_t)offset_low < 0;
 	offset_low = (uint32_t)offset_low << 1;
-	offset_high = (uint8_t)(((uint32_t)(uint8_t)((uint32_t)offset_high << 8) << 1) | carry);
-	carry = (int8_t)offset_low < 0;
+	offset_high = (uint8_t)(((uint32_t)(uint8_t)((uint32_t)offset_high << 8) << 1) | shifted_bit);
+	shifted_bit = (int8_t)offset_low < 0;
 	offset_low = (uint32_t)offset_low << 1;
-	offset_high = (uint8_t)(((uint32_t)offset_high << 1) | carry);
-	carry = (int8_t)offset_low < 0;
-	placement_record = stage_title_placements_ADDRESS + (((((uint32_t)offset_high << 1) | carry) << 8) | (uint8_t)((uint32_t)offset_low << 1));
+	offset_high = (uint8_t)(((uint32_t)offset_high << 1) | shifted_bit);
+	shifted_bit = (int8_t)offset_low < 0;
+	placement_record = stage_title_placements_ADDRESS + (((((uint32_t)offset_high << 1) | shifted_bit) << 8) | (uint8_t)((uint32_t)offset_low << 1));
 	object = PLACEMENT(placement_record)->object;
 	OBJECT(object)->flags = 0x80u;
 	kind_at = placement_record + 2u;

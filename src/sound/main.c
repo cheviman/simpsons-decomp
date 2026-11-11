@@ -3,7 +3,7 @@
  *    Description: the reset and its self test, the commands from the 053248, the main loop
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the Z80 sound program decompiled into C by
@@ -72,8 +72,8 @@ void sound_command(void)
 	uint16_t bytes_left = 0, channel = 0, count = 0, handler = 0, program_sum = 0, sample_1_sum = 0, sample_2_sum = 0, sound = 0, stride = 0, sum = 0;
 	uint8_t saved_sound_2 = 0;
 	uint16_t stack = 0, saved_sound = 0;
-	uint8_t t20 = 0, t21 = 0, t22 = 0, t23 = 0;
-	uint16_t t1 = 0, t2 = 0, t3 = 0, t4 = 0, t5 = 0, t6 = 0, t7 = 0, t8 = 0, t9 = 0, t10 = 0, t11 = 0, t12 = 0, t13 = 0, t14 = 0, t15 = 0, t16 = 0, t17 = 0, t18 = 0, t19 = 0;
+	uint8_t f8_fd_command_aside = 0, f8_fd_failures_back = 0, sound_aside = 0, sound_failures_back = 0;
+	uint16_t f2_command_aside = 0, f2_program_sum_back = 0, f3_command_aside = 0, f3_program_sum_back = 0, f4_command_aside = 0, f4_program_sum_back = 0, f5_command_aside = 0, f5_program_sum_back = 0, f6_command_aside = 0, f6_program_sum_back = 0, f7_command_aside = 0, f7_program_sum_back = 0, sample_1_sum_for_low_byte = 0, sample_2_sum_aside = 0, final_sample_1_sum = 0, sample_2_sum_back = 0, sample_2_sum_low_byte = 0, final_sample_2_sum = 0, new_sample_2_sum = 0;
 
 	z80_block(10);
 	z80_block(38);
@@ -121,11 +121,11 @@ void sound_command(void)
 		if (command == 0xF2u)
 		{
 			z80_block(66);
-			t1 = sound;
+			f2_command_aside = sound;
 			program_sum = program_rom_sum;
-			t2 = program_sum;
-			program_rom_sum = t2;
-			z80_write16(PCM_FC02, (t1 & ~0xFFu) | (uint8_t)program_sum);
+			f2_program_sum_back = program_sum;
+			program_rom_sum = f2_program_sum_back;
+			z80_write16(PCM_FC02, (f2_command_aside & ~0xFFu) | (uint8_t)program_sum);
 			failures = self_test_failures;
 			self_test_failures = failures;
 			if ((failures & 1u) != 0u)
@@ -140,11 +140,11 @@ void sound_command(void)
 		if (command == 0xF3u)
 		{
 			z80_block(66);
-			t3 = sound;
+			f3_command_aside = sound;
 			program_sum = program_rom_sum;
-			t4 = program_sum;
-			program_rom_sum = t4;
-			z80_write16(PCM_FC02, (t3 & ~0xFFu) | (program_sum >> 8));
+			f3_program_sum_back = program_sum;
+			program_rom_sum = f3_program_sum_back;
+			z80_write16(PCM_FC02, (f3_command_aside & ~0xFFu) | (program_sum >> 8));
 			failures = self_test_failures;
 			self_test_failures = failures;
 			if ((failures & 1u) != 0u)
@@ -159,12 +159,12 @@ void sound_command(void)
 		if (command == 0xF4u)
 		{
 			z80_block(66);
-			t5 = sound;
+			f4_command_aside = sound;
 			sample_1_sum = sample_rom_1_sum;
-			t6 = program_rom_sum;
-			program_rom_sum = t6;
+			f4_program_sum_back = program_rom_sum;
+			program_rom_sum = f4_program_sum_back;
 			sample_rom_1_sum = sample_1_sum;
-			z80_write16(PCM_FC02, (t5 & ~0xFFu) | (uint8_t)sample_1_sum);
+			z80_write16(PCM_FC02, (f4_command_aside & ~0xFFu) | (uint8_t)sample_1_sum);
 			failures = self_test_failures;
 			self_test_failures = failures;
 			if ((failures & 1u) != 0u)
@@ -179,12 +179,12 @@ void sound_command(void)
 		if (command == 0xF5u)
 		{
 			z80_block(66);
-			t7 = sound;
+			f5_command_aside = sound;
 			sample_1_sum = sample_rom_1_sum;
-			t8 = program_rom_sum;
-			program_rom_sum = t8;
+			f5_program_sum_back = program_rom_sum;
+			program_rom_sum = f5_program_sum_back;
 			sample_rom_1_sum = sample_1_sum;
-			z80_write16(PCM_FC02, (t7 & ~0xFFu) | (sample_1_sum >> 8));
+			z80_write16(PCM_FC02, (f5_command_aside & ~0xFFu) | (sample_1_sum >> 8));
 			failures = self_test_failures;
 			self_test_failures = failures;
 			if ((failures & 1u) != 0u)
@@ -199,12 +199,12 @@ void sound_command(void)
 		if (command == 0xF6u)
 		{
 			z80_block(66);
-			t9 = sound;
+			f6_command_aside = sound;
 			sample_2_sum = sample_rom_2_sum;
-			t10 = program_rom_sum;
-			program_rom_sum = t10;
+			f6_program_sum_back = program_rom_sum;
+			program_rom_sum = f6_program_sum_back;
 			sample_rom_2_sum = sample_2_sum;
-			z80_write16(PCM_FC02, (t9 & ~0xFFu) | (uint8_t)sample_2_sum);
+			z80_write16(PCM_FC02, (f6_command_aside & ~0xFFu) | (uint8_t)sample_2_sum);
 			failures = self_test_failures;
 			self_test_failures = failures;
 			if ((failures & 1u) != 0u)
@@ -219,12 +219,12 @@ void sound_command(void)
 		if (command == 0xF7u)
 		{
 			z80_block(66);
-			t11 = sound;
+			f7_command_aside = sound;
 			sample_2_sum = sample_rom_2_sum;
-			t12 = program_rom_sum;
-			program_rom_sum = t12;
+			f7_program_sum_back = program_rom_sum;
+			program_rom_sum = f7_program_sum_back;
 			sample_rom_2_sum = sample_2_sum;
-			z80_write16(PCM_FC02, (t11 & ~0xFFu) | (sample_2_sum >> 8));
+			z80_write16(PCM_FC02, (f7_command_aside & ~0xFFu) | (sample_2_sum >> 8));
 			failures = self_test_failures;
 			self_test_failures = failures;
 			if ((failures & 1u) != 0u)
@@ -418,15 +418,15 @@ void sound_command(void)
 				bytes_left--;
 			} while ((uint8_t)((bytes_left >> 8) | bytes_left) != 0u);
 			z80_block(71);
-			t13 = sum;
+			sample_1_sum_for_low_byte = sum;
 			sample_rom_1_sum = (uint8_t)sum;
-			t14 = sample_rom_2_sum;
-			sum = t13;
-			t15 = sum;
+			sample_2_sum_aside = sample_rom_2_sum;
+			sum = sample_1_sum_for_low_byte;
+			final_sample_1_sum = sum;
 			sample_rom_1_sum = sample_rom_1_sum | ((uint32_t)(sum >> 8) << 8);
-			t16 = t14;
-			sample_rom_2_sum = t16;
-			if (t15 != 0x93ABu)
+			sample_2_sum_back = sample_2_sum_aside;
+			sample_rom_2_sum = sample_2_sum_back;
+			if (final_sample_1_sum != 0x93ABu)
 			{
 				z80_block(16);
 				self_test_failures = self_test_failures | 4u;
@@ -479,11 +479,11 @@ void sound_command(void)
 				bytes_left--;
 			} while ((uint8_t)((bytes_left >> 8) | bytes_left) != 0u);
 			z80_block(71);
-			t17 = (uint8_t)sum;
-			t18 = sum;
-			t19 = t17 | ((uint32_t)(sum >> 8) << 8);
-			sample_rom_2_sum = t19;
-			if (t18 != 0xA5A5u)
+			sample_2_sum_low_byte = (uint8_t)sum;
+			final_sample_2_sum = sum;
+			new_sample_2_sum = sample_2_sum_low_byte | ((uint32_t)(sum >> 8) << 8);
+			sample_rom_2_sum = new_sample_2_sum;
+			if (final_sample_2_sum != 0xA5A5u)
 			{
 				z80_block(16);
 				self_test_failures = self_test_failures | 8u;
@@ -526,12 +526,12 @@ void sound_command(void)
 			return;
 		}
 		z80_block(30);
-		t20 = command;
+		f8_fd_command_aside = command;
 		failures = self_test_failures;
 		failure_bits = failures;
-		t21 = failures;
-		failures = t20;
-		self_test_failures = t21;
+		f8_fd_failures_back = failures;
+		failures = f8_fd_command_aside;
+		self_test_failures = f8_fd_failures_back;
 		if ((failure_bits & 1u) != 0u)
 		{
 			self_test_failed();
@@ -557,12 +557,12 @@ void sound_command(void)
 		return;
 	}
 	z80_block(30);
-	t22 = command;
+	sound_aside = command;
 	failures = self_test_failures;
 	failure_bits = failures;
-	t23 = failures;
-	sound_2 = t22;
-	self_test_failures = t23;
+	sound_failures_back = failures;
+	sound_2 = sound_aside;
+	self_test_failures = sound_failures_back;
 	if ((failure_bits & 1u) != 0u)
 	{
 		self_test_failed();
@@ -765,7 +765,7 @@ void nmi_return(void)
    faded out (fade, fade_next_song). */
 void start_sound(uint8_t sound)
 {
-	uint32_t zero = 0;
+	uint32_t no_song = 0;
 	uint8_t count = 0, next_song = 0, priority = 0, sensitivity = 0, song = 0, sound_2 = 0, volume = 0;
 	uint16_t channel = 0, handler = 0, lowest = 0, stride = 0;
 	uint16_t stack = 0;
@@ -776,75 +776,75 @@ void start_sound(uint8_t sound)
 		z80_block(42);
 		next_song = sound - 0x40u;
 		channel = FM_0;
-		zero = music_channel_song(channel);
+		no_song = music_channel_song(channel);
 		z80_block(10);
-		if (zero)
+		if (no_song)
 		{
 			z80_block(31);
 			channel = FM_1;
-			zero = music_channel_song(channel);
+			no_song = music_channel_song(channel);
 			z80_block(10);
-			if (zero)
+			if (no_song)
 			{
 				z80_block(31);
 				channel = FM_2;
-				zero = music_channel_song(channel);
+				no_song = music_channel_song(channel);
 				z80_block(10);
-				if (zero)
+				if (no_song)
 				{
 					z80_block(31);
 					channel = FM_3;
-					zero = music_channel_song(channel);
+					no_song = music_channel_song(channel);
 					z80_block(10);
-					if (zero)
+					if (no_song)
 					{
 						z80_block(31);
 						channel = FM_4;
-						zero = music_channel_song(channel);
+						no_song = music_channel_song(channel);
 						z80_block(10);
-						if (zero)
+						if (no_song)
 						{
 							z80_block(31);
 							channel = FM_5;
-							zero = music_channel_song(channel);
+							no_song = music_channel_song(channel);
 							z80_block(10);
-							if (zero)
+							if (no_song)
 							{
 								z80_block(31);
 								channel = FM_6;
-								zero = music_channel_song(channel);
+								no_song = music_channel_song(channel);
 								z80_block(10);
-								if (zero)
+								if (no_song)
 								{
 									z80_block(31);
 									channel = FM_7;
-									zero = music_channel_song(channel);
+									no_song = music_channel_song(channel);
 									z80_block(10);
-									if (zero)
+									if (no_song)
 									{
 										z80_block(31);
 										channel = PCM_0;
-										zero = music_channel_song(channel);
+										no_song = music_channel_song(channel);
 										z80_block(10);
-										if (zero)
+										if (no_song)
 										{
 											z80_block(31);
 											channel = PCM_1;
-											zero = music_channel_song(channel);
+											no_song = music_channel_song(channel);
 											z80_block(10);
-											if (zero)
+											if (no_song)
 											{
 												z80_block(31);
 												channel = PCM_2;
-												zero = music_channel_song(channel);
+												no_song = music_channel_song(channel);
 												z80_block(10);
-												if (zero)
+												if (no_song)
 												{
 													z80_block(31);
 													channel = PCM_3;
-													zero = music_channel_song(channel);
+													no_song = music_channel_song(channel);
 													z80_block(10);
-													if (zero)
+													if (no_song)
 													{
 														z80_block(14);
 														song = next_song;
@@ -1282,7 +1282,7 @@ uint16_t start_music_channel(uint16_t header_entry, uint16_t channel, uint8_t so
 uint16_t BOARD_ORIGINAL(check_rom)(void)
 {
 	uint16_t address = 0, sum = 0;
-	uint16_t t1 = 0, t2 = 0, t3 = 0, t4 = 0;
+	uint16_t sum_for_low_byte = 0, sample_2_sum_aside = 0, final_sum = 0, sample_2_sum_back = 0;
 
 	z80_block(20);
 	sum = 0u;
@@ -1348,15 +1348,15 @@ uint16_t BOARD_ORIGINAL(check_rom)(void)
 		address++;
 	} while (address >> 8 != 0xC0u);
 	z80_block(71);
-	t1 = sum;
+	sum_for_low_byte = sum;
 	program_rom_sum = (uint8_t)sum;
-	t2 = sample_rom_2_sum;
-	sum = t1;
-	t3 = sum;
+	sample_2_sum_aside = sample_rom_2_sum;
+	sum = sum_for_low_byte;
+	final_sum = sum;
 	program_rom_sum = program_rom_sum | ((uint32_t)(sum >> 8) << 8);
-	t4 = t2;
-	sample_rom_2_sum = t4;
-	if (t3 == 0x72Eu)
+	sample_2_sum_back = sample_2_sum_aside;
+	sample_rom_2_sum = sample_2_sum_back;
+	if (final_sum == 0x72Eu)
 		return sound_main();
 	z80_block(16);
 	self_test_failures = self_test_failures | 2u;
@@ -1473,7 +1473,7 @@ void sound_main_loop(void)
 {
 	uint8_t attenuation = 0, fade_kind = 0, next_song = 0;
 	uint16_t channel = 0, ignored16 = 0, timer_address = 0;
-	uint8_t t1 = 0, t2 = 0;
+	uint8_t old_fade_timer = 0, old_fade_hold = 0;
 
 	z80_block(27);
 	if ((z80_read8(FM_F801) & 2u) == 0u)
@@ -1542,9 +1542,9 @@ void sound_main_loop(void)
 	{
 		z80_block(31);
 		timer_address = fade_timer_ADDRESS;
-		t1 = fade_timer;
-		fade_timer = t1 - 1u;
-		if (t1 != 1u)
+		old_fade_timer = fade_timer;
+		fade_timer = old_fade_timer - 1u;
+		if (old_fade_timer != 1u)
 		{
 			z80_block(8);
 			interrupts_on();
@@ -1621,9 +1621,9 @@ void sound_main_loop(void)
 		return;
 	}
 	z80_block(31);
-	t2 = fade_hold;
-	fade_hold = t2 - 1u;
-	if (t2 != 1u)
+	old_fade_hold = fade_hold;
+	fade_hold = old_fade_hold - 1u;
+	if (old_fade_hold != 1u)
 	{
 		z80_block(8);
 		interrupts_on();
@@ -1660,7 +1660,7 @@ void sound_main_loop(void)
 void run_pcm_channel(uint16_t channel)
 {
 	uint8_t decay = 0;
-	uint8_t t1 = 0;
+	uint8_t next_decay = 0;
 
 	z80_block(49);
 	if ((pass_count & 0xFu) == CHANNEL(channel)->chip_channel)
@@ -1669,9 +1669,9 @@ void run_pcm_channel(uint16_t channel)
 		if ((pcm_keyed & CHANNEL(channel)->pcm.key_bit) == 0u)
 		{
 			z80_block(48);
-			t1 = CHANNEL(channel)->pcm.decay + CHANNEL(channel)->pcm.decay_step;
-			decay = t1;
-			if ((int8_t)t1 < 0)
+			next_decay = CHANNEL(channel)->pcm.decay + CHANNEL(channel)->pcm.decay_step;
+			decay = next_decay;
+			if ((int8_t)next_decay < 0)
 			{
 				z80_block(7);
 				decay = 0x7Fu;

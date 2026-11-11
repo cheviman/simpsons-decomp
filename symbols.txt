@@ -203,22 +203,22 @@ field test_palette 02 colours u16[16]
 struct vector 03 rom
 field vector 00 opcode u8
 field vector 01 offset s16
-0280BD  table  empty_vector_0280BD[1]  vector
-02C030  table  empty_vectors_02C030[2]  vector
-02C057  table  empty_vector_02C057[1]  vector
-032024  table  empty_vector_032024[1]  vector
-07865F  table  empty_vector_07865F[1]  vector
-078665  table  empty_vector_078665[1]  vector
-034000  table  empty_vectors_034000[2]  vector    # the first two slots of bank 1A's jump table
+0280BD  table  goon_actions_jump_table_spare_slot[1]  vector
+02C030  table  scenery_jump_table_spare_slots[2]  vector
+02C057  table  scenery_jump_table_spare_slot[1]  vector
+032024  table  stage_7_objects_jump_table_spare_slot[1]  vector
+07865F  table  fixed_jump_table_spare_slot_2[1]  vector
+078665  table  fixed_jump_table_spare_slot_3[1]  vector
+034000  table  dreamland_jump_table_spare_slots[2]  vector    # the first two slots of bank 1A's jump table
 # a slot of the fixed program's jump table nothing jumps through, to a routine (07D47E) that dispatches by its object's
 # field 28 like the objects' dispatchers (07D484 "LDU #$F661; LDB A,U; STB <$0E; SETLN <$0E", 07D496 "LDU #$F65F;
 # ASLA; JMP [A,U]"), through tables that hold no code addresses there: F65F-F661 end a table of bytes, F662 starts
 # one of code addresses (DDC3, DDF3...). Left from the game's making: its jump goes nowhere
-0785D8  table  unused_vector_0785D8[1]  vector
+0785D8  table  vector_to_dead_dispatch[1]  vector
 07D49A  code  unused_enemy_run_action_jump  calls=unused_object_handlers
 07F65F  data  unused_object_handlers  record=2 count=0 code=0
 # a list of spawns no table leads to, in bank 1A: 67 records like a stage's (x from 0148 to 0540), no end record
-0354C5  table  unused_spawn_list_0354C5[67]  spawn
+0354C5  table  unused_dreamland_spawn_list[67]  spawn
 
 # ======== the enemies (tools/data_walk.py: enemy behaviour) ========
 # an enemy's behaviour, 88 bytes: what the fixed program's enemy routines (07D3D7-07D662) read from the object's field
@@ -302,7 +302,7 @@ struct player_kind 04 rom
 field player_kind 00 bit u8
 field player_kind 01 kind u16
 field player_kind 03 unk_03 u8
-025952  table  unused_player_kinds_025952[4]  player_kind
+025952  table  unused_player_kind_list[4]  player_kind
 # bank 13's stage records, a slot each after the bank's jumps (6000-600B), 3 bytes like them: the record (into direct
 # page A4) and a 00. Each step's start in the fixed program reads its own (07A555 "LDX $600C", 07A794 "LDX $600F",
 # 07A8DF $6015... 07B08F $6021); the third, 6012, the second's 7AA9 again, none reads
@@ -313,11 +313,11 @@ field stage_slot 02 unk_02 u8
 # bank 1A: 4 words after the object setup at 792E (0000, 0100, 0200, 0400) that nothing reads (no code names 7934, no
 # table holds it, no scenario reads it); shaped like 7926's just before, 4 entries of 2 bytes by direct page 58's low
 # 2 bits (034E55: a speed's high byte, into 0F, and field 3B)
-035934  table  unused_words_035934[4]  u16
+035934  table  unused_speed_words[4]  u16
 # a hit box no object setup points to, after bank 18's 7 (7EA0-7ED7, which 07D1B7 reads into an object's fields 1C,
 # 1F, 21 and 23): no code names 7ED8 and no scenario reads it
 struct hit_box 08 rom
-031ED8  table  unused_hit_box_031ED8[1]  hit_box
+031ED8  table  unused_figure_hit_box[1]  hit_box
 # bank 1D's object's parts, by number (03B530 "LDY #$7D21", 8 bytes a record, 03B535-03B553): a speed, its y and z
 # from the object, its kind, its animation; kref --rom-reads: 03BD21-03BD96, 15 records
 struct part 08 rom
@@ -352,7 +352,7 @@ field part_offset 02 dz s8
 # at 7C00: 10 words nothing reads (no code names 7BEC-7BFF, and no scenario reads them), shaped like the sound
 # commands 078680 queues at 4904 (a command and its byte, as 0209ED's 3F30 and 3F31 at 7BC4): effect 78 with 08, 09,
 # 0C, 0D, 18, then with 0A, 0B, 0E, 0F, 1A
-021BEC  table  unused_sound_commands_021BEC[10]  u16
+021BEC  table  unused_effect_78_commands[10]  u16
 
 # ======== the game's texts ========
 # by number (079311: bit 7 clears it instead, 079346), in bank 12 (07932D "LDX $6021": the table's address, which the
@@ -362,9 +362,9 @@ field part_offset 02 dz s8
 0259E4  table  game_texts[19]  u16
 
 # code nothing the analysis follows reaches (runs that decode to a return or a jump at their end, or into code)
-02807E  table  empty_vectors_02807E[2]  vector
-0280B1  table  empty_vector_0280B1[1]  vector
-0785F6  table  empty_vector_0785F6[1]  vector
+02807E  table  goon_jump_table_spare_slots[2]  vector
+0280B1  table  goon_jump_table_spare_slot[1]  vector
+0785F6  table  fixed_jump_table_spare_slot[1]  vector
 # bank 1A's flying object's next state by its field 31 (034089 "LDU #$77BC", 0340B2 "LDU #$77C1"), and its levels: a row
 # of 5 by field 31 (03409B "LDU #$77C6; ASLA; LDU A,U"), a byte by direct page 57 (0340A7 "LDA A,U", into 188C)
 0357BC  table  object_1a_next_states[5]  u8
@@ -373,8 +373,8 @@ field part_offset 02 dz s8
 035754  table  object_1a_levels[20]  u8
 # after the spawn list nothing leads to, a record more like its (0356DD), places in the tile RAM (0356E5) and two texts
 # in the fixed printer's form (0356FE: spaces over two lines; 035744: T F V O), which nothing prints
-0356FE  table  unused_text_0356FE[70]  u8
-035744  table  unused_text_035744[16]  u8
+0356FE  table  unused_blank_lines_text[70]  u8
+035744  table  unused_tfvo_text[16]  u8
 
 # ======== the decompiled program's files ========
 # where the C of the 053248's functions goes (tools/decompile.py: src/PATH.c): a file line takes the functions from
@@ -6461,18 +6461,22 @@ param bonus_results_draw_box u box object.bonus_results
 comment name_entry Runs the name entry of the high scores by its state (3840): set up, the players typing their initials, a last wait, then the scores saved (carry when done).
 # 07B423 (the ending's step) "LBSR $6006"; 0227A0: "LDA #$C0; LBSR $8653; LBCS $6917" (078653 = 079784: once direct
 # page 78 has counted A frames, an attack or jump of a player in the game: carry), "LDX #$76EA; LDA $18E0; JMP [A,X]"
+022006  file  scenes/ending    # the ending
 022006  func  ending
 comment ending Runs the ending by the scene's state: the family, the staff roll and the last fade; after 192 frames a player's button skips it.
 # 07CB3C's list 4F80 type 37 (F387 = 11, F2EC -> 022009 -> 022A4C): 022DE0 hits, "LDU #$7A13; LDA #$02,X; JSR
 # [A,U]", 022ECD / 022F01 the edges, 022F3A the helpers, 0786BF the gauge
+022009  file  objects/stage_7_boss    # stage 7's boss (Channel 6)
 022009  func  stage_7_boss_update
 comment stage_7_boss_update Runs stage 7's boss each frame: reacts to a hit, runs its state, keeps it inside its area, sends its helpers and draws its health gauge.
 # 07CB9F's list 5280 type 37 (F4B0 = 11, F40D -> 02200C -> 023171 "LDU #$7AF1; LDA #$02,X; JMP [A,U]")
+02200C  file  objects/stage_7_boss_helper    # the four helpers of stage 7's boss
 02200C  func  stage_7_boss_helper_update
 comment stage_7_boss_helper_update Runs one of stage 7's boss' four helpers by its state: waits, moves as the boss says, or throws.
 # 022029 (state 0): 0786B3 (the players' sprites), 022307 ranks them; each one's place (0786A4 against the table:
 # "ADDA <$F4; CMPA #$09"), its column (022491: box and face), its place ("1ST"...) and score in sprite letters,
 # initials "A@@" ("LDA #$41; LDD #$4040"), 7 Maggies (4D40 x 7: kind 11, animation 1) walking from 30
+022029  file  scenes/high_scores    # the bank's jump table, then the name entry and the attract's high score table
 022029  func  name_entry_set_up
 comment name_entry_set_up The name entry: ranks the players by score, draws each one who made the table a column with its face, place and score, starts its initials at the letter A, and sets Maggies walking along the bottom.
 # 022212 (state 1): "LDD $385E; ADDD #$0001" up to 0700 (at 06C0 "LDD #$FD00; LBSR $869E"), the Maggies wrapped back
@@ -34741,8 +34745,2169 @@ field player 07 countdown u16 player_counters
 # "unused_spawn_0356DD[0].depth << 8 | .flags" and "AT16(unused_tile_places[7], -1)"
 # replaces: 0356E5  table  unused_tile_places[25]  u8
 0356E0  table  unused_debug_tile_places[15]  u16
-# the 3 bytes before them, 05 40 30: the start of a 68th record of unused_spawn_list_0354C5 (67 records of 8 from
+# the 3 bytes before them, 05 40 30: the start of a 68th record of unused_dreamland_spawn_list (67 records of 8 from
 # 0354C5 end at 0356DD; x 0540, y +30, as its last records' x 0500-0540), cut short where the places start
 # replaces: 0356DD  table  unused_spawn_0356DD[1]  spawn
 0356DD  table  unused_spawn_tail[3]  u8
 
+
+# ======== names, batch 5: what the carry a routine hands back says ========
+# What the carry of a routine says where it hands it back ('flag FUNCTION cy NAME'); the functions that only hand it on
+# from these, and the callers whose carry only comes from them, take the name too (konami_cpu/decompile.py
+# inherited_flag_names)
+# stage_boss_any_player_down: carry 1 when a player in play is in a state its class marks negative (down, hurt)
+flag stage_boss_any_player_down cy player_down
+# stage_boss_blink_out: carry 1 once the blinks are done and the boss is removed (its score awarded)
+flag stage_boss_blink_out cy gone
+
+# ======== names, batch 5: what the flags say, the last register names (build/names5/names_*.txt; merged by the lead) ========
+# ---- system (build/names5/names_system.txt) ----
+# batch 5, group system: flags and register variables of src/system, src/engine, src/video, src/game, src/attract,
+# src/test_mode (proposals; symbols.txt syntax)
+
+# ======== flag sources ========
+
+# --- src/engine/floor.c ---
+# floor_cell_at: the floor map's cell is read last (079545 "LDA ,U; RTS"): N is its bit 7, which the floor map sets
+# where there is no floor ("its value in A (negative: no floor)"; scenery_block_floor writes FF there to take the floor
+# away; check_floor_ahead "BMI" on the cell ahead stops the object before a gap)
+flag floor_cell_at s no_floor
+# check_floor_ahead: 07CF4C "LDA #$42,X; BMI $CF5E; BEQ $CF5E": Z set when the object's enemy_class is 0 (the C:
+# "zero = enemy_class == 0u; if ((int8_t)enemy_class >= 0 && zero == 0u)")
+flag check_floor_ahead z no_enemy_class
+# done: src/engine/floor.c
+# done: src/engine/directions.c
+
+# --- src/game/score.c ---
+# high_score_rank: 07973D "COMA" when the score is at least a table entry's (079726 "CMPD ,X; BCC $973D"), 079737
+# "CLRA" after the 10 places; game_finish: "if (carry) { reset_for_stage(); mode_phase = 4u; ..." (the name entry),
+# players.c's caller: "if (carry == 0u)" the player is out without a place
+flag high_score_rank cy in_high_scores
+# done: src/game/score.c
+
+# --- src/game/skip.c ---
+# check_skip: 0797B5 "COMA" when a player in the game newly presses attack or jump (0797A1 "LDA [A,X]; ANDA #$30;
+# BNE"), 0797B0 "CLRA" while it waits or nobody pressed; the stories and the stage ends skip on it
+flag check_skip cy skipped
+# done: src/game/skip.c
+# done: src/game/continue.c
+# done: src/game/game_over.c
+# done: src/game/name_entry.c
+
+# --- src/system/boot.c ---
+# check_work_ram: 078B17 "LBSR $8DCF" (test_ram_words) then 078B1A "TSTB; RTS": Z when no word of 4000-5CFF failed
+# ("Z when it is good"); boot: "if (zero == 0u)" prints the RAM BAD texts
+flag check_work_ram z work_ram_good
+# done: src/system/boot.c
+# done: src/system/eeprom.c
+
+# --- src/system/inputs.c ---
+# coin_inserted: 0791F1 "COMA" after the coin's sound (0791E8 "LDD #$4002; LBSR $97ED") and 0791EE "INC <$51"
+# (coins_inserted), 0791F4 "CLRA" when no coin of the slot was released; irq_handler: "if (carry)" add_coin
+flag coin_inserted cy coin_dropped
+# done: src/system/inputs.c
+# done: src/system/interrupts.c
+# done: src/system/jobs.c
+
+# --- src/system/jump_table.c ---
+# sample_rom_check_answered: 078F1D "LDB #$88; CMPB $1FC7; RTS": Z once the Z80 echoes 88 in 1FC7 (test_rom_check_6g:
+# "if (zero == 0u)" waits another frame)
+flag sample_rom_check_answered z answered
+# find_nearest_player: 07D2B1 "CLRA" when no player is in the stage (07D2AB "LDA $1874; BNE"), else 07D2FB "LDA <$EC;
+# CMPA #$7F": carry while the nearest distance is under 7F00, i.e. a player in play was found (it starts at 7FFF:
+# 07D2BA "LDD #$7FFF; STD <$EC"); burns_robot, krusty_balloon and stage_7_boss: "if (carry == 0u)" no target
+flag find_nearest_player cy player_found
+# done: src/system/jump_table.c
+
+# --- src/test_mode/menu.c ---
+# test_menu_update: 05E5A5 "COMA; RTS" after SHOOT1 on a line whose page byte is 20 (05E579 "CMPA #$20; BEQ $6597"),
+# handing back the line (05E5A0 "DIV X,B": the cursor / 3); 05E595 "CLRA" otherwise (no press, or a line that opens
+# its page); test_choose_setting_run: "if (carry == 0u)" just marks the setting
+flag test_menu_update cy line_chosen
+# test_read_setting: Z from the setting's value, 05E627 "LDB ,Y; RTS" (the variable) or 05E621 "LBSR $6915; TSTB"
+# (the EEPROM's byte): the C "zero = setting_byte == 0u" / "zero = value_byte == 0u"; test_io_check_open: "if (zero == 0u)" the start
+# buttons' row is printed (5A60 not 0), test_coin_setting_page "if (zero == 0u)" the plain coin page
+flag test_read_setting z setting_off
+# test_open_page: 05E642 "CLR $5912" leaves carry clear before 05E64E "PULLS D,X,Y,U,PC": a page just printed has no
+# line chosen; test_music_choice/test_sound_choice hand it back after a choice ("carry = test_music_open(...)"), the
+# same variable as test_menu_update's
+flag test_open_page cy line_chosen
+# done: src/test_mode/menu.c
+
+# --- src/test_mode/options.c ---
+# test_choose_setting_run: 05E459 "COMA; RTS" after the chosen line's value is written (05E452 "LBSR $65E8",
+# test_write_setting with 05E451 "DECB"), 05E45F "CLRA; RTS" when test_menu_update chose nothing (05E443 "BCC $645B")
+flag test_choose_setting_run cy setting_chosen
+# done: src/test_mode/options.c
+
+# --- src/video/palette.c ---
+# find_free_palette_job: 07BF4F "CLRA" on the first job whose kind is 0 (07BF41 "LDA ,U; BEQ"), 07BF4D "COMA" when the
+# 64 are all taken; every request_*: "if (carry == 0u)" fills the job ("carry when there is none")
+flag find_free_palette_job cy no_free_job
+# palette_effect_stop: 07BDB0 "CLR ,U; COMA; RTS": the effect's command 80 frees its job and sets carry, on which
+# palette_job_effect skips the step (07BD2F "BSR $BDA8; BCS $BD3C")
+flag palette_effect_stop cy effect_ended
+# palette_effect_reverse: 07BDBF "CLRA; RTS" (command 81: the effect runs on backward)
+flag palette_effect_reverse cy effect_ended
+# palette_effect_repeat: 07BDD9 / 07BDE4 "CLRA; RTS" (command 82: the effect runs on from the step it names, or the
+# next)
+flag palette_effect_repeat cy effect_ended
+# palette_effect_backward: 07BD8C "CLR #$01,U" (direction forward again at the first step) clears carry; the effect
+# runs on
+flag palette_effect_backward cy effect_ended
+# palette_effect_command: 07BDA8 "LDY #$E975; ANDA #$7F; ASLA; JMP [A,Y]": its carry is the command's (80 stop: set,
+# 81 reverse / 82 repeat: clear); palette_job_effect: 07BD2F "BSR $BDA8; BCS $BD3C" leaves the step undone when the
+# effect ended
+flag palette_effect_command cy effect_ended
+# done: src/video/palette.c
+
+# --- src/video/sprites.c ---
+# borrow_object_for_sprites: 079CCE "LDA #$01; STA ,X; COMA; RTS" on a free object from 55E0 down (079CC0 "LDA ,X;
+# BEQ"), 079CCC "CLRA; RTS" at 4D40; draw_object: "if (carry)" keeps the lender in the 8th sprite's borrowed_object
+flag borrow_object_for_sprites cy object_borrowed
+# write_object_sprites: 079CF2 "LDA ,U+; BEQ $9D43; BPL $9CFC; NEGA; DEC <$F0" (and 079D72 for y): N of the listed
+# offset, negative when the sprite is left of (above) the object, then turned positive and zoom_offset_negative marked
+# ("negative = listed_offset_x >> 7; ... if (negative)")
+flag write_object_sprites s negative_offset
+# done: src/video/sprites.c
+
+# ======== caller exceptions (callees that mean different things, one test in the caller) ========
+
+# spawn_list_2_child: 07CA9E "LDB #$02; LBSR $CA54; BCC $CAE9": carry from take_free_object (a free object of list 2),
+# then from place_child_object (07CAAB.., which ends with carry set): set when the child is in; its callers test it
+# once for that ("carry when there was a free slot")
+flag spawn_list_2_child cy child_placed
+# test_choose_setting: the setting pages' step runner (05E425 "LDX #$642B; LBRA $603B": step 0 test_choose_setting_open,
+# step 1 test_choose_setting_run, both setting_chosen; the switch's other cases are entries of the next step tables);
+# test_start_buttons_page, test_premium_start_page and test_premium_coins_page test it once: "if (carry == 0u) return"
+# before writing the chosen value
+flag test_choose_setting cy setting_chosen
+# test_music_first_choice: 05E223 "BSR $6261; BCC $6260; BRA $623E": the carry of test_sound_test_first_press
+# (test_menu_update's line_chosen) is tested once, then test_music_play's (queue_sound's, which nothing tests) is handed
+# back
+flag test_music_first_choice cy line_chosen
+# test_sound_first_choice: 05E27F "BSR $6261; BCC $6260; BRA $62A0", the same with test_sound_play
+flag test_sound_first_choice cy line_chosen
+# palette_job_effect: tests the carry once, after palette_effect_command (07BD2F "BSR $BDA8; BCS $BD3C": the effect
+# ended, its step is not run); its other callees (the direction handlers, darken_colour/brighten_colour of the
+# over-read entries) hand back carries nobody tests
+flag palette_job_effect cy effect_ended
+# done: src/test_mode/sound_test.c
+# done: src/test_mode/checks.c
+# done: src/test_mode/rom_check.c
+
+# ======== register variables ========
+
+# boss_shade_by_vitality: 07E4F1 "LDY #$E526", 07E4F4 "LDA <$E9; ASLA", 07E4F8 "LDY A,Y": the boss's row of
+# hurt_effect_rows (by shade_effect_row), whose effect for the new level 07E4FE "LDD A,Y" reads
+local boss_shade_by_vitality 07E4F8 y hurt_row hurt_effect_row
+# palette_job_clear: 07BF16 "LEAY ,X; CLR ,X+; BMOVE Y,X,U": Y the range's first byte, just cleared, from which BMOVE
+# copies the 0 along the range
+local palette_job_clear 07BF16,07BF1A y fill_source
+# clear_text_layer: 0792AD "LDD ,S; STD ,X; STD #$26,X" (the edge columns' tiles, 3F3F) and 0792B4 "LDD #$02,S; STD
+# #$-2000,X; STD #$-1FDA,X" (their colours, 0000): the word written into each side's two columns, A the left one's
+local clear_text_layer 0792AD,0792B4 a edge_high
+local clear_text_layer 0792AD,0792B4 d edge_low
+# test_options_open: 05E33A "LDB #$00" before 05E33C "LBSR $66FD" (test_put_tile, D = digit:colour) and 05E38F "LDB
+# #$00" before 05E391 "LBSR $6650" (test_print, B the colour): the colour the values are printed in
+local test_options_open 05E33A,05E38F b print_colour
+# done: src/video/clear.c
+# done: src/video/background_maps.c
+# done: src/attract/intro.c
+# done: src/attract/title.c
+# ---- objects (build/names5/names_objects.txt) ----
+# ==== batch 5, group objects: flags and register variables of src/objects/ ====
+# Every line has its evidence above it. Sections by source file; "# done: FILE" closes each file of the work list.
+# Kinds: the sources first (they name their callers), then local flags, then register variables. At the end, a
+# separate section of caller lines whose only source can not carry a name (its variable is also an arithmetic carry
+# or another test): see the report.
+
+# ---- objects/object_setup.c ----
+# apply_gravity: 07D16E "LDD #$19,X; SUBD #$0060; STD #$19,X; BPL $D1AE" (still rising: 07D1AE "CLRA; RTS", carry
+# clear), else cap_fall_and_land; C: "carry = 0u;" while the height speed is >= 0. Set once the object is on its floor.
+flag apply_gravity cy landed
+# cap_fall_and_land: 07D18E "CMPD <$E8; BHI $D1AE" (above its floor + 7: "CLRA; RTS"), else 07D193-07D1A9 puts it on
+# its floor (height speed 0, flags bit 3 off, animation_flags bit 7) and 07D1AC "COMA; RTS": carry set when it lands.
+flag cap_fall_and_land cy landed
+# land_if_falling: 07D1B0 "LDA #$19,X; BPL $D1AE" (not falling: "CLRA; RTS"), else 07D1B5 "BRA $D179"
+# (cap_fall_and_land): carry set when it lands. vector_check_landing only leads here.
+flag land_if_falling cy landed
+# enemy_on_screen: 07D216 "LDD #$0C,X; SUBD #$0050; CMPD #$0120; RTS": carry set when its x is within 50-16F; C:
+# "carry = screen_x >= 0x50 && screen_x <= 0x16F;"
+flag enemy_on_screen cy on_screen
+# done: objects/object_setup.c
+
+# ---- objects/spawning.c ----
+# take_free_object: 07CA5F "LDB #$00,U; BNE $CA82" (taken: next slot), a free one cleared and marked 4, then 07CA80
+# "COMB; RTS" (carry set); 07CA85 "DECA; BNE", 07CA88 "CLRB; RTS" when the list is full (carry clear). Callers:
+# spawn_child_object 07CA8D "LBSR $CA54; BCC $CA9D", spawn_stage_objects' take_free_object_for_spawn, and every
+# vector_find_free_slot caller ("if (carry) type = ...").
+flag take_free_object cy slot_found
+# place_child_object: runs only after take_free_object found a slot (07CA90 "BCC $CA9D", 07CAA3 "BCC $CAE9") and
+# ends 07CAE8 "COMA; RTS": carry always set, handed back by spawn_child_object and spawn_list_2_child as "the child
+# had its slot and is placed"; the same name as take_free_object's so that those two (and vector_spawn_child,
+# kind_90_put_in_missile...) take it.
+flag place_child_object cy slot_found
+# hold_scroll_over_enemy_limit: 07CB2B "CLRB; CMPA $1876; BCC $CB33; DECB; STB <$A7; RTS": carry set when the
+# enemies present (1876) are more than the limit in A (then the camera's x scroll is held)
+flag hold_scroll_over_enemy_limit cy too_many_enemies
+# compare_enemy_limit: 07CB37 "CMPA $1876; RTS": the same test without the scroll. check_enemy_limit only hands on
+# these two (07CB29 "JMP [B,U]") or the carry it got (07CAF5 "LDD #$0101; STD <$A7; RTS")
+flag compare_enemy_limit cy too_many_enemies
+# done: objects/spawning.c
+
+# ---- objects/stage_bosses.c ----
+# stage_boss_settle: 03C159 "CMPD #$16,X; BGE $6169" (still above the floor: height speed - 60, 03C167 "CLRA; RTS"),
+# else on its floor (03C169 "STD #$16,X", height speed cleared) and 03C177 "COMA; RTS": carry set once it is on its
+# floor. stage_boss_follow_floor and stage_boss_stop_on_floor only hand it on.
+flag stage_boss_settle cy landed
+# stage_boss_next_player_slot: 03C1AD "TST #$00,U; RTS": zero set when the player slot's object is not in use; C:
+# "zero = OBJECT(player)->flags == 0u;", stage_boss_pick_random_player "if (zero == 0u) return player;"
+flag stage_boss_next_player_slot z slot_empty
+# stage_boss_player_is_near: 03C1FE "LSRB; BCC $6223" (not playing: "CLRA; RTS"), x then y distance against the
+# reaches <$F8/<$FA ("CMPD <$F8; BGE $6223", "CMPD <$FA; BGE $6223"), 03C221 "COMA; RTS": carry set when the player
+# is in play and within reach. stage_boss_find_near_player only hands it on (03C1E4.. "BSR; BCS").
+flag stage_boss_player_is_near cy player_near
+# stage_boss_player_off_floor: 03C240 "TST #$00,U; BEQ $624C" (not in use), "LDU #$16,U; BEQ $624C" (height 0), else
+# 03C24A "COMA; RTS": carry set when the player is in use and off the floor. stage_boss_any_player_off_floor only
+# hands it on (03C225 "BSR $6240; BCS $623F" for each player).
+flag stage_boss_player_off_floor cy player_off_floor
+# stage_boss_check_hit hands back A: 0 not hit (03C2B3 "CLRA; RTS": zero set), 1 hurt (03C2A1 "LDA #$01; RTS"), FF
+# beaten (03C2B0 "LDA #$FF; RTS": negative set); bear_charge_check_hit "if (zero) {...} if (negative) bear_beaten"
+flag stage_boss_check_hit z not_hit
+flag stage_boss_check_hit s beaten
+# stage_boss_attack_frame: 03C2E0 "LDA #$06,X; LSRA; RTS": carry = animation_flags bit 0, the animation ran to its
+# end (field object 06); bear_swipe "if (carry) bear_turn_to_player"
+flag stage_boss_attack_frame cy animation_ended
+# done: objects/stage_bosses.c
+
+# ---- objects/burns_robot.c ----
+# burns_robot_facing_target: 03B243 "LDU #$2B,X; LDD #$0C,X; CMPD #$0C,U; BLT", the facing bit "LDA #$09,X; ANDA
+# #$40", 03B25F "COMA; RTS" when it faces the target, 03B261 "CLRA; RTS" when not
+flag burns_robot_facing_target cy facing
+# burns_robot_target_in_reach: 03B371 "LDU #$2B,X; BSR $738A (across); BCC $7398 (CLRA); BSR $737B (in depth); RTS":
+# carry set when its target is within reach across and in depth
+flag burns_robot_target_in_reach cy in_reach
+# burns_robot_target_in_depth: 03B37B "LDD #$11,U; SUBD #$11,X; BMI $7398; CMPD <$FA; BGT $7398", 03B396 "COMA; RTS":
+# carry set when the target is 0 to <$FA further down the screen
+flag burns_robot_target_in_depth cy within_depth
+# burns_robot_target_across: 03B38A "LDD #$0C,X; SUBD #$0C,U; ABSD; CMPD <$F8; BGT $7398", 03B396 "COMA; RTS": carry
+# set when the target is within <$F8 across
+flag burns_robot_target_across cy within_across
+# burns_robot_start_gloating: 03B3D8-03B3F6 sound 3F38, handler 0D, its gloating look, can not be hit; 03B3F9 "COMA;
+# RTS": carry always set, an action other than walking started (the walking handlers 03AE44 "BCS $6E73" stop)
+flag burns_robot_start_gloating cy action_started
+# burns_robot_start_attack: its attack's handler and look started, or burns_robot_start_gloating when the target is
+# down; every way out sets carry (C: "carry = 1u;" three times, "carry = burns_robot_start_gloating(robot);")
+flag burns_robot_start_attack cy action_started
+# burns_robot_start_lob: 03B4E1-03B4F9 lob timers cleared, handler 0C; 03B4FC "COMA; RTS": carry always set
+flag burns_robot_start_lob cy action_started
+# burns_robot_in_middle: 03B566 "LDD #$0C,X; CMPD #$0040; BLT $7575; CMPD #$0180; BGT $7575", 03B573 "COMA; RTS":
+# carry set when its x is within 40-180
+flag burns_robot_in_middle cy in_middle
+# burns_robot_lob_due: 03B577 "LDY #$7BA7 (burns_robot_shot_times) ... LDD A,Y; CMPD #$3B,X; BLT $758E", 03B58E
+# "COMA; RTS" when its lob frames passed the time, 03B58C "CLRA; RTS" when not
+flag burns_robot_lob_due cy lob_due
+# burns_robot_walk_form_1 and burns_robot_steer: 03AE9F/03AED5 "LDB #$2D,X; SUBB #$31,X; BEQ; BPL; NEGA": negative
+# set when its aim (2D) is below its walking direction (31), so the turn goes down (C: "if (negative) turn = 0u -
+# turn;")
+flag burns_robot_walk_form_1 s aim_below
+flag burns_robot_steer s aim_below
+# burns_robot_check_hit: 03B168 "LDB #$1E,X; BEQ $7175; BMI $7175": negative set when its hit value has bit 7 set
+# (then it is not taken); C: "negative = hit >> 7; if (hit != 0u && negative == 0u)"
+flag burns_robot_check_hit s negative_hit
+# done: objects/burns_robot.c
+
+# ---- objects/burns_robot_parts.c ----
+# burns_part_fall: 03B6E3 "LDD #$16,X; BEQ $76EC; BMI $76EC": negative set when its height is below 0 (then it is put
+# on the floor); C: "negative = z_2 >> 15; if (z_2 == 0u || negative)". Its carry is left: the variable is also the
+# carry of the height's sum (03B6DD "ADCA #$16,X").
+flag burns_part_fall s below_floor
+# mr_burns_beaten: B is the state the list runner hands every handler (its "LDD #$01,X": type, state; the parts'
+# dispatcher 03B59B "LDA #$02,X; ASLA; JMP [A,U]" keeps B), stored with 01 into <$05-<$06 (03B98F "PUSHS D" ...
+# step_subphase 1, step_countdown the state number); its callers pass "state" but one "(uint8_t)floor_cell", so it
+# needs its line ("state" is a local of it already)
+param mr_burns_beaten d state_number
+# done: objects/burns_robot_parts.c
+
+# ---- objects/collisions.c ----
+# collide_players_with_enemies, collide_players_with_child_objects, collide_players_with_list_1_objects: D is what
+# boxes_overlap hands back in it (07C058/07C08F/07C0C7 "LBSR $C13A"; boxes_overlap's "local ... d overlap_word",
+# 07C1DD/07C1DF), A read as the last flags and D handed back at the end (last_flags_word)
+param collide_players_with_enemies d overlap_word
+param collide_players_with_child_objects d overlap_word
+param collide_players_with_list_1_objects d overlap_word
+# done: objects/collisions.c
+
+# ---- objects/krusty_balloon.c ----
+# krusty_balloon_check_over_target: its target gone or down: krusty_balloon_lose_target (02693F "LBEQ $6CD8", 026945
+# "LBMI $6CD8"); not in place: 026967 "CLRA; RTS"; in place: 026C24 "LBSR $867D (free slot); BCC $6C7B" and the attack
+# set up, 026C72/026C7A "COMA; RTS". Carry set when the chase ends (an attack starts or it waits for a target):
+# krusty_balloon_chase "if (carry) return;"
+flag krusty_balloon_check_over_target cy chase_ended
+# krusty_balloon_lose_target: keeps its state and step, stops, state 5 (waiting for a target), 026CFF "COMA; RTS":
+# carry always set, the chase ended
+flag krusty_balloon_lose_target cy chase_ended
+# krusty_balloon_check_hit: 026923 "LDB #$1E,X; BEQ $6939; BMI $6939": negative set when the hit value has bit 7 set
+flag krusty_balloon_check_hit s negative_hit
+# done: objects/krusty_balloon.c
+
+# ---- objects/police_car.c ----
+# police_car_door_open: 02C465 "LDA ,Y+; CMPA #$7F; BEQ" (the list's end), 02C46B "CMPA $1874; BCC $6474" (skipped
+# unless more players are present than it), 02C471 "LBSR $862C" puts in the child record after it: the byte
+# car_door_release's "players" field gives
+local police_car_door_open 02C465 a player_threshold
+# done: objects/police_car.c
+
+# ---- objects/kind_90_effect.c ----
+# kind_90_effect: 07E18F "LDU #$F28C; ASLB; JMP [B,U]": B is the object's state the list runner hands it (its "LDD
+# #$01,X"); C: "switch ((int8_t)(uint8_t)((uint32_t)d << 1))"
+param kind_90_effect d state
+# done: objects/kind_90_effect.c
+
+# ---- objects/stage_3_boss.c ----
+# stage_3_boss_partner_ready: 03D6AF "LDU #$41,X; LDA #$01,U; CMPA #$3E; BNE $76C7", "TST #$00,U; BEQ $76C7", "LDA
+# #$2E,U; CMPA #$13; BGE $76C7", 03D6C5 "COMB; RTS", 03D6C7 "CLRB; RTS": carry set when its partner is still a boss
+# (type 3E) in use and standing (phase below 13); stage_3_boss_update "if (carry)" joins it again
+flag stage_3_boss_partner_ready cy partner_ready
+# stage_3_boss_arrive: 03D24D "LDY $1852; CLR #$2A,Y": the object kept in stage_kept_object (the story's marker
+# stage_3_boss_enter tells: "local stage_3_boss_enter 03D230 y marker object"), its byte 2A cleared
+local stage_3_boss_arrive 03D24D y marker object
+# stage_3_boss_together: 03D2C6 "TFR X,Y; LEAY #$0C,Y; LDX #$41,X; LEAX #$0C,X; LDU #$000F; BMOVE Y,X,U": Y walks its
+# own place (x, y, z: 15 bytes from field 0C) copied to its partner's (partner_place)
+local stage_3_boss_together 03D2C8,03D2D4 y own_place
+# done: objects/stage_3_boss.c
+
+# ---- objects/stage_7_boss.c ----
+# stage_7_boss_approach: not facing the target or not near it: 022E3B "INCW #$3D,X; CLRA; RTS"; charging (0230FD..)
+# 02312D "COMA; RTS"; attacking (0230B3..) 0230F3/0230FB "COMA; RTS"; its target down: stage_7_boss_go_idle. Carry set
+# when it started an attack or a charge (its comment: "carry: it did either"); stage_7_boss_walk "if (carry) return;".
+# (Its find_nearest_player call at 023119 also writes the carry, which 02312D overwrites unread.)
+flag stage_7_boss_approach cy action_started
+# stage_7_boss_charging: 022D2E "LBSR $861D; SUBA #$32,X; BEQ; BPL $6D3D; DEC #$32,X": negative set when the
+# direction to its target is below its charge direction (32), which then turns down
+flag stage_7_boss_charging s target_below
+# stage_7_boss_check_hit: 022DE7 "LDB #$1E,X; BEQ $6DF1; BMI $6DF1": negative set when the hit value has bit 7 set
+flag stage_7_boss_check_hit s negative_hit
+# stage_7_boss_order_throws: 022F6E "LDB $1880; DECB; PUSHS B; SUBA ,S; LEAS #$01,S; BEQ $6F90; BMI $6F90": negative
+# set when the other enemies are more than the throws allowed for the players (then no throw is ordered)
+flag stage_7_boss_order_throws s too_many_enemies
+# done: objects/stage_7_boss.c
+
+# ---- objects/stage_8_boss.c ----
+# stage_8_boss_player_down: 03A02D "LDB <$50; LSRB; BCC; TST $4A42; BMI $6056" for each player in the game,
+# 03A054 "CLRA; RTS", 03A056 "COMA; RTS": carry set when a player in the game is reeling or down (as
+# stage_boss_any_player_down's player_down)
+flag stage_8_boss_player_down cy player_down
+# stage_8_boss_move: walls, the floor ahead, then its height against the floor: above it, height speed - 60 and
+# "carry = 0u"; on it, "carry = 1u" (its comment: "carry once it is on the floor")
+flag stage_8_boss_move cy landed
+# stage_8_boss_next_player: 03A115 "TST #$00,U; RTS": zero set when that player's object is not in use
+flag stage_8_boss_next_player z slot_empty
+# stage_8_boss_player_is_close: as stage_boss_player_is_near (03A150 "LSRB; BCC $6175", the reaches <$F8/<$FA, COMA
+# when within): carry set when the player is in the game and within reach
+flag stage_8_boss_player_is_close cy player_close
+# stage_8_boss_make_invulnerable: 03A177 "LDA #$00,X; ORA #$04; STA #$00,X; RTS": zero set when its flags byte is
+# clear (never: bit 2 was just set); stage_8_boss_reel 03A726 "LBSR $6177; LBNE $65D1" (always taken)
+flag stage_8_boss_make_invulnerable z flags_clear
+# stage_8_boss_take_hit: as stage_boss_check_hit, A 0 not hit (zero), 1 hurt, FF beaten (negative); stage_8_boss_take_hits
+# "if (zero)"
+flag stage_8_boss_take_hit z not_hit
+flag stage_8_boss_take_hit s beaten
+# stage_8_boss_blink_out: 03A1E8 "DEC #$2F,X; BNE $61F5" (03A1F5 "CLRA; RTS"), else removed and scored, 03A1F3 "COMA;
+# RTS": carry set once it is gone (as stage_boss_blink_out's gone)
+flag stage_8_boss_blink_out cy gone
+# stage_8_boss_hit_on_frame: 03A209 "LDA #$06,X; LSRA; RTS": carry = animation_flags bit 0, the animation ended
+flag stage_8_boss_hit_on_frame cy animation_ended
+# stage_8_boss_is_still: 03A25B "LDD #$0F,X; BNE $6267; LDD #$14,X; BNE $6267; COMA; RTS": carry set when its x and y
+# speeds are 0
+flag stage_8_boss_is_still cy standing_still
+# done: objects/stage_8_boss.c
+
+# ---- objects/wrestler.c ----
+# wrestler_within_reach: 0217C9 "LDD #$0C,X; SUBD #$0C,U; ABSD; CMPD #$0040; BGT $77E3", the same in y against 4,
+# 0217E1 "COMA; RTS": carry set when the object in U is within 40 across and 4 in depth
+flag wrestler_within_reach cy in_reach
+# wrestler_check_hit: 0216D9 "LDB #$1E,X; BEQ $76E3; BMI $76E3": negative set when the hit value has bit 7 set
+flag wrestler_check_hit s negative_hit
+# done: objects/wrestler.c
+
+# ---- files of the work list with nothing of their own to name (their flags come from the sources above or other
+# groups', or are arithmetic) ----
+# done: objects/bear.c
+# done: objects/bird_item.c
+# done: objects/boss_door.c
+# done: objects/boulder.c
+# done: objects/bouncing_prop.c
+# done: objects/clown_on_ball.c
+# done: objects/fat_goon.c
+# done: objects/fat_goon_actions.c
+# done: objects/floor_scenery.c
+# done: objects/football_player.c
+# done: objects/handlers_bank_15.c
+# done: objects/items.c
+# done: objects/kind_88_ride.c
+# done: objects/kind_90.c
+# done: objects/kind_a0.c
+# done: objects/object_f9.c
+# done: objects/object_lists.c
+# done: objects/obstacles.c
+# done: objects/robot_scrap.c
+# done: objects/running_animal.c
+# done: objects/scenery_bank_15.c
+# done: objects/shaking_scenery.c
+# done: objects/stage_4_figures.c
+# done: objects/stage_7_boss_helper.c
+# done: objects/unused_objects.c
+
+# ==== callers whose only source can not carry a name ====
+# Each source below hands back a flag its own variable also uses for something else (an arithmetic carry, a shift's
+# carry handed to table overrun cases, or other tests), so no flag line can be given to it and the name can not come
+# up by itself; each caller here gets the flag only from it (calls whose flag nothing reads after them aside) and
+# tests it for that one thing.
+#
+# boxes_overlap (its carry is also the ADDB/ADCA carry of the half sizes added, 07C154.. "ADDB #$20,U; ADCA #$00"):
+# 07C1DA "CMPD <$F6; BCC $C1DE", 07C1DC "CLRA; RTS", 07C1DE "COMA; RTS": carry set when the two boxes overlap. Callers:
+# 07C058/07C08F/07C0C7/07C129/07C1F9 "LBSR $C13A; BCC" then the trade of hits (players_touch for the players' pairs)
+flag collide_players_with_enemies cy overlapping
+flag collide_players_with_child_objects cy overlapping
+flag collide_players_with_list_1_objects cy overlapping
+flag unused_collide_with_list_1_objects cy overlapping
+flag collide_players_with_players cy overlapping
+# stage_boss_move_on_screen (its variable is the carry of the x sum, 03C0EB..; it ends in stage_boss_follow_floor or
+# stage_boss_stop_on_floor, which hand on stage_boss_settle's landed): callers 03CC47 "LBSR $60EB; LBCC $6CD9"
+# (bear_knocked_down: its vector_spawn_child carries are read by nothing), 03D497 "LBSR $60EB; LBCS $7285", 03D4A7
+# "LBSR $60EB; BCS $74AD", 03C76A "LBSR $60EB; BCC $6769", 03C772 "LBSR $60EB; BCC $67AB": each goes on once landed
+flag bear_knocked_down cy landed
+flag stage_3_boss_leap cy landed
+flag stage_3_boss_knocked cy landed
+flag football_player_knocked_back cy landed
+flag football_player_knocked_out cy landed
+# burns_part_fall (its variable is also the carry of the height's sum, 03B6DD "ADCA #$16,X"): 03B6EA "CLRA; RTS"
+# above the floor, 03B6F3 "COMA; RTS" put on the floor; burns_debris_bounce 03B6AD "LBSR $76CA; BCC $76C9" bounces
+# when it lands
+flag burns_debris_bounce cy landed
+# krusty_balloon_throw (its variable also takes the ASLA carry of the side handed to the table overrun cases,
+# "carry = (int8_t)side_index < 0;"): carry set when neither list 1 nor list 2 has room for the shot ("carry = 1u;"
+# after the second vector_find_free_slot fails; 0 at the end); krusty_balloon_volley_throw 02684A "LBSR $69E0; BCS
+# $686E" ends the volley
+flag krusty_balloon_volley_throw cy no_room
+# krusty_balloon_wobble (its variable also takes the ASLA carry of the squash step handed to the overrun cases):
+# carry set once the four squash steps are done ("carry = 1u;" when squash_step reaches 4); krusty_balloon_flinch
+# 026601 "LBSR $6A74; LBCS $6B33" goes back to chasing
+flag krusty_balloon_flinch cy wobble_done
+# burns_robot_decide_form_0/1/late_forms (their variable is also the facing, lob-due, in-middle and in-reach tests in
+# turn) and burns_robot_choose_target (its variable is first find_nearest_player's "found"): each hands back carry set
+# when the robot started something else than walking (an attack, a lob, a volley, holding out its part, or gloating);
+# the walking handlers 03AE41 "LBSR $7176; BCS $6E73; LBSR $727F; BCS $6E73" (03AE74, 03AEB4 the same) stop there
+flag burns_robot_walk_form_0 cy action_started
+flag burns_robot_walk_form_1 cy action_started
+flag burns_robot_walk_late_forms cy action_started
+# wrestler_approach (its variable is also the within-reach and the surrounded tests): carry set when it started an
+# attack, a guard or a leap (its comment: "carry: it did"); wrestler_walk 021565 "LBSR $76E4; BCS $758E" stops walking
+flag wrestler_walk cy action_started
+# ---- actors (build/names5/names_actors.txt) ----
+# Batch 5, actors (src/bonus, src/bosses, src/enemies, src/players): the flags' names and the last register names.
+# Flags named where they are worked out (the sources); the functions that only hand them on take the name by
+# themselves. A few caller lines where the guide's exception applies (each says why).
+
+# ---------------------------------------------------------------------------------------------------------------
+# src/bonus/balloon.c (bonus 1, the bonuses' pan, title and timer)
+# ---------------------------------------------------------------------------------------------------------------
+
+# bonus_pan: the bonuses' camera pan by its step (020919 "LDX #$7BB2; LDA <$05; ASLA; JMP [A,X]"); its carry is
+# the step's: bonus_pan_up 020963 "COMA" once the view has gone round (step_subphase back to 0), 020965 "CLRA"
+# meanwhile; bonus_pan_start 020935 "CLRA". The callers wait on it: bonus_1_intro_pan "if (carry)" next state,
+# bonus_2_intro_set_up 020A4F "BCC $6A8F" (returns until the pan is done)
+flag bonus_pan cy pan_done
+# bonus_pan_up: 020943 "ADDD #$0003" on the layer's y scroll, 020949 "BCC" not round yet: 020965 "CLRA"; round:
+# the backdrop put back, step_subphase cleared, 020963 "COMA"
+flag bonus_pan_up cy pan_done
+# bonus_pan_start: the pan's first step, never the last: 020935 "CLRA; RTS"
+flag bonus_pan_start cy pan_done
+
+# bonus_1_any_balloon_full: 020637 "CMPD #$01A0; BCC $6647" a balloon's size past 1A0: 020647 "COMA"; none of the
+# four: 020644 "CLRA". bonus_1_blow_until_done tests it ("if (carry)": the contest stops)
+flag bonus_1_any_balloon_full cy balloon_full
+
+# bonus_timer_tick: the bonuses' timer (BCD seconds and frames, 020655 "ADDA #$99; DAA" counts one down); with
+# seconds and frames at 0: 020683 "COMA" (time up), else 02065E/020673 "CLRA". bonus_1_blow_until_done and
+# bonus_2_yell test it ("carry = bonus_timer_tick(); if (carry)": the contest stops). The DAA's own carry in between
+# is this variable too.
+flag bonus_timer_tick cy time_up
+
+# bonus_1_blow_until_done: tests the carry twice for one end of the contest: "bonus_1_any_balloon_full(&balloon,
+# &carry); if (carry)" and "carry = bonus_timer_tick(); if (carry)", both stopping the balloons and going on to the
+# next state (a balloon full or the time up); what it hands back nobody tests
+flag bonus_1_blow_until_done cy contest_over
+
+# bonus_1_stretch_width: 0204B3 "CMPD #$B000; BLS" past the biggest: width_zoom = B000, 0204BE "COMA"; 0204C0
+# "CMPD #$4000; BCC" below the smallest: width_zoom = 4000, 0204CB "COMA"; in between: 0204D0 "CLRA"
+flag bonus_1_stretch_width cy at_limit
+# bonus_1_stretch_height: the same between 2000 and B000 (carry at a limit)
+flag bonus_1_stretch_height cy at_limit
+# bonus_1_blow: its carry is tested only after the stretches ("carry = bonus_1_stretch_height(balloon); if (carry)
+# bonus_1_stretch_width(balloon);": at the limit one way, it stretches the other); what it hands back nobody tests
+flag bonus_1_blow cy at_limit
+
+# bonus_1_results: tests the carry once, after bonus_results ("if (carry == 0u)": the results still showing; when
+# done, the small balloons marked and the flight waits given); its other carries (the loop's "CMPA #$04") nobody
+# tests
+flag bonus_1_results cy results_done
+
+# done: src/bonus/balloon.c
+
+# ---------------------------------------------------------------------------------------------------------------
+# src/bonus/results.c
+# ---------------------------------------------------------------------------------------------------------------
+
+# bonus_results_count_points: the results' last state; when all four players' points are counted: 02109E "CLRD;
+# STD $1842" (the results' state back to 0), 0210A3 "COMA"; else 02107F "CLRA". bonus_results hands it on from its
+# states (bonus_results_start, _first ... _fourth, _wait, _wait_count, all through bonus_results_animate), and
+# bonus_1_results / bonus_2_results wait on it
+flag bonus_results_count_points cy results_done
+# bonus_results_animate: the results' other states, never done: 021015 "CLRA; RTS"
+flag bonus_results_animate cy results_done
+
+# bonus_first_player_in_game: 0212A3 "LDA #$04; SUBA <$F0; RTS" (4 less the slots left: the first player's number);
+# bonus_2_intro_set_up 020A57 "BMI $6A8B" skips showing a player when it is negative (it never is: the count goes
+# from 4 to 0)
+flag bonus_first_player_in_game s no_player
+
+# done: src/bonus/results.c
+
+# ---------------------------------------------------------------------------------------------------------------
+# src/bonus/wake_up.c (bonus 2)
+# ---------------------------------------------------------------------------------------------------------------
+
+# bonus_2_level: a player's level; past the top (level byte / 4 above 14): 020DEC "COMA; RTS"; else it ends in the
+# shared 020E64 "CLRA; RTS" (bonus_2_not_full). bonus_2_player hands it on from every reaction, and
+# bonus_2_all_players stops at the first player whose level is full ("if (carry == 0u)" next player); bonus_2_yell
+# then ends the yelling. The CMPA and ROLA carries in between are this variable too.
+flag bonus_2_level cy level_full
+# bonus_2_not_full: 020E64 "CLRA; RTS", the reactions' "not full"
+flag bonus_2_not_full cy level_full
+# bonus_2_wait_start: the player before the yelling: 020CDE "CLRA; RTS"
+flag bonus_2_wait_start cy level_full
+
+# bonus_2_yell (caller, exception): its carry comes from bonus_2_all_players (level_full) and bonus_timer_tick
+# (time_up), and it tests both for one thing: "if (carry)" the results' music (8800) and state 0x628, the yelling over
+flag bonus_2_yell cy contest_over
+# bonus_2_results (caller, exception): from bonus_2_all_players (level_full) and bonus_results (results_done); it
+# tests it once, after bonus_results: "if (carry)" the players' end pose (state 0x70A)
+flag bonus_2_results cy results_done
+
+# done: src/bonus/wake_up.c
+
+# ---------------------------------------------------------------------------------------------------------------
+# src/bosses
+# ---------------------------------------------------------------------------------------------------------------
+
+# dreamland_boss_fall: falls with C0 less height speed each frame; rising or still above floor + 10: 034406 "CLRA";
+# down on its floor (z = floor_z, speed 0): 034404 "COMA". dreamland_boss_drop_in, _knocked_fall, _knocked_land and
+# _leap_fall test it ("if (carry == 0u) return;")
+flag dreamland_boss_fall cy on_floor
+
+# find_free_object_from_4d40: 035447 "LDB #$00,U; BNE" a free object of the 24 from 4D40: cleared and marked,
+# 035468 "COMB; RTS"; none: 035470 "CLRB; RTS". dreamland_boss_chain_setup tests it ("if (carry)" the piece put)
+flag find_free_object_from_4d40 cy found
+
+# done: src/bosses
+
+# ---------------------------------------------------------------------------------------------------------------
+# src/enemies
+# ---------------------------------------------------------------------------------------------------------------
+
+# enemy_find_attack_range: target too far (07D3DA/07D3E2 "CMPD #$0100") or in none of the 4 ranges: 07D403 "CLRB"
+# (carry 0); in a range (07D3F3 "CMPB #$01,U; BCS", 07D3F8 "CMPB #$02,U; BLS $D405"): carry set with the range's
+# chance. enemy_think tests it ("if (carry)" it rolls the chance to attack)
+flag enemy_find_attack_range cy in_range
+
+# enemy_take_hit: 07D02D "LDD #$0F,U" the hitter's x speed, then 07D030 enemy_set_knock_direction "BMI"/"BNE" on it:
+# zero when the hitter does not move (the side it stands on decides), negative when it moves left
+flag enemy_take_hit z hitter_still
+flag enemy_take_hit s hitter_moving_left
+# enemy_set_knock_direction: the flags it gets (07D030 "BMI $D044" no turn, 07D032 "BNE $D03C" turned, else
+# 07D034 "LDD #$0C,U; CMPD #$0C,X" by the hitter's place); its other callers (the step tables' overruns in
+# goons.c) hand it their dispatch's flags
+flag enemy_set_knock_direction z hitter_still
+flag enemy_set_knock_direction s hitter_moving_left
+
+# enemy_hurt_start: 07E21E "LDD #$0F,U" the hitter's x speed; 07E221 "BMI", 07E223 "BNE": zero when the hitter does
+# not move ("if (zero)": then the side it stands on turns the knock-back)
+flag enemy_hurt_start z hitter_still
+
+# done: src/enemies
+
+# ---------------------------------------------------------------------------------------------------------------
+# src/players
+# ---------------------------------------------------------------------------------------------------------------
+
+# player_next_height_against_floor: 039B3F-039B4A the next height (z + height speed), 039B4D "CMPD #$5C,U; RTS"
+# against the floor; its callers branch on the signed compare: "if ((negative ^ overflow) | zero)" (BLE) the
+# player lands, player_attack_fall "if (zero)" (BEQ) right at the floor
+flag player_next_height_against_floor z at_floor
+flag player_next_height_against_floor s below_floor
+flag player_next_height_against_floor ov compare_overflow
+
+# player_floor_against_height: the floor's height from the block flags (0397A0 "SEX"), 0397A1 "CMPD #$16,U; RTS"
+# against the player's height; player_check_motion "if ((negative ^ overflow) | zero)" (BLE): the floor is not
+# above the player, so it takes it
+flag player_floor_against_height z floor_at_height
+flag player_floor_against_height s floor_below_height
+flag player_floor_against_height ov floor_compare_overflow
+# player_check_motion (caller, exception for N only): its negative comes from player_floor_against_height and from
+# vector_floor_ahead/_x/_y, whose N it never tests (it tests the floor cell's byte); it tests it only in "(negative ^
+# overflow) | zero" after player_floor_against_height (3 times, one purpose). Its zero and overflow come from
+# player_floor_against_height alone.
+flag player_check_motion s floor_below_height
+
+# player_floor_at_next_place: 039872 "CMPA #$FF" the floor ahead a wall: 03987F "COMA"; else its height, 03987D
+# "CLRA"
+flag player_floor_at_next_place cy wall
+# player_find_entry_floor: 038211 "BCS $622A" stops at the first wall of the 8 places; none: 038229 "CLRA".
+# player_run tries another depth while it is set
+flag player_find_entry_floor cy wall
+
+# player_start_effect: 039C2F "CMPA #$0090,U" an effect of a higher number already on the second sprite: 039C4E
+# "COMA" (not started); else it starts it and clears the carry. player_show_hurt_spark, player_show_hit_spark and
+# player_stand test it ("if (carry == 0u)" the spark placed)
+flag player_start_effect cy effect_busy
+
+# player_check_screen_edges: zero comes out of 039B0A "COMA" with A = FF (vitality left) or 0 (none): set unless a
+# player with no vitality was stopped; 039AF8 "CLRA" when it goes on. player_knocked_flying and player_knocked_up:
+# "if (zero)" keep on, else player_crash_into_edge
+flag player_check_screen_edges z no_crash
+# (its carry, set at 039B0A "COMA" when stopped and cleared at 039AF8 "CLRA", shares the variable with the ADDD/ADCA
+# of the next x (039ADB, 039AE4), so it is left; its two callers that test it get a line each)
+# player_knocked_flying (caller, exception): its carry comes from player_check_screen_edges alone, whose variable
+# can not take the name; it tests it once: "if (carry == 0u)" keeps its life, else lies down
+flag player_knocked_flying cy blocked_ahead
+# player_entry_crash (caller, exception): the same, "if (carry == 0u)" keeps its life, else stops
+flag player_entry_crash cy blocked_ahead
+
+# player_eat_food: 0393D9 "LDA #$1B,U; CMPA #$1B,X; BCS; BHI" the player's vitality against its partner's: the food
+# goes to the partner when the player has more (or the same, at random)
+flag player_eat_food z same_vitality
+flag player_eat_food cy less_vitality
+
+# done: src/players/effects.c src/players/motion.c src/players/players.c src/players/reactions.c src/players/states.c
+
+# gauges_byte_to_bcd: adds the BCD value of each set bit (0409DF "DAA"); past 99 the DAA's carry stops it (0409F0
+# "PULLS U,PC" with it set). gauges_draw and gauge_draw_player test it ("if (carry)" shows 99)
+flag gauges_byte_to_bcd cy past_99
+
+# gauge_draw_health: 040A0D "CMPB #$02,U; BEQ; BLS" the health's gauge step against the shown one: the same, no
+# change; shown above (BLS: carry or zero), one step down; else one up
+flag gauge_draw_health z gauge_at_health
+flag gauge_draw_health cy gauge_above_health
+
+# done: src/players/gauges.c
+
+# ---------------------------------------------------------------------------------------------------------------
+# Register variables
+# ---------------------------------------------------------------------------------------------------------------
+
+# bonus_1_intro: 020012 "CLRA", 020013 "LBSR $69C0" (bonus_title, A = the bonus: 0 here, 1 from bonus_2_intro_set_up
+# 020A47 "LDA #$01", whose local is bonus_number already); bonus_title's param then has the same name from all its
+# callers
+local bonus_1_intro 020013 d bonus_number
+
+# unused_bonus_draw_timer_digits: 020698 "LDD <$F8" (bonus_draw_x), 02069B "STD #$0C,X" the digit's x; the C keeps its
+# low byte in d (uint8_t) and its high byte in a (which later holds the tens of the seconds: left)
+local unused_bonus_draw_timer_digits 020698 d digit_x_low
+
+# player_set_air_move: D is the move (player state in A, 038998 "ADDB #$10" the air version of the animation in B):
+# player_set_move_on_floor and player_start_attack hand it over as move_and_animation, player_set_move takes A as the
+# player state and B as the animation
+param player_set_air_move d move_and_animation
+
+# done: register variables
+# ---- scenes (build/names5/names_scenes.txt) ----
+# batch 5, scenes (src/scenes/, src/stages/): flags and register names, in symbols.txt syntax
+
+# ---- scenes/ending.c ----
+# 02291E "LDA $18EA; CMPA #$68; BNE" (a pixel every 104 frames), 02292A "LDD <$C5; CMPD #$001B; BEQ $693E" ->
+# 02293E "COMA; RTS" (carry 1: layer A's y has reached 27, the view is at the top), else 022932 "ADDD #$0001; STD
+# <$C5", 02293C "CLRA; RTS" (carry 0). ending_roll_credits: "carry = ending_scroll_up(); if (carry == 0u) return;"
+# then its next pose
+flag ending_scroll_up cy at_top
+# 0229D2 "INC #$28,X; LDA #$28,X; CMPA #$03; BNE $69F9" (every 3 frames), 0229DF "LDA #$0A,X; DECA; CMPA #$30" (its
+# zoom), 0229E7 "LDB #$05,X; CMPB #$07; BEQ $69FB" -> 0229FB "CLR ,X; COMA; RTS" (carry 1: its last animation done,
+# the tossed object removed: flags 0), every other way out 0229F9 "CLRA; RTS" (carry 0). ending_fade_start: "if
+# (carry)" the family floats away and the fade starts
+flag ending_tossed_rise cy gone
+# 022A21 "CLRB; EXG A,B; ASLB; ROLA; ASLB; ROLA; ASLB; ROLA": the record number times 8 as a 16-bit shift done a byte at
+# a time; the carry is the bit each ASLB moves out of the low byte into the high one (ROLA)
+flag ending_put_placement cy shifted_bit
+# done: scenes/ending.c
+
+# ---- scenes/high_scores.c ----
+# 022A52 "LDA #$02,X; ASLA; JSR [A,U]": the carry is the state's top bit the ASLA shifts out (the states are below 80,
+# so it is 0), which stage_7_boss_blink_out gets with the carry and rotates into the boss's flags (022A93 "RORA")
+flag stage_7_boss_update cy state_top_bit
+# The name entry (022003, by name_entry_state at 3840) hands its carry back to name_entry_run: "carry = name_entry();
+# if (carry) game_step++;" (1 once the scores are saved: done).
+# 0222CD (name_entry_save) "... LBSR $86A1 (vector_insert_high_score) ... DEC ,S; BNE; COMA; PULLS A,PC": carry 1, the
+# players who made the table put into it: the name entry is done
+flag name_entry_save cy done
+# 022212 "LDD $385E; ADDD #$0001; STD $385E; CMPD #$0700; LBEQ $62CD" (time up: name_entry_save, carry 1), else
+# 0222A3/0222AE "CLRA; RTS" (carry 0: still typing, or all done and on to name_entry_linger)
+flag name_entry_type_initials cy done
+# 0222B0 "LDD $385E; ADDD #$0001; STD $385E; CMPD #$0100; BEQ $62CD" (after 256 frames name_entry_save, carry 1),
+# else 0222CB "CLRA; RTS" (carry 0)
+flag name_entry_linger cy done
+# name_entry's carry only comes from its states (tail calls by name_entry_state): name_entry_type_initials,
+# name_entry_linger and name_entry_save say done, but name_entry_set_up's carry is also the carry of the BCD
+# increment of the place (022029.. "ADDA #$01; DAA": carry = (uint8_t)(place_number + 1u) < place_number, handed to
+# konami_daa) before its "CLRA; RTS": named "done" there it would name that DAA carry too, so name_entry_set_up is left
+# with its carry and name_entry (one meaning for its callers: name_entry_run "if (carry) game_step++;") takes the
+# name itself
+flag name_entry cy done
+# (left: name_entry_set_up's half_carry and carry, and high_scores_print_entries' carry and half_carry 02263C..: the
+# half carry and carry of the place's BCD increment "ADDA #$01; DAA", arithmetic carries)
+# done: scenes/high_scores.c
+
+# ---- scenes/scene_objects.c ----
+# 02538D "CLRB; EXG A,B; ASLB; ROLA; ASLB; ROLA; ASLB; ROLA": the record number times 8, a 16-bit shift done a byte at a
+# time; the carry is the bit each ASLB moves out of the low byte into the high one
+flag scene_put_placement cy shifted_bit
+# done: scenes/scene_objects.c
+
+# ---- scenes/story_actor.c ----
+# 03E7FC "LEAX #$00C0,X; DEC <$F0; RTS": the next player's object and the count of players left (story_players_left)
+# down by one; the zero flag of the DEC is 1 when none is left. Its callers loop "do { ... story_next_player(&player,
+# &zero); } while (zero == 0u);" (story_random_player, story_actor_line_up_players...)
+flag story_next_player z none_left
+# 03E05A "LDA #$00,X; BNE $6065", 03E065 "CMPA #$04; LBNE": the actor's flags (4: start its script again)
+local story_actor_run 03E05A a actor_flags
+# 03E083 "CLRD; LEAX #$28,X; LDU #$0018; BSETW D,X,U": the word its fields from 28 are filled with (0)
+local story_actor_run 03E083 a fill_high
+local story_actor_run 03E083 b fill_low
+# 03E125 "LDA #$04,X; CMPA #$03; BHI $6138; MUL": the actor's kind (a player, 0-3, times the margin: 03E12C "MUL")
+local story_actor_run 03E125 a kind
+# 03E138 "LBSR $8671" (vector_direction_to_offset: the direction towards beside the target, in A), 03E13B "LDB
+# #$3A,X; LBSR $8617" (vector_set_speed_by_direction with the direction and the walk speed)
+local story_actor_run 03E138 a direction
+# 03E1D1 "LDD #$3C,X; BEQ; CMPD <$AC; LBGE $667F": the camera x the actor waits for (story_actor.camera_wait), its
+# two bytes
+local story_actor_run 03E1D1 a camera_wait_high
+local story_actor_run 03E1D1 b camera_wait_low
+# 03E1E9 "LDA #$04; LDB #$04,X; MUL; ADDD #$4842; PUSHS D; PULLS U; TST ,U": the pressed byte (player_input.pressed)
+# of the player whose number is the actor's kind
+local story_actor_run 03E1F4 u pressed_at
+# 03E1FA "LDA #$1D,X; LBEQ; DECA; STA #$1D,X": on each press, what it adds to the wait, one less every press
+local story_actor_run 03E1FA,03E200 a press_bonus
+# 03E204 "ADDA #$1C,X; CMPA #$E0; BHI; STA #$1C,X": the wait (field 1C, 03E20E "DEC #$1C,X; LBNE") made longer, up to E0
+local story_actor_run 03E204 a longer_wait
+# 03E21F "LDB #$3B,X; BEQ; CLRA; CMPD #$16,X; ... DECB; STD #$16,X": the height waited for (landing_height) as a word,
+# its high byte 0
+local story_actor_run 03E224 a height_high
+# 03E238 "LDD #$3E,X; BEQ $6252" (story_actor.x_wait, the x waited for), 03E23D "SUBD <$AC; CMPD #$0C,X; LBGT;
+# DECD; STD #$0C,X" (on the screen: less camera_x)
+local story_actor_run 03E238 a x_wait_high
+local story_actor_run 03E238 b x_wait_low
+local story_actor_run 03E23D a screen_x_high
+local story_actor_run 03E23D b screen_x_low
+# 03E252 "LDD #$0A,X; BEQ", 03E257 "LBSR $863B" (vector_floor_ahead: the floor map's cell where the speeds take it,
+# its value in A), 03E25A "ANDA #$0F; CMPA #$0B,X; LBNE" (its floor against the one waited for)
+local story_actor_run 03E257 d cell
+local story_actor_run 03E257 a cell_value
+# 03E6F6 "LDY #$0C,X; CMPY #$0190; BGE; CMPY #$0000; BLT" (its x on the screen), 03E703 "LDY #$16,X; CMPY #$0280;
+# BGE; CMPY #$FE00; BLE" (its height): off either, story_actor_remove
+local story_actor_finish_frame 03E6F6 y x_now
+local story_actor_finish_frame 03E703 y z_now
+# (left: story_actor_remove_children's d, d_2 and p_d: A, which 03E7A3 "PUSHS X,A" keeps and 03E7B8 "PULLS A,X,PC"
+# gives back, passed along; story_actor_run's d at 03E138, margin in and direction out, and its u from the calls)
+# done: scenes/story_actor.c
+
+# ---- stages/scroll.c ----
+# 0264E7 "LDD <$F0; ASRA; RORB; ASRA; RORB": the move divided by 4, a 16-bit shift done a byte at a time; the carry is
+# the bit each ASRA moves out of the high byte into the low one (RORB)
+flag camera_scale_quarter cy shifted_bit
+# 0264EF "LDD <$F0; ASRA; RORB": the move divided by 2
+flag camera_scale_half cy shifted_bit
+# 0264FB "LDD <$F0; ASLB; ROLA": the move times 2; the bit the ASLB moves out of the low byte into the high one
+flag camera_scale_double cy shifted_bit
+# 026501 "LDD <$F0; ASLB; ROLA; ASLB; ROLA": the move times 4
+flag camera_scale_quadruple cy shifted_bit
+# (left: camera_scale_move's d at 0264E5, A doubled by "ASLA" with the ratio's low byte, handed back as it is; and the
+# arithmetic carries of camera_update, camera_stop_at_x/_y..., layer_scroll_move, cemetery_scroll_up, story_1_scroll,
+# screen_shake_advance, dreamland_scroll: sums done a byte at a time)
+# done: stages/scroll.c
+
+# ---- stages/stage.c ----
+# 07B693 "LDA $184E; BEQ $B6A4" (players_all_idle: not all out, scene_routine_nothing, carry 0), else 07B699 "LDA
+# <$50; STA <$85; INC <$04; COMA; RTS" (the players noted again, the next phase, carry 1: all the players are out).
+# Its callers stage_N_exit: "if (carry) stage_record_entry += 4u;"
+flag stage_players_exit cy players_out
+# 07B6A4 "CLRA; RTS": carry 0, what stage_players_exit hands back while the players are not all out (its other caller,
+# stage_play_frame's scene routine, does not read it)
+flag scene_routine_nothing cy players_out
+# done: stages/stage.c
+
+# ---- stages/stage_3.c ----
+# 07A9FC "CLRD; STA <$04", 07AA00 "STD <$05" (step_subphase and step_countdown, from D: stage_3_forest_end_phase
+# hands it 0, cleared_steps); the palette callers reach it only through table entries read past their ends
+param stage_3_forest_end_phase_tail d subphase_and_countdown
+# done: stages/stage_3.c
+
+# ---- stages/stage_7.c ----
+# (left: stage_7_closing_scene's u. 07B181 "LDU #$001F; BMOVE Y,X,U" makes it a count, but 07B188 joins that path
+# with the one where U is what run_child_objects hands back, and the C has one variable for the parameter and all of
+# them (the parameter's web keeps its name, so a local line there would do nothing): the U the step dispatcher hands
+# on)
+# done: stages/stage_7.c
+
+# ---- stages/title_cards.c ----
+# 02719F "CLRB; EXG A,B; ASLB; ROLA; ASLB; ROLA; ASLB; ROLA": the record number times 8, a 16-bit shift done a byte at a
+# time; the carry is the bit each ASLB moves out of the low byte into the high one
+flag title_card_put_picture cy shifted_bit
+# done: stages/title_cards.c
+
+# (left as passing a value along: the b that story_1_street, story_1_redraw, bonus_1_intro_phase, bonus_2_intro_phase,
+# bonus_2_end_phase, stage_2_end_phase and stage_5_end_phase find in B: "LDA #$xx; LBSR check_skip", which reads only
+# A, the frames to wait)
+
+# ======== names, batch 6: the stack slots and temporaries (build/names6/names_*.txt; merged by the lead) ========
+# ---- system (build/names5/names_system.txt) ----
+# batch 6, group system: the 053248 C's stack slots and temporaries in src/system, src/engine, src/video, src/game,
+# src/attract, src/test_mode, src/scenes, src/stages (proposals; symbols.txt syntax)
+#
+# A note on the plain `stack` the C shows: emit.renumbered() renames the first of a function's numbered names
+# (stack_1, stack_10, stack_10001...) to its base when the base is free, so the C's `stack` is a slot too; the work
+# list (which looks for stack_N) misses it. Its slot is named here with the rest, by the store that writes it.
+
+# ---- src/attract/demo.c ----
+# demo_start 07A0EA "PUSHS U": U the player's record (07A0E5 "LDU A,U" from player_records[demo_player]), kept over
+# 07A0F2-07A0FE (U then walks the demo's inputs) and taken back at 07A101 "PULLS U" (the C: "record = ((uint32_t)
+# stack_2 << 8) | stack;", then the record's lives). s2 its high byte, s1 its low byte
+local demo_start 07A0EA s2 saved_player_high
+local demo_start 07A0EA s1 saved_player_low
+# done: src/attract/demo.c
+
+# ---- src/engine/directions.c ----
+# set_walk_speeds_from_direction 07CCDD "PUSHS U,D": U, the caller's, kept to hand back (07CCED "PULLS D,U,PC"; the C
+# returns "((uint32_t)stack_2 << 8) | stack"); A the direction's angle (heading's high byte), read back at 07CCE4
+# "LDA ,S; ADDA #$40" for the speed across, a quarter turn on
+local set_walk_speeds_from_direction 07CCDD s2 saved_u_high
+local set_walk_speeds_from_direction 07CCDD s1 saved_u_low
+local set_walk_speeds_from_direction 07CCDD s4 heading_angle
+
+# ---- src/engine/objects.c ----
+# clear_enemy_objects / clear_list_1_objects / clear_child_objects 07959A / 0795CA / 0795FA "PUSHS D" after 079597 /
+# 0795C7 / 0795F7 "LDD #$59,X" (the object's sprites), put back after the clearing at 0795A4/0795A6 "PULLS D; STD
+# #$-07,X" (the C: "mem_write16(object_place - 7u, ((uint32_t)stack << 8) | stack_10002)"): the high byte (s10001,
+# the C's `stack`) and the low byte (s10002)
+local clear_enemy_objects 07959A s10001 saved_sprites_high
+local clear_enemy_objects 07959A s10002 saved_sprites_low
+local clear_list_1_objects 0795CA s10001 saved_sprites_high
+local clear_list_1_objects 0795CA s10002 saved_sprites_low
+# done: src/engine/objects.c
+
+# ---- src/scenes/game_start_portraits.c ----
+# game_start_draw_portraits 05EE68/05EE7C "PUSHS U; PULLS D; ANDA #$07; ORA #$28" and 05EE70/05EE84 "PUSHS D; PULLS
+# U": the tile place, past each column and each row, kept inside the tile layer's page 2800-2FFF (the C: "stack_2 =
+# (stack_2 & 7u) | 0x28u; tile = ((uint32_t)stack_2 << 8) | stack;"): s2 the place's high byte, s1 its low byte
+local game_start_draw_portraits 05EE68,05EE70,05EE7C,05EE84 s2 tile_high
+local game_start_draw_portraits 05EE68,05EE70,05EE7C,05EE84 s1 tile_low
+
+# ---- src/scenes/high_scores.c ----
+# name_entry_type_initials 022228 "PUSHS D" (the name entry's timer, 022212 "LDD $385E", over the sound at 02222D,
+# 022230 "PULLS D") and 022285 "PUSHS D" (the text's x, 022282 "LDD <$F8", over name_entry_edit_initials, 02228E
+# "PULLS D; ADDD #$0048"): a word kept over a call; s10001 (the C's `stack`) its high byte, s10002 its low byte
+local name_entry_type_initials 022228,022285 s10001 kept_word_high
+local name_entry_type_initials 022228,022285 s10002 kept_word_low
+# name_entry_edit_initials 022407 "PUSHS U" (the letter's sprite, over 02240B "LDU <$FC; LDB #$18,U": the player's
+# colour, back at 022413 "PULLS U") and 022435 "PUSHS X" (the entry, over 022437 "LDX #$759E": the cursor's zooms,
+# back at 022446 "PULLS X"): a pointer kept while U or X reads something else; s2 its high byte, s1 its low byte
+local name_entry_edit_initials 022407,022435 s2 kept_pointer_high
+local name_entry_edit_initials 022407,022435 s1 kept_pointer_low
+# name_entry_draw_picture 022491 "PUSHS U,X,D; LEAS #$-10,S": its frame from 0,S = s16
+# 022496 "STA #$00,S": A the column with bit 7 (022491's "bit 7 of A blank": 0224CF "LDB #$00,S; BPL" else colour 0)
+local name_entry_draw_picture 022496 s16 column_and_blank
+# 02249B "ANDA #$7F; STA #$06,S" (s10, the C's `stack`): the player's column, 0224A4 "LDA #$06,S; ASLA; LDD A,X" its
+# name_entry_columns entry
+local name_entry_draw_picture 02249B s10 column_number
+# 02249E "STB #$07,S": B the picture, 0224B3 "LDB #$07,S; ASLB; LDX B,X" name_entry_pictures
+local name_entry_draw_picture 02249E sF picture_number
+# 0224AA "STA #$05,S": the column entry's column (name_entry_column.column), added to every block's tile place at
+# 0224BB "LDB #$05,S; LEAU B,U"
+local name_entry_draw_picture 0224AA s11 column_tiles
+# 0224AD "STB #$03,S": the column entry's palette, ORed into each block's colour at 0224CC "ORA #$03,S"
+local name_entry_draw_picture 0224AD s13 column_palette
+# 0224C2 "LDA ,X+; STA #$01,S": the block's width, the columns of each row (0224D8 "LDA #$01,S; STA #$04,S") and the
+# step to the next row (0224EE "LDA #$40; SUBA #$01,S")
+local name_entry_draw_picture 0224C2 s15 block_width
+# 0224C7 "LDA ,X+; STA #$02,S", 0224F5 "DEC #$02,S; BNE": the block's rows still to draw
+local name_entry_draw_picture 0224C7,0224F5 s14 rows_to_draw
+# 0224DB "STA #$04,S" (the width), 0224E9 "DEC #$04,S; BNE": the row's tiles still to draw
+local name_entry_draw_picture 0224DB,0224E9 s12 columns_to_draw
+# 0224D5 "STA #$08,S": the block's colour with the column's palette, 0 to blank (0224D4 "CLRA"); 0224DE "LDB #$08,S;
+# STB #$-2000,U" each tile's colour
+local name_entry_draw_picture 0224D5 sE block_colour
+# high_scores_print_entries 022654 "PUSHS X": the entry, kept over the row (022724 "PULLS X; LEAX #$08,X": the next
+# entry; the C: "entry = (((uint32_t)stack_2 << 8) | stack) + 8u"); s2 its high byte, s1 its low byte
+local high_scores_print_entries 022654 s2 saved_entry_high
+local high_scores_print_entries 022654 s1 saved_entry_low
+# 0226A5 "LDD ,X++; PUSHS D" (the entry's BCD score), 0226CF "ASLDI #$04; STD ,S" (the digits moved a digit up after
+# each one printed), 0226DF "PULLS D"; then 0226E9 "LDA ,X++; PUSHS A" (the entry's icon number, read back at
+# 022702 "PULLS A; ADDB A,Y" in high_score_icons) and 0226EE "PUSHS U; PULLS D" (the sprite place, for the icon's
+# frame: 0226F2 "LSRDI #$03; ADDB <$16"). s4: the score's high digits, then the sprite place's low byte; s3: the
+# score's low digits, then the icon number; s5: the sprite place's high byte
+local high_scores_print_entries 0226A5,0226CF,0226EE s4 digits_high_then_sprite_low
+local high_scores_print_entries 0226A5,0226CF,0226E9 s3 digits_low_then_icon
+local high_scores_print_entries 0226EE s5 sprite_high
+# done: src/scenes/high_scores.c
+
+# ---- src/scenes/scene_objects.c ----
+# scene_put_placement 0253AD "LDD ,U++; CMPD #$FFFF; BEQ; STD #$0C,Y": the placement's x (FFFF keeps the object's)
+local scene_put_placement 0253AD t4 placement_x
+
+# ---- src/scenes/story_actor.c ----
+# story_actor_run: 03E081 "PUSHS X,B" (the actor and its script number, 03E07B "LDB #$30,X", over the clearing of
+# fields 28-57: 03E08B "PULLS B,X; STB #$30,X"); 03E134 "PUSHS A; SUBB ,S+" (half the target margin, 03E130 "LDA
+# #$39,X; ASRA"); 03E1B0 "PUSHS X" (the actor, over clearing the players' fields 2F: 03E1C6 "PULLS X"); 03E1F2
+# "PUSHS D; PULLS U" (the player's controls place 4842 + 4 x kind). s2: the high byte of the actor (or of the
+# controls place); s1: their low byte, or the half margin; s3: the actor's script number
+local story_actor_run 03E081,03E1B0,03E1F2 s2 kept_high
+local story_actor_run 03E081,03E134,03E1B0,03E1F2 s1 kept_low
+local story_actor_run 03E081 s3 saved_script_number
+# story_actor_play_sound_if_player 03E42A "PUSHS X" (the actor, over 03E42C-03E430 the player's flags, 03E432 "PULLS
+# X") and 03E437 "PUSHS U; PULLS D" (the operation's sound, 03E420 "LDU ,Y++", to D for 03E43B "LBSR $8680"): s2,
+# the C's 16-bit `stack`
+local story_actor_play_sound_if_player 03E42A,03E437 s2 kept_word
+# 03E42C "PUSHS D; PULLS X": the player's object (03E424 "LDA #$C0; MUL; ADDD #$4A40"), D to X; s10003 its high byte,
+# s10004 its low byte
+local story_actor_play_sound_if_player 03E42C s10003 player_object_high
+local story_actor_play_sound_if_player 03E42C s10004 player_object_low
+# story_actor_player_speaks 03E5D6 "PUSHS X": the actor, over story_random_player (03E5D8) and the balloon's set-up,
+# back at 03E639 "PULLS X" (the C's 16-bit `stack`)
+local story_actor_player_speaks 03E5D6 s2 saved_actor
+# 03E5EB / 03E61E "PUSHS D": the voice's sound command (03E5DF "LDD B,Y", the player's entry), kept over the balloon's
+# set-up and taken back at 03E610 "PULLS D" for 03E633 "LBSR $8680"
+local story_actor_player_speaks 03E5EB,03E61E s10003 saved_voice_high
+local story_actor_player_speaks 03E5EB,03E61E s10004 saved_voice_low
+# story_actor_finish_frame 03E68B / 03E6B2 "PUSHS X": the actor, over running its 11 child slots and over running the
+# eight players' objects (03E6A4 / 03E6E4 "PULLS X"; the C's 16-bit `stack`)
+local story_actor_finish_frame 03E68B,03E6B2 s2 saved_actor
+# 03E689 "LDA #$0B", 03E692 "PUSHS A" ... 03E69F "PULLS A; DECA; BNE": the child slots still to run
+local story_actor_finish_frame 03E692 s3 child_slots_left
+# 03E698 "PUSHS Y": the next child slot (03E694 "LDX ,Y++"), over story_actor_run (03E69D "PULLS Y")
+local story_actor_finish_frame 03E698 s5 saved_child_slot
+# story_actor_remove 03E752 "PUSHS X": the actor (5640), over the players' loop (03E79F "PULLS X; TFR X,U": the
+# parent of story_actor_remove_children; the C's 16-bit `stack`)
+local story_actor_remove 03E752 s2 saved_actor
+# 03E777 "PUSHS X": the player, over clearing its fields 1C-58 (03E77C "LDU #$003D; BSET"), back at 03E781 "PULLS X"
+local story_actor_remove 03E777 s4 saved_player
+# story_random_player 03E7CB "PUSHS D; PULLS X": a player's object picked by the random number (03E7C0 "LDA <$58;
+# ANDA #$03; LDB #$C0; MUL; ADDD #$4A40"), D to X; s10001 (the C's `stack`) its high byte, s10002 its low byte
+local story_random_player 03E7CB s10001 random_player_high
+local story_random_player 03E7CB s10002 random_player_low
+# done: src/scenes/story_actor.c
+
+# ---- src/system/jump_table.c ----
+# clear_child_objects (0795DF folded in): 0795FA "PUSHS D" after 0795F7 "LDD #$59,X" (the object's sprites), put
+# back at 079604/079606 "PULLS D; STD #$-07,X"
+local clear_child_objects 0795FA s10001 saved_sprites_high
+local clear_child_objects 0795FA s10002 saved_sprites_low
+# start_sample_rom_check 078F18 "TST $1FC4": reading 1FC4 interrupts the Z80 (CLAUDE.md: "1FC4 lectura = IRQ al
+# Z80"); the value read is not used
+local start_sample_rom_check 078F18 t1 ignored_irq_read
+# find_nearest_player 07D2B3 "LDA #$04; PUSHS A" (s1, the C's `stack`), 07D2F0 "DEC ,S; BNE": the players still to
+# look at
+local find_nearest_player 07D2B5,07D2F0 s1 players_to_check
+# 07D2D3 "PUSHS D": the x distance to the player (07D2CA "LDD #$0C,X; SUBD #$0C,U", made positive), added to the y
+# distance at 07D2DE "ADDD ,S++"
+local find_nearest_player 07D2D3 s3 kept_x_distance
+# print_bcd_word 07941B "PUSHS A" (s1, the C's `stack`): the BCD word's high byte (its first two digits), read back
+# at 07942B "LDA ,S; ANDA #$0F" (the second digit) and 079443 "TST #$01,S" (the third digit is blank only when the
+# first two are 0)
+local print_bcd_word 07941B s1 high_digits
+# 079439 "TFR B,A; PUSHS A": the low byte (the last two digits), read back at 079450 "PULLS A; ANDA #$0F"
+local print_bcd_word 07943B s2 low_digits
+# print_bcd_byte 079400 "PUSHS A" (s1, the C's `stack`): the BCD byte, back at 079410 "PULLS A; ANDA #$0F" (the
+# low digit)
+local print_bcd_byte 079400 s1 saved_bcd_byte
+# reserve_objects_for_sprites 07E461 "PUSHS A" (s1, the C's `stack`; A the count of objects), 07E480 "DEC ,S; BNE":
+# the objects still to reserve
+local reserve_objects_for_sprites 07E451,07E461,07E480 s1 objects_left
+# 07E468 "LDB #$08; PUSHS B", 07E477 "DEC ,S; BNE": the object's sprites still to give an order
+local reserve_objects_for_sprites 07E46A,07E477 s2 sprites_left
+# done: src/system/jump_table.c
+
+# ---- src/test_mode/checks.c ----
+# test_color_check_draw_ramp 05E14F "PUSHS D": A the ramp's first tile (05E132 "LDA #$30"), B its colour byte (05E134
+# "LDB #$40", 05E13D "#$80", 05E146 "#$C0"), read back for each step at 05E15B "LDD ,S" (test_put_tile: tile A,
+# colour B); 05E16E "INC ,S": the next step's tile
+local test_color_check_draw_ramp 05E14F,05E16E s2 step_tile
+local test_color_check_draw_ramp 05E14F s1 kept_colour
+# test_io_check_run 05E1B8 "PUSHS X,B": X the place of the port's row (05E1B5 "LEAX #$09,X"), back at 05E1FD "PULLS
+# B,X"; B the ports still to show (05E1AB "LDB #$04", 05E1FF "DBJNZ"), read at 05E1DA "LDB #$01,S; CMPB #$02"
+local test_io_check_run 05E1B8 s2 row_place_high
+local test_io_check_run 05E1B8 s1 row_place_low
+local test_io_check_run 05E1B8 s3 ports_remaining
+# s4: 05E1BC "PUSHS B" (the bits still to show, 05E1BA "LDB #$06", 05E1C5 "PULLS B; DBJNZ"), 05E1CC "PUSHS Y" (the
+# next port's place, low byte, over test_read_setting) and 05E1D6 "PUSHS B" (the start buttons setting it read, 05E1EF
+# "PULLS B; TSTB"); s5: the port place's high byte
+local test_io_check_run 05E1BC,05E1CC,05E1D6 s4 kept_byte
+local test_io_check_run 05E1CC s5 saved_port_high
+# done: src/test_mode/checks.c
+
+# ---- src/test_mode/menu.c ----
+# test_menu_update 05E597 "LDB [,Y]; SEX; PUSHS D; PULLS X": the cursor (sign extended) from D to X for the division
+# by 3 (05E59E "LDB #$03; DIV X,B"); s10001 its high byte, s10002 its low byte
+local test_menu_update 05E59A s10001 cursor_high
+local test_menu_update 05E59A s10002 cursor_low
+# 05E5A1 "PUSHS X; PULLS D": the quotient, the line chosen (each menu line takes three bytes), handed back in D
+# (05E5A5 "COMA": chosen); the C's 16-bit `stack`
+local test_menu_update 05E5A1 s2 chosen_line
+# test_colour_row 05E5BE "PUSHS U,X,D": U the caller's, put back (05E5E6 "PULLS D,X,U,PC"); X the row's place (05E5C0
+# "LDD #$02,S; ADDD #$E000": its colour place); A the colour to write (05E5D9 "LDA ,S; ... BSET A,X,U"), B the
+# caller's
+local test_colour_row 05E5BE s2 saved_u_high
+local test_colour_row 05E5BE s1 saved_u_low
+local test_colour_row 05E5BE s4 row_high
+local test_colour_row 05E5BE s3 row_low
+local test_colour_row 05E5BE s6 row_colour
+local test_colour_row 05E5BE s5 saved_colour_low
+# 05E5C6 "ANDB #$C0; ADDB #$0F; PUSHS D; PULLS X": the row's colour place (from the line's start, column 0F), D to X
+local test_colour_row 05E5CA s8 colour_place_high
+local test_colour_row 05E5CA s7 colour_place_low
+# test_write_setting 05E5F2 "PUSHS U,Y,X,A": Y the setting's place (5A58-5A67 are in the EEPROM), put back at 05E605
+# "PULLS A,X,Y,U,PC"; 05E5F4 "LEAY #$-59F0,Y; PUSHS Y; LDA #$01,S": the EEPROM's cell, its low byte (s8)
+local test_write_setting 05E5F2 s4 saved_setting_high
+local test_write_setting 05E5F2 s3 saved_setting_low
+local test_write_setting 05E5F8 s8 eeprom_cell
+# test_read_setting 05E614 "PUSHS U,Y,X,A": Y the setting's place, X the caller's place on the screen (its tiles),
+# A the caller's, put back at 05E625 "PULLS A,X,Y,U,PC"; 05E61A "PUSHS Y; LDA #$01,S": the EEPROM's cell (s8)
+local test_read_setting 05E614 s4 saved_setting_high
+local test_read_setting 05E614 s3 saved_setting_low
+local test_read_setting 05E614 s6 saved_tiles_high
+local test_read_setting 05E614 s5 saved_tiles_low
+local test_read_setting 05E614 s7 saved_value_high
+local test_read_setting 05E61A s8 eeprom_cell
+# test_print 05E650 "PUSHS X,D": X the line's start place, read back by the line commands (05E69F/05E6A6/05E6AE/
+# 05E6C1 "PULLS D,X; LEAX #$40|#$80|#$C0|#$100,X": the next lines); the C's 16-bit `stack`
+local test_print 05E650 s2 line_start
+# 05E677 "ADDD #$208C; PUSHS D; PULLS X": a place the text gives (row and column), D to X
+local test_print 05E67A s10005 new_place_high
+local test_print 05E67A s10006 new_place_low
+# 05E6E6 "PUSHS U,D": U the text after the word (05E6F1 "PULLS D,U"), A the word's number (C7 + n, 05E6F3 "TSTA":
+# the word C7 ends the text), B the colour
+local test_print 05E6E6 s6 saved_text
+local test_print 05E6E6 s10007 saved_word_number
+local test_print 05E6E6 s10008 saved_colour
+# unused_test_print_hex_word 05E704 "PUSHS U": the word, 05E706 "LDA ,S" its high byte, 05E70A "LDA #$01,S" its low
+# byte, each printed with test_print_hex
+local unused_test_print_hex_word 05E704 s2 word_high_byte
+local unused_test_print_hex_word 05E704 s1 word_low_byte
+# test_print_hex 05E711 "PUSHS D": A the byte printed (its low digit read back at 05E71E "LDA ,S; ANDA #$0F"), B the
+# caller's colour (05E726 "PULLS D,PC")
+local test_print_hex 05E711 s2 kept_printed_byte
+local test_print_hex 05E711 s1 saved_colour
+# done: src/test_mode/menu.c
+
+# ---- src/test_mode/options.c ----
+# test_print_coinage 05E2E1 "PUSHS B" (s1, the C's `stack`): the coinage setting, back at 05E304 "PULLS A" for its
+# credits digit (05E30C "LDA A,Y", coin_setting_credit_digits)
+local test_print_coinage 05E2E1 s1 saved_coinage
+# 05E2F0 "PUSHS B; ADDA ,S+": the extra coins of the first credit (setting 5A62) added to the coins
+local test_print_coinage 05E2F0 s2 added_extra_coins
+# test_choose_setting_run 05E43C "PUSHS Y": the setting's place, over test_menu_update (05E441 "PULLS Y"); then
+# 05E447 "PUSHS B": the line chosen, back at 05E44F "PULLS B; DECB" (the value to write)
+local test_choose_setting_run 05E43C s2 saved_setting_high
+local test_choose_setting_run 05E43C,05E447 s1 setting_low_then_line
+# done: src/test_mode/options.c
+
+# ---- src/video/background_maps.c ----
+# draw_scrolled_layer_edges 07C411 "LDA #$03; LDB #$04; PUSHS D" (and 07C43F-07C443 for the rows): A the edge's number
+# (07C41F "LDA ,S; ASLA; JSR [A,X]": its draw routine), counted down by 07C439/07C467 "DEC ,S"; B its bit in the
+# edges to draw (07C417 "LDA #$01,S; BITA <$9A"), 07C436/07C464 "LSR #$01,S"
+local draw_scrolled_layer_edges 07C415,07C439,07C443,07C467 s2 edge_number
+local draw_scrolled_layer_edges 07C415,07C436,07C443,07C464 s1 edge_bit
+# draw_layer_columns 07C4A3 "PUSHS D": A the layer (07C4B0 "LDA #$01,S" for find_layer_column), B the columns to draw
+# (07C4C6 "DEC #$02,S; BNE")
+local draw_layer_columns 07C4A3 s2 kept_layer
+local draw_layer_columns 07C4A3,07C4C6 s1 columns_to_go
+# 07C4B3 "PUSHS X": the layer's map record, over drawing the column (07C4BB "PULLS X")
+local draw_layer_columns 07C4B3 s5 saved_layer_map_high
+local draw_layer_columns 07C4B3 s4 saved_layer_map_low
+# draw_layer_columns_with_floor_map 07C4E1 "PUSHS D": A the layer (07C4F0/07C4FC "LDA ,S"), B the columns to draw
+# (07C511 "DEC #$01,S; BNE")
+local draw_layer_columns_with_floor_map 07C4E1 s2 kept_layer
+local draw_layer_columns_with_floor_map 07C4E1,07C511 s1 columns_to_go
+# 07C4F2 / 07C4FE "PUSHS X": the layer's map record, over drawing the column and filling the floor map
+local draw_layer_columns_with_floor_map 07C4F2,07C4FE s4 saved_layer_map_high
+local draw_layer_columns_with_floor_map 07C4F2,07C4FE s3 saved_layer_map_low
+# find_layer_column 07C5F1 "PUSHS Y": the map's strip under the column (07C5E5 "LDY A,Y"), back at 07C5F8 "PULLS Y"
+# for the cell (07C60A "LEAY D,Y")
+local find_layer_column 07C5F1 s2 strip_high
+local find_layer_column 07C5F1 s1 strip_low
+# find_layer_row 07C67C "PUSHS X,D": X the layer's map record, A the strip's word in the map (07C67B "ASLA", the
+# scroll x's high byte times 2), B the scroll x's low byte; 07C690 "PULLS D,X; LDY A,Y"
+local find_layer_row 07C67C s2 saved_layer_map_high
+local find_layer_row 07C67C s1 saved_layer_map_low
+local find_layer_row 07C67C s4 strip_word
+local find_layer_row 07C67C s3 scroll_x_low
+# draw_map_row 07C80B "PUSHS Y": the next map cell (07C807 "LDD ,Y++"), over drawing the block's row (07C829 "PULLS Y")
+local draw_map_row 07C80B s2 next_cell_high
+local draw_map_row 07C80B s1 next_cell_low
+# fill_floor_map_row 07C867 "PUSHS Y": the same, over the floor map's row (07C88A "PULLS Y")
+local fill_floor_map_row 07C867 s2 next_cell_high
+local fill_floor_map_row 07C867 s1 next_cell_low
+# done: src/video/background_maps.c
+
+# ---- src/video/clear.c ----
+# clear_text_layer 07927F / 0792A3 "LDA #$20; PUSHS A" (s1, the C's `stack`), 079298 "DEC ,S" / 0792C2 "DEC #$04,S":
+# the rows still to clear, then the edge rows
+local clear_text_layer 07927F,079298,0792A3,0792C2 s1 rows_to_go
+# 079283 "LDA #$12; PUSHS X,A": X the row's place (079293 "PULLS A,X; LEAX #$40,X"), A the words of the row (07928F
+# "DEC ,S"); then 0792A5 "CLRD; PUSHS D" (the edges' colours, 0792B4 "LDD #$02,S") and 0792A8 "LDD #$3F3F; PUSHS D"
+# (the edges' tiles, 0792AD "LDD ,S"). s3/s2: the row place, then the colours; s4: the words left, then the tiles'
+# low byte; s5: the tiles' high byte
+local clear_text_layer 079283,0792A6 s3 row_or_colours_high
+local clear_text_layer 079283,0792A6 s2 row_or_colours_low
+local clear_text_layer 079283,07928F,0792AB s4 words_or_tiles_low
+local clear_text_layer 0792AB s5 edge_tiles_high
+# done: src/video/clear.c
+
+# ---- src/video/palette.c ----
+# palette_job_fade 07BE3B "PUSHS U": the palette job, over the range's colours (07BE6F "PULLS U"); 07BE77 "PUSHS A":
+# A (the step's bit from the last colour routine) over the board's control write, handed back (07BE85 "PULLS A")
+local palette_job_fade 07BE3B s2 saved_job_high
+local palette_job_fade 07BE3B,07BE77 s1 job_low_then_step_bit
+# done: src/video/palette.c
+
+# ---- src/video/sprites.c ----
+# sort_objects_by_depth 079A60 "PUSHS Y; PULLS D": the row's first object (079A5C "LDY D,U"), Y to D; the C's 16-bit
+# `stack`
+local sort_objects_by_depth 079A60 s2 first_in_row
+# 079A64 "PUSHS D; PULLS Y" (the next object in the row, 079A68 "LDD #$5E,Y": draw_next) and 079ABC "PUSHS D; PULLS
+# U" (the object lending the next sprites, 079AB6 "LDD #$-0002,U"): an object reached by a link, D to Y or U
+local sort_objects_by_depth 079A64,079ABC s10001 linked_object_high
+local sort_objects_by_depth 079A64,079ABC s10002 linked_object_low
+# draw_object 079BE5 "PUSHS X": the object, while X looks for an object to lend it sprites (079BE7 "LDX #$7E,Y",
+# 079BEC "LBSR $9CBD"), back at 079BF1/079C00 "PULLS X"
+local draw_object 079BE5 s2 saved_object_high
+local draw_object 079BE5 s1 saved_object_low
+# write_object_sprites: 079C71 "PUSHS D; PULLS Y" (the object lending the next 8 sprites, 079C6E "LDD #$-02,Y", D to
+# Y: s2 its high byte, s1 its low byte); 079CD7 "PUSHS A" (the window's bank, 079CD4 "LDA <$0E", set back at 079D51-
+# 079D5C "LDB #$04,U; STB <$0E; SETLN" and 079DCF-079DD7: s1); 079D02 / 079D82 "PUSHS Y" (the sprite entry, over the
+# zoom table in bank 1D) and 079D51 "PUSHS U,B,CC" (the sprite list): s3 their high byte, s2 their low byte
+local write_object_sprites 079C71,079CD7 s1 bank_or_lender_low
+local write_object_sprites 079C71,079D02,079D51,079D82 s2 pointer_low_or_lender_high
+local write_object_sprites 079D02,079D51,079D82 s3 kept_pointer_high
+# 079D04 / 079D84 "PUSHS B,CC": the zoom less 10 (the zoom step's index, 079D0E "PULLS CC,B; ... LDX D,X"); 079D1D /
+# 079D9D "CLRA; LDB <$EB; PUSHS D; PULLS Y": the offset to scale (s5 0, s4 the offset), D to Y for "LMUL"; 079D22 /
+# 079DA2 "PUSHS Y,X; LDD #$01,S": the product's middle bytes, the scaled offset (s6 its high byte, s5 its low byte)
+local write_object_sprites 079D04,079D1D,079D84,079D9D s4 zoom_then_offset
+local write_object_sprites 079D1D,079D22,079D9D,079DA2 s5 offset_high_then_scaled_low
+local write_object_sprites 079D22,079DA2 s6 scaled_offset_high
+# done: src/video/sprites.c
+
+# ======== the plain `stack` slots of the group's other functions (not in the work list) ========
+# Each is the slot the C calls `stack` (the first numbered slot of the function, renamed by emit.renumbered()); the
+# slot's key is given by the push that writes it.
+
+# ---- src/attract/intro.c ----
+# attract_lisa_scene_animate 04045C "ANDA #$01; PUSHS A": Lisa's random pose (0 or 1), her animation 1A + pose, back at
+# 040467 "PULLS A; ADDA #$1C" for her partner's
+local attract_lisa_scene_animate 04045E s1 saved_pose
+# attract_profile_move_out 0407A3 "PUSHS A": the move's number, over the move's speeds, back at 0407B5 "PULLS A; CMPA
+# #$04"
+local attract_profile_move_out 0407A3 s1 saved_move_number
+# done: src/attract/intro.c
+
+# ---- src/engine/directions.c ----
+# set_speeds_from_direction 07CC8E "PUSHS U,D": D the heading (A its angle), read back at 07CC95 "LDD ,S" for the speed
+# across, a quarter turn on (the C: "stack = heading", 16 bits at s4)
+local set_speeds_from_direction 07CC8E s4 saved_heading
+# direction_to_beside 07CCF0 "PUSHS X,B": B the x offset beside the other object (07CCF2 "SEX; ADDD #$0C,U"), handed
+# back as the direction's low byte (07CD86/07CD8E "PULLS B,X,PC")
+local direction_to_beside 07CCF0 s3 saved_x_offset
+# direction_to 07CCFB "PUSHS X,B": the caller's B, handed back as the direction's low byte ("PULLS B,X,PC")
+local direction_to 07CCFB s3 direction_low
+# done: src/engine/directions.c
+
+# ---- src/engine/floor.c ----
+# set_climb_speed 07CDD6 "LDB #$5D,X; LSRB x3; PUSHS B; SUBA ,S+": the level of the floor the object is on (its floor
+# height in steps of 8), taken from the target level
+local set_climb_speed 07CDDC s1 current_level
+# done: src/engine/floor.c
+
+# ---- src/game/continue.c ----
+# continue_screen 07B990 / 07B9D6 "PUSHS A" (the player's number, over its record's countdown, 07B9A8 / 07B9EB "PULLS
+# A; ... INCA"); 07B925 / 07BA15 "PUSHS B,CC" keep B over the bank switch in the same slot
+local continue_screen 07B925,07B990,07B9D6,07BA15 s1 saved_player_number
+# done: src/game/continue.c
+
+# ---- src/scenes/game_start_portraits.c ----
+# game_start_run_portraits 05EEB3 "CLRA; PUSHS A", 05EEC7 "INC ,S", 05EEC9 "LDA ,S; CMPA #$04": the portrait (test
+# player) to run, 05EEB9 "LDA ,S" its record in test_player_records
+local game_start_run_portraits 05EEB4,05EEC7 s1 portrait_index
+# portrait_come_alive 05EF58 "PUSHS A": the portrait's last frame (16), over the palette requests and the voice, back
+# at 05EF7E "PULLS A"
+local portrait_come_alive 05EF58 s1 saved_frame
+# portrait_blink_now_and_then 05EF89 "PUSHS X; PULLS D": the object's address as a number, added to the random number
+# so that each portrait blinks at its own time (the C: "((stack + random_number) & 0xF7u) == 0u")
+local portrait_blink_now_and_then 05EF89 s2 object_as_number
+# done: src/scenes/game_start_portraits.c
+
+# ---- src/scenes/high_scores.c ----
+# name_entry_save 0222D0 "LDA #$04; PUSHS A", 022300 "DEC ,S; BNE": the players' entries still to save
+local name_entry_save 0222D2,022300 s1 entries_to_save
+# print_sprite_letter 022730 "PUSHS X; PUSHS B": B the colour, over the letter's sprite code, back at 022741 "PULLS B"
+# for put_sprite
+local print_sprite_letter 022732 s3 saved_colour
+# put_sprite 022757 "PUSHS A": the sprite's flags byte (A), over the board's control write, back at 022765 "PULLS A;
+# ORA #$80; STA ,U"
+local put_sprite 022757 s1 saved_flags
+
+# ---- src/scenes/scene_objects.c ----
+# blank_absent_player 0253CC "PUSHS U,X", then (s5) 0253E2 / 0253EC "PUSHS A" (the blank's tile, over reading the
+# player's place and the column count) and 025401 "PUSHS B" (the colour, over the step to the next row)
+local blank_absent_player 0253E2,0253EC,025401 s5 saved_tile_or_colour
+# done: src/scenes/scene_objects.c
+
+# ---- src/scenes/stage_7_scenes.c ----
+# stage_7_scene_set_up 024751 "PUSHS D": A the placement's record, B the placements left (02474F "LDB #$04"), over
+# scene_put_placement, back at 02476E "PULLS D" (the next record)
+local stage_7_scene_set_up 024751 s2 saved_record_and_count
+# stage_7_scene_put_chain 024858 "PUSHS Y": the link just put (record 28), 02486B "LDX ,S" to give it its pair (the
+# record 29 link), 024873 "PULLS X": the chain's last link
+local stage_7_scene_put_chain 024858 s2 saved_link
+# stage_7_end_board 0249E2 / stage_7_end_take_off 024A72 "PUSHS A": the rider's placement record, over
+# scene_put_placement, back at 0249F4 / 024A88 "PULLS A"
+local stage_7_end_board 0249E2 s1 saved_record
+local stage_7_end_take_off 024A72 s1 saved_record
+# done: src/scenes/stage_7_scenes.c
+
+# ---- src/scenes/stage_8_scenes.c ----
+# stage_8_start_run_players 024D26 "LDA #$04; PUSHS A", 024D3D "DEC ,S; BNE": the players' objects still to run
+local stage_8_start_run_players 024D28,024D3D s1 players_to_run
+# stage_8_end_run_family 0251D2 "LDA #$07; PUSHS A", 0251E2 "DEC ,S; BNE": the family's objects still to run
+local stage_8_end_run_family 0251D4,0251E2 s1 actors_to_run
+# done: src/scenes/stage_8_scenes.c
+
+# ---- src/scenes/stage_ends.c ----
+# stage_end_run_jumpers 024254 "LDA #$05; PUSHS A", 024269 "DEC ,S; BNE": the jumpers still to run
+local stage_end_run_jumpers 024256,024269 s1 jumpers_to_run
+# stage_2_end_players_look_around 0243C0 "PUSHS X; PULLS D": the object's address as a number, added to the frame
+# count (the C: "((stack + (uint8_t)frame_count) & 0x40u) == 0u")
+local stage_2_end_players_look_around 0243C0 s2 object_as_number
+# done: src/scenes/stage_ends.c
+
+# ---- src/scenes/stories.c ----
+# story_stage_8_end 03EA0C / story_burns_robot_entrance 03FDEA "PUSHS X": the actor, over the players' loop (03E7F3),
+# back at 03EA3C / 03FE19 "PULLS X"
+local story_stage_8_end 03EA0C s2 saved_actor
+local story_burns_robot_entrance 03FDEA s2 saved_actor
+# done: src/scenes/stories.c
+
+# ---- src/scenes/story_1.c ----
+# story_1_family 0275AE "CLRA; PUSHS A", 0275BD "INC ,S", 0275B4 "LDA ,S" (its script): the family member being set up
+local story_1_family 0275AF,0275BD s1 family_member
+# story_1_runners 027659 "CLRA; PUSHS A", 027676 "INC ,S", 02765F "LDA ,S": the runner being set up
+local story_1_runners 02765A,027676 s1 runner_number
+# story_1_smithers_drop 0276D3 "PUSHS X": the object, over story_put_object (0276D8 "PULLS X")
+local story_1_smithers_drop 0276D3 s2 saved_object
+# done: src/scenes/story_1.c
+
+# ---- src/scenes/story_actor.c ----
+# story_actor_walk_to_partner 03E2D8 "PUSHS X; PULLS D": the actor's address as a number (the C: "target = stack +
+# 0x60u", its partner object)
+local story_actor_walk_to_partner 03E2D8 s2 actor_as_number
+# story_actor_put_in 03E308 / 03E396 "PUSHS X" (the actor, over the players' loop and its child slots) and 03E37D
+# "PUSHS Y" (the script, over 03E37F "LBSR $862C", back at 03E382 "PULLS Y; LEAY #$08,Y")
+local story_actor_put_in 03E308,03E37D,03E396 s2 saved_actor_or_script
+# story_actor_line_up_players 03E3D2, story_actor_random_player_faces 03E4A1, story_actor_set_players_animation
+# 03E4C6, story_actor_place_players 03E566, story_actor_start_absent_players 03E5AC "PUSHS X": the actor, over the
+# players' loop, back at 03E403 / 03E4C1 / 03E4E2 / 03E583 / 03E5C1 "PULLS X"
+local story_actor_line_up_players 03E3D2 s2 saved_actor
+local story_actor_random_player_faces 03E4A1 s2 saved_actor
+local story_actor_set_players_animation 03E4C6 s2 saved_actor
+local story_actor_place_players 03E566 s2 saved_actor
+local story_actor_start_absent_players 03E5AC s2 saved_actor
+# story_actor_remove_children 03E7A3 "PUSHS X,A": A the caller's count of child slots (the function calls itself for
+# each child, 03E7B3 "BSR $67A3"), handed back at 03E7B8 "PULLS A,X,PC"
+local story_actor_remove_children 03E7A3 s3 callers_count
+
+# ---- src/stages/scroll.c ----
+# cemetery_scroll_slow_down 0260D4 "PUSHS X": the row's first place, back at 0260DD "PULLS X; LEAX #$40,X"
+local cemetery_scroll_slow_down 0260D4 s2 row_start
+# camera_stop_at_x 026304 / camera_next_entry_at_x 026330 / camera_stop_at_x_left 02637B "(LDD <$DE;) ADDD <$AD;
+# PUSHS A": the camera's next x, its low byte (its high byte from 026310 "ADCA <$AC"; 026313 "PULLS B")
+local camera_stop_at_x 02630A s1 next_x_low
+local camera_next_entry_at_x 026333 s1 next_x_low
+local camera_stop_at_x_left 02637E s1 next_x_low
+# camera_stop_at_y 0263CC / camera_stop_at_y_up 0263EE: the same for y ("ADDD <$B3", "ADCA <$B2")
+local camera_stop_at_y 0263CC s1 next_y_low
+local camera_stop_at_y_up 0263EE s1 next_y_low
+# camera_scroll_layers 02643E "LDA ,U+; PUSHS A": the entry's ratio for the other layer's move, used for x (026442
+# "LBSR $64E1") and again for y (02644E "PULLS A")
+local camera_scroll_layers 026440 s1 saved_ratio
+# done: src/stages/scroll.c
+
+# ---- src/system/boot.c ----
+# apply_settings 078A22 "LDA A,U; PUSHS A": the coinage's byte (coinages), its low digit the credits, back at 078A2E
+# "PULLS A; LSRA x4" for the coins
+local apply_settings 078A24 s1 coinage_byte
+# ram_rom_check 078C22 "LDA #$20; PUSHS A" (and 078C6C #$30, 078CAB #$00, 078CEA #$10), 078C39 / 078C81 / 078CC0 /
+# 078CFF "INC ,S": the bank whose bytes are summed next (078C26-078C31 "LEAU #$00,S; LDB #$03,U; STB <$0E; SETLN")
+local ram_rom_check 078C24,078C39,078C6C,078C81,078CAB,078CC0,078CEA,078CFF s1 summed_bank
+# set_check_colours 078D95 "LDA #$0F; PUSHS A" / 078DAA "LDA #$10; PUSHS A", 078D9E / 078DB3 "DEC ,S": the colours
+# still to set
+local set_check_colours 078D97,078D9E,078DAC,078DB3 s1 colours_to_set
+# test_ram_words 078DD6 / 078DF6 "PUSHS Y; PULLS D": the count of words to test, Y to D
+local test_ram_words 078DD6,078DF6 s2 words_to_test
+# print_check_result 078E7F "PUSHS B": the result (0 good, else BAD's offset in the texts), read back at 078E89 "LDB
+# ,S" and handed back at 078EAE "PULLS B,PC"
+local print_check_result 078E7F s1 saved_result
+# read_sound_rom_sum 078ED9 "PUSHS A": the sum's high byte (command F383), back at 078EE4 "PULLS A"
+local read_sound_rom_sum 078ED9 s1 saved_sum_high
+# done: src/system/boot.c
+
+# ---- src/system/eeprom.c ----
+# eeprom_verify 05EA6F "PUSHS B": the stored sum's high byte (cell 7E), back at 05EA75 "PULLS A; CMPD <$F0"
+local eeprom_verify 05EA6F s1 saved_sum_high
+# eeprom_read 05E915 "PUSHS U,A": A the cell's address, handed back at 05E930 "PULLS A,U,PC"
+local eeprom_read 05E915 s3 saved_address
+# done: src/system/eeprom.c
+
+# ---- src/system/inputs.c ----
+# coin_inserted 0791D8 "PUSHS A": the slot's coin bit, 0791E4 "ANDB ,S" (the coins let go), handed back at 0791F2 /
+# 0791F5 "PULLS A,PC"
+local coin_inserted 0791D8 s1 saved_coin_bit
+# add_coin 07922E "PUSHS A; LDA #$02,U; SUBA ,S+": the coins a credit costs, taken from the slot's coins
+local add_coin 07922E s1 credit_cost
+# done: src/system/inputs.c
+
+# ---- src/system/interrupts.c ----
+# test_mode_run 0791A2 "PUSHS B,CC": the interrupted code's B, kept over the switch to bank 2F and handed to
+# test_run_page
+local test_mode_run 0791A2 s1 saved_b
+# done: src/system/interrupts.c
+
+# ---- src/system/jump_table.c (the routines behind its jumps) ----
+# object_take_special_hit 07CFC2 "LDA #$5B,U; ANDA #$70; PUSHS A; ... ORA ,S+": the hitter's player bits (its
+# shadow_player's 70), put into the object's points field
+local object_take_special_hit 07CFC7 s1 hitter_player_bits
+
+# ---- src/system/random.c ----
+# next_random 079548 "LDD <$58; PUSHS D", 079556 "ADDD ,S++": the old random number, added to the new one
+local next_random 07954B s2 saved_random
+# done: src/system/random.c
+
+# ---- src/test_mode/menu.c ----
+# test_mark_line 05E5A7 "PUSHS D; INCB; PUSHS A": A the colour (s3), over the line's row, back at 05E5B7 "PULLS A" for
+# test_colour_row
+local test_mark_line 05E5AA s3 saved_colour
+
+# ---- src/test_mode/options.c ----
+# test_choose_setting_open 05E431 "PUSHS Y": the setting's place, over test_open_page (05E436 "PULLS Y")
+local test_choose_setting_open 05E431 s2 saved_setting
+# test_premium_start_page 05E495 "PUSHS B" (the line chosen, over test_read_setting, 05E49A "PULLS B") and 05E4C0
+# "PUSHS B" (the next page, 14, over test_open_coinage_page, 05E4C7 "PULLS B; STB $5908")
+local test_premium_start_page 05E495,05E4C0 s1 choice_or_next_page
+
+# ---- src/test_mode/rom_check.c ----
+# test_sum_tile_rom 05EC50 / 05EC5C "PUSHS A": the board's output byte last written (A), over the interrupt control
+# writes, handed back (05EC58 / 05EC6A "PULLS A")
+local test_sum_tile_rom 05EC50,05EC5C s1 saved_output
+# test_print_rom_ok / test_print_rom_bad 05ED45 "PUSHS X; PULLS D": the ROM's sum, X to D for print_hex_word
+local test_print_rom_ok 05ED45 s2 printed_sum
+local test_print_rom_bad 05ED45 s2 printed_sum
+# done: src/test_mode/rom_check.c
+
+# ---- src/test_mode/sound_test.c ----
+# test_sound_test_next 05E24B "PUSHS A; INCA; CMPA ,S+": the list's last number, compared with the next one
+local test_sound_test_next 05E24B s1 saved_last_number
+# done: src/test_mode/sound_test.c
+
+# ---- src/video/palette.c ----
+# palette_request 07BAC7 "PUSHS X", 07BACC "PUSHS A" (s3): the request's kind (A), over its routine's address (07BAD2
+# "LDX A,X"), back at 07BAD4 "PULLS A"
+local palette_request 07BACC s3 saved_request_high
+# run_palette_jobs 07BC97 "PUSHS U": the palette job, over its routine (07BC9D "JSR [A,X]"), back at 07BC9F "PULLS U"
+local run_palette_jobs 07BC97 s2 saved_job
+# palette_job_effect 07BD01 "PUSHS B,CC" (B over the switch to bank 2E) and 07BD15 / 07BD3C "PUSHS A" (A over the
+# board's control writes): a register kept over a write
+local palette_job_effect 07BD01,07BD15,07BD3C s1 kept_byte
+# palette_effect_forward / palette_effect_backward 07BD97 "PUSHS A": A (the colours left, or the step's mark) over the
+# board's control write, handed back at 07BDA5 "PULLS A"
+local palette_effect_forward 07BD97 s1 saved_colours_left
+local palette_effect_backward 07BD97 s1 saved_step_mark
+# palette_job_background_colour 07BDE6 / 07BDFF "PUSHS A": A over the board's control writes; at 07BDFF the background
+# colour's high byte (07BDF6 "LDD #$01,U; STD $0C00")
+local palette_job_background_colour 07BDE6,07BDFF s1 saved_colour_high
+# load_palettes 07BF51 "PUSHS A" (the palettes to load, over the control write, 07BF5F "PULLS A") and 07BF83 "PUSHS
+# A" (the last colour's high byte, over the control write)
+local load_palettes 07BF51,07BF83 s1 count_then_colour_high
+
+# ---- src/video/text.c ----
+# print_game_text 07931F "ANDB #$7F; PUSHS B,CC" (and 079348): the text's entry in game_texts (number x 2), kept over
+# the switch to bank 12, read at 079331 "LDU B,X"
+local print_game_text 079321,079348 s2 text_entry_offset
+# print_hex_byte 07945C "PUSHS U,A" (s3): the byte printed, its low digit read back at 07946F "PULLS A; ANDA #$0F"
+local print_hex_byte 07945C s3 saved_printed_byte
+# print_hex_word 07947D "PUSHS B": the word's low byte, printed after the high one (079484 "PULLS A")
+local print_hex_word 07947D s1 kept_low_byte
+# done: src/video/text.c
+# ---- objects (build/names5/names_objects.txt) ----
+# batch 6, objects: the stack slots and temporaries of src/objects, src/enemies, src/players, src/bosses, src/bonus
+# (lines 'local FUNCTION PLACE sN NAME' / 'local FUNCTION PLACE tN NAME', PLACE the store from the work list)
+
+# ---- src/bonus/balloon.c ----
+# 0200D7 "PUSHS U,X", 0200D9 "LBSR $68AB" (bonus_1_press_sound), 0200DC "PULLS X,U": X, the shown player's balloon,
+# kept around the call (C "stack_4 = player_balloon; ... player_balloon = stack_4;")
+local bonus_1_intro_show_how 0200D7 s4 saved_player_balloon
+# 02022C "PUSHS Y" ... "PULLS Y": the player's wait place (scene_palette_effect + player, the wait before its flight),
+# kept while the too-small player's blower and middle part get their animations
+local bonus_1_results 02022C s3 saved_wait_place
+# 0202EE "PUSHS U", 0202F0 "LBSR $6510" (bonus_1_flight), 0202F3 "PULLS U": the player's wait place around its flight
+local bonus_1_fly_away 0202EE s3 saved_wait_place
+# 020412 "CLRA", 020413 "LDB #$29,X; NEGB", 020417 "PUSHS D", 02041E "ADDD ,S": 00 and minus the width zoom's whole
+# part, added to minus the height's into the balloon's size (C "size = b + ((stack_10001 << 8) | stack_10002)")
+local bonus_1_blow 020417 s10001 negated_width_high
+local bonus_1_blow 020417 s10002 negated_width
+# 020431 "LMUL", 020432 "PUSHS Y; PULLS D", 020438 "STA #$1F,X" (box width); 02044C "LMUL", 02044D "PUSHS Y; PULLS D",
+# 020453 "STA #$22,X" (box dx): 4000 / zoom times a factor, whose high byte is the box's size
+local bonus_1_blow 020432,02044D s4 scaled_box_size
+# 020496 "LDY #$2D,X; PUSHS Y" (the growth), 0204A1 "PULLS Y; LMUL", 0204A4 "PUSHS X; PULLS D": the growth, then the
+# growth scaled by the width zoom squared (the change to the width)
+local bonus_1_stretch_width 020499,0204A4 s4 scaled_growth
+# 0204D4 "LDY #$2D,X; PUSHS Y", 0204E2 "PUSHS X; PULLS D": the same for the height
+local bonus_1_stretch_height 0204D7,0204E2 s4 scaled_growth
+# 020795 "PUSHS X", 020797 "TFR Y,X", 02079E "LBSR $67C7" (bonus_put_placement), 0207A1 "PULLS X": the player's object
+# kept while an absent player's part is placed (its high byte here; the low byte shares the player-count slot)
+local bonus_1_put_players 020795 s2 saved_player_object_high
+# 02082C "LDA <$58; ANDA #$03; CLRB; PUSHS D" (A at ,S: a random player number), 020837 "LDA ,S; ASLA; LDU A,U"
+# (bonus_1_player_records), 02084C "ADDA ,S" (the rate), 020861 "LDA ,S; INCA; ANDA #$03; STA ,S": the player whose
+# record is looked at, going round from a random one
+local bonus_1_set_absent_rates 020832,020866 s2 record_index
+# 020A00 "LDA #$04; PUSHS A", 020A2A "DEC ,S; BNE": the result boxes still to check (4 down)
+local bonus_reward_winners 020A02,020A2A s6 boxes_to_check
+# done: src/bonus/balloon.c
+
+# ---- src/bonus/results.c ----
+# 0211B0 "LDA <$F1; ADDA #$0A" (the portrait's kind: 0A + the player), 0211B5 "LDB <$F0", 0211B8 "PUSHS D; PULLS Y",
+# 0211C1 "STY #$04,U" (kind and animation)
+local bonus_show_player_portraits 0211B8 s10002 portrait_kind
+# 0212A9 "PUSHS U,Y,X,D" ... 0212F5 "PULLS D,X,Y,U": X, the box's x, given back to the caller
+local bonus_results_draw_box 0212A9 s6 saved_box_x
+# 0212B3 "PUSHS A" (the colour, B2 or F2), 0212C6 "PULLS A"; 0212D2 "PUSHS B" (the rows, 7 or 4), 0212D4 "LDB ,S",
+# 0212EA "LDB ,S+": the slot holds the colour, then the row count
+local bonus_results_draw_box 0212B3,0212D2 s9 colour_or_rows
+# 0212BF "ADDD #$22C0", 0212C2 "PUSHS D; PULLS X": the box's first tile (22C0 + (x - scroll) / 8)
+local bonus_results_draw_box 0212C2 s1000A first_tile_high
+local bonus_results_draw_box 0212C2 s1000B first_tile_low
+# 0212B5 "PUSHS X; PULLS D" (the box's x, into D to take the scroll off), 0212D9 "PUSHS X", 0212E4 "PULLS X; LEAX
+# #$-2000,X" (the first tile, kept for the colours): the box's start, as x and then as tile
+local bonus_results_draw_box 0212B5,0212D9 sB box_start
+# done: src/bonus/results.c
+
+# ---- src/bonus/wake_up.c ----
+# 020A6C "LDD #$00A8; SUBD $4A4C", 020A73 "PUSHS D; PULLS X", 020A7A "LBSR $6A90" (bonus_2_move_player): how far the
+# first player walks to x A8 (low byte; the high byte shares another slot)
+local bonus_2_intro_set_up 020A73 s10002 walk_distance_low
+# 020E76 "LDX #$7D7D; LDD B,X" (bonus_2_player_x), 020E7B "PUSHS D; PULLS X": the player's x (low byte)
+local bonus_2_portrait_x 020E7B s10002 player_x_low
+# done: src/bonus/wake_up.c
+
+# ---- src/bosses/dreamland_boss.c ----
+# 0342A1 "LDD #$11,U; SUBD #$11,X", 0342A7 "ABSD": the player's y minus the boss's (depth), before its absolute value
+local dreamland_boss_chase_leg 0342A7 t1 depth_difference
+# done: src/bosses/dreamland_boss.c
+
+# ---- src/bosses/dreamland_boss_objects.c ----
+# 034EC2 "LDD #$0C,U; SUBD #$0C,X", 034EC8 "ABSD": the target's x minus the ball's, before its absolute value
+local boss_ball_fly_out 034EC8 t1 x_difference
+# done: src/bosses/dreamland_boss_objects.c
+
+# ---- src/enemies/cloud_devil.c ----
+# 03109F "LDD #$0C,X; CMPD #$0C,U; BCS" (the player to the right), 0310DD "LDB #$3A,X", 0310E0 "ADDD #$2E,X": the
+# heading plus the sweep rate (sweeping up to 4)
+local cloud_devil_steer 0310E0 t7 right_heading_up
+# 0310C2 "LDB #$3A,X", 0310C5 "NEGD": minus the sweep rate (the player to the left, sweeping back)
+local cloud_devil_steer 0310C5 t2 left_minus_rate
+# 0310C6 "ADDD #$2E,X", 0310CE "CMPA #$04": the heading minus the rate (the player to the left, down to 4)
+local cloud_devil_steer 0310C6 t7 left_heading_down
+# 0310AD "LDB #$3A,X", 0310B0 "ADDD #$2E,X", 0310B8 "CMPA #$0C": the heading plus the rate (the player to the left, up
+# to C)
+local cloud_devil_steer 0310B0 t7 left_heading_up
+# 03110B "LDD #$11,X; SUBD #$11,U; STA <$F0", 031114 "ABSD": the devil's y minus the player's, before its absolute value
+local cloud_devil_steer 031114 t1 depth_difference
+# 031128 "LDD #$0C,X; CMPD #$0060" / "CMPD #$0160": the x checked against the screen's sides
+local cloud_devil_steer 031128 t5 checked_x
+# 03113D "SUBD #$0C,X": the x again, taken from the edge to make the speed back in
+local cloud_devil_steer 03113D t5 old_x
+# 031146 "LDD #$11,X; CMPD #$0090" / "CMPD #$0100": the y checked against the floor's band
+local cloud_devil_steer 031146 t5 checked_y
+# 03115B "SUBD #$11,X": the y again, taken from the band's edge
+local cloud_devil_steer 03115B t5 old_y
+# done: src/enemies/cloud_devil.c
+
+# ---- src/enemies/enemy_moves.c ----
+# 07DA32 "CLRW #$0F,X", 07DA35 "LDD $1886" (enemy_walk_speed), 07DA39 "STD #$14,X": the walk speed, as depth speed
+local enemy_line_up_in_depth 07DA35 t3 depth_walk_speed
+# done: src/enemies/enemy_moves.c
+
+# ---- src/enemies/enemy_states.c ----
+# 07D5AC "LDD #$5C,U; SUBD #$5C,X", 07D5B2 "ABSD; CMPD #$0020": the target's floor minus the enemy's
+local enemy_think 07D5B2 t1 floor_gap
+# 07D617 "SUBA B,U; BCS": the roll before this choice's chance comes off it (the state's choice of an action)
+local enemy_think 07D617 t3 roll_before
+# 07D61B "DECB; BNE": the choice before it counts down
+local enemy_think 07D61B t1 choice_before
+# done: src/enemies/enemy_states.c
+
+# ---- src/enemies/enemy_targets.c ----
+# 07D31A "LDD #$0C,X; SUBD #$0C,U; BPL; NEGD", 07D323 "PUSHS D", 07D32E "ADDD ,S++": the x distance to the player,
+# added to the y distance
+local enemy_target_nearest_player 07D323 s3 x_distance
+# done: src/enemies/enemy_targets.c
+
+# ---- src/enemies/kind_b8_flyer.c ----
+# the same steering as cloud_devil_steer: 03353D "ADDD #$2E,X" (the player to the right, sweeping up to 4)
+local kind_b8_flyer_steer 03353D t7 right_heading_up
+# 033522 "NEGD": minus the sweep rate (the player to the left)
+local kind_b8_flyer_steer 033522 t2 left_minus_rate
+# 033523 "ADDD #$2E,X": the heading minus the rate (the player to the left, down to 4)
+local kind_b8_flyer_steer 033523 t7 left_heading_down
+# 03350D "ADDD #$2E,X": the heading plus the rate (the player to the left, up to C)
+local kind_b8_flyer_steer 03350D t7 left_heading_up
+# 033568 "LDD #$11,X; SUBD #$11,U; STA <$F0", 033571 "ABSD": the flyer's y minus the player's
+local kind_b8_flyer_steer 033571 t1 depth_difference
+# 033585 "LDD #$0C,X; CMPD #$0040": the x checked against the screen's sides
+local kind_b8_flyer_steer 033585 t5 checked_x
+# 03359A "SUBD #$0C,X": the x again, taken from the edge
+local kind_b8_flyer_steer 03359A t5 old_x
+# 0335A3 "LDD #$11,X": the y checked against the floor's band
+local kind_b8_flyer_steer 0335A3 t5 checked_y
+# 0335B8 "SUBD #$11,X": the y again, taken from the band's edge
+local kind_b8_flyer_steer 0335B8 t5 old_y
+# done: src/enemies/kind_b8_flyer.c
+
+# ---- src/objects/bear.c ----
+# 03CF23 "LDD #$19,X" (z speed), 03CF30 "PUSHS D", 03CF35 "LBSR $8680" (vector_queue_sound), 03CF38 "PULLS D";
+# 03CF4D "ASRDI #$02" (the bounce speed), 03CF4F "PUSHS D", 03CF5A "PULLS D": the z speed kept (low byte; the high byte
+# shares another slot)
+local bear_boulder 03CF30,03CF4F s10002 saved_z_speed_low
+# 03C9CE "PUSHS U; PULLS D" (the floor cell's place, high byte), 03C9D6 "PUSHS X" ... 03C9E1 "PULLS X" (the bear kept
+# around the fill): the slot holds the place's high byte, then the bear's
+local bear_break_out 03C9CE,03C9D6 s2 place_or_object_high
+# 03C9D2 "ANDB $00C0" (the row's start), 03C9D8 "PUSHS D; PULLS X", 03C9E0 "BSET A,X,U": the floor row cleared
+local bear_break_out 03C9D8 s3 floor_row_low
+local bear_break_out 03C9D8 s4 floor_row_high
+# 03CA86 "ANDA #$03; LDB #$C0; MUL; ADDD #$4A40", 03CA8E "PUSHS D; PULLS U": a random player's object (low byte)
+local bear_choose_target 03CA8E s10002 chosen_player_low
+# 03CB1E "LDU #$7E63; LDB <$57; LDB B,U" (bear_attack_delays_by_players), 03CB26 "LDA #$11", 03CB28 "PUSHS D;
+# PULLS Y", 03CB2E "LBSR $604C" (stage_boss_set_state: state 11 and this wait)
+local bear_walk 03CB28 s10002 attack_wait
+# done: src/objects/bear.c
+
+# ---- src/objects/burns_robot.c ----
+# 03B2B1 "LDB #$C0" / 03B2B5 "LDB #$40" (the side to aim at), 03B2B7 "PUSHS X,B", 03B2C4 "NEG ,S" (the other side when
+# the floor there is a wall), 03B2C6 "PULLS B,X", 03B2C8 "LBSR $8671" (vector_direction_to_offset)
+local burns_robot_aim_at_target 03B2B7,03B2C4 s3 aim_offset
+# done: src/objects/burns_robot.c
+
+# ---- src/objects/floor_scenery.c ----
+# 02C859 "LDD #$38,X; ORB <$F0", 02C85F "PUSHS D; PULLS U", 02C863 "STU #$2A,X": the floor row with the column two to
+# the left, the scenery's floor start
+local platform_scenery_start 02C85F s10001 floor_start_high
+local platform_scenery_start 02C85F s10002 floor_start_low
+# 02CA26 "LDD #$38,X; ORB <$F0", 02CA2C "PUSHS D; PULLS U", 02CA30 "STU #$2A,X": the same
+local charging_scenery_start 02CA2C s10001 floor_start_high
+local charging_scenery_start 02CA2C s10002 floor_start_low
+# done: src/objects/floor_scenery.c
+
+# ---- src/objects/football_player.c ----
+# 03C465 "LDB #$12", 03C46D "LDA #$0B", 03C46F "PUSHS D; PULLS Y", 03C475 "LBSR $604C" (stage_boss_set_state: state
+# 0B, this wait)
+local football_player_start_charge 03C46F s10002 wait_time
+# 03C5D9 "LDB #$18", 03C5E1 "LDA #$09", 03C5E3 "PUSHS D; PULLS Y", 03C5E9 "LBSR $604C" (state 09, this wait)
+local football_player_run 03C5E3 s10002 wait_time
+# done: src/objects/football_player.c
+
+# ---- src/objects/krusty_balloon.c ----
+# 026A18 "PUSHS U,X", 026A1E "LBSR $6969" (krusty_balloon_set_animation), 026A23 "LBSR $6978" (set_hit_box), 026A26
+# "PULLS X,U": U the shot and X the balloon, kept while the shot gets its look
+local krusty_balloon_throw 026A18 s3 saved_shot
+local krusty_balloon_throw 026A18 s5 saved_balloon
+# done: src/objects/krusty_balloon.c
+
+# ---- src/objects/obstacles.c ----
+# 02CC64 "PUSHS U; PULLS D" (the floor cell's place), 02CC6B "ANDB #$C0; STD #$38,X": the row's high byte
+local obstacle_raise_floor 02CC64 s2 floor_row_high
+# done: src/objects/obstacles.c
+
+# ---- src/objects/shaking_scenery.c ----
+# 02D234 "PUSHS U; PULLS D", 02D23B "ANDB #$C0; STD #$38,X": the floor row's high byte
+local scenery_block_floor 02D234 s2 floor_row_high
+# done: src/objects/shaking_scenery.c
+
+# ---- src/objects/stage_8_boss.c ----
+# 03A0E7 "LDA <$58; ANDA #$03; LDB #$C0; MUL; ADDD #$4A40", 03A0F2 "PUSHS D; PULLS U": the random player to start
+# looking from (low byte)
+local stage_8_boss_pick_player 03A0F2 s10002 start_player_low
+# done: src/objects/stage_8_boss.c
+
+# ---- src/objects/stage_bosses.c ----
+# 03C17F "LDA <$58; ANDA #$03; LDB #$C0; MUL; ADDD #$4A40", 03C18A "PUSHS D; PULLS U": the same
+local stage_boss_pick_random_player 03C18A s10002 start_player_low
+# done: src/objects/stage_bosses.c
+
+# ---- src/objects/wrestler.c ----
+# 0217EF "LDA #$04; CLRB", 0217F2 "PUSHS D" (A at ,S), 021808 "DEC ,S; BNE": the player slots still to check
+local wrestler_surrounded 0217F2,021808 s2 slots_left
+# done: src/objects/wrestler.c
+
+# ---- src/players/effects.c ----
+# 039B3F "LDD #$17,U" (z's low byte and fraction), 039B42 "ADDD #$19,U" (plus the z speed)
+local player_next_height_against_floor 039B42 t6 z_low_and_fraction
+# 039B6A "LEAX #$0090,Y" (an X nothing reads), 039B6E "CMPY #$0C,U": the player's x read again for the second compare
+local player_face_heavy_object 039B6E t5 rechecked_player_x
+# done: src/players/effects.c
+
+# ---- src/players/gauges.c ----
+# 0409CF "PUSHS U" ... 0409F0 "PULLS U,PC": the caller's U, the tiles it prints on (gauge_draw_player hands its
+# lives' `tiles`), kept (its high byte; the low byte shares another slot)
+local gauges_byte_to_bcd 0409CF s2 saved_tiles_high
+# 0409D4 "LDA #$08; PUSHS D" (A at ,S), 0409E9 "DEC ,S; BNE": the bits still to add
+local gauges_byte_to_bcd 0409D6,0409E9 s4 bit_count
+# 0409FD "PUSHS X" ... 040A0B "PULLS X" (the gauge player kept around the division, its high byte); 040A4A, 040A69,
+# 040A82 "PUSHS A" (the gauge's steps kept while a tile is drawn): the slot holds both
+local gauge_draw_health 0409FD,040A4A,040A69,040A82 s2 player_high_or_steps
+# 0409FC "MUL" (1F x health), 0409FF "PUSHS D; PULLS X", 040A05 "DIV X,B" (by 28), 040A06 "PUSHS X; PULLS D": the
+# division's dividend, then its quotient (the step)
+local gauge_draw_health 0409FF,040A06 s3 division_low
+local gauge_draw_health 0409FF s4 division_high
+# 040AAE "LDY #$730E; LDA #$01,X; ASLA; INCA; LDA A,Y" (gauge_player_columns: the colour byte of the player's
+# entry), 040AB8 "STA #$01,S", 040ACF "ORA #$01,S" (into each digit's attribute)
+local gauge_print_count 040AB8 sF player_colour
+# 040B44 "LDA $4A1C" (continue_seconds), 040B4A "LSRA" x4, 040B4E "PUSHS A", 040B59 "PULLS A; TSTA": the tens digit
+local continue_draw_count 040B4E s2 tens_digit
+# 040B8A "LDD ,U++" (the picture's width and rows), 040B8C "PUSHS D" (B at 3,S), 040BC4 "DEC #$03,S; BNE": the rows
+# still to draw
+local gauges_put_picture 040B8C,040BC4 s2 rows_left
+# 040B8C "PUSHS D" (A at 2,S), 040B92 "LDA #$02,S; STA #$01,S", 040BBF "SUBA #$02,S": the picture's width in tiles
+local gauges_put_picture 040B8C s3 columns_wide
+# 040B95 "STA #$01,S" (the width), 040BA8 / 040BB8 "DEC #$01,S; BNE": the columns still to draw in the row
+local gauges_put_picture 040B95,040BA8,040BB8 s4 columns_left
+# 040B8E "LDA ,U+" (the picture's colour), 040B90 "PUSHS D" (A at ,S), 040B9D "LDB #$00,S; STB #$-2000,X"
+local gauges_put_picture 040B90 s5 tile_colour
+# 040BA8 "DEC #$01,S; BNE": the columns left before this tile, while the picture's tiles are copied
+local gauges_put_picture 040BA8 t3 copy_columns_before
+# 040BD0 "LEAS #$-10,S", 040BD3 "STA #$00,S" (the player, bit 7 for blank), 040C0C "LDB #$00,S; BPL"
+local gauge_draw_picture 040BD3 s16 quarter_and_blank
+# 040BDB "STB #$07,S", 040BF0 "LDB #$07,S; ASLB; LDX B,X" (gauge_pictures)
+local gauge_draw_picture 040BDB sF picture_number
+# 040BDE "LDX #$730E; LDA #$06,S; ASLA; LDD A,X" (gauge_player_columns), 040BE7 "STA #$05,S" (the column),
+# 040BF8 "LDB #$05,S; LEAU B,U"
+local gauge_draw_picture 040BE7 s11 quarter_column
+# 040BEA "STB #$03,S" (the colour), 040C09 "ORA #$03,S"
+local gauge_draw_picture 040BEA s13 quarter_colour
+# 040BFD "LDA ,X+; STA #$01,S" (the part's width), 040C15 "LDA #$01,S; STA #$04,S", 040C2D "SUBA #$01,S"
+local gauge_draw_picture 040BFF s15 part_width
+# 040C02 "LDA ,X+; STA #$02,S" (the part's rows), 040C32 "DEC #$02,S; BNE"
+local gauge_draw_picture 040C04,040C32 s14 rows_left
+# 040C18 "STA #$04,S" (the width), 040C26 "DEC #$04,S; BNE": the columns still to draw in the row
+local gauge_draw_picture 040C18,040C26 s12 columns_left
+# 040C07 "LDA ,X+; ORA #$03,S" (the part's colour with the player's), 040C11 "CLRA" (blank), 040C12 "STA #$08,S",
+# 040C1B "LDB #$08,S; STB #$-2000,U"
+local gauge_draw_picture 040C12 sE draw_colour
+# done: src/players/gauges.c
+
+# ---- src/players/motion.c ----
+# 0397A7 "LDD #$12,U" (y's low byte and fraction), 0397AA "ADDD #$14,U" (plus the y speed)
+local player_check_motion 0397AA t6 y_low_and_fraction
+# 0397C3 "LDD #$0D,U" (x's low byte and fraction), 0397C6 "ADDD #$0F,U" (plus the x speed)
+local player_check_motion 0397C6 t6 x_low_and_fraction
+# 039865 "LDX $1848" (running_player_values), 039869 "STB #$02,X" (kept_life)
+local player_check_motion 039865 t3 running_values
+local player_keep_life 039865 t3 running_values
+# 0398AB "LDX #$0C,U": the player's x
+local player_request_scroll 0398AB t5 player_x
+# 03992E "LDX #$11,U": the player's y
+local player_request_scroll 03992E t5 player_y
+# 039ACE "SEX" (the floor's height), 039AD4 "PUSHS D; PULLS X", 039AE9 "CMPD <$F8": the floor's z (high byte)
+local player_check_screen_edges 039AD4 s2 floor_z_high
+# done: src/players/motion.c
+
+# ---- src/players/players.c ----
+# 03800E "LDA <$40; LDB <$42" (player_controls: player_input.now and .pressed), 038014 "PUSHS D; PULLS Y" (the same at
+# 03802E, 038048, 038062 for the other three): the pressed buttons (low byte)
+local player_run_all 038014,03802E,038048,038062 s10002 pressed_buttons
+# 03807A "TST $184B" (players_stop_request), 038080 "LDA $184C; CMPA #$04" (players_idle_count)
+local player_run_all 038080 t1 idle_count
+# 0380FE "PUSHS X,D" (B the player number, X the player's values), 03812B "PULLS D,X; ASLB" x4, 038131 "ORB #$5B,U"
+# (C "stack_10004 = player_number; ... shadow_player = (stack_10004 << 4) | ...")
+local player_run 0380FE s10004 saved_player_number
+# 038108 "PUSHS U", 03810A "TFR U,X; LEAX #$1C,X" (clearing the object's fields), then "PULLS U"
+local player_run 038108 s6 saved_player
+# 0381EF "LDY #$11,U; LEAY #$08,Y; STY #$11,U": the y tried for the entry floor, a row nearer each time
+local player_run 0381EF t5 tried_y
+# 0381F8 "DEC <$F1; BNE" (entry_tries_left): the tries before this one (the second search, 9 rows)
+local player_run 0381F8 t2 second_tries_before
+# 038159 "LDB #$04,U; ASLB" x5, 038161 "SEX; ADDD #$00D0": the kind times 20 (signed), the drop's x offset
+local player_run 038161 t1 drop_offset
+# 03818E "DEC <$F1; BNE": the tries before this one (the drop's search, 8 columns)
+local player_run 03818E t2 drop_tries_before
+# 03819A "LDD #$0C,U": the x being scanned for a floor
+local player_run 03819A t5 scan_x
+# 03819D "ADDD #$0010; STD #$0C,U": the next x to scan
+local player_run 03819D t2 next_scan_x
+# 07B75C "LDA [,X]" (the player's pressed buttons), 07B75E "ANDA #$B0; LBEQ": the start buttons pressed
+local player_join 07B75E t2 start_buttons
+# 07B763 "LDD <$37; SUBD #$0001; STD <$37" (credits)
+local player_join 07B763 t4 credits_before
+# done: src/players/players.c
+
+# ---- src/players/reactions.c ----
+# 039305 "LDX $1848" (running_player_values), 03930B "STA #$03,X" (entry_status)
+local player_take_touches 039305 t3 running_values
+# 0393C3 "LDA #$1E,U" (hit: the food taken), 0393C6 "PUSHS A", 0393F5 "PULLS A; SUBA #$F9; LDX #$7EAD; ADDB A,X"
+# (pickup_vitality)
+local player_eat_food 0393C6 s3 food_kind
+# 0395B5 "LDY $1848" (running_player_values), 0395B9 "LDA #$06,Y" (grab_hints)
+local player_get_grabbed 0395B5 t3 running_values
+# 039694 "PUSHS U,X", 039698 "LBSR $7A93" (player_check_screen_edges on the partner), 03969B "PULLS X,U": X the partner
+local player_break_team 039694 s4 saved_partner
+# done: src/players/reactions.c
+
+# ---- src/players/second_sprite.c ----
+# 03EB3E "PUSHS Y" (the throw's x speed), 03EB40 "LDA ,S; NEGA; STA ,S" (only the high byte negated, facing left),
+# 03EB45 "PULLS Y"
+local player_second_sprite_throw 03EB3E s2 x_speed_low
+local player_second_sprite_throw 03EB3E,03EB43 s3 x_speed_high
+# 03EBBB "LDX #$6C,U; CMPX #$0044": the second sprite's x (field 0C of the object after the player's)
+local player_second_sprite_fall 03EBBB t5 second_sprite_x
+# done: src/players/second_sprite.c
+
+# ---- src/players/states.c ----
+# 0391EE "LDY #$7E3D" (team_move_animation_offsets), 0391FB "LDA A,Y; BMI" (by the move and the character): the
+# table's entry, negative for none (the same shared end in each team state)
+local player_team_move 0391FB t2 animation_entry
+local player_walk 0391FB t2 animation_entry
+local player_team_jump 0391FB t2 animation_entry
+local player_team_start_fall 0391FB t2 animation_entry
+local player_team_fall 0391FB t2 animation_entry
+local player_attack_end 0391FB t2 animation_entry
+local player_team_ready 0391FB t2 animation_entry
+local player_team_together 0391FB t2 animation_entry
+# 038365 "ANDA #$EF; ORA <$F0" (the joystick and the attack bit), 03836A "ANDA #$1F; LBEQ"
+local player_team_move 03836A t2 active_controls
+# 0385EA "LDA #$40,U" (the weapon held), 0385ED "LDB #$80", 0385EF "PUSHS D; PULLS Y", 0385F5 "LBSR $7C2F"
+# (player_start_effect): the weapon's effect (high byte)
+local player_stand 0385EF s2 weapon_effect_kind
+# 038853 "LDB #$2E,U", 038856 "ANDB #$03; BEQ" (after player_set_in_air): left or right for the jump
+local player_stand 038856 t2 jump_joystick_x
+# 03872E "LDB #$2E,U", 038731 "ANDB #$03; BEQ; CLR #$09,U; BITB #$01": left or right to face
+local player_stand 038731 t2 facing_joystick_x
+# 0383C9 "LDA #$2E,U", 0383CC "ANDA #$0F; LBEQ": the joystick's four ways, to walk
+local player_stand 0383CC t2 walk_joystick
+# 038536 "LDD #$19,U; SUBD #$0040", 03853C "STD #$19,U; BMI": the z speed slowed by gravity
+local player_team_jump 03853C t3 slowed_z_speed
+# 038657 "LDD #$19,U; SUBD #$0040", 03865D "STD #$19,U; BMI"
+local player_jump 03865D t3 slowed_z_speed
+# 038CC6 "LDA #$09,U", 038CC9 "ANDA #$40; BEQ": the facing bit of the attributes
+local player_attack_end 038CC9 t2 facing_left_bit
+# 038F41 "LDX #$0C,U; CMPX #$0140; ... CMPX #$0070": the player's x
+local player_knocked_up 038F41 t5 player_x
+# 038FD9 "LDD [$1848]; CMPD #$0001": running_player_values, the place of the player's lives
+local player_die 038FD9 t3 lives_address
+# 038FF0 "LDX $1848; CLR #$06,X" (grab_hints)
+local player_die 038FF0 t3 running_values
+# 039054 "LDX $1848; CLR #$03,X" (entry_status)
+local player_lose_life 039054 t3 running_values
+# 03905E "DECW [$1848]": the lives
+local player_lose_life 03905E t3 lives_address
+# 03908B "LDX $1848; CLR #$03,X" (entry_status, before the shared end at 03904E)
+local player_game_over_end 03908B t3 game_over_values
+local player_game_over_end 039054 t3 running_values
+local player_game_over_end 03905E t3 lives_address
+# 039288 "TST $184B; LBNE" (players_stop_request, carrying a teammate)
+local player_set_animation 039288 t1 team_stop_request
+# 0392A1 "TST $184B; BEQ" (players_stop_request, carrying an object)
+local player_set_animation 0392A1 t1 carry_stop_request
+# 0392A7 "LDY #$3F,U; BEQ", 0392AC "TST #$3F,U": the held word's high byte (an object, not a weapon)
+local player_set_animation 0392AC t3 dropped_high
+# 0392C4 "LDA #$09,U", 0392C7 "ANDA #$40; BEQ; NEGB"
+local player_set_animation 0392C7 t2 facing_left_bit
+# done: src/players/states.c
+
+# ======== names, batch 6, round 2: the objects' plain stack slots (build/names6/names_objects_2.txt; merged by the lead) ========
+# batch 6 round 2, objects: the stack slots the C still calls plain `stack` (one line per slot, all its stores)
+
+# ---- src/bonus/balloon.c ----
+# 0200D7 "PUSHS U,X", 0200D9 "LBSR $68AB" (bonus_1_press_sound), 0200DC "PULLS X,U": U, the shown player's bonus record
+# (C "stack = bonus_player; ... record = stack;")
+local bonus_1_intro_show_how 0200D7 s2 saved_bonus_player
+# 0201B9 "LDA #$04; PUSHS A", 0201E3 "DEC ,S; BNE": the balloons still to set (4 down)
+local bonus_1_blow_until_done 0201BB,0201E3 s1 balloon_count
+# 020215 "CLRA; PUSHS A", 020255 "INC ,S", 020257 "LDA ,S; CMPA #$04": the player being handled (0 up to 4)
+local bonus_1_results 020216,020255 s1 player_counter
+# 02026A "CLRA; PUSHS A", 0202C1 "INC ,S; LDA ,S; CMPA #$04"
+local bonus_1_top_up_balloons 02026B,0202C1 s1 player_counter
+# 0202E7 "CLRA; PUSHS A", 020300 "INC ,S; LDA ,S; CMPA #$04"
+local bonus_1_fly_away 0202E8,020300 s1 player_counter
+# 020316 "LBSR $69F8" (bonus_reward_winners: D the caller's state offset and B), 02031C "PUSHS D", 02031E "STD <$05"
+# (step_subphase, step_countdown), 020321 "PULLS D"
+local bonus_1_end 02031C s2 subphase_and_countdown
+# 020425 "PUSHS X" ... 020436 "PULLS X"; 020440 "PUSHS X" ... 020451 "PULLS X": the balloon kept around the divisions
+local bonus_1_blow 020425,020440 s2 saved_balloon
+# 020494 "PUSHS X" ... 0204A8 "PULLS X": the balloon kept around the multiplications
+local bonus_1_stretch_width 020494 s2 saved_balloon
+# 0204D2 "PUSHS X" ... "PULLS X"
+local bonus_1_stretch_height 0204D2 s2 saved_balloon
+# 020600 "LDU #$33,X" (the flyer), 020603 "PUSHS X; TFR U,X", 020607 "LBSR $85B1" (vector_apply_gravity on the flyer),
+# 02060A "PULLS X": the balloon kept
+local bonus_1_fall 020603 s2 saved_balloon
+# 020630 "LDA #$04; PUSHS A", 020640 "DEC ,S; BNE": the balloons still to check
+local bonus_1_any_balloon_full 020632,020640 s1 balloon_count
+# 02068B "LDA #$04; PUSHS A", 0206C2 "DEC ,S; BNE": the timer digits still to set up
+local unused_bonus_draw_timer_digits 02068D,0206C2 s3 digit_count
+# 020731 "CLRA", 020732 "PUSHS A" (the player number, first loop); 020795 "PUSHS X" (the player's object, its low byte
+# here): the slot holds the player number, then the object's low byte
+local bonus_1_put_players 020732,020795 s1 player_or_object_low
+# 020806 "CLRA; PUSHS A", 02081F "INC ,S; LDA ,S; CMPA #$04"
+local bonus_1_take_presses 020807,02081F s1 player_counter
+# 020831 "CLRB", 020832 "PUSHS D" (B at 1,S), 020868 "INC #$01,S; LDA #$01,S; CMPA #$04", 02084C "ADDA ,S" (the rate)
+local bonus_1_set_absent_rates 020832,020868 s1 player_counter
+# 020877 "CLRA; PUSHS A", 0208A1 "INC ,S; LDA ,S; CMPA #$04"
+local bonus_1_absent_presses 020878,0208A1 s1 player_counter
+# 0208B5 "CLRA; PUSHS A", 0208C7 "INC ,S; LDB ,S; CMPB #$04"
+local bonus_1_press_sound 0208B6,0208C7 s1 player_counter
+# 0209DC "PUSHS A" (the bonus: A + 1A its title's placement), 0209E7 "PULLS A", 0209E9 "LDX #$7BC4; ASLA; LDD A,X"
+# (bonus_intro_sounds)
+local bonus_title_show 0209DC s1 bonus_index
+# 0209F8 "PUSHS U,X,A" ... 020A30 "PULLS A,X,U,PC": A, the state offset its dispatcher handed (bonus_1_end's callers:
+# C "d = (d & 0xFFu) | (state_offset << 8)"), given back
+local bonus_reward_winners 0209F8 s5 saved_state_offset
+# done: src/bonus/balloon.c
+
+# ---- src/bonus/results.c ----
+# 02118F "LDA <$50" (players_playing), 021192 "PUSHS A", 021201 "PULLS A; LSRA": the players' bits still to go
+local bonus_show_player_portraits 021192 s1 player_bits_left
+# 0212A9 "PUSHS U,Y,X,D" ... 0212F5 "PULLS D,X,Y,U": Y, the box's text (bonus_results_draw_box(sign_kind, box_text, ...)),
+# given back
+local bonus_results_draw_box 0212A9 s4 saved_box_text
+# done: src/bonus/results.c
+
+# ---- src/bonus/wake_up.c ----
+# 020A6C "LDD #$00A8; SUBD $4A4C", 020A73 "PUSHS D; PULLS X": how far the first player walks (high byte)
+local bonus_2_intro_set_up 020A73 s10001 walk_distance_high
+# 020E79 "LDD B,X" (bonus_2_player_x), 020E7B "PUSHS D; PULLS X": the player's x (high byte)
+local bonus_2_portrait_x 020E7B s10001 player_x_high
+# done: src/bonus/wake_up.c
+
+# ---- src/bosses/dreamland_boss_objects.c ----
+# 035452 "PUSHS U,X", 035455 "TFR U,X", 03545A "BSETW D,X,U" (clearing the free object), then "PULLS X,U": U the free object
+local find_free_object_from_4d40 035452 s2 saved_free_object
+# done: src/bosses/dreamland_boss_objects.c
+
+# ---- src/enemies/enemy_hits.c ----
+# 07D044 "LDA #$5B,U; ANDA #$70" (the hitter's player number bits), 07D049 "PUSHS A", 07D04B "LDA #$27,X; ANDA #$8F;
+# ORA ,S+" (into the enemy's points: who gets them)
+local enemy_set_knock_direction 07D049 s1 hitter_player_bits
+# done: src/enemies/enemy_hits.c
+
+# ---- src/enemies/enemy_states.c ----
+# 07D5C6 "LBSR $D3D7" (enemy_find_attack_range: A the attack chance), 07D5CB "PUSHS A", 07D5CD "LBSR $D34F"
+# (enemy_random), 07D5D0 "CMPA ,S+; BCC"
+local enemy_think 07D5CB s1 attack_odds
+# 07D64F "LDD #$28,X" (action, action_step), 07D652 "PUSHS B,CC", 07D659 "SETLN <$0E", 07D65C "PULLS CC,B": the step kept
+# across the bank switch
+local enemy_attack 07D652 s1 saved_action_step
+# done: src/enemies/enemy_states.c
+
+# ---- src/enemies/enemy_targets.c ----
+# 07D308 "LDA #$04; PUSHS A", 07D340 "DEC ,S; BNE": the player slots still to check
+local enemy_target_nearest_player 07D30A,07D340 s1 slots_left
+# done: src/enemies/enemy_targets.c
+
+# ---- src/enemies/goon_actions.c ----
+# 028EC2 "LDA #$5B,U; ANDA #$70" (the grabbed player's number bits), 028EC7 "PUSHS A", 028EC9 "LDA #$27,X; ANDA #$8F;
+# ORA ,S+"
+local goon_grab_try 028EC7 s1 target_player_bits
+# done: src/enemies/goon_actions.c
+
+# ---- src/enemies/grabbing_zombie.c ----
+# 03079A "LDA #$5B,U; ANDA #$70", 03079F "PUSHS A", 0307A1 "LDA #$27,X; ANDA #$8F; ORA ,S+"
+local zombie_grab_reach 03079F s1 target_player_bits
+# done: src/enemies/grabbing_zombie.c
+
+# ---- src/objects/bear.c ----
+# 03CF30 "PUSHS D" ... 03CF38 "PULLS D" (around the sound), 03CF4F "PUSHS D" ... 03CF5A "PULLS D": the z speed (high byte)
+local bear_boulder 03CF30,03CF4F s10001 saved_z_speed_high
+# 03C9CE "PUSHS U; PULLS D" (the floor cell's place, low byte), 03C9D6 "PUSHS X" ... 03C9E1 "PULLS X" (the bear, low
+# byte): the slot holds the place's low byte, then the bear's
+local bear_break_out 03C9CE,03C9D6 s1 place_or_object_low
+# 03CA5B "LDY #$0610", 03CA5E "PUSHS Y", 03CA63 "LBSR $62E5" (stage_boss_set_hit_box), 03CA66 "PULLS Y", 03CA6A "LBSR
+# $604C" (stage_boss_set_state)
+local bear_face_player 03CA5E s2 saved_state_wait
+# 03CA8B "ADDD #$4A40", 03CA8E "PUSHS D; PULLS U": a random player's object (high byte)
+local bear_choose_target 03CA8E s10001 chosen_player_high
+# 03CB26 "LDA #$11", 03CB28 "PUSHS D; PULLS Y", 03CB2E "LBSR $604C" (stage_boss_set_state: state 11)
+local bear_walk 03CB28 s10001 attack_state
+# 03CBB3 "LDD A,Y" (bear_charge_speeds_by_rank), 03CBB5 "PUSHS A", 03CBB7 "LDA #$09,X; BITA #$40", 03CBBC "PULLS A":
+# the speed's high byte kept across the facing test
+local bear_start_charge 03CBB5 s1 saved_speed_high
+# 03CD92 "LDA <$57; ASLA" x4, 03CD99 "PUSHS A", 03CD9B "LDA #$96; SUBA ,S+; CMPA #$3A,X": 16 frames off the charge's
+# wait for each player
+local bear_think 03CD99 s1 time_off_by_players
+# done: src/objects/bear.c
+
+# ---- src/objects/burns_robot.c ----
+# 03AB00 "PUSHS A" (the piece's number), 03AB04 "LBSR $867D" (vector_find_free_slot), 03AB07 "PULLS A", 03AB09 "LBSR
+# $751E" (burns_robot_place_part)
+local burns_robot_throw_piece 03AB00 s1 saved_piece_number
+# 03AB82 "PUSHS A", 03AB86 "LBSR $867D", 03AB89 "PULLS A"
+local burns_robot_throw_piece_2 03AB82 s1 saved_piece_number
+# 03ABEC "PUSHS A", 03ABF0 "LBSR $867D", 03ABF3 "PULLS A"
+local burns_robot_throw_piece_3 03ABEC s1 saved_piece_number
+# 03ACF0 "PUSHS A", 03ACF4 "LBSR $867D", 03ACF7 "PULLS A"
+local burns_robot_throw_piece_4 03ACF0 s1 saved_piece_number
+# 03AF91 "PUSHS X; TFR U,X", 03AF97 "LBSR $72FF" (burns_robot_set_box on the shot), 03AF9A "PULLS X": the robot
+local burns_robot_fire_shot 03AF91 s2 saved_robot
+# 03B04D "PUSHS U,X; TFR U,X", 03B053 "LBSR $72FF" (burns_robot_set_box on the held part), 03B056 "PULLS X,U": X the robot
+local burns_robot_part_attack_hold 03B04D s4 saved_robot
+# 03B2B7 "PUSHS X,B; TFR U,X", 03B2BE "LBSR $8638" (vector_floor_at_offset on the target), 03B2C6 "PULLS B,X": X the robot
+local burns_robot_aim_at_target 03B2B7 s2 saved_robot
+# done: src/objects/burns_robot.c
+
+# ---- src/objects/burns_robot_parts.c ----
+# 03B60E "PUSHS U" (the row's first tile), 03B610 "CLR #$-2000,U; STA ,U+" x 20, then "PULLS U; LEAU #$40,U"
+local burns_breakout_break_wall 03B60E s2 row_start
+# done: src/objects/burns_robot_parts.c
+
+# ---- src/objects/fat_goon_actions.c ----
+# 02AB0F "LDA #$5B,U; ANDA #$70", 02AB14 "PUSHS A", 02AB16 "LDA #$27,X; ANDA #$8F; ORA ,S+"
+local fat_goon_grab 02AB14 s1 target_player_bits
+# done: src/objects/fat_goon_actions.c
+
+# ---- src/objects/floor_scenery.c ----
+# 02B26D "STU #$2A,X" (the floor cell's place), 02B270 "PUSHS U; PULLS D", 02B274 "ANDB #$C0; STD #$38,X" (its row)
+local floor_blocker_start 02B270 s2 floor_place
+# 02B2D2 "LDU #$2A,X; LDA #$37,X; ASLA; ASLA; LEAU A,U" (the part's place), 02B2DC "PUSHS U; PULLS D", 02B2E0 "STB
+# #$34,X" (its column, the low byte)
+local floor_blocker_write_cells 02B2DC s1 part_place_low
+# 02C7D7 "LDU #$2A,X; ... LEAU A,U", 02C7E1 "PUSHS U; PULLS D", 02C7E5 "STB #$34,X"
+local platform_scenery_write_cells 02C7E1 s1 part_place_low
+# 02C83D "LBSR $8650" (floor_cell_under: U the place), 02C843 "PUSHS U; PULLS D", 02C84A "ANDB #$C0; STD #$38,X"
+local platform_scenery_start 02C843 s2 floor_place
+# 02C885 "LDU #$2A,X" (floor_start), 02C888 "PUSHS U; PULLS D", 02C88C "STB #$34,X"
+local platform_scenery_clear_floor 02C888 s2 floor_place
+# 02CA0A "LBSR $8650", 02CA10 "PUSHS U; PULLS D", 02CA17 "ANDB #$C0; STD #$38,X"
+local charging_scenery_start 02CA10 s2 floor_place
+# done: src/objects/floor_scenery.c
+
+# ---- src/objects/football_player.c ----
+# 03C46D "LDA #$0B", 03C46F "PUSHS D; PULLS Y", 03C475 "LBSR $604C" (stage_boss_set_state: state 0B)
+local football_player_start_charge 03C46F s10001 new_state
+# 03C5E1 "LDA #$09", 03C5E3 "PUSHS D; PULLS Y", 03C5E9 "LBSR $604C" (state 09)
+local football_player_run 03C5E3 s10001 new_state
+# done: src/objects/football_player.c
+
+# ---- src/objects/kind_10_scenery.c ----
+# 02C309 "LBSR $8650" (floor_cell_under), 02C312 "PUSHS U; PULLS D", 02C319 "ANDB #$C0; STD #$38,X"
+local kind_10_dropper_start 02C312 s2 floor_place
+# 02C393 "LDU #$2A,X" (floor_start), 02C396 "PUSHS U; PULLS D", 02C39A "STB #$34,X" (its column)
+local kind_10_dropper_write_floor 02C396 s1 start_place_low
+# done: src/objects/kind_10_scenery.c
+
+# ---- src/objects/krusty_balloon.c ----
+# 026789 "PUSHS X; TFR U,X", 02678F "LBSR $6978" (krusty_balloon_set_hit_box on the attack), 026792 "PULLS X"
+local krusty_balloon_attack_hit 026789 s2 saved_balloon
+# 0269E0 "PUSHS A" (the throw's side), 0269E4 "LBSR $867D" (vector_find_free_slot), later "PULLS A; ASLA" (the throw
+# by side: krusty_balloon_throw_directions)
+local krusty_balloon_throw 0269E0 s1 saved_side
+# 026DD9 "PUSHS X; PULLS D", 026DDD "ADDB <$16; ANDB #$20": the shot's address, its low byte a phase for the drift
+local krusty_balloon_shot_drift 026DD9 s2 shot_address
+# done: src/objects/krusty_balloon.c
+
+# ---- src/objects/object_f9.c ----
+# 03D79B "LDA <$16; ASLA" x3, 03D7A1 "ANDA #$78", 03D7A3 "PUSHS A", 03D7AC "CMPA ,S+" (with the x's low byte - 40)
+local object_f9_idle 03D7A3 s1 frame_phase
+# done: src/objects/object_f9.c
+
+# ---- src/objects/object_lists.c ----
+# 07CB6F "LDD #$01,X" (type, state), 07CB72 "PUSHS B,CC", 07CB79 "SETLN <$0E", 07CB7C "PULLS CC,B": the state kept
+# across the bank switch
+local run_enemies 07CB72 s1 kept_state
+# 07CBB0 "LDD #$01,X", 07CBB3 "PUSHS B,CC", 07CBBD "PULLS CC,B"
+local run_list_1_objects 07CBB3 s1 kept_state
+# 07CBE3 "LDD #$01,X", 07CBE6 "PUSHS B,CC", 07CBF0 "PULLS CC,B"
+local run_child_objects 07CBE6 s1 kept_state
+# 07CC12 "LDD #$01,X", 07CC15 "PUSHS B,CC", 07CC1F "PULLS CC,B"
+local run_stage_event 07CC15 s1 kept_state
+# 07CC38 "LDD #$7F04; PUSHS A", 07CC48 "CMPA ,S; BCC", 07CC4C "STA ,S; STU $1870" (least_attacked_player)
+local find_least_attacked_player 07CC3B,07CC4C s1 fewest_attackers
+# done: src/objects/object_lists.c
+
+# ---- src/objects/obstacles.c ----
+# 02CC4E "LBSR $8650" (A the old floor cell), 02CC51 "PUSHS A" ... 02CC5F "PULLS A"; 02CC64 "PUSHS U; PULLS D" (the
+# place's low byte, the column): the slot holds the cell, then the column
+local obstacle_raise_floor 02CC51,02CC64 s1 cell_or_column
+# done: src/objects/obstacles.c
+
+# ---- src/objects/scripted_object.c ----
+# 03DC9D "LDD ,Y++" (the sound from the script), 03DCA4 "PUSHS Y", 03DCA6 "LBSR $8680" (vector_queue_sound), 03DCA9
+# "PULLS Y"
+local scripted_object_play_sound 03DCA4 s2 saved_script_cursor
+# done: src/objects/scripted_object.c
+
+# ---- src/objects/shaking_scenery.c ----
+# 02D21E "PUSHS A" (the old floor cell) ... 02D22C "PULLS A"; 02D234 "PUSHS U; PULLS D" (the column)
+local scenery_block_floor 02D21E,02D234 s1 cell_or_column
+# done: src/objects/shaking_scenery.c
+
+# ---- src/objects/spawning.c ----
+# 07CA6A "PUSHS U,X", 07CA6D "TFR U,X", 07CA72 "BSETW D,X,U" (clearing the slot), 07CA73 "PULLS X,U": U the slot's object
+local take_free_object 07CA6A s2 saved_slot_object
+# done: src/objects/spawning.c
+
+# ---- src/objects/stage_3_boss.c ----
+# 03D2C4 "PUSHS X", 03D2CB "LDX #$41,X" (the partner) ... then "PULLS X": the boss
+local stage_3_boss_together 03D2C4 s2 saved_boss
+# 03D574 "PUSHS X; LDX #$41,X" (the partner's state set); 03D5C3 "PUSHS X; LDX #$41,X" (the partner moved): the boss
+local stage_3_boss_update 03D574,03D5C3 s2 saved_boss
+# done: src/objects/stage_3_boss.c
+
+# ---- src/objects/stage_7_boss.c ----
+# 022F6E "LDB $1880; DECB" (enemies_present_last_frame, less the boss), 022F73 "PUSHS B", 022F75 "SUBA ,S"
+local stage_7_boss_order_throws 022F73 s1 other_enemy_count
+# done: src/objects/stage_7_boss.c
+
+# ---- src/objects/stage_8_boss.c ----
+# 03A0EF "ADDD #$4A40", 03A0F2 "PUSHS D; PULLS U": the random player to start from (high byte)
+local stage_8_boss_pick_player 03A0F2 s10001 start_player_high
+# 03A150 "LSRB; BCC" (the players' bits), 03A153 "PUSHS B" ... 03A15F "PULLS B"; 03A163 "PUSHS B" ... 03A16F "PULLS B":
+# the bits kept around the distance checks
+local stage_8_boss_player_is_close 03A153,03A163 s1 saved_player_bits
+# 03A3B5 "PUSHS A" (the angle to walk), 03A3BD "LDB A,Y" (stage_8_boss_walk_speeds_by_players), 03A3BF "PULLS A",
+# 03A3C1 "LBSR $8617" (vector_set_speed_by_direction)
+local stage_8_boss_phase_1 03A3B5 s1 saved_angle
+# 03A458 "PUSHS A" (the run speed), 03A45A "LBSR $863B" (vector_floor_ahead), 03A45E "PULLS A; BPL; NEGA"
+local stage_8_boss_phase_2 03A458 s1 saved_run_speed
+# 03A68D "PUSHS X" (the boss, around the palette request), later "PULLS X"
+local stage_8_boss_take_hits 03A68D s2 saved_boss
+# 03A95C "LDD ,Y", 03A95E "PUSHS D", 03A960 "ADDD ,Y" x3, 03A966 "ADDD ,S++; ADDD #$3711": the old value, 5 times it
+# plus 3711 the next
+local stage_8_boss_next_random 03A95E s2 old_value
+# 03A991 "LDD #$0F,X; ABSD", 03A995 "PUSHS D", 03A99B "ADDD ,S++" (the y speed's size)
+local stage_8_boss_speed 03A995 s2 x_speed_size
+# done: src/objects/stage_8_boss.c
+
+# ---- src/objects/stage_bosses.c ----
+# 03C0B0 "PUSHS Y; PULLS D; NEGD", 03C0B5 "PUSHS D; PULLS Y", 03C0B9 "STY #$0F,X": the knock-away speed, turned round
+local stage_boss_knock_away 03C0B0,03C0B5 s2 knock_speed
+# 03C0EB "LDD #$0D,X; ADDD #$0F,X", 03C0F1 "PUSHS A" (the next x's low byte), 03C0FA "PULLS B; CMPD #$0070"
+local stage_boss_move_on_screen 03C0F1 s1 next_x_low
+# 03C187 "ADDD #$4A40", 03C18A "PUSHS D; PULLS U": the random player to start from (high byte)
+local stage_boss_pick_random_player 03C18A s10001 start_player_high
+# 03C1FE "LSRB; BCC", 03C201 "PUSHS B" ... "PULLS B"; 03C211 "PUSHS B" ... "PULLS B"
+local stage_boss_player_is_near 03C201,03C211 s1 saved_player_bits
+# done: src/objects/stage_bosses.c
+
+# ---- src/objects/wrestler.c ----
+# 0217F1 "CLRB", 0217F2 "PUSHS D" (B at 1,S), 021801 "INC #$01,S" (a player within reach), 02180C "PULLS D; CMPB #$02"
+local wrestler_surrounded 0217F2,021801 s1 players_in_reach
+# done: src/objects/wrestler.c
+
+# ---- src/players/effects.c ----
+# 039B89 "PUSHS U,Y,D" ... "PULLS D,Y,U": Y, whatever the caller holds there (player_grabbed's y), given back
+local player_flash_palette 039B89 s4 saved_y
+# 039BFC "PUSHS Y" (the spark's height), 039C03 "LBSR $7C2F" (player_start_effect), 039C06 "PULLS Y"
+local player_show_hit_spark 039BFC s2 saved_spark_height
+# done: src/players/effects.c
+
+# ---- src/players/gauges.c ----
+# 040906 "CLRA", 040907 "PUSHS A", 040912 "LDA ,S" (gauge_player_records by player), 040917 "PULLS A; INCA; CMPA #$04" (pushed again at 040907)
+local gauges_draw 040907 s1 player_counter
+# 040B26 "PUSHS U,X,D" ... "PULLS D,X,U,PC": the caller's B, given back (nothing reads it)
+local continue_end 040B26 s10006 saved_caller_byte
+# 0408E2 "CLRA; PUSHS A", 0408F7 "INC ,S; LDA ,S; CMPA #$04"
+local gauges_count_delays 0408E3,0408F7 s1 player_counter
+# 0409CF "PUSHS U" ... 0409F0 "PULLS U,PC": the caller's tiles (low byte)
+local gauges_byte_to_bcd 0409CF s1 saved_tiles_low
+# 0409FD "PUSHS X" (the gauge player, low byte) ... 040A0B "PULLS X"; 040A3F "LDB #$04; PUSHS B", 040AA1 "DEC ,S; BNE":
+# the slot holds the player's low byte, then the tiles still to draw
+local gauge_draw_health 0409FD,040A41,040AA1 s1 player_low_or_tiles_left
+# 040AA8 "LEAS #$-10,S", 040AAB "STA #$00,S" (the count, BCD), 040ABE "LDA #$00,S; ANDA #$F0" (tens), 040AE9 "LDA #$00,S;
+# ANDA #$0F" (units)
+local gauge_print_count 040AAB s10 bcd_count
+# 040B44 "LDA $4A1C" (continue_seconds), 040B48 "PUSHS A", 040B62 "PULLS A; ANDA #$0F" (the units)
+local continue_draw_count 040B48 s1 seconds_bcd
+# 040B88 "PUSHS A" (bit 7: blank), 040B98 "LDA #$04,S; BMI"
+local gauges_put_picture 040B88 s1 blank_flag
+# 040BD6 "ANDA #$7F", 040BD8 "STA #$06,S", 040BE1 "LDA #$06,S; ASLA; LDD A,X" (gauge_player_columns)
+local gauge_draw_picture 040BD8 s10 quarter_number
+# done: src/players/gauges.c
+
+# ---- src/players/motion.c ----
+# 0397AD "PUSHS A" (the next y's low byte) ... 0397B6 "PULLS B"; 0397C9 "PUSHS A" (the next x's low byte) ... 0397D2
+# "PULLS B"; 0397F7 "PUSHS A" (the next x's high byte, around the scene check) ... 0397FE "PULLS A"
+local player_check_motion 0397AD,0397C9,0397F7 s1 next_position_byte
+# 039898 "STD #$0F,U" (the x speed), 03989B "ANDA #$40", 03989D "PUSHS A", 0398A4 "ORA ,S+; STA #$09,U" (the facing)
+local player_steer 03989D s1 facing_left_bit
+# 039AD4 "PUSHS D; PULLS X" (the floor's z, low byte); 039ADE "PUSHS A" (the next x's low byte), 039AE7 "PULLS B"
+local player_check_screen_edges 039AD4,039ADE s1 floor_or_next_x_low
+# done: src/players/motion.c
+
+# ---- src/players/players.c ----
+# 03800E "LDA <$40" (player_input.now, the buttons held), 038014 "PUSHS D; PULLS Y" (the same at 03802E, 038048, 038062)
+local player_run_all 038014,03802E,038048,038062 s10001 buttons_now
+# 0380FE "PUSHS X,D" (X the player's values), 038125 "LDX #$02,S; STA #$02,X" (kept_life), 03812B "PULLS D,X"
+local player_run 0380FE s2 saved_record
+# 07B710 "CLRA; PUSHS A", 07B716 "LDA ,S; ASLA; LDX A,X" (player_records), 07B727 "INC ,S; LDA ,S; CMPA #$04"
+local update_players 07B711,07B727 s1 player_counter
+# 07B7BF "LBSR $9718" (high_score_rank: A the place), 07B7C4 "PUSHS A", later "PULLS A" for insert_high_score
+local player_join 07B7C4 s1 high_score_place
+# done: src/players/players.c
+
+# ---- src/players/reactions.c ----
+# 039749 "PUSHS X" (the first team member), 039750 "LDX #$4A40; LEAX D,X" (the second), later "PULLS X"
+local player_take_touches 039749 s2 saved_team_member
+# 03937F "PUSHS U" (the player, popped at 03943A "PULLS U" after the pick-up's shared end)
+local player_pick_up_item 03937F s2 saved_player
+# 0393B2 "PUSHS U", 03943A "PULLS U"
+local player_pick_up_weapon 0393B2 s2 saved_player
+# 0393C1 "PUSHS U", 03943A "PULLS U" (the player, while the partner may eat instead)
+local player_eat_food 0393C1 s2 saved_player
+# 03945F "LDX #$16,U" (the player's z), 039477 "PUSHS X; PULLS D", 03947B "ADDD #$0010; CMPD #$16,Y"
+local player_take_blow 039477 s2 player_z
+# 039694 "PUSHS U,X", 039698 "LBSR $7A93" (player_check_screen_edges on the partner), 03969B "PULLS X,U": U the player
+local player_break_team 039694 s2 saved_player
+# done: src/players/reactions.c
+
+# ---- src/players/second_sprite.c ----
+# 03EB35 "LDA #$09,U; ANDA #$40", 03EB3A "PUSHS A", 03EB4D "ORA ,S+; STA #$69,U" (the second sprite's facing)
+local player_second_sprite_throw 03EB3A s1 facing_left_bit
+# 03ECC9 "LDA A,X" (pair_balloon_players), 03ECCB "LDB #$C0; MUL; ADDD #$4A40", 03ECD1 "PUSHS D; PULLS X", 03ECD5 "LDD
+# #$0C,X": the player who speaks
+local player_second_sprite_balloon 03ECD1 s2 speaker_object
+# done: src/players/second_sprite.c
+
+# ---- src/players/states.c ----
+# 038338 "PUSHS Y", 03833A "LDY #$7E3B", 03833D "LBSR $7BF9" (player_show_hit_spark), 038340 "PULLS Y": the walk
+# velocities kept
+local player_team_move 038338 s2 saved_walk_velocities
+# 0385ED "LDB #$80", 0385EF "PUSHS D; PULLS Y" (the weapon effect's low byte); 03876E "LDA #$5B,U; ANDA #$30", 038773
+# "PUSHS A", 03877A "ORA ,S+; STA #$5B,X" (the player's bits into the picked-up object's)
+local player_stand 0385EF,038773 s1 effect_low_or_shadow_bits
+# 0387F4 "PUSHS B" (the use index) ... 0387FE "PULLS B"
+local player_start_throw_kind_4 0387F4 s1 saved_use_index
+# 038818 "PUSHS B", 03881D "LBSR $8680" (vector_queue_sound), 038820 "PULLS B"
+local player_start_swing_6 038818 s1 saved_use_index
+# 038943 "PUSHS X; PULLS D" (the player's z, which its callers load from field 16), 038947 "SUBD #$5C,U" (the height
+# above the floor)
+local player_start_jump_attack 038943 s4 player_z
+# 038CD9 "PUSHS A" (the facing bit), 038CDB "LDA #$09,X; ANDA #$70; ORA ,S+; STA #$09,X" (into the teammate's)
+local player_attack_end 038CD9 s1 facing_for_teammate
+# 03925A "PUSHS A" (the weapon's animation offset), 039272 "PUSHS B" (the animation, around the held look's check),
+# 03929A "PUSHS A" (the held object's animation offset), 0392CC "PUSHS A" (the facing bit): the slot holds each in turn
+local player_set_animation 03925A,039272,03929A,0392CC s1 offset_or_facing
+# done: src/players/states.c

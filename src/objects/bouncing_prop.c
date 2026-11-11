@@ -226,14 +226,14 @@ uint16_t bouncing_prop_setup(uint16_t object)
    the players. */
 void bouncing_prop_fall_in(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t landed = 0;
 	uint16_t zoom_x = 0;
 	uint16_t z_speed = 0, zoom_x_2 = 0;
 
 	z_speed = OBJECT(object)->z_speed;
 	OBJECT(object)->z_speed = z_speed - 0x10u;
-	carry = vector_check_landing(object);
-	if (carry)
+	landed = vector_check_landing(object);
+	if (landed)
 	{
 		OBJECT(object)->y_speed = 0;
 		OBJECT(object)->flags = 0xC0u;
@@ -403,12 +403,12 @@ void bouncing_prop_bounce_off_edge(uint16_t object)
    hit again and moves at the players. */
 void bouncing_prop_land(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t landed = 0;
 	uint16_t ignored16 = 0;
 	uint8_t bounces_left = 0;
 
-	vector_apply_gravity(object, &ignored16, &carry);
-	if (carry == 0u)
+	vector_apply_gravity(object, &ignored16, &landed);
+	if (landed == 0u)
 		return;
 	OBJECT(object)->x_speed = 0;
 	bounces_left = OBJECT(object)->bouncing_prop.bounces_left;

@@ -16,8 +16,8 @@
 uint16_t enemy_target_nearest_player(uint16_t object)
 {
 	uint16_t distance = 0, object_2 = 0, target = 0;
-	uint8_t stack = 0;
-	uint16_t stack_3 = 0;
+	uint8_t slots_left = 0;
+	uint16_t x_distance = 0;
 	uint8_t players_counted = 0, slots_before = 0;
 	uint16_t nearest_player = 0, enemy_x = 0, player_x = 0, dx = 0, enemy_y = 0, player_y = 0, dy = 0;
 
@@ -29,7 +29,7 @@ uint16_t enemy_target_nearest_player(uint16_t object)
 		OBJECT(object)->target = target;
 		return target;
 	}
-	stack = 4u;
+	slots_left = 4u;
 	object_2 = OBJECT_ADDRESS(0);
 	nearest_player_distance = 0x7FFFu;
 	do
@@ -42,14 +42,14 @@ uint16_t enemy_target_nearest_player(uint16_t object)
 			distance = dx;
 			if ((int16_t)dx < 0)
 				distance = 0u - distance;
-			stack_3 = distance;
+			x_distance = distance;
 			enemy_y = OBJECT(object)->y;
 			player_y = OBJECT(object_2)->y;
 			dy = enemy_y - player_y;
 			distance = dy;
 			if ((int16_t)dy < 0)
 				distance = 0u - distance;
-			distance += stack_3;
+			distance += x_distance;
 			if (distance < nearest_player_distance)
 			{
 				nearest_player_distance = distance;
@@ -57,8 +57,8 @@ uint16_t enemy_target_nearest_player(uint16_t object)
 			}
 		}
 		object_2 += 0xC0u;
-		slots_before = stack;
-		stack = slots_before - 1u;
+		slots_before = slots_left;
+		slots_left = slots_before - 1u;
 	} while (slots_before != 1u);
 	nearest_player = io_read16(nearest_player_found);
 	target = nearest_player;
@@ -174,10 +174,10 @@ void enemy_look_at_target(uint16_t object, uint16_t target)
 
 /* Finds the first of its behaviour's 4 attack ranges its target is in (within the range's depth and
    between its least and most x distance): carry set, with the range's chance to attack. */
-void enemy_find_attack_range(uint16_t object, uint16_t *p_range, uint16_t *p_chance, uint32_t *p_carry)
+void enemy_find_attack_range(uint16_t object, uint16_t *p_range, uint16_t *p_chance, uint32_t *p_in_range)
 {
 	uint16_t range = (uint16_t)*p_range;
-	uint32_t carry = *p_carry;
+	uint32_t in_range = *p_in_range;
 	uint8_t distance_high = 0, x_distance = 0;
 	uint16_t chance = 0;
 	uint8_t dy_low = 0, dx_low = 0, range_least_dx = 0, range_most_dx = 0, range_chance = 0, ranges_before = 0;
@@ -187,7 +187,7 @@ void enemy_find_attack_range(uint16_t object, uint16_t *p_range, uint16_t *p_cha
 	distance_high = (uint8_t)(target_dx >> 8);
 	if ((uint16_t)(((uint32_t)distance_high << 8) | (uint8_t)target_dx) >= 0x100u)
 	{
-		carry = 0u;
+		in_range = 0u;
 		chance = (uint32_t)distance_high << 8;
 	}
 	else
@@ -196,7 +196,7 @@ void enemy_find_attack_range(uint16_t object, uint16_t *p_range, uint16_t *p_cha
 		distance_high = (uint8_t)(target_dy >> 8);
 		if ((uint16_t)(((uint32_t)distance_high << 8) | (uint8_t)target_dy) >= 0x100u)
 		{
-			carry = 0u;
+			in_range = 0u;
 			chance = (uint32_t)distance_high << 8;
 		}
 		else
@@ -207,7 +207,7 @@ void enemy_find_attack_range(uint16_t object, uint16_t *p_range, uint16_t *p_cha
 				dy_low = (uint8_t)OBJECT(object)->target_dy;
 				if (ATTACK_RANGE(range)->most_dy < dy_low)
 				{
-					carry = 0u;
+					in_range = 0u;
 					chance = (uint32_t)distance_high << 8;
 					break;
 				}
@@ -219,7 +219,7 @@ void enemy_find_attack_range(uint16_t object, uint16_t *p_range, uint16_t *p_cha
 					range_most_dx = ATTACK_RANGE(range)->most_dx;
 					if (x_distance <= range_most_dx)
 					{
-						carry = 1u;
+						in_range = 1u;
 						range_chance = ATTACK_RANGE(range)->chance;
 						chance = ((uint32_t)range_chance << 8) | (uint8_t)~x_distance;
 						break;
@@ -230,7 +230,7 @@ void enemy_find_attack_range(uint16_t object, uint16_t *p_range, uint16_t *p_cha
 				distance_high = ranges_before - 1u;
 				if (ranges_before == 1u)
 				{
-					carry = 0u;
+					in_range = 0u;
 					chance = (uint32_t)distance_high << 8;
 					break;
 				}
@@ -239,5 +239,5 @@ void enemy_find_attack_range(uint16_t object, uint16_t *p_range, uint16_t *p_cha
 	}
 	*p_range = range;
 	*p_chance = chance;
-	*p_carry = carry;
+	*p_in_range = in_range;
 }

@@ -990,7 +990,7 @@ uint16_t burns_breakout_break_wall(uint16_t shape)
 {
 	uint8_t fill = 0;
 	uint16_t command = 0, piece = 0;
-	uint16_t stack = 0;
+	uint16_t row_start = 0;
 	uint8_t animation_flags = 0, tiles_left = 0, rows_left = 0, state = 0;
 	uint16_t piece_2 = 0, piece_y = 0, raised_y = 0, tile_at = 0;
 
@@ -1008,7 +1008,7 @@ uint16_t burns_breakout_break_wall(uint16_t shape)
 	{
 		wall_tiles_left = 0x20u;
 		fill = 0x10u;
-		stack = piece;
+		row_start = piece;
 		do
 		{
 			mem_write8(piece - 0x2000u, 0u);
@@ -1018,7 +1018,7 @@ uint16_t burns_breakout_break_wall(uint16_t shape)
 			tiles_left = wall_tiles_left;
 			wall_tiles_left = tiles_left - 1u;
 		} while (tiles_left != 1u);
-		piece = stack + 0x40u;
+		piece = row_start + 0x40u;
 		rows_left = wall_rows_left;
 		wall_rows_left = rows_left - 1u;
 	} while (rows_left != 1u);
@@ -1108,18 +1108,18 @@ void burns_debris_blink(uint16_t debris)
    starts blinking. */
 void burns_debris_bounce(uint16_t debris)
 {
-	uint32_t negative = 0, carry = 0;
+	uint32_t no_floor = 0, landed = 0;
 	uint16_t ignored16 = 0;
 	uint8_t x_speed = 0, z_speed = 0, state = 0, state_2 = 0;
 
-	vector_floor_ahead(debris, &ignored16, &negative);
-	if (negative)
+	vector_floor_ahead(debris, &ignored16, &no_floor);
+	if (no_floor)
 	{
 		x_speed = (uint8_t)(OBJECT(debris)->x_speed >> 8u);
 		OBJECT(debris)->x_speed = (OBJECT(debris)->x_speed & 0xFFu) | ((0u - x_speed & 0xFFu) << 8u);
 	}
-	carry = burns_part_fall(debris);
-	if (carry)
+	landed = burns_part_fall(debris);
+	if (landed)
 	{
 		z_speed = (uint8_t)(OBJECT(debris)->z_speed >> 8u);
 		OBJECT(debris)->z_speed = (OBJECT(debris)->z_speed & 0xFFu) | (((int8_t)(0u - z_speed) >> 1 & 0xFFu) << 8u);
@@ -1136,7 +1136,7 @@ void burns_debris_bounce(uint16_t debris)
 /* Moves the object by its height speed with gravity: carry when it is at the floor (height 0). */
 uint32_t burns_part_fall(uint16_t part)
 {
-	uint32_t negative = 0, carry = 0;
+	uint32_t below_floor = 0, carry = 0;
 	uint8_t z_speed_high = 0, z_speed_low = 0;
 	uint8_t z_speed_2 = 0, z = 0;
 	uint16_t z_speed = 0, next_z_speed = 0, z_low_and_fraction = 0, z_speed_now = 0, new_z_low_and_fraction = 0, z_2 = 0;
@@ -1156,8 +1156,8 @@ uint32_t burns_part_fall(uint16_t part)
 	z = (uint8_t)(OBJECT(part)->z >> 8u);
 	OBJECT(part)->z = (OBJECT(part)->z & 0xFFu) | ((((uint16_t)(int8_t)z_speed_2 >> 8) + z + carry & 0xFFu) << 8u);
 	z_2 = OBJECT(part)->z;
-	negative = z_2 >> 15;
-	if (z_2 == 0u || negative)
+	below_floor = z_2 >> 15;
+	if (z_2 == 0u || below_floor)
 	{
 		OBJECT(part)->z = 0u;
 		OBJECT(part)->z_fraction = 0u;
@@ -1392,12 +1392,12 @@ uint16_t rescued_maggie_sound(uint16_t d)
 /* A lobbed bomb falls; landing, sound 52 and its fuse (animation 87, 32 frames). */
 void burns_bomb_fall(uint16_t bomb)
 {
-	uint32_t carry = 0;
+	uint32_t landed = 0;
 	uint16_t command = 0, ignored16 = 0;
 	uint8_t state = 0;
 
-	vector_apply_gravity(bomb, &ignored16, &carry);
-	if (carry == 0u)
+	vector_apply_gravity(bomb, &ignored16, &landed);
+	if (landed == 0u)
 		return;
 	command = 0x5200u;
 	vector_queue_sound(command);
@@ -1581,7 +1581,7 @@ uint16_t mr_burns_wait_for_blow(uint16_t burns, uint16_t object)
 }
 
 /* After 32 frames: keeps him in 1852, a boss beaten (direct page 7D), and the step moves on. */
-void mr_burns_beaten(uint16_t burns, uint8_t d)
+void mr_burns_beaten(uint16_t burns, uint8_t state_number)
 {
 	uint8_t wait_frames = 0, state = 0;
 	uint32_t step_subphase_halfword = 0;
@@ -1593,7 +1593,7 @@ void mr_burns_beaten(uint16_t burns, uint8_t d)
 		io_write16(stage_kept_object, burns);
 		boss_beaten = 1u;
 		step_phase++;
-		step_subphase_halfword = 0x100u | (d & 0xFFu);
+		step_subphase_halfword = 0x100u | (state_number & 0xFFu);
 		step_subphase = (uint8_t)(step_subphase_halfword >> 8u);
 		step_countdown = (uint8_t)step_subphase_halfword;
 		state = OBJECT(burns)->state;

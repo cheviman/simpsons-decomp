@@ -67,10 +67,10 @@ void bonus_show_go(void)
 
 /* The bonuses' results by their state: the places one after the other, then the points counted up; carry
    when done. */
-void bonus_results(uint16_t *p_state_table, uint16_t *p_d, uint32_t *p_carry)
+void bonus_results(uint16_t *p_state_table, uint16_t *p_d, uint32_t *p_results_done)
 {
 	uint16_t d = (uint16_t)*p_d;
-	uint32_t carry = *p_carry;
+	uint32_t results_done = *p_results_done;
 	uint16_t state_table = 0;
 	uint8_t state_number = 0;
 
@@ -79,39 +79,39 @@ void bonus_results(uint16_t *p_state_table, uint16_t *p_d, uint32_t *p_carry)
 	switch ((int8_t)(uint8_t)((uint32_t)state_number << 1))
 	{
 	case 0:
-		bonus_results_start(&state_table, &d, &carry);
+		bonus_results_start(&state_table, &d, &results_done);
 		break;
 	case 2:
-		bonus_results_first(&state_table, &d, &carry);
+		bonus_results_first(&state_table, &d, &results_done);
 		break;
 	case 4:
-		bonus_results_second(&state_table, &d, &carry);
+		bonus_results_second(&state_table, &d, &results_done);
 		break;
 	case 6:
-		bonus_results_third(&state_table, &d, &carry);
+		bonus_results_third(&state_table, &d, &results_done);
 		break;
 	case 8:
-		bonus_results_fourth(&state_table, &d, &carry);
+		bonus_results_fourth(&state_table, &d, &results_done);
 		break;
 	case 10:
-		bonus_results_wait(&state_table, &d, &carry);
+		bonus_results_wait(&state_table, &d, &results_done);
 		break;
 	case 12:
-		bonus_results_wait_count(&state_table, &d, &carry);
+		bonus_results_wait_count(&state_table, &d, &results_done);
 		break;
 	case 14:
-		bonus_results_count_points(&state_table, &d, &carry);
+		bonus_results_count_points(&state_table, &d, &results_done);
 		break;
 	}
 	*p_state_table = state_table;
 	*p_d = d;
-	*p_carry = carry;
+	*p_results_done = results_done;
 }
 
 /* The bonuses' results: prepares the four result boxes, then ranks the winners. */
-void bonus_results_start(uint16_t *p_x, uint16_t *p_d, uint32_t *p_carry)
+void bonus_results_start(uint16_t *p_x, uint16_t *p_d, uint32_t *p_results_done)
 {
-	uint32_t carry = *p_carry;
+	uint32_t results_done = *p_results_done;
 	uint16_t d = 0, object = 0, parent = 0, x = 0;
 	uint8_t boxes_left_before = 0, old_boxes_placed = 0;
 
@@ -137,151 +137,151 @@ void bonus_results_start(uint16_t *p_x, uint16_t *p_d, uint32_t *p_carry)
 	io_write8(results_boxes_placed, 0u);
 	*p_x = x;
 	*p_d = d;
-	bonus_results_first(p_x, p_d, &carry);
-	*p_carry = carry;
+	bonus_results_first(p_x, p_d, &results_done);
+	*p_results_done = results_done;
 }
 
 /* The bonuses' results: puts the winners (first place sign). */
-void bonus_results_first(uint16_t *p_sign_kind, uint16_t *p_d, uint32_t *p_carry)
+void bonus_results_first(uint16_t *p_sign_kind, uint16_t *p_d, uint32_t *p_results_done)
 {
-	uint32_t carry = *p_carry;
+	uint32_t results_done = *p_results_done;
 	uint16_t d = 0, sign_kind = 0;
 
 	sign_kind = 0xE8Bu;
 	bonus_results_place_next(&sign_kind, &d);
 	*p_sign_kind = sign_kind;
 	*p_d = d;
-	bonus_results_animate(p_sign_kind, p_d, &carry);
-	*p_carry = carry;
+	bonus_results_animate(p_sign_kind, p_d, &results_done);
+	*p_results_done = results_done;
 }
 
 /* The bonuses' results: after a wait, puts the players in second place. */
-void bonus_results_second(uint16_t *p_sign_kind, uint16_t *p_d, uint32_t *p_carry)
+void bonus_results_second(uint16_t *p_sign_kind, uint16_t *p_d, uint32_t *p_results_done)
 {
 	uint16_t sign_kind = (uint16_t)*p_sign_kind;
 	uint16_t d = (uint16_t)*p_d;
-	uint32_t carry = *p_carry;
+	uint32_t results_done = *p_results_done;
 	uint8_t results_frames_left = 0, expired_frames = 0;
 
 	results_frames_left = io_read8(bonus_results_timer);
 	io_write8(bonus_results_timer, results_frames_left - 1u);
 	if (results_frames_left != 1u)
-		bonus_results_animate(&sign_kind, &d, &carry);
+		bonus_results_animate(&sign_kind, &d, &results_done);
 	else
 	{
 		expired_frames = io_read8(bonus_results_timer);
 		io_write8(bonus_results_timer, expired_frames + 1u);
 		sign_kind = 0xE8Cu;
 		bonus_results_place_next(&sign_kind, &d);
-		bonus_results_animate(&sign_kind, &d, &carry);
+		bonus_results_animate(&sign_kind, &d, &results_done);
 	}
 	*p_sign_kind = sign_kind;
 	*p_d = d;
-	*p_carry = carry;
+	*p_results_done = results_done;
 }
 
 /* The bonuses' results: after a wait, puts the players in third place. */
-void bonus_results_third(uint16_t *p_sign_kind, uint16_t *p_d, uint32_t *p_carry)
+void bonus_results_third(uint16_t *p_sign_kind, uint16_t *p_d, uint32_t *p_results_done)
 {
 	uint16_t sign_kind = (uint16_t)*p_sign_kind;
 	uint16_t d = (uint16_t)*p_d;
-	uint32_t carry = *p_carry;
+	uint32_t results_done = *p_results_done;
 	uint8_t results_frames_left = 0, expired_frames = 0;
 
 	results_frames_left = io_read8(bonus_results_timer);
 	io_write8(bonus_results_timer, results_frames_left - 1u);
 	if (results_frames_left != 1u)
-		bonus_results_animate(&sign_kind, &d, &carry);
+		bonus_results_animate(&sign_kind, &d, &results_done);
 	else
 	{
 		expired_frames = io_read8(bonus_results_timer);
 		io_write8(bonus_results_timer, expired_frames + 1u);
 		sign_kind = 0xE8Du;
 		bonus_results_place_next(&sign_kind, &d);
-		bonus_results_animate(&sign_kind, &d, &carry);
+		bonus_results_animate(&sign_kind, &d, &results_done);
 	}
 	*p_sign_kind = sign_kind;
 	*p_d = d;
-	*p_carry = carry;
+	*p_results_done = results_done;
 }
 
 /* The bonuses' results: after a wait, puts the players in fourth place. */
-void bonus_results_fourth(uint16_t *p_sign_kind, uint16_t *p_d, uint32_t *p_carry)
+void bonus_results_fourth(uint16_t *p_sign_kind, uint16_t *p_d, uint32_t *p_results_done)
 {
 	uint16_t sign_kind = (uint16_t)*p_sign_kind;
 	uint16_t d = (uint16_t)*p_d;
-	uint32_t carry = *p_carry;
+	uint32_t results_done = *p_results_done;
 	uint8_t results_frames_left = 0, expired_frames = 0;
 
 	results_frames_left = io_read8(bonus_results_timer);
 	io_write8(bonus_results_timer, results_frames_left - 1u);
 	if (results_frames_left != 1u)
-		bonus_results_animate(&sign_kind, &d, &carry);
+		bonus_results_animate(&sign_kind, &d, &results_done);
 	else
 	{
 		expired_frames = io_read8(bonus_results_timer);
 		io_write8(bonus_results_timer, expired_frames + 1u);
 		sign_kind = 0xE8Eu;
 		bonus_results_place_next(&sign_kind, &d);
-		bonus_results_animate(&sign_kind, &d, &carry);
+		bonus_results_animate(&sign_kind, &d, &results_done);
 	}
 	*p_sign_kind = sign_kind;
 	*p_d = d;
-	*p_carry = carry;
+	*p_results_done = results_done;
 }
 
 /* The bonuses' results: waits before counting the points. */
-void bonus_results_wait(uint16_t *p_hop_speed_table, uint16_t *p_state_and_frames, uint32_t *p_carry)
+void bonus_results_wait(uint16_t *p_hop_speed_table, uint16_t *p_state_and_frames, uint32_t *p_results_done)
 {
 	uint16_t hop_speed_table = (uint16_t)*p_hop_speed_table;
 	uint16_t state_and_frames = (uint16_t)*p_state_and_frames;
-	uint32_t carry = *p_carry;
+	uint32_t results_done = *p_results_done;
 	uint8_t results_frames_left = 0;
 
 	results_frames_left = io_read8(bonus_results_timer);
 	io_write8(bonus_results_timer, results_frames_left - 1u);
 	if (results_frames_left != 1u)
-		bonus_results_animate(&hop_speed_table, &state_and_frames, &carry);
+		bonus_results_animate(&hop_speed_table, &state_and_frames, &results_done);
 	else
 	{
 		state_and_frames = 0x63Cu;
 		io_write16(bonus_results_state, 0x63Cu);
-		bonus_results_animate(&hop_speed_table, &state_and_frames, &carry);
+		bonus_results_animate(&hop_speed_table, &state_and_frames, &results_done);
 	}
 	*p_hop_speed_table = hop_speed_table;
 	*p_state_and_frames = state_and_frames;
-	*p_carry = carry;
+	*p_results_done = results_done;
 }
 
 /* The bonuses' results: a last short wait before the points. */
-void bonus_results_wait_count(uint16_t *p_hop_speed_table, uint16_t *p_state_and_frames, uint32_t *p_carry)
+void bonus_results_wait_count(uint16_t *p_hop_speed_table, uint16_t *p_state_and_frames, uint32_t *p_results_done)
 {
 	uint16_t hop_speed_table = (uint16_t)*p_hop_speed_table;
 	uint16_t state_and_frames = (uint16_t)*p_state_and_frames;
-	uint32_t carry = *p_carry;
+	uint32_t results_done = *p_results_done;
 	uint8_t results_frames_left = 0;
 
 	results_frames_left = io_read8(bonus_results_timer);
 	io_write8(bonus_results_timer, results_frames_left - 1u);
 	if (results_frames_left != 1u)
-		bonus_results_animate(&hop_speed_table, &state_and_frames, &carry);
+		bonus_results_animate(&hop_speed_table, &state_and_frames, &results_done);
 	else
 	{
 		state_and_frames = 0x704u;
 		io_write16(bonus_results_state, 0x704u);
-		bonus_results_animate(&hop_speed_table, &state_and_frames, &carry);
+		bonus_results_animate(&hop_speed_table, &state_and_frames, &results_done);
 	}
 	*p_hop_speed_table = hop_speed_table;
 	*p_state_and_frames = state_and_frames;
-	*p_carry = carry;
+	*p_results_done = results_done;
 }
 
 /* The bonuses' results: types each box's text, makes the newly placed ones hop and reads the places. */
-void bonus_results_animate(uint16_t *p_hop_speed_table, uint16_t *p_d, uint32_t *p_carry)
+void bonus_results_animate(uint16_t *p_hop_speed_table, uint16_t *p_d, uint32_t *p_results_done)
 {
 	uint16_t hop_speed_table = (uint16_t)*p_hop_speed_table;
 	uint16_t d = (uint16_t)*p_d;
-	uint32_t carry = *p_carry;
+	uint32_t results_done = *p_results_done;
 	uint8_t hop = 0, z_speed = 0;
 	uint16_t box = 0;
 	uint8_t blocked = 0, blocked_2 = 0, hop_2 = 0, hop_3 = 0, boxes_left_before = 0;
@@ -316,20 +316,20 @@ void bonus_results_animate(uint16_t *p_hop_speed_table, uint16_t *p_d, uint32_t 
 		results_typed_boxes_left = boxes_left_before - 1u;
 	} while (boxes_left_before != 1u);
 	bonus_results_read_places();
-	carry = 0u;
+	results_done = 0u;
 	d &= 0xFFu;
 	*p_hop_speed_table = hop_speed_table;
 	*p_d = d;
-	*p_carry = carry;
+	*p_results_done = results_done;
 }
 
 /* The bonuses' results: counts each player's points up on its box with a tick sound, a sound when it is
    done; carry when all are. */
-void bonus_results_count_points(uint16_t *p_next_print_place, uint16_t *p_d, uint32_t *p_carry)
+void bonus_results_count_points(uint16_t *p_next_print_place, uint16_t *p_d, uint32_t *p_results_done)
 {
 	uint16_t next_print_place = (uint16_t)*p_next_print_place;
 	uint8_t d = (uint8_t)*p_d;
-	uint32_t carry = *p_carry;
+	uint32_t results_done = *p_results_done;
 	uint8_t players_done = 0, points_shown = 0;
 	uint16_t box = 0, command = 0, d_2 = 0;
 	uint8_t results_frames_left = 0, points_shown_2 = 0, target_dy = 0, target_dy_2 = 0, look = 0, boxes_left_before = 0;
@@ -339,7 +339,7 @@ void bonus_results_count_points(uint16_t *p_next_print_place, uint16_t *p_d, uin
 	io_write8(bonus_results_timer, results_frames_left - 1u);
 	if (results_frames_left != 1u)
 	{
-		carry = 0u;
+		results_done = 0u;
 		d_2 = players_done;
 	}
 	else
@@ -387,18 +387,18 @@ void bonus_results_count_points(uint16_t *p_next_print_place, uint16_t *p_d, uin
 		if (players_done == 4u)
 		{
 			io_write16(bonus_results_state, 0u);
-			carry = 1u;
+			results_done = 1u;
 			d_2 = 0xFF00u;
 		}
 		else
 		{
-			carry = 0u;
+			results_done = 0u;
 			d_2 = players_done;
 		}
 	}
 	*p_next_print_place = next_print_place;
 	*p_d = d_2;
-	*p_carry = carry;
+	*p_results_done = results_done;
 }
 
 /* The bonuses' results: keeps the four players' places (for bonus 1's flight waits). */
@@ -520,7 +520,7 @@ void bonus_show_player_portraits(void)
 {
 	uint8_t look = 0, old_look = 0, player_bits = 0;
 	uint16_t kind = 0, portrait = 0;
-	uint8_t stack = 0, stack_10002 = 0, saved_portrait_animation = 0;
+	uint8_t player_bits_left = 0, portrait_kind = 0, saved_portrait_animation = 0;
 	uint8_t current_look = 0, look_before = 0, kind_2 = 0, state = 0, results_state = 0;
 	uint16_t portrait_offset = 0, portrait_x = 0, portrait_y = 0;
 
@@ -529,7 +529,7 @@ void bonus_show_player_portraits(void)
 	player_bits = players_playing;
 	do
 	{
-		stack = player_bits;
+		player_bits_left = player_bits;
 		current_look = OBJECT(portrait)->bonus_results.look;
 		old_look = current_look;
 		if (current_look != 0u)
@@ -574,9 +574,9 @@ void bonus_show_player_portraits(void)
 		else if ((player_bits & 1u) != 0u)
 		{
 			OBJECT(portrait)->state = 0xFFu;
-			stack_10002 = bonus_portrait_player + 0xAu;
+			portrait_kind = bonus_portrait_player + 0xAu;
 			saved_portrait_animation = portrait_animation;
-			kind = ((uint32_t)stack_10002 << 8) | saved_portrait_animation;
+			kind = ((uint32_t)portrait_kind << 8) | saved_portrait_animation;
 			leftover_y = kind;
 			look = 3u;
 			OBJECT(portrait)->bonus_results.look = look;
@@ -606,7 +606,7 @@ void bonus_show_player_portraits(void)
 			OBJECT(portrait)->y = portrait_y;
 			OBJECT(portrait)->z = 0u;
 		}
-		player_bits = stack >> 1;
+		player_bits = player_bits_left >> 1;
 		portrait += 0xC0u;
 		bonus_portrait_player++;
 	} while (bonus_portrait_player != 4u);
@@ -740,9 +740,9 @@ uint16_t bonus_results_print_number(uint16_t number)
 }
 
 /* The bonuses: the number of the first player in the game. */
-void bonus_first_player_in_game(uint16_t *p_first_player, uint32_t *p_negative)
+void bonus_first_player_in_game(uint16_t *p_first_player, uint32_t *p_no_player)
 {
-	uint32_t negative = *p_negative;
+	uint32_t no_player = *p_no_player;
 	uint8_t player_bits = 0;
 	uint16_t first_player = 0;
 	uint8_t bits_before = 0, slots_left_before = 0, first_player_number = 0;
@@ -759,10 +759,10 @@ void bonus_first_player_in_game(uint16_t *p_first_player, uint32_t *p_negative)
 		first_player_slots_left = slots_left_before - 1u;
 	} while (slots_left_before != 1u);
 	first_player_number = 4u - first_player_slots_left;
-	negative = first_player_number >> 7;
+	no_player = first_player_number >> 7;
 	first_player = ((uint32_t)first_player_number << 8) | player_bits;
 	*p_first_player = first_player;
-	*p_negative = negative;
+	*p_no_player = no_player;
 }
 
 /* The bonuses' results: draws a player's box of tiles under its sign (taller for a player in the game). */
@@ -770,33 +770,33 @@ uint16_t bonus_results_draw_box(uint16_t box_x, uint16_t y, uint16_t box, uint8_
 {
 	uint8_t colour = 0, rows = 0, rows_left = 0;
 	uint16_t box_tiles = 0, count = 0, tiles = 0;
-	uint8_t stack_9 = 0, stack_1000A = 0, stack_1000B = 0;
-	uint16_t stack = 0, stack_6 = 0, stack_B = 0;
+	uint8_t colour_or_rows = 0, first_tile_high = 0, first_tile_low = 0;
+	uint16_t saved_box_text = 0, saved_box_x = 0, box_start = 0;
 	uint8_t tile_rows_before = 0, colour_rows_before = 0;
 	uint16_t subtracted_scroll = 0, screen_x = 0, tile_column = 0, first_tile = 0;
 
-	stack = y;
-	stack_6 = box_x;
+	saved_box_text = y;
+	saved_box_x = box_x;
 	colour = 0xB2u;
 	if (look != 3u)
 		colour = 0xF2u;
-	stack_9 = colour;
-	stack_B = box_x;
+	colour_or_rows = colour;
+	box_start = box_x;
 	subtracted_scroll = io_read16(0xA0u);
-	screen_x = stack_B - subtracted_scroll;
+	screen_x = box_start - subtracted_scroll;
 	tile_column = screen_x >> 3;
 	first_tile = tile_column + 0x22C0u;
-	stack_1000A = first_tile >> 8;
-	stack_1000B = first_tile;
-	tiles = ((uint32_t)stack_1000A << 8) | stack_1000B;
-	colour = stack_9;
+	first_tile_high = first_tile >> 8;
+	first_tile_low = first_tile;
+	tiles = ((uint32_t)first_tile_high << 8) | first_tile_low;
+	colour = colour_or_rows;
 	rows = 7u;
 	if ((uint8_t)OBJECT(box - 0x540u)->type == 0u)
 		rows = 4u;
-	stack_9 = rows;
-	rows_left = stack_9;
+	colour_or_rows = rows;
+	rows_left = colour_or_rows;
 	box_tiles = bonus_result_box_tiles_ADDRESS;
-	stack_B = tiles;
+	box_start = tiles;
 	do
 	{
 		count = 8u;
@@ -811,8 +811,8 @@ uint16_t bonus_results_draw_box(uint16_t box_x, uint16_t y, uint16_t box, uint8_
 		tile_rows_before = rows_left;
 		rows_left = tile_rows_before - 1u;
 	} while (tile_rows_before != 1u);
-	tiles = stack_B - 0x2000u;
-	rows_left = stack_9;
+	tiles = box_start - 0x2000u;
+	rows_left = colour_or_rows;
 	do
 	{
 		count = 8u;
@@ -826,7 +826,7 @@ uint16_t bonus_results_draw_box(uint16_t box_x, uint16_t y, uint16_t box, uint8_
 		colour_rows_before = rows_left;
 		rows_left = colour_rows_before - 1u;
 	} while (colour_rows_before != 1u);
-	box_x = stack_6;
-	leftover_y = stack;
+	box_x = saved_box_x;
+	leftover_y = saved_box_text;
 	return box_x;
 }

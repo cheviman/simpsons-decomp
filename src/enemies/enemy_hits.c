@@ -17,7 +17,7 @@
 void enemy_take_hit(uint16_t object, uint16_t *p_object_2, uint32_t *p_left_caller)
 {
 	uint16_t object_2 = (uint16_t)*p_object_2;
-	uint32_t zero = 0, negative = 0;
+	uint32_t hitter_still = 0, hitter_moving_left = 0;
 	uint16_t object_3 = 0;
 	uint32_t left_caller = 0;
 	uint8_t hit = 0, state = 0, kind = 0, kind_2 = 0, behaviour = 0, attributes = 0;
@@ -57,10 +57,10 @@ void enemy_take_hit(uint16_t object, uint16_t *p_object_2, uint32_t *p_left_call
 				hit_by_2 = OBJECT(object)->hit_by;
 				object_2 = hit_by_2;
 				x_speed = OBJECT(object_2)->x_speed;
-				negative = x_speed >> 15;
-				zero = x_speed == 0u;
+				hitter_moving_left = x_speed >> 15;
+				hitter_still = x_speed == 0u;
 				left_caller = 0u;
-				enemy_set_knock_direction(object, object_2, zero, negative);
+				enemy_set_knock_direction(object, object_2, hitter_still, hitter_moving_left);
 			}
 		}
 	}
@@ -70,21 +70,21 @@ void enemy_take_hit(uint16_t object, uint16_t *p_object_2, uint32_t *p_left_call
 
 /* Notes whether the hit pushes the enemy the way it faces (by the hitter's x speed, or by the side the
    hitter stands when it does not move) and takes the hitter's player number for its score. */
-void enemy_set_knock_direction(uint16_t object, uint16_t hitter, uint32_t zero, uint32_t negative)
+void enemy_set_knock_direction(uint16_t object, uint16_t hitter, uint32_t hitter_still, uint32_t hitter_moving_left)
 {
-	uint8_t stack = 0;
+	uint8_t hitter_player_bits = 0;
 	uint8_t shadow_player = 0, points = 0, hit_from_behind = 0;
 	uint16_t hitter_x = 0, enemy_x = 0;
 
-	if (negative)
+	if (hitter_moving_left)
 	{
 		shadow_player = OBJECT(hitter)->shadow_player;
-		stack = shadow_player & 0x70u;
+		hitter_player_bits = shadow_player & 0x70u;
 		points = OBJECT(object)->points;
-		OBJECT(object)->points = (points & 0x8Fu) | stack;
+		OBJECT(object)->points = (points & 0x8Fu) | hitter_player_bits;
 		return;
 	}
-	if (zero)
+	if (hitter_still)
 	{
 		hitter_x = OBJECT(hitter)->x;
 		enemy_x = OBJECT(object)->x;
@@ -94,17 +94,17 @@ void enemy_set_knock_direction(uint16_t object, uint16_t hitter, uint32_t zero, 
 			OBJECT(object)->hit_from_behind = hit_from_behind ^ 0x40u;
 		}
 		shadow_player = OBJECT(hitter)->shadow_player;
-		stack = shadow_player & 0x70u;
+		hitter_player_bits = shadow_player & 0x70u;
 		points = OBJECT(object)->points;
-		OBJECT(object)->points = (points & 0x8Fu) | stack;
+		OBJECT(object)->points = (points & 0x8Fu) | hitter_player_bits;
 		return;
 	}
 	hit_from_behind = OBJECT(object)->hit_from_behind;
 	OBJECT(object)->hit_from_behind = hit_from_behind ^ 0x40u;
 	shadow_player = OBJECT(hitter)->shadow_player;
-	stack = shadow_player & 0x70u;
+	hitter_player_bits = shadow_player & 0x70u;
 	points = OBJECT(object)->points;
-	OBJECT(object)->points = (points & 0x8Fu) | stack;
+	OBJECT(object)->points = (points & 0x8Fu) | hitter_player_bits;
 }
 
 /* When the enemy was hit by an attack: takes the hit and starts the hit reaction its kind gives (kinds

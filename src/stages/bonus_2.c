@@ -441,13 +441,13 @@ void bonus_2_wait(void)
 /* Bonus stage 2's end (bank 12), which a button skips after C0 frames; then the next step */
 void bonus_2_end_phase(uint16_t u)
 {
-	uint32_t carry = 0;
+	uint32_t skipped = 0;
 	uint8_t b = 0;
 	uint16_t ignored16 = 0, wait = 0;
 
 	wait = 0xC000u | b;
-	check_skip(wait, &ignored16, &carry);
-	if (carry)
+	check_skip(wait, &ignored16, &skipped);
+	if (skipped)
 	{
 		game_step++;
 		step_phase = 0u;

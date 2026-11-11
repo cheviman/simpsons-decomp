@@ -193,7 +193,7 @@ uint16_t stage_8_boss_bomb_run(uint16_t bomb, uint16_t u)
    player_state_classes, negative). */
 uint32_t stage_8_boss_player_down(void)
 {
-	uint32_t carry = 0;
+	uint32_t player_down = 0;
 	uint8_t playing_bits = 0;
 	uint8_t bits_from_marge = 0, bits_from_homer = 0, bits_from_bart = 0;
 
@@ -209,13 +209,13 @@ uint32_t stage_8_boss_player_down(void)
 			playing_bits = bits_from_bart >> 1;
 			if (((bits_from_bart & 1u) == 0u || (int8_t)OBJECT(OBJECT_ADDRESS(4))->state >= 0) && ((playing_bits & 1u) == 0u || (int8_t)OBJECT(OBJECT_ADDRESS(6))->state >= 0))
 			{
-				carry = 0u;
-				return carry;
+				player_down = 0u;
+				return player_down;
 			}
 		}
 	}
-	carry = 1u;
-	return carry;
+	player_down = 1u;
+	return player_down;
 }
 
 /* Stops the bomb and sets its animation (A), state and timer (Y). */
@@ -243,13 +243,13 @@ void stage_8_boss_set_on_floor(uint16_t self)
    on the floor. */
 uint32_t stage_8_boss_move(uint16_t boss)
 {
-	uint32_t negative = 0, carry = 0;
+	uint32_t no_floor = 0, landed = 0;
 	uint8_t floor_height_high = 0, floor_height_low = 0, floor_value = 0;
 	uint16_t floor_cell = 0;
 	uint8_t attributes = 0;
 	uint16_t floor_height = 0, z = 0, floor_z = 0, z_2 = 0, z_speed = 0, new_z_speed = 0, z_speed_2 = 0;
 
-	vector_floor_ahead(boss, &floor_cell, &negative);
+	vector_floor_ahead(boss, &floor_cell, &no_floor);
 	floor_value = (uint8_t)(floor_cell >> 8);
 	if ((int8_t)floor_value >= 0)
 	{
@@ -273,9 +273,9 @@ uint32_t stage_8_boss_move(uint16_t boss)
 	}
 	else
 	{
-		vector_floor_ahead_x(boss, &floor_cell, &negative);
+		vector_floor_ahead_x(boss, &floor_cell, &no_floor);
 		floor_value = (uint8_t)(floor_cell >> 8);
-		if (negative == 0u)
+		if (no_floor == 0u)
 		{
 			OBJECT(boss)->y_speed = 0;
 			priority_bits = floor_value & 0x30u;
@@ -299,9 +299,9 @@ uint32_t stage_8_boss_move(uint16_t boss)
 		else
 		{
 			OBJECT(boss)->x_speed = 0;
-			vector_floor_ahead_y(boss, &floor_cell, &negative);
+			vector_floor_ahead_y(boss, &floor_cell, &no_floor);
 			floor_value = (uint8_t)(floor_cell >> 8);
-			if (negative == 0u)
+			if (no_floor == 0u)
 			{
 				priority_bits = floor_value & 0x30u;
 				attributes = OBJECT(boss)->attributes;
@@ -321,7 +321,7 @@ uint32_t stage_8_boss_move(uint16_t boss)
 				else
 					OBJECT(boss)->floor_z = ((uint32_t)floor_height_high << 8) | floor_height_low;
 			}
-			else if (negative)
+			else if (no_floor)
 			{
 				OBJECT(boss)->y_speed = 0;
 				OBJECT(boss)->x_speed = 0;
@@ -358,8 +358,8 @@ uint32_t stage_8_boss_move(uint16_t boss)
 		z_speed = OBJECT(boss)->z_speed;
 		new_z_speed = z_speed - 0x60u;
 		OBJECT(boss)->z_speed = new_z_speed;
-		carry = 0u;
-		return carry;
+		landed = 0u;
+		return landed;
 	}
 	OBJECT(boss)->z = ((uint32_t)floor_height_high << 8) | floor_height_low;
 	z_speed_2 = OBJECT(boss)->z_speed;
@@ -369,35 +369,35 @@ uint32_t stage_8_boss_move(uint16_t boss)
 		OBJECT(boss)->z_speed = 0;
 		stage_8_boss_set_on_floor(boss);
 	}
-	carry = 1u;
-	return carry;
+	landed = 1u;
+	return landed;
 }
 
 /* A random player in play, in U. */
 void stage_8_boss_pick_player(uint16_t *p_player, uint16_t *p_first_slot)
 {
-	uint32_t zero = 0;
+	uint32_t slot_empty = 0;
 	uint8_t slot_high = 0, slot_low = 0;
 	uint16_t first_slot = 0, player = 0;
-	uint8_t stack = 0, stack_10002 = 0;
+	uint8_t start_player_high = 0, start_player_low = 0;
 	uint16_t player_offset = 0, start_player = 0;
 
 	player_offset = (random_number & 3u) * 0xC0u;
 	start_player = player_offset + OBJECT_ADDRESS(0);
 	slot_high = (uint8_t)(start_player >> 8);
 	slot_low = (uint8_t)start_player;
-	stack = slot_high;
-	stack_10002 = slot_low;
-	player = ((uint32_t)stack << 8) | stack_10002;
-	stage_8_boss_next_player(&player, &zero);
-	if (zero)
+	start_player_high = slot_high;
+	start_player_low = slot_low;
+	player = ((uint32_t)start_player_high << 8) | start_player_low;
+	stage_8_boss_next_player(&player, &slot_empty);
+	if (slot_empty)
 	{
-		stage_8_boss_next_player(&player, &zero);
-		if (zero)
+		stage_8_boss_next_player(&player, &slot_empty);
+		if (slot_empty)
 		{
-			stage_8_boss_next_player(&player, &zero);
-			if (zero)
-				stage_8_boss_next_player(&player, &zero);
+			stage_8_boss_next_player(&player, &slot_empty);
+			if (slot_empty)
+				stage_8_boss_next_player(&player, &slot_empty);
 		}
 	}
 	first_slot = ((uint32_t)slot_high << 8) | slot_low;
@@ -406,17 +406,17 @@ void stage_8_boss_pick_player(uint16_t *p_player, uint16_t *p_first_slot)
 }
 
 /* The next player's object after U (from the first after the fourth); Z when it is not in play. */
-void stage_8_boss_next_player(uint16_t *p_player, uint32_t *p_zero)
+void stage_8_boss_next_player(uint16_t *p_player, uint32_t *p_slot_empty)
 {
 	uint16_t player = (uint16_t)*p_player;
-	uint32_t zero = *p_zero;
+	uint32_t slot_empty = *p_slot_empty;
 
 	player += 0xC0u;
 	if (player == OBJECT_ADDRESS(8))
 		player = OBJECT_ADDRESS(0);
-	zero = OBJECT(player)->flags == 0u;
+	slot_empty = OBJECT(player)->flags == 0u;
 	*p_player = player;
-	*p_zero = zero;
+	*p_slot_empty = slot_empty;
 }
 
 /* Notes the player who hit it (its number from the player's field 5B) for the score. */
@@ -443,40 +443,40 @@ void stage_8_boss_give_score(uint16_t boss)
 }
 
 /* Carry when a player in the game is within F8 of it across and FA in depth, that player in U. */
-void stage_8_boss_find_close_player(uint16_t boss, uint16_t *p_player, uint32_t *p_carry)
+void stage_8_boss_find_close_player(uint16_t boss, uint16_t *p_player, uint32_t *p_player_close)
 {
-	uint32_t carry = *p_carry;
+	uint32_t player_close = *p_player_close;
 	uint16_t player = 0, playing_bits = 0;
 
 	player = OBJECT_ADDRESS(0);
 	playing_bits = players_playing;
-	stage_8_boss_player_is_close(boss, player, &playing_bits, &carry);
-	if (carry == 0u)
+	stage_8_boss_player_is_close(boss, player, &playing_bits, &player_close);
+	if (player_close == 0u)
 	{
 		player = OBJECT_ADDRESS(2);
-		stage_8_boss_player_is_close(boss, player, &playing_bits, &carry);
-		if (carry == 0u)
+		stage_8_boss_player_is_close(boss, player, &playing_bits, &player_close);
+		if (player_close == 0u)
 		{
 			player = OBJECT_ADDRESS(4);
-			stage_8_boss_player_is_close(boss, player, &playing_bits, &carry);
-			if (carry == 0u)
+			stage_8_boss_player_is_close(boss, player, &playing_bits, &player_close);
+			if (player_close == 0u)
 			{
 				player = OBJECT_ADDRESS(6);
-				stage_8_boss_player_is_close(boss, player, &playing_bits, &carry);
+				stage_8_boss_player_is_close(boss, player, &playing_bits, &player_close);
 			}
 		}
 	}
 	*p_player = player;
-	*p_carry = carry;
+	*p_player_close = player_close;
 }
 
 /* Carry when the player U, in the game by the bit in B, is within F8 across and FA in depth. */
-void stage_8_boss_player_is_close(uint16_t boss, uint16_t object, uint16_t *p_playing_bits, uint32_t *p_carry)
+void stage_8_boss_player_is_close(uint16_t boss, uint16_t object, uint16_t *p_playing_bits, uint32_t *p_player_close)
 {
 	uint8_t playing_bits = (uint8_t)*p_playing_bits;
-	uint32_t carry = *p_carry;
+	uint32_t player_close = *p_player_close;
 	uint16_t distance = 0, playing_bits_left = 0;
-	uint8_t stack = 0;
+	uint8_t saved_player_bits = 0;
 	uint8_t player_bits = 0;
 	uint16_t own_x = 0, player_at_x = 0, x_distance = 0, own_y = 0, player_at_y = 0, y_distance = 0;
 
@@ -484,57 +484,57 @@ void stage_8_boss_player_is_close(uint16_t boss, uint16_t object, uint16_t *p_pl
 	playing_bits_left = player_bits >> 1;
 	if ((player_bits & 1u) == 0u)
 	{
-		carry = 0u;
+		player_close = 0u;
 		playing_bits_left &= 0xFFu;
 	}
 	else
 	{
-		stack = (uint8_t)playing_bits_left;
+		saved_player_bits = (uint8_t)playing_bits_left;
 		own_x = OBJECT(boss)->x;
 		player_at_x = OBJECT(object)->x;
 		distance = own_x - player_at_x;
 		x_distance = distance >> 15 ? 0u - distance : distance;
-		playing_bits_left = stack;
+		playing_bits_left = saved_player_bits;
 		if (reach_x <= (int16_t)x_distance)
 		{
-			carry = 0u;
+			player_close = 0u;
 			playing_bits_left &= 0xFFu;
 		}
 		else
 		{
-			stack = (uint8_t)playing_bits_left;
+			saved_player_bits = (uint8_t)playing_bits_left;
 			own_y = OBJECT(boss)->y;
 			player_at_y = OBJECT(object)->y;
 			distance = own_y - player_at_y;
 			distance = (uint16_t)(distance >> 15 ? 0u - distance : distance);
 			y_distance = distance;
-			playing_bits_left = (distance & ~0xFFu) | stack;
+			playing_bits_left = (distance & ~0xFFu) | saved_player_bits;
 			if (reach_y <= (int16_t)y_distance)
 			{
-				carry = 0u;
+				player_close = 0u;
 				playing_bits_left &= 0xFFu;
 			}
 			else
 			{
-				carry = 1u;
+				player_close = 1u;
 				playing_bits_left = (playing_bits_left & 0xFFu) | ((uint32_t)(uint8_t)~(playing_bits_left >> 8) << 8);
 			}
 		}
 	}
 	*p_playing_bits = playing_bits_left;
-	*p_carry = carry;
+	*p_player_close = player_close;
 }
 
 /* The boss can not be hurt. */
 uint32_t stage_8_boss_make_invulnerable(uint16_t boss)
 {
-	uint32_t zero = 0;
+	uint32_t flags_clear = 0;
 	uint8_t flags = 0;
 
 	flags = OBJECT(boss)->flags | 4u;
-	zero = flags == 0u;
+	flags_clear = flags == 0u;
 	OBJECT(boss)->flags = flags;
-	return zero;
+	return flags_clear;
 }
 
 /* The boss can be hurt again. */
@@ -546,11 +546,11 @@ void stage_8_boss_make_vulnerable(uint16_t boss)
 /* Takes a player's blow (strength 11 or more): sound 66, its spark on the player; 1 when it holds on, FF
    when its health is at or below the limit Y gives for the players in the game (beaten, the hitter
    noted), 0 when not hit. */
-void stage_8_boss_take_hit(uint16_t boss, uint16_t limits, uint16_t *p_object, uint32_t *p_zero, uint32_t *p_negative)
+void stage_8_boss_take_hit(uint16_t boss, uint16_t limits, uint16_t *p_object, uint32_t *p_not_hit, uint32_t *p_beaten)
 {
 	uint16_t object = (uint16_t)*p_object;
-	uint32_t zero = *p_zero;
-	uint32_t negative = *p_negative;
+	uint32_t not_hit = *p_not_hit;
+	uint32_t beaten = *p_beaten;
 	uint8_t behaviour = 0, health = 0, players = 0;
 	uint16_t command = 0;
 	uint8_t hit = 0, vitality = 0, vitality_2 = 0;
@@ -558,8 +558,8 @@ void stage_8_boss_take_hit(uint16_t boss, uint16_t limits, uint16_t *p_object, u
 
 	if ((OBJECT(boss)->flags & 0x20u) == 0u)
 	{
-		negative = 0u;
-		zero = 1u;
+		beaten = 0u;
+		not_hit = 1u;
 	}
 	else
 	{
@@ -567,8 +567,8 @@ void stage_8_boss_take_hit(uint16_t boss, uint16_t limits, uint16_t *p_object, u
 		behaviour = hit;
 		if ((int8_t)behaviour < 0x11)
 		{
-			negative = 0u;
-			zero = 1u;
+			beaten = 0u;
+			not_hit = 1u;
 		}
 		else
 		{
@@ -596,27 +596,27 @@ void stage_8_boss_take_hit(uint16_t boss, uint16_t limits, uint16_t *p_object, u
 				object = stage_8_boss_credit_hitter(boss);
 				command = 0x6600u;
 				vector_queue_sound(command);
-				negative = 1u;
-				zero = 0xFFu == 0u;
+				beaten = 1u;
+				not_hit = 0xFFu == 0u;
 			}
 			else
 			{
 				command = 0x6600u;
 				vector_queue_sound(command);
-				negative = 0u;
-				zero = 1u == 0u;
+				beaten = 0u;
+				not_hit = 1u == 0u;
 			}
 		}
 	}
 	*p_object = object;
-	*p_zero = zero;
-	*p_negative = negative;
+	*p_not_hit = not_hit;
+	*p_beaten = beaten;
 }
 
 /* Blinks, safe, until its timer runs out, then is gone with its score given (carry). */
 uint32_t stage_8_boss_blink_out(uint16_t boss)
 {
-	uint32_t carry = 0;
+	uint32_t gone = 0;
 	uint8_t state_timer = 0;
 
 	OBJECT(boss)->flags = (OBJECT(boss)->flags ^ 0x80u) | 4u;
@@ -624,20 +624,20 @@ uint32_t stage_8_boss_blink_out(uint16_t boss)
 	OBJECT(boss)->stage_8_boss.state_timer = state_timer - 1u;
 	if (state_timer != 1u)
 	{
-		carry = 0u;
-		return carry;
+		gone = 0u;
+		return gone;
 	}
 	OBJECT(boss)->flags = 0u;
 	stage_8_boss_give_score(boss);
-	carry = 1u;
-	return carry;
+	gone = 1u;
+	return gone;
 }
 
 /* At its animation's hit frames hits with Y and can be hurt, else no hit; carry when the animation has
    ended. */
 uint32_t stage_8_boss_hit_on_frame(uint16_t boss, uint16_t damage)
 {
-	uint32_t carry = 0;
+	uint32_t animation_ended = 0;
 	uint8_t animation_flags = 0, animation_flags_2 = 0;
 
 	animation_flags = OBJECT(boss)->animation_flags;
@@ -648,8 +648,8 @@ uint32_t stage_8_boss_hit_on_frame(uint16_t boss, uint16_t damage)
 	OBJECT(boss)->damage = (uint8_t)(damage >> 8u);
 	OBJECT(boss)->attack = (uint8_t)damage;
 	animation_flags_2 = OBJECT(boss)->animation_flags;
-	carry = animation_flags_2 & 1u;
-	return carry;
+	animation_ended = animation_flags_2 & 1u;
+	return animation_ended;
 }
 
 /* Sets the object's box from the 4 bytes Y points at. */
@@ -721,7 +721,7 @@ void unused_stage_8_boss_set_speed_by_rank(uint16_t object, uint16_t speeds_by_r
 /* Carry when it has no x or y speed. */
 uint32_t stage_8_boss_is_still(uint16_t boss)
 {
-	uint32_t carry = 0;
+	uint32_t standing_still = 0;
 	uint16_t x_speed = 0, y_speed = 0;
 
 	x_speed = OBJECT(boss)->x_speed;
@@ -730,12 +730,12 @@ uint32_t stage_8_boss_is_still(uint16_t boss)
 		y_speed = OBJECT(boss)->y_speed;
 		if (y_speed == 0u)
 		{
-			carry = 1u;
-			return carry;
+			standing_still = 1u;
+			return standing_still;
 		}
 	}
-	carry = 0u;
-	return carry;
+	standing_still = 0u;
+	return standing_still;
 }
 
 /* Unused: shades the boss by its vitality, in steps a table gives for the players in the game. */
@@ -954,10 +954,10 @@ void stage_8_boss_fight(uint16_t boss, uint16_t enemy_handlers)
 void stage_8_boss_phase_1(uint16_t boss, uint16_t target_player)
 {
 	bool L_03A3A4 = false;
-	uint32_t carry = 0;
+	uint32_t player_down = 0;
 	uint8_t angle = 0, new_phase = 0, speed_high = 0, speed_low = 0;
 	uint16_t command = 0, direction = 0, heading = 0, speed = 0;
-	uint8_t stack = 0;
+	uint8_t saved_angle = 0;
 	uint8_t count_down = 0, count_down_2 = 0, random_high = 0, state_timer = 0, phase_1_hits = 0, laugh_frames = 0, laugh_frames_2 = 0, count = 0, count_2 = 0;
 	uint16_t x_speed = 0, x_speed_2 = 0, x_speed_3 = 0, doubled_x_speed = 0;
 
@@ -992,8 +992,8 @@ void stage_8_boss_phase_1(uint16_t boss, uint16_t target_player)
 					direction = vector_direction_to(boss, target_player);
 					angle = (uint8_t)(direction >> 8);
 				}
-				stack = angle;
-				heading = ((uint32_t)stack << 8) | stage_8_boss_walk_speeds_by_players[(int8_t)player_count];
+				saved_angle = angle;
+				heading = ((uint32_t)saved_angle << 8) | stage_8_boss_walk_speeds_by_players[(int8_t)player_count];
 				vector_set_speed_by_direction(boss, heading);
 				stage_8_boss_turn_to_motion(boss);
 				x_speed_2 = OBJECT(boss)->x_speed;
@@ -1023,8 +1023,8 @@ void stage_8_boss_phase_1(uint16_t boss, uint16_t target_player)
 				return;
 			}
 			OBJECT(boss)->stage_8_boss.laugh_frames = 0u;
-			carry = stage_8_boss_player_down();
-			if (carry == 0u)
+			player_down = stage_8_boss_player_down();
+			if (player_down == 0u)
 			{
 				stage_8_boss_move_and_take_hits(boss, target_player);
 				return;
@@ -1129,7 +1129,7 @@ void stage_8_boss_phase_2(uint16_t boss, uint16_t enemy_handlers)
 	uint32_t negative = 0;
 	uint8_t cell_ahead = 0, chosen_speed = 0, floor_low = 0, new_phase = 0, run_speed = 0;
 	uint16_t floor_cell = 0;
-	uint8_t stack = 0;
+	uint8_t saved_run_speed = 0;
 	uint8_t tested_cell = 0;
 
 	new_phase = 0xDu;
@@ -1138,12 +1138,12 @@ void stage_8_boss_phase_2(uint16_t boss, uint16_t enemy_handlers)
 	chosen_speed = stage_8_boss_run_speeds_by_players[(int8_t)player_count];
 	if ((int8_t)random_number < 0)
 		chosen_speed = 0u - chosen_speed;
-	stack = chosen_speed;
+	saved_run_speed = chosen_speed;
 	vector_floor_ahead(boss, &floor_cell, &negative);
 	cell_ahead = (uint8_t)(floor_cell >> 8);
 	floor_low = (uint8_t)floor_cell;
 	tested_cell = cell_ahead;
-	run_speed = stack;
+	run_speed = saved_run_speed;
 	if ((int8_t)tested_cell < 0)
 		run_speed = 0u - run_speed;
 	OBJECT(boss)->x_speed = ((uint32_t)run_speed << 8) | floor_low;
@@ -1263,7 +1263,7 @@ void stage_8_boss_phase_3(uint16_t boss)
    dashes at one every 64 frames when its count runs out. */
 void stage_8_boss_keep_away(uint16_t boss)
 {
-	uint32_t carry = 0;
+	uint32_t standing_still = 0;
 	uint8_t angle = 0, new_phase = 0;
 	uint16_t direction = 0, heading = 0, ignored16 = 0, player = 0, target_player = 0, u = 0;
 	uint8_t steps_left = 0, z_low = 0, count = 0;
@@ -1291,8 +1291,8 @@ void stage_8_boss_keep_away(uint16_t boss)
 		stage_8_boss_pick_player(&player, &ignored16);
 		OBJECT(boss)->stage_8_boss.marked_player = player;
 	}
-	carry = stage_8_boss_is_still(boss);
-	if (carry)
+	standing_still = stage_8_boss_is_still(boss);
+	if (standing_still)
 	{
 		new_phase = 0x10u;
 		stage_8_boss_start_state(boss, new_phase);
@@ -1346,12 +1346,12 @@ void stage_8_boss_keep_away(uint16_t boss)
 /* In its jump: drops bombs (every frame with 2 or more players), and fights on when it lands. */
 void stage_8_boss_jump(uint16_t boss, uint16_t enemy_handlers)
 {
-	uint32_t carry = 0;
+	uint32_t landed = 0;
 	uint16_t bomb_count = 0, last_bomb = 0;
 	uint8_t count_down = 0, count_down_2 = 0;
 
-	carry = stage_8_boss_move(boss);
-	if (carry)
+	landed = stage_8_boss_move(boss);
+	if (landed)
 	{
 		stage_8_boss_resume(boss, enemy_handlers);
 		return;
@@ -1431,13 +1431,13 @@ void stage_8_boss_attack_wind_up(uint16_t boss, uint16_t enemy_handlers)
 /* Its close attack, hitting with 040A at its frames, then its second part (state 12). */
 void stage_8_boss_attack(uint16_t boss, uint16_t enemy_handlers)
 {
-	uint32_t carry = 0;
+	uint32_t animation_ended = 0;
 	uint8_t new_phase = 0;
 	uint16_t damage = 0;
 
 	damage = 0x40Au;
-	carry = stage_8_boss_hit_on_frame(boss, damage);
-	if (carry == 0u)
+	animation_ended = stage_8_boss_hit_on_frame(boss, damage);
+	if (animation_ended == 0u)
 	{
 		stage_8_boss_move_and_take_hits(boss, enemy_handlers);
 		return;
@@ -1451,12 +1451,12 @@ void stage_8_boss_attack(uint16_t boss, uint16_t enemy_handlers)
 /* The close attack's second part, hitting with 040A, then fights on. */
 void stage_8_boss_attack_2(uint16_t boss, uint16_t enemy_handlers)
 {
-	uint32_t carry = 0;
+	uint32_t animation_ended = 0;
 	uint16_t damage = 0;
 
 	damage = 0x40Au;
-	carry = stage_8_boss_hit_on_frame(boss, damage);
-	if (carry == 0u)
+	animation_ended = stage_8_boss_hit_on_frame(boss, damage);
+	if (animation_ended == 0u)
 	{
 		stage_8_boss_move_and_take_hits(boss, enemy_handlers);
 		return;
@@ -1488,15 +1488,15 @@ void stage_8_boss_idle(void)
    16 health since the last), then moves and takes hits. */
 void stage_8_boss_check_close_player(uint16_t boss)
 {
-	uint32_t carry = 0;
+	uint32_t player_close = 0;
 	uint8_t new_phase = 0;
 	uint16_t close_player = 0;
 	uint8_t health_mark = 0, vitality = 0, vitality_2 = 0;
 
 	reach_x = 0x30;
 	reach_y = 0x10;
-	stage_8_boss_find_close_player(boss, &close_player, &carry);
-	if (carry == 0u)
+	stage_8_boss_find_close_player(boss, &close_player, &player_close);
+	if (player_close == 0u)
 	{
 		stage_8_boss_move_and_take_hits(boss, close_player);
 		return;
@@ -1537,19 +1537,19 @@ void stage_8_boss_move_and_take_hits(uint16_t boss, uint16_t u)
    blow or in the air); beaten, it cries out and starts its defeat (state 17). */
 void stage_8_boss_take_hits(uint16_t boss, uint16_t u)
 {
-	uint32_t zero = 0, negative = 0;
+	uint32_t not_hit = 0, beaten = 0;
 	uint8_t new_phase = 0;
 	uint16_t command = 0, limits = 0, object = 0, palette_effect_number = 0;
-	uint16_t stack = 0;
+	uint16_t saved_boss = 0;
 	uint8_t phases_left = 0, attributes = 0, attributes_2 = 0, attributes_3 = 0, hit = 0;
 	uint16_t hit_by = 0, z_speed = 0, z = 0;
 
 	leftover_y = stage_8_boss_beaten_healths_by_players_ADDRESS;
 	limits = stage_8_boss_beaten_healths_by_players_ADDRESS;
-	stage_8_boss_take_hit(boss, limits, &u, &zero, &negative);
-	if (zero)
+	stage_8_boss_take_hit(boss, limits, &u, &not_hit, &beaten);
+	if (not_hit)
 		return;
-	if (negative)
+	if (beaten)
 	{
 		command = 0x7900u;
 		vector_queue_sound(command);
@@ -1557,7 +1557,7 @@ void stage_8_boss_take_hits(uint16_t boss, uint16_t u)
 		stage_8_boss_stop_and_start_state(boss, new_phase);
 		return;
 	}
-	stack = boss;
+	saved_boss = boss;
 	phases_left = OBJECT(boss)->stage_8_boss.phases_left;
 	if (phases_left == 0u)
 	{
@@ -1571,7 +1571,7 @@ void stage_8_boss_take_hits(uint16_t boss, uint16_t u)
 		palette_effect_number = 0x40u;
 		vector_palette_request(u, palette_effect_number);
 	}
-	object = stack;
+	object = saved_boss;
 	hit_by = OBJECT(object)->hit_by;
 	attributes = OBJECT(hit_by)->attributes;
 	attributes_2 = OBJECT(object)->attributes;
@@ -1605,7 +1605,7 @@ void stage_8_boss_take_hits(uint16_t boss, uint16_t u)
    can not be hurt for a while. */
 void stage_8_boss_reel(uint16_t boss, uint16_t enemy_handlers)
 {
-	uint32_t zero = 0;
+	uint32_t flags_clear = 0;
 	uint8_t players = 0;
 	uint8_t animation_flags = 0, phases_left = 0, count = 0, count_2 = 0;
 
@@ -1632,8 +1632,8 @@ void stage_8_boss_reel(uint16_t boss, uint16_t enemy_handlers)
 	OBJECT(boss)->stage_8_boss.count = 0u;
 	leftover_y = stage_8_boss_invulnerable_times_by_players_ADDRESS;
 	OBJECT(boss)->stage_8_boss.count_down = stage_8_boss_invulnerable_times_by_players[(int8_t)players];
-	zero = stage_8_boss_make_invulnerable(boss);
-	if (zero == 0u)
+	flags_clear = stage_8_boss_make_invulnerable(boss);
+	if (flags_clear == 0u)
 	{
 		stage_8_boss_resume(boss, enemy_handlers);
 		return;
@@ -1705,11 +1705,11 @@ void stage_8_boss_defeat_wait(uint16_t boss)
    (07B333 then plays the story before the robot). */
 void stage_8_boss_vanish(uint16_t boss, uint8_t countdown_value)
 {
-	uint32_t carry = 0;
+	uint32_t gone = 0;
 	uint32_t step_subphase_halfword = 0;
 
-	carry = stage_8_boss_blink_out(boss);
-	if (carry)
+	gone = stage_8_boss_blink_out(boss);
+	if (gone)
 	{
 		camera_x_held = 0u;
 		camera_y_held = 0u;
@@ -1827,7 +1827,7 @@ uint16_t stage_8_boss_bomb_bounce(uint16_t bomb, uint16_t u)
    boss beaten), or bounces on when the boss is bombing on the run, and by chance in its second phase. */
 uint16_t stage_8_boss_bomb_fly(uint16_t bomb)
 {
-	uint32_t negative = 0, carry = 0;
+	uint32_t negative = 0, player_down = 0;
 	uint16_t floor_cell = 0, object = 0, u = 0, z_speed = 0;
 	uint8_t vitality = 0, target_dy = 0, thrower_phases_left = 0, shared_random = 0;
 	uint16_t z = 0, z_speed_2 = 0, thrower = 0, x_speed = 0, x_speed_2 = 0, x_speed_3 = 0, y_speed = 0, y_speed_2 = 0, y_speed_3 = 0, z_speed_3 = 0;
@@ -1847,8 +1847,8 @@ uint16_t stage_8_boss_bomb_fly(uint16_t bomb)
 		}
 		return z_speed;
 	}
-	carry = stage_8_boss_player_down();
-	if (carry)
+	player_down = stage_8_boss_player_down();
+	if (player_down)
 	{
 		stage_8_boss_bomb_explode(bomb);
 		return u;
@@ -1993,11 +1993,11 @@ uint16_t stage_8_boss_throw_bombs(uint16_t boss, uint16_t bomb_count)
 uint16_t stage_8_boss_next_random(uint16_t seed)
 {
 	uint16_t previous = 0;
-	uint16_t stack = 0;
+	uint16_t old_value = 0;
 
 	previous = mem_read16(seed);
-	stack = previous;
-	previous = previous + mem_read16(seed) + mem_read16(seed) + mem_read16(seed) + stack + 0x3711u;
+	old_value = previous;
+	previous = previous + mem_read16(seed) + mem_read16(seed) + mem_read16(seed) + old_value + 0x3711u;
 	mem_write16(seed, previous);
 	return previous;
 }
@@ -2047,12 +2047,12 @@ void stage_8_boss_turn_to_motion(uint16_t boss)
 uint16_t stage_8_boss_speed(uint16_t boss)
 {
 	uint16_t speed = 0;
-	uint16_t stack = 0;
+	uint16_t x_speed_size = 0;
 	uint16_t x_speed = 0, y_speed = 0;
 
 	x_speed = OBJECT(boss)->x_speed;
-	stack = x_speed >> 15 ? 0u - x_speed : x_speed;
+	x_speed_size = x_speed >> 15 ? 0u - x_speed : x_speed;
 	y_speed = OBJECT(boss)->y_speed;
-	speed = (y_speed >> 15 ? 0u - y_speed : y_speed) + stack;
+	speed = (y_speed >> 15 ? 0u - y_speed : y_speed) + x_speed_size;
 	return speed;
 }

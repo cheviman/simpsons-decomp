@@ -1428,7 +1428,7 @@ void enemy_line_up_start(uint16_t object)
 void enemy_line_up_in_depth(uint16_t object)
 {
 	uint8_t timer = 0, side = 0, target_direction = 0, side_2 = 0, action_step = 0, blocked = 0, target_direction_2 = 0;
-	uint16_t target_dx = 0, walk_speed_now = 0, x_speed = 0, target_dy = 0, t1 = 0, y_speed = 0;
+	uint16_t target_dx = 0, walk_speed_now = 0, x_speed = 0, target_dy = 0, depth_walk_speed = 0, y_speed = 0;
 
 	enemy_face_with_animation(object);
 	timer = OBJECT(object)->timer;
@@ -1476,8 +1476,8 @@ void enemy_line_up_in_depth(uint16_t object)
 			return;
 		}
 		OBJECT(object)->x_speed = 0;
-		t1 = io_read16(enemy_walk_speed);
-		OBJECT(object)->y_speed = t1;
+		depth_walk_speed = io_read16(enemy_walk_speed);
+		OBJECT(object)->y_speed = depth_walk_speed;
 		target_direction_2 = OBJECT(object)->target_direction;
 		if ((int8_t)target_direction_2 < 0)
 		{

@@ -771,12 +771,12 @@ void burns_robot_throw_piece(uint16_t robot, uint16_t *p_piece, uint16_t *p_piec
 	uint32_t carry = 0;
 	uint8_t list = 0;
 	uint16_t part_code = 0, piece = 0;
-	uint8_t stack = 0;
+	uint8_t saved_piece_number = 0;
 
-	stack = piece_number >> 8;
+	saved_piece_number = piece_number >> 8;
 	list = 1u;
 	vector_find_free_slot(list, &piece, &carry);
-	part_code = 1u | ((uint32_t)stack << 8);
+	part_code = 1u | ((uint32_t)saved_piece_number << 8);
 	burns_robot_place_part(robot, piece, part_code);
 	OBJECT(piece)->flags = 0x88u;
 	OBJECT(piece)->z_speed = 0x500;
@@ -1020,12 +1020,12 @@ uint16_t burns_robot_throw_piece_2(uint16_t robot, uint16_t piece_number)
 	uint32_t carry = 0;
 	uint8_t list = 0;
 	uint16_t part_code = 0, piece = 0;
-	uint8_t stack = 0;
+	uint8_t saved_piece_number = 0;
 
-	stack = piece_number >> 8;
+	saved_piece_number = piece_number >> 8;
 	list = 1u;
 	vector_find_free_slot(list, &piece, &carry);
-	part_code = 1u | ((uint32_t)stack << 8);
+	part_code = 1u | ((uint32_t)saved_piece_number << 8);
 	burns_robot_place_part(robot, piece, part_code);
 	OBJECT(piece)->flags = 0x88u;
 	OBJECT(piece)->z_speed = 0x500;
@@ -1252,12 +1252,12 @@ uint16_t burns_robot_throw_piece_3(uint16_t robot, uint16_t piece_number)
 	uint32_t carry = 0;
 	uint8_t list = 0;
 	uint16_t part_code = 0, piece = 0;
-	uint8_t stack = 0;
+	uint8_t saved_piece_number = 0;
 
-	stack = piece_number >> 8;
+	saved_piece_number = piece_number >> 8;
 	list = 1u;
 	vector_find_free_slot(list, &piece, &carry);
-	part_code = 1u | ((uint32_t)stack << 8);
+	part_code = 1u | ((uint32_t)saved_piece_number << 8);
 	burns_robot_place_part(robot, piece, part_code);
 	OBJECT(piece)->flags = 0x80u;
 	return piece;
@@ -1529,12 +1529,12 @@ void burns_robot_shed_form_0(uint16_t robot)
 /* Falls to the floor, then lies 128 frames. */
 void burns_robot_fall_down(uint16_t robot)
 {
-	uint32_t carry = 0;
+	uint32_t landed = 0;
 	uint16_t ignored16 = 0;
 	uint8_t step = 0;
 
-	vector_apply_gravity(robot, &ignored16, &carry);
-	if (carry)
+	vector_apply_gravity(robot, &ignored16, &landed);
+	if (landed)
 	{
 		OBJECT(robot)->burns_robot.wait_frames = 0x80u;
 		step = OBJECT(robot)->burns_robot.step;
@@ -1611,12 +1611,12 @@ uint16_t burns_robot_throw_piece_4(uint16_t robot, uint16_t piece_number)
 	uint32_t carry = 0;
 	uint8_t list = 0;
 	uint16_t part_code = 0, piece = 0;
-	uint8_t stack = 0;
+	uint8_t saved_piece_number = 0;
 
-	stack = piece_number >> 8;
+	saved_piece_number = piece_number >> 8;
 	list = 1u;
 	vector_find_free_slot(list, &piece, &carry);
-	part_code = 1u | ((uint32_t)stack << 8);
+	part_code = 1u | ((uint32_t)saved_piece_number << 8);
 	burns_robot_place_part(robot, piece, part_code);
 	OBJECT(piece)->flags = 0x88u;
 	OBJECT(piece)->z_speed = 0x500;
@@ -2075,7 +2075,7 @@ void burns_robot_step_up(uint16_t robot)
    (3F36). */
 void burns_robot_speak(uint16_t robot)
 {
-	uint32_t carry = 0;
+	uint32_t slot_found = 0;
 	uint8_t list = 0;
 	uint16_t balloon = 0, command = 0, look = 0;
 	uint8_t wait_frames = 0, step = 0;
@@ -2085,8 +2085,8 @@ void burns_robot_speak(uint16_t robot)
 	if (wait_frames != 1u)
 		return;
 	list = 2u;
-	vector_find_free_slot(list, &balloon, &carry);
-	if (carry)
+	vector_find_free_slot(list, &balloon, &slot_found);
+	if (slot_found)
 	{
 		OBJECT(balloon)->type = 0x29;
 		OBJECT(balloon)->kind = 0xB0u;
@@ -2106,7 +2106,7 @@ void burns_robot_speak(uint16_t robot)
 /* At its frame tosses away a part (object_1d_parts 8, 5280 type E4) at full size, with sound 0301. */
 void burns_robot_toss_part(uint16_t robot)
 {
-	uint32_t carry = 0;
+	uint32_t slot_found = 0;
 	uint8_t list = 0;
 	uint16_t command = 0, part = 0, part_code = 0;
 	uint8_t animation_flags = 0, step = 0;
@@ -2115,8 +2115,8 @@ void burns_robot_toss_part(uint16_t robot)
 	if ((animation_flags & 2u) == 0u)
 		return;
 	list = 1u;
-	vector_find_free_slot(list, &part, &carry);
-	if (carry)
+	vector_find_free_slot(list, &part, &slot_found);
+	if (slot_found)
 	{
 		part_code = 0x801u;
 		burns_robot_place_part(robot, part, part_code);
@@ -2174,15 +2174,15 @@ void burns_robot_ready(uint16_t robot)
 /* Form 0 walking straight at its target with heavy steps (sound 5A), attacking when it can. */
 void burns_robot_walk_form_0(uint16_t robot)
 {
-	uint32_t carry = 0;
+	uint32_t action_started = 0;
 	uint16_t command = 0, look = 0, u = 0;
 	uint8_t animation = 0, form_base = 0, aim = 0, animation_flags = 0;
 
-	burns_robot_decide_form_0(robot, &u, &carry);
-	if (carry)
+	burns_robot_decide_form_0(robot, &u, &action_started);
+	if (action_started)
 		return;
-	carry = burns_robot_choose_target(robot, u);
-	if (carry)
+	action_started = burns_robot_choose_target(robot, u);
+	if (action_started)
 		return;
 	animation = OBJECT(robot)->animation;
 	if (animation != 4u)
@@ -2207,16 +2207,16 @@ void burns_robot_walk_form_0(uint16_t robot)
    can. */
 void burns_robot_walk_form_1(uint16_t robot)
 {
-	uint32_t negative = 0, carry = 0;
+	uint32_t aim_below = 0, action_started = 0;
 	uint8_t turn = 0, walk_direction = 0;
 	uint16_t command = 0, look = 0, u = 0;
 	uint8_t animation = 0, form_base = 0, aim = 0, walk_direction_2 = 0, walk_direction_3 = 0;
 
-	burns_robot_decide_form_1(robot, &u, &carry);
-	if (carry)
+	burns_robot_decide_form_1(robot, &u, &action_started);
+	if (action_started)
 		return;
-	carry = burns_robot_choose_target(robot, u);
-	if (carry)
+	action_started = burns_robot_choose_target(robot, u);
+	if (action_started)
 		return;
 	if ((frame_count & 0x3Fu) == 0u)
 	{
@@ -2235,13 +2235,13 @@ void burns_robot_walk_form_1(uint16_t robot)
 	aim = OBJECT(robot)->burns_robot.aim;
 	walk_direction = aim;
 	walk_direction_2 = OBJECT(robot)->burns_robot.walk_direction;
-	negative = (uint8_t)(walk_direction - walk_direction_2) >> 7;
+	aim_below = (uint8_t)(walk_direction - walk_direction_2) >> 7;
 	if (walk_direction == walk_direction_2)
 	{
 		burns_robot_walk(robot);
 		return;
 	}
-	if (negative)
+	if (aim_below)
 		turn = 0u - turn;
 	walk_direction_3 = OBJECT(robot)->burns_robot.walk_direction;
 	OBJECT(robot)->burns_robot.walk_direction = turn + walk_direction_3;
@@ -2251,15 +2251,15 @@ void burns_robot_walk_form_1(uint16_t robot)
 /* Forms 2-4 walking at their target, turning 3 steps at a time, attacking when they can. */
 void burns_robot_walk_late_forms(uint16_t robot)
 {
-	uint32_t carry = 0;
+	uint32_t action_started = 0;
 	uint16_t look = 0, u = 0;
 	uint8_t animation = 0, form_base = 0, form_extra = 0;
 
-	burns_robot_decide_late_forms(robot, &u, &carry);
-	if (carry)
+	burns_robot_decide_late_forms(robot, &u, &action_started);
+	if (action_started)
 		return;
-	carry = burns_robot_choose_target(robot, u);
-	if (carry)
+	action_started = burns_robot_choose_target(robot, u);
+	if (action_started)
 		return;
 	animation = OBJECT(robot)->animation;
 	if (animation != 1u)
@@ -2276,7 +2276,7 @@ void burns_robot_walk_late_forms(uint16_t robot)
 /* Turns its walking direction up to 3 steps toward its aim and walks that way. */
 void burns_robot_steer(uint16_t robot)
 {
-	uint32_t negative = 0;
+	uint32_t aim_below = 0;
 	uint8_t turn = 0, walk_direction = 0;
 	uint8_t aim = 0, walk_direction_2 = 0, walk_direction_3 = 0;
 
@@ -2284,13 +2284,13 @@ void burns_robot_steer(uint16_t robot)
 	aim = OBJECT(robot)->burns_robot.aim;
 	walk_direction = aim;
 	walk_direction_2 = OBJECT(robot)->burns_robot.walk_direction;
-	negative = (uint8_t)(walk_direction - walk_direction_2) >> 7;
+	aim_below = (uint8_t)(walk_direction - walk_direction_2) >> 7;
 	if (walk_direction == walk_direction_2)
 	{
 		burns_robot_walk(robot);
 		return;
 	}
-	if (negative)
+	if (aim_below)
 		turn = 0u - turn;
 	walk_direction_3 = OBJECT(robot)->burns_robot.walk_direction;
 	OBJECT(robot)->burns_robot.walk_direction = turn + walk_direction_3;
@@ -2718,10 +2718,10 @@ void burns_robot_volley(uint16_t robot)
 /* At its frame fires a shot (4D40 type 25) at x speed 0500 the way it faces, sound 1D. */
 void burns_robot_fire_shot(uint16_t robot)
 {
-	uint32_t carry = 0;
+	uint32_t slot_found = 0;
 	uint8_t facing = 0, list = 0, turned_part = 0;
 	uint16_t box_number = 0, command = 0, object = 0, part_code = 0, self = 0, shot = 0;
-	uint16_t stack = 0;
+	uint16_t saved_robot = 0;
 	uint8_t animation_flags = 0, attributes = 0, action = 0;
 	uint16_t shot_x_speed = 0;
 
@@ -2729,8 +2729,8 @@ void burns_robot_fire_shot(uint16_t robot)
 	if ((animation_flags & 2u) == 0u)
 		return;
 	list = 2u;
-	vector_find_free_slot(list, &shot, &carry);
-	if (carry == 0u)
+	vector_find_free_slot(list, &shot, &slot_found);
+	if (slot_found == 0u)
 	{
 		burns_robot_start_walking(robot);
 		return;
@@ -2753,11 +2753,11 @@ void burns_robot_fire_shot(uint16_t robot)
 	vector_queue_sound(command);
 	shot_x_speed = shot_speed;
 	OBJECT(shot)->x_speed = shot_x_speed;
-	stack = robot;
+	saved_robot = robot;
 	self = shot;
 	box_number = 0xF00u;
 	burns_robot_set_box(self, box_number);
-	object = stack;
+	object = saved_robot;
 	action = OBJECT(object)->action;
 	OBJECT(object)->action = action + 1u;
 }
@@ -2948,10 +2948,10 @@ void burns_robot_part_attack_raise(uint16_t robot)
 /* At its frame holds out its part (4F80 type EA) in front of it, harmful, for 64 frames. */
 void burns_robot_part_attack_hold(uint16_t robot)
 {
-	uint32_t carry = 0;
+	uint32_t slot_found = 0;
 	uint8_t list = 0, turned_part = 0;
 	uint16_t box_number = 0, held_object = 0, part_code = 0, robot_back = 0, self = 0;
-	uint16_t stack = 0;
+	uint16_t saved_robot = 0;
 	uint8_t animation_flags = 0, step = 0, attributes = 0;
 
 	animation_flags = OBJECT(robot)->animation_flags;
@@ -2959,17 +2959,17 @@ void burns_robot_part_attack_hold(uint16_t robot)
 		return;
 	OBJECT(robot)->flags &= ~4u;
 	list = 0u;
-	vector_find_free_slot(list, &held_object, &carry);
-	if (carry == 0u)
+	vector_find_free_slot(list, &held_object, &slot_found);
+	if (slot_found == 0u)
 	{
 		OBJECT(held_object)->flags = 0xC0u;
 		OBJECT(held_object)->burns_held_part.robot = robot;
 		OBJECT(robot)->burns_robot.held_part = held_object;
-		stack = robot;
+		saved_robot = robot;
 		self = held_object;
 		box_number = 0x1000u;
 		burns_robot_set_box(self, box_number);
-		robot_back = stack;
+		robot_back = saved_robot;
 		OBJECT(robot_back)->burns_robot.wait_frames = 0x40u;
 		OBJECT(robot_back)->burns_robot.holding_part = 1u;
 		step = OBJECT(robot_back)->burns_robot.step;
@@ -2985,11 +2985,11 @@ void burns_robot_part_attack_hold(uint16_t robot)
 	OBJECT(held_object)->flags = 0xC0u;
 	OBJECT(held_object)->burns_held_part.robot = robot;
 	OBJECT(robot)->burns_robot.held_part = held_object;
-	stack = robot;
+	saved_robot = robot;
 	self = held_object;
 	box_number = 0x1000u;
 	burns_robot_set_box(self, box_number);
-	robot_back = stack;
+	robot_back = saved_robot;
 	OBJECT(robot_back)->burns_robot.wait_frames = 0x40u;
 	OBJECT(robot_back)->burns_robot.holding_part = 1u;
 	step = OBJECT(robot_back)->burns_robot.step;
@@ -3093,7 +3093,7 @@ void burns_robot_lob_aim(uint16_t robot)
    of bombs thrown. */
 void burns_robot_lob_throw(uint16_t robot)
 {
-	uint32_t carry = 0;
+	uint32_t slot_found = 0;
 	uint8_t facing = 0, list = 0, turned_part = 0;
 	uint16_t bomb = 0, part_code = 0;
 	uint8_t animation_flags = 0, step = 0, attributes = 0, form_base = 0, form_extra = 0, bombs_lobbed = 0;
@@ -3103,8 +3103,8 @@ void burns_robot_lob_throw(uint16_t robot)
 	if ((animation_flags & 2u) == 0u)
 		return;
 	list = 2u;
-	vector_find_free_slot(list, &bomb, &carry);
-	if (carry == 0u)
+	vector_find_free_slot(list, &bomb, &slot_found);
+	if (slot_found == 0u)
 	{
 		step = OBJECT(robot)->burns_robot.step;
 		OBJECT(robot)->burns_robot.step = step + 1u;
@@ -3199,15 +3199,15 @@ void burns_robot_gloat(uint16_t robot)
    frames. */
 void burns_robot_gloat_until_player(uint16_t robot)
 {
-	uint32_t carry = 0;
+	uint32_t player_found = 0;
 	uint16_t ignored16 = 0, ignored16_2 = 0;
 	uint8_t form_base = 0, step = 0;
 
 	form_base = OBJECT(robot)->burns_robot.form_base;
 	if (form_base != 2u)
 		burns_robot_stop(robot);
-	find_nearest_player(robot, &ignored16, &ignored16_2, &carry);
-	if (carry)
+	find_nearest_player(robot, &ignored16, &ignored16_2, &player_found);
+	if (player_found)
 	{
 		OBJECT(robot)->flags |= 0x40u;
 		OBJECT(robot)->burns_robot.wait_frames = 0x20u;
@@ -3233,14 +3233,14 @@ void burns_robot_gloat_end(uint16_t robot)
 /* When a player's blow hits it, lets go of its held part and takes the blow. */
 void burns_robot_check_hit(uint16_t robot)
 {
-	uint32_t negative = 0;
+	uint32_t negative_hit = 0;
 	uint8_t hit = 0;
 
 	if ((OBJECT(robot)->flags & 0x20u) != 0u)
 	{
 		hit = OBJECT(robot)->hit;
-		negative = hit >> 7;
-		if (hit != 0u && negative == 0u)
+		negative_hit = hit >> 7;
+		if (hit != 0u && negative_hit == 0u)
 		{
 			OBJECT(robot)->burns_robot.holding_part = 0u;
 			burns_robot_take_hit(robot);
@@ -3488,9 +3488,9 @@ void burns_robot_decide_late_forms(uint16_t robot, uint16_t *p_target, uint32_t 
 }
 
 /* Carry when it faces its target. */
-void burns_robot_facing_target(uint16_t robot, uint16_t *p_target, uint32_t *p_carry)
+void burns_robot_facing_target(uint16_t robot, uint16_t *p_target, uint32_t *p_facing)
 {
-	uint32_t carry = *p_carry;
+	uint32_t facing = *p_facing;
 	uint16_t target = 0;
 	uint8_t attributes = 0, attributes_2 = 0;
 	uint16_t target_player = 0, robot_x = 0, target_x = 0;
@@ -3503,20 +3503,20 @@ void burns_robot_facing_target(uint16_t robot, uint16_t *p_target, uint32_t *p_c
 	{
 		attributes = OBJECT(robot)->attributes;
 		if ((attributes & 0x40u) != 0u)
-			carry = 0u;
+			facing = 0u;
 		else
-			carry = 1u;
+			facing = 1u;
 	}
 	else
 	{
 		attributes_2 = OBJECT(robot)->attributes;
 		if ((attributes_2 & 0x40u) == 0u)
-			carry = 0u;
+			facing = 0u;
 		else
-			carry = 1u;
+			facing = 1u;
 	}
 	*p_target = target;
-	*p_carry = carry;
+	*p_facing = facing;
 }
 
 /* Walks in its walking direction at its form's speed for the rank, facing it. */
@@ -3579,8 +3579,8 @@ void burns_robot_aim_at_target(uint16_t robot)
 	uint32_t negative = 0;
 	uint8_t a = 0, cell = 0, direction = 0, side = 0, target_dy = 0;
 	uint16_t direction_to_target = 0, object = 0, side_probe = 0, target = 0;
-	uint8_t stack_3 = 0;
-	uint16_t stack = 0;
+	uint8_t aim_offset = 0;
+	uint16_t saved_robot = 0;
 	uint16_t target_player = 0, robot_x = 0, target_x = 0;
 
 	target_player = OBJECT(robot)->burns_robot.target_player;
@@ -3591,16 +3591,16 @@ void burns_robot_aim_at_target(uint16_t robot)
 		side = 0x40u;
 	else
 		side = 0xC0u;
-	stack = robot;
-	stack_3 = side;
+	saved_robot = robot;
+	aim_offset = side;
 	object = target;
 	side_probe = (uint32_t)(uint16_t)(((uint32_t)a << 8) | side) << 8;
 	vector_floor_at_offset(object, &side_probe, &negative);
 	cell = (uint8_t)(side_probe >> 8);
 	if ((int8_t)cell < 0)
-		stack_3 = 0u - stack_3;
-	object = stack;
-	side_probe = stack_3;
+		aim_offset = 0u - aim_offset;
+	object = saved_robot;
+	side_probe = aim_offset;
 	side_probe = vector_direction_to_offset(object, target, side_probe);
 	direction = (uint8_t)(side_probe >> 8);
 	OBJECT(object)->target_dx = (OBJECT(object)->target_dx & 0xFF00u) | (direction & 0xFFu);
@@ -3670,27 +3670,27 @@ uint16_t burns_robot_set_box(uint16_t self, uint16_t box_number)
 }
 
 /* Carry when its target is within F8 across and up to FA further down the screen. */
-void burns_robot_target_in_reach(uint16_t robot, uint16_t *p_target, uint32_t *p_carry)
+void burns_robot_target_in_reach(uint16_t robot, uint16_t *p_target, uint32_t *p_in_reach)
 {
-	uint32_t carry = *p_carry;
+	uint32_t in_reach = *p_in_reach;
 	uint16_t target = 0;
 	uint16_t target_player = 0;
 
 	target_player = OBJECT(robot)->burns_robot.target_player;
 	target = target_player;
-	carry = burns_robot_target_across(robot, target);
-	if (carry == 0u)
-		carry = 0u;
+	in_reach = burns_robot_target_across(robot, target);
+	if (in_reach == 0u)
+		in_reach = 0u;
 	else
-		carry = burns_robot_target_in_depth(robot, target);
+		in_reach = burns_robot_target_in_depth(robot, target);
 	*p_target = target;
-	*p_carry = carry;
+	*p_in_reach = in_reach;
 }
 
 /* Carry when U is up to FA further down the screen than it. */
 uint32_t burns_robot_target_in_depth(uint16_t robot, uint16_t target)
 {
-	uint32_t carry = 0;
+	uint32_t within_depth = 0;
 	uint16_t depth = 0;
 	uint16_t target_y = 0, robot_y = 0, difference_y = 0;
 
@@ -3700,17 +3700,17 @@ uint32_t burns_robot_target_in_depth(uint16_t robot, uint16_t target)
 	depth = difference_y;
 	if ((int16_t)difference_y < 0 || reach_y < (int16_t)depth)
 	{
-		carry = 0u;
-		return carry;
+		within_depth = 0u;
+		return within_depth;
 	}
-	carry = 1u;
-	return carry;
+	within_depth = 1u;
+	return within_depth;
 }
 
 /* Carry when U is within F8 across. */
 uint32_t burns_robot_target_across(uint16_t robot, uint16_t target)
 {
-	uint32_t carry = 0;
+	uint32_t within_across = 0;
 	uint16_t across = 0;
 	uint16_t robot_x = 0, target_x = 0;
 
@@ -3719,11 +3719,11 @@ uint32_t burns_robot_target_across(uint16_t robot, uint16_t target)
 	across = robot_x - target_x;
 	if (reach_x < (int16_t)(across >> 15 ? 0u - across : across))
 	{
-		carry = 0u;
-		return carry;
+		within_across = 0u;
+		return within_across;
 	}
-	carry = 1u;
-	return carry;
+	within_across = 1u;
+	return within_across;
 }
 
 /* Back to walking: can be hit and hurt, its body's box, its form's walking handler. */
@@ -3746,7 +3746,7 @@ uint16_t burns_robot_start_walking(uint16_t robot)
 /* Mr. Burns gloats (voice 3F38): handler 0D with its gloating look; it can not be hit meanwhile. */
 uint32_t burns_robot_start_gloating(uint16_t robot)
 {
-	uint32_t carry = 0;
+	uint32_t action_started = 0;
 	uint16_t command = 0, look = 0;
 	uint8_t form_base = 0, form_extra = 0;
 
@@ -3759,8 +3759,8 @@ uint32_t burns_robot_start_gloating(uint16_t robot)
 	look = 0x38u | ((uint32_t)(uint8_t)(0xFu + form_base + form_extra) << 8);
 	burns_robot_set_look(robot, look);
 	OBJECT(robot)->flags &= 0xBFu;
-	carry = 1u;
-	return carry;
+	action_started = 1u;
+	return action_started;
 }
 
 /* Takes a blow: a spark on the player, sound 66, no box; at or below its form's beaten health for the
@@ -3804,9 +3804,9 @@ void burns_robot_take_hit(uint16_t robot)
 
 /* Starts attack F0 of its form (handler 6 + 2 x form base + it), at once by chance or after hurt, else
    after a 32-frame wait; gloats when its target is down. */
-void burns_robot_start_attack(uint16_t robot, uint16_t *p_object, uint32_t *p_carry)
+void burns_robot_start_attack(uint16_t robot, uint16_t *p_object, uint32_t *p_action_started)
 {
-	uint32_t carry = *p_carry;
+	uint32_t action_started = *p_action_started;
 	uint16_t look = 0, target = 0;
 	uint8_t state = 0, form_base = 0, attack_choice = 0, form_base_2 = 0, form_extra = 0, form_extra_2 = 0, form_base_3 = 0, vitality = 0, health_mark = 0, vitality_2 = 0;
 	uint16_t target_player = 0;
@@ -3816,7 +3816,7 @@ void burns_robot_start_attack(uint16_t robot, uint16_t *p_object, uint32_t *p_ca
 	target = target_player;
 	state = OBJECT(target)->state;
 	if ((int8_t)state < 0)
-		carry = burns_robot_start_gloating(robot);
+		action_started = burns_robot_start_gloating(robot);
 	else
 	{
 		form_base = OBJECT(robot)->burns_robot.form_base;
@@ -3835,7 +3835,7 @@ void burns_robot_start_attack(uint16_t robot, uint16_t *p_object, uint32_t *p_ca
 		{
 			vitality = OBJECT(robot)->vitality;
 			OBJECT(robot)->burns_robot.health_mark = vitality;
-			carry = 1u;
+			action_started = 1u;
 		}
 		else
 		{
@@ -3845,23 +3845,23 @@ void burns_robot_start_attack(uint16_t robot, uint16_t *p_object, uint32_t *p_ca
 			{
 				vitality = OBJECT(robot)->vitality;
 				OBJECT(robot)->burns_robot.health_mark = vitality;
-				carry = 1u;
+				action_started = 1u;
 			}
 			else
 			{
 				OBJECT(robot)->burns_robot.wait_frames = 0x20u;
-				carry = 1u;
+				action_started = 1u;
 			}
 		}
 	}
 	*p_object = target;
-	*p_carry = carry;
+	*p_action_started = action_started;
 }
 
 /* Starts lobbing bombs (handler 0C), facing its target, safe meanwhile. */
 uint32_t burns_robot_start_lob(uint16_t robot)
 {
-	uint32_t carry = 0;
+	uint32_t action_started = 0;
 
 	OBJECT(robot)->burns_robot.lob_frames = 0u;
 	OBJECT(robot)->burns_robot.bombs_lobbed = 0u;
@@ -3870,8 +3870,8 @@ uint32_t burns_robot_start_lob(uint16_t robot)
 	OBJECT(robot)->flags |= 4u;
 	OBJECT(robot)->state = 0xCu;
 	OBJECT(robot)->burns_robot.step = 0u;
-	carry = 1u;
-	return carry;
+	action_started = 1u;
+	return action_started;
 }
 
 /* Stops: no x, y or height speed. */
@@ -3957,7 +3957,7 @@ void burns_robot_place_part(uint16_t self, uint16_t part, uint16_t part_code)
 /* Carry when its x is within 40-180. */
 uint32_t burns_robot_in_middle(uint16_t robot)
 {
-	uint32_t carry = 0;
+	uint32_t in_middle = 0;
 	uint8_t robot_x_high = 0, robot_x_low = 0;
 	uint16_t robot_x = 0;
 
@@ -3966,17 +3966,17 @@ uint32_t burns_robot_in_middle(uint16_t robot)
 	robot_x_high = (uint8_t)(robot_x >> 8);
 	if ((int16_t)(((uint32_t)robot_x_high << 8) | (robot_x_low & 0xFFu)) < 0x40 || (int16_t)(((uint32_t)robot_x_high << 8) | (robot_x_low & 0xFFu)) > 0x180)
 	{
-		carry = 0u;
-		return carry;
+		in_middle = 0u;
+		return in_middle;
 	}
-	carry = 1u;
-	return carry;
+	in_middle = 1u;
+	return in_middle;
 }
 
 /* Carry when the frames since its last bombs pass burns_robot_shot_times for the rank and form. */
 uint32_t burns_robot_lob_due(uint16_t robot)
 {
-	uint32_t carry = 0;
+	uint32_t lob_due = 0;
 	uint16_t shot_times = 0;
 	uint8_t form_base = 0, form_extra = 0;
 	uint16_t lob_time = 0, lob_frames = 0;
@@ -3988,13 +3988,13 @@ uint32_t burns_robot_lob_due(uint16_t robot)
 	lob_frames = OBJECT(robot)->burns_robot.lob_frames;
 	if ((int16_t)lob_time < (int16_t)lob_frames)
 	{
-		carry = 1u;
+		lob_due = 1u;
 		leftover_y = shot_times;
-		return carry;
+		return lob_due;
 	}
-	carry = 0u;
+	lob_due = 0u;
 	leftover_y = shot_times;
-	return carry;
+	return lob_due;
 }
 
 /* Its three attack timers back to 0. */

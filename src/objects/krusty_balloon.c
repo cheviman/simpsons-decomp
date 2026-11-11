@@ -491,12 +491,12 @@ void krusty_balloon_wait_for_players(uint16_t object)
    keeps itself in 1852 and ends the stage step's substep (the stage is cleared). */
 void krusty_balloon_fall_and_land(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t landed = 0;
 	uint16_t command = 0, ignored16 = 0;
 	uint8_t points = 0;
 
-	vector_apply_gravity(object, &ignored16, &carry);
-	if (carry == 0u)
+	vector_apply_gravity(object, &ignored16, &landed);
+	if (landed == 0u)
 		return;
 	points = OBJECT(object)->points;
 	OBJECT(object)->points = points | 0x81u;
@@ -708,10 +708,10 @@ void krusty_balloon_knocked_up_stomp(uint16_t object, uint16_t object_2)
 /* Flinching (state -1): wobbles through its four squash steps, then goes back to chasing. */
 uint16_t krusty_balloon_flinch(uint16_t balloon)
 {
-	uint32_t carry = 0;
+	uint32_t wobble_done = 0;
 
-	krusty_balloon_wobble(&balloon, &carry);
-	if (carry)
+	krusty_balloon_wobble(&balloon, &wobble_done);
+	if (wobble_done)
 	{
 		krusty_balloon_start_chase(balloon);
 		return balloon;
@@ -972,12 +972,12 @@ void krusty_balloon_drift_back(uint16_t object)
    body's hit box. */
 void krusty_balloon_land(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t landed = 0;
 	uint16_t box_number = 0, command = 0, ignored16 = 0;
 	uint8_t step = 0;
 
-	vector_apply_gravity(object, &ignored16, &carry);
-	if (carry == 0u)
+	vector_apply_gravity(object, &ignored16, &landed);
+	if (landed == 0u)
 		return;
 	command = 0x6500u;
 	vector_queue_sound(command);
@@ -1126,12 +1126,12 @@ uint16_t krusty_balloon_bounce_up(uint16_t object)
    at the speed the game's rank gives. */
 void krusty_balloon_chase(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t chase_ended = 0;
 	uint16_t animation_number = 0, heading = 0, target = 0;
 	uint8_t animation = 0, direction = 0;
 
-	krusty_balloon_check_over_target(object, &target, &carry);
-	if (carry)
+	krusty_balloon_check_over_target(object, &target, &chase_ended);
+	if (chase_ended)
 		return;
 	krusty_balloon_keep_target(object, target);
 	animation = OBJECT(object)->animation;
@@ -1305,7 +1305,7 @@ void krusty_balloon_attack_hit(uint16_t object)
 {
 	uint8_t own_box = 0;
 	uint16_t attack = 0, box_number = 0;
-	uint16_t stack = 0;
+	uint16_t saved_balloon = 0;
 	uint8_t animation_flags = 0, animation_flags_2 = 0, action = 0;
 	uint16_t attack_object = 0;
 
@@ -1317,11 +1317,11 @@ void krusty_balloon_attack_hit(uint16_t object)
 	if ((animation_flags & 2u) != 0u)
 	{
 		OBJECT(attack)->flags |= 0x40u;
-		stack = object;
+		saved_balloon = object;
 		object = attack;
 		box_number = 0x400u;
 		krusty_balloon_set_hit_box(object, box_number);
-		object = stack;
+		object = saved_balloon;
 		own_box = 1u;
 	}
 	box_number = (uint32_t)own_box << 8;
@@ -1546,7 +1546,7 @@ void krusty_balloon_volley_take_position(uint16_t object)
    with that throw's animation; after 12 throws, or when there is no room for a shot, goes on. */
 uint16_t krusty_balloon_volley_throw(uint16_t balloon)
 {
-	uint32_t carry = 0;
+	uint32_t no_room = 0;
 	uint8_t next_throw_side = 0;
 	uint16_t animation_number = 0, side = 0;
 	uint8_t balloon_timer = 0, throws = 0, throws_2 = 0, action = 0, throw_side = 0, throw_side_2 = 0, throw_side_3 = 0;
@@ -1569,8 +1569,8 @@ uint16_t krusty_balloon_volley_throw(uint16_t balloon)
 	}
 	throw_side = OBJECT(balloon)->krusty_balloon.throw_side;
 	side = (uint32_t)throw_side << 8;
-	krusty_balloon_throw(side, &balloon, &carry);
-	if (carry)
+	krusty_balloon_throw(side, &balloon, &no_room);
+	if (no_room)
 	{
 		animation_number = 0u;
 		krusty_balloon_set_animation(balloon, animation_number);
@@ -1780,13 +1780,13 @@ uint16_t krusty_balloon_stomping(uint16_t object)
    takes its body's hit box. */
 void krusty_balloon_stomp_land(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t landed = 0;
 	uint16_t box_number = 0, command = 0, ignored16 = 0;
 	uint8_t step = 0;
 	uint16_t own_y = 0;
 
-	vector_apply_gravity(object, &ignored16, &carry);
-	if (carry == 0u)
+	vector_apply_gravity(object, &ignored16, &landed);
+	if (landed == 0u)
 	{
 		own_y = OBJECT(object)->y;
 		if ((int16_t)own_y < 0x90)
@@ -1974,15 +1974,15 @@ void krusty_balloon_wait_for_target(uint16_t object)
    reacts (krusty_balloon_hit). */
 void krusty_balloon_check_hit(uint16_t object)
 {
-	uint32_t negative = 0;
+	uint32_t negative_hit = 0;
 	uint8_t hit = 0;
 	uint16_t attack_object = 0, attack_object_2 = 0;
 
 	if ((OBJECT(object)->flags & 0x20u) != 0u)
 	{
 		hit = OBJECT(object)->hit;
-		negative = hit >> 7;
-		if (hit != 0u && negative == 0u)
+		negative_hit = hit >> 7;
+		if (hit != 0u && negative_hit == 0u)
 		{
 			attack_object = OBJECT(object)->krusty_balloon.attack_object;
 			if (attack_object != 0u)
@@ -1998,9 +1998,9 @@ void krusty_balloon_check_hit(uint16_t object)
 
 /* Starts an attack when its target is just in front of it (up to 10 in y) and 10 to 40 away in x;
    without a target in play waits for one. */
-void krusty_balloon_check_over_target(uint16_t object, uint16_t *p_other_object, uint32_t *p_carry)
+void krusty_balloon_check_over_target(uint16_t object, uint16_t *p_other_object, uint32_t *p_chase_ended)
 {
-	uint32_t carry = *p_carry;
+	uint32_t chase_ended = *p_chase_ended;
 	uint8_t distance_high = 0, distance_low = 0, slot_list = 0;
 	uint16_t animation_number = 0, other_object = 0;
 	uint8_t target_state = 0, vitality = 0, last_attack_health = 0, vitality_2 = 0;
@@ -2009,12 +2009,12 @@ void krusty_balloon_check_over_target(uint16_t object, uint16_t *p_other_object,
 	target = OBJECT(object)->krusty_balloon.target;
 	other_object = target;
 	if (OBJECT(other_object)->flags == 0u)
-		carry = krusty_balloon_lose_target(object);
+		chase_ended = krusty_balloon_lose_target(object);
 	else
 	{
 		target_state = OBJECT(other_object)->state;
 		if ((int8_t)target_state < 0)
-			carry = krusty_balloon_lose_target(object);
+			chase_ended = krusty_balloon_lose_target(object);
 		else
 		{
 			own_y = OBJECT(object)->y;
@@ -2023,7 +2023,7 @@ void krusty_balloon_check_over_target(uint16_t object, uint16_t *p_other_object,
 			distance_high = (uint8_t)(y_difference >> 8);
 			distance_low = (uint8_t)y_difference;
 			if ((int16_t)y_difference < 0 || (int16_t)(((uint32_t)distance_high << 8) | distance_low) > 0x10)
-				carry = 0u;
+				chase_ended = 0u;
 			else
 			{
 				own_x = OBJECT(object)->x;
@@ -2034,14 +2034,14 @@ void krusty_balloon_check_over_target(uint16_t object, uint16_t *p_other_object,
 				distance_high = (uint8_t)(x_distance >> 8);
 				distance_low = (uint8_t)x_distance;
 				if ((int16_t)(((uint32_t)distance_high << 8) | distance_low) > 0x40 || (int16_t)(((uint32_t)distance_high << 8) | distance_low) < 0x10)
-					carry = 0u;
+					chase_ended = 0u;
 				else
 				{
 					OBJECT(object)->x_speed = 0;
 					OBJECT(object)->y_speed = 0;
 					slot_list = 0u;
-					vector_find_free_slot(slot_list, &other_object, &carry);
-					if (carry)
+					vector_find_free_slot(slot_list, &other_object, &chase_ended);
+					if (chase_ended)
 					{
 						OBJECT(other_object)->type = 4;
 						attack_x = OBJECT(object)->x;
@@ -2062,7 +2062,7 @@ void krusty_balloon_check_over_target(uint16_t object, uint16_t *p_other_object,
 						{
 							vitality = OBJECT(object)->vitality;
 							OBJECT(object)->krusty_balloon.last_attack_health = vitality;
-							carry = 1u;
+							chase_ended = 1u;
 						}
 						else
 						{
@@ -2072,12 +2072,12 @@ void krusty_balloon_check_over_target(uint16_t object, uint16_t *p_other_object,
 							{
 								vitality = OBJECT(object)->vitality;
 								OBJECT(object)->krusty_balloon.last_attack_health = vitality;
-								carry = 1u;
+								chase_ended = 1u;
 							}
 							else
 							{
 								OBJECT(object)->krusty_balloon.balloon_timer = 0x20u;
-								carry = 1u;
+								chase_ended = 1u;
 							}
 						}
 					}
@@ -2086,7 +2086,7 @@ void krusty_balloon_check_over_target(uint16_t object, uint16_t *p_other_object,
 		}
 	}
 	*p_other_object = other_object;
-	*p_carry = carry;
+	*p_chase_ended = chase_ended;
 }
 
 /* Starts animation A of krusty_balloon_animations (its kind and animation) on X's object. */
@@ -2191,11 +2191,11 @@ void krusty_balloon_throw(uint16_t side, uint16_t *p_balloon, uint32_t *p_carry)
 	uint32_t carry = *p_carry;
 	uint8_t side_index = 0, type = 0;
 	uint16_t box_number = 0, command = 0, object = 0, object_2 = 0, shot = 0, slot_list = 0;
-	uint8_t stack = 0;
-	uint16_t stack_3 = 0, stack_5 = 0;
+	uint8_t saved_side = 0;
+	uint16_t saved_shot = 0, saved_balloon = 0;
 	uint16_t balloon_x = 0, balloon_y = 0, z = 0;
 
-	stack = side >> 8;
+	saved_side = side >> 8;
 	slot_list = 1u;
 	vector_find_free_slot(slot_list, &shot, &carry);
 	if (carry)
@@ -2223,19 +2223,19 @@ void krusty_balloon_throw(uint16_t side, uint16_t *p_balloon, uint32_t *p_carry)
 	OBJECT(shot)->action_step = (uint8_t)(balloon >> 8u);
 	OBJECT(shot)->behaviour = (OBJECT(shot)->behaviour & 0xFFu) | ((balloon & 0xFFu) << 8u);
 	OBJECT(shot)->shadow_player = 2u;
-	stack_3 = shot;
-	stack_5 = balloon;
+	saved_shot = shot;
+	saved_balloon = balloon;
 	object_2 = shot;
 	slot_list |= 0x800u;
 	krusty_balloon_set_animation(object_2, slot_list);
 	box_number = (slot_list & 0xFFu) | 0x200u;
 	krusty_balloon_set_hit_box(object_2, box_number);
-	balloon = stack_5;
-	object = stack_3;
+	balloon = saved_balloon;
+	object = saved_shot;
 	OBJECT(object)->x_speed = 0;
 	OBJECT(object)->z_speed = 0x280;
 	leftover_y = krusty_balloon_throw_directions_ADDRESS;
-	side_index = stack;
+	side_index = saved_side;
 	carry = (int8_t)side_index < 0;
 	switch ((int8_t)(uint8_t)((uint32_t)side_index << 1))
 	{
@@ -2775,7 +2775,7 @@ void krusty_balloon_stomp(uint16_t object, uint16_t object_2)
 /* Keeps its state and step (fields 33-34), stops and waits for a target (state 5). */
 uint32_t krusty_balloon_lose_target(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t chase_ended = 0;
 	uint8_t zero_speed = 0;
 	uint16_t animation_number = 0;
 	uint8_t state = 0, step = 0, animation = 0;
@@ -2796,8 +2796,8 @@ uint32_t krusty_balloon_lose_target(uint16_t object)
 		animation_number = 0u;
 		krusty_balloon_set_animation(object, animation_number);
 	}
-	carry = 1u;
-	return carry;
+	chase_ended = 1u;
+	return chase_ended;
 }
 
 /* Stops its x speed when its next place in the stage would leave 076F-08E0. */
@@ -2911,13 +2911,13 @@ void krusty_balloon_shot_fly(uint16_t object)
 /* Drifting (state 1): sways sideways every 32 frames as it sinks; after its time bursts open (state 2). */
 void krusty_balloon_shot_drift(uint16_t object)
 {
-	uint16_t stack = 0;
+	uint16_t shot_address = 0;
 	uint8_t shot_timer = 0;
 	uint16_t x_speed = 0;
 
 	OBJECT(object)->x_speed = 0x80;
-	stack = object;
-	if (((stack + (uint8_t)frame_count) & 0x20u) == 0u)
+	shot_address = object;
+	if (((shot_address + (uint8_t)frame_count) & 0x20u) == 0u)
 	{
 		x_speed = OBJECT(object)->x_speed;
 		OBJECT(object)->x_speed = 0u - x_speed;
@@ -2953,11 +2953,11 @@ void krusty_balloon_shot_open(uint16_t object)
 /* Falling (state 3): falls with gravity and bursts on landing. */
 void krusty_balloon_shot_fall(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t landed = 0;
 	uint16_t ignored16 = 0;
 
-	vector_apply_gravity(object, &ignored16, &carry);
-	if (carry)
+	vector_apply_gravity(object, &ignored16, &landed);
+	if (landed)
 	{
 		krusty_balloon_shot_burst(object);
 		return;

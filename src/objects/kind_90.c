@@ -149,11 +149,11 @@ void kind_90_find_floor(uint16_t object)
 /* Lands on the floor and starts fighting. */
 void kind_90_land(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t landed = 0;
 	uint16_t ignored16 = 0;
 
-	vector_apply_gravity(object, &ignored16, &carry);
-	if (carry == 0u)
+	vector_apply_gravity(object, &ignored16, &landed);
+	if (landed == 0u)
 		return;
 	OBJECT(object)->flags = 0xC0u;
 	OBJECT(object)->x_speed = 0;
@@ -226,16 +226,16 @@ void kind_90_throw_end(uint16_t object)
 }
 
 /* Puts in what the kind 90 enemy throws. */
-void kind_90_put_in_missile(uint16_t object, uint16_t *p_object_2, uint32_t *p_carry)
+void kind_90_put_in_missile(uint16_t object, uint16_t *p_object_2, uint32_t *p_child_placed)
 {
-	uint32_t carry = *p_carry;
+	uint32_t child_placed = *p_child_placed;
 	uint16_t child_object = 0, ignored16 = 0, object_3 = 0;
 	uint8_t attributes = 0, attributes_2 = 0;
 	uint16_t parent = 0;
 
 	leftover_y = kind_90_put_in_missile_child_ADDRESS;
 	child_object = kind_90_put_in_missile_child_ADDRESS;
-	spawn_list_2_child(object, child_object, &ignored16, &carry);
+	spawn_list_2_child(object, child_object, &ignored16, &child_placed);
 	parent = OBJECT(object)->parent;
 	object_3 = parent;
 	attributes = OBJECT(object_3)->attributes;
@@ -243,7 +243,7 @@ void kind_90_put_in_missile(uint16_t object, uint16_t *p_object_2, uint32_t *p_c
 	attributes_2 = OBJECT(object)->attributes;
 	OBJECT(object)->attributes = (attributes_2 & 0xCFu) | priority_bits;
 	*p_object_2 = object_3;
-	*p_carry = carry;
+	*p_child_placed = child_placed;
 }
 
 /* Sets up the thrown thing at its thrower's priority. */

@@ -69,18 +69,18 @@ uint16_t eeprom_verify(void)
 {
 	uint8_t address = 0, d = 0, stored_high = 0, stored_high_2 = 0, stored_low = 0;
 	uint16_t bad = 0, cell = 0;
-	uint8_t stack = 0;
+	uint8_t saved_sum_high = 0;
 
 	eeprom_sum();
 	cell = (d & 0xFFu) | 0x7E00u;
 	cell = eeprom_read(cell);
 	address = (uint8_t)(cell >> 8);
 	stored_high_2 = (uint8_t)cell;
-	stack = stored_high_2;
+	saved_sum_high = stored_high_2;
 	cell = (cell & 0xFFu) | ((uint32_t)(uint8_t)(address + 1u) << 8);
 	cell = eeprom_read(cell);
 	stored_low = (uint8_t)cell;
-	stored_high = stack;
+	stored_high = saved_sum_high;
 	if ((uint16_t)(((uint32_t)stored_high << 8) | stored_low) == eeprom_total)
 	{
 		bad = (uint32_t)stored_high << 8;
@@ -139,10 +139,10 @@ uint16_t eeprom_write(uint16_t cell)
 uint16_t eeprom_read(uint16_t cell)
 {
 	uint8_t address = 0, data = 0;
-	uint8_t stack = 0;
+	uint8_t saved_address = 0;
 
 	address = (uint8_t)(cell >> 8);
-	stack = address;
+	saved_address = address;
 	eeprom_address = address;
 	eeprom_send_read();
 	eeprom_send_address();
@@ -150,7 +150,7 @@ uint16_t eeprom_read(uint16_t cell)
 	eeprom_deselect();
 	data = eeprom_read_data;
 	io_write8(board_control_register, board_control);
-	cell = ((uint32_t)stack << 8) | data;
+	cell = ((uint32_t)saved_address << 8) | data;
 	return cell;
 }
 

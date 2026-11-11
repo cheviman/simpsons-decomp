@@ -89,12 +89,12 @@ uint16_t shaken_object_wait(uint16_t object)
 /* Falls and bounces off the floor. */
 void shaken_object_fall(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t landed = 0;
 	uint16_t ignored16 = 0;
 	uint8_t state = 0;
 
-	vector_apply_gravity(object, &ignored16, &carry);
-	if (carry)
+	vector_apply_gravity(object, &ignored16, &landed);
+	if (landed)
 	{
 		OBJECT(object)->flags = 0x88u;
 		OBJECT(object)->x_speed = 0x200;
@@ -236,7 +236,7 @@ uint16_t scenery_block_floor(uint16_t object)
 {
 	uint8_t column = 0, control = 0, floor_column = 0, no_floor = 0, old_cell = 0;
 	uint16_t floor_cell = 0, floor_place = 0, floor_start = 0;
-	uint8_t stack = 0, stack_2 = 0;
+	uint8_t cell_or_column = 0, floor_row_high = 0;
 	uint8_t blocked = 0, floor_column_2 = 0, columns_to_block = 0;
 	uint16_t floor_row = 0;
 
@@ -244,17 +244,17 @@ uint16_t scenery_block_floor(uint16_t object)
 	OBJECT(object)->blocked = blocked + 1u;
 	floor_cell_under(object, &floor_start, &floor_cell);
 	old_cell = (uint8_t)(floor_cell >> 8);
-	stack = old_cell;
+	cell_or_column = old_cell;
 	control = board_control | 2u;
 	board_control = control;
 	io_write8(board_control_register, control);
-	OBJECT(object)->scenery.floor_cell = stack;
+	OBJECT(object)->scenery.floor_cell = cell_or_column;
 	OBJECT(object)->scenery.floor_start = floor_start;
-	stack_2 = floor_start >> 8;
-	stack = (uint8_t)floor_start;
-	floor_column = stack;
+	floor_row_high = floor_start >> 8;
+	cell_or_column = (uint8_t)floor_start;
+	floor_column = cell_or_column;
 	OBJECT(object)->scenery.floor_column = floor_column;
-	OBJECT(object)->scenery.floor_row = ((uint32_t)stack_2 << 8) | (floor_column & 0xC0u);
+	OBJECT(object)->scenery.floor_row = ((uint32_t)floor_row_high << 8) | (floor_column & 0xC0u);
 	floor_columns_left = 3u;
 	floor_column_2 = OBJECT(object)->scenery.floor_column;
 	column = floor_column_2 - 2u;
@@ -429,7 +429,7 @@ uint16_t shaking_scenery_hit_from_above_steps(uint16_t object)
 /* Shows its hit animation and drops a small piece. */
 uint16_t shaking_scenery_drop_bit(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t slot_found = 0;
 	uint16_t dropped_bit = 0, ignored16 = 0, ignored16_2 = 0;
 	uint8_t standing_animation = 0, action = 0, kind = 0;
 
@@ -442,11 +442,11 @@ uint16_t shaking_scenery_drop_bit(uint16_t object)
 	if (kind != 0xFu)
 	{
 		leftover_y = shaking_scenery_bit_2_ADDRESS;
-		vector_spawn_child(object, &ignored16, &dropped_bit, &ignored16_2, &carry);
+		vector_spawn_child(object, &ignored16, &dropped_bit, &ignored16_2, &slot_found);
 		return dropped_bit;
 	}
 	leftover_y = shaking_scenery_bit_1_ADDRESS;
-	vector_spawn_child(object, &ignored16, &dropped_bit, &ignored16_2, &carry);
+	vector_spawn_child(object, &ignored16, &dropped_bit, &ignored16_2, &slot_found);
 	return dropped_bit;
 }
 
@@ -473,15 +473,15 @@ uint16_t shaking_scenery_hit_steps(uint16_t object)
 /* Lets out the next food of its pattern (sound 1C00); after the fifth it can take no more. */
 uint16_t shaking_scenery_drop_food(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t slot_found = 0;
 	uint8_t food_parameter = 0, pattern_byte = 0;
 	uint16_t command = 0, food = 0, food_data = 0, ignored16 = 0;
 	uint8_t standing_animation = 0, action = 0, food_left = 0, food_left_2 = 0, food_flags = 0;
 	uint16_t pattern = 0, hit_by = 0;
 
 	leftover_y = shaking_scenery_drop_food_child_ADDRESS;
-	vector_spawn_child(object, &food_data, &food, &ignored16, &carry);
-	if (carry == 0u)
+	vector_spawn_child(object, &food_data, &food, &ignored16, &slot_found);
+	if (slot_found == 0u)
 	{
 		command = 0x1C00u;
 		vector_queue_sound(command);

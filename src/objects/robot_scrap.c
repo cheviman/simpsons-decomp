@@ -175,11 +175,11 @@ void robot_scrap_drop(uint16_t object)
 /* Pulls the dropped scrap down; it bursts when it lands. */
 void robot_scrap_drop_land(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t landed = 0;
 	uint16_t ignored16 = 0;
 
-	vector_apply_gravity(object, &ignored16, &carry);
-	if (carry)
+	vector_apply_gravity(object, &ignored16, &landed);
+	if (landed)
 	{
 		OBJECT(object)->state = 0xFFu;
 		OBJECT(object)->action = 0u;

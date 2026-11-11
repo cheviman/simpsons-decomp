@@ -265,7 +265,7 @@ void game_over_wait(void)
    in, else the game's end */
 void game_finish(void)
 {
-	uint32_t carry = 0;
+	uint32_t in_high_scores = 0;
 	uint16_t score = 0, score_address = 0;
 	uint8_t old_scroll_control = 0, scores_left = 0;
 
@@ -278,8 +278,8 @@ void game_finish(void)
 	do
 	{
 		score = mem_read16(score_address);
-		high_score_rank(&score, &carry);
-		if (carry)
+		high_score_rank(&score, &in_high_scores);
+		if (in_high_scores)
 		{
 			reset_for_stage();
 			mode_phase = 4u;

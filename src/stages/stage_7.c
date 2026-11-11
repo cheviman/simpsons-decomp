@@ -428,11 +428,11 @@ void stage_7_over(void)
 /* Stage 7's players leaving; when they are out, stage_record_entry moves to its next entry */
 uint32_t stage_7_exit(uint32_t left_caller)
 {
-	uint32_t carry = 0;
+	uint32_t players_out = 0;
 	uint16_t ignored16 = 0;
 
-	stage_players_exit(&ignored16, &left_caller, &carry);
-	if (carry)
+	stage_players_exit(&ignored16, &left_caller, &players_out);
+	if (players_out)
 		stage_record_entry += 4u;
 	return left_caller;
 }

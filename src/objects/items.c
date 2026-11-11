@@ -87,7 +87,7 @@ uint16_t food_jump_out_start(uint16_t object)
    landing). */
 void food_jump_out_bounce(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t landed = 0;
 	uint8_t parameter = 0, bounces_left = 0, bounces_left_2 = 0;
 	uint16_t z_speed = 0, bounce_speed = 0, next_z_speed = 0;
 
@@ -95,8 +95,8 @@ void food_jump_out_bounce(uint16_t object)
 	bounce_speed = OBJECT(object)->food_jump_out.bounce_speed;
 	next_z_speed = z_speed - bounce_speed;
 	OBJECT(object)->z_speed = next_z_speed;
-	carry = vector_check_landing(object);
-	if (carry == 0u)
+	landed = vector_check_landing(object);
+	if (landed == 0u)
 		return;
 	parameter = OBJECT(object)->parameter;
 	if (parameter < 2u)
@@ -564,15 +564,15 @@ void item_carrier_walk_in(uint16_t object)
 /* Puts down its item and shows its putting-down animation (without a free slot it just walks off). */
 uint16_t item_carrier_put_down(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t slot_found = 0;
 	uint16_t ignored16 = 0, ignored16_2 = 0, target = 0;
 	uint8_t parameter = 0, state = 0;
 
 	OBJECT(object)->x_speed = 0;
 	parameter = OBJECT(object)->parameter;
 	leftover_y = item_carrier_items[(int8_t)((uint8_t)((uint32_t)parameter << 1)) / 2];
-	vector_spawn_child(object, &ignored16, &target, &ignored16_2, &carry);
-	if (carry == 0u)
+	vector_spawn_child(object, &ignored16, &target, &ignored16_2, &slot_found);
+	if (slot_found == 0u)
 	{
 		OBJECT(object)->target = 0xFFFFu;
 		OBJECT(object)->x_speed = -0x180;

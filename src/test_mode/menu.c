@@ -231,14 +231,14 @@ void test_menu_open(uint16_t *p_d, uint32_t *p_carry)
 }
 
 /* Moves the cursor with the 1P joystick, and on SHOOT1 goes to the line's page or hands back its line */
-void test_menu_update(uint16_t *p_d, uint32_t *p_carry)
+void test_menu_update(uint16_t *p_d, uint32_t *p_line_chosen)
 {
 	uint8_t d = (uint8_t)*p_d;
-	uint32_t carry = *p_carry;
+	uint32_t line_chosen = *p_line_chosen;
 	uint8_t b = 0, cursor = 0, joystick = 0, old_cursor = 0, page = 0, repeat_delay = 0;
 	uint16_t cursor_place = 0, cursor_variable = 0, d_2 = 0, ignored16 = 0, menu_lines = 0;
-	uint8_t stack_10001 = 0, stack_10002 = 0;
-	uint16_t stack = 0;
+	uint8_t cursor_high = 0, cursor_low = 0;
+	uint16_t chosen_line = 0;
 	uint8_t player_1_port = 0, up_down_bits = 0, moved_cursor = 0;
 	uint16_t cursor_word = 0;
 
@@ -281,7 +281,7 @@ void test_menu_update(uint16_t *p_d, uint32_t *p_carry)
 	b = (uint8_t)d_2;
 	if ((player_controls(2) & 0x10u) == 0u)
 	{
-		carry = 0u;
+		line_chosen = 0u;
 		d_2 = b;
 	}
 	else
@@ -291,11 +291,11 @@ void test_menu_update(uint16_t *p_d, uint32_t *p_carry)
 		if (page == 0x20u)
 		{
 			cursor_word = (int8_t)mem_read8(test_menu_cursor_variable);
-			stack_10001 = cursor_word >> 8;
-			stack_10002 = cursor_word;
-			stack = konami_divx((uint16_t)(((uint32_t)stack_10001 << 8) | stack_10002), 3u);
-			carry = 1u;
-			d_2 = ((uint32_t)(uint8_t)~(stack >> 8) << 8) | (uint8_t)stack;
+			cursor_high = cursor_word >> 8;
+			cursor_low = cursor_word;
+			chosen_line = konami_divx((uint16_t)(((uint32_t)cursor_high << 8) | cursor_low), 3u);
+			line_chosen = 1u;
+			d_2 = ((uint32_t)(uint8_t)~(chosen_line >> 8) << 8) | (uint8_t)chosen_line;
 		}
 		else
 		{
@@ -307,12 +307,12 @@ void test_menu_update(uint16_t *p_d, uint32_t *p_carry)
 			vector_clear_text_layer(&ignored16, &d_2);
 			b = (uint8_t)d_2;
 			test_cursor = 0u;
-			carry = 0u;
+			line_chosen = 0u;
 			d_2 = b;
 		}
 	}
 	*p_d = d_2;
-	*p_carry = carry;
+	*p_line_chosen = line_chosen;
 }
 
 /* Colours menu line B's row with A */
@@ -320,12 +320,12 @@ uint16_t test_mark_line(uint16_t colour_and_line)
 {
 	uint8_t line_offset = 0;
 	uint16_t colour = 0, ignored16 = 0, row = 0;
-	uint8_t stack = 0;
+	uint8_t saved_colour = 0;
 
-	stack = colour_and_line >> 8;
+	saved_colour = colour_and_line >> 8;
 	line_offset = 3u * (colour_and_line + 1u);
 	row = mem_read16(test_menu_lines + (int8_t)line_offset);
-	colour = (uint32_t)stack << 8;
+	colour = (uint32_t)saved_colour << 8;
 	test_colour_row(&row, &ignored16, &colour);
 	return row;
 }
@@ -349,24 +349,24 @@ void test_colour_row(uint16_t *p_row, uint16_t *p_u, uint16_t *p_colour)
 	uint16_t colour = (uint16_t)*p_colour;
 	uint8_t colour_byte = 0, page = 0;
 	uint16_t colour_place = 0, count = 0, u_2 = 0;
-	uint8_t stack = 0, stack_2 = 0, stack_3 = 0, stack_4 = 0, stack_5 = 0, stack_6 = 0, stack_7 = 0, stack_8 = 0;
+	uint8_t saved_u_low = 0, saved_u_high = 0, row_low = 0, row_high = 0, saved_colour_low = 0, row_colour = 0, colour_place_low = 0, colour_place_high = 0;
 	uint16_t saved_row = 0, row_colours = 0;
 
-	stack_2 = u >> 8;
-	stack = (uint8_t)u;
-	stack_4 = row >> 8;
-	stack_3 = (uint8_t)row;
-	stack_5 = (uint8_t)colour;
-	stack_6 = colour >> 8;
-	saved_row = ((uint32_t)stack_4 << 8) | stack_3;
+	saved_u_high = u >> 8;
+	saved_u_low = (uint8_t)u;
+	row_high = row >> 8;
+	row_low = (uint8_t)row;
+	saved_colour_low = (uint8_t)colour;
+	row_colour = colour >> 8;
+	saved_row = ((uint32_t)row_high << 8) | row_low;
 	row_colours = saved_row - 0x2000u;
-	stack_7 = (row_colours & 0xC0u) + 0xFu;
-	stack_8 = row_colours >> 8;
-	colour_place = ((uint32_t)stack_8 << 8) | stack_7;
+	colour_place_low = (row_colours & 0xC0u) + 0xFu;
+	colour_place_high = row_colours >> 8;
+	colour_place = ((uint32_t)colour_place_high << 8) | colour_place_low;
 	page = test_page;
 	if (page == 0x15u)
 		colour_place += 0x11u;
-	colour_byte = stack_6;
+	colour_byte = row_colour;
 	count = 0x24u;
 	if ((int8_t)page >= 0x14)
 		count = 0x12u;
@@ -376,9 +376,9 @@ void test_colour_row(uint16_t *p_row, uint16_t *p_u, uint16_t *p_colour)
 		colour_place++;
 		count--;
 	}
-	row = ((uint32_t)stack_4 << 8) | stack_3;
-	u_2 = ((uint32_t)stack_2 << 8) | stack;
-	colour = ((uint32_t)stack_6 << 8) | stack_5;
+	row = ((uint32_t)row_high << 8) | row_low;
+	u_2 = ((uint32_t)saved_u_high << 8) | saved_u_low;
+	colour = ((uint32_t)row_colour << 8) | saved_colour_low;
 	*p_row = row;
 	*p_u = u_2;
 	*p_colour = colour;
@@ -388,85 +388,85 @@ void test_colour_row(uint16_t *p_row, uint16_t *p_u, uint16_t *p_colour)
 uint16_t test_write_setting(uint16_t setting, uint8_t value)
 {
 	uint16_t cell = 0, ignored16 = 0, ignored16_2 = 0;
-	uint8_t stack = 0, stack_4 = 0, stack_8 = 0;
+	uint8_t saved_setting_low = 0, saved_setting_high = 0, eeprom_cell = 0;
 
 	if ((int16_t)setting < 0x5A58 || setting > 0x5A67u)
 	{
 		mem_write8(setting, value);
 		return setting;
 	}
-	stack_4 = setting >> 8;
-	stack = (uint8_t)setting;
-	stack_8 = setting - 0x59F0u;
-	cell = (value & 0xFFu) | ((uint32_t)stack_8 << 8);
+	saved_setting_high = setting >> 8;
+	saved_setting_low = (uint8_t)setting;
+	eeprom_cell = setting - 0x59F0u;
+	cell = (value & 0xFFu) | ((uint32_t)eeprom_cell << 8);
 	eeprom_write(cell);
 	eeprom_write_sum(&ignored16, &ignored16_2);
-	setting = ((uint32_t)stack_4 << 8) | stack;
+	setting = ((uint32_t)saved_setting_high << 8) | saved_setting_low;
 	return setting;
 }
 
 /* Reads setting Y from the EEPROM (5A58-5A67), else the variable, into B */
-void test_read_setting(uint16_t *p_x, uint16_t *p_setting, uint16_t *p_value, uint32_t *p_zero)
+void test_read_setting(uint16_t *p_x, uint16_t *p_setting, uint16_t *p_value, uint32_t *p_setting_off)
 {
 	uint16_t x = (uint16_t)*p_x;
 	uint16_t setting = (uint16_t)*p_setting;
 	uint16_t value = (uint16_t)*p_value;
-	uint32_t zero = *p_zero;
+	uint32_t setting_off = *p_setting_off;
 	uint8_t value_byte = 0, value_high = 0;
 	uint16_t eeprom_word = 0;
-	uint8_t stack = 0, stack_4 = 0, stack_5 = 0, stack_6 = 0, stack_7 = 0, stack_8 = 0;
+	uint8_t saved_setting_low = 0, saved_setting_high = 0, saved_tiles_low = 0, saved_tiles_high = 0, saved_value_high = 0, eeprom_cell = 0;
 	uint8_t setting_byte = 0;
 
 	value_high = (uint8_t)(value >> 8);
 	if ((int16_t)setting < 0x5A58 || setting > 0x5A67u)
 	{
 		setting_byte = mem_read8(setting);
-		zero = setting_byte == 0u;
+		setting_off = setting_byte == 0u;
 		value = ((uint32_t)value_high << 8) | setting_byte;
 	}
 	else
 	{
-		stack_4 = setting >> 8;
-		stack = (uint8_t)setting;
-		stack_6 = x >> 8;
-		stack_5 = (uint8_t)x;
-		stack_7 = value_high;
-		stack_8 = setting - 0x59F0u;
-		eeprom_word = (value & 0xFFu) | ((uint32_t)stack_8 << 8);
+		saved_setting_high = setting >> 8;
+		saved_setting_low = (uint8_t)setting;
+		saved_tiles_high = x >> 8;
+		saved_tiles_low = (uint8_t)x;
+		saved_value_high = value_high;
+		eeprom_cell = setting - 0x59F0u;
+		eeprom_word = (value & 0xFFu) | ((uint32_t)eeprom_cell << 8);
 		eeprom_word = eeprom_read(eeprom_word);
 		value_byte = (uint8_t)eeprom_word;
-		zero = value_byte == 0u;
-		x = ((uint32_t)stack_6 << 8) | stack_5;
-		setting = ((uint32_t)stack_4 << 8) | stack;
-		value = ((uint32_t)stack_7 << 8) | value_byte;
+		setting_off = value_byte == 0u;
+		x = ((uint32_t)saved_tiles_high << 8) | saved_tiles_low;
+		setting = ((uint32_t)saved_setting_high << 8) | saved_setting_low;
+		value = ((uint32_t)saved_value_high << 8) | value_byte;
 	}
 	*p_x = x;
 	*p_setting = setting;
 	*p_value = value;
-	*p_zero = zero;
+	*p_setting_off = setting_off;
 }
 
 /* Prints test_mode_texts[A] and takes its menu: its length, cursor variable and lines */
 uint32_t test_open_page(uint16_t tiles, uint16_t text_number)
 {
-	uint32_t carry = 0;
+	uint32_t line_chosen = 0;
 	uint8_t colour = 0;
 	uint16_t text = 0;
 	uint16_t page_menu = 0, cursor_variable_place = 0, cursor_variable_address = 0;
 
 	text = test_mode_texts[(int8_t)((uint8_t)((uint32_t)(text_number >> 8) << 1)) / 2];
 	colour = 0u;
-	test_print(colour, &tiles, &text, &carry);
+	test_print(colour, &tiles, &text, &line_chosen);
 	page_menu = text;
 	test_menu_length = mem_read8(page_menu);
 	cursor_variable_place = page_menu + 1u;
 	cursor_variable_address = mem_read16(cursor_variable_place);
 	test_menu_cursor_variable = cursor_variable_address;
-	carry = 0u;
+	line_chosen = 0u;
 	test_check_cursor = 0u;
 	test_menu_lines = cursor_variable_place + 2u;
 	test_page_step++;
-	return carry;
+	return line_chosen;
 }
 
 /* The test mode's printer: letters, places, new lines, hex bytes and words, up to C0 */
@@ -477,15 +477,15 @@ void test_print(uint16_t colour, uint16_t *p_tiles, uint16_t *p_text, uint32_t *
 	uint32_t carry = *p_carry;
 	bool L_05E69F = false, L_05E6A6 = false, L_05E6AE = false, L_05E6C1 = false;
 	uint8_t character = 0, colour_byte = 0, command = 0, tile = 0;
-	uint8_t stack_10005 = 0, stack_10006 = 0, stack_10007 = 0, stack_10008 = 0;
-	uint16_t stack = 0, stack_6 = 0;
+	uint8_t new_place_high = 0, new_place_low = 0, saved_word_number = 0, saved_colour = 0;
+	uint16_t line_start = 0, saved_text = 0;
 	uint8_t printed_character = 0, command_character = 0;
 	uint16_t text_place = 0, variable_address_place = 0, place_row_offset = 0, column_place = 0, new_tiles = 0;
 
 	for (;;)
 	{
 		colour_byte = (uint8_t)colour;
-		stack = tiles;
+		line_start = tiles;
 		test_print_down = 0u;
 		for (;;)
 		{
@@ -550,15 +550,15 @@ void test_print(uint16_t colour, uint16_t *p_tiles, uint16_t *p_text, uint32_t *
 				break;
 			if (L_05E6C1)
 				break;
-			stack_6 = text;
-			stack_10007 = command;
-			stack_10008 = colour_byte;
+			saved_text = text;
+			saved_word_number = command;
+			saved_colour = colour_byte;
 			text = test_mode_words[(int8_t)((uint8_t)((uint32_t)command << 1)) / 2];
 			colour = colour_byte;
 			test_print(colour, &tiles, &text, &carry);
-			colour_byte = stack_10008;
-			text = stack_6;
-			if (stack_10007 == 0u)
+			colour_byte = saved_colour;
+			text = saved_text;
+			if (saved_word_number == 0u)
 			{
 				*p_tiles = tiles;
 				*p_text = text;
@@ -578,21 +578,21 @@ void test_print(uint16_t colour, uint16_t *p_tiles, uint16_t *p_text, uint32_t *
 						column_place = text;
 						text = column_place + 1u;
 						new_tiles = (((uint32_t)(place_row_offset >> 8) << 8) | (uint8_t)(place_row_offset + mem_read8(column_place))) + 0x208Cu;
-						stack_10005 = new_tiles >> 8;
-						stack_10006 = new_tiles;
-						tiles = ((uint32_t)stack_10005 << 8) | stack_10006;
+						new_place_high = new_tiles >> 8;
+						new_place_low = new_tiles;
+						tiles = ((uint32_t)new_place_high << 8) | new_place_low;
 						continue;
 					}
 					L_05E69F = false;
-					tiles = stack + 0x40u;
+					tiles = line_start + 0x40u;
 					continue;
 				}
 				L_05E6A6 = false;
-				tiles = stack + 0x80u;
+				tiles = line_start + 0x80u;
 				continue;
 			}
 			L_05E6AE = false;
-			tiles = stack;
+			tiles = line_start;
 			if (test_print_down != 0u)
 			{
 				tiles += 3u;
@@ -602,7 +602,7 @@ void test_print(uint16_t colour, uint16_t *p_tiles, uint16_t *p_text, uint32_t *
 			continue;
 		}
 		L_05E6C1 = false;
-		tiles = stack;
+		tiles = line_start;
 		if (test_print_down != 0u)
 		{
 			tiles += 4u;
@@ -628,13 +628,13 @@ uint16_t test_put_tile(uint16_t tiles, uint16_t tile_and_colour)
 void unused_test_print_hex_word(uint16_t tiles, uint16_t printed_word)
 {
 	uint16_t value = 0;
-	uint8_t stack = 0, stack_2 = 0;
+	uint8_t word_low_byte = 0, word_high_byte = 0;
 
-	stack_2 = printed_word >> 8;
-	stack = (uint8_t)printed_word;
-	value = (uint32_t)stack_2 << 8;
+	word_high_byte = printed_word >> 8;
+	word_low_byte = (uint8_t)printed_word;
+	value = (uint32_t)word_high_byte << 8;
 	test_print_hex(&tiles, &value);
-	value = (uint32_t)stack << 8;
+	value = (uint32_t)word_low_byte << 8;
 	test_print_hex(&tiles, &value);
 }
 
@@ -644,18 +644,18 @@ void test_print_hex(uint16_t *p_tiles, uint16_t *p_value)
 	uint16_t tiles = (uint16_t)*p_tiles;
 	uint16_t value = (uint16_t)*p_value;
 	uint8_t printed_byte = 0;
-	uint8_t stack = 0, stack_2 = 0;
+	uint8_t saved_colour = 0, kept_printed_byte = 0;
 	uint16_t high_digit_place = 0, low_digit_place = 0;
 
 	printed_byte = (uint8_t)(value >> 8);
-	stack = (uint8_t)value;
-	stack_2 = printed_byte;
+	saved_colour = (uint8_t)value;
+	kept_printed_byte = printed_byte;
 	high_digit_place = tiles;
 	mem_write8(high_digit_place, test_mode_hex_digit_tiles[(((printed_byte >> 1) >> 1) >> 1) >> 1]);
 	low_digit_place = high_digit_place + 1u;
 	tiles = low_digit_place + 1u;
-	mem_write8(low_digit_place, test_mode_hex_digit_tiles[stack_2 & 0xFu]);
-	value = ((uint32_t)stack_2 << 8) | stack;
+	mem_write8(low_digit_place, test_mode_hex_digit_tiles[kept_printed_byte & 0xFu]);
+	value = ((uint32_t)kept_printed_byte << 8) | saved_colour;
 	*p_tiles = tiles;
 	*p_value = value;
 }

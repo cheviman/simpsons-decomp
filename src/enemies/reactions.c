@@ -15,13 +15,13 @@
    vitality left). */
 void enemy_spin_land(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t landed = 0;
 	uint16_t z_speed = 0;
 
 	z_speed = OBJECT(object)->z_speed;
 	OBJECT(object)->z_speed = z_speed - 0x20u;
-	carry = vector_check_landing(object);
-	if (carry == 0u)
+	landed = vector_check_landing(object);
+	if (landed == 0u)
 		return;
 	OBJECT(object)->x_speed = 0;
 	OBJECT(object)->y_speed = 0;
@@ -305,7 +305,7 @@ void enemy_defeated_launch(uint16_t object)
    negative. */
 void enemy_defeated_fly(uint16_t object)
 {
-	uint32_t negative = 0, carry = 0;
+	uint32_t negative = 0, landed = 0;
 	uint8_t floor_value = 0;
 	uint16_t floor_cell = 0;
 	uint8_t y_speed = 0, attributes = 0, action_step = 0;
@@ -314,8 +314,8 @@ void enemy_defeated_fly(uint16_t object)
 	z_speed = OBJECT(object)->z_speed;
 	falling_z_speed = z_speed - 0x20u;
 	OBJECT(object)->z_speed = falling_z_speed;
-	carry = vector_check_landing(object);
-	if (carry)
+	landed = vector_check_landing(object);
+	if (landed)
 	{
 		OBJECT(object)->x_speed = 0;
 		OBJECT(object)->y_speed = 0;

@@ -14,7 +14,7 @@
 /* Sets the lift up hidden and puts in its two parts (type 3A). */
 uint16_t goon_lift_setup(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t slot_found = 0;
 	uint16_t ignored16 = 0, ignored16_2 = 0, ignored16_3 = 0, part = 0, setup = 0;
 	uint8_t state = 0;
 
@@ -25,16 +25,16 @@ uint16_t goon_lift_setup(uint16_t object)
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
 	leftover_y = goon_lift_part_child_1_ADDRESS;
-	vector_spawn_child(object, &ignored16, &ignored16_2, &ignored16_3, &carry);
+	vector_spawn_child(object, &ignored16, &ignored16_2, &ignored16_3, &slot_found);
 	leftover_y = goon_lift_part_child_2_ADDRESS;
-	vector_spawn_child(object, &ignored16, &part, &ignored16_3, &carry);
+	vector_spawn_child(object, &ignored16, &part, &ignored16_3, &slot_found);
 	return part;
 }
 
 /* When the scroll brings it on, shows the lift coming down with its two goons (4F80 type 13). */
 uint16_t goon_lift_arrive(uint16_t object, uint16_t states)
 {
-	uint32_t carry = 0;
+	uint32_t slot_found = 0;
 	uint16_t goon = 0, ignored16 = 0, ignored16_2 = 0, ignored16_3 = 0;
 	uint8_t state = 0;
 	uint16_t lift_x = 0;
@@ -48,9 +48,9 @@ uint16_t goon_lift_arrive(uint16_t object, uint16_t states)
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
 	leftover_y = goon_lift_goon_1_ADDRESS;
-	vector_spawn_child(object, &ignored16, &ignored16_2, &ignored16_3, &carry);
+	vector_spawn_child(object, &ignored16, &ignored16_2, &ignored16_3, &slot_found);
 	leftover_y = goon_lift_goon_2_ADDRESS;
-	vector_spawn_child(object, &ignored16, &goon, &ignored16_3, &carry);
+	vector_spawn_child(object, &ignored16, &goon, &ignored16_3, &slot_found);
 	return goon;
 }
 

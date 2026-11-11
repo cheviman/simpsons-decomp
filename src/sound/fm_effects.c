@@ -3,7 +3,7 @@
  *    Description: the FM effects (commands 01-38), each a chain of handlers its record runs one pass at a time
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the Z80 sound program decompiled into C by
@@ -65,22 +65,22 @@ void fm_effect_01(uint16_t channel)
    keyed off and on again for the falling half (fm_effect_01_pitch). */
 void fm_effect_01_retrigger(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t timer_ran_out = 0;
 	uint16_t handler = 0, step = 0;
 	uint8_t count = 0;
 
 	z80_block(27);
 	step = 8u;
-	zero = fm_effect_01_move_pitch(step, channel);
+	timer_ran_out = fm_effect_01_move_pitch(step, channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (timer_ran_out == 0u)
 	{
 		z80_cycles(6);
 		return;
 	}
 	z80_block(27);
 	step = 0xFF30u;
-	zero = fm_effect_01_move_pitch(step, channel);
+	timer_ran_out = fm_effect_01_move_pitch(step, channel);
 	z80_block(47);
 	CHANNEL(channel)->timer = 0x20u;
 	count = CHANNEL(channel)->count;
@@ -105,22 +105,22 @@ void fm_effect_01_retrigger(uint16_t channel)
    semitones up after each 32, for 42 rounds; then stop_channel. */
 void fm_effect_01_pitch(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t timer_ran_out = 0;
 	uint16_t step = 0;
 	uint8_t count = 0;
 
 	z80_block(27);
 	step = 0xFFF8u;
-	zero = fm_effect_01_move_pitch(step, channel);
+	timer_ran_out = fm_effect_01_move_pitch(step, channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (timer_ran_out == 0u)
 	{
 		z80_cycles(6);
 		return;
 	}
 	z80_block(27);
 	step = 0xD0u;
-	zero = fm_effect_01_move_pitch(step, channel);
+	timer_ran_out = fm_effect_01_move_pitch(step, channel);
 	z80_block(47);
 	CHANNEL(channel)->timer = 0x20u;
 	count = CHANNEL(channel)->count;
@@ -137,19 +137,19 @@ void fm_effect_01_pitch(uint16_t channel)
 /* Adds the step to the pitch and sets it; counts the timer down and tells whether it ran out. */
 uint32_t fm_effect_01_move_pitch(uint16_t step, uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t timer_ran_out = 0;
 	uint16_t pitch = 0;
-	uint8_t t1 = 0;
+	uint8_t timer_left = 0;
 
 	z80_block(104);
 	pitch = CHANNEL(channel)->pitch + step;
 	CHANNEL(channel)->pitch = pitch;
 	set_pitch(pitch, channel);
 	z80_block(33);
-	t1 = CHANNEL(channel)->timer - 1u;
-	zero = t1 == 0u;
-	CHANNEL(channel)->timer = t1;
-	return zero;
+	timer_left = CHANNEL(channel)->timer - 1u;
+	timer_ran_out = timer_left == 0u;
+	CHANNEL(channel)->timer = timer_left;
+	return timer_ran_out;
 }
 
 /* Effect 03's sound after 16 passes. */
@@ -667,14 +667,14 @@ void fm_effect_0e(uint16_t channel)
 /* The dive: a semitone lower each pass for 48 passes; then 96 passes of fm_effect_0e_pitch_2. */
 void fm_effect_0e_pitch(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t timer_ran_out = 0;
 	uint16_t handler = 0, step = 0;
 
 	z80_block(27);
 	step = 0xFFC0u;
-	zero = fm_effect_0e_move_pitch(step, channel);
+	timer_ran_out = fm_effect_0e_move_pitch(step, channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (timer_ran_out == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -689,14 +689,14 @@ void fm_effect_0e_pitch(uint16_t channel)
    higher; then the first sweep (fm_effect_0e_round). */
 void fm_effect_0e_pitch_2(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t timer_ran_out = 0;
 	uint16_t step = 0;
 
 	z80_block(27);
 	step = 0x18u;
-	zero = fm_effect_0e_move_pitch(step, channel);
+	timer_ran_out = fm_effect_0e_move_pitch(step, channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (timer_ran_out == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -723,15 +723,15 @@ void fm_effect_0e_round(uint16_t channel)
    pass 28 semitones higher; after 8 sweeps (fm_effect_0e_round) stop_channel. */
 void fm_effect_0e_pitch_3(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t timer_ran_out = 0;
 	uint16_t step = 0;
 	uint8_t count = 0;
 
 	z80_block(27);
 	step = 0x18u;
-	zero = fm_effect_0e_move_pitch(step, channel);
+	timer_ran_out = fm_effect_0e_move_pitch(step, channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (timer_ran_out == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -752,9 +752,9 @@ void fm_effect_0e_pitch_3(uint16_t channel)
    timer down and tells whether it ran out. */
 uint32_t fm_effect_0e_move_pitch(uint16_t step, uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t timer_ran_out = 0;
 	uint16_t pitch = 0;
-	uint8_t t1 = 0;
+	uint8_t timer_left = 0;
 
 	z80_block(117);
 	pitch = CHANNEL(channel)->pitch + step;
@@ -767,10 +767,10 @@ uint32_t fm_effect_0e_move_pitch(uint16_t step, uint16_t channel)
 	z80_block(17);
 	set_pitch(pitch, channel);
 	z80_block(33);
-	t1 = CHANNEL(channel)->timer - 1u;
-	zero = t1 == 0u;
-	CHANNEL(channel)->timer = t1;
-	return zero;
+	timer_left = CHANNEL(channel)->timer - 1u;
+	timer_ran_out = timer_left == 0u;
+	CHANNEL(channel)->timer = timer_left;
+	return timer_ran_out;
 }
 
 /* Loads fm_effect_0f_patch (fm_effect_0e_patch's bytes) and keys on pitch C00, for 8 rounds of 64 passes
@@ -924,15 +924,15 @@ void fm_effect_11_pitch(uint16_t channel)
 {
 	uint8_t passes_high = 0, passes_low = 0;
 	uint16_t step = 0;
-	uint16_t t1 = 0;
+	uint16_t passes_left = 0;
 
 	z80_block(27);
 	step = 0xFFF8u;
 	fm_effect_11_move_pitch(step, channel);
 	z80_block(95);
-	t1 = CHANNEL(channel)->fm_effect_11.passes - 1u;
-	passes_high = (uint8_t)(t1 >> 8);
-	passes_low = (uint8_t)t1;
+	passes_left = CHANNEL(channel)->fm_effect_11.passes - 1u;
+	passes_high = (uint8_t)(passes_left >> 8);
+	passes_low = (uint8_t)passes_left;
 	CHANNEL(channel)->fm_effect_11.passes = ((uint32_t)passes_high << 8) | passes_low;
 	if ((passes_high | passes_low) != 0u)
 	{
@@ -986,12 +986,12 @@ void fm_effect_12_delay(uint16_t channel)
 {
 	uint8_t passes_high = 0, passes_low = 0;
 	uint16_t handler = 0;
-	uint16_t t1 = 0;
+	uint16_t passes_left = 0;
 
 	z80_block(95);
-	t1 = CHANNEL(channel)->fm_effect_12.passes - 1u;
-	passes_high = (uint8_t)(t1 >> 8);
-	passes_low = (uint8_t)t1;
+	passes_left = CHANNEL(channel)->fm_effect_12.passes - 1u;
+	passes_high = (uint8_t)(passes_left >> 8);
+	passes_low = (uint8_t)passes_left;
 	CHANNEL(channel)->fm_effect_12.passes = ((uint32_t)passes_high << 8) | passes_low;
 	if ((passes_low | passes_high) != 0u)
 	{
@@ -1649,14 +1649,14 @@ void fm_effect_1b(uint16_t channel)
    passes of fm_effect_1b_pitch_2. */
 void fm_effect_1b_pitch(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t timer_ran_out = 0;
 	uint16_t handler = 0, step = 0;
 
 	z80_block(27);
 	step = 0xFFC8u;
-	zero = fm_effect_1b_move_pitch(step, channel);
+	timer_ran_out = fm_effect_1b_move_pitch(step, channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (timer_ran_out == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -1671,14 +1671,14 @@ void fm_effect_1b_pitch(uint16_t channel)
    stop_channel. */
 void fm_effect_1b_pitch_2(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t timer_ran_out = 0;
 	uint16_t step = 0;
 
 	z80_block(27);
 	step = 0x10u;
-	zero = fm_effect_1b_move_pitch(step, channel);
+	timer_ran_out = fm_effect_1b_move_pitch(step, channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (timer_ran_out == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -1691,9 +1691,9 @@ void fm_effect_1b_pitch_2(uint16_t channel)
    timer is clear); counts the timer down and tells whether it ran out. */
 uint32_t fm_effect_1b_move_pitch(uint16_t step, uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t timer_ran_out = 0;
 	uint16_t pitch = 0;
-	uint8_t t1 = 0;
+	uint8_t timer_left = 0;
 
 	z80_block(117);
 	pitch = CHANNEL(channel)->pitch + step;
@@ -1706,10 +1706,10 @@ uint32_t fm_effect_1b_move_pitch(uint16_t step, uint16_t channel)
 	z80_block(17);
 	set_pitch(pitch, channel);
 	z80_block(33);
-	t1 = CHANNEL(channel)->timer - 1u;
-	zero = t1 == 0u;
-	CHANNEL(channel)->timer = t1;
-	return zero;
+	timer_left = CHANNEL(channel)->timer - 1u;
+	timer_ran_out = timer_left == 0u;
+	CHANNEL(channel)->timer = timer_left;
+	return timer_ran_out;
 }
 
 /* Loads fm_effect_1c_patch and keys on pitch 1500: a fall, a climb and 4 short rises
@@ -1737,14 +1737,14 @@ void fm_effect_1c(uint16_t channel)
 /* The fall: 1 1/4 semitones lower each pass for 48 passes; then 64 passes of fm_effect_1c_pitch_2. */
 void fm_effect_1c_pitch(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t timer_ran_out = 0;
 	uint16_t handler = 0, step = 0;
 
 	z80_block(27);
 	step = 0xFFB0u;
-	zero = fm_effect_1c_move_pitch(step, channel);
+	timer_ran_out = fm_effect_1c_move_pitch(step, channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (timer_ran_out == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -1759,14 +1759,14 @@ void fm_effect_1c_pitch(uint16_t channel)
    (fm_effect_1c_round). */
 void fm_effect_1c_pitch_2(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t timer_ran_out = 0;
 	uint16_t step = 0;
 
 	z80_block(27);
 	step = 0x20u;
-	zero = fm_effect_1c_move_pitch(step, channel);
+	timer_ran_out = fm_effect_1c_move_pitch(step, channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (timer_ran_out == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -1793,15 +1793,15 @@ void fm_effect_1c_round(uint16_t channel)
    (fm_effect_1c_round) stop_channel. */
 void fm_effect_1c_pitch_3(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t timer_ran_out = 0;
 	uint16_t step = 0;
 	uint8_t count = 0;
 
 	z80_block(27);
 	step = 8u;
-	zero = fm_effect_1c_move_pitch(step, channel);
+	timer_ran_out = fm_effect_1c_move_pitch(step, channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (timer_ran_out == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -1822,9 +1822,9 @@ void fm_effect_1c_pitch_3(uint16_t channel)
    the timer is set); counts the timer down and tells whether it ran out. */
 uint32_t fm_effect_1c_move_pitch(uint16_t step, uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t timer_ran_out = 0;
 	uint16_t pitch = 0;
-	uint8_t t1 = 0;
+	uint8_t timer_left = 0;
 
 	z80_block(117);
 	pitch = CHANNEL(channel)->pitch + step;
@@ -1837,10 +1837,10 @@ uint32_t fm_effect_1c_move_pitch(uint16_t step, uint16_t channel)
 	z80_block(17);
 	set_pitch(pitch, channel);
 	z80_block(33);
-	t1 = CHANNEL(channel)->timer - 1u;
-	zero = t1 == 0u;
-	CHANNEL(channel)->timer = t1;
-	return zero;
+	timer_left = CHANNEL(channel)->timer - 1u;
+	timer_ran_out = timer_left == 0u;
+	CHANNEL(channel)->timer = timer_left;
+	return timer_ran_out;
 }
 
 /* Loads fm_effect_1d_patch and keys on pitch 1500: a fall, then 10 short falls from pitch C00
@@ -1868,14 +1868,14 @@ void fm_effect_1d(uint16_t channel)
    (fm_effect_1d_pitch_2). */
 void fm_effect_1d_pitch(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t timer_ran_out = 0;
 	uint16_t step = 0;
 
 	z80_block(27);
 	step = 0xFFB0u;
-	zero = fm_effect_1d_move_pitch(step, channel);
+	timer_ran_out = fm_effect_1d_move_pitch(step, channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (timer_ran_out == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -1904,15 +1904,15 @@ void fm_effect_1d_pitch_2(uint16_t channel)
    stop_channel. */
 void fm_effect_1d_pitch_3(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t timer_ran_out = 0;
 	uint16_t step = 0;
 	uint8_t count = 0;
 
 	z80_block(27);
 	step = 0xFFF0u;
-	zero = fm_effect_1d_move_pitch(step, channel);
+	timer_ran_out = fm_effect_1d_move_pitch(step, channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (timer_ran_out == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -1933,9 +1933,9 @@ void fm_effect_1d_pitch_3(uint16_t channel)
    timer down and tells whether it ran out. */
 uint32_t fm_effect_1d_move_pitch(uint16_t step, uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t timer_ran_out = 0;
 	uint16_t pitch = 0;
-	uint8_t t1 = 0;
+	uint8_t timer_left = 0;
 
 	z80_block(117);
 	pitch = CHANNEL(channel)->pitch + step;
@@ -1948,10 +1948,10 @@ uint32_t fm_effect_1d_move_pitch(uint16_t step, uint16_t channel)
 	z80_block(17);
 	set_pitch(pitch, channel);
 	z80_block(33);
-	t1 = CHANNEL(channel)->timer - 1u;
-	zero = t1 == 0u;
-	CHANNEL(channel)->timer = t1;
-	return zero;
+	timer_left = CHANNEL(channel)->timer - 1u;
+	timer_ran_out = timer_left == 0u;
+	CHANNEL(channel)->timer = timer_left;
+	return timer_ran_out;
 }
 
 /* Loads fm_effect_1e_patch (fm_effect_18_patch's bytes) and keys on pitch 1500, for 128 passes of
@@ -2052,12 +2052,12 @@ void fm_effect_1f_retrigger(uint16_t channel)
 void fm_effect_1f_end(uint16_t channel)
 {
 	uint8_t passes_high = 0, passes_low = 0;
-	uint16_t t1 = 0;
+	uint16_t passes_left = 0;
 
 	z80_block(95);
-	t1 = CHANNEL(channel)->fm_effect_1f.passes - 1u;
-	passes_high = (uint8_t)(t1 >> 8);
-	passes_low = (uint8_t)t1;
+	passes_left = CHANNEL(channel)->fm_effect_1f.passes - 1u;
+	passes_high = (uint8_t)(passes_left >> 8);
+	passes_low = (uint8_t)passes_left;
 	CHANNEL(channel)->fm_effect_1f.passes = ((uint32_t)passes_high << 8) | passes_low;
 	if ((passes_low | passes_high) != 0u)
 	{
@@ -2091,14 +2091,14 @@ void fm_effect_20(uint16_t channel)
 /* The fall: 1 1/2 semitones lower each pass for the 48 passes; then 64 passes of fm_effect_20_pitch_2. */
 void fm_effect_20_pitch(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t count_ran_out = 0;
 	uint16_t handler = 0, step = 0;
 
 	z80_block(27);
 	step = 0xFFA0u;
-	zero = fm_effect_20_move_pitch(step, channel);
+	count_ran_out = fm_effect_20_move_pitch(step, channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (count_ran_out == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -2112,14 +2112,14 @@ void fm_effect_20_pitch(uint16_t channel)
 /* The climb: a semitone higher each pass for the 64 passes; then stop_channel. */
 void fm_effect_20_pitch_2(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t count_ran_out = 0;
 	uint16_t step = 0;
 
 	z80_block(27);
 	step = 0x40u;
-	zero = fm_effect_20_move_pitch(step, channel);
+	count_ran_out = fm_effect_20_move_pitch(step, channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (count_ran_out == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -2132,9 +2132,9 @@ void fm_effect_20_pitch_2(uint16_t channel)
    down and tells whether it ran out. */
 uint32_t fm_effect_20_move_pitch(uint16_t step, uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t count_ran_out = 0;
 	uint16_t pitch = 0;
-	uint8_t t1 = 0;
+	uint8_t count_left = 0;
 
 	z80_block(117);
 	pitch = CHANNEL(channel)->fm_effect_20.pitch + step;
@@ -2147,10 +2147,10 @@ uint32_t fm_effect_20_move_pitch(uint16_t step, uint16_t channel)
 	z80_block(17);
 	set_pitch(pitch, channel);
 	z80_block(33);
-	t1 = CHANNEL(channel)->count - 1u;
-	zero = t1 == 0u;
-	CHANNEL(channel)->count = t1;
-	return zero;
+	count_left = CHANNEL(channel)->count - 1u;
+	count_ran_out = count_left == 0u;
+	CHANNEL(channel)->count = count_left;
+	return count_ran_out;
 }
 
 /* Loads fm_effect_21_patch and keys on pitch 600 for 384 passes (fm_effect_21_end). */
@@ -2176,12 +2176,12 @@ void fm_effect_21(uint16_t channel)
 void fm_effect_21_end(uint16_t channel)
 {
 	uint8_t passes_high = 0, passes_low = 0;
-	uint16_t t1 = 0;
+	uint16_t passes_left = 0;
 
 	z80_block(95);
-	t1 = CHANNEL(channel)->fm_effect_21.passes - 1u;
-	passes_high = (uint8_t)(t1 >> 8);
-	passes_low = (uint8_t)t1;
+	passes_left = CHANNEL(channel)->fm_effect_21.passes - 1u;
+	passes_high = (uint8_t)(passes_left >> 8);
+	passes_low = (uint8_t)passes_left;
 	AT8(CHANNEL(channel)->fm_effect_21.passes, 1) = passes_high;
 	AS8(CHANNEL(channel)->fm_effect_21.passes) = passes_low;
 	if ((passes_low | passes_high) != 0u)
@@ -2526,13 +2526,13 @@ void fm_effect_26_transpose(uint16_t channel)
    and the second rise (fm_effect_26_pitch). */
 void fm_effect_26_slide(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t timer_ran_out = 0;
 	uint16_t handler = 0, pitch = 0;
 
 	z80_block(17);
-	zero = fm_effect_26_move_pitch(channel);
+	timer_ran_out = fm_effect_26_move_pitch(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (timer_ran_out == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -2548,13 +2548,13 @@ void fm_effect_26_slide(uint16_t channel)
 /* The second rise, 48 passes more; after 3 rounds, each 2 semitones above the last, stop_channel. */
 void fm_effect_26_pitch(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t timer_ran_out = 0;
 	uint8_t count = 0;
 
 	z80_block(17);
-	zero = fm_effect_26_move_pitch(channel);
+	timer_ran_out = fm_effect_26_move_pitch(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (timer_ran_out == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -2574,19 +2574,19 @@ void fm_effect_26_pitch(uint16_t channel)
 /* The pitch 7/16 of a semitone higher, set; counts the timer down and tells whether it ran out. */
 uint32_t fm_effect_26_move_pitch(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t timer_ran_out = 0;
 	uint16_t pitch = 0;
-	uint8_t t1 = 0;
+	uint8_t timer_left = 0;
 
 	z80_block(114);
 	pitch = CHANNEL(channel)->pitch + 0x1Cu;
 	CHANNEL(channel)->pitch = pitch;
 	set_pitch(pitch, channel);
 	z80_block(33);
-	t1 = CHANNEL(channel)->timer - 1u;
-	zero = t1 == 0u;
-	CHANNEL(channel)->timer = t1;
-	return zero;
+	timer_left = CHANNEL(channel)->timer - 1u;
+	timer_ran_out = timer_left == 0u;
+	CHANNEL(channel)->timer = timer_left;
+	return timer_ran_out;
 }
 
 /* Loads fm_effect_27_patch and keys on pitch 17D8: 6 notes of 48 passes, each a semitone lower
@@ -2750,14 +2750,14 @@ void fm_effect_29(uint16_t channel)
 /* The fall: 1 1/8 semitones lower each pass for 48 passes; then the 3 rises (fm_effect_29_setup). */
 void fm_effect_29_pitch(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t timer_ran_out = 0;
 	uint16_t step = 0;
 
 	z80_block(27);
 	step = 0xFFB8u;
-	zero = fm_effect_29_move_pitch(step, channel);
+	timer_ran_out = fm_effect_29_move_pitch(step, channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (timer_ran_out == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -2782,15 +2782,15 @@ void fm_effect_29_setup(uint16_t channel)
    (fm_effect_29_setup), each 8 semitones above the last; after the third stop_channel. */
 void fm_effect_29_slide(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t timer_ran_out = 0;
 	uint16_t pitch = 0, step = 0;
 	uint8_t count = 0;
 
 	z80_block(27);
 	step = 0x20u;
-	zero = fm_effect_29_move_pitch(step, channel);
+	timer_ran_out = fm_effect_29_move_pitch(step, channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (timer_ran_out == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -2812,19 +2812,19 @@ void fm_effect_29_slide(uint16_t channel)
 /* Adds the step to the pitch and sets it; counts the timer down and tells whether it ran out. */
 uint32_t fm_effect_29_move_pitch(uint16_t step, uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t timer_ran_out = 0;
 	uint16_t pitch = 0;
-	uint8_t t1 = 0;
+	uint8_t timer_left = 0;
 
 	z80_block(104);
 	pitch = CHANNEL(channel)->pitch + step;
 	CHANNEL(channel)->pitch = pitch;
 	set_pitch(pitch, channel);
 	z80_block(33);
-	t1 = CHANNEL(channel)->timer - 1u;
-	zero = t1 == 0u;
-	CHANNEL(channel)->timer = t1;
-	return zero;
+	timer_left = CHANNEL(channel)->timer - 1u;
+	timer_ran_out = timer_left == 0u;
+	CHANNEL(channel)->timer = timer_left;
+	return timer_ran_out;
 }
 
 /* Effect 2A's notes after 48 passes. */

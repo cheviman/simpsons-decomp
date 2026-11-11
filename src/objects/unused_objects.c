@@ -35,15 +35,15 @@ void unused_kind_b7_start(uint16_t object)
 /* Unused: falls and bounces high with sound 2000. */
 void unused_kind_b7_bounce(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t landed = 0;
 	uint16_t command = 0;
 	uint8_t state = 0;
 	uint16_t z_speed = 0;
 
 	z_speed = OBJECT(object)->z_speed;
 	OBJECT(object)->z_speed = z_speed - 0x40u;
-	carry = vector_check_landing(object);
-	if (carry == 0u)
+	landed = vector_check_landing(object);
+	if (landed == 0u)
 		return;
 	OBJECT(object)->flags = 0xC8u;
 	OBJECT(object)->z_speed = 0x600;
@@ -56,15 +56,15 @@ void unused_kind_b7_bounce(uint16_t object)
 /* Unused: falls and lands with sound 2000. */
 void unused_kind_b7_land(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t landed = 0;
 	uint16_t command = 0;
 	uint8_t state = 0;
 	uint16_t z_speed = 0;
 
 	z_speed = OBJECT(object)->z_speed;
 	OBJECT(object)->z_speed = z_speed - 0x40u;
-	carry = vector_check_landing(object);
-	if (carry == 0u)
+	landed = vector_check_landing(object);
+	if (landed == 0u)
 		return;
 	command = 0x2000u;
 	vector_queue_sound(command);

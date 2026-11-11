@@ -48,9 +48,9 @@ void start_object_from_setup(uint16_t object, uint16_t setup)
 
 /* Pulls the object's height speed down by gravity and, once it falls, caps its fall and lands it on its
    floor (carry set when it lands). */
-void apply_gravity(uint16_t object, uint16_t *p_z_speed, uint32_t *p_carry)
+void apply_gravity(uint16_t object, uint16_t *p_z_speed, uint32_t *p_landed)
 {
-	uint32_t carry = *p_carry;
+	uint32_t landed = *p_landed;
 	uint16_t z_speed = 0;
 	uint16_t z_speed_2 = 0;
 
@@ -59,21 +59,21 @@ void apply_gravity(uint16_t object, uint16_t *p_z_speed, uint32_t *p_carry)
 	OBJECT(object)->z_speed = z_speed;
 	if ((int16_t)z_speed >= 0)
 	{
-		carry = 0u;
+		landed = 0u;
 		z_speed &= 0xFFu;
 	}
 	else
-		cap_fall_and_land(object, &z_speed, &carry);
+		cap_fall_and_land(object, &z_speed, &landed);
 	*p_z_speed = z_speed;
-	*p_carry = carry;
+	*p_landed = landed;
 }
 
 /* Caps the object's fall at 8 pixels a frame and, once it is within 7 pixels of its floor, lands it
    there (carry set): its height speed stopped, no longer in the air. */
-void cap_fall_and_land(uint16_t object, uint16_t *p_z_speed, uint32_t *p_carry)
+void cap_fall_and_land(uint16_t object, uint16_t *p_z_speed, uint32_t *p_landed)
 {
 	uint16_t z_speed = (uint16_t)*p_z_speed;
-	uint32_t carry = *p_carry;
+	uint32_t landed = *p_landed;
 	uint8_t animation_flags = 0, floor_z_low = 0;
 	uint16_t height = 0;
 	uint8_t animation_flags_2 = 0;
@@ -88,7 +88,7 @@ void cap_fall_and_land(uint16_t object, uint16_t *p_z_speed, uint32_t *p_carry)
 	height = z;
 	if (land_at_height < (uint16_t)(((uint32_t)(z >> 8) << 8) | (height & 0xFFu)))
 	{
-		carry = 0u;
+		landed = 0u;
 		height &= 0xFFu;
 	}
 	else
@@ -101,18 +101,18 @@ void cap_fall_and_land(uint16_t object, uint16_t *p_z_speed, uint32_t *p_carry)
 		animation_flags_2 = OBJECT(object)->animation_flags;
 		animation_flags = animation_flags_2 | 0x80u;
 		OBJECT(object)->animation_flags = animation_flags;
-		carry = 1u;
+		landed = 1u;
 		height = (floor_z_low & 0xFFu) | ((uint32_t)(uint8_t)~animation_flags << 8);
 	}
 	*p_z_speed = height;
-	*p_carry = carry;
+	*p_landed = landed;
 }
 
 /* While the object falls (its height speed below 0), caps its fall and lands it on its floor (carry set
    when it lands). */
 uint32_t land_if_falling(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t landed = 0;
 	uint8_t z_speed_high = 0;
 	uint16_t z_speed = 0;
 	uint8_t z_speed_2 = 0;
@@ -121,12 +121,12 @@ uint32_t land_if_falling(uint16_t object)
 	z_speed_high = z_speed_2;
 	if ((int8_t)z_speed_2 >= 0)
 	{
-		carry = 0u;
-		return carry;
+		landed = 0u;
+		return landed;
 	}
 	z_speed = (uint32_t)z_speed_high << 8;
-	cap_fall_and_land(object, &z_speed, &carry);
-	return carry;
+	cap_fall_and_land(object, &z_speed, &landed);
+	return landed;
 }
 
 /* Copies a hit box record into the object: its power and kind of hit, its half sizes and its offsets. */
@@ -187,10 +187,10 @@ uint16_t enemy_remove_off_screen(uint16_t object, uint16_t target)
 /* Whether the enemy is on the screen, 16 pixels in from its edges (carry set). */
 uint32_t enemy_on_screen(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t on_screen = 0;
 	uint16_t screen_x = 0;
 
 	screen_x = OBJECT(object)->x;
-	carry = screen_x >= 0x50 && screen_x <= 0x16F;
-	return carry;
+	on_screen = screen_x >= 0x50 && screen_x <= 0x16F;
+	return on_screen;
 }

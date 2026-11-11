@@ -237,13 +237,13 @@ void dreamland_boss_appear(uint16_t object)
 /* Drops the boss; when it lands it bounces with a thud and its attacking hit box. */
 void dreamland_boss_drop_in(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t on_floor = 0;
 	uint16_t command = 0;
 	uint8_t routine_step = 0;
 
 	OBJECT(object)->flags = 0x98u;
-	carry = dreamland_boss_fall(object);
-	if (carry == 0u)
+	on_floor = dreamland_boss_fall(object);
+	if (on_floor == 0u)
 	{
 		camera_x_held--;
 		return;
@@ -262,12 +262,12 @@ void dreamland_boss_drop_in(uint16_t object)
 /* Pulls the bouncing boss down; when it lands it takes its plain hit box and waits 64 frames. */
 void dreamland_boss_bounce_in(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t landed = 0;
 	uint16_t ignored16 = 0;
 	uint8_t routine_step = 0;
 
-	vector_apply_gravity(object, &ignored16, &carry);
-	if (carry == 0u)
+	vector_apply_gravity(object, &ignored16, &landed);
+	if (landed == 0u)
 	{
 		OBJECT(object)->flags = 0x98u;
 		camera_x_held--;
@@ -588,14 +588,14 @@ void dreamland_boss_chase_leg(uint16_t object)
 	uint8_t angle = 0;
 	uint16_t direction = 0, heading = 0, nearest_player = 0;
 	uint8_t legs_left = 0, legs_left_2 = 0, routine_step = 0;
-	uint16_t player_y = 0, boss_y = 0, dy = 0, t1 = 0, depth_distance = 0;
+	uint16_t player_y = 0, boss_y = 0, dy = 0, depth_difference = 0, depth_distance = 0;
 
 	nearest_player = vector_choose_nearest_player(object);
 	player_y = OBJECT(nearest_player)->y;
 	boss_y = OBJECT(object)->y;
 	dy = player_y - boss_y;
-	t1 = dy;
-	depth_distance = t1 >> 15 ? 0u - t1 : t1;
+	depth_difference = dy;
+	depth_distance = depth_difference >> 15 ? 0u - depth_difference : depth_difference;
 	if (depth_distance < 4u)
 	{
 		OBJECT(object)->x_speed = 0;
@@ -852,7 +852,7 @@ void dreamland_boss_bounce_off_edges(uint16_t object)
 /* Pulls the boss down hard; returns true when it has landed on its floor. */
 uint32_t dreamland_boss_fall(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t on_floor = 0;
 	uint16_t z_speed = 0;
 	uint16_t z_speed_2 = 0, floor_z = 0, z = 0, floor_z_2 = 0;
 
@@ -861,8 +861,8 @@ uint32_t dreamland_boss_fall(uint16_t object)
 	OBJECT(object)->z_speed = z_speed;
 	if ((int16_t)z_speed >= 0)
 	{
-		carry = 0u;
-		return carry;
+		on_floor = 0u;
+		return on_floor;
 	}
 	if (z_speed >> 8 < 0xF0u)
 		OBJECT(object)->z_speed = (OBJECT(object)->z_speed & 0xFFu) | 0xF000u;
@@ -871,15 +871,15 @@ uint32_t dreamland_boss_fall(uint16_t object)
 	z = OBJECT(object)->z;
 	if (land_at_height < z)
 	{
-		carry = 0u;
-		return carry;
+		on_floor = 0u;
+		return on_floor;
 	}
 	OBJECT(object)->z_speed = 0;
 	floor_z_2 = OBJECT(object)->floor_z;
 	OBJECT(object)->z = floor_z_2;
 	OBJECT(object)->animation_flags = 0x80u;
-	carry = 1u;
-	return carry;
+	on_floor = 1u;
+	return on_floor;
 }
 
 /* The end of the first form (step 6), by field 4E: it changes into its second form. */
@@ -1112,7 +1112,7 @@ void dreamland_boss_knocked_up(uint16_t object)
 /* Pulls the knocked boss down; once it falls it takes its attacking hit box. */
 void dreamland_boss_knocked_rise(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t landed = 0;
 	uint16_t ignored16 = 0;
 	uint8_t action_step = 0;
 	uint16_t z_speed = 0;
@@ -1127,8 +1127,8 @@ void dreamland_boss_knocked_rise(uint16_t object)
 		vector_set_hit_box(object);
 		return;
 	}
-	vector_apply_gravity(object, &ignored16, &carry);
-	if (carry)
+	vector_apply_gravity(object, &ignored16, &landed);
+	if (landed)
 	{
 		dreamland_boss_knocked_bounce(object);
 		return;
@@ -1138,10 +1138,10 @@ void dreamland_boss_knocked_rise(uint16_t object)
 /* Pulls the knocked boss down hard; when it lands it bounces with a thud. */
 void dreamland_boss_knocked_fall(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t on_floor = 0;
 
-	carry = dreamland_boss_fall(object);
-	if (carry == 0u)
+	on_floor = dreamland_boss_fall(object);
+	if (on_floor == 0u)
 		return;
 	dreamland_boss_knocked_bounce(object);
 }
@@ -1170,12 +1170,12 @@ void dreamland_boss_knocked_bounce(uint16_t object)
 /* Pulls the boss down hard; when it lands, a thud and a 32 frames' wait. */
 void dreamland_boss_knocked_land(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t on_floor = 0;
 	uint16_t command = 0;
 	uint8_t action_step = 0;
 
-	carry = dreamland_boss_fall(object);
-	if (carry == 0u)
+	on_floor = dreamland_boss_fall(object);
+	if (on_floor == 0u)
 		return;
 	OBJECT(object)->flags = 0x88u;
 	OBJECT(object)->timer = 0x20u;
@@ -1374,7 +1374,7 @@ void dreamland_boss_leap_take_off(uint16_t object)
 /* Pulls the leaping boss down; lands it if it comes down. */
 void dreamland_boss_leap_rise(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t landed = 0;
 	uint16_t ignored16 = 0;
 	uint8_t routine_step = 0;
 	uint16_t z_speed = 0;
@@ -1386,8 +1386,8 @@ void dreamland_boss_leap_rise(uint16_t object)
 		routine_step = OBJECT(object)->dreamland_boss.routine_step;
 		OBJECT(object)->dreamland_boss.routine_step = routine_step + 1u;
 	}
-	vector_apply_gravity(object, &ignored16, &carry);
-	if (carry)
+	vector_apply_gravity(object, &ignored16, &landed);
+	if (landed)
 	{
 		dreamland_boss_leap_bounce(object);
 		return;
@@ -1397,10 +1397,10 @@ void dreamland_boss_leap_rise(uint16_t object)
 /* Pulls the falling boss down hard until it lands. */
 void dreamland_boss_leap_fall(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t on_floor = 0;
 
-	carry = dreamland_boss_fall(object);
-	if (carry == 0u)
+	on_floor = dreamland_boss_fall(object);
+	if (on_floor == 0u)
 		return;
 	dreamland_boss_leap_bounce(object);
 }
@@ -1434,11 +1434,11 @@ void dreamland_boss_leap_rebound(uint16_t object)
 /* When the boss lands, stops it with its plain hit box and starts another round of poses. */
 void dreamland_boss_leap_land(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t landed = 0;
 	uint16_t ignored16 = 0;
 
-	vector_apply_gravity(object, &ignored16, &carry);
-	if (carry == 0u)
+	vector_apply_gravity(object, &ignored16, &landed);
+	if (landed == 0u)
 		return;
 	OBJECT(object)->x_speed = 0;
 	OBJECT(object)->y_speed = 0;
@@ -1659,12 +1659,12 @@ void dreamland_boss_third_change_start(uint16_t object)
 /* Pulls the boss down; when it lands, plays animation 85 for 128 frames. */
 void dreamland_boss_third_change_land(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t landed = 0;
 	uint16_t ignored16 = 0;
 	uint8_t change_step = 0;
 
-	vector_apply_gravity(object, &ignored16, &carry);
-	if (carry)
+	vector_apply_gravity(object, &ignored16, &landed);
+	if (landed)
 	{
 		OBJECT(object)->flags = 0xC8u;
 		OBJECT(object)->animation = 0x85u;
@@ -2010,7 +2010,7 @@ void dreamland_boss_spit_start(uint16_t object)
 /* On the marked frame, spits a ball (4D40 type 20). */
 void dreamland_boss_spit_ball(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t child_placed = 0;
 	uint16_t child_object = 0, ignored16 = 0;
 	uint8_t animation_flags = 0, routine_step = 0;
 
@@ -2024,7 +2024,7 @@ void dreamland_boss_spit_ball(uint16_t object)
 	OBJECT(object)->dreamland_boss.routine_step = routine_step + 1u;
 	leftover_y = dreamland_boss_spit_ball_child_ADDRESS;
 	child_object = dreamland_boss_spit_ball_child_ADDRESS;
-	spawn_list_2_child(object, child_object, &ignored16, &carry);
+	spawn_list_2_child(object, child_object, &ignored16, &child_placed);
 }
 
 /* When the spit ends, sends the boss walking again. */
@@ -2500,13 +2500,13 @@ void dreamland_boss_wobble_wait(uint16_t object)
 /* Puts out the boss's chain of balls (4F80 type FF), held by the boss, and sets work RAM 185A. */
 void dreamland_boss_put_out_chain(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t slot_found = 0;
 	uint16_t ignored16 = 0, ignored16_2 = 0, object_2 = 0;
 	uint8_t routine_step = 0;
 
 	leftover_y = dreamland_boss_put_out_chain_child_ADDRESS;
-	vector_spawn_child(object, &ignored16, &object_2, &ignored16_2, &carry);
-	if (carry)
+	vector_spawn_child(object, &ignored16, &object_2, &ignored16_2, &slot_found);
+	if (slot_found)
 	{
 		OBJECT(object_2)->target = object;
 		OBJECT(object)->dreamland_boss.chain = object_2;
@@ -2856,12 +2856,12 @@ void dreamland_boss_defeat_release(uint16_t object)
 /* When it lands, bounces it again with a thud. */
 void dreamland_boss_defeat_bounce(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t landed = 0;
 	uint16_t command = 0, ignored16 = 0;
 	uint8_t action_step = 0;
 
-	vector_apply_gravity(object, &ignored16, &carry);
-	if (carry == 0u)
+	vector_apply_gravity(object, &ignored16, &landed);
+	if (landed == 0u)
 		return;
 	command = 0x2000u;
 	vector_queue_sound(command);
@@ -2874,12 +2874,12 @@ void dreamland_boss_defeat_bounce(uint16_t object)
 /* When it lands again, a thud and a 128 frames' wait. */
 void dreamland_boss_defeat_land(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t landed = 0;
 	uint16_t command = 0, ignored16 = 0;
 	uint8_t action_step = 0;
 
-	vector_apply_gravity(object, &ignored16, &carry);
-	if (carry == 0u)
+	vector_apply_gravity(object, &ignored16, &landed);
+	if (landed == 0u)
 		return;
 	OBJECT(object)->flags = 0x88u;
 	command = 0x2000u;

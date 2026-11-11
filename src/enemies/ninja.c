@@ -355,7 +355,7 @@ void ninja_drop_forward(uint16_t object)
 /* Pulls the ninja down onto the floor under it; when it lands it can be hit and fights. */
 void ninja_drop_land(uint16_t object)
 {
-	uint32_t negative = 0, carry = 0;
+	uint32_t negative = 0, landed = 0;
 	uint8_t floor_value = 0;
 	uint16_t floor_cell = 0;
 	uint8_t state = 0;
@@ -364,8 +364,8 @@ void ninja_drop_land(uint16_t object)
 	z_speed = OBJECT(object)->z_speed;
 	falling_z_speed = z_speed - 0x20u;
 	OBJECT(object)->z_speed = falling_z_speed;
-	carry = vector_check_landing(object);
-	if (carry)
+	landed = vector_check_landing(object);
+	if (landed)
 	{
 		OBJECT(object)->flags = 0xC0u;
 		OBJECT(object)->y_speed = 0;
@@ -448,15 +448,15 @@ void ninja_leap_stop_forward(uint16_t object)
 /* Pulls the ninja down until it lands crouching, then lets it fight. */
 void ninja_leap_land(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t landed = 0;
 	uint8_t state = 0;
 	uint16_t z_speed = 0, falling_z_speed = 0;
 
 	z_speed = OBJECT(object)->z_speed;
 	falling_z_speed = z_speed - 0x20u;
 	OBJECT(object)->z_speed = falling_z_speed;
-	carry = vector_check_landing(object);
-	if (carry)
+	landed = vector_check_landing(object);
+	if (landed)
 	{
 		OBJECT(object)->animation = 0x9Eu;
 		OBJECT(object)->flags = 0xC0u;
@@ -525,7 +525,7 @@ void ninja_jump_back(uint16_t object)
    fights at once. */
 void ninja_split(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t slot_found = 0;
 	uint16_t ignored16 = 0, ignored16_2 = 0, ignored16_3 = 0;
 	uint8_t animation_flags = 0, state = 0, action_step = 0;
 
@@ -533,8 +533,8 @@ void ninja_split(uint16_t object)
 	if ((animation_flags & 1u) == 0u)
 		return;
 	leftover_y = ninja_split_child_ADDRESS;
-	vector_spawn_child(object, &ignored16, &ignored16_2, &ignored16_3, &carry);
-	if (carry == 0u)
+	vector_spawn_child(object, &ignored16, &ignored16_2, &ignored16_3, &slot_found);
+	if (slot_found == 0u)
 	{
 		OBJECT(object)->flags = 0xC0u;
 		state = OBJECT(object)->state;
@@ -698,14 +698,14 @@ void ninja_fall_in(uint16_t object)
 /* Pulls the ninja down until it lands, then lets it fight. */
 void ninja_fall_in_land(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t landed = 0;
 	uint8_t state = 0;
 	uint16_t z_speed = 0;
 
 	z_speed = OBJECT(object)->z_speed;
 	OBJECT(object)->z_speed = z_speed - 0x20u;
-	carry = vector_check_landing(object);
-	if (carry)
+	landed = vector_check_landing(object);
+	if (landed)
 	{
 		state = OBJECT(object)->state;
 		OBJECT(object)->state = state + 1u;
@@ -759,7 +759,7 @@ void ninja_throw_start(uint16_t object)
 /* On the marked frame, puts in the star (4D40 type 19). */
 uint16_t ninja_throw_release(uint16_t object, uint16_t steps)
 {
-	uint32_t carry = 0;
+	uint32_t child_placed = 0;
 	uint16_t child_object = 0, star = 0;
 	uint8_t animation_flags = 0, action_step = 0;
 
@@ -770,7 +770,7 @@ uint16_t ninja_throw_release(uint16_t object, uint16_t steps)
 	OBJECT(object)->action_step = action_step + 1u;
 	leftover_y = ninja_throw_release_child_ADDRESS;
 	child_object = ninja_throw_release_child_ADDRESS;
-	spawn_list_2_child(object, child_object, &star, &carry);
+	spawn_list_2_child(object, child_object, &star, &child_placed);
 	return star;
 }
 
@@ -1007,11 +1007,11 @@ void ninja_jump_attack_fall(uint16_t object)
 /* When the ninja lands, gives it back its plain hit box and ends the action. */
 void ninja_jump_attack_land(uint16_t object, uint16_t z_speed)
 {
-	uint32_t carry = 0;
+	uint32_t landed = 0;
 
 	OBJECT(object)->z_speed = z_speed;
-	carry = vector_check_landing(object);
-	if (carry == 0u)
+	landed = vector_check_landing(object);
+	if (landed == 0u)
 		return;
 	leftover_y = ninja_body_box_ADDRESS;
 	vector_set_hit_box(object);
@@ -1086,14 +1086,14 @@ void ninja_rush_run(uint16_t object)
    a slash (action 2B). */
 void ninja_rush_leap(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t landed = 0;
 	uint8_t bounced = 0, bounced_2 = 0;
 	uint16_t z_speed = 0, ninja_x = 0, x_speed = 0;
 
 	z_speed = OBJECT(object)->z_speed;
 	OBJECT(object)->z_speed = z_speed - 0x20u;
-	carry = vector_check_landing(object);
-	if (carry)
+	landed = vector_check_landing(object);
+	if (landed)
 	{
 		OBJECT(object)->x_speed = 0;
 		OBJECT(object)->action = 0x2Bu;

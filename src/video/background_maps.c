@@ -17,7 +17,7 @@
 void draw_scrolled_layer_edges(void)
 {
 	uint8_t layers_to_draw = 0;
-	uint8_t stack = 0, stack_2 = 0;
+	uint8_t edge_bit = 0, edge_number = 0;
 	uint8_t column_layers_left = 0, row_layers_left = 0;
 
 	if (layer_a_edges_on != 0u)
@@ -54,13 +54,13 @@ void draw_scrolled_layer_edges(void)
 			layer_rows_to_draw = layers_to_draw;
 		}
 	}
-	stack = 4u;
-	stack_2 = 3u;
+	edge_bit = 4u;
+	edge_number = 3u;
 	do
 	{
-		if ((stack & layer_columns_to_draw) != 0u)
+		if ((edge_bit & layer_columns_to_draw) != 0u)
 		{
-			switch ((int8_t)(uint8_t)((uint32_t)stack_2 << 1))
+			switch ((int8_t)(uint8_t)((uint32_t)edge_number << 1))
 			{
 			case 0:
 			case 6:
@@ -83,21 +83,21 @@ void draw_scrolled_layer_edges(void)
 				draw_layer_a_row();
 				break;
 			}
-			layer_columns_to_draw &= ~stack;
+			layer_columns_to_draw &= ~edge_bit;
 			if (draw_all_layer_edges == 0u)
 				break;
 		}
-		stack = stack >> 1;
-		column_layers_left = stack_2;
-		stack_2 = column_layers_left - 1u;
+		edge_bit = edge_bit >> 1;
+		column_layers_left = edge_number;
+		edge_number = column_layers_left - 1u;
 	} while (column_layers_left != 1u);
-	stack = 4u;
-	stack_2 = 3u;
+	edge_bit = 4u;
+	edge_number = 3u;
 	do
 	{
-		if ((stack & layer_rows_to_draw) != 0u)
+		if ((edge_bit & layer_rows_to_draw) != 0u)
 		{
-			switch ((int8_t)(uint8_t)((uint32_t)stack_2 << 1))
+			switch ((int8_t)(uint8_t)((uint32_t)edge_number << 1))
 			{
 			case 0:
 			case 6:
@@ -120,13 +120,13 @@ void draw_scrolled_layer_edges(void)
 				draw_layer_a_column();
 				break;
 			}
-			layer_rows_to_draw &= ~stack;
+			layer_rows_to_draw &= ~edge_bit;
 			if (draw_all_layer_edges == 0u)
 				break;
 		}
-		stack = stack >> 1;
-		row_layers_left = stack_2;
-		stack_2 = row_layers_left - 1u;
+		edge_bit = edge_bit >> 1;
+		row_layers_left = edge_number;
+		edge_number = row_layers_left - 1u;
 	} while (row_layers_left != 1u);
 }
 
@@ -199,31 +199,31 @@ void draw_layer_columns(uint16_t layer_and_columns, uint16_t *p_layer_map, uint1
 {
 	uint8_t layer = 0;
 	uint16_t layer_and_block_column = 0, layer_map = 0, map_cell = 0, tile_place = 0;
-	uint8_t stack = 0, stack_2 = 0, saved_window_bank = 0, stack_4 = 0, stack_5 = 0;
+	uint8_t columns_to_go = 0, kept_layer = 0, saved_window_bank = 0, saved_layer_map_low = 0, saved_layer_map_high = 0;
 	uint8_t columns_left_before = 0;
 	uint16_t offset_x = 0, layer_offset_x = 0, next_offset_x = 0, offset_x_2 = 0, offset_x_3 = 0;
 
 	layer = (uint8_t)(layer_and_columns >> 8);
-	stack = (uint8_t)layer_and_columns;
-	stack_2 = layer;
+	columns_to_go = (uint8_t)layer_and_columns;
+	kept_layer = layer;
 	layer_map = layer_maps[layer & 0x7Fu];
 	saved_window_bank = window_bank;
 	do
 	{
-		stack_5 = layer_map >> 8;
-		stack_4 = (uint8_t)layer_map;
-		layer_and_block_column = (uint32_t)stack_2 << 8;
+		saved_layer_map_high = layer_map >> 8;
+		saved_layer_map_low = (uint8_t)layer_map;
+		layer_and_block_column = (uint32_t)kept_layer << 8;
 		find_layer_column(&map_cell, &tile_place, &layer_and_block_column);
 		leftover_y = map_cell;
 		tile_place = draw_map_column(tile_place, (uint8_t)layer_and_block_column);
-		layer_map = ((uint32_t)stack_5 << 8) | stack_4;
+		layer_map = ((uint32_t)saved_layer_map_high << 8) | saved_layer_map_low;
 		offset_x = LAYER_MAP(layer_map)->offset_x;
 		layer_offset_x = mem_read16(offset_x);
 		next_offset_x = layer_offset_x + 8u;
 		offset_x_2 = LAYER_MAP(layer_map)->offset_x;
 		mem_write16(offset_x_2, next_offset_x);
-		columns_left_before = stack;
-		stack = columns_left_before - 1u;
+		columns_left_before = columns_to_go;
+		columns_to_go = columns_left_before - 1u;
 	} while (columns_left_before != 1u);
 	offset_x_3 = LAYER_MAP(layer_map)->offset_x;
 	mem_write16(offset_x_3, 0u);
@@ -239,13 +239,13 @@ uint16_t draw_layer_columns_with_floor_map(uint16_t layer_and_columns)
 {
 	uint8_t layer = 0;
 	uint16_t layer_and_block_column = 0, layer_map = 0, map_cell = 0, tile_place = 0, u = 0;
-	uint8_t stack = 0, stack_2 = 0, stack_3 = 0, stack_4 = 0;
+	uint8_t columns_to_go = 0, kept_layer = 0, saved_layer_map_low = 0, saved_layer_map_high = 0;
 	uint8_t columns_left_before = 0;
 	uint16_t offset_x = 0, offset_y = 0, layer_offset_x_at = 0, layer_offset_x = 0, next_offset_x = 0, layer_offset_x_to = 0, cleared_offset_x_at = 0;
 
 	layer = (uint8_t)(layer_and_columns >> 8);
-	stack = (uint8_t)layer_and_columns;
-	stack_2 = layer;
+	columns_to_go = (uint8_t)layer_and_columns;
+	kept_layer = layer;
 	layer_map = layer_maps[layer & 0x7Fu];
 	offset_x = LAYER_MAP(layer_map)->offset_x;
 	mem_write16(offset_x, 0u);
@@ -253,27 +253,27 @@ uint16_t draw_layer_columns_with_floor_map(uint16_t layer_and_columns)
 	mem_write16(offset_y, 0u);
 	do
 	{
-		stack_4 = layer_map >> 8;
-		stack_3 = (uint8_t)layer_map;
-		layer_and_block_column = (uint32_t)stack_2 << 8;
+		saved_layer_map_high = layer_map >> 8;
+		saved_layer_map_low = (uint8_t)layer_map;
+		layer_and_block_column = (uint32_t)kept_layer << 8;
 		find_layer_column(&map_cell, &tile_place, &layer_and_block_column);
 		leftover_y = map_cell;
 		draw_map_column(tile_place, (uint8_t)layer_and_block_column);
-		layer_map = ((uint32_t)stack_4 << 8) | stack_3;
-		stack_4 = layer_map >> 8;
-		stack_3 = (uint8_t)layer_map;
-		layer_and_block_column = (uint32_t)stack_2 << 8;
+		layer_map = ((uint32_t)saved_layer_map_high << 8) | saved_layer_map_low;
+		saved_layer_map_high = layer_map >> 8;
+		saved_layer_map_low = (uint8_t)layer_map;
+		layer_and_block_column = (uint32_t)kept_layer << 8;
 		find_layer_column(&map_cell, &u, &layer_and_block_column);
 		leftover_y = map_cell;
 		fill_floor_map_column((uint8_t)layer_and_block_column);
-		layer_map = ((uint32_t)stack_4 << 8) | stack_3;
+		layer_map = ((uint32_t)saved_layer_map_high << 8) | saved_layer_map_low;
 		layer_offset_x_at = LAYER_MAP(layer_map)->offset_x;
 		layer_offset_x = mem_read16(layer_offset_x_at);
 		next_offset_x = layer_offset_x + 8u;
 		layer_offset_x_to = LAYER_MAP(layer_map)->offset_x;
 		mem_write16(layer_offset_x_to, next_offset_x);
-		columns_left_before = stack;
-		stack = columns_left_before - 1u;
+		columns_left_before = columns_to_go;
+		columns_to_go = columns_left_before - 1u;
 	} while (columns_left_before != 1u);
 	cleared_offset_x_at = LAYER_MAP(layer_map)->offset_x;
 	mem_write16(cleared_offset_x_at, 0u);
@@ -342,7 +342,7 @@ void find_layer_column(uint16_t *p_map_cell, uint16_t *p_tile_place, uint16_t *p
 	uint32_t carry = 0;
 	uint8_t b = 0, edge_y_high = 0, layer = 0, scene_number = 0;
 	uint16_t area_lists = 0, layer_map = 0, map_cell = 0, scene_area = 0, tile_place = 0;
-	uint8_t stack = 0, stack_2 = 0;
+	uint8_t strip_low = 0, strip_high = 0;
 	uint8_t scene_byte = 0, bank = 0, bank_2 = 0;
 	uint16_t scroll_x = 0, tile_scroll_x = 0, offset_x = 0, tile_edge_x = 0, scroll_y = 0, tile_scroll_y = 0, row_offset = 0, tile_offset = 0, scroll_x_2 = 0, floor_scroll_x = 0, offset_x_2 = 0, floor_edge_x = 0, maps = 0, maps_high = 0, scroll_x_3 = 0, map_scroll_x = 0, offset_x_3 = 0, map_edge_x = 0, scroll_y_2 = 0, map_scroll_y = 0, offset_y2 = 0, map_edge_y = 0, cell_offset = 0, scroll_x_4 = 0, column_scroll_x = 0, offset_x_4 = 0, column_edge_x = 0;
 
@@ -392,8 +392,8 @@ void find_layer_column(uint16_t *p_map_cell, uint16_t *p_tile_place, uint16_t *p
 	map_cell = mem_read16(SCENE_AREA(scene_area)->address + (int8_t)((uint32_t)(map_edge_x >> 8) << 1));
 	b = (((((uint8_t)map_edge_x >> 1) >> 1) >> 1) >> 1) & 0xEu;
 	map_place_offset = b;
-	stack_2 = map_cell >> 8;
-	stack = (uint8_t)map_cell;
+	strip_high = map_cell >> 8;
+	strip_low = (uint8_t)map_cell;
 	map_column_cell = map_cell + b;
 	scroll_y_2 = LAYER_MAP(layer_map)->scroll_y;
 	map_scroll_y = mem_read16(scroll_y_2);
@@ -405,7 +405,7 @@ void find_layer_column(uint16_t *p_map_cell, uint16_t *p_tile_place, uint16_t *p
 	edge_y_high = (uint8_t)(map_edge_y >> 8);
 	carry = edge_y_high & 1u;
 	cell_offset = (((uint32_t)(uint8_t)((int8_t)edge_y_high >> 1) << 8) | ((((uint8_t)map_edge_y >> 1) | (carry << 7)) & 0xF0u)) + map_place_offset;
-	map_cell = (((uint32_t)stack_2 << 8) | stack) + cell_offset;
+	map_cell = (((uint32_t)strip_high << 8) | strip_low) + cell_offset;
 	scroll_x_4 = LAYER_MAP(layer_map)->scroll_x;
 	column_scroll_x = mem_read16(scroll_x_4);
 	offset_x_4 = LAYER_MAP(layer_map)->offset_x;
@@ -425,7 +425,7 @@ void find_layer_row(uint16_t *p_map_cell, uint16_t *p_tile_place, uint16_t *p_st
 	uint32_t carry = 0;
 	uint8_t a = 0, b = 0, layer = 0, scene_number = 0;
 	uint16_t address = 0, area_lists = 0, layer_map = 0, map_cell = 0, scene_area = 0, tile_place = 0;
-	uint8_t stack = 0, stack_2 = 0, stack_3 = 0, stack_4 = 0;
+	uint8_t saved_layer_map_low = 0, saved_layer_map_high = 0, scroll_x_low = 0, strip_word = 0;
 	uint8_t scene_byte = 0, bank = 0, bank_2 = 0;
 	uint16_t scroll_x = 0, tile_scroll_x = 0, scroll_y = 0, offset_y = 0, row_offset = 0, tile_offset = 0, maps = 0, maps_high = 0, scroll_x_2 = 0, map_scroll_x = 0, next_strip = 0, strip_length = 0, strip_last_row = 0, scroll_y_2 = 0, map_scroll_y = 0, offset_y_2 = 0, map_view_y = 0, offset_y2 = 0, map_edge_y = 0, cell_offset = 0, scroll_y_3 = 0, row_scroll_y = 0, offset_y_3 = 0, row_view_y = 0, offset_y2_2 = 0, row_edge_y = 0;
 
@@ -468,18 +468,18 @@ void find_layer_row(uint16_t *p_map_cell, uint16_t *p_tile_place, uint16_t *p_st
 	scroll_x_2 = LAYER_MAP(layer_map)->scroll_x;
 	map_scroll_x = mem_read16(scroll_x_2);
 	a = (uint32_t)(map_scroll_x >> 8) << 1;
-	stack_2 = layer_map >> 8;
-	stack = (uint8_t)layer_map;
-	stack_3 = map_scroll_x;
-	stack_4 = a;
+	saved_layer_map_high = layer_map >> 8;
+	saved_layer_map_low = (uint8_t)layer_map;
+	scroll_x_low = map_scroll_x;
+	strip_word = a;
 	map_strip_step = mem_read16(address + (int8_t)a);
 	next_strip = mem_read16(address + (int8_t)(a + 2u));
 	strip_length = next_strip - map_strip_step;
 	strip_last_row = strip_length - 0x10u;
 	map_strip_step = strip_last_row;
-	layer_map = ((uint32_t)stack_2 << 8) | stack;
-	map_cell = mem_read16(address + (int8_t)stack_4);
-	map_place_offset = ((((stack_3 >> 1) >> 1) >> 1) >> 1) & 0xEu;
+	layer_map = ((uint32_t)saved_layer_map_high << 8) | saved_layer_map_low;
+	map_cell = mem_read16(address + (int8_t)strip_word);
+	map_place_offset = ((((scroll_x_low >> 1) >> 1) >> 1) >> 1) & 0xEu;
 	scroll_y_2 = LAYER_MAP(layer_map)->scroll_y;
 	map_scroll_y = mem_read16(scroll_y_2);
 	offset_y_2 = LAYER_MAP(layer_map)->offset_y;
@@ -688,7 +688,7 @@ void draw_map_row(uint16_t map_cell, uint16_t tile_place, uint8_t block_row)
 {
 	uint8_t wrapped = 0;
 	uint16_t block = 0, block_number = 0, tile_row = 0;
-	uint8_t stack = 0, stack_2 = 0;
+	uint8_t next_cell_low = 0, next_cell_high = 0;
 	uint8_t blocks_left_before = 0;
 	uint16_t map_cell_at = 0, map_word = 0, drawn_scroll = 0, next_scroll = 0, strip_jump = 0, new_draw_scroll = 0;
 
@@ -701,8 +701,8 @@ void draw_map_row(uint16_t map_cell, uint16_t tile_place, uint8_t block_row)
 		map_cell_at = map_cell;
 		map_cell = map_cell_at + 2u;
 		map_word = mem_read16(map_cell_at);
-		stack_2 = map_cell >> 8;
-		stack = (uint8_t)map_cell;
+		next_cell_high = map_cell >> 8;
+		next_cell_low = (uint8_t)map_cell;
 		block_number = (((map_word >> 8) & 3u) << 8) | (uint8_t)map_word;
 		block = find_map_block(block_number);
 		tile_row = (block_number & 0xFFu) | ((uint32_t)block_tile_row << 8);
@@ -714,7 +714,7 @@ void draw_map_row(uint16_t map_cell, uint16_t tile_place, uint8_t block_row)
 		wrapped ^= (uint8_t)(map_draw_scroll >> 8u);
 		if ((wrapped & 2u) != 0u)
 			tile_place -= 0x40u;
-		map_cell = ((uint32_t)stack_2 << 8) | stack;
+		map_cell = ((uint32_t)next_cell_high << 8) | next_cell_low;
 		if ((wrapped & 1u) != 0u)
 		{
 			strip_jump = map_strip_step;
@@ -733,7 +733,7 @@ void fill_floor_map_row(uint16_t map_cell, uint8_t block_row)
 {
 	uint8_t control = 0, wrapped = 0;
 	uint16_t block = 0, block_number = 0, floor_place = 0;
-	uint8_t stack = 0, stack_2 = 0;
+	uint8_t next_cell_low = 0, next_cell_high = 0;
 	uint8_t blocks_left_before = 0;
 	uint16_t map_cell_at = 0, map_word = 0, drawn_scroll = 0, next_scroll = 0, strip_jump = 0, new_draw_scroll = 0;
 
@@ -749,8 +749,8 @@ void fill_floor_map_row(uint16_t map_cell, uint8_t block_row)
 		map_cell_at = map_cell;
 		map_cell = map_cell_at + 2u;
 		map_word = mem_read16(map_cell_at);
-		stack_2 = map_cell >> 8;
-		stack = (uint8_t)map_cell;
+		next_cell_high = map_cell >> 8;
+		next_cell_low = (uint8_t)map_cell;
 		block_number = map_word;
 		block = find_map_block(block_number);
 		floor_place = floor_map_place;
@@ -763,7 +763,7 @@ void fill_floor_map_row(uint16_t map_cell, uint8_t block_row)
 		if ((wrapped & 2u) != 0u)
 			floor_place -= 0x40u;
 		floor_map_place = floor_place;
-		map_cell = ((uint32_t)stack_2 << 8) | stack;
+		map_cell = ((uint32_t)next_cell_high << 8) | next_cell_low;
 		if ((wrapped & 1u) != 0u)
 		{
 			strip_jump = map_strip_step;

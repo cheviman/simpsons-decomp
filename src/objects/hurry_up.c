@@ -14,7 +14,7 @@
 /* Runs the HURRY UP: set up on its first frame, then by its step */
 uint16_t hurry_up(uint16_t object, uint16_t child_handlers)
 {
-	uint32_t carry = 0;
+	uint32_t partner_ready = 0;
 	uint16_t u = 0;
 	uint8_t step = 0;
 	uint16_t player_offset = 0, player_object = 0, camera_x_now = 0;
@@ -92,7 +92,7 @@ uint16_t hurry_up(uint16_t object, uint16_t child_handlers)
 	case 42:
 		return stage_3_boss_together(object, child_handlers);
 	case 46:
-		stage_3_boss_partner_ready(object, &u, &carry);
+		stage_3_boss_partner_ready(object, &u, &partner_ready);
 		return u;
 	case 48:
 		return stage_3_boss_pause(object, child_handlers);

@@ -120,7 +120,7 @@ void continue_screen(uint16_t *p_player, uint16_t *p_countdown_address, uint16_t
 	uint32_t carry = 0, half_carry = 0;
 	uint8_t a = 0, b = 0, player_number = 0, seconds = 0, state = 0;
 	uint16_t command = 0, d_2 = 0, player = 0, player_vars = 0, x = 0;
-	uint8_t stack = 0;
+	uint8_t saved_player_number = 0;
 	uint8_t old_seconds = 0, seconds_sum = 0, record_state = 0, old_seconds_2 = 0, seconds_sum_2 = 0, record_state_2 = 0;
 	uint16_t countdown = 0, credit_given = 0, countdown_2 = 0, countdown_3 = 0;
 
@@ -141,10 +141,10 @@ void continue_screen(uint16_t *p_player, uint16_t *p_countdown_address, uint16_t
 		*p_d = d_2;
 		return;
 	}
-	stack = b;
+	saved_player_number = b;
 	window_bank = 0x20u;
 	set_lines(window_bank);
-	state = stack;
+	state = saved_player_number;
 	continue_draw();
 	player = player_records[(int8_t)((uint8_t)((uint32_t)continue_player << 1)) / 2];
 	continue_frames++;
@@ -164,7 +164,7 @@ void continue_screen(uint16_t *p_player, uint16_t *p_countdown_address, uint16_t
 				record_state = PLAYER_VALUES(player_vars)->state;
 				if (record_state == 3u)
 				{
-					stack = player_number;
+					saved_player_number = player_number;
 					player = player_records[(int8_t)((uint8_t)((uint32_t)player_number << 1)) / 2];
 					countdown = PLAYER(player)->countdown;
 					countdown_address = countdown;
@@ -173,7 +173,7 @@ void continue_screen(uint16_t *p_player, uint16_t *p_countdown_address, uint16_t
 					credit_given = PLAYER(player)->credit_given;
 					mem_write8(credit_given, 0u);
 					PLAYER_VALUES(player_vars)->state = 4u;
-					player_number = stack;
+					player_number = saved_player_number;
 				}
 				player_vars += 8u;
 				player_number++;
@@ -237,7 +237,7 @@ void continue_screen(uint16_t *p_player, uint16_t *p_countdown_address, uint16_t
 			record_state = PLAYER_VALUES(player_vars)->state;
 			if (record_state == 3u)
 			{
-				stack = player_number;
+				saved_player_number = player_number;
 				player = player_records[(int8_t)((uint8_t)((uint32_t)player_number << 1)) / 2];
 				countdown = PLAYER(player)->countdown;
 				countdown_address = countdown;
@@ -246,7 +246,7 @@ void continue_screen(uint16_t *p_player, uint16_t *p_countdown_address, uint16_t
 				credit_given = PLAYER(player)->credit_given;
 				mem_write8(credit_given, 0u);
 				PLAYER_VALUES(player_vars)->state = 4u;
-				player_number = stack;
+				player_number = saved_player_number;
 			}
 			player_vars += 8u;
 			player_number++;
@@ -279,7 +279,7 @@ void continue_screen(uint16_t *p_player, uint16_t *p_countdown_address, uint16_t
 		state = record_state_2;
 		if (state == 3u)
 		{
-			stack = player_number;
+			saved_player_number = player_number;
 			player = player_records[(int8_t)((uint8_t)((uint32_t)player_number << 1)) / 2];
 			countdown_3 = PLAYER(player)->countdown;
 			countdown_address = countdown_3;
@@ -289,7 +289,7 @@ void continue_screen(uint16_t *p_player, uint16_t *p_countdown_address, uint16_t
 				PLAYER_COUNTERS(countdown_address)->seconds = seconds;
 				PLAYER_COUNTERS(countdown_address)->frames = 0u;
 			}
-			player_number = stack;
+			player_number = saved_player_number;
 		}
 		player_vars += 8u;
 		leftover_y = player_vars;

@@ -47,7 +47,7 @@ void clear_enemy_objects(void)
 {
 	uint8_t blank_high = 0, blank_low = 0;
 	uint16_t object_place = 0;
-	uint8_t stack = 0, stack_10002 = 0;
+	uint8_t saved_sprites_high = 0, saved_sprites_low = 0;
 	uint8_t words_left = 0, objects_left = 0;
 	uint16_t kept_sprites = 0, cleared_word = 0;
 
@@ -59,8 +59,8 @@ void clear_enemy_objects(void)
 		{
 			cleared_object_words_left = 0x30u;
 			kept_sprites = mem_read16(object_place + 0x59u);
-			stack = kept_sprites >> 8;
-			stack_10002 = kept_sprites;
+			saved_sprites_high = kept_sprites >> 8;
+			saved_sprites_low = kept_sprites;
 			blank_low = 0u;
 			blank_high = 0u;
 			do
@@ -71,7 +71,7 @@ void clear_enemy_objects(void)
 				words_left = cleared_object_words_left;
 				cleared_object_words_left = words_left - 1u;
 			} while (words_left != 1u);
-			mem_write16(object_place - 7u, ((uint32_t)stack << 8) | stack_10002);
+			mem_write16(object_place - 7u, ((uint32_t)saved_sprites_high << 8) | saved_sprites_low);
 		}
 		else
 			object_place += 0x60u;
@@ -86,7 +86,7 @@ void clear_list_1_objects(void)
 {
 	uint8_t blank_high = 0, blank_low = 0;
 	uint16_t object_place = 0;
-	uint8_t stack = 0, stack_10002 = 0;
+	uint8_t saved_sprites_high = 0, saved_sprites_low = 0;
 	uint8_t words_left = 0, objects_left = 0;
 	uint16_t kept_sprites = 0, cleared_word = 0;
 
@@ -98,8 +98,8 @@ void clear_list_1_objects(void)
 		{
 			cleared_object_words_left = 0x30u;
 			kept_sprites = mem_read16(object_place + 0x59u);
-			stack = kept_sprites >> 8;
-			stack_10002 = kept_sprites;
+			saved_sprites_high = kept_sprites >> 8;
+			saved_sprites_low = kept_sprites;
 			blank_low = 0u;
 			blank_high = 0u;
 			do
@@ -110,7 +110,7 @@ void clear_list_1_objects(void)
 				words_left = cleared_object_words_left;
 				cleared_object_words_left = words_left - 1u;
 			} while (words_left != 1u);
-			mem_write16(object_place - 7u, ((uint32_t)stack << 8) | stack_10002);
+			mem_write16(object_place - 7u, ((uint32_t)saved_sprites_high << 8) | saved_sprites_low);
 		}
 		else
 			object_place += 0x60u;

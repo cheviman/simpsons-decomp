@@ -67,15 +67,24 @@ As of 11-11-2026:
 - [x] The board's memory the 053248 keeps variables in (the K052109's RAM at 1840-18FF and 3840-38FF: scene waits,
       counts, signals) read and written by name, as are the board's registers
 - [x] Every object field the 053248's C reaches named, by the family that owns it (no `->unk_XX` left)
-- [ ] The 053248's C made fully readable: about 850 parameters and locals still named after a register (mostly what a
-      dispatcher hands its handlers in U and D, and the cases of the steps' switches that run on into the next
-      table's), and about 1,080 of the CPU's flags a routine hands another (the 6809's convention: a carry for "found"
-      or "done")
+- [x] The flags a 053248 routine hands its caller named by what they say (the 6809's convention: a carry for
+      `landed`, `slot_found`, `gone`, `player_down`...): named where the routine works it out, and the name goes up
+      by itself to every caller whose flag only comes from routines that say the same
+- [x] What the 053248's handlers only pass along to each other in a register or a flag (a `d`, `u` or `carry` that
+      comes in and goes on untouched) counted apart, as what the register held between routines: the step tables
+      have no length, so a step's dispatcher may run on into the next table's handlers, and the C hands those values
+      on as the original does (`tools/noise_report.py`: `passed_registers`, `passed_flags`)
+- [x] The sound program's flags named the same way (`voice_ended`, `timer_ran_out`, `no_song`...), and both programs'
+      temporaries and the 053248's stack slots named by what they hold (a loop's count, a pointer saved across a call)
+- [ ] The 053248's C made fully readable: about 190 parameters and locals still named after a register and about 160
+      flags' variables that the code uses (the carries of sums done a byte at a time among them, which are carries)
 - [x] The assets extracted by subject and checked byte for byte (`tools/extract_assets.py --check`): the sprites by
       the objects whose animations show them, the tiles by the stages whose maps show them, the K053260's samples
       as WAV files, the music as Standard MIDI Files (a song a file, as the Z80's driver plays it), and every other
       byte of data of both programs as text by name: the records by their fields, the addresses as the names of what
-      they point at
+      they point at; every piece named by what names it in the program (the function whose code reads it, the piece
+      that points at it, an object kind's animations by what they show), none by its place; and the same assets
+      whether or not the reference's runs are at hand
 - [x] The assets loaded back in C byte for byte (`kref --assets-check`), the factory EEPROM among them
 - [x] Both programs' data read by name by the decompiled C, from the assets' pieces: the game builds no image of the
       ROM's regions, and neither program's C reads its data through an address of the ROM (`tools/noise_report.py`,

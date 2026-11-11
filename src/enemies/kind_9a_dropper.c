@@ -153,11 +153,11 @@ void kind_9a_dropper_hurt_flash(uint16_t object)
    and the knocked-down animation), left one vitality point. */
 uint16_t kind_9a_dropper_fall(uint16_t object, uint16_t behaviour_address)
 {
-	uint32_t carry = 0;
+	uint32_t landed = 0;
 	uint16_t command = 0, ignored16 = 0, nearest_player = 0;
 
-	vector_apply_gravity(object, &ignored16, &carry);
-	if (carry == 0u)
+	vector_apply_gravity(object, &ignored16, &landed);
+	if (landed == 0u)
 		return behaviour_address;
 	OBJECT(object)->entrance_pending = 0u;
 	OBJECT(object)->x_speed = 0;

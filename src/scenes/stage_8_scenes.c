@@ -75,8 +75,7 @@ void stage_8_start_show(uint16_t *p_default_object, uint16_t *p_u)
 	scene_put_placement(default_object, record_number);
 	rider_record = 0x3226u;
 	object = scene_put_placement(default_object, rider_record);
-	leftover_y = object;
-	OBJECT(leftover_y)->attributes = 0x10u;
+	OBJECT(object)->attributes = 0x10u;
 	scene_riders_left = 4u;
 	rider_bits = players_present;
 	rider_kind = 0x2Au;
@@ -86,9 +85,8 @@ void stage_8_start_show(uint16_t *p_default_object, uint16_t *p_u)
 		{
 			rider_record = (rider_record & 0xFFu) | ((uint32_t)rider_kind << 8);
 			object = scene_put_placement(default_object, rider_record);
-			leftover_y = object;
-			OBJECT(leftover_y)->flags |= 8u;
-			OBJECT(leftover_y)->action = scene_riders_left * 0x10u + 0x10u;
+			OBJECT(object)->flags |= 8u;
+			OBJECT(object)->action = scene_riders_left * 0x10u + 0x10u;
 		}
 		rider_bits = rider_bits >> 1;
 		rider_kind++;
@@ -262,7 +260,6 @@ void stage_8_start_finish(uint16_t *p_x, uint16_t *p_u)
 	vector_queue_sound(command);
 	vector_clear_objects(&x, &u);
 	scene_running = 0u;
-	leftover_y = clear_from;
 	*p_x = x;
 	*p_u = u;
 }
@@ -272,10 +269,10 @@ void stage_8_start_run_players(uint16_t *p_object, uint16_t *p_player_states)
 {
 	uint16_t player_states = (uint16_t)*p_player_states;
 	uint16_t object = 0;
-	uint8_t stack = 0;
+	uint8_t players_to_run = 0;
 	uint8_t state = 0, players_left = 0;
 
-	stack = 4u;
+	players_to_run = 4u;
 	object = OBJECT_ADDRESS(22);
 	do
 	{
@@ -551,8 +548,8 @@ void stage_8_start_run_players(uint16_t *p_object, uint16_t *p_player_states)
 			}
 		}
 		object += 0x60u;
-		players_left = stack;
-		stack = players_left - 1u;
+		players_left = players_to_run;
+		players_to_run = players_left - 1u;
 	} while (players_left != 1u);
 	*p_object = object;
 	*p_player_states = player_states;
@@ -714,8 +711,7 @@ void stage_8_end_show(uint16_t *p_default_object, uint16_t *p_u)
 	vector_draw_layer_strips(layer_and_columns, &default_object, &u_2);
 	record_number = 0x2326u;
 	object = scene_put_placement(default_object, record_number);
-	leftover_y = object;
-	OBJECT(leftover_y)->attributes = 0x10u;
+	OBJECT(object)->attributes = 0x10u;
 	io_write8(colour_bases_back_sprites_fixed, 0x13u);
 	io_write8(colour_bases_layers_a_b, 0x2Cu);
 	command = 0x9600u;
@@ -771,7 +767,7 @@ void stage_8_end_show_kind_13(uint16_t *p_default_object, uint16_t *p_u)
 {
 	uint16_t default_object = (uint16_t)*p_default_object;
 	uint16_t u = (uint16_t)*p_u;
-	uint16_t ignored16 = 0, ignored16_2 = 0, layer_and_columns = 0, object = 0, record_number = 0, u_2 = 0;
+	uint16_t ignored16 = 0, ignored16_2 = 0, layer_and_columns = 0, record_number = 0, u_2 = 0;
 	uint8_t old_scene_state = 0;
 	uint16_t view_wait = 0;
 
@@ -794,8 +790,7 @@ void stage_8_end_show_kind_13(uint16_t *p_default_object, uint16_t *p_u)
 	record_number = 0x2526u;
 	scene_put_placement(default_object, record_number);
 	record_number = 0x2626u;
-	object = scene_put_placement(default_object, record_number);
-	leftover_y = object;
+	scene_put_placement(default_object, record_number);
 	io_write16(scene_wait, 0x100u);
 	old_scene_state = io_read8(scene_state);
 	io_write8(scene_state, old_scene_state + 1u);
@@ -1050,8 +1045,8 @@ void stage_8_end_reunion(uint16_t *p_object, uint16_t *p_u)
 void stage_8_end_run_family(uint16_t *p_object, uint16_t *p_steps)
 {
 	uint16_t steps = (uint16_t)*p_steps;
-	uint16_t command = 0, ignored16 = 0, ignored16_2 = 0, layer_and_columns = 0, object = 0, record_number = 0, request = 0, scroll_x = 0, scroll_y = 0, y = 0;
-	uint8_t stack = 0;
+	uint16_t command = 0, ignored16 = 0, ignored16_2 = 0, layer_and_columns = 0, object = 0, record_number = 0, request = 0, scroll_x = 0, scroll_y = 0;
+	uint8_t actors_to_run = 0;
 	uint8_t old_scene_state = 0, state = 0, actors_left = 0;
 	uint16_t family_wait = 0;
 
@@ -1079,8 +1074,7 @@ void stage_8_end_run_family(uint16_t *p_object, uint16_t *p_steps)
 		vector_draw_layer_strips(layer_and_columns, &ignored16, &ignored16_2);
 		vector_clear_objects(&object, &steps);
 		record_number = 0x2726u;
-		y = scene_put_placement(object, record_number);
-		leftover_y = y;
+		scene_put_placement(object, record_number);
 		io_write16(scene_wait, 0x140u);
 		palette_request_kind = 2u;
 		request = 0x39u;
@@ -1094,7 +1088,7 @@ void stage_8_end_run_family(uint16_t *p_object, uint16_t *p_steps)
 	else
 	{
 		object = OBJECT_ADDRESS(22);
-		stack = 7u;
+		actors_to_run = 7u;
 		do
 		{
 			steps = stage_8_end_run_family_states_ADDRESS;
@@ -1346,8 +1340,8 @@ void stage_8_end_run_family(uint16_t *p_object, uint16_t *p_steps)
 				break;
 			}
 			object += 0x60u;
-			actors_left = stack;
-			stack = actors_left - 1u;
+			actors_left = actors_to_run;
+			actors_to_run = actors_left - 1u;
 		} while (actors_left != 1u);
 	}
 	*p_object = object;

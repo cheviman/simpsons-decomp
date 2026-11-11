@@ -11,6 +11,126 @@
  */
 #include "game.h"
 
+/* Runs stage 7's boss each frame: reacts to a hit, runs its state, keeps it inside its area, sends its
+   helpers and draws its health gauge. */
+void stage_7_boss_update(uint16_t object)
+{
+	uint32_t state_top_bit = 0;
+	uint8_t state = 0;
+	uint16_t boss_states = 0, step_and_row = 0;
+	uint8_t state_2 = 0;
+
+	stage_7_boss_check_hit(object);
+	boss_states = stage_7_boss_states_ADDRESS;
+	state_2 = OBJECT(object)->state;
+	state = state_2;
+	state_top_bit = (int8_t)state < 0;
+	switch ((int8_t)(uint8_t)((uint32_t)state << 1))
+	{
+	case 0:
+		stage_7_boss_entrance(object);
+		break;
+	case 2:
+		stage_7_boss_walk(object);
+		break;
+	case 4:
+		stage_7_boss_attack(object);
+		break;
+	case 6:
+		stage_7_boss_charge(object);
+		break;
+	case 8:
+		stage_7_boss_jump_away(object);
+		break;
+	case 10:
+		stage_7_boss_idle(object, boss_states);
+		break;
+	case 12:
+		stage_7_boss_wait_target_up(object);
+		break;
+	case 14:
+		stage_7_boss_beaten_wait(object);
+		break;
+	case 16:
+		stage_7_boss_blink_out(object, state_top_bit);
+		break;
+	case 18:
+		stage_7_boss_fall(object);
+		break;
+	case 20:
+		stage_7_boss_lie(object);
+		break;
+	case 22:
+		stage_7_boss_get_up(object);
+		break;
+	case 24:
+		stage_7_boss_flinch_wait(object);
+		break;
+	case 26:
+		stage_7_boss_flinch_land(object);
+		break;
+	case 28:
+		stage_7_boss_put_in(object);
+		break;
+	case 30:
+		stage_7_boss_start_entrance(object);
+		break;
+	case 32:
+		stage_7_boss_move_helpers(object);
+		break;
+	case 34:
+		stage_7_boss_step_forward(object);
+		break;
+	case 36:
+		stage_7_boss_arrive(object);
+		break;
+	case 38:
+		stage_7_boss_entrance_pose(object);
+		break;
+	case 40:
+		stage_7_boss_entrance_end(object);
+		break;
+	case 42:
+		stage_7_boss_wind_up(object);
+		break;
+	case 44:
+		stage_7_boss_strike(object);
+		break;
+	case 46:
+		stage_7_boss_recover(object);
+		break;
+	case 48:
+		stage_7_boss_charging(object);
+		break;
+	case 50:
+		stage_7_boss_charge_end(object);
+		break;
+	case 52:
+		stage_7_boss_jump_rise(object);
+		break;
+	case 54:
+		stage_7_boss_jump_land(object);
+		break;
+	case 56:
+		stage_7_boss_jump_end(object);
+		break;
+	case -6:
+		stage_7_boss_beaten(object);
+		break;
+	case -4:
+		stage_7_boss_knocked_down(object);
+		break;
+	case -2:
+		stage_7_boss_flinch(object);
+		break;
+	}
+	stage_7_boss_keep_in_x(object);
+	stage_7_boss_keep_in_y(object);
+	stage_7_boss_order_throws(object);
+	step_and_row = ((uint32_t)stage_7_boss_gauge_piece_health_by_players[(int8_t)((uint8_t)(player_count - 1u))] << 8) | 4u;
+	boss_shade_by_vitality(object, step_and_row);
+}
+
 /* Stage 7's boss beaten (state FD), by its step. */
 void stage_7_boss_beaten(uint16_t object)
 {
@@ -291,13 +411,13 @@ void stage_7_boss_knocked_down(uint16_t object)
 /* Stage 7's boss knocked down: falls; landing with too little health it is beaten, else it lies. */
 void stage_7_boss_fall(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t landed = 0;
 	uint16_t animation_number = 0, command = 0, landing_result = 0;
 	uint8_t vitality = 0, ninja_vanish_signal = 0, shadow_player = 0, action = 0;
 	uint16_t hit_by = 0;
 
-	vector_apply_gravity(object, &landing_result, &carry);
-	if (carry == 0u)
+	vector_apply_gravity(object, &landing_result, &landed);
+	if (landed == 0u)
 		return;
 	OBJECT(object)->x_speed = 0;
 	OBJECT(object)->y_speed = 0;
@@ -488,11 +608,11 @@ void stage_7_boss_flinch_wait(uint16_t object)
 /* Stage 7's boss hit: once back on the floor, stands and picks its target again. */
 void stage_7_boss_flinch_land(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t landed = 0;
 	uint16_t box_end = 0, ignored16 = 0;
 
-	vector_apply_gravity(object, &ignored16, &carry);
-	if (carry == 0u)
+	vector_apply_gravity(object, &ignored16, &landed);
+	if (landed == 0u)
 		return;
 	box_end = stage_7_boss_stand(object);
 	stage_7_boss_pick_target(object, box_end);
@@ -793,12 +913,12 @@ void stage_7_boss_entrance_end(uint16_t object)
 /* Stage 7's boss walks toward its target at its speed by rank. */
 void stage_7_boss_walk(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t action_started = 0;
 	uint16_t animation_number = 0, heading = 0, u = 0;
 	uint8_t animation = 0, side_direction = 0;
 
-	stage_7_boss_approach(object, &u, &carry);
-	if (carry)
+	stage_7_boss_approach(object, &u, &action_started);
+	if (action_started)
 		return;
 	stage_7_boss_pick_target(object, u);
 	animation = OBJECT(object)->animation;
@@ -1110,7 +1230,7 @@ void stage_7_boss_charge(uint16_t object)
    frames, until its time runs out. */
 void stage_7_boss_charging(uint16_t object)
 {
-	uint32_t negative = 0, carry = 0;
+	uint32_t target_below = 0, player_found = 0;
 	uint8_t attributes = 0, charge_direction = 0;
 	uint16_t box_number = 0, command = 0, heading = 0, ignored16 = 0, ignored16_2 = 0, target_or_box_end = 0, toward_target = 0;
 	uint8_t action = 0, animation_flags = 0, charge_direction_2 = 0, charge_direction_3 = 0, attributes_2 = 0, charge_direction_4 = 0, charge_direction_5 = 0, charge_direction_6 = 0;
@@ -1136,8 +1256,8 @@ void stage_7_boss_charging(uint16_t object)
 		OBJECT(object)->action = action + 1u;
 		return;
 	}
-	find_nearest_player(object, &target_or_box_end, &ignored16, &carry);
-	if (carry == 0u)
+	find_nearest_player(object, &target_or_box_end, &ignored16, &player_found);
+	if (player_found == 0u)
 	{
 		OBJECT(object)->action_step = 0x20u;
 		OBJECT(object)->x_speed = 0;
@@ -1157,7 +1277,7 @@ void stage_7_boss_charging(uint16_t object)
 	toward_target = vector_direction_to(object, target_or_box_end);
 	charge_direction = (uint8_t)(toward_target >> 8);
 	charge_direction_2 = OBJECT(object)->stage_7_boss.charge_direction;
-	negative = (uint8_t)(charge_direction - charge_direction_2) >> 7;
+	target_below = (uint8_t)(charge_direction - charge_direction_2) >> 7;
 	if (charge_direction == charge_direction_2)
 	{
 		charge_direction_3 = OBJECT(object)->stage_7_boss.charge_direction;
@@ -1171,7 +1291,7 @@ void stage_7_boss_charging(uint16_t object)
 		OBJECT(object)->attributes = attributes;
 		return;
 	}
-	if (negative == 0u)
+	if (target_below == 0u)
 	{
 		charge_direction_5 = OBJECT(object)->stage_7_boss.charge_direction;
 		OBJECT(object)->stage_7_boss.charge_direction = charge_direction_5 + 1u;
@@ -1349,12 +1469,12 @@ void stage_7_boss_jump_rise(uint16_t object)
 /* Stage 7's boss jumps away: lands. */
 void stage_7_boss_jump_land(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t landed = 0;
 	uint16_t animation_number = 0, ignored16 = 0;
 	uint8_t action = 0;
 
-	vector_apply_gravity(object, &ignored16, &carry);
-	if (carry == 0u)
+	vector_apply_gravity(object, &ignored16, &landed);
+	if (landed == 0u)
 		return;
 	OBJECT(object)->x_speed = 0;
 	OBJECT(object)->flags &= ~8u;
@@ -1380,13 +1500,13 @@ void stage_7_boss_jump_end(uint16_t object)
 /* Stage 7's boss with no target (state 5): waits for a player. */
 void stage_7_boss_idle(uint16_t object, uint16_t nearest)
 {
-	uint32_t carry = 0;
+	uint32_t player_found = 0;
 	uint16_t ignored16 = 0;
 
 	OBJECT(object)->x_speed = 0;
 	OBJECT(object)->y_speed = 0;
-	find_nearest_player(object, &nearest, &ignored16, &carry);
-	if (carry)
+	find_nearest_player(object, &nearest, &ignored16, &player_found);
+	if (player_found)
 	{
 		OBJECT(object)->flags |= 0x40u;
 		OBJECT(object)->state = 1u;
@@ -1417,23 +1537,23 @@ void stage_7_boss_wait_target_up(uint16_t object)
 /* Stage 7's boss: when hit, takes the hit. */
 void stage_7_boss_check_hit(uint16_t object)
 {
-	uint32_t negative = 0;
+	uint32_t negative_hit = 0;
 	uint8_t hit = 0;
 
 	if ((OBJECT(object)->flags & 0x20u) != 0u)
 	{
 		hit = OBJECT(object)->hit;
-		negative = hit >> 7;
-		if (hit != 0u && negative == 0u)
+		negative_hit = hit >> 7;
+		if (hit != 0u && negative_hit == 0u)
 			stage_7_boss_take_hit(object);
 	}
 }
 
 /* Stage 7's boss walking: at its target, decides how to attack; after walking too long without reaching
    it, charges (carry: it did either). */
-void stage_7_boss_approach(uint16_t object, uint16_t *p_object_2, uint32_t *p_carry)
+void stage_7_boss_approach(uint16_t object, uint16_t *p_object_2, uint32_t *p_action_started)
 {
-	uint32_t carry = *p_carry;
+	uint32_t action_started = *p_action_started;
 	uint8_t charge_direction = 0;
 	uint16_t animation_number = 0, direction = 0, heading = 0, target = 0, wait = 0;
 	uint8_t attributes = 0, attributes_2 = 0, state = 0, last_health = 0, vitality = 0, vitality_2 = 0;
@@ -1450,9 +1570,9 @@ void stage_7_boss_approach(uint16_t object, uint16_t *p_object_2, uint32_t *p_ca
 		{
 			walk_time = OBJECT(object)->stage_7_boss.walk_time;
 			OBJECT(object)->stage_7_boss.walk_time = walk_time + 1u;
-			carry = 0u;
+			action_started = 0u;
 			*p_object_2 = wait;
-			*p_carry = carry;
+			*p_action_started = action_started;
 			return;
 		}
 	}
@@ -1463,9 +1583,9 @@ void stage_7_boss_approach(uint16_t object, uint16_t *p_object_2, uint32_t *p_ca
 		{
 			walk_time = OBJECT(object)->stage_7_boss.walk_time;
 			OBJECT(object)->stage_7_boss.walk_time = walk_time + 1u;
-			carry = 0u;
+			action_started = 0u;
 			*p_object_2 = wait;
-			*p_carry = carry;
+			*p_action_started = action_started;
 			return;
 		}
 	}
@@ -1482,9 +1602,9 @@ void stage_7_boss_approach(uint16_t object, uint16_t *p_object_2, uint32_t *p_ca
 		{
 			walk_time = OBJECT(object)->stage_7_boss.walk_time;
 			OBJECT(object)->stage_7_boss.walk_time = walk_time + 1u;
-			carry = 0u;
+			action_started = 0u;
 			*p_object_2 = wait;
-			*p_carry = carry;
+			*p_action_started = action_started;
 			return;
 		}
 		OBJECT(object)->x_speed = 0;
@@ -1496,16 +1616,16 @@ void stage_7_boss_approach(uint16_t object, uint16_t *p_object_2, uint32_t *p_ca
 		stage_7_boss_set_animation(object, animation_number);
 		direction = 0x200u;
 		stage_7_boss_set_hit_box(object, &wait, &direction);
-		find_nearest_player(object, &wait, &direction, &carry);
+		find_nearest_player(object, &wait, &direction, &action_started);
 		direction = vector_direction_to_offset(object, wait, direction);
 		charge_direction = (uint8_t)(direction >> 8);
 		OBJECT(object)->stage_7_boss.charge_direction = charge_direction;
 		heading = ((uint32_t)charge_direction << 8) | 0x40u;
 		vector_set_speed_by_direction(object, heading);
 		OBJECT(object)->stage_7_boss.charge_time = 0xA0u;
-		carry = 1u;
+		action_started = 1u;
 		*p_object_2 = wait;
-		*p_carry = carry;
+		*p_action_started = action_started;
 		return;
 	}
 	boss_y = OBJECT(object)->y;
@@ -1517,9 +1637,9 @@ void stage_7_boss_approach(uint16_t object, uint16_t *p_object_2, uint32_t *p_ca
 	{
 		walk_time = OBJECT(object)->stage_7_boss.walk_time;
 		OBJECT(object)->stage_7_boss.walk_time = walk_time + 1u;
-		carry = 0u;
+		action_started = 0u;
 		*p_object_2 = wait;
-		*p_carry = carry;
+		*p_action_started = action_started;
 		return;
 	}
 	attack_target = OBJECT(object)->stage_7_boss.target;
@@ -1527,9 +1647,9 @@ void stage_7_boss_approach(uint16_t object, uint16_t *p_object_2, uint32_t *p_ca
 	state = OBJECT(target)->state;
 	if ((int8_t)state < 0)
 	{
-		carry = stage_7_boss_go_idle(object);
+		action_started = stage_7_boss_go_idle(object);
 		*p_object_2 = target;
-		*p_carry = carry;
+		*p_action_started = action_started;
 		return;
 	}
 	OBJECT(object)->action_step = 0u;
@@ -1548,17 +1668,17 @@ void stage_7_boss_approach(uint16_t object, uint16_t *p_object_2, uint32_t *p_ca
 		if ((uint8_t)(last_health - vitality) < 0x14u)
 		{
 			OBJECT(object)->action_step = 0x20u;
-			carry = 1u;
+			action_started = 1u;
 			*p_object_2 = wait;
-			*p_carry = carry;
+			*p_action_started = action_started;
 			return;
 		}
 	}
 	vitality_2 = OBJECT(object)->vitality;
 	OBJECT(object)->stage_7_boss.last_health = vitality_2;
-	carry = 1u;
+	action_started = 1u;
 	*p_object_2 = wait;
-	*p_carry = carry;
+	*p_action_started = action_started;
 }
 
 /* Stage 7's boss: keeps its target a while, then takes the nearest player; with none present, goes idle. */
@@ -1744,10 +1864,10 @@ void stage_7_boss_keep_in_y(uint16_t object)
 /* Stage 7's boss: every so often by the rank, sends some of its idle helpers to throw. */
 void stage_7_boss_order_throws(uint16_t object)
 {
-	uint32_t negative = 0;
+	uint32_t too_many_enemies = 0;
 	uint8_t other_enemies = 0, throws = 0;
 	uint16_t helper_number = 0;
-	uint8_t stack = 0;
+	uint8_t other_enemy_count = 0;
 	uint8_t state = 0, vitality = 0, enemies_last_frame = 0, throws_allowed = 0, throws_wanted = 0, throws_to_order = 0;
 	uint16_t throw_wait = 0, new_throw_wait = 0, attack_time = 0, throw_wait_2 = 0;
 
@@ -1768,12 +1888,12 @@ void stage_7_boss_order_throws(uint16_t object)
 				throw_helper = random_number & 3u;
 				enemies_last_frame = io_read8(enemies_present_last_frame);
 				other_enemies = enemies_last_frame - 1u;
-				stack = other_enemies;
+				other_enemy_count = other_enemies;
 				throws_allowed = ((uint8_t)(player_count - 1u) >> 1) + 1u;
-				throws_wanted = throws_allowed - stack;
-				negative = throws_wanted >> 7;
+				throws_wanted = throws_allowed - other_enemy_count;
+				too_many_enemies = throws_wanted >> 7;
 				throws = throws_wanted;
-				if (throws_allowed != stack && negative == 0u)
+				if (throws_allowed != other_enemy_count && too_many_enemies == 0u)
 				{
 					helper_throws_left = throws;
 					do
@@ -1794,7 +1914,7 @@ void stage_7_boss_order_throws(uint16_t object)
 /* Stage 7's boss: the given helper, if idle, gets its missile and starts throwing. */
 void stage_7_boss_order_throw(uint16_t object, uint16_t helper_number)
 {
-	uint32_t carry = 0;
+	uint32_t slot_found = 0;
 	uint16_t helper = 0, ignored16 = 0, ignored16_2 = 0, ignored16_3 = 0;
 	uint8_t state = 0;
 
@@ -1803,8 +1923,8 @@ void stage_7_boss_order_throw(uint16_t object, uint16_t helper_number)
 	if (state != 0u)
 		return;
 	leftover_y = stage_7_boss_order_throw_child_ADDRESS;
-	vector_spawn_child(helper, &ignored16, &ignored16_2, &ignored16_3, &carry);
-	if (carry)
+	vector_spawn_child(helper, &ignored16, &ignored16_2, &ignored16_3, &slot_found);
+	if (slot_found)
 		OBJECT(helper)->state = 7u;
 }
 

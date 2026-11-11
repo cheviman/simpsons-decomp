@@ -15,7 +15,7 @@
 uint16_t stage_7_scene_set_up(void)
 {
 	uint16_t default_object = 0, object = 0, record_and_count = 0;
-	uint16_t stack = 0;
+	uint16_t saved_record_and_count = 0;
 	uint8_t placements_left = 0, old_scene_state = 0;
 	uint16_t placed_x = 0, z = 0;
 
@@ -24,15 +24,14 @@ uint16_t stage_7_scene_set_up(void)
 	record_and_count = 0x1404u;
 	do
 	{
-		stack = record_and_count;
+		saved_record_and_count = record_and_count;
 		object = scene_put_placement(default_object, record_and_count);
-		leftover_y = object;
-		placed_x = OBJECT(leftover_y)->x;
-		OBJECT(leftover_y)->x = placed_x + scene_x_offset;
-		z = OBJECT(leftover_y)->z;
-		OBJECT(leftover_y)->z = z + camera_y;
-		OBJECT(leftover_y)->y = 0xD8u;
-		record_and_count = (stack & 0xFFu) | ((uint32_t)(uint8_t)((stack >> 8) + 1u) << 8);
+		placed_x = OBJECT(object)->x;
+		OBJECT(object)->x = placed_x + scene_x_offset;
+		z = OBJECT(object)->z;
+		OBJECT(object)->z = z + camera_y;
+		OBJECT(object)->y = 0xD8u;
+		record_and_count = (saved_record_and_count & 0xFFu) | ((uint32_t)(uint8_t)((saved_record_and_count >> 8) + 1u) << 8);
 		placements_left = (uint8_t)record_and_count;
 		record_and_count = (record_and_count & ~0xFFu) | (uint8_t)(placements_left - 1u);
 	} while (placements_left != 1u);
@@ -108,7 +107,6 @@ void stage_7_scene_lift(uint16_t *p_tile, uint16_t *p_u)
 		}
 		vector_clear_objects(&tile, &u);
 		scene_running = 0u;
-		leftover_y = clear_from;
 	}
 	else
 	{
@@ -172,7 +170,7 @@ void stage_7_scene_wait_train(void)
 void stage_7_scene_put_chain(uint16_t *p_last_link, uint16_t *p_new_object)
 {
 	uint16_t command = 0, last_link = 0, link = 0, link_before = 0, new_object = 0, record_number = 0, upper_link = 0;
-	uint16_t stack = 0;
+	uint16_t saved_link = 0;
 	uint8_t links_left = 0, old_scene_substate = 0;
 	uint16_t first_link = 0;
 
@@ -186,18 +184,17 @@ void stage_7_scene_put_chain(uint16_t *p_last_link, uint16_t *p_new_object)
 	{
 		record_number = 0x2800u;
 		link = stage_7_scene_put_link(new_object, record_number);
-		stack = link;
+		saved_link = link;
 		link_before = chain_last_link;
 		OBJECT(link_before)->stage_7_link.next_link = link;
 		chain_last_link = link;
 		new_object = stage_7_scene_new_object();
 		record_number = 0x2900u;
 		link = stage_7_scene_put_link(new_object, record_number);
-		leftover_y = link;
-		upper_link = stack;
-		OBJECT(upper_link)->stage_7_link.pair = leftover_y;
+		upper_link = saved_link;
+		OBJECT(upper_link)->stage_7_link.pair = link;
 		new_object = stage_7_scene_new_object();
-		last_link = stack;
+		last_link = saved_link;
 		links_left = chain_links_left;
 		chain_links_left = links_left - 1u;
 	} while (links_left != 1u);
@@ -318,16 +315,16 @@ uint16_t stage_7_scene_put_link(uint16_t new_object, uint16_t record_number)
 /* Stage 7's scene: takes a free object from the first list, or else the second. */
 uint16_t stage_7_scene_new_object(void)
 {
-	uint32_t carry = 0;
+	uint32_t slot_found = 0;
 	uint8_t list_number = 0;
 	uint16_t free_slot = 0;
 
 	list_number = 0u;
-	vector_find_free_slot(list_number, &free_slot, &carry);
-	if (carry == 0u)
+	vector_find_free_slot(list_number, &free_slot, &slot_found);
+	if (slot_found == 0u)
 	{
 		list_number = 1u;
-		vector_find_free_slot(list_number, &free_slot, &carry);
+		vector_find_free_slot(list_number, &free_slot, &slot_found);
 	}
 	return free_slot;
 }
@@ -393,16 +390,15 @@ void stage_7_end_board(uint16_t default_object)
 {
 	uint8_t record = 0;
 	uint16_t object = 0, record_number = 0;
-	uint8_t stack = 0;
+	uint8_t saved_record = 0;
 	uint8_t riders_left = 0, old_scene_state = 0;
 
 	record_number = 0x1800u;
 	object = scene_put_placement(default_object, record_number);
-	leftover_y = object;
-	OBJECT(leftover_y)->x_speed = 0x200;
-	OBJECT(leftover_y)->zoom_x = 0x40u;
-	OBJECT(leftover_y)->zoom_y = 0x40u;
-	OBJECT(leftover_y)->attributes = 0x40u;
+	OBJECT(object)->x_speed = 0x200;
+	OBJECT(object)->zoom_x = 0x40u;
+	OBJECT(object)->zoom_y = 0x40u;
+	OBJECT(object)->attributes = 0x40u;
 	scene_riders_left = 4u;
 	rider_bits = players_present;
 	record = 0x19u;
@@ -410,14 +406,13 @@ void stage_7_end_board(uint16_t default_object)
 	{
 		if ((rider_bits & 1u) != 0u)
 		{
-			stack = record;
+			saved_record = record;
 			record_number = (uint32_t)record << 8;
 			object = scene_put_placement(default_object, record_number);
-			leftover_y = object;
-			OBJECT(leftover_y)->zoom_x = 0x40u;
-			OBJECT(leftover_y)->zoom_y = 0x40u;
-			OBJECT(leftover_y)->attributes = 0x40u;
-			record = stack;
+			OBJECT(object)->zoom_x = 0x40u;
+			OBJECT(object)->zoom_y = 0x40u;
+			OBJECT(object)->attributes = 0x40u;
+			record = saved_record;
 		}
 		record++;
 		rider_bits = rider_bits >> 1;
@@ -435,7 +430,7 @@ uint16_t stage_7_end_take_off(void)
 {
 	uint8_t record = 0;
 	uint16_t default_object = 0, object = 0, object_2 = 0, record_number = 0;
-	uint8_t stack = 0;
+	uint8_t saved_record = 0;
 	uint8_t zoom_x = 0, zoom_y = 0, riders_left = 0, old_scene_state = 0;
 	uint16_t board_x = 0, z_speed = 0, new_z_speed = 0, take_off_wait = 0;
 
@@ -461,14 +456,13 @@ uint16_t stage_7_end_take_off(void)
 		return stage_7_end_move_riders();
 	record_number = 0x1D00u;
 	object_2 = scene_put_placement(default_object, record_number);
-	leftover_y = object_2;
-	OBJECT(leftover_y)->x_speed = -0x80;
-	OBJECT(leftover_y)->x_speed = -0x80;
-	OBJECT(leftover_y)->z_speed = 0x80;
-	OBJECT(leftover_y)->flags |= 0x10u;
-	OBJECT(leftover_y)->attributes = 0u;
-	OBJECT(leftover_y)->zoom_x = 0xC0u;
-	OBJECT(leftover_y)->zoom_y = 0xC0u;
+	OBJECT(object_2)->x_speed = -0x80;
+	OBJECT(object_2)->x_speed = -0x80;
+	OBJECT(object_2)->z_speed = 0x80;
+	OBJECT(object_2)->flags |= 0x10u;
+	OBJECT(object_2)->attributes = 0u;
+	OBJECT(object_2)->zoom_x = 0xC0u;
+	OBJECT(object_2)->zoom_y = 0xC0u;
 	scene_riders_left = 4u;
 	rider_bits = players_present;
 	record = 0x1Eu;
@@ -476,15 +470,14 @@ uint16_t stage_7_end_take_off(void)
 	{
 		if ((rider_bits & 1u) != 0u)
 		{
-			stack = record;
+			saved_record = record;
 			record_number = (uint32_t)record << 8;
 			object_2 = scene_put_placement(default_object, record_number);
-			leftover_y = object_2;
-			OBJECT(leftover_y)->flags |= 0x10u;
-			OBJECT(leftover_y)->attributes = 0u;
-			OBJECT(leftover_y)->zoom_x = 0xC0u;
-			OBJECT(leftover_y)->zoom_y = 0xC0u;
-			record = stack;
+			OBJECT(object_2)->flags |= 0x10u;
+			OBJECT(object_2)->attributes = 0u;
+			OBJECT(object_2)->zoom_x = 0xC0u;
+			OBJECT(object_2)->zoom_y = 0xC0u;
+			record = saved_record;
 		}
 		record++;
 		rider_bits = rider_bits >> 1;

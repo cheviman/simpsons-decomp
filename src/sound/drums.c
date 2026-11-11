@@ -3,7 +3,7 @@
  *    Description: the drum routines: a music note's low nibble on a channel with a drum kit (+12) runs one
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the Z80 sound program decompiled into C by
@@ -957,13 +957,13 @@ void pcm_drum_1_b(uint16_t channel)
    holds the voice), then pcm_drum_1_b_note_2. */
 void pcm_drum_1_b_note(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 	uint16_t handler = 0, patch = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -981,13 +981,13 @@ void pcm_drum_1_b_note(uint16_t channel)
 /* When the voice has ended: sample 162, whose key_on does nothing either, then drum_done. */
 void pcm_drum_1_b_note_2(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 	uint16_t patch = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -1045,13 +1045,13 @@ void pcm_drum_1_c_note(uint16_t channel)
    holds the voice), then pcm_drum_1_c_note_3. */
 void pcm_drum_1_c_note_2(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 	uint16_t handler = 0, patch = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;
@@ -1069,13 +1069,13 @@ void pcm_drum_1_c_note_2(uint16_t channel)
 /* When the voice has ended: sample 162, whose key_on does nothing either, then drum_done. */
 void pcm_drum_1_c_note_3(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 	uint16_t patch = 0;
 
 	z80_block(17);
-	zero = pcm_voice_playing(channel);
+	voice_ended = pcm_voice_playing(channel);
 	z80_block(5);
-	if (zero == 0u)
+	if (voice_ended == 0u)
 	{
 		z80_cycles(6);
 		return;

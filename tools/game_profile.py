@@ -59,6 +59,12 @@ DECOMPILED = "06-11-2026"
 # The noise meter (tools/noise_report.py): the 053248's registers, which the C names its values after until a line
 # names them (a, b, d, x, y, u), and the names made of an address (sub_078E68, unused_020686) counted as such
 NOISE_REGISTERS = r"(?:[abdxyu]|r\d+)"
+# ... and the ones of those (and of the flags' variables) that only pass a value along counted apart, as faithful:
+# the handlers reached through step tables with no length hand D, U, X and the carry on to each other
+NOISE_PASSED_VALUES = True
+# ... and the plain stack the emitter gives a function's first stack slot when the name is free, counted with the
+# stack_N ones (it is no name either)
+NOISE_PLAIN_STACK_SLOTS = True
 ADDRESS_NAMES = True
 # The program's data read through the pointers the program keeps, by name (konami_cpu/emit.py): the values a pointer
 # walks (symbols.txt elements lines) read one at a time at their address, NAME(p), and a record reached by a pointer
@@ -109,6 +115,10 @@ PASSES_BY_PART = True
 UNCHANGED_PARTS = True
 NARROW_OUTPUTS = True
 CHOSEN_IN_ORDER = True
+# the least outputs (dataflow.least_outputs): a step's handlers and the steps hand D, X and U back to each other through
+# their tables with no caller that reads them (1587 of 1803 outputs): they are no results, and their callers pass
+# nothing for them
+LEAST_OUTPUTS = True
 # what the registers carry from one routine to a later one that no call links to it (konami_cpu/decompile.py carry,
 # decompiler/carried.py) is in global variables: the object lists' runners hand each handler what the handler before
 # left in Y, which C would otherwise pass through hundreds of functions as a parameter and a result

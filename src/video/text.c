@@ -17,7 +17,7 @@ uint16_t print_game_text(uint16_t text_number)
 {
 	uint8_t colour_byte = 0, text_offset = 0;
 	uint16_t colour = 0, ignored16 = 0, text = 0;
-	uint8_t saved_window_bank = 0, stack = 0;
+	uint8_t saved_window_bank = 0, text_entry_offset = 0;
 	uint8_t text_byte = 0;
 
 	game_text_colour = text_number >> 8;
@@ -27,19 +27,19 @@ uint16_t print_game_text(uint16_t text_number)
 	text_offset = (uint32_t)text_byte << 1;
 	if ((int8_t)text_byte < 0)
 	{
-		stack = text_offset & 0x7Fu;
+		text_entry_offset = text_offset & 0x7Fu;
 		window_bank = 0x12u;
 		set_lines(window_bank);
-		text = GAME_TEXT_ENTRY(game_texts_address[0] + stack);
+		text = GAME_TEXT_ENTRY(game_texts_address[0] + text_entry_offset);
 		text = erase_text(text);
 		window_bank = saved_window_bank;
 		set_lines(window_bank);
 		return text;
 	}
-	stack = text_offset & 0x7Fu;
+	text_entry_offset = text_offset & 0x7Fu;
 	window_bank = 0x12u;
 	set_lines(window_bank);
-	text = GAME_TEXT_ENTRY(game_texts_address[0] + stack);
+	text = GAME_TEXT_ENTRY(game_texts_address[0] + text_entry_offset);
 	colour = (text_number & 0xFFu) | ((uint32_t)colour_byte << 8);
 	print_text(colour, &ignored16, &text);
 	window_bank = saved_window_bank;
@@ -117,17 +117,17 @@ uint16_t erase_text(uint16_t text)
 uint16_t print_hex_byte(uint16_t place, uint16_t value)
 {
 	uint8_t digit_tile = 0, printed_byte = 0;
-	uint8_t stack = 0;
+	uint8_t saved_printed_byte = 0;
 	uint16_t high_digit_place = 0, low_digit_place = 0;
 
 	printed_byte = (uint8_t)(value >> 8);
-	stack = printed_byte;
+	saved_printed_byte = printed_byte;
 	digit_tile = hex_digit_tiles[((((printed_byte & ~0xFu) >> 1) >> 1) >> 1) >> 1];
 	io_write8(place - 0x2000u, (uint8_t)value);
 	high_digit_place = place;
 	place = high_digit_place + 1u;
 	io_write8(high_digit_place, digit_tile);
-	digit_tile = hex_digit_tiles[stack & 0xFu];
+	digit_tile = hex_digit_tiles[saved_printed_byte & 0xFu];
 	mem_write8(place - 0x2000u, (uint8_t)value);
 	low_digit_place = place;
 	place = low_digit_place + 1u;
@@ -140,13 +140,13 @@ uint16_t print_hex_word(uint16_t place, uint16_t value)
 {
 	uint8_t colour = 0, low_byte = 0;
 	uint16_t low_byte_and_colour = 0;
-	uint8_t stack = 0;
+	uint8_t kept_low_byte = 0;
 
-	stack = (uint8_t)value;
+	kept_low_byte = (uint8_t)value;
 	value = (value & ~0xFFu) | hex_colour;
 	place = print_hex_byte(place, value);
 	colour = hex_colour;
-	low_byte_and_colour = ((uint32_t)stack << 8) | colour;
+	low_byte_and_colour = ((uint32_t)kept_low_byte << 8) | colour;
 	print_hex_byte(place, low_byte_and_colour);
 	low_byte = (uint8_t)(low_byte_and_colour >> 8);
 	value = ((uint32_t)low_byte << 8) | colour;

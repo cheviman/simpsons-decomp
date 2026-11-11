@@ -116,14 +116,14 @@ void object_f9_start(uint16_t object)
 /* Waits hidden for a player to come near, then shows itself */
 void object_f9_wait_for_player(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t player_near = 0;
 	uint8_t new_phase = 0;
 	uint16_t ignored16 = 0, ignored16_2 = 0;
 
 	reach_x = 0x30;
 	reach_y = 0x10;
-	stage_boss_find_near_player(object, &ignored16, &ignored16_2, &carry);
-	if (carry)
+	stage_boss_find_near_player(object, &ignored16, &ignored16_2, &player_near);
+	if (player_near)
 	{
 		OBJECT(object)->flags = 0x80u;
 		new_phase = 2u;
@@ -190,12 +190,12 @@ void object_f9_idle(uint16_t object)
 {
 	uint8_t new_phase = 0;
 	uint16_t command = 0;
-	uint8_t stack = 0;
+	uint8_t frame_phase = 0;
 	uint8_t x_low = 0, attributes = 0, actions = 0;
 
-	stack = ((((uint32_t)(uint8_t)frame_count << 1) << 1) << 1) & 0x78u;
+	frame_phase = ((((uint32_t)(uint8_t)frame_count << 1) << 1) << 1) & 0x78u;
 	x_low = (uint8_t)OBJECT(object)->x;
-	if (((x_low - 0x40u) & 0x78u) != stack)
+	if (((x_low - 0x40u) & 0x78u) != frame_phase)
 	{
 		object_f9_check_hit(object);
 		return;
@@ -254,15 +254,15 @@ void object_f9_start_look(uint16_t object)
 /* Looks for a player in reach to attack, else idles */
 void object_f9_look(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t player_near = 0;
 	uint8_t new_phase = 0;
 	uint16_t ignored16 = 0, ignored16_2 = 0;
 	uint8_t wait = 0;
 
 	reach_x = 0x40;
 	reach_y = 0x10;
-	stage_boss_find_near_player(object, &ignored16, &ignored16_2, &carry);
-	if (carry)
+	stage_boss_find_near_player(object, &ignored16, &ignored16_2, &player_near);
+	if (player_near)
 	{
 		new_phase = 7u;
 		object_f9_set_state(object, new_phase);
@@ -321,13 +321,13 @@ void object_f9_windup(uint16_t object)
 /* Its attack's damage on the attack frames */
 void object_f9_attack(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t animation_ended = 0;
 	uint8_t new_phase = 0, new_phase_2 = 0;
 	uint16_t box = 0, damage = 0;
 
 	damage = 0x401u;
-	carry = stage_boss_attack_frame(object, damage);
-	if (carry == 0u)
+	animation_ended = stage_boss_attack_frame(object, damage);
+	if (animation_ended == 0u)
 	{
 		object_f9_check_hit(object);
 		return;
@@ -344,13 +344,13 @@ void object_f9_attack(uint16_t object)
 /* Idles when a player is down; leaves after 3 actions */
 void object_f9_check_leave(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t player_down = 0;
 	uint8_t new_phase = 0;
 	uint16_t command = 0;
 	uint8_t actions = 0;
 
-	carry = stage_boss_any_player_down();
-	if (carry)
+	player_down = stage_boss_any_player_down();
+	if (player_down)
 	{
 		object_f9_start_idle(object);
 		return;
@@ -372,16 +372,16 @@ void object_f9_check_leave(uint16_t object)
 /* Its hits: a flinch, or beaten */
 void object_f9_check_hit(uint16_t object)
 {
-	uint32_t zero = 0, negative = 0;
+	uint32_t not_hit = 0, beaten = 0;
 	uint8_t new_phase = 0;
 	uint16_t command = 0, health_limits = 0, ignored16 = 0;
 
 	leftover_y = 0x7FA1u;
 	health_limits = 0x7FA1u;
-	stage_boss_check_hit(object, health_limits, &ignored16, &zero, &negative);
-	if (zero)
+	stage_boss_check_hit(object, health_limits, &ignored16, &not_hit, &beaten);
+	if (not_hit)
 		return;
-	if (negative == 0u)
+	if (beaten == 0u)
 	{
 		new_phase = 0xCu;
 		object_f9_set_state(object, new_phase);

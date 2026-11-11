@@ -327,10 +327,10 @@ void stage_8_events(void)
 /* Runs the story after Mr. Burns' robot, the players' second sprites lined up by the object in 1852 */
 uint16_t story_stage_8_end(void)
 {
-	uint32_t zero = 0;
+	uint32_t none_left = 0;
 	uint8_t flags = 0, noted_x_high = 0, noted_x_low = 0, speed_high = 0, speed_low = 0;
 	uint16_t actor = 0, noted_actor = 0, player = 0;
-	uint16_t stack = 0;
+	uint16_t saved_actor = 0;
 	uint8_t flags_2 = 0, kind = 0;
 	uint16_t noted_object = 0, noted_x = 0, kind_offset = 0, noted_again = 0, noted_x_again = 0, partner_x = 0, noted_y = 0, partner_y = 0;
 
@@ -355,7 +355,7 @@ uint16_t story_stage_8_end(void)
 		OBJECT(actor)->story_actor.acceleration_x = ((uint32_t)speed_high << 8) | speed_low;
 		OBJECT(actor)->story_actor.acceleration_y = -0x100;
 	}
-	stack = actor;
+	saved_actor = actor;
 	player = story_first_player();
 	do
 	{
@@ -375,9 +375,9 @@ uint16_t story_stage_8_end(void)
 			partner_y = noted_y + 0x10u;
 			OBJECT(player + 0x60u)->y = partner_y;
 		}
-		story_next_player(&player, &zero);
-	} while (zero == 0u);
-	actor = stack;
+		story_next_player(&player, &none_left);
+	} while (none_left == 0u);
+	actor = saved_actor;
 	OBJECT(actor)->story_actor.script_number = 0x60u;
 	story_actor_run(&actor, &noted_actor);
 	return noted_actor;
@@ -387,10 +387,10 @@ uint16_t story_stage_8_end(void)
    the screen */
 uint16_t story_burns_robot_entrance(uint16_t object_2)
 {
-	uint32_t zero = 0;
+	uint32_t none_left = 0;
 	uint8_t camera_x_high = 0, camera_x_low = 0, flags = 0, speed_high = 0, speed_low = 0;
 	uint16_t actor = 0, player = 0;
-	uint16_t stack = 0;
+	uint16_t saved_actor = 0;
 	uint8_t flags_2 = 0, kind = 0;
 	uint16_t camera_x_now = 0, kind_offset = 0, offset_place_x = 0, partner_x = 0, partner_y = 0;
 
@@ -412,7 +412,7 @@ uint16_t story_burns_robot_entrance(uint16_t object_2)
 		speed_low = 0u;
 		OBJECT(actor)->story_actor.acceleration_x = ((uint32_t)speed_high << 8) | speed_low;
 	}
-	stack = actor;
+	saved_actor = actor;
 	player = story_first_player();
 	do
 	{
@@ -429,9 +429,9 @@ uint16_t story_burns_robot_entrance(uint16_t object_2)
 			partner_y = 0xB0u + camera_y;
 			OBJECT(player + 0x60u)->y = partner_y;
 		}
-		story_next_player(&player, &zero);
-	} while (zero == 0u);
-	actor = stack;
+		story_next_player(&player, &none_left);
+	} while (none_left == 0u);
+	actor = saved_actor;
 	OBJECT(actor)->story_actor.acceleration_y = 0x100;
 	story_actor_run(&actor, &object_2);
 	return object_2;

@@ -286,7 +286,7 @@ void police_car_door_wait_car(uint16_t object)
 uint16_t police_car_door_open(uint16_t object, uint16_t states)
 {
 	uint32_t carry = 0;
-	uint8_t a = 0;
+	uint8_t player_threshold = 0;
 	uint16_t ignored16 = 0, release = 0, released = 0;
 	uint8_t timer = 0, state = 0, parameter = 0, players_now = 0;
 	uint16_t release_record = 0;
@@ -305,11 +305,11 @@ uint16_t police_car_door_open(uint16_t object, uint16_t states)
 	{
 		release_record = release;
 		release = release_record + 1u;
-		a = mem_read8(release_record);
-		if (a == 0x7Fu)
+		player_threshold = mem_read8(release_record);
+		if (player_threshold == 0x7Fu)
 			break;
 		players_now = io_read8(stage_player_count);
-		if (a < players_now)
+		if (player_threshold < players_now)
 		{
 			leftover_y = release;
 			vector_spawn_child(object, &release, &released, &ignored16, &carry);

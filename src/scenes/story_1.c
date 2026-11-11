@@ -228,14 +228,14 @@ uint16_t story_1_set_up_street(uint16_t palette_job)
    for 50 frames. */
 uint16_t story_1_street(uint16_t palette_job)
 {
-	uint32_t carry = 0;
+	uint32_t skipped = 0;
 	uint8_t b = 0;
 	uint16_t command = 0, effect_job = 0, ignored16 = 0, ignored16_2 = 0, layer_and_columns = 0, object = 0, record = 0, request = 0, wait = 0, x = 0;
 	uint8_t street_wait = 0, old_part_done = 0;
 
 	wait = 0x4000u | b;
-	vector_check_skip(wait, &ignored16, &carry);
-	if (carry == 0u)
+	vector_check_skip(wait, &ignored16, &skipped);
+	if (skipped == 0u)
 	{
 		street_wait = io_read8(scene_short_wait);
 		io_write8(scene_short_wait, street_wait - 1u);
@@ -286,15 +286,15 @@ uint16_t story_1_street(uint16_t palette_job)
    places and shows the text again. */
 uint16_t story_1_redraw(uint16_t x)
 {
-	uint32_t carry = 0;
+	uint32_t skipped = 0;
 	uint8_t b = 0;
 	uint16_t ignored16 = 0, ignored16_2 = 0, layer_and_columns = 0, record = 0, wait = 0;
 	uint8_t street_wait = 0, old_part_done = 0;
 	uint16_t effect_job = 0;
 
 	wait = 0x4000u | b;
-	vector_check_skip(wait, &x, &carry);
-	if (carry == 0u)
+	vector_check_skip(wait, &x, &skipped);
+	if (skipped == 0u)
 	{
 		street_wait = io_read8(scene_short_wait);
 		io_write8(scene_short_wait, street_wait - 1u);
@@ -329,15 +329,15 @@ uint16_t story_1_redraw(uint16_t x)
 /* Story 1's rising part: runs its step (18E1); a button skips to the last part. */
 uint16_t story_1_rise(uint16_t u)
 {
-	uint32_t carry = 0;
+	uint32_t skipped = 0;
 	uint16_t steps = 0, wait = 0;
 	uint8_t old_scene_state = 0, scene_substep = 0;
 
 	for (;;)
 	{
 		wait = 0x4000u;
-		vector_check_skip(wait, &steps, &carry);
-		if (carry)
+		vector_check_skip(wait, &steps, &skipped);
+		if (skipped)
 		{
 			old_scene_state = io_read8(scene_state);
 			io_write8(scene_state, old_scene_state + 1u);
@@ -776,15 +776,15 @@ uint16_t story_1_last_view(void)
 /* Story 1's last part: runs its step (18E1); a button ends the story. */
 uint16_t story_1_end(uint16_t u)
 {
-	uint32_t carry = 0;
+	uint32_t skipped = 0;
 	uint16_t ignored16 = 0, steps = 0, wait = 0, x = 0;
 	uint8_t scene_substep = 0, old_part_done = 0;
 
 	for (;;)
 	{
 		wait = 0x4000u;
-		vector_check_skip(wait, &steps, &carry);
-		if (carry)
+		vector_check_skip(wait, &steps, &skipped);
+		if (skipped)
 			break;
 		steps = story_1_end_steps_ADDRESS;
 		scene_substep = io_read8(scene_substate);
@@ -1010,14 +1010,14 @@ uint16_t story_1_finish(uint16_t x)
 void story_1_family(void)
 {
 	uint16_t family_scripts = 0, object = 0;
-	uint8_t stack = 0;
+	uint8_t family_member = 0;
 
 	object = OBJECT_ADDRESS(0);
-	stack = 0u;
+	family_member = 0u;
 	do
 	{
 		family_scripts = story_1_family_scripts_ADDRESS;
-		switch ((int8_t)(uint8_t)((uint32_t)stack << 1))
+		switch ((int8_t)(uint8_t)((uint32_t)family_member << 1))
 		{
 		case 0:
 			object = story_1_marge(object);
@@ -1168,8 +1168,8 @@ void story_1_family(void)
 			break;
 		}
 		object += 0xC0u;
-		stack = stack + 1u;
-	} while (stack != 4u);
+		family_member = family_member + 1u;
+	} while (family_member != 4u);
 }
 
 /* Marge's slot (4A40), shown with kind 11 (the maggie set): runs its step. */
@@ -1826,15 +1826,15 @@ void story_1_runners(void)
 {
 	uint8_t attributes = 0;
 	uint16_t object = 0, runner_scripts = 0;
-	uint8_t stack = 0;
+	uint8_t runner_number = 0;
 	uint8_t attributes_2 = 0, x_speed = 0;
 
 	object = OBJECT_ADDRESS(15);
-	stack = 0u;
+	runner_number = 0u;
 	do
 	{
 		runner_scripts = story_1_runner_scripts_ADDRESS;
-		switch ((int8_t)(uint8_t)((uint32_t)stack << 1))
+		switch ((int8_t)(uint8_t)((uint32_t)runner_number << 1))
 		{
 		case 0:
 			object = story_1_smithers(object);
@@ -1991,8 +1991,8 @@ void story_1_runners(void)
 			attributes |= 0x40u;
 		OBJECT(object)->attributes = attributes;
 		object += 0x60u;
-		stack = stack + 1u;
-	} while (stack != 3u);
+		runner_number = runner_number + 1u;
+	} while (runner_number != 3u);
 }
 
 /* Smithers (kind 9C): runs his step. */
@@ -2175,7 +2175,7 @@ void story_1_smithers_collide(uint16_t object)
 void story_1_smithers_drop(uint16_t object)
 {
 	uint16_t record = 0;
-	uint16_t stack = 0;
+	uint16_t saved_object = 0;
 	uint8_t animation_flags = 0, type = 0;
 
 	animation_flags = OBJECT(object)->animation_flags;
@@ -2183,9 +2183,9 @@ void story_1_smithers_drop(uint16_t object)
 		return;
 	OBJECT(object)->attributes = 0u;
 	record = story_1_smithers_drop_start_ADDRESS;
-	stack = object;
+	saved_object = object;
 	story_put_object(record);
-	object = stack;
+	object = saved_object;
 	OBJECT(object)->animation = 0x80u;
 	type = OBJECT(object)->type;
 	OBJECT(object)->type = type + 1u;
@@ -2927,12 +2927,12 @@ uint16_t story_1_dropped_object(void)
 /* Falls with gravity; landing, crashes (animation 8A, sound 6F00). */
 void story_1_dropped_object_fall(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t landed = 0;
 	uint16_t command = 0, ignored16 = 0;
 	uint8_t type = 0;
 
-	vector_apply_gravity(object, &ignored16, &carry);
-	if (carry == 0u)
+	vector_apply_gravity(object, &ignored16, &landed);
+	if (landed == 0u)
 		return;
 	command = 0x6F00u;
 	vector_queue_sound(command);

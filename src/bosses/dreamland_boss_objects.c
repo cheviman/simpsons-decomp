@@ -71,7 +71,7 @@ uint16_t boss_ball_fly_out(uint16_t object, uint16_t target_player)
 	uint8_t angle = 0, timer = 0;
 	uint16_t direction = 0, ignored16 = 0, ignored16_2 = 0, ignored16_3 = 0;
 	uint8_t timer_2 = 0, heading = 0, state = 0, timer_3 = 0;
-	uint16_t target = 0, target_2 = 0, player_x = 0, ball_x = 0, dx = 0, t1 = 0, distance = 0, z_speed = 0, raised_z_speed = 0;
+	uint16_t target = 0, target_2 = 0, player_x = 0, ball_x = 0, dx = 0, x_difference = 0, distance = 0, z_speed = 0, raised_z_speed = 0;
 
 	timer_2 = OBJECT(object)->timer;
 	OBJECT(object)->timer = timer_2 - 1u;
@@ -103,8 +103,8 @@ uint16_t boss_ball_fly_out(uint16_t object, uint16_t target_player)
 	player_x = OBJECT(target_player)->x;
 	ball_x = OBJECT(object)->x;
 	dx = player_x - ball_x;
-	t1 = dx;
-	distance = t1 >> 15 ? 0u - t1 : t1;
+	x_difference = dx;
+	distance = x_difference >> 15 ? 0u - x_difference : x_difference;
 	if (distance >= 0x20u)
 	{
 		z_speed = OBJECT(object)->z_speed;
@@ -118,7 +118,7 @@ uint16_t boss_ball_fly_out(uint16_t object, uint16_t target_player)
    lands. */
 uint16_t boss_ball_home_in(uint16_t object, uint16_t states)
 {
-	uint32_t carry = 0;
+	uint32_t landed = 0;
 	uint8_t heading_2 = 0;
 	uint16_t heading = 0, ignored16 = 0, ignored16_2 = 0, target_player = 0;
 	uint8_t timer = 0, target_direction = 0, state = 0, timer_2 = 0, state_2 = 0, heading_3 = 0, turn = 0;
@@ -142,13 +142,13 @@ uint16_t boss_ball_home_in(uint16_t object, uint16_t states)
 	if ((timer_2 & 1u) == 0u)
 	{
 		leftover_y = boss_ball_fly_out_child_ADDRESS;
-		vector_spawn_child(object, &ignored16, &states, &ignored16_2, &carry);
+		vector_spawn_child(object, &ignored16, &states, &ignored16_2, &landed);
 	}
 	z_speed = OBJECT(object)->z_speed;
 	lowered_z_speed = z_speed - 0x80u;
 	OBJECT(object)->z_speed = lowered_z_speed;
-	carry = vector_check_landing(object);
-	if (carry)
+	landed = vector_check_landing(object);
+	if (landed)
 	{
 		OBJECT(object)->timer = 0x20u;
 		state_2 = OBJECT(object)->state;
@@ -166,15 +166,15 @@ uint16_t boss_ball_home_in(uint16_t object, uint16_t states)
 /* Pulls the ball down; where it lands, or when its time is up, it bursts with its hit box and a sound. */
 uint16_t boss_ball_land(uint16_t object, uint16_t u)
 {
-	uint32_t negative = 0, carry = 0;
+	uint32_t negative = 0, landed = 0;
 	uint16_t command = 0, floor_cell = 0, ignored16 = 0, ignored16_2 = 0;
 	uint8_t state = 0, timer = 0, timer_2 = 0;
 	uint16_t z_speed = 0;
 
 	z_speed = OBJECT(object)->z_speed;
 	OBJECT(object)->z_speed = z_speed - 0x20u;
-	carry = vector_check_landing(object);
-	if (carry)
+	landed = vector_check_landing(object);
+	if (landed)
 	{
 		floor_cell = 0u;
 		vector_floor_at_offset(object, &floor_cell, &negative);
@@ -200,7 +200,7 @@ uint16_t boss_ball_land(uint16_t object, uint16_t u)
 		if ((((uint16_t)((uint32_t)timer_2 << 8) >> 8) & 1u) == 0u)
 		{
 			leftover_y = boss_ball_fly_out_child_ADDRESS;
-			vector_spawn_child(object, &ignored16, &u, &ignored16_2, &carry);
+			vector_spawn_child(object, &ignored16, &u, &ignored16_2, &landed);
 		}
 		return u;
 	}
@@ -320,7 +320,7 @@ void chain_holder_setup(uint16_t object)
    it. */
 void chain_holder_put_out_chain(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t slot_found = 0;
 	uint16_t chain = 0, ignored16 = 0, ignored16_2 = 0;
 	uint8_t timer = 0, state = 0;
 
@@ -330,8 +330,8 @@ void chain_holder_put_out_chain(uint16_t object)
 		return;
 	boss_arrived = 1u;
 	leftover_y = chain_holder_put_out_chain_child_ADDRESS;
-	vector_spawn_child(object, &ignored16, &chain, &ignored16_2, &carry);
-	if (carry)
+	vector_spawn_child(object, &ignored16, &chain, &ignored16_2, &slot_found);
+	if (slot_found)
 		OBJECT(chain)->target = object;
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
@@ -964,12 +964,12 @@ void dreamland_boss_chain_head_retract(uint16_t object)
 
 /* Finds a free object among the 24 from 4D40 (the lists at 4D40, 4F80 and 5280), clears it but for field
    59 and marks it hidden; returns true with it in U. */
-void find_free_object_from_4d40(uint16_t *p_object, uint32_t *p_carry)
+void find_free_object_from_4d40(uint16_t *p_object, uint32_t *p_found)
 {
-	uint32_t carry = *p_carry;
+	uint32_t found = *p_found;
 	uint8_t clear_high = 0, clear_low = 0, slots_left = 0;
 	uint16_t cursor = 0, object = 0, words_left = 0;
-	uint16_t stack = 0;
+	uint16_t saved_free_object = 0;
 	uint8_t slots_before = 0;
 	uint16_t sprites = 0, kept_sprites = 0;
 
@@ -984,12 +984,12 @@ void find_free_object_from_4d40(uint16_t *p_object, uint32_t *p_carry)
 			slots_left = slots_before - 1u;
 			if (slots_before != 1u)
 				continue;
-			carry = 0u;
+			found = 0u;
 			break;
 		}
 		sprites = OBJECT(object)->sprites;
 		free_slot_sprites = sprites;
-		stack = object;
+		saved_free_object = object;
 		clear_high = 0u;
 		clear_low = 0u;
 		cursor = object;
@@ -1001,15 +1001,15 @@ void find_free_object_from_4d40(uint16_t *p_object, uint32_t *p_carry)
 			cursor += 2u;
 			words_left--;
 		}
-		object = stack;
+		object = saved_free_object;
 		kept_sprites = free_slot_sprites;
 		OBJECT(object)->sprites = kept_sprites;
 		OBJECT(object)->flags = 4u;
-		carry = 1u;
+		found = 1u;
 		break;
 	}
 	*p_object = object;
-	*p_carry = carry;
+	*p_found = found;
 }
 
 /* Gives the x and height offsets of a chain's link at a direction (A) and a distance (B), by

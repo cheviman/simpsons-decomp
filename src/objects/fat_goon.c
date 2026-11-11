@@ -13,9 +13,9 @@
 
 /* Sets a fat goon up: its sprite, hit box and life, facing the nearest player, the plain fat goon's
    behaviour. */
-uint16_t fat_goon_setup(uint16_t object)
+void fat_goon_setup(uint16_t object)
 {
-	uint16_t behaviour = 0, player = 0, setup = 0;
+	uint16_t player = 0, setup = 0;
 	uint8_t attributes = 0;
 
 	setup = fat_goon_object_setup_ADDRESS;
@@ -25,10 +25,8 @@ uint16_t fat_goon_setup(uint16_t object)
 	OBJECT(object)->enemy_class = 2;
 	player = vector_choose_nearest_player(object);
 	vector_measure_target(object, player);
-	behaviour = 0x75E8u;
 	OBJECT(object)->behaviour = 0x75E8u;
 	OBJECT(object)->retarget_time = 0x10u;
-	return behaviour;
 }
 
 /* Sets up the plain fat goon (with less life when its spawn's state is set) and lets it fight at once. */
@@ -689,7 +687,7 @@ void fat_goon_entrance_steps(uint16_t object)
 		fat_goon_walk_in_go(object);
 		return;
 	case 26:
-		fat_goon_walk_in_end(object, 0u);
+		fat_goon_walk_in_end(object);
 		return;
 	case 28:
 		fat_goon_from_back_start(object);
@@ -701,10 +699,10 @@ void fat_goon_entrance_steps(uint16_t object)
 		fat_goon_from_back_place(object);
 		return;
 	case 42:
-		fat_goon_from_back_walk(object, 0u);
+		fat_goon_from_back_walk(object);
 		return;
 	case 44:
-		fat_goon_from_back_wait(object, 0u);
+		fat_goon_from_back_wait(object);
 		return;
 	}
 }
@@ -771,30 +769,27 @@ void fat_goon_entrance_walk_out(uint16_t object)
 }
 
 /* Sets up the fat goon that walks in for as many frames as its spawn's state says. */
-uint16_t fat_goon_walk_in_start(uint16_t object)
+void fat_goon_walk_in_start(uint16_t object)
 {
-	uint16_t behaviour = 0;
 	uint8_t parameter = 0, state = 0;
 
-	behaviour = fat_goon_setup(object);
+	fat_goon_setup(object);
 	parameter = OBJECT(object)->parameter;
 	OBJECT(object)->timer = parameter;
 	OBJECT(object)->parameter = 0u;
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
-	return behaviour;
 }
 
 /* Runs the steps of the walking-in fat goon by its substep, keeping its priority by the floor. */
-uint16_t fat_goon_walk_in_steps(uint16_t object)
+void fat_goon_walk_in_steps(uint16_t object)
 {
 	uint32_t negative = 0;
 	uint8_t cell = 0;
-	uint16_t floor_cell = 0, steps = 0;
+	uint16_t floor_cell = 0, ignored16 = 0;
 	uint32_t ignored = 0;
 	uint8_t action_step = 0, attributes = 0;
 
-	steps = fat_goon_walk_in_step_handlers_ADDRESS;
 	action_step = OBJECT(object)->action_step;
 	switch ((int8_t)(uint8_t)((uint32_t)action_step << 1))
 	{
@@ -802,13 +797,13 @@ uint16_t fat_goon_walk_in_steps(uint16_t object)
 		fat_goon_walk_in_go(object);
 		break;
 	case 2:
-		steps = fat_goon_walk_in_end(object, steps);
+		fat_goon_walk_in_end(object);
 		break;
 	case 4:
-		steps = fat_goon_from_back_start(object);
+		fat_goon_from_back_start(object);
 		break;
 	case 6:
-		steps = fat_goon_from_back_steps(object);
+		fat_goon_from_back_steps(object);
 		break;
 	case -126:
 	case -114:
@@ -819,7 +814,7 @@ uint16_t fat_goon_walk_in_steps(uint16_t object)
 	case 34:
 	case 62:
 	case 96:
-		vector_enemy_think(object, &steps, &ignored);
+		vector_enemy_think(object, &ignored16, &ignored);
 		break;
 	case -124:
 	case -112:
@@ -830,7 +825,7 @@ uint16_t fat_goon_walk_in_steps(uint16_t object)
 	case 36:
 	case 64:
 	case 98:
-		vector_enemy_act(object, &steps, &ignored);
+		vector_enemy_act(object, &ignored16, &ignored);
 		break;
 	case -122:
 	case -110:
@@ -841,7 +836,7 @@ uint16_t fat_goon_walk_in_steps(uint16_t object)
 	case 38:
 	case 66:
 	case 100:
-		vector_enemy_react(object, &steps, &ignored);
+		vector_enemy_react(object, &ignored16, &ignored);
 		break;
 	case -120:
 	case -108:
@@ -852,16 +847,16 @@ uint16_t fat_goon_walk_in_steps(uint16_t object)
 	case 40:
 	case 68:
 	case 102:
-		vector_enemy_climb(object, &steps, &ignored);
+		vector_enemy_climb(object, &ignored16, &ignored);
 		break;
 	case 16:
-		steps = fat_goon_from_back_place(object);
+		fat_goon_from_back_place(object);
 		break;
 	case 18:
-		steps = fat_goon_from_back_walk(object, steps);
+		fat_goon_from_back_walk(object);
 		break;
 	case 20:
-		steps = fat_goon_from_back_wait(object, steps);
+		fat_goon_from_back_wait(object);
 		break;
 	case -16:
 	case 88:
@@ -886,10 +881,10 @@ uint16_t fat_goon_walk_in_steps(uint16_t object)
 		fat_goon_entrance_pose_end(object);
 		break;
 	case -12:
-		steps = fat_goon_walk_in_start(object);
+		fat_goon_walk_in_start(object);
 		break;
 	case -10:
-		steps = fat_goon_walk_in_steps(object);
+		fat_goon_walk_in_steps(object);
 		break;
 	}
 	floor_cell = 0u;
@@ -903,7 +898,6 @@ uint16_t fat_goon_walk_in_steps(uint16_t object)
 		OBJECT(object)->attributes = (attributes & 0xCFu) | priority_bits;
 		OBJECT(object)->floor_z = (OBJECT(object)->floor_z & 0xFF00u) | ((((cell_seen & 0xFu) << 1) << 1) << 1 & 0xFFu);
 	}
-	return steps;
 }
 
 /* Starts the fat goon walking towards its target. */
@@ -926,7 +920,7 @@ void fat_goon_walk_in_go(uint16_t object)
 }
 
 /* When the walk's frames run out, faces the nearest player and lets the fat goon fight. */
-uint16_t fat_goon_walk_in_end(uint16_t object, uint16_t u)
+void fat_goon_walk_in_end(uint16_t object)
 {
 	uint16_t heading = 0, player = 0;
 	uint8_t timer = 0, target_direction = 0;
@@ -934,20 +928,19 @@ uint16_t fat_goon_walk_in_end(uint16_t object, uint16_t u)
 	timer = OBJECT(object)->timer;
 	OBJECT(object)->timer = timer - 1u;
 	if (timer != 1u)
-		return u;
+		return;
 	player = vector_choose_nearest_player(object);
 	vector_measure_target(object, player);
 	target_direction = OBJECT(object)->target_direction;
 	heading = (uint32_t)target_direction << 8;
-	player = vector_set_walk_speed_by_direction(object, player, heading);
+	vector_set_walk_speed_by_direction(object, heading);
 	vector_face_direction(object);
 	OBJECT(object)->state = 2u;
 	OBJECT(object)->timer = 0u;
-	return player;
 }
 
 /* Sets up the fat goon coming from the back of the stage, facing the nearest player. */
-uint16_t fat_goon_from_back_start(uint16_t object)
+void fat_goon_from_back_start(uint16_t object)
 {
 	uint16_t player = 0;
 	uint8_t state = 0, attributes = 0;
@@ -962,26 +955,26 @@ uint16_t fat_goon_from_back_start(uint16_t object)
 	player = vector_choose_nearest_player(object);
 	vector_measure_target(object, player);
 	vector_face_direction(object);
-	return player;
 }
 
 /* Runs the steps of the fat goon coming from the back, by its substep. */
-uint16_t fat_goon_from_back_steps(uint16_t object)
+void fat_goon_from_back_steps(uint16_t object)
 {
-	uint16_t steps = 0, u = 0;
+	uint16_t ignored16 = 0;
 	uint32_t ignored = 0;
 	uint8_t action_step = 0;
 
 	for (;;)
 	{
-		steps = fat_goon_from_back_step_handlers_ADDRESS;
 		action_step = OBJECT(object)->action_step;
 		switch ((int8_t)(uint8_t)((uint32_t)action_step << 1))
 		{
 		case 0:
-			return fat_goon_from_back_place(object);
+			fat_goon_from_back_place(object);
+			return;
 		case 2:
-			return fat_goon_from_back_walk(object, steps);
+			fat_goon_from_back_walk(object);
+			return;
 		case 4:
 			break;
 		case -92:
@@ -991,8 +984,8 @@ uint16_t fat_goon_from_back_steps(uint16_t object)
 		case 18:
 		case 46:
 		case 80:
-			vector_enemy_think(object, &u, &ignored);
-			return u;
+			vector_enemy_think(object, &ignored16, &ignored);
+			return;
 		case -128:
 		case -90:
 		case -70:
@@ -1001,8 +994,8 @@ uint16_t fat_goon_from_back_steps(uint16_t object)
 		case 20:
 		case 48:
 		case 82:
-			vector_enemy_act(object, &u, &ignored);
-			return u;
+			vector_enemy_act(object, &ignored16, &ignored);
+			return;
 		case -126:
 		case -88:
 		case -68:
@@ -1011,8 +1004,8 @@ uint16_t fat_goon_from_back_steps(uint16_t object)
 		case 22:
 		case 50:
 		case 84:
-			vector_enemy_react(object, &u, &ignored);
-			return u;
+			vector_enemy_react(object, &ignored16, &ignored);
+			return;
 		case -124:
 		case -86:
 		case -66:
@@ -1021,58 +1014,60 @@ uint16_t fat_goon_from_back_steps(uint16_t object)
 		case 24:
 		case 52:
 		case 86:
-			vector_enemy_climb(object, &u, &ignored);
-			return u;
+			vector_enemy_climb(object, &ignored16, &ignored);
+			return;
 		case -32:
 		case 72:
 			fat_goon_reach_ground(object);
-			return steps;
+			return;
 		case -78:
 		case -30:
 		case 74:
 			fat_goon_entrance_end(object);
-			return steps;
+			return;
 		case -82:
 		case -34:
 			fat_goon_entrance_walk_out(object);
-			return steps;
+			return;
 		case -40:
 			fat_goon_entrance_appear(object);
-			return steps;
+			return;
 		case -38:
 			fat_goon_entrance_pose(object);
-			return steps;
+			return;
 		case -36:
 			fat_goon_entrance_pose_end(object);
-			return steps;
+			return;
 		case -28:
-			return fat_goon_walk_in_start(object);
+			fat_goon_walk_in_start(object);
+			return;
 		case -26:
-			return fat_goon_walk_in_steps(object);
+			fat_goon_walk_in_steps(object);
+			return;
 		case -16:
 			fat_goon_walk_in_go(object);
-			return steps;
+			return;
 		case -14:
-			return fat_goon_walk_in_end(object, steps);
+			fat_goon_walk_in_end(object);
+			return;
 		case -12:
-			return fat_goon_from_back_start(object);
+			fat_goon_from_back_start(object);
+			return;
 		case -10:
 			continue;
 		}
 		break;
 	}
-	return fat_goon_from_back_wait(object, steps);
+	fat_goon_from_back_wait(object);
 }
 
 /* Puts the fat goon at the back of the stage, at the x its spawn's state picks, walking down. */
-uint16_t fat_goon_from_back_place(uint16_t object)
+void fat_goon_from_back_place(uint16_t object)
 {
-	uint16_t xs = 0;
 	uint8_t parameter = 0, action_step = 0;
 	uint16_t first_x = 0;
 
 	OBJECT(object)->flags = 0x80u;
-	xs = fat_goon_from_back_xs_ADDRESS;
 	parameter = OBJECT(object)->parameter;
 	first_x = fat_goon_from_back_xs[(int8_t)((uint8_t)((uint32_t)parameter << 1)) / 2];
 	OBJECT(object)->x = first_x;
@@ -1080,11 +1075,10 @@ uint16_t fat_goon_from_back_place(uint16_t object)
 	OBJECT(object)->y_speed = 0x100;
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step + 1u;
-	return xs;
 }
 
 /* Walks down until there is floor under it, facing its target every 8 frames. */
-uint16_t fat_goon_from_back_walk(uint16_t object, uint16_t u)
+void fat_goon_from_back_walk(uint16_t object)
 {
 	uint32_t negative = 0;
 	uint8_t cell = 0;
@@ -1106,16 +1100,15 @@ uint16_t fat_goon_from_back_walk(uint16_t object, uint16_t u)
 		OBJECT(object)->action_step = action_step + 1u;
 	}
 	if ((frame_count & 7u) != 0u)
-		return u;
+		return;
 	target_2 = OBJECT(object)->target;
 	target = target_2;
 	vector_measure_target(object, target);
 	vector_face_direction(object);
-	return target;
 }
 
 /* Waits 32 frames on the floor facing its target, then lets the fat goon fight. */
-uint16_t fat_goon_from_back_wait(uint16_t object, uint16_t u)
+void fat_goon_from_back_wait(uint16_t object)
 {
 	uint16_t target = 0;
 	uint8_t timer = 0, state = 0;
@@ -1126,29 +1119,28 @@ uint16_t fat_goon_from_back_wait(uint16_t object, uint16_t u)
 	if (timer != 1u)
 	{
 		if ((frame_count & 7u) != 0u)
-			return u;
+			return;
 		target_2 = OBJECT(object)->target;
 		target = target_2;
 		vector_measure_target(object, target);
 		vector_face_direction(object);
-		return target;
+		return;
 	}
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
-	return u;
 }
 
 /* Sets up the fat goon that carries an obstacle, walking for as many steps as its spawn's state says. */
-uint16_t fat_goon_thrower_start(uint16_t object)
+void fat_goon_thrower_start(uint16_t object)
 {
 	uint32_t negative = 0;
 	uint8_t cell = 0;
-	uint16_t behaviour = 0, floor_cell = 0;
+	uint16_t floor_cell = 0;
 	uint8_t parameter = 0, state = 0;
 
 	parameter = OBJECT(object)->parameter;
 	OBJECT(object)->fat_goon_thrower.carry_time = parameter;
-	behaviour = fat_goon_setup(object);
+	fat_goon_setup(object);
 	OBJECT(object)->animation = 0xA6u;
 	floor_cell = 0u;
 	vector_floor_at_offset(object, &floor_cell, &negative);
@@ -1157,30 +1149,28 @@ uint16_t fat_goon_thrower_start(uint16_t object)
 	OBJECT(object)->parameter = 0u;
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
-	return behaviour;
 }
 
 /* Runs the thrower's steps by its substep, stopping where the floor ahead changes. */
-uint16_t fat_goon_thrower_steps(uint16_t object)
+void fat_goon_thrower_steps(uint16_t object)
 {
 	uint32_t negative = 0;
 	uint8_t cell = 0;
-	uint16_t floor_cell = 0, steps = 0;
+	uint16_t floor_cell = 0, ignored16 = 0;
 	uint32_t ignored = 0;
 	uint8_t action_step = 0, start_cell = 0;
 
-	steps = fat_goon_thrower_step_handlers_ADDRESS;
 	action_step = OBJECT(object)->action_step;
 	switch ((int8_t)(uint8_t)((uint32_t)action_step << 1))
 	{
 	case 0:
-		steps = fat_goon_thrower_pick_up(object);
+		fat_goon_thrower_pick_up(object);
 		break;
 	case 2:
-		steps = fat_goon_thrower_carry(object);
+		fat_goon_thrower_carry(object);
 		break;
 	case 4:
-		steps = fat_goon_thrower_throw(object, steps);
+		fat_goon_thrower_throw(object);
 		break;
 	case 6:
 		fat_goon_thrower_end(object);
@@ -1192,7 +1182,7 @@ uint16_t fat_goon_thrower_steps(uint16_t object)
 	case -8:
 	case 20:
 	case 54:
-		vector_enemy_think(object, &steps, &ignored);
+		vector_enemy_think(object, &ignored16, &ignored);
 		break;
 	case -116:
 	case -96:
@@ -1201,7 +1191,7 @@ uint16_t fat_goon_thrower_steps(uint16_t object)
 	case -6:
 	case 22:
 	case 56:
-		vector_enemy_act(object, &steps, &ignored);
+		vector_enemy_act(object, &ignored16, &ignored);
 		break;
 	case -114:
 	case -94:
@@ -1210,7 +1200,7 @@ uint16_t fat_goon_thrower_steps(uint16_t object)
 	case -4:
 	case 24:
 	case 58:
-		vector_enemy_react(object, &steps, &ignored);
+		vector_enemy_react(object, &ignored16, &ignored);
 		break;
 	case -112:
 	case -92:
@@ -1219,13 +1209,13 @@ uint16_t fat_goon_thrower_steps(uint16_t object)
 	case -2:
 	case 26:
 	case 60:
-		vector_enemy_climb(object, &steps, &ignored);
+		vector_enemy_climb(object, &ignored16, &ignored);
 		break;
 	case -12:
-		steps = fat_goon_thrower_start(object);
+		fat_goon_thrower_start(object);
 		break;
 	case -10:
-		steps = fat_goon_thrower_steps(object);
+		fat_goon_thrower_steps(object);
 		break;
 	}
 	vector_floor_ahead(object, &floor_cell, &negative);
@@ -1236,14 +1226,13 @@ uint16_t fat_goon_thrower_steps(uint16_t object)
 		OBJECT(object)->x_speed = 0;
 		OBJECT(object)->y_speed = 0;
 	}
-	return steps;
 }
 
 /* Puts in the obstacle the fat goon carries on its head and starts it walking; without a free slot it
    fights at once. */
-uint16_t fat_goon_thrower_pick_up(uint16_t object)
+void fat_goon_thrower_pick_up(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t slot_found = 0;
 	uint8_t x_speed_high = 0, x_speed_low = 0;
 	uint16_t carried = 0, ignored16 = 0, ignored16_2 = 0;
 	uint8_t target_direction = 0, carry_time = 0, action_step = 0;
@@ -1262,12 +1251,12 @@ uint16_t fat_goon_thrower_pick_up(uint16_t object)
 	}
 	OBJECT(object)->x_speed = (uint32_t)x_speed_high << 8;
 	leftover_y = fat_goon_thrower_pick_up_child_ADDRESS;
-	vector_spawn_child(object, &ignored16, &carried, &ignored16_2, &carry);
-	if (carry == 0u)
+	vector_spawn_child(object, &ignored16, &carried, &ignored16_2, &slot_found);
+	if (slot_found == 0u)
 	{
 		OBJECT(object)->state = 2u;
 		OBJECT(object)->timer = 0u;
-		return carried;
+		return;
 	}
 	OBJECT(object)->fat_goon_thrower.carried_object = carried;
 	carry_time = OBJECT(object)->fat_goon_thrower.carry_time;
@@ -1276,14 +1265,13 @@ uint16_t fat_goon_thrower_pick_up(uint16_t object)
 	OBJECT(object)->fat_goon_thrower.carry_time = 8u;
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step + 1u;
-	return carried;
 }
 
 /* Walks with the obstacle on its head, and starts the throw when its steps run out or the target is
    near. */
-uint16_t fat_goon_thrower_carry(uint16_t object)
+void fat_goon_thrower_carry(uint16_t object)
 {
-	uint16_t carried = 0;
+	uint16_t carried = 0, u = 0;
 	uint8_t state = 0, timer = 0, carry_time = 0, action_step = 0, target_direction = 0, animation_flags = 0;
 	uint16_t carried_object = 0, y_speed = 0, carried_object_2 = 0, thrower_x = 0, thrower_y = 0, z = 0, carried_z = 0, target_dy = 0, target_dx = 0, thrower_x_now = 0, screen_offset = 0;
 
@@ -1296,10 +1284,10 @@ uint16_t fat_goon_thrower_carry(uint16_t object)
 		OBJECT(object)->state = 4u;
 		OBJECT(object)->action = 0u;
 		OBJECT(object)->action_step = 0u;
-		return carried;
+		return;
 	}
-	carried = vector_choose_nearest_player(object);
-	vector_measure_target(object, carried);
+	u = vector_choose_nearest_player(object);
+	vector_measure_target(object, u);
 	timer = OBJECT(object)->timer;
 	OBJECT(object)->timer = timer - 1u;
 	if (timer == 1u)
@@ -1316,7 +1304,7 @@ uint16_t fat_goon_thrower_carry(uint16_t object)
 			action_step = OBJECT(object)->action_step;
 			OBJECT(object)->action_step = action_step + 1u;
 			vector_face_direction(object);
-			return carried;
+			return;
 		}
 		OBJECT(object)->x_speed = 4;
 		OBJECT(object)->y_speed = 0x40;
@@ -1342,20 +1330,20 @@ uint16_t fat_goon_thrower_carry(uint16_t object)
 	if (target_dy >= 0x10u)
 	{
 		vector_face_direction(object);
-		return carried;
+		return;
 	}
 	target_dx = OBJECT(object)->target_dx;
 	if (target_dx >= 0x60u)
 	{
 		vector_face_direction(object);
-		return carried;
+		return;
 	}
 	thrower_x_now = OBJECT(object)->x;
 	screen_offset = thrower_x_now - 0x60u;
 	if (screen_offset >= 0x100u)
 	{
 		vector_face_direction(object);
-		return carried;
+		return;
 	}
 	OBJECT(object)->animation = 0xA7u;
 	OBJECT(object)->timer = 0x10u;
@@ -1364,18 +1352,18 @@ uint16_t fat_goon_thrower_carry(uint16_t object)
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step + 1u;
 	vector_face_direction(object);
-	return carried;
 }
 
 /* At the throw's frame, sends the carried obstacle flying the way the fat goon faces. */
-uint16_t fat_goon_thrower_throw(uint16_t object, uint16_t carried)
+void fat_goon_thrower_throw(uint16_t object)
 {
+	uint16_t carried = 0;
 	uint8_t animation_flags = 0, attributes = 0, action_step = 0;
 	uint16_t carried_object = 0, x_speed = 0;
 
 	animation_flags = OBJECT(object)->animation_flags;
 	if ((animation_flags & 2u) == 0u)
-		return carried;
+		return;
 	carried_object = OBJECT(object)->fat_goon_thrower.carried_object;
 	carried = carried_object;
 	OBJECT(carried)->state = 2u;
@@ -1390,7 +1378,6 @@ uint16_t fat_goon_thrower_throw(uint16_t object, uint16_t carried)
 	OBJECT(object)->timer = 0x20u;
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step + 1u;
-	return carried;
 }
 
 /* After the throw, waits 32 frames and lets the fat goon fight. */
@@ -1534,10 +1521,10 @@ void fat_goon_delayed_steps(uint16_t object)
 		vector_enemy_climb(object, &ignored16, &ignored);
 		return;
 	case 18:
-		fat_goon_descent_fall(object, steps);
+		fat_goon_descent_fall(object);
 		return;
 	case 20:
-		fat_goon_descent_land(object, steps);
+		fat_goon_descent_land(object);
 		return;
 	case -14:
 	case -10:
@@ -1568,22 +1555,22 @@ void fat_goon_delayed_appear(uint16_t object)
 }
 
 /* Sets up the fat goon coming down from far away, small and high, with the balloon it will let go of. */
-uint16_t fat_goon_descent_start(uint16_t object)
+void fat_goon_descent_start(uint16_t object)
 {
-	uint32_t carry = 0;
-	uint16_t carried_object = 0, descent_start = 0, ignored16 = 0, ignored16_3 = 0;
+	uint32_t slot_found = 0;
+	uint16_t carried_object = 0, descent_start = 0, ignored16 = 0, ignored16_2 = 0;
 	uint8_t parameter = 0, state = 0;
 	uint16_t first_x = 0, x_speed = 0;
 
 	fat_goon_setup(object);
 	leftover_y = fat_goon_descent_child_ADDRESS;
-	vector_spawn_child(object, &ignored16, &carried_object, &ignored16_3, &carry);
-	if (carry == 0u)
+	vector_spawn_child(object, &ignored16, &carried_object, &ignored16_2, &slot_found);
+	if (slot_found == 0u)
 	{
 		OBJECT(object)->timer = 0u;
 		OBJECT(object)->parameter = 0u;
 		OBJECT(object)->state = 2u;
-		return carried_object;
+		return;
 	}
 	OBJECT(object)->fat_goon.carried_object = carried_object;
 	OBJECT(object)->animation = 0xAFu;
@@ -1604,11 +1591,10 @@ uint16_t fat_goon_descent_start(uint16_t object)
 	OBJECT(object)->parameter = 0u;
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
-	return descent_start;
 }
 
 /* Runs the descending fat goon's steps by its substep, facing its target. */
-uint16_t fat_goon_descent_steps(uint16_t object)
+void fat_goon_descent_steps(uint16_t object)
 {
 	uint32_t zero = 0, negative = 0;
 	uint16_t steps = 0;
@@ -1623,10 +1609,10 @@ uint16_t fat_goon_descent_steps(uint16_t object)
 	switch ((int8_t)step_offset)
 	{
 	case 0:
-		steps = fat_goon_descent_fall(object, steps);
+		fat_goon_descent_fall(object);
 		break;
 	case 2:
-		steps = fat_goon_descent_land(object, steps);
+		fat_goon_descent_land(object);
 		break;
 	case -120:
 	case -16:
@@ -1674,22 +1660,21 @@ uint16_t fat_goon_descent_steps(uint16_t object)
 		fat_goon_delayed_appear(object);
 		break;
 	case -12:
-		steps = fat_goon_descent_start(object);
+		fat_goon_descent_start(object);
 		break;
 	case -10:
-		steps = fat_goon_descent_steps(object);
+		fat_goon_descent_steps(object);
 		break;
 	}
 	vector_face_direction(object);
-	return steps;
 }
 
 /* Grows the fat goon as it comes nearer, and after its time lets the balloon go. */
-uint16_t fat_goon_descent_fall(uint16_t object, uint16_t balloon)
+void fat_goon_descent_fall(uint16_t object)
 {
 	uint32_t negative = 0;
 	uint8_t cell = 0, new_zoom_x = 0, new_zoom_y = 0;
-	uint16_t floor_cell = 0;
+	uint16_t balloon = 0, floor_cell = 0;
 	uint8_t timer = 0, action_step = 0;
 	uint16_t zoom_x = 0, bigger_zoom = 0, carried_object = 0;
 	uint32_t zoom_x_halfword = 0;
@@ -1724,28 +1709,26 @@ uint16_t fat_goon_descent_fall(uint16_t object, uint16_t balloon)
 		OBJECT(object)->action_step = action_step + 1u;
 	}
 	vector_check_landing(object);
-	return balloon;
 }
 
 /* Falls to the floor, then faces the nearest player and lets the fat goon fight. */
-uint16_t fat_goon_descent_land(uint16_t object, uint16_t u)
+void fat_goon_descent_land(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t landed = 0;
 	uint16_t d = 0, heading = 0, player = 0;
 	uint8_t target_direction = 0;
 
-	vector_apply_gravity(object, &d, &carry);
-	if (carry == 0u)
-		return u;
+	vector_apply_gravity(object, &d, &landed);
+	if (landed == 0u)
+		return;
 	player = vector_choose_nearest_player(object);
 	vector_measure_target(object, player);
 	target_direction = OBJECT(object)->target_direction;
 	heading = (d & 0xFFu) | ((uint32_t)target_direction << 8);
-	player = vector_set_walk_speed_by_direction(object, player, heading);
+	vector_set_walk_speed_by_direction(object, heading);
 	vector_face_direction(object);
 	OBJECT(object)->state = 2u;
 	OBJECT(object)->timer = 0u;
-	return player;
 }
 
 /* Sets up the fat goon coming in from a side of the cemetery, walking in. */
@@ -1853,11 +1836,11 @@ void fat_goon_jump_in_jump(uint16_t object)
 /* Lands, then finds the nearest player and fights. */
 void fat_goon_jump_in_land(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t landed = 0;
 	uint16_t ignored16 = 0;
 
-	vector_apply_gravity(object, &ignored16, &carry);
-	if (carry == 0u)
+	vector_apply_gravity(object, &ignored16, &landed);
+	if (landed == 0u)
 		return;
 	OBJECT(object)->flags = 0xC0u;
 	vector_choose_nearest_player(object);
@@ -1950,11 +1933,11 @@ void fat_goon_from_below_rise(uint16_t object)
 /* Lands, then finds the nearest player and fights. */
 void fat_goon_from_below_land(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t landed = 0;
 	uint16_t ignored16 = 0;
 
-	vector_apply_gravity(object, &ignored16, &carry);
-	if (carry == 0u)
+	vector_apply_gravity(object, &ignored16, &landed);
+	if (landed == 0u)
 		return;
 	OBJECT(object)->flags = 0xC0u;
 	vector_choose_nearest_player(object);

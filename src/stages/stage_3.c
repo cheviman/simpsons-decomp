@@ -443,19 +443,19 @@ uint32_t stage_3_forest_end_phase(void)
 }
 
 /* The end of stage_3_forest_end_phase: step_subphase cleared, the hits and the players' handling */
-void stage_3_forest_end_phase_tail(uint16_t *p_player, uint16_t *p_slot, uint16_t *p_d, uint32_t *p_left_caller, uint32_t *p_carry)
+void stage_3_forest_end_phase_tail(uint16_t *p_player, uint16_t *p_slot, uint16_t *p_subphase_and_countdown, uint32_t *p_left_caller, uint32_t *p_carry)
 {
-	uint16_t d = (uint16_t)*p_d;
+	uint16_t subphase_and_countdown = (uint16_t)*p_subphase_and_countdown;
 	uint32_t carry = *p_carry;
-	uint16_t d_2 = 0, ignored16 = 0, player = 0, slot = 0;
+	uint16_t d = 0, ignored16 = 0, player = 0, slot = 0;
 
-	step_subphase = (uint8_t)(d >> 8u);
-	step_countdown = (uint8_t)d;
-	check_collisions(&ignored16, &d_2);
+	step_subphase = (uint8_t)(subphase_and_countdown >> 8u);
+	step_countdown = (uint8_t)subphase_and_countdown;
+	check_collisions(&ignored16, &d);
 	*p_player = player;
 	*p_slot = slot;
-	*p_d = d_2;
-	update_players(p_player, p_slot, p_d, &carry);
+	*p_subphase_and_countdown = d;
+	update_players(p_player, p_slot, p_subphase_and_countdown, &carry);
 	*p_left_caller = 1u;
 	*p_carry = carry;
 }
@@ -846,10 +846,10 @@ void stage_3_cemetery_over(void)
 /* The cemetery's players leaving */
 uint32_t stage_3_cemetery_exit(uint32_t left_caller)
 {
-	uint32_t carry = 0;
+	uint32_t players_out = 0;
 	uint16_t ignored16 = 0;
 
-	stage_players_exit(&ignored16, &left_caller, &carry);
+	stage_players_exit(&ignored16, &left_caller, &players_out);
 	return left_caller;
 }
 

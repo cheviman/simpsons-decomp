@@ -19,13 +19,13 @@ void unused_palette_no_op(void)
 /* Starts a palette request of the kind palette_request_kind says, with its argument */
 uint16_t palette_request(uint16_t palette_job, uint16_t request)
 {
-	uint8_t stack = 0;
+	uint8_t saved_request_high = 0;
 
-	stack = request >> 8;
-	request = (request & 0xFFu) | ((uint32_t)stack << 8);
+	saved_request_high = request >> 8;
+	request = (request & 0xFFu) | ((uint32_t)saved_request_high << 8);
 	switch (palette_request_handlers[(int8_t)((uint8_t)((uint32_t)palette_request_kind << 1)) / 2])
 	{
-	case code_read_as_tiles_07BAEC_ADDRESS:
+	case request_palette_sets_as_code_read_as_tiles_ADDRESS:
 		palette_job = request_palette_sets(request);
 		break;
 	case 0xBB12u:
@@ -53,13 +53,13 @@ uint16_t palette_request(uint16_t palette_job, uint16_t request)
 /* Takes a free palette job for a load of palette sets: which of the set's loads and the set */
 uint16_t request_palette_sets(uint16_t request)
 {
-	uint32_t carry = 0;
+	uint32_t no_free_job = 0;
 	uint16_t palette_job = 0;
 	uint16_t loads_and_set = 0;
 
 	palette_request_word = request;
-	find_free_palette_job(&palette_job, &carry);
-	if (carry == 0u)
+	find_free_palette_job(&palette_job, &no_free_job);
+	if (no_free_job == 0u)
 	{
 		palette_request_saved_bank = window_bank;
 		PALETTE_JOB(palette_job)->kind = 1u;
@@ -146,13 +146,13 @@ uint16_t request_palette_effect(uint16_t request)
 /* Takes a free palette job to set the background colour */
 uint16_t request_background_colour(uint16_t request)
 {
-	uint32_t carry = 0;
+	uint32_t no_free_job = 0;
 	uint16_t palette_job = 0;
 	uint16_t background_colour = 0;
 
 	palette_request_word = request;
-	find_free_palette_job(&palette_job, &carry);
-	if (carry == 0u)
+	find_free_palette_job(&palette_job, &no_free_job);
+	if (no_free_job == 0u)
 	{
 		PALETTE_JOB(palette_job)->kind = 3u;
 		background_colour = palette_request_word;
@@ -165,14 +165,14 @@ uint16_t request_background_colour(uint16_t request)
    name */
 uint16_t request_palette_fade(uint16_t request)
 {
-	uint32_t carry = 0;
+	uint32_t no_free_job = 0;
 	uint8_t fade_mask = 0, fade_mask_high = 0;
 	uint16_t palette_job = 0;
 	uint16_t ranges_mask = 0;
 
 	palette_request_word = request;
-	find_free_palette_job(&palette_job, &carry);
-	if (carry)
+	find_free_palette_job(&palette_job, &no_free_job);
+	if (no_free_job)
 		return palette_job;
 	PALETTE_JOB(palette_job)->fade.frames_left &= 0xFFu;
 	PALETTE_JOB(palette_job)->fade.frames_left = (PALETTE_JOB(palette_job)->fade.frames_left & 0xFF00u) | (palette_request_argument & 0xFFu);
@@ -203,14 +203,14 @@ uint16_t request_palette_fade(uint16_t request)
    that show it on the layers the request's bits name */
 uint16_t request_white_flash(uint16_t request)
 {
-	uint32_t carry = 0;
+	uint32_t no_free_job = 0;
 	uint8_t control = 0, layer_bits = 0, priority = 0, white_high = 0, white_low = 0;
 	uint16_t colour_place = 0, palette_job = 0, words_left = 0;
 	uint16_t white_place = 0, words_after = 0, flash_request = 0, flash_priorities = 0;
 
 	palette_request_word = request;
-	find_free_palette_job(&palette_job, &carry);
-	if (carry)
+	find_free_palette_job(&palette_job, &no_free_job);
+	if (no_free_job)
 		return palette_job;
 	control = board_control | 1u;
 	board_control = control;
@@ -262,12 +262,12 @@ uint16_t request_white_flash(uint16_t request)
 /* Takes a free palette job to clear the palette ranges the request's bits name */
 uint16_t request_palette_clear(uint16_t request)
 {
-	uint32_t carry = 0;
+	uint32_t no_free_job = 0;
 	uint16_t palette_job = 0;
 
 	palette_request_bits = request >> 8;
-	find_free_palette_job(&palette_job, &carry);
-	if (carry == 0u)
+	find_free_palette_job(&palette_job, &no_free_job);
+	if (no_free_job == 0u)
 	{
 		PALETTE_JOB(palette_job)->clearing.ranges = palette_request_bits;
 		PALETTE_JOB(palette_job)->kind = 7u;
@@ -280,7 +280,7 @@ void run_palette_jobs(uint16_t d)
 {
 	uint8_t job_kind = 0;
 	uint16_t palette_job = 0;
-	uint16_t stack = 0;
+	uint16_t saved_job = 0;
 	uint8_t slot_kind = 0, jobs_left_was = 0;
 
 	palette_job = palette_jobs;
@@ -291,7 +291,7 @@ void run_palette_jobs(uint16_t d)
 		job_kind = slot_kind;
 		if (slot_kind != 0u)
 		{
-			stack = palette_job;
+			saved_job = palette_job;
 			switch ((int8_t)(uint8_t)((uint32_t)job_kind << 1))
 			{
 			case 0:
@@ -317,7 +317,7 @@ void run_palette_jobs(uint16_t d)
 				palette_job_clear(palette_job);
 				break;
 			}
-			palette_job = stack;
+			palette_job = saved_job;
 		}
 		palette_job += 8u;
 		jobs_left_was = palette_jobs_left;
@@ -378,18 +378,18 @@ uint16_t palette_job_load_sets(uint16_t palette_job)
    step holds */
 uint16_t palette_job_effect(uint16_t palette_job, uint8_t d)
 {
-	uint32_t carry = 0;
+	uint32_t effect_ended = 0;
 	uint8_t a = 0, b = 0, frames_waited = 0, step_mark = 0;
 	uint16_t d_2 = 0, step = 0;
 	uint32_t left_caller = 0;
-	uint8_t stack = 0;
+	uint8_t kept_byte = 0;
 	uint8_t frames_waited_now = 0, effect_delay = 0, frames_waited_was = 0, address = 0, effect_direction = 0;
 	uint16_t effect_step = 0;
 
-	stack = d;
+	kept_byte = d;
 	window_bank = 0x2Eu;
 	set_lines(window_bank);
-	b = stack;
+	b = kept_byte;
 	frames_waited_now = PALETTE_JOB(palette_job)->effect.frames_waited;
 	frames_waited = frames_waited_now;
 	effect_delay = PALETTE_JOB(palette_job)->effect.delay;
@@ -421,26 +421,26 @@ uint16_t palette_job_effect(uint16_t palette_job, uint8_t d)
 			palette_effect_forward(palette_job, &step, &d_2);
 			break;
 		case 2:
-			palette_effect_backward(palette_job, &step, &d_2, &carry);
+			palette_effect_backward(palette_job, &step, &d_2, &effect_ended);
 			break;
 		case 4:
 			palette_effect_stop(palette_job);
 			break;
 		case 6:
-			palette_effect_reverse(palette_job, &step, &carry);
+			palette_effect_reverse(palette_job, &step, &effect_ended);
 			break;
 		case 8:
-			palette_effect_repeat(palette_job, &step, &carry);
+			palette_effect_repeat(palette_job, &step, &effect_ended);
 			break;
 		case 10:
-			darken_colour(palette_job, &d_2, &carry);
+			darken_colour(palette_job, &d_2, &effect_ended);
 			break;
 		case 12:
-			brighten_colour(palette_job, &d_2, &carry);
+			brighten_colour(palette_job, &d_2, &effect_ended);
 			break;
 		case -76:
 		case -4:
-			stage_3_forest_end_phase_tail(&step, &palette_job, &d_2, &left_caller, &carry);
+			stage_3_forest_end_phase_tail(&step, &palette_job, &d_2, &left_caller, &effect_ended);
 			break;
 		case -74:
 		case -2:
@@ -454,15 +454,15 @@ uint16_t palette_job_effect(uint16_t palette_job, uint8_t d)
 			d_2 = ((uint32_t)a << 8) | b;
 			return d_2;
 		}
-		stack = a;
+		kept_byte = a;
 		a = board_control & ~3u;
 		board_control = a;
 		io_write8(board_control_register, a);
-		d_2 = ((uint32_t)stack << 8) | b;
+		d_2 = ((uint32_t)kept_byte << 8) | b;
 		return d_2;
 	}
 	d_2 = ((uint32_t)step_mark << 8) | b;
-	palette_effect_command(&step, &palette_job, &d_2, &left_caller, &carry);
+	palette_effect_command(&step, &palette_job, &d_2, &left_caller, &effect_ended);
 	a = (uint8_t)(d_2 >> 8);
 	b = (uint8_t)d_2;
 	if (left_caller != 0u)
@@ -470,13 +470,13 @@ uint16_t palette_job_effect(uint16_t palette_job, uint8_t d)
 		d_2 = ((uint32_t)a << 8) | b;
 		return d_2;
 	}
-	if (carry)
+	if (effect_ended)
 	{
-		stack = a;
+		kept_byte = a;
 		a = board_control & ~3u;
 		board_control = a;
 		io_write8(board_control_register, a);
-		d_2 = ((uint32_t)stack << 8) | b;
+		d_2 = ((uint32_t)kept_byte << 8) | b;
 		return d_2;
 	}
 	leftover_y = palette_effect_directions_ADDRESS;
@@ -490,26 +490,26 @@ uint16_t palette_job_effect(uint16_t palette_job, uint8_t d)
 		palette_effect_forward(palette_job, &step, &d_2);
 		break;
 	case 2:
-		palette_effect_backward(palette_job, &step, &d_2, &carry);
+		palette_effect_backward(palette_job, &step, &d_2, &effect_ended);
 		break;
 	case 4:
 		palette_effect_stop(palette_job);
 		break;
 	case 6:
-		palette_effect_reverse(palette_job, &step, &carry);
+		palette_effect_reverse(palette_job, &step, &effect_ended);
 		break;
 	case 8:
-		palette_effect_repeat(palette_job, &step, &carry);
+		palette_effect_repeat(palette_job, &step, &effect_ended);
 		break;
 	case 10:
-		darken_colour(palette_job, &d_2, &carry);
+		darken_colour(palette_job, &d_2, &effect_ended);
 		break;
 	case 12:
-		brighten_colour(palette_job, &d_2, &carry);
+		brighten_colour(palette_job, &d_2, &effect_ended);
 		break;
 	case -76:
 	case -4:
-		stage_3_forest_end_phase_tail(&step, &palette_job, &d_2, &left_caller, &carry);
+		stage_3_forest_end_phase_tail(&step, &palette_job, &d_2, &left_caller, &effect_ended);
 		break;
 	case -74:
 	case -2:
@@ -523,11 +523,11 @@ uint16_t palette_job_effect(uint16_t palette_job, uint8_t d)
 		d_2 = ((uint32_t)a << 8) | b;
 		return d_2;
 	}
-	stack = a;
+	kept_byte = a;
 	a = board_control & ~3u;
 	board_control = a;
 	io_write8(board_control_register, a);
-	d_2 = ((uint32_t)stack << 8) | b;
+	d_2 = ((uint32_t)kept_byte << 8) | b;
 	return d_2;
 }
 
@@ -537,7 +537,7 @@ void palette_effect_forward(uint16_t palette_job, uint16_t *p_step, uint16_t *p_
 	uint16_t step = (uint16_t)*p_step;
 	uint8_t colour_low = 0, colours_left = 0, control = 0;
 	uint16_t address = 0, d = 0;
-	uint8_t stack = 0;
+	uint8_t saved_step_mark = 0;
 	uint8_t step_extra_colours = 0, more_colours = 0;
 	uint16_t step_at = 0, colour_at = 0, colour = 0;
 
@@ -559,25 +559,25 @@ void palette_effect_forward(uint16_t palette_job, uint16_t *p_step, uint16_t *p_
 		palette_effect_colours_left--;
 	}
 	PALETTE_JOB(palette_job)->effect.step = step;
-	stack = colours_left;
+	saved_step_mark = colours_left;
 	control = board_control & ~3u;
 	board_control = control;
 	io_write8(board_control_register, control);
 	leftover_y = address;
-	d = (colour_low & 0xFFu) | ((uint32_t)stack << 8);
+	d = (colour_low & 0xFFu) | ((uint32_t)saved_step_mark << 8);
 	*p_step = step;
 	*p_d = d;
 }
 
 /* Sets the colours of the effect's step and moves to the one before; at its first step the effect runs
    forward again */
-void palette_effect_backward(uint16_t palette_job, uint16_t *p_step, uint16_t *p_d, uint32_t *p_carry)
+void palette_effect_backward(uint16_t palette_job, uint16_t *p_step, uint16_t *p_d, uint32_t *p_effect_ended)
 {
 	uint16_t step = (uint16_t)*p_step;
-	uint32_t carry = *p_carry;
+	uint32_t effect_ended = *p_effect_ended;
 	uint8_t colour_low = 0, control = 0, step_mark = 0;
 	uint16_t address = 0, d = 0;
-	uint8_t stack = 0;
+	uint8_t saved_step_mark = 0;
 	uint8_t step_extra_colours = 0, address_2 = 0;
 	uint16_t step_at = 0, colour_at = 0, colour = 0;
 
@@ -602,68 +602,68 @@ void palette_effect_backward(uint16_t palette_job, uint16_t *p_step, uint16_t *p
 	step_mark = address_2;
 	if ((int8_t)address_2 < 0)
 	{
-		carry = 0u;
+		effect_ended = 0u;
 		PALETTE_JOB(palette_job)->effect.direction = 0u;
 		step += 4u;
 	}
 	PALETTE_JOB(palette_job)->effect.step = step;
-	stack = step_mark;
+	saved_step_mark = step_mark;
 	control = board_control & ~3u;
 	board_control = control;
 	io_write8(board_control_register, control);
 	leftover_y = address;
-	d = (colour_low & 0xFFu) | ((uint32_t)stack << 8);
+	d = (colour_low & 0xFFu) | ((uint32_t)saved_step_mark << 8);
 	*p_step = step;
 	*p_d = d;
-	*p_carry = carry;
+	*p_effect_ended = effect_ended;
 }
 
 /* Runs the command of an effect's step: stop, reverse or repeat */
-void palette_effect_command(uint16_t *p_x, uint16_t *p_u, uint16_t *p_d, uint32_t *p_left_caller, uint32_t *p_carry)
+void palette_effect_command(uint16_t *p_x, uint16_t *p_u, uint16_t *p_d, uint32_t *p_left_caller, uint32_t *p_effect_ended)
 {
 	uint16_t x = (uint16_t)*p_x;
 	uint16_t u = (uint16_t)*p_u;
 	uint16_t d = (uint16_t)*p_d;
-	uint32_t carry = *p_carry;
+	uint32_t effect_ended = *p_effect_ended;
 	uint8_t command = 0;
 	uint16_t y = 0;
 	uint32_t left_caller = 0;
 
 	y = palette_effect_commands_ADDRESS;
 	command = (d >> 8) & 0x7Fu;
-	carry = (int8_t)command < 0;
+	effect_ended = (int8_t)command < 0;
 	command = (uint32_t)command << 1;
 	switch ((int8_t)command)
 	{
 	case 0:
 		left_caller = 0u;
 		leftover_y = y;
-		carry = palette_effect_stop(u);
+		effect_ended = palette_effect_stop(u);
 		break;
 	case 2:
 		left_caller = 0u;
 		leftover_y = y;
-		palette_effect_reverse(u, &x, &carry);
+		palette_effect_reverse(u, &x, &effect_ended);
 		break;
 	case 4:
 		left_caller = 0u;
 		leftover_y = y;
-		palette_effect_repeat(u, &x, &carry);
+		palette_effect_repeat(u, &x, &effect_ended);
 		break;
 	case 6:
 		left_caller = 0u;
 		leftover_y = y;
-		darken_colour(u, &d, &carry);
+		darken_colour(u, &d, &effect_ended);
 		break;
 	case 8:
 		left_caller = 0u;
 		leftover_y = y;
-		brighten_colour(u, &d, &carry);
+		brighten_colour(u, &d, &effect_ended);
 		break;
 	case -80:
 	case -8:
 		d = (d & 0xFFu) | ((uint32_t)command << 8);
-		stage_3_forest_end_phase_tail(&x, &u, &d, &left_caller, &carry);
+		stage_3_forest_end_phase_tail(&x, &u, &d, &left_caller, &effect_ended);
 		break;
 	case -78:
 	case -6:
@@ -678,46 +678,46 @@ void palette_effect_command(uint16_t *p_x, uint16_t *p_u, uint16_t *p_d, uint32_
 		break;
 	case -2:
 		left_caller = 0u;
-		palette_effect_backward(u, &x, &d, &carry);
+		palette_effect_backward(u, &x, &d, &effect_ended);
 		break;
 	}
 	*p_x = x;
 	*p_u = u;
 	*p_d = d;
 	*p_left_caller = left_caller;
-	*p_carry = carry;
+	*p_effect_ended = effect_ended;
 }
 
 /* An effect's command 80: the effect ends and its job is freed */
 uint32_t palette_effect_stop(uint16_t palette_job)
 {
-	uint32_t carry = 0;
+	uint32_t effect_ended = 0;
 
 	PALETTE_JOB(palette_job)->kind = 0u;
-	carry = 1u;
-	return carry;
+	effect_ended = 1u;
+	return effect_ended;
 }
 
 /* An effect's command 81: the effect runs backward from its last step */
-void palette_effect_reverse(uint16_t palette_job, uint16_t *p_step, uint32_t *p_carry)
+void palette_effect_reverse(uint16_t palette_job, uint16_t *p_step, uint32_t *p_effect_ended)
 {
 	uint16_t step = (uint16_t)*p_step;
-	uint32_t carry = *p_carry;
+	uint32_t effect_ended = *p_effect_ended;
 
 	PALETTE_JOB(palette_job)->effect.direction = 1u;
 	step -= 4u;
 	PALETTE_JOB(palette_job)->effect.step = step;
-	carry = 0u;
+	effect_ended = 0u;
 	*p_step = step;
-	*p_carry = carry;
+	*p_effect_ended = effect_ended;
 }
 
 /* An effect's command 82: goes back to the step it names, the number of times it says (FF for ever),
    then on */
-void palette_effect_repeat(uint16_t palette_job, uint16_t *p_step, uint32_t *p_carry)
+void palette_effect_repeat(uint16_t palette_job, uint16_t *p_step, uint32_t *p_effect_ended)
 {
 	uint16_t step = (uint16_t)*p_step;
-	uint32_t carry = *p_carry;
+	uint32_t effect_ended = *p_effect_ended;
 	uint8_t repeat_count = 0;
 	uint8_t wanted_repeats = 0, repeats_done = 0, repeats_was = 0;
 	uint16_t repeat_target = 0;
@@ -729,7 +729,7 @@ void palette_effect_repeat(uint16_t palette_job, uint16_t *p_step, uint32_t *p_c
 		repeat_target = mem_read16(step + 2u);
 		step = repeat_target + 4u;
 		PALETTE_JOB(palette_job)->effect.step = step;
-		carry = 0u;
+		effect_ended = 0u;
 	}
 	else
 	{
@@ -739,7 +739,7 @@ void palette_effect_repeat(uint16_t palette_job, uint16_t *p_step, uint32_t *p_c
 			PALETTE_JOB(palette_job)->effect.repeats = 0u;
 			step += 4u;
 			PALETTE_JOB(palette_job)->effect.step = step;
-			carry = 0u;
+			effect_ended = 0u;
 		}
 		else
 		{
@@ -748,11 +748,11 @@ void palette_effect_repeat(uint16_t palette_job, uint16_t *p_step, uint32_t *p_c
 			repeat_target = mem_read16(step + 2u);
 			step = repeat_target + 4u;
 			PALETTE_JOB(palette_job)->effect.step = step;
-			carry = 0u;
+			effect_ended = 0u;
 		}
 	}
 	*p_step = step;
-	*p_carry = carry;
+	*p_effect_ended = effect_ended;
 }
 
 /* Palette job 3: sets the background colour and frees the job */
@@ -760,7 +760,7 @@ uint16_t palette_job_background_colour(uint16_t palette_job)
 {
 	uint8_t colour_high = 0, colour_low = 0, control = 0;
 	uint16_t d = 0;
-	uint8_t stack = 0;
+	uint8_t saved_colour_high = 0;
 	uint16_t background_colour = 0;
 
 	control = board_control | 1u;
@@ -771,11 +771,11 @@ uint16_t palette_job_background_colour(uint16_t palette_job)
 	colour_high = (uint8_t)(background_colour >> 8);
 	io_write16(0xC00u, ((uint32_t)colour_high << 8) | (colour_low & 0xFFu));
 	PALETTE_JOB(palette_job)->kind = 0u;
-	stack = colour_high;
+	saved_colour_high = colour_high;
 	control = board_control & ~3u;
 	board_control = control;
 	io_write8(board_control_register, control);
-	d = (colour_low & 0xFFu) | ((uint32_t)stack << 8);
+	d = (colour_low & 0xFFu) | ((uint32_t)saved_colour_high << 8);
 	return d;
 }
 
@@ -811,7 +811,7 @@ uint16_t palette_job_fade(uint16_t palette_job, uint16_t fade_mask)
 	uint8_t control = 0, fade_direction = 0, step_bit = 0;
 	uint16_t colour_place = 0, fade_range = 0;
 	uint32_t left_caller = 0;
-	uint8_t stack = 0, stack_2 = 0;
+	uint8_t job_low_then_step_bit = 0, saved_job_high = 0;
 	uint8_t range_number = 0, ranges_left_low = 0, range_on = 0, range_index = 0, colours_left_was = 0, range_was = 0;
 	uint16_t frames_left_was = 0, all_ranges = 0, range_record = 0, ranges_left_was = 0;
 
@@ -830,8 +830,8 @@ uint16_t palette_job_fade(uint16_t palette_job, uint16_t fade_mask)
 	step_bit = range_on;
 	if (range_on != 0u)
 	{
-		stack_2 = palette_job >> 8;
-		stack = (uint8_t)palette_job;
+		saved_job_high = palette_job >> 8;
+		job_low_then_step_bit = (uint8_t)palette_job;
 		control = board_control | 1u;
 		board_control = control;
 		io_write8(board_control_register, control);
@@ -885,17 +885,17 @@ uint16_t palette_job_fade(uint16_t palette_job, uint16_t fade_mask)
 			colours_left_was = palette_fade_colours_left;
 			palette_fade_colours_left = colours_left_was - 1u;
 		} while (colours_left_was != 1u);
-		palette_job = ((uint32_t)stack_2 << 8) | stack;
+		palette_job = ((uint32_t)saved_job_high << 8) | job_low_then_step_bit;
 	}
 	ranges_left_was = PALETTE_JOB(palette_job)->fade.ranges_left;
 	PALETTE_JOB(palette_job)->fade.ranges_left = ranges_left_was >> 1;
 	range_was = PALETTE_JOB(palette_job)->fade.range;
 	PALETTE_JOB(palette_job)->fade.range = range_was + 1u;
-	stack = step_bit;
+	job_low_then_step_bit = step_bit;
 	control = board_control & ~3u;
 	board_control = control;
 	io_write8(board_control_register, control);
-	fade_mask = (fade_mask & 0xFFu) | ((uint32_t)stack << 8);
+	fade_mask = (fade_mask & 0xFFu) | ((uint32_t)job_low_then_step_bit << 8);
 	return fade_mask;
 }
 
@@ -960,7 +960,7 @@ uint16_t palette_job_white_flash(uint16_t palette_job, uint8_t d)
 void palette_job_clear(uint16_t palette_job)
 {
 	uint8_t control = 0;
-	uint16_t address = 0, clear_to = 0, count = 0, y = 0;
+	uint16_t address = 0, clear_to = 0, count = 0, fill_source = 0;
 	uint8_t clear_ranges = 0;
 	uint16_t clear_record = 0, first_cleared = 0;
 
@@ -978,16 +978,16 @@ void palette_job_clear(uint16_t palette_job)
 			clear_record = palette_clears_ADDRESS + (int8_t)(((uint32_t)palette_clear_range << 1) << 1);
 			count = PALETTE_CLEAR(clear_record)->extra_bytes;
 			address = PALETTE_CLEAR(clear_record)->address;
-			y = address;
-			leftover_y = y;
+			fill_source = address;
+			leftover_y = fill_source;
 			first_cleared = address;
 			clear_to = first_cleared + 1u;
 			mem_write8(first_cleared, 0u);
 			while (count != 0u)
 			{
-				mem_write8(clear_to, mem_read8(y));
-				y++;
-				leftover_y = y;
+				mem_write8(clear_to, mem_read8(fill_source));
+				fill_source++;
+				leftover_y = fill_source;
 				clear_to++;
 				count--;
 			}
@@ -1001,9 +1001,9 @@ void palette_job_clear(uint16_t palette_job)
 }
 
 /* Finds a free palette job among the 64; carry when there is none */
-void find_free_palette_job(uint16_t *p_palette_job, uint32_t *p_carry)
+void find_free_palette_job(uint16_t *p_palette_job, uint32_t *p_no_free_job)
 {
-	uint32_t carry = *p_carry;
+	uint32_t no_free_job = *p_no_free_job;
 	uint16_t palette_job = 0;
 	uint8_t jobs_left_was = 0;
 
@@ -1013,7 +1013,7 @@ void find_free_palette_job(uint16_t *p_palette_job, uint32_t *p_carry)
 	{
 		if (PALETTE_JOB(palette_job)->kind == 0u)
 		{
-			carry = 0u;
+			no_free_job = 0u;
 			break;
 		}
 		palette_job += 8u;
@@ -1021,29 +1021,29 @@ void find_free_palette_job(uint16_t *p_palette_job, uint32_t *p_carry)
 		palette_jobs_left = jobs_left_was - 1u;
 		if (jobs_left_was == 1u)
 		{
-			carry = 1u;
+			no_free_job = 1u;
 			break;
 		}
 	}
 	*p_palette_job = palette_job;
-	*p_carry = carry;
+	*p_no_free_job = no_free_job;
 }
 
 /* Copies palettes of 16 colours from bank 2D into the palette RAM */
 uint16_t load_palettes(uint16_t destination, uint16_t source, uint16_t palette_count)
 {
 	uint8_t colour_high = 0, colour_low = 0, control = 0;
-	uint8_t stack = 0;
+	uint8_t count_then_colour_high = 0;
 	uint8_t colours_left_was = 0, palettes_left_was = 0;
 	uint16_t source_at = 0, colour = 0, destination_at = 0;
 
-	stack = palette_count >> 8;
+	count_then_colour_high = palette_count >> 8;
 	control = board_control | 1u;
 	board_control = control;
 	io_write8(board_control_register, control);
 	window_bank = 0x2Du;
 	set_lines(window_bank);
-	palettes_to_load = stack;
+	palettes_to_load = count_then_colour_high;
 	do
 	{
 		palette_colours_left = 0x10u;
@@ -1063,11 +1063,11 @@ uint16_t load_palettes(uint16_t destination, uint16_t source, uint16_t palette_c
 		palettes_left_was = palettes_to_load;
 		palettes_to_load = palettes_left_was - 1u;
 	} while (palettes_left_was != 1u);
-	stack = colour_high;
+	count_then_colour_high = colour_high;
 	control = board_control & ~3u;
 	board_control = control;
 	io_write8(board_control_register, control);
-	palette_count = ((uint32_t)stack << 8) | colour_low;
+	palette_count = ((uint32_t)count_then_colour_high << 8) | colour_low;
 	return palette_count;
 }
 

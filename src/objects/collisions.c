@@ -52,9 +52,9 @@ uint16_t clear_hits(void)
 
 /* Every player and partner in the hit checks against every enemy in them: where their boxes overlap,
    they trade hits. */
-uint16_t collide_players_with_enemies(uint16_t d)
+uint16_t collide_players_with_enemies(uint16_t overlap_word)
 {
-	uint32_t carry = 0;
+	uint32_t overlapping = 0;
 	uint8_t flags = 0;
 	uint16_t last_flags_word = 0, object = 0, object_2 = 0;
 	uint8_t enemy_checks_left = 0, players_left = 0;
@@ -73,12 +73,12 @@ uint16_t collide_players_with_enemies(uint16_t d)
 				flags = OBJECT(object_2)->flags;
 				if ((flags & 0x40u) != 0u)
 				{
-					boxes_overlap(object, object_2, &d, &carry);
-					flags = (uint8_t)(d >> 8);
-					if (carry)
+					boxes_overlap(object, object_2, &overlap_word, &overlapping);
+					flags = (uint8_t)(overlap_word >> 8);
+					if (overlapping)
 					{
 						trade_hits_with_enemy(object, object_2);
-						flags = (uint8_t)(d >> 8);
+						flags = (uint8_t)(overlap_word >> 8);
 					}
 				}
 				object_2 += 0x60u;
@@ -90,15 +90,15 @@ uint16_t collide_players_with_enemies(uint16_t d)
 		players_left = hit_check_players_left;
 		hit_check_players_left = players_left - 1u;
 	} while (players_left != 1u);
-	last_flags_word = (d & 0xFFu) | ((uint32_t)flags << 8);
+	last_flags_word = (overlap_word & 0xFFu) | ((uint32_t)flags << 8);
 	return last_flags_word;
 }
 
 /* Every player in the hit checks against every child object in them: where their boxes overlap, they
    trade hits unless the player is attacking. */
-uint16_t collide_players_with_child_objects(uint16_t d)
+uint16_t collide_players_with_child_objects(uint16_t overlap_word)
 {
-	uint32_t carry = 0;
+	uint32_t overlapping = 0;
 	uint8_t flags = 0;
 	uint16_t last_flags_word = 0, object = 0, object_2 = 0;
 	uint8_t children_left = 0, players_left = 0;
@@ -117,12 +117,12 @@ uint16_t collide_players_with_child_objects(uint16_t d)
 				flags = OBJECT(object_2)->flags;
 				if ((flags & 0x40u) != 0u)
 				{
-					boxes_overlap(object, object_2, &d, &carry);
-					flags = (uint8_t)(d >> 8);
-					if (carry)
+					boxes_overlap(object, object_2, &overlap_word, &overlapping);
+					flags = (uint8_t)(overlap_word >> 8);
+					if (overlapping)
 					{
 						trade_hits_unless_attacking(object, object_2);
-						flags = (uint8_t)(d >> 8);
+						flags = (uint8_t)(overlap_word >> 8);
 					}
 				}
 				object_2 += 0x60u;
@@ -134,15 +134,15 @@ uint16_t collide_players_with_child_objects(uint16_t d)
 		players_left = hit_check_players_left;
 		hit_check_players_left = players_left - 1u;
 	} while (players_left != 1u);
-	last_flags_word = (d & 0xFFu) | ((uint32_t)flags << 8);
+	last_flags_word = (overlap_word & 0xFFu) | ((uint32_t)flags << 8);
 	return last_flags_word;
 }
 
 /* Every player and partner in the hit checks against every object of list 1 in them: where their boxes
    overlap, they trade hits unless the player is attacking. */
-uint16_t collide_players_with_list_1_objects(uint16_t d)
+uint16_t collide_players_with_list_1_objects(uint16_t overlap_word)
 {
-	uint32_t carry = 0;
+	uint32_t overlapping = 0;
 	uint8_t flags = 0;
 	uint16_t last_flags_word = 0, object = 0, object_2 = 0;
 	uint8_t list_1_left = 0, players_left = 0;
@@ -161,12 +161,12 @@ uint16_t collide_players_with_list_1_objects(uint16_t d)
 				flags = OBJECT(object_2)->flags;
 				if ((flags & 0x40u) != 0u)
 				{
-					boxes_overlap(object, object_2, &d, &carry);
-					flags = (uint8_t)(d >> 8);
-					if (carry)
+					boxes_overlap(object, object_2, &overlap_word, &overlapping);
+					flags = (uint8_t)(overlap_word >> 8);
+					if (overlapping)
 					{
 						trade_hits_unless_attacking(object, object_2);
-						flags = (uint8_t)(d >> 8);
+						flags = (uint8_t)(overlap_word >> 8);
 					}
 				}
 				object_2 += 0x60u;
@@ -178,14 +178,14 @@ uint16_t collide_players_with_list_1_objects(uint16_t d)
 		players_left = hit_check_players_left;
 		hit_check_players_left = players_left - 1u;
 	} while (players_left != 1u);
-	last_flags_word = (d & 0xFFu) | ((uint32_t)flags << 8);
+	last_flags_word = (overlap_word & 0xFFu) | ((uint32_t)flags << 8);
 	return last_flags_word;
 }
 
 /* Unused: checks the object's box against list 1's objects, trading hits with each it touches. */
 void unused_collide_with_list_1_objects(uint16_t checked)
 {
-	uint32_t carry = 0;
+	uint32_t overlapping = 0;
 	uint16_t ignored16 = 0, object = 0;
 	uint8_t list_1_left = 0;
 
@@ -197,8 +197,8 @@ void unused_collide_with_list_1_objects(uint16_t checked)
 	{
 		if ((OBJECT(object)->flags & 0x40u) != 0u)
 		{
-			boxes_overlap(checked, object, &ignored16, &carry);
-			if (carry)
+			boxes_overlap(checked, object, &ignored16, &overlapping);
+			if (overlapping)
 				trade_hits_unless_attacking(checked, object);
 		}
 		object += 0x60u;
@@ -351,7 +351,7 @@ void boxes_overlap(uint16_t object, uint16_t other, uint16_t *p_overlap_word, ui
 void collide_players_with_players(uint16_t *p_object, uint16_t *p_last_flags_word)
 {
 	uint16_t last_flags_word = (uint16_t)*p_last_flags_word;
-	uint32_t carry = 0;
+	uint32_t overlapping = 0;
 	uint8_t flags = 0;
 	uint16_t object = 0, object_2 = 0;
 	uint8_t players_left = 0, later_players_left = 0;
@@ -365,8 +365,8 @@ void collide_players_with_players(uint16_t *p_object, uint16_t *p_last_flags_wor
 		{
 			if ((OBJECT(object)->flags & 0x40u) != 0u)
 			{
-				boxes_overlap(object_2, object, &last_flags_word, &carry);
-				if (carry)
+				boxes_overlap(object_2, object, &last_flags_word, &overlapping);
+				if (overlapping)
 					players_touch(object_2, object);
 			}
 			object += 0xC0u;
@@ -383,8 +383,8 @@ void collide_players_with_players(uint16_t *p_object, uint16_t *p_last_flags_wor
 		{
 			if ((OBJECT(object)->flags & 0x40u) != 0u)
 			{
-				boxes_overlap(object_2, object, &last_flags_word, &carry);
-				if (carry)
+				boxes_overlap(object_2, object, &last_flags_word, &overlapping);
+				if (overlapping)
 					players_touch(object_2, object);
 			}
 			object += 0xC0u;
@@ -396,8 +396,8 @@ void collide_players_with_players(uint16_t *p_object, uint16_t *p_last_flags_wor
 	object = OBJECT_ADDRESS(6);
 	if ((OBJECT(OBJECT_ADDRESS(4))->flags & 0x40u) != 0u && (OBJECT(object)->flags & 0x40u) != 0u)
 	{
-		boxes_overlap(object_2, object, &last_flags_word, &carry);
-		if (carry)
+		boxes_overlap(object_2, object, &last_flags_word, &overlapping);
+		if (overlapping)
 			players_touch(object_2, object);
 	}
 	object_2 = OBJECT_ADDRESS(6);
@@ -408,9 +408,9 @@ void collide_players_with_players(uint16_t *p_object, uint16_t *p_last_flags_wor
 		flags = OBJECT(object)->flags;
 		if ((flags & 0x40u) != 0u)
 		{
-			boxes_overlap(object_2, object, &last_flags_word, &carry);
+			boxes_overlap(object_2, object, &last_flags_word, &overlapping);
 			flags = (uint8_t)(last_flags_word >> 8);
-			if (carry)
+			if (overlapping)
 			{
 				players_touch(object_2, object);
 				flags = (uint8_t)(last_flags_word >> 8);

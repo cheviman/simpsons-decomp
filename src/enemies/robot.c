@@ -55,14 +55,14 @@ void robot_piece_wait(uint16_t object)
 /* Pulls the piece down; when it lands it bounces once. */
 void robot_piece_fall(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t landed = 0;
 	uint8_t state = 0;
 	uint16_t z_speed = 0;
 
 	z_speed = OBJECT(object)->z_speed;
 	OBJECT(object)->z_speed = z_speed - 0x40u;
-	carry = vector_check_landing(object);
-	if (carry)
+	landed = vector_check_landing(object);
+	if (landed)
 	{
 		OBJECT(object)->z_speed = 0x200;
 		state = OBJECT(object)->state;
@@ -74,15 +74,15 @@ void robot_piece_fall(uint16_t object)
 /* Pulls the bouncing piece down; when it lands it stops and turns into sparks. */
 void robot_piece_bounce(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t landed = 0;
 	uint8_t state = 0;
 	uint16_t z_speed = 0, falling_z_speed = 0;
 
 	z_speed = OBJECT(object)->z_speed;
 	falling_z_speed = z_speed - 0x30u;
 	OBJECT(object)->z_speed = falling_z_speed;
-	carry = vector_check_landing(object);
-	if (carry == 0u)
+	landed = vector_check_landing(object);
+	if (landed == 0u)
 	{
 		robot_piece_bounce_off_walls(object);
 		return;
@@ -594,7 +594,7 @@ void robot_hit_reaction(uint16_t object)
    it strikes back. */
 void robot_hit_land(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t landed = 0;
 	uint16_t command = 0, ignored16 = 0;
 	uint8_t vitality = 0, action_step = 0;
 	uint16_t hit_box = 0;
@@ -605,8 +605,8 @@ void robot_hit_land(uint16_t object)
 	vector_set_hit_box(object);
 	command = 0x6300u;
 	vector_queue_sound(command);
-	vector_apply_gravity(object, &ignored16, &carry);
-	if (carry == 0u)
+	vector_apply_gravity(object, &ignored16, &landed);
+	if (landed == 0u)
 		return;
 	OBJECT(object)->x_speed = 0;
 	OBJECT(object)->y_speed = 0;
@@ -709,7 +709,7 @@ void robot_explode(uint16_t object)
 /* Puts in the robot's 8 pieces (5280 type 33, states 0-7) with the explosion's sound. */
 void robot_put_in_pieces(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t slot_found = 0;
 	uint16_t child_record = 0, command = 0, ignored16 = 0, ignored16_2 = 0;
 	uint8_t pieces_before = 0;
 
@@ -720,8 +720,8 @@ void robot_put_in_pieces(uint16_t object)
 	do
 	{
 		leftover_y = child_record;
-		vector_spawn_child(object, &child_record, &ignored16, &ignored16_2, &carry);
-		if (carry == 0u)
+		vector_spawn_child(object, &child_record, &ignored16, &ignored16_2, &slot_found);
+		if (slot_found == 0u)
 			break;
 		child_record += 8u;
 		pieces_before = robot_pieces_left;
@@ -747,7 +747,7 @@ void robot_launch_part_start(uint16_t object)
    128 frames. */
 uint16_t robot_launch_part_release(uint16_t object, uint16_t steps)
 {
-	uint32_t carry = 0;
+	uint32_t child_placed = 0;
 	uint16_t child_object = 0, part = 0;
 	uint8_t animation_flags = 0, action_step = 0;
 
@@ -760,7 +760,7 @@ uint16_t robot_launch_part_release(uint16_t object, uint16_t steps)
 	OBJECT(object)->timer = 0x80u;
 	leftover_y = robot_launch_part_release_child_ADDRESS;
 	child_object = robot_launch_part_release_child_ADDRESS;
-	spawn_list_2_child(object, child_object, &part, &carry);
+	spawn_list_2_child(object, child_object, &part, &child_placed);
 	return part;
 }
 

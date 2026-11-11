@@ -13,16 +13,16 @@
 
 /* After waiting A frames, whether a player in the game newly presses attack or jump (carry), which skips
    a story. */
-void check_skip(uint16_t wait, uint16_t *p_presses_addresses, uint32_t *p_carry)
+void check_skip(uint16_t wait, uint16_t *p_presses_addresses, uint32_t *p_skipped)
 {
 	uint16_t presses_addresses = (uint16_t)*p_presses_addresses;
-	uint32_t carry = *p_carry;
+	uint32_t skipped = *p_skipped;
 	uint8_t player_bits = 0;
 
 	if (skip_wait <= wait >> 8)
 	{
 		skip_wait++;
-		carry = 0u;
+		skipped = 0u;
 	}
 	else
 	{
@@ -32,7 +32,7 @@ void check_skip(uint16_t wait, uint16_t *p_presses_addresses, uint32_t *p_carry)
 		{
 			if (skip_player == 4u)
 			{
-				carry = 0u;
+				skipped = 0u;
 				break;
 			}
 			if ((player_bits & 1u) != 0u)
@@ -41,7 +41,7 @@ void check_skip(uint16_t wait, uint16_t *p_presses_addresses, uint32_t *p_carry)
 				if ((mem_read8(player_presses[(int8_t)((uint8_t)((uint32_t)skip_player << 1)) / 2]) & 0x30u) != 0u)
 				{
 					skip_wait = 0u;
-					carry = 1u;
+					skipped = 1u;
 					break;
 				}
 			}
@@ -50,5 +50,5 @@ void check_skip(uint16_t wait, uint16_t *p_presses_addresses, uint32_t *p_carry)
 		}
 	}
 	*p_presses_addresses = presses_addresses;
-	*p_carry = carry;
+	*p_skipped = skipped;
 }

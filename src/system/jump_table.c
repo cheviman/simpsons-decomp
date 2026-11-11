@@ -18,7 +18,7 @@
 uint16_t object_take_special_hit(uint16_t object, uint16_t hitter)
 {
 	uint8_t state = 0;
-	uint8_t stack = 0;
+	uint8_t hitter_player_bits = 0;
 	uint8_t hit = 0, state_2 = 0, kind = 0, kind_2 = 0, behaviour = 0, shadow_player = 0, points = 0, vitality = 0;
 	uint16_t hit_by = 0;
 
@@ -44,9 +44,9 @@ uint16_t object_take_special_hit(uint16_t object, uint16_t hitter)
 		}
 	}
 	shadow_player = OBJECT(hitter)->shadow_player;
-	stack = shadow_player & 0x70u;
+	hitter_player_bits = shadow_player & 0x70u;
 	points = OBJECT(object)->points;
-	OBJECT(object)->points = (points & 0x8Fu) | stack;
+	OBJECT(object)->points = (points & 0x8Fu) | hitter_player_bits;
 	OBJECT(object)->flags = 0x80u;
 	vitality = OBJECT(object)->vitality;
 	if (vitality != 0u)
@@ -134,14 +134,14 @@ void unused_vector_no_op_1(void)
 
 /* Jumps to the routine that takes gravity off the object's z speed and lands it on the floor (carry when
    it lands). */
-void vector_apply_gravity(uint16_t object, uint16_t *p_d, uint32_t *p_carry)
+void vector_apply_gravity(uint16_t object, uint16_t *p_d, uint32_t *p_landed)
 {
-	uint32_t carry = *p_carry;
+	uint32_t landed = *p_landed;
 	uint16_t d = 0;
 
 	*p_d = d;
-	apply_gravity(object, p_d, &carry);
-	*p_carry = carry;
+	apply_gravity(object, p_d, &landed);
+	*p_landed = landed;
 }
 
 /* Jumps to the routine that copies the hit box record at Y into the object's attack and box fields. */
@@ -275,12 +275,12 @@ void unused_vector_enemy_become_goon(uint16_t object)
 void print_bcd_byte(uint16_t place, uint16_t value)
 {
 	uint8_t bcd_byte = 0, high_digit = 0;
-	uint8_t stack = 0;
+	uint8_t saved_bcd_byte = 0;
 	uint8_t high_nibble = 0;
 	uint16_t tile_place = 0;
 
 	bcd_byte = (uint8_t)(value >> 8);
-	stack = bcd_byte;
+	saved_bcd_byte = bcd_byte;
 	high_nibble = (((bcd_byte >> 1) >> 1) >> 1) >> 1;
 	high_digit = high_nibble;
 	if (high_nibble == 0u)
@@ -290,24 +290,24 @@ void print_bcd_byte(uint16_t place, uint16_t value)
 	place = tile_place + 1u;
 	io_write8(tile_place, high_digit);
 	mem_write8(place - 0x2000u, (uint8_t)value);
-	mem_write8(place, stack & 0xFu);
+	mem_write8(place, saved_bcd_byte & 0xFu);
 }
 
 /* Unused: jumps to kind_90_effect. */
-void unused_vector_kind_90_effect(uint16_t object, uint8_t d)
+void unused_vector_kind_90_effect(uint16_t object, uint8_t state)
 {
-	kind_90_effect(object, d);
+	kind_90_effect(object, state);
 }
 
 /* Puts in a kind_90_effect object at the object's place. */
 void spawn_kind_90_effect(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t slot_found = 0;
 	uint16_t ignored16 = 0, ignored16_2 = 0, record = 0;
 
 	leftover_y = kind_90_effect_child_ADDRESS;
 	record = kind_90_effect_child_ADDRESS;
-	spawn_child_object(object, record, &ignored16, &ignored16_2, &carry);
+	spawn_child_object(object, record, &ignored16, &ignored16_2, &slot_found);
 }
 
 /* Jumps to enemy_hurt_become_goon. */
@@ -318,9 +318,9 @@ uint16_t vector_enemy_hurt_become_goon(uint16_t object)
 
 /* Jumps to the plain goon's setup (object_setup_07F1A8, kind 80): facing left, after the nearest player,
    the goon's behaviour and its retarget time. */
-uint16_t vector_goon_setup(uint16_t object)
+void vector_goon_setup(uint16_t object)
 {
-	return enemy_goon_set_up(object);
+	enemy_goon_set_up(object);
 }
 
 /* Runs the enemy's shared hit reaction by field action; then, while work RAM 48B8 is under 0500, sends
@@ -405,7 +405,7 @@ uint16_t clear_child_objects(void)
 {
 	uint8_t clear_value = 0, clear_value_high = 0;
 	uint16_t object_place = 0;
-	uint8_t stack = 0, stack_10002 = 0;
+	uint8_t saved_sprites_high = 0, saved_sprites_low = 0;
 	uint8_t object_words_left_was = 0, objects_left_was = 0;
 	uint16_t kept_sprites = 0, cleared_word_place = 0;
 
@@ -417,8 +417,8 @@ uint16_t clear_child_objects(void)
 		{
 			cleared_object_words_left = 0x30u;
 			kept_sprites = mem_read16(object_place + 0x59u);
-			stack = kept_sprites >> 8;
-			stack_10002 = kept_sprites;
+			saved_sprites_high = kept_sprites >> 8;
+			saved_sprites_low = kept_sprites;
 			clear_value = 0u;
 			clear_value_high = 0u;
 			do
@@ -429,7 +429,7 @@ uint16_t clear_child_objects(void)
 				object_words_left_was = cleared_object_words_left;
 				cleared_object_words_left = object_words_left_was - 1u;
 			} while (object_words_left_was != 1u);
-			mem_write16(object_place - 7u, ((uint32_t)stack << 8) | stack_10002);
+			mem_write16(object_place - 7u, ((uint32_t)saved_sprites_high << 8) | saved_sprites_low);
 		}
 		else
 			object_place += 0x60u;
@@ -517,11 +517,11 @@ void vector_ask_sound_cpu_check(uint16_t *p_x, uint16_t *p_d)
 uint16_t start_sample_rom_check(void)
 {
 	uint16_t command = 0;
-	uint8_t t1 = 0;
+	uint8_t ignored_irq_read = 0;
 
 	command = 0xFE88u;
 	io_write16(sound_command_port, 0xFE88u);
-	t1 = io_read8(sound_irq_port);
+	ignored_irq_read = io_read8(sound_irq_port);
 	return command;
 }
 
@@ -548,17 +548,17 @@ void check_sample_rom_1d(void)
 }
 
 /* Sets Z when the Z80 has answered start_sample_rom_check (88 in 1FC7). */
-void sample_rom_check_answered(uint16_t *p_sample_check_command, uint32_t *p_zero)
+void sample_rom_check_answered(uint16_t *p_sample_check_command, uint32_t *p_answered)
 {
-	uint32_t zero = *p_zero;
+	uint32_t answered = *p_answered;
 	uint16_t sample_check_command = 0;
 	uint8_t sound_echo = 0;
 
 	sound_echo = io_read8(sound_echo_port);
-	zero = (uint8_t)(0x88u - sound_echo) == 0u;
+	answered = (uint8_t)(0x88u - sound_echo) == 0u;
 	sample_check_command = 0x88u;
 	*p_sample_check_command = (*p_sample_check_command & 0xFF00u) | sample_check_command;
-	*p_zero = zero;
+	*p_answered = answered;
 }
 
 /* Unused: does nothing. */
@@ -609,45 +609,45 @@ void vector_measure_target(uint16_t object, uint16_t target)
 /* Unused: jumps to enemy_find_attack_range. */
 void unused_vector_enemy_find_attack_range(uint16_t object, uint16_t range)
 {
-	uint32_t carry = 0;
+	uint32_t in_range = 0;
 	uint16_t ignored16 = 0;
 
-	enemy_find_attack_range(object, &range, &ignored16, &carry);
+	enemy_find_attack_range(object, &range, &ignored16, &in_range);
 }
 
 /* Jumps to the routine that puts in a child object by the record at Y, at an offset from the object at
    X. */
-void vector_spawn_child(uint16_t object, uint16_t *p_y, uint16_t *p_u, uint16_t *p_d, uint32_t *p_carry)
+void vector_spawn_child(uint16_t object, uint16_t *p_y, uint16_t *p_u, uint16_t *p_d, uint32_t *p_slot_found)
 {
-	uint32_t carry = *p_carry;
+	uint32_t slot_found = *p_slot_found;
 	uint16_t d = 0, record = 0, u = 0;
 
 	record = (uint16_t)leftover_y;
 	*p_u = u;
 	*p_d = d;
-	spawn_child_object(object, record, p_u, p_d, &carry);
+	spawn_child_object(object, record, p_u, p_d, &slot_found);
 	*p_y = record;
-	*p_carry = carry;
+	*p_slot_found = slot_found;
 }
 
 /* Puts in an object of list 2 (4D40) with the type of the record at Y (its byte 5), at the record's
    offset from the object at X; carry when there was a free slot. */
-void spawn_list_2_child(uint16_t object, uint16_t child_object, uint16_t *p_child, uint32_t *p_carry)
+void spawn_list_2_child(uint16_t object, uint16_t child_object, uint16_t *p_child, uint32_t *p_child_placed)
 {
-	uint32_t carry = *p_carry;
+	uint32_t child_placed = *p_child_placed;
 	uint16_t child = 0, ignored16 = 0, list_number = 0;
 	uint8_t list = 0;
 
 	list_number = 2u;
-	take_free_object(&child, &list_number, &carry);
-	if (carry)
+	take_free_object(&child, &list_number, &child_placed);
+	if (child_placed)
 	{
 		list = CHILD_OBJECT(child_object)->list;
 		OBJECT(child)->type = list;
-		place_child_object(object, child_object, child, &ignored16, &carry);
+		place_child_object(object, child_object, child, &ignored16, &child_placed);
 	}
 	*p_child = child;
-	*p_carry = carry;
+	*p_child_placed = child_placed;
 }
 
 /* The floor map's cell at the object's place moved by the 8.8 offsets in work RAM 48F8 (across) and 48FA
@@ -664,25 +664,25 @@ uint16_t floor_at_scratch_offset(uint16_t object)
 }
 
 /* Jumps to floor_at_offset. */
-void vector_floor_at_offset(uint16_t object, uint16_t *p_offsets, uint32_t *p_negative)
+void vector_floor_at_offset(uint16_t object, uint16_t *p_offsets, uint32_t *p_no_floor)
 {
 	uint16_t offsets = (uint16_t)*p_offsets;
-	uint32_t negative = *p_negative;
+	uint32_t no_floor = *p_no_floor;
 
 	*p_offsets = offsets;
-	floor_at_offset(object, p_offsets, &negative);
-	*p_negative = negative;
+	floor_at_offset(object, p_offsets, &no_floor);
+	*p_no_floor = no_floor;
 }
 
 /* Jumps to floor_ahead. */
-void vector_floor_ahead(uint16_t object, uint16_t *p_d, uint32_t *p_negative)
+void vector_floor_ahead(uint16_t object, uint16_t *p_d, uint32_t *p_no_floor)
 {
-	uint32_t negative = *p_negative;
+	uint32_t no_floor = *p_no_floor;
 	uint16_t d = 0;
 
 	*p_d = d;
-	floor_ahead(object, p_d, &negative);
-	*p_negative = negative;
+	floor_ahead(object, p_d, &no_floor);
+	*p_no_floor = no_floor;
 }
 
 /* Unused: jumps to enemy_start_climbing. */
@@ -692,25 +692,25 @@ void unused_vector_enemy_start_climbing(uint16_t object)
 }
 
 /* Jumps to floor_ahead_x. */
-void vector_floor_ahead_x(uint16_t object, uint16_t *p_d, uint32_t *p_negative)
+void vector_floor_ahead_x(uint16_t object, uint16_t *p_d, uint32_t *p_no_floor)
 {
-	uint32_t negative = *p_negative;
+	uint32_t no_floor = *p_no_floor;
 	uint16_t d = 0;
 
 	*p_d = d;
-	floor_ahead_x(object, p_d, &negative);
-	*p_negative = negative;
+	floor_ahead_x(object, p_d, &no_floor);
+	*p_no_floor = no_floor;
 }
 
 /* Jumps to floor_ahead_y. */
-void vector_floor_ahead_y(uint16_t object, uint16_t *p_d, uint32_t *p_negative)
+void vector_floor_ahead_y(uint16_t object, uint16_t *p_d, uint32_t *p_no_floor)
 {
-	uint32_t negative = *p_negative;
+	uint32_t no_floor = *p_no_floor;
 	uint16_t d = 0;
 
 	*p_d = d;
-	floor_ahead_y(object, p_d, &negative);
-	*p_negative = negative;
+	floor_ahead_y(object, p_d, &no_floor);
+	*p_no_floor = no_floor;
 }
 
 /* Turns the object's flags 80 (shown) and 04 over: called each frame, it blinks. */
@@ -743,25 +743,25 @@ void unused_take_floor_height_and_priority(uint16_t object)
 /* The floor map's cell under the object: its address in U and its value in A. */
 void floor_cell_under(uint16_t object, uint16_t *p_u, uint16_t *p_d)
 {
-	uint32_t negative = 0;
+	uint32_t no_floor = 0;
 	uint16_t d = 0, u = 0;
 
 	floor_offset_x = 0;
 	floor_offset_y = 0;
 	*p_u = u;
 	*p_d = d;
-	floor_cell_at(object, p_u, p_d, &negative);
+	floor_cell_at(object, p_u, p_d, &no_floor);
 }
 
 /* Jumps to check_skip. */
-void vector_check_skip(uint16_t wait, uint16_t *p_presses_addresses, uint32_t *p_carry)
+void vector_check_skip(uint16_t wait, uint16_t *p_presses_addresses, uint32_t *p_skipped)
 {
 	uint16_t presses_addresses = (uint16_t)*p_presses_addresses;
-	uint32_t carry = *p_carry;
+	uint32_t skipped = *p_skipped;
 
 	*p_presses_addresses = presses_addresses;
-	check_skip(wait, p_presses_addresses, &carry);
-	*p_carry = carry;
+	check_skip(wait, p_presses_addresses, &skipped);
+	*p_skipped = skipped;
 }
 
 /* Jumps to queue_job. */
@@ -831,9 +831,9 @@ void unused_vector_take_floor_priority(uint16_t object)
 
 /* Jumps to the routine that sets the object's x and y speeds from a direction (A) at the walk's speed
    (sines_20). */
-uint16_t vector_set_walk_speed_by_direction(uint16_t object, uint16_t u, uint16_t heading)
+void vector_set_walk_speed_by_direction(uint16_t object, uint16_t heading)
 {
-	return set_walk_speeds_from_direction(object, u, heading);
+	set_walk_speeds_from_direction(object, 0u, heading);
 }
 
 /* Unused: does nothing. */
@@ -887,14 +887,14 @@ void unused_vector_collide_with_list_1_objects(uint16_t object)
 }
 
 /* Jumps to the routine that finds and clears a free object of the list in B (carry and U when found). */
-void vector_find_free_slot(uint16_t list_number, uint16_t *p_u, uint32_t *p_carry)
+void vector_find_free_slot(uint16_t list_number, uint16_t *p_u, uint32_t *p_slot_found)
 {
-	uint32_t carry = *p_carry;
+	uint32_t slot_found = *p_slot_found;
 	uint16_t u = 0;
 
 	*p_u = u;
-	take_free_object(p_u, &list_number, &carry);
-	*p_carry = carry;
+	take_free_object(p_u, &list_number, &slot_found);
+	*p_slot_found = slot_found;
 }
 
 /* Jumps to queue_sound. */
@@ -925,21 +925,21 @@ uint32_t remove_off_screen(uint16_t object, uint32_t carry)
 
 /* Finds the nearest player in play to the object (U, and A the distance's high byte; carry when one was
    found). */
-void find_nearest_player(uint16_t object, uint16_t *p_nearest, uint16_t *p_nearest_result, uint32_t *p_carry)
+void find_nearest_player(uint16_t object, uint16_t *p_nearest, uint16_t *p_nearest_result, uint32_t *p_player_found)
 {
 	uint16_t nearest = (uint16_t)*p_nearest;
 	uint16_t nearest_result = (uint16_t)*p_nearest_result;
-	uint32_t carry = *p_carry;
+	uint32_t player_found = *p_player_found;
 	uint16_t distance = 0, object_2 = 0, x_distance = 0;
-	uint8_t stack = 0;
-	uint16_t stack_3 = 0;
+	uint8_t players_to_check = 0;
+	uint16_t kept_x_distance = 0;
 	uint8_t present_count = 0, state = 0, players_left_was = 0;
 	uint16_t own_x = 0, player_x = 0, x_difference = 0, own_y = 0, player_y = 0, y_difference = 0, nearest_found = 0;
 
 	present_count = io_read8(stage_player_count);
 	if (present_count != 0u)
 	{
-		stack = 4u;
+		players_to_check = 4u;
 		object_2 = OBJECT_ADDRESS(0);
 		distance = 0x7FFFu;
 		nearest_player_distance = 0x7FFFu;
@@ -956,14 +956,14 @@ void find_nearest_player(uint16_t object, uint16_t *p_nearest, uint16_t *p_neare
 					x_distance = x_difference;
 					if ((int16_t)x_difference < 0)
 						x_distance = 0u - x_distance;
-					stack_3 = x_distance;
+					kept_x_distance = x_distance;
 					own_y = OBJECT(object)->y;
 					player_y = OBJECT(object_2)->y;
 					y_difference = own_y - player_y;
 					distance = y_difference;
 					if ((int16_t)y_difference < 0)
 						distance = 0u - distance;
-					distance += stack_3;
+					distance += kept_x_distance;
 					if (distance < nearest_player_distance)
 					{
 						nearest_player_distance = distance;
@@ -972,22 +972,22 @@ void find_nearest_player(uint16_t object, uint16_t *p_nearest, uint16_t *p_neare
 				}
 			}
 			object_2 += 0xC0u;
-			players_left_was = stack;
-			stack = players_left_was - 1u;
+			players_left_was = players_to_check;
+			players_to_check = players_left_was - 1u;
 		} while (players_left_was != 1u);
 		nearest_found = io_read16(nearest_player_found);
 		nearest = nearest_found;
 		nearest_result = (distance & 0xFFu) | ((uint32_t)nearest_player_distance_high << 8);
-		carry = nearest_result >> 8 < 0x7Fu;
+		player_found = nearest_result >> 8 < 0x7Fu;
 	}
 	else
 	{
-		carry = 0u;
+		player_found = 0u;
 		nearest_result &= 0xFFu;
 	}
 	*p_nearest = nearest;
 	*p_nearest_result = nearest_result;
-	*p_carry = carry;
+	*p_player_found = player_found;
 }
 
 /* Jumps to queue_sound_unless_attract. */
@@ -1055,9 +1055,9 @@ void vector_insert_high_score(uint16_t place)
 /* Jumps to high_score_rank. */
 uint16_t vector_high_score_rank(uint16_t score)
 {
-	uint32_t carry = 0;
+	uint32_t in_high_scores = 0;
 
-	high_score_rank(&score, &carry);
+	high_score_rank(&score, &in_high_scores);
 	return score;
 }
 
@@ -1065,12 +1065,12 @@ uint16_t vector_high_score_rank(uint16_t score)
 void print_bcd_word(uint16_t place, uint16_t value)
 {
 	uint8_t digit = 0, digit_2 = 0, digit_3 = 0, high_byte = 0, low_byte = 0;
-	uint8_t stack = 0, stack_2 = 0;
+	uint8_t high_digits = 0, low_digits = 0;
 	uint8_t nibble = 0, nibble_2 = 0, nibble_3 = 0;
 	uint16_t tile_place = 0, tile_place_2 = 0, tile_place_3 = 0;
 
 	high_byte = (uint8_t)(value >> 8);
-	stack = high_byte;
+	high_digits = high_byte;
 	nibble = (((high_byte >> 1) >> 1) >> 1) >> 1;
 	digit = nibble;
 	if (nibble == 0u)
@@ -1079,7 +1079,7 @@ void print_bcd_word(uint16_t place, uint16_t value)
 	tile_place = place;
 	place = tile_place + 1u;
 	mem_write8(tile_place, digit);
-	nibble_2 = stack & 0xFu;
+	nibble_2 = high_digits & 0xFu;
 	digit_2 = nibble_2;
 	if (nibble_2 == 0u)
 		digit_2 = 0x10u;
@@ -1088,28 +1088,28 @@ void print_bcd_word(uint16_t place, uint16_t value)
 	place = tile_place_2 + 1u;
 	mem_write8(tile_place_2, digit_2);
 	low_byte = (uint8_t)value;
-	stack_2 = low_byte;
+	low_digits = low_byte;
 	nibble_3 = (((low_byte >> 1) >> 1) >> 1) >> 1;
 	digit_3 = nibble_3;
-	if (nibble_3 == 0u && stack == 0u)
+	if (nibble_3 == 0u && high_digits == 0u)
 		digit_3 = 0x10u;
 	mem_write8(place - 0x2000u, 0u);
 	tile_place_3 = place;
 	place = tile_place_3 + 1u;
 	mem_write8(tile_place_3, digit_3);
 	mem_write8(place - 0x2000u, 0u);
-	mem_write8(place, stack_2 & 0xFu);
+	mem_write8(place, low_digits & 0xFu);
 }
 
 /* Jumps to the routine that finds a free object in the list bits 2-3 of B name (a spawn record's flags). */
-void vector_find_free_slot_by_flags(uint8_t spawn_flags, uint16_t *p_u, uint32_t *p_carry)
+void vector_find_free_slot_by_flags(uint8_t spawn_flags, uint16_t *p_u, uint32_t *p_slot_found)
 {
-	uint32_t carry = *p_carry;
+	uint32_t slot_found = *p_slot_found;
 	uint16_t u = 0;
 
 	*p_u = u;
-	take_free_object_for_spawn(spawn_flags, p_u, &carry);
-	*p_carry = carry;
+	take_free_object_for_spawn(spawn_flags, p_u, &slot_found);
+	*p_slot_found = slot_found;
 }
 
 /* Jumps to the routine that draws B strips of 8 pixels of the layer A names, from its scroll on. */
@@ -1134,12 +1134,12 @@ void reserve_objects_for_sprites(uint16_t object, uint16_t object_count)
 {
 	uint8_t control = 0, order = 0, reserve_count = 0;
 	uint16_t sprite_place = 0;
-	uint8_t stack = 0, stack_2 = 0;
+	uint8_t objects_left = 0, sprites_left = 0;
 	uint8_t sprites_left_was = 0, objects_left_was = 0;
 	uint16_t sprites = 0;
 
 	reserve_count = (uint8_t)(object_count >> 8);
-	stack = reserve_count;
+	objects_left = reserve_count;
 	control = board_control | 2u;
 	board_control = control;
 	io_write8(board_control_register, control);
@@ -1148,19 +1148,19 @@ void reserve_objects_for_sprites(uint16_t object, uint16_t object_count)
 	{
 		sprites = OBJECT(object)->sprites;
 		sprite_place = sprites;
-		stack_2 = 8u;
+		sprites_left = 8u;
 		do
 		{
 			OBJECT(object)->flags = 1u;
 			SPRITE_ENTRY(sprite_place)->depth = order;
 			sprite_place += 0x10u;
 			order--;
-			sprites_left_was = stack_2;
-			stack_2 = sprites_left_was - 1u;
+			sprites_left_was = sprites_left;
+			sprites_left = sprites_left_was - 1u;
 		} while (sprites_left_was != 1u);
 		object += 0x60u;
-		objects_left_was = stack;
-		stack = objects_left_was - 1u;
+		objects_left_was = objects_left;
+		objects_left = objects_left_was - 1u;
 	} while (objects_left_was != 1u);
 	control = board_control & ~3u;
 	board_control = control;
@@ -1228,7 +1228,7 @@ void vector_play_scene_music(void)
 void boss_shade_by_vitality(uint16_t object, uint16_t step_and_row)
 {
 	uint8_t effect_row = 0, shade_level = 0, threshold = 0, vitality_step = 0;
-	uint16_t palette_job = 0, request = 0, shade_job = 0, y = 0;
+	uint16_t hurt_row = 0, palette_job = 0, request = 0, shade_job = 0;
 	uint8_t vitality = 0, shade_level_2 = 0, vitality_2 = 0, full_vitality = 0, vitality_3 = 0;
 	uint16_t shade_job_2 = 0, normal = 0, shade_job_3 = 0, normal_2 = 0;
 
@@ -1249,9 +1249,9 @@ void boss_shade_by_vitality(uint16_t object, uint16_t step_and_row)
 			{
 				OBJECT(object)->boss_shade.shade_level = shade_level;
 				palette_request_kind = 8u;
-				y = hurt_effect_rows[(int8_t)((uint8_t)((uint32_t)shade_effect_row << 1)) / 2];
-				leftover_y = y;
-				normal = HURT_EFFECT_ROW(y + (int8_t)((uint32_t)shade_new_level << 1))->normal;
+				hurt_row = hurt_effect_rows[(int8_t)((uint8_t)((uint32_t)shade_effect_row << 1)) / 2];
+				leftover_y = hurt_row;
+				normal = HURT_EFFECT_ROW(hurt_row + (int8_t)((uint32_t)shade_new_level << 1))->normal;
 				request = normal;
 				palette_request(palette_job, request);
 			}
@@ -1293,9 +1293,9 @@ void boss_shade_by_vitality(uint16_t object, uint16_t step_and_row)
 	{
 		OBJECT(object)->boss_shade.shade_level = shade_level;
 		palette_request_kind = 8u;
-		y = hurt_effect_rows[(int8_t)((uint8_t)((uint32_t)shade_effect_row << 1)) / 2];
-		leftover_y = y;
-		normal = HURT_EFFECT_ROW(y + (int8_t)((uint32_t)shade_new_level << 1))->normal;
+		hurt_row = hurt_effect_rows[(int8_t)((uint8_t)((uint32_t)shade_effect_row << 1)) / 2];
+		leftover_y = hurt_row;
+		normal = HURT_EFFECT_ROW(hurt_row + (int8_t)((uint32_t)shade_new_level << 1))->normal;
 		request = normal;
 		palette_request(palette_job, request);
 	}

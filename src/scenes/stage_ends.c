@@ -1503,13 +1503,13 @@ uint16_t stage_7_scene(uint16_t u)
    after 128 frames a player's button skips it. */
 uint16_t stage_7_end(uint16_t u)
 {
-	uint32_t carry = 0;
+	uint32_t skipped = 0;
 	uint16_t ignored16 = 0, scene_steps = 0, u_2 = 0, wait = 0;
 	uint8_t scene_step = 0;
 
 	wait = 0x8000u;
-	vector_check_skip(wait, &ignored16, &carry);
-	if (carry)
+	vector_check_skip(wait, &ignored16, &skipped);
+	if (skipped)
 	{
 		vector_clear_objects(&ignored16, &u_2);
 		scene_running = 0u;
@@ -2094,13 +2094,13 @@ void dream_wave_draw(void)
    frames a player's button skips it. */
 void stage_8_start(uint16_t u)
 {
-	uint32_t carry = 0;
+	uint32_t skipped = 0;
 	uint16_t ignored16 = 0, ignored16_2 = 0, scene_steps = 0, wait = 0;
 	uint8_t scene_step = 0;
 
 	wait = 0x8000u;
-	vector_check_skip(wait, &ignored16, &carry);
-	if (carry)
+	vector_check_skip(wait, &ignored16, &skipped);
+	if (skipped)
 	{
 		stage_8_start_finish(&ignored16, &ignored16_2);
 		return;
@@ -2644,14 +2644,14 @@ void stage_6_end(uint16_t u)
    fades away; after 96 frames a player's button skips it. */
 void stage_6_wake(uint16_t u)
 {
-	uint32_t carry = 0;
+	uint32_t skipped = 0;
 	uint16_t delay = 0, ignored16 = 0, ignored16_2 = 0, scene_steps = 0, wait = 0;
 	uint8_t scene_step = 0;
 	uint16_t delay_left = 0;
 
 	wait = 0x6000u;
-	vector_check_skip(wait, &ignored16, &carry);
-	if (carry)
+	vector_check_skip(wait, &ignored16, &skipped);
+	if (skipped)
 	{
 		scene_running = 0u;
 		delay = 0x2000u;
@@ -3112,12 +3112,11 @@ void stage_2_end_set_up(uint16_t *p_default_object, uint16_t *p_u)
 	io_write8(colour_bases_layers_a_b, 0x2Cu);
 	record_number = 0xD26u;
 	jumper = scene_put_placement(default_object, record_number);
-	leftover_y = jumper;
-	OBJECT(leftover_y)->zoom_x = 0x30u;
-	OBJECT(leftover_y)->zoom_y = 0x30u;
-	OBJECT(leftover_y)->parameter = 4u;
-	OBJECT(leftover_y)->stage_end_jumper.jumper_player = 4u;
-	OBJECT(leftover_y)->stage_end_jumper.jump_wait = 1u;
+	OBJECT(jumper)->zoom_x = 0x30u;
+	OBJECT(jumper)->zoom_y = 0x30u;
+	OBJECT(jumper)->parameter = 4u;
+	OBJECT(jumper)->stage_end_jumper.jumper_player = 4u;
+	OBJECT(jumper)->stage_end_jumper.jump_wait = 1u;
 	old_scene_state = io_read8(scene_state);
 	io_write8(scene_state, old_scene_state + 1u);
 	*p_default_object = default_object;
@@ -3385,14 +3384,13 @@ uint16_t stage_end_put_jumpers(uint16_t x)
 		{
 			record_number = (uint32_t)scene_player << 8;
 			jumper = scene_put_placement(x, record_number);
-			leftover_y = jumper;
-			OBJECT(leftover_y)->stage_end_jumper.jumper_player = scene_player;
-			OBJECT(leftover_y)->zoom_x = 0x30u;
-			OBJECT(leftover_y)->zoom_y = 0x30u;
+			OBJECT(jumper)->stage_end_jumper.jumper_player = scene_player;
+			OBJECT(jumper)->zoom_x = 0x30u;
+			OBJECT(jumper)->zoom_y = 0x30u;
 			x = stage_end_exit_waits_ADDRESS;
 			jumper_number = jumper_order;
-			OBJECT(leftover_y)->parameter = jumper_number;
-			OBJECT(leftover_y)->stage_end_jumper.jump_wait = (uint8_t)(EXIT_SPEED(stage_end_exit_speeds_ADDRESS + (int8_t)jumper_number - 0x4u)->x_speed >> 8u);
+			OBJECT(jumper)->parameter = jumper_number;
+			OBJECT(jumper)->stage_end_jumper.jump_wait = (uint8_t)(EXIT_SPEED(stage_end_exit_speeds_ADDRESS + (int8_t)jumper_number - 0x4u)->x_speed >> 8u);
 			jumper_order++;
 		}
 		scene_player_bit = (uint32_t)scene_player_bit << 1;
@@ -3410,7 +3408,7 @@ uint16_t stage_end_put_jumpers(uint16_t x)
 void stage_end_run_jumpers(uint16_t *p_object, uint16_t *p_steps)
 {
 	uint16_t object = 0, steps = 0;
-	uint8_t stack = 0;
+	uint8_t jumpers_to_run = 0;
 	uint8_t old_scene_state = 0, discarded_read = 0, type = 0, jumpers_left = 0;
 	uint16_t jumpers_wait = 0;
 
@@ -3428,7 +3426,7 @@ void stage_end_run_jumpers(uint16_t *p_object, uint16_t *p_steps)
 	else
 	{
 		object = OBJECT_ADDRESS(8);
-		stack = 5u;
+		jumpers_to_run = 5u;
 		do
 		{
 			steps = stage_end_jumper_steps_ADDRESS;
@@ -3671,8 +3669,8 @@ void stage_end_run_jumpers(uint16_t *p_object, uint16_t *p_steps)
 				}
 			}
 			object += 0x60u;
-			jumpers_left = stack;
-			stack = jumpers_left - 1u;
+			jumpers_left = jumpers_to_run;
+			jumpers_to_run = jumpers_left - 1u;
 		} while (jumpers_left != 1u);
 	}
 	*p_object = object;
@@ -3830,7 +3828,7 @@ void stage_2_end_show_area_3(uint16_t *p_x, uint16_t *p_u)
 /* Stage 2's closing scene: puts the players, each with its voice. */
 void stage_2_end_put_players(uint16_t default_object)
 {
-	uint16_t record_number = 0, shout_command = 0, y = 0;
+	uint16_t record_number = 0, shout_command = 0;
 	uint8_t old_scene_state = 0;
 	uint16_t shout = 0;
 
@@ -3841,8 +3839,7 @@ void stage_2_end_put_players(uint16_t default_object)
 		if ((players_present & scene_player_bit) != 0u)
 		{
 			record_number = (shout_command & 0xFFu) | ((uint32_t)(uint8_t)(scene_player + 4u) << 8);
-			y = scene_put_placement(default_object, record_number);
-			leftover_y = y;
+			scene_put_placement(default_object, record_number);
 			shout = scene_player + 0x3F28u;
 			shout_command = shout;
 			vector_queue_sound(shout_command);
@@ -3862,7 +3859,7 @@ void stage_2_end_players_look_around(uint16_t *p_object, uint16_t *p_palette_job
 	uint16_t object = (uint16_t)*p_object;
 	uint16_t palette_job = (uint16_t)*p_palette_job;
 	uint16_t request = 0;
-	uint16_t stack = 0;
+	uint16_t object_as_number = 0;
 	uint8_t old_scene_state = 0;
 	uint16_t look_wait = 0, layer_a_y = 0, new_layer_a_y = 0;
 
@@ -3894,8 +3891,8 @@ void stage_2_end_players_look_around(uint16_t *p_object, uint16_t *p_palette_job
 		{
 			if ((players_present & scene_player_bit) != 0u)
 			{
-				stack = object;
-				if (((stack + (uint8_t)frame_count) & 0x40u) == 0u)
+				object_as_number = object;
+				if (((object_as_number + (uint8_t)frame_count) & 0x40u) == 0u)
 					OBJECT(object)->x_speed = -0x80;
 				else
 					OBJECT(object)->x_speed = 0x80;
@@ -3926,7 +3923,7 @@ void stage_5_end_set_up(uint16_t *p_default_object, uint16_t *p_u)
 {
 	uint16_t default_object = (uint16_t)*p_default_object;
 	uint16_t u = (uint16_t)*p_u;
-	uint16_t command = 0, ignored16 = 0, ignored16_2 = 0, layer_and_columns = 0, object = 0, record_number = 0, request = 0, u_2 = 0;
+	uint16_t command = 0, ignored16 = 0, ignored16_2 = 0, layer_and_columns = 0, record_number = 0, request = 0, u_2 = 0;
 	uint8_t old_scene_state = 0;
 
 	if (layer_clear_pending != 0u)
@@ -3955,8 +3952,7 @@ void stage_5_end_set_up(uint16_t *p_default_object, uint16_t *p_u)
 	io_write8(colour_bases_back_sprites_fixed, 0x13u);
 	io_write8(colour_bases_layers_a_b, 0x2Cu);
 	record_number = 0x826u;
-	object = scene_put_placement(default_object, record_number);
-	leftover_y = object;
+	scene_put_placement(default_object, record_number);
 	old_scene_state = io_read8(scene_state);
 	io_write8(scene_state, old_scene_state + 1u);
 	*p_default_object = default_object;
@@ -4014,8 +4010,7 @@ void stage_end_show_players(uint16_t *p_default_object, uint16_t *p_u)
 		{
 			layer_then_player = (layer_then_player & 0xFFu) | ((uint32_t)(uint8_t)(shown_player + 9u) << 8);
 			object = scene_put_placement(default_object, layer_then_player);
-			leftover_y = object;
-			OBJECT(leftover_y)->attributes = 0x20u;
+			OBJECT(object)->attributes = 0x20u;
 		}
 		else
 		{
@@ -4154,7 +4149,6 @@ void stage_6_end_finish(uint16_t *p_clear_to, uint16_t *p_count)
 	effect_job = io_read16(scene_palette_effect);
 	mem_write8(effect_job, 0u);
 	clear_from = scene_state;
-	leftover_y = scene_state;
 	clear_to = scene_substate;
 	io_write8(scene_state, 0u);
 	count = 0x1Fu;
@@ -4162,7 +4156,6 @@ void stage_6_end_finish(uint16_t *p_clear_to, uint16_t *p_count)
 	{
 		mem_write8(clear_to, mem_read8(clear_from));
 		clear_from++;
-		leftover_y = clear_from;
 		clear_to++;
 		count--;
 	}

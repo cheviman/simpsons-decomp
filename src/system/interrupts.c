@@ -17,7 +17,7 @@
    game) and updates the sprites for the DMA. */
 void irq_handler(void)
 {
-	uint32_t carry = 0;
+	uint32_t coin_dropped = 0;
 	uint8_t b = 0, control = 0, d = 0, output = 0, scroll_x_high = 0, sprite_control = 0;
 	uint16_t coin_bit = 0, controls = 0, controls_port = 0, port = 0, queue_place = 0, request = 0, slot = 0;
 	uint8_t saved_board_control = 0;
@@ -86,16 +86,16 @@ void irq_handler(void)
 			}
 		}
 		coin_bit = 0x100u;
-		coin_inserted(&coin_bit, &carry);
-		if (carry)
+		coin_inserted(&coin_bit, &coin_dropped);
+		if (coin_dropped)
 		{
 			slot = slot_credits_ADDRESS;
 			add_coin(slot, (uint8_t)coin_bit);
 		}
 		coin_bit = 0x200u;
-		coin_inserted(&coin_bit, &carry);
+		coin_inserted(&coin_bit, &coin_dropped);
 		b = (uint8_t)coin_bit;
-		if (carry)
+		if (coin_dropped)
 		{
 			slot = slot_2_credits_ADDRESS;
 			coin_bit = add_coin(slot, (uint8_t)coin_bit);
@@ -104,16 +104,16 @@ void irq_handler(void)
 		if (four_coin_slots != 0u)
 		{
 			coin_bit = 0x400u;
-			coin_inserted(&coin_bit, &carry);
-			if (carry)
+			coin_inserted(&coin_bit, &coin_dropped);
+			if (coin_dropped)
 			{
 				slot = slot_3_credits_ADDRESS;
 				add_coin(slot, (uint8_t)coin_bit);
 			}
 			coin_bit = 0x800u;
-			coin_inserted(&coin_bit, &carry);
+			coin_inserted(&coin_bit, &coin_dropped);
 			b = (uint8_t)coin_bit;
-			if (carry)
+			if (coin_dropped)
 			{
 				slot = slot_4_credits_ADDRESS;
 				coin_bit = add_coin(slot, (uint8_t)coin_bit);
@@ -297,12 +297,12 @@ void test_mode_start(void)
 void test_mode_run(uint8_t d)
 {
 	uint8_t d_2 = 0;
-	uint8_t stack = 0;
+	uint8_t saved_b = 0;
 
-	stack = d;
+	saved_b = d;
 	window_bank = 0x2Fu;
 	set_lines(window_bank);
-	d_2 = stack;
+	d_2 = saved_b;
 	test_run_page(d_2);
 }
 

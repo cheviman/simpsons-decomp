@@ -11,6 +11,43 @@
  */
 #include "game.h"
 
+/* Runs one of stage 7's boss' four helpers by its state: waits, moves as the boss says, or throws. */
+uint16_t stage_7_boss_helper_update(uint16_t object)
+{
+	uint16_t helper_states = 0;
+	uint8_t state = 0;
+
+	helper_states = stage_7_boss_helper_states_ADDRESS;
+	state = OBJECT(object)->state;
+	switch ((int8_t)(uint8_t)((uint32_t)state << 1))
+	{
+	case 0:
+		stage_7_boss_helper_idle();
+		return helper_states;
+	case 2:
+	case 4:
+	case 6:
+	case 8:
+	case 10:
+	case 12:
+		return stage_7_boss_helper_move(object);
+	case 14:
+		return stage_7_boss_helper_attack(object);
+	case 16:
+		return stage_7_boss_helper_start_move(object);
+	case 18:
+		stage_7_boss_helper_moving(object);
+		return helper_states;
+	case 20:
+		stage_7_boss_helper_throw_start(object);
+		return helper_states;
+	case 22:
+		stage_7_boss_helper_throw_end(object);
+		return helper_states;
+	}
+	unreachable();
+}
+
 /* Stage 7's boss' helper waiting (state 0): does nothing. */
 void stage_7_boss_helper_idle(void)
 {

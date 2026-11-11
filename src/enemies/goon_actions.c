@@ -1962,11 +1962,11 @@ void goon_jump_attack_land(uint16_t object)
 /* Takes the new z speed and moves; on the floor, animation A8 and done. */
 void goon_jump_attack_settle(uint16_t object, uint16_t z_speed)
 {
-	uint32_t carry = 0;
+	uint32_t landed = 0;
 
 	OBJECT(object)->z_speed = z_speed;
-	carry = vector_check_landing(object);
-	if (carry == 0u)
+	landed = vector_check_landing(object);
+	if (landed == 0u)
 		return;
 	OBJECT(object)->animation = 0xA8u;
 	OBJECT(object)->state = 2u;
@@ -2040,7 +2040,7 @@ uint16_t goon_grab_try(uint16_t object)
 {
 	uint8_t angle = 0, floor_high = 0, floor_low = 0;
 	uint16_t direction = 0, heading = 0, target_player = 0;
-	uint8_t stack = 0;
+	uint8_t target_player_bits = 0;
 	uint8_t state = 0, timer = 0, blink_frames = 0, hold_presses = 0, attributes = 0, attributes_2 = 0, shadow_player = 0, points = 0, shadow_player_2 = 0, action_step = 0;
 	uint16_t target = 0, hit_by = 0, target_dx = 0, target_dy = 0, floor_z = 0, z = 0, floor_z_2 = 0, player_x = 0, player_y = 0;
 
@@ -2232,9 +2232,9 @@ uint16_t goon_grab_try(uint16_t object)
 	attributes_2 = OBJECT(object)->attributes;
 	OBJECT(object)->attributes = (attributes_2 & 0xBFu) | grab_facing;
 	shadow_player = OBJECT(target_player)->shadow_player;
-	stack = shadow_player & 0x70u;
+	target_player_bits = shadow_player & 0x70u;
 	points = OBJECT(object)->points;
-	OBJECT(object)->points = (points & 0x8Fu) | stack;
+	OBJECT(object)->points = (points & 0x8Fu) | target_player_bits;
 	shadow_player_2 = OBJECT(target_player)->shadow_player;
 	OBJECT(object)->animation = goon_hold_animations[(((shadow_player_2 >> 1) >> 1) >> 1) >> 1] | 0x80u;
 	action_step = OBJECT(object)->action_step;
@@ -2325,7 +2325,7 @@ void bomb_goon_throw_start(uint16_t object)
 /* Action 1B, step 1: at the animation's event throws a bomb forward. */
 uint16_t bomb_goon_throw_release(uint16_t object, uint16_t bomb)
 {
-	uint32_t carry = 0;
+	uint32_t child_placed = 0;
 	uint16_t child_object = 0;
 	uint8_t animation_flags = 0, action_step = 0, attributes = 0;
 	uint16_t x_speed = 0;
@@ -2337,8 +2337,8 @@ uint16_t bomb_goon_throw_release(uint16_t object, uint16_t bomb)
 	OBJECT(object)->action_step = action_step + 1u;
 	leftover_y = bomb_goon_throw_release_child_ADDRESS;
 	child_object = bomb_goon_throw_release_child_ADDRESS;
-	spawn_list_2_child(object, child_object, &bomb, &carry);
-	if (carry)
+	spawn_list_2_child(object, child_object, &bomb, &child_placed);
+	if (child_placed)
 	{
 		OBJECT(bomb)->x_speed = 0x300;
 		attributes = OBJECT(object)->attributes;
@@ -2708,7 +2708,7 @@ void hat_goon_throw_start(uint16_t object)
    no room, done. */
 uint16_t hat_goon_throw_release(uint16_t object, uint16_t hat)
 {
-	uint32_t carry = 0;
+	uint32_t child_placed = 0;
 	uint16_t child_object = 0;
 	uint8_t animation_flags = 0, action_step = 0;
 
@@ -2717,8 +2717,8 @@ uint16_t hat_goon_throw_release(uint16_t object, uint16_t hat)
 		return hat;
 	leftover_y = hat_goon_throw_release_child_ADDRESS;
 	child_object = hat_goon_throw_release_child_ADDRESS;
-	spawn_list_2_child(object, child_object, &hat, &carry);
-	if (carry == 0u)
+	spawn_list_2_child(object, child_object, &hat, &child_placed);
+	if (child_placed == 0u)
 	{
 		OBJECT(object)->state = 2u;
 		OBJECT(object)->timer = 0u;

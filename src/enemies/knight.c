@@ -58,18 +58,18 @@ uint32_t knight_lose_first_form(uint16_t object, uint32_t left_caller)
    animation 88. */
 void knight_fall(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t landed = 0;
 	uint16_t ignored16 = 0, ignored16_2 = 0, ignored16_3 = 0, target_player = 0;
 	uint8_t action_step = 0;
 	uint16_t target = 0;
 
 	OBJECT(object)->x_speed = 0;
 	OBJECT(object)->y_speed = 0;
-	vector_apply_gravity(object, &ignored16, &carry);
-	if (carry == 0u)
+	vector_apply_gravity(object, &ignored16, &landed);
+	if (landed == 0u)
 		return;
 	leftover_y = knight_fall_child_ADDRESS;
-	vector_spawn_child(object, &ignored16_2, &ignored16_3, &ignored16, &carry);
+	vector_spawn_child(object, &ignored16_2, &ignored16_3, &ignored16, &landed);
 	OBJECT(object)->animation = 0x88u;
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step + 1u;
@@ -248,7 +248,7 @@ void knight_jump_rise(uint16_t object)
    fight. */
 void knight_jump_land(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t landed = 0;
 	uint16_t command = 0;
 	uint8_t state = 0;
 	uint16_t z_speed = 0;
@@ -256,8 +256,8 @@ void knight_jump_land(uint16_t object)
 	knight_shrink(object);
 	z_speed = OBJECT(object)->z_speed;
 	OBJECT(object)->z_speed = z_speed - 0x20u;
-	carry = vector_check_landing(object);
-	if (carry == 0u)
+	landed = vector_check_landing(object);
+	if (landed == 0u)
 		return;
 	command = 0x2000u;
 	vector_queue_sound(command);
@@ -403,7 +403,7 @@ void knight_leap_rise(uint16_t object)
    then lets it fight. */
 void knight_leap_land(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t landed = 0;
 	uint16_t command = 0;
 	uint8_t state = 0;
 	uint16_t x_speed = 0, entrance_slowdown = 0, z_speed = 0;
@@ -414,8 +414,8 @@ void knight_leap_land(uint16_t object)
 	OBJECT(object)->x_speed = x_speed - entrance_slowdown;
 	z_speed = OBJECT(object)->z_speed;
 	OBJECT(object)->z_speed = z_speed - 0x20u;
-	carry = vector_check_landing(object);
-	if (carry == 0u)
+	landed = vector_check_landing(object);
+	if (landed == 0u)
 		return;
 	command = 0x2000u;
 	vector_queue_sound(command);

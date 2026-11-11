@@ -123,7 +123,7 @@ void running_animal_knocked_away(uint16_t object)
 /* Grows back and, on landing at full size, runs off again. */
 void running_animal_knocked_back(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t landed = 0;
 	uint16_t zoom_x = 0;
 	uint8_t look_kind = 0, action_step = 0;
 	uint16_t zoom_x_2 = 0, z_speed = 0, zoom_x_3 = 0, screen_x = 0, x_speed = 0;
@@ -138,8 +138,8 @@ void running_animal_knocked_back(uint16_t object)
 	}
 	z_speed = OBJECT(object)->z_speed;
 	OBJECT(object)->z_speed = z_speed - 0x10u;
-	carry = vector_check_landing(object);
-	if (carry == 0u)
+	landed = vector_check_landing(object);
+	if (landed == 0u)
 	{
 		running_animal_gone();
 		return;

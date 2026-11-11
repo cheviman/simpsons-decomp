@@ -3,7 +3,7 @@
  *    Description: the records' handlers and the chips: the YM2151's registers, patches, volumes, pitches, keys, LFO and pan; the K053260's voices
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the Z80 sound program decompiled into C by
@@ -287,21 +287,21 @@ void update_volume(uint16_t channel)
    carrier; hands the mask back shifted for the next operator. */
 uint16_t write_operator_level(uint16_t fm_write, uint16_t carriers, uint16_t channel, uint8_t level)
 {
-	uint32_t carry = 0;
+	uint32_t carrier = 0;
 	uint8_t mask = 0;
 	uint16_t next_carriers = 0;
-	uint8_t t1 = 0;
+	uint8_t attenuated_level = 0;
 
 	mask = (uint8_t)carriers;
 	z80_block(18);
-	carry = mask >> 7;
+	carrier = mask >> 7;
 	mask = (uint32_t)mask << 1;
-	if (carry)
+	if (carrier)
 	{
 		z80_block(29);
-		t1 = level + CHANNEL(channel)->volume;
-		level = t1;
-		if ((int8_t)t1 < 0)
+		attenuated_level = level + CHANNEL(channel)->volume;
+		level = attenuated_level;
+		if ((int8_t)attenuated_level < 0)
 		{
 			z80_block(7);
 			level = 0x7Fu;
@@ -319,20 +319,20 @@ uint16_t write_operator_level(uint16_t fm_write, uint16_t carriers, uint16_t cha
 void pcm_update_volume(uint16_t channel)
 {
 	uint8_t attenuation = 0;
-	uint8_t t1 = 0, t2 = 0;
+	uint8_t patch_attenuation = 0, decayed_attenuation = 0;
 
 	z80_block(48);
-	t1 = CHANNEL(channel)->volume + CHANNEL(channel)->pcm.level;
-	attenuation = t1;
-	if ((int8_t)t1 < 0)
+	patch_attenuation = CHANNEL(channel)->volume + CHANNEL(channel)->pcm.level;
+	attenuation = patch_attenuation;
+	if ((int8_t)patch_attenuation < 0)
 	{
 		z80_block(7);
 		attenuation = 0x7Fu;
 	}
 	z80_block(29);
-	t2 = attenuation + CHANNEL(channel)->pcm.decay;
-	attenuation = t2;
-	if ((int8_t)t2 < 0)
+	decayed_attenuation = attenuation + CHANNEL(channel)->pcm.decay;
+	attenuation = decayed_attenuation;
+	if ((int8_t)decayed_attenuation < 0)
 	{
 		z80_block(7);
 		attenuation = 0x7Fu;
@@ -354,7 +354,7 @@ void set_pitch(uint16_t pitch, uint16_t channel)
 {
 	uint8_t note = 0;
 	uint16_t fm_write = 0;
-	uint8_t t1 = 0;
+	uint8_t unwrapped_note = 0;
 
 	z80_block(36);
 	if (CHANNEL(channel)->chip_channel >= 8u)
@@ -367,9 +367,9 @@ void set_pitch(uint16_t pitch, uint16_t channel)
 	do
 	{
 		z80_block(17);
-		t1 = note;
-		note = t1 - 0x18u;
-	} while (t1 >= 0x18u);
+		unwrapped_note = note;
+		note = unwrapped_note - 0x18u;
+	} while (unwrapped_note >= 0x18u);
 	z80_block(61);
 	pitch = ((pitch & 0xFFu) | ((uint32_t)(uint8_t)(note + 0x18u) << 8)) * 2u * 2u;
 	fm_write = 0x3000u | (uint8_t)pitch;
@@ -702,20 +702,20 @@ void noise_on(uint16_t channel, uint8_t noise_frequency)
    does. */
 uint32_t pcm_voice_playing(uint16_t channel)
 {
-	uint32_t zero = 0;
+	uint32_t voice_ended = 0;
 	uint8_t chip_channel = 0;
 
 	z80_block(31);
 	chip_channel = CHANNEL(channel)->chip_channel;
-	zero = (uint8_t)(chip_channel - 8u) == 0u;
+	voice_ended = (uint8_t)(chip_channel - 8u) == 0u;
 	if (chip_channel < 8u)
 	{
 		z80_cycles(6);
-		return zero;
+		return voice_ended;
 	}
 	z80_block(42);
-	zero = (z80_read8(PCM_FC29) & CHANNEL(channel)->pcm.key_bit) == 0u;
-	return zero;
+	voice_ended = (z80_read8(PCM_FC29) & CHANNEL(channel)->pcm.key_bit) == 0u;
+	return voice_ended;
 }
 
 /* Unused: the byte at byte_pointer, which moves on by one within its page (sound_main points it at the

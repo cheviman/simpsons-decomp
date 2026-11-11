@@ -417,13 +417,13 @@ void stage_5_over(void)
 /* Stage 5's players leaving; when they are out, stage_record_entry moves to its next entry */
 uint32_t stage_5_exit(uint32_t left_caller)
 {
-	uint32_t carry = 0;
+	uint32_t players_out = 0;
 	uint16_t ignored16 = 0, ignored16_2 = 0, ignored16_3 = 0;
 
-	stage_players_exit(&ignored16, &left_caller, &carry);
-	if (carry)
+	stage_players_exit(&ignored16, &left_caller, &players_out);
+	if (players_out)
 		stage_record_entry += 4u;
-	update_players(&ignored16_2, &ignored16, &ignored16_3, &carry);
+	update_players(&ignored16_2, &ignored16, &ignored16_3, &players_out);
 	return left_caller;
 }
 
@@ -452,13 +452,13 @@ void stage_5_closing_scene(uint16_t u)
    step */
 void stage_5_end_phase(uint16_t u)
 {
-	uint32_t carry = 0;
+	uint32_t skipped = 0;
 	uint8_t b = 0;
 	uint16_t command = 0, ignored16 = 0, wait = 0;
 
 	wait = 0xF000u | b;
-	check_skip(wait, &ignored16, &carry);
-	if (carry)
+	check_skip(wait, &ignored16, &skipped);
+	if (skipped)
 	{
 		command = 0u;
 		queue_sound_always(command);

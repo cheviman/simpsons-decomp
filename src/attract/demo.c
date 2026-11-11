@@ -109,7 +109,7 @@ void attract_demo(uint16_t u)
 void demo_start(void)
 {
 	uint16_t clear_from = 0, clear_to = 0, count = 0, demo_cursor = 0, ignored16 = 0, inputs = 0, playback = 0, player = 0, record = 0, request = 0, u = 0;
-	uint8_t stack = 0, stack_2 = 0;
+	uint8_t saved_player_low = 0, saved_player_high = 0;
 	uint8_t frames_2 = 0;
 	uint16_t demo_record = 0, frames_at = 0, frames = 0, step_at = 0, state = 0, object_kind = 0, inputs_at = 0, lives = 0, lives_2 = 0, state_2 = 0;
 
@@ -153,8 +153,8 @@ void demo_start(void)
 		player = player_records[(int8_t)((uint8_t)((uint32_t)demo_player << 1)) / 2];
 		state = PLAYER(player)->state;
 		mem_write8(state, 0u);
-		stack_2 = player >> 8;
-		stack = (uint8_t)player;
+		saved_player_high = player >> 8;
+		saved_player_low = (uint8_t)player;
 		object_kind = PLAYER(player)->object_kind;
 		mem_write8(object_kind, demo_player);
 		inputs_at = demo_cursor;
@@ -164,7 +164,7 @@ void demo_start(void)
 		frames_2 = DEMO_INPUT(inputs)->frames;
 		DEMO_PLAYBACK(playback)->frames = frames_2;
 		DEMO_PLAYBACK(playback)->controls = DEMO_INPUT(inputs)->controls;
-		record = ((uint32_t)stack_2 << 8) | stack;
+		record = ((uint32_t)saved_player_high << 8) | saved_player_low;
 		lives = PLAYER(record)->lives;
 		mem_write8(lives, 0u);
 		if ((demo_player_bits & 1u) != 0u)

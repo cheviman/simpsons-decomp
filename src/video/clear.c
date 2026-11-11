@@ -60,64 +60,63 @@ void clear_layer_b(void)
 		remaining_words = words_left - 1u;
 		words_left = remaining_words;
 	} while (remaining_words != 0u);
-	leftover_y = words_left;
 }
 
 /* Clears the text layer's 36 visible columns of its 32 rows and puts tile 3F in the two columns at each
    side of them. */
 void clear_text_layer(uint16_t *p_place, uint16_t *p_d)
 {
-	uint8_t a = 0, d = 0;
-	uint16_t d_2 = 0, place = 0;
-	uint8_t stack = 0, stack_2 = 0, stack_3 = 0, stack_4 = 0, stack_5 = 0;
+	uint8_t edge_high = 0, edge_low = 0;
+	uint16_t d = 0, place = 0;
+	uint8_t rows_to_go = 0, row_or_colours_low = 0, row_or_colours_high = 0, words_or_tiles_low = 0, edge_tiles_high = 0;
 	uint8_t row_words_left = 0, rows_left = 0, edge_rows_left = 0;
 	uint16_t written_place = 0, edge_tiles = 0, edge_colours = 0;
 
 	place = 0x200Eu;
-	stack = 0x20u;
+	rows_to_go = 0x20u;
 	do
 	{
-		stack_3 = place >> 8;
-		stack_2 = (uint8_t)place;
-		stack_4 = 0x12u;
+		row_or_colours_high = place >> 8;
+		row_or_colours_low = (uint8_t)place;
+		words_or_tiles_low = 0x12u;
 		do
 		{
 			mem_write16(place - 0x2000u, 0u);
 			written_place = place;
 			place = written_place + 2u;
 			mem_write16(written_place, 0x1010u);
-			row_words_left = stack_4;
-			stack_4 = row_words_left - 1u;
+			row_words_left = words_or_tiles_low;
+			words_or_tiles_low = row_words_left - 1u;
 		} while (row_words_left != 1u);
-		place = (((uint32_t)stack_3 << 8) | stack_2) + 0x40u;
-		rows_left = stack;
-		stack = rows_left - 1u;
+		place = (((uint32_t)row_or_colours_high << 8) | row_or_colours_low) + 0x40u;
+		rows_left = rows_to_go;
+		rows_to_go = rows_left - 1u;
 	} while (rows_left != 1u);
 	place = 0x200Cu;
-	stack = 0x20u;
-	stack_2 = 0u;
-	stack_3 = 0u;
-	stack_4 = 0x3Fu;
-	stack_5 = 0x3Fu;
+	rows_to_go = 0x20u;
+	row_or_colours_low = 0u;
+	row_or_colours_high = 0u;
+	words_or_tiles_low = 0x3Fu;
+	edge_tiles_high = 0x3Fu;
 	do
 	{
-		edge_tiles = ((uint32_t)stack_5 << 8) | stack_4;
-		d = (uint8_t)edge_tiles;
-		a = (uint8_t)(edge_tiles >> 8);
-		mem_write16(place, ((uint32_t)a << 8) | (d & 0xFFu));
-		mem_write16(place + 0x26u, ((uint32_t)a << 8) | (d & 0xFFu));
-		edge_colours = ((uint32_t)stack_3 << 8) | stack_2;
-		d = (uint8_t)edge_colours;
-		a = (uint8_t)(edge_colours >> 8);
-		mem_write16(place - 0x2000u, (uint32_t)a << 8);
-		mem_write16(place - 0x1FDAu, (uint32_t)a << 8);
+		edge_tiles = ((uint32_t)edge_tiles_high << 8) | words_or_tiles_low;
+		edge_low = (uint8_t)edge_tiles;
+		edge_high = (uint8_t)(edge_tiles >> 8);
+		mem_write16(place, ((uint32_t)edge_high << 8) | (edge_low & 0xFFu));
+		mem_write16(place + 0x26u, ((uint32_t)edge_high << 8) | (edge_low & 0xFFu));
+		edge_colours = ((uint32_t)row_or_colours_high << 8) | row_or_colours_low;
+		edge_low = (uint8_t)edge_colours;
+		edge_high = (uint8_t)(edge_colours >> 8);
+		mem_write16(place - 0x2000u, (uint32_t)edge_high << 8);
+		mem_write16(place - 0x1FDAu, (uint32_t)edge_high << 8);
 		place += 0x40u;
-		edge_rows_left = stack;
-		stack = edge_rows_left - 1u;
+		edge_rows_left = rows_to_go;
+		rows_to_go = edge_rows_left - 1u;
 	} while (edge_rows_left != 1u);
-	d_2 = (uint32_t)a << 8;
+	d = (uint32_t)edge_high << 8;
 	*p_place = place;
-	*p_d = d_2;
+	*p_d = d;
 }
 
 /* Clears the sprite RAM (2000-2FFF). */
@@ -150,6 +149,5 @@ uint16_t clear_sprites(void)
 	control = board_control & ~3u;
 	board_control = control;
 	io_write8(board_control_register, control);
-	leftover_y = bytes_left;
 	return place;
 }

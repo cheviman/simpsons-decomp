@@ -13,22 +13,22 @@
 
 /* Whether a coin went through the coin slot whose bit is in A (released after being held): queues the
    coin's sound and counts it in coins_inserted; carry when it did. */
-void coin_inserted(uint16_t *p_coin_bit, uint32_t *p_carry)
+void coin_inserted(uint16_t *p_coin_bit, uint32_t *p_coin_dropped)
 {
 	uint16_t coin_bit = (uint16_t)*p_coin_bit;
-	uint32_t carry = *p_carry;
+	uint32_t coin_dropped = *p_coin_dropped;
 	uint8_t b = 0, inserted = 0;
 	uint16_t command = 0;
-	uint8_t stack = 0;
+	uint8_t saved_coin_bit = 0;
 	uint8_t released_coin_bits = 0;
 
-	stack = coin_bit >> 8;
-	released_coin_bits = ~(coin_inputs | coin_inputs_last) & coin_inputs_before & stack;
+	saved_coin_bit = coin_bit >> 8;
+	released_coin_bits = ~(coin_inputs | coin_inputs_last) & coin_inputs_before & saved_coin_bit;
 	inserted = released_coin_bits;
 	if (released_coin_bits == 0u)
 	{
-		carry = 0u;
-		coin_bit = ((uint32_t)stack << 8) | inserted;
+		coin_dropped = 0u;
+		coin_bit = ((uint32_t)saved_coin_bit << 8) | inserted;
 	}
 	else
 	{
@@ -36,11 +36,11 @@ void coin_inserted(uint16_t *p_coin_bit, uint32_t *p_carry)
 		command = 0x4002u;
 		queue_sound_always(command);
 		coins_inserted++;
-		carry = 1u;
-		coin_bit = ((uint32_t)stack << 8) | b;
+		coin_dropped = 1u;
+		coin_bit = ((uint32_t)saved_coin_bit << 8) | b;
 	}
 	*p_coin_bit = coin_bit;
-	*p_carry = carry;
+	*p_coin_dropped = coin_dropped;
 }
 
 /* Counts a coin in the coin slot's record at U and gives the credits it is worth when enough coins are
@@ -50,7 +50,7 @@ uint16_t add_coin(uint16_t slot, uint8_t coin_bit)
 {
 	uint8_t b = 0, coins = 0, coins_needed = 0, first_credit_given = 0;
 	uint16_t d = 0, d_2 = 0;
-	uint8_t stack = 0;
+	uint8_t credit_cost = 0;
 	uint8_t coins_before = 0, pulses_before = 0, slot_coins = 0, credit_price = 0, credit_price_2 = 0, credit_gain = 0, given_already = 0, slot_coins_2 = 0, slot_coins_3 = 0;
 	uint16_t new_credits = 0, new_slot_credits = 0;
 
@@ -86,9 +86,9 @@ uint16_t add_coin(uint16_t slot, uint8_t coin_bit)
 	slot_coins_2 = COIN_SLOT(slot)->coins;
 	if (coins_needed <= slot_coins_2)
 	{
-		stack = coins_needed;
+		credit_cost = coins_needed;
 		slot_coins_3 = COIN_SLOT(slot)->coins;
-		COIN_SLOT(slot)->coins = slot_coins_3 - stack;
+		COIN_SLOT(slot)->coins = slot_coins_3 - credit_cost;
 		new_slot_credits = slot_1_credits_per_coins + COIN_SLOT(slot)->own_credits;
 		first_credit_given = (uint8_t)new_slot_credits;
 		COIN_SLOT(slot)->own_credits = ((uint32_t)(new_slot_credits >> 8) << 8) | first_credit_given;

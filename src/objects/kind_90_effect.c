@@ -12,12 +12,12 @@
 #include "game.h"
 
 /* The object that shows kind 90's animation 11 once, by its state. */
-uint16_t kind_90_effect(uint16_t object, uint8_t d)
+uint16_t kind_90_effect(uint16_t object, uint8_t state)
 {
 	uint16_t state_handlers = 0;
 
 	state_handlers = kind_90_effect_steps_ADDRESS;
-	switch ((int8_t)(uint8_t)((uint32_t)d << 1))
+	switch ((int8_t)(uint8_t)((uint32_t)state << 1))
 	{
 	case 0:
 		return kind_90_effect_start(object);

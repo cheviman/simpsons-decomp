@@ -447,7 +447,7 @@ uint32_t fat_goon_thrower_update(uint16_t object, uint8_t state)
 		fat_goon_thrower_carry(object);
 		break;
 	case 16:
-		fat_goon_thrower_throw(object, 0u);
+		fat_goon_thrower_throw(object);
 		break;
 	case 18:
 		fat_goon_thrower_end(object);
@@ -509,10 +509,10 @@ uint32_t fat_goon_descent_update(uint16_t object, uint8_t state)
 		vector_enemy_climb(object, &states, &ignored);
 		break;
 	case 12:
-		fat_goon_descent_fall(object, states);
+		fat_goon_descent_fall(object);
 		break;
 	case 14:
-		fat_goon_descent_land(object, states);
+		fat_goon_descent_land(object);
 		break;
 	case -108:
 	case -4:
@@ -626,7 +626,7 @@ uint32_t fat_goon_walk_in_update(uint16_t object, uint8_t state)
 		fat_goon_walk_in_go(object);
 		break;
 	case 14:
-		fat_goon_walk_in_end(object, 0u);
+		fat_goon_walk_in_end(object);
 		break;
 	case 16:
 		fat_goon_from_back_start(object);
@@ -638,10 +638,10 @@ uint32_t fat_goon_walk_in_update(uint16_t object, uint8_t state)
 		fat_goon_from_back_place(object);
 		break;
 	case 30:
-		fat_goon_from_back_walk(object, 0u);
+		fat_goon_from_back_walk(object);
 		break;
 	case 32:
-		fat_goon_from_back_wait(object, 0u);
+		fat_goon_from_back_wait(object);
 		break;
 	case -4:
 	case 100:
@@ -789,10 +789,10 @@ uint32_t fat_goon_from_back_update(uint16_t object, uint8_t state)
 		fat_goon_from_back_place(object);
 		break;
 	case 14:
-		fat_goon_from_back_walk(object, 0u);
+		fat_goon_from_back_walk(object);
 		break;
 	case 16:
-		fat_goon_from_back_wait(object, 0u);
+		fat_goon_from_back_wait(object);
 		break;
 	case -20:
 	case 84:
@@ -826,7 +826,7 @@ uint32_t fat_goon_from_back_update(uint16_t object, uint8_t state)
 		fat_goon_walk_in_go(object);
 		break;
 	case -2:
-		fat_goon_walk_in_end(object, 0u);
+		fat_goon_walk_in_end(object);
 		break;
 	}
 	vector_enemy_take_special_hit(object, &ignored16, &left_caller);

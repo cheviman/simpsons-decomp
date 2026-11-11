@@ -309,14 +309,14 @@ uint16_t gorilla_leap_take_off(uint16_t object)
 /* Pulls the gorilla down; 8 frames into the leap gives it its attacking hit box. */
 void gorilla_leap_rise(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t landed = 0;
 	uint8_t timer = 0, action_step = 0;
 	uint16_t z_speed = 0;
 
 	z_speed = OBJECT(object)->z_speed;
 	OBJECT(object)->z_speed = z_speed - 0x30u;
-	carry = vector_check_landing(object);
-	if (carry)
+	landed = vector_check_landing(object);
+	if (landed)
 	{
 		gorilla_leap_land(object);
 		return;
@@ -334,13 +334,13 @@ void gorilla_leap_rise(uint16_t object)
 /* Pulls the gorilla down until it lands. */
 void gorilla_leap_fall(uint16_t object)
 {
-	uint32_t carry = 0;
+	uint32_t landed = 0;
 	uint16_t z_speed = 0;
 
 	z_speed = OBJECT(object)->z_speed;
 	OBJECT(object)->z_speed = z_speed - 0x30u;
-	carry = vector_check_landing(object);
-	if (carry == 0u)
+	landed = vector_check_landing(object);
+	if (landed == 0u)
 		return;
 	gorilla_leap_land(object);
 }

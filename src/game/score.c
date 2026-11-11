@@ -39,10 +39,10 @@ void add_score(uint16_t score, uint8_t addition)
 }
 
 /* Finds the place of the score D in the high score table (A, 0-9; carry when it gets in). */
-void high_score_rank(uint16_t *p_score, uint32_t *p_carry)
+void high_score_rank(uint16_t *p_score, uint32_t *p_in_high_scores)
 {
 	uint16_t score = (uint16_t)*p_score;
-	uint32_t carry = *p_carry;
+	uint32_t in_high_scores = *p_in_high_scores;
 	uint8_t score_low_byte = 0;
 	uint16_t high_score_address = 0;
 	uint16_t score_compared = 0;
@@ -56,7 +56,7 @@ void high_score_rank(uint16_t *p_score, uint32_t *p_carry)
 		score_low_byte = (uint8_t)score_compared;
 		if (mem_read16(high_score_address) <= (uint16_t)(((uint32_t)(score_compared >> 8) << 8) | (score_low_byte & 0xFFu)))
 		{
-			carry = 1u;
+			in_high_scores = 1u;
 			score = (score_low_byte & 0xFFu) | ((uint32_t)high_score_place_found << 8);
 			break;
 		}
@@ -64,13 +64,13 @@ void high_score_rank(uint16_t *p_score, uint32_t *p_carry)
 		high_score_place_found++;
 		if (high_score_place_found == 0xAu)
 		{
-			carry = 0u;
+			in_high_scores = 0u;
 			score = (score_low_byte & 0xFFu) | ((uint32_t)high_score_place_found << 8);
 			break;
 		}
 	}
 	*p_score = score;
-	*p_carry = carry;
+	*p_in_high_scores = in_high_scores;
 }
 
 /* Puts the initials and score at 48F0 into the high score table at place A, moving the lower ones down. */
