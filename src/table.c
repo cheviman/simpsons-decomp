@@ -122,7 +122,7 @@ const void *object_15_spawn_lists_data;
 const void *enemy_waves_next_wave_enemies_data;
 const void *cemetery_obstacle_xs_data;
 const void *cemetery_obstacle_food_data;
-const void *kind_10_floor_edge_flags_data;
+const void *moes_street_scenery_floor_edge_flags_data;
 const void *police_car_door_lists_data;
 const void *player_objects_data;
 const void *obstacle_heights_data;
@@ -130,20 +130,20 @@ const void *object_16_flags_data;
 const void *rising_scenery_camera_xs_data;
 const void *item_setups_data;
 const void *food_hit_kinds_data;
-const void *kind_a5_partners_data;
-const void *kind_a5_food_drops_data;
+const void *girl_with_food_partners_data;
+const void *girl_with_food_food_drops_data;
 const void *item_carrier_setups_data;
 const void *item_carrier_items_data;
 const void *carried_item_kinds_data;
 const void *bystanders_data;
-const void *kind_b3_damage_animations_data;
+const void *kent_brockman_damage_animations_data;
 const void *krustyland_child_limits_by_players_data;
 const void *clown_on_ball_pause_waits_by_rank_data;
 const void *orbit_cosines_data;
-const void *kind_b2_idle_animations_data;
+const void *caged_gorilla_idle_animations_data;
 const void *kind_97_timed_moves_data;
 const void *object_18_behaviours_data;
-const void *kind_9a_drop_starts_data;
+const void *ghost_on_rope_drop_starts_data;
 const void *kind_91_appearances_data;
 const void *kind_97_entrances_data;
 const void *kind_97_hold_animations_data;
@@ -160,8 +160,8 @@ const void *kind_c7_hurt_shakes_data;
 const void *kind_c7_bob_up_data;
 const void *kind_c7_bob_down_data;
 const void *kind_c7_shot_waits_data;
-const void *kind_8e_poses_data;
-const void *kind_8c_animations_data;
+const void *belly_dancer_poses_data;
+const void *barney_animations_data;
 const void *kind_a1_entrance_steps_data;
 const void *kind_a1_attack_delays_by_players_data;
 const void *robot_pieces_data;
@@ -172,22 +172,22 @@ const void *robot_sparks_by_frame_91_data;
 const void *robot_actions_after_hit_data;
 const void *robot_status_after_hit_data;
 const void *robot_part_zooms_data;
-const void *kind_12_parts_data;
+const void *channel_6_scenery_parts_data;
 const void *kind_b7_entrances_data;
-const void *kind_b8_sweep_ways_data;
-const void *kind_b8_headings_data;
-const void *kind_b8_sweep_rates_data;
-const void *kind_b8_descent_slowdowns_data;
-const void *kind_b8_descent_y_speeds_data;
-const void *kind_b8_volley_shots_data;
-const void *kind_b8_single_shots_data;
-const void *kind_b8_hurt_shakes_data;
-const void *kind_b8_bob_up_data;
-const void *kind_b8_bob_down_data;
-const void *kind_b8_shot_waits_data;
-const void *kind_b8_velocities_data;
-const void *kind_b8_shot_animations_data;
-const void *kind_b8_shot_speeds_data;
+const void *flying_saxophone_sweep_ways_data;
+const void *flying_saxophone_headings_data;
+const void *flying_saxophone_sweep_rates_data;
+const void *flying_saxophone_descent_slowdowns_data;
+const void *flying_saxophone_descent_y_speeds_data;
+const void *flying_saxophone_volley_shots_data;
+const void *flying_saxophone_single_shots_data;
+const void *flying_saxophone_hurt_shakes_data;
+const void *flying_saxophone_bob_up_data;
+const void *flying_saxophone_bob_down_data;
+const void *flying_saxophone_shot_waits_data;
+const void *flying_saxophone_velocities_data;
+const void *flying_saxophone_shot_animations_data;
+const void *flying_saxophone_shot_speeds_data;
 const void *unused_debug_tile_places_data;
 const void *object_1a_next_states_data;
 const void *object_1a_states_after_data;
@@ -209,8 +209,8 @@ const void *object_1a_path_times_data;
 const void *object_1a_sines_data;
 const void *door_spawn_lists_data;
 const void *door_spawns_data;
-const void *kind_12_door_openings_data;
-const void *kind_10_door_openings_data;
+const void *channel_6_scenery_door_openings_data;
+const void *moes_street_scenery_door_openings_data;
 const void *kind_0f_door_openings_data;
 const void *team_move_attack_states_data;
 const void *object_1c_move_steps_data;
@@ -412,7 +412,7 @@ const game_table game_tables[] =
 	{ "enemy_waves_next_wave_enemies", 0x02BA18u, &enemy_waves_next_wave_enemies_data, 1 },
 	{ "cemetery_obstacle_xs", 0x02DB58u, &cemetery_obstacle_xs_data, 2 },
 	{ "cemetery_obstacle_food", 0x02DB68u, &cemetery_obstacle_food_data, 1 },
-	{ "kind_10_floor_edge_flags", 0x02DBF2u, &kind_10_floor_edge_flags_data, 1 },
+	{ "moes_street_scenery_floor_edge_flags", 0x02DBF2u, &moes_street_scenery_floor_edge_flags_data, 1 },
 	{ "police_car_door_lists", 0x02DC3Eu, &police_car_door_lists_data, 2 },
 	{ "player_objects", 0x02DD83u, &player_objects_data, 2 },
 	{ "obstacle_heights", 0x02DDB1u, &obstacle_heights_data, 1 },
@@ -420,20 +420,20 @@ const game_table game_tables[] =
 	{ "rising_scenery_camera_xs", 0x02DFA1u, &rising_scenery_camera_xs_data, 2 },
 	{ "item_setups", 0x02FA70u, &item_setups_data, 2 },
 	{ "food_hit_kinds", 0x02FACEu, &food_hit_kinds_data, 1 },
-	{ "kind_a5_partners", 0x02FB00u, &kind_a5_partners_data, 2 },
-	{ "kind_a5_food_drops", 0x02FB28u, &kind_a5_food_drops_data, 2 },
+	{ "girl_with_food_partners", 0x02FB00u, &girl_with_food_partners_data, 2 },
+	{ "girl_with_food_food_drops", 0x02FB28u, &girl_with_food_food_drops_data, 2 },
 	{ "item_carrier_setups", 0x02FB7Au, &item_carrier_setups_data, 2 },
 	{ "item_carrier_items", 0x02FB92u, &item_carrier_items_data, 2 },
 	{ "carried_item_kinds", 0x02FBB8u, &carried_item_kinds_data, 1 },
 	{ "bystanders", 0x02FBCBu, &bystanders_data, 4 },
-	{ "kind_b3_damage_animations", 0x02FC9Fu, &kind_b3_damage_animations_data, 1 },
+	{ "kent_brockman_damage_animations", 0x02FC9Fu, &kent_brockman_damage_animations_data, 1 },
 	{ "krustyland_child_limits_by_players", 0x02FDA2u, &krustyland_child_limits_by_players_data, 1 },
 	{ "clown_on_ball_pause_waits_by_rank", 0x02FE87u, &clown_on_ball_pause_waits_by_rank_data, 1 },
 	{ "orbit_cosines", 0x02FE8Fu, &orbit_cosines_data, 1 },
-	{ "kind_b2_idle_animations", 0x02FF3Bu, &kind_b2_idle_animations_data, 1 },
+	{ "caged_gorilla_idle_animations", 0x02FF3Bu, &caged_gorilla_idle_animations_data, 1 },
 	{ "kind_97_timed_moves", 0x031988u, &kind_97_timed_moves_data, 4 },
 	{ "object_18_behaviours", 0x0319DAu, &object_18_behaviours_data, 4 },
-	{ "kind_9a_drop_starts", 0x031A30u, &kind_9a_drop_starts_data, 4 },
+	{ "ghost_on_rope_drop_starts", 0x031A30u, &ghost_on_rope_drop_starts_data, 4 },
 	{ "kind_91_appearances", 0x031A56u, &kind_91_appearances_data, 4 },
 	{ "kind_97_entrances", 0x031AF8u, &kind_97_entrances_data, 2 },
 	{ "kind_97_hold_animations", 0x031B0Au, &kind_97_hold_animations_data, 1 },
@@ -450,8 +450,8 @@ const game_table game_tables[] =
 	{ "kind_c7_bob_up", 0x031DDCu, &kind_c7_bob_up_data, 1 },
 	{ "kind_c7_bob_down", 0x031DFCu, &kind_c7_bob_down_data, 1 },
 	{ "kind_c7_shot_waits", 0x031E1Cu, &kind_c7_shot_waits_data, 1 },
-	{ "kind_8e_poses", 0x031F52u, &kind_8e_poses_data, 2 },
-	{ "kind_8c_animations", 0x031F7Au, &kind_8c_animations_data, 1 },
+	{ "belly_dancer_poses", 0x031F52u, &belly_dancer_poses_data, 2 },
+	{ "barney_animations", 0x031F7Au, &barney_animations_data, 1 },
 	{ "kind_a1_entrance_steps", 0x033A72u, &kind_a1_entrance_steps_data, 1 },
 	{ "kind_a1_attack_delays_by_players", 0x033AB5u, &kind_a1_attack_delays_by_players_data, 1 },
 	{ "robot_pieces", 0x033B10u, &robot_pieces_data, 4 },
@@ -462,22 +462,22 @@ const game_table game_tables[] =
 	{ "robot_actions_after_hit", 0x033CB8u, &robot_actions_after_hit_data, 1 },
 	{ "robot_status_after_hit", 0x033CC0u, &robot_status_after_hit_data, 1 },
 	{ "robot_part_zooms", 0x033D22u, &robot_part_zooms_data, 1 },
-	{ "kind_12_parts", 0x033D96u, &kind_12_parts_data, 4 },
+	{ "channel_6_scenery_parts", 0x033D96u, &channel_6_scenery_parts_data, 4 },
 	{ "kind_b7_entrances", 0x033E32u, &kind_b7_entrances_data, 2 },
-	{ "kind_b8_sweep_ways", 0x033E86u, &kind_b8_sweep_ways_data, 1 },
-	{ "kind_b8_headings", 0x033E8Du, &kind_b8_headings_data, 1 },
-	{ "kind_b8_sweep_rates", 0x033E94u, &kind_b8_sweep_rates_data, 1 },
-	{ "kind_b8_descent_slowdowns", 0x033E9Bu, &kind_b8_descent_slowdowns_data, 2 },
-	{ "kind_b8_descent_y_speeds", 0x033EA9u, &kind_b8_descent_y_speeds_data, 2 },
-	{ "kind_b8_volley_shots", 0x033EC7u, &kind_b8_volley_shots_data, 2 },
-	{ "kind_b8_single_shots", 0x033EEFu, &kind_b8_single_shots_data, 2 },
-	{ "kind_b8_hurt_shakes", 0x033F0Du, &kind_b8_hurt_shakes_data, 1 },
-	{ "kind_b8_bob_up", 0x033F11u, &kind_b8_bob_up_data, 1 },
-	{ "kind_b8_bob_down", 0x033F31u, &kind_b8_bob_down_data, 1 },
-	{ "kind_b8_shot_waits", 0x033F51u, &kind_b8_shot_waits_data, 1 },
-	{ "kind_b8_velocities", 0x033F55u, &kind_b8_velocities_data, 4 },
-	{ "kind_b8_shot_animations", 0x033FE3u, &kind_b8_shot_animations_data, 1 },
-	{ "kind_b8_shot_speeds", 0x033FE9u, &kind_b8_shot_speeds_data, 2 },
+	{ "flying_saxophone_sweep_ways", 0x033E86u, &flying_saxophone_sweep_ways_data, 1 },
+	{ "flying_saxophone_headings", 0x033E8Du, &flying_saxophone_headings_data, 1 },
+	{ "flying_saxophone_sweep_rates", 0x033E94u, &flying_saxophone_sweep_rates_data, 1 },
+	{ "flying_saxophone_descent_slowdowns", 0x033E9Bu, &flying_saxophone_descent_slowdowns_data, 2 },
+	{ "flying_saxophone_descent_y_speeds", 0x033EA9u, &flying_saxophone_descent_y_speeds_data, 2 },
+	{ "flying_saxophone_volley_shots", 0x033EC7u, &flying_saxophone_volley_shots_data, 2 },
+	{ "flying_saxophone_single_shots", 0x033EEFu, &flying_saxophone_single_shots_data, 2 },
+	{ "flying_saxophone_hurt_shakes", 0x033F0Du, &flying_saxophone_hurt_shakes_data, 1 },
+	{ "flying_saxophone_bob_up", 0x033F11u, &flying_saxophone_bob_up_data, 1 },
+	{ "flying_saxophone_bob_down", 0x033F31u, &flying_saxophone_bob_down_data, 1 },
+	{ "flying_saxophone_shot_waits", 0x033F51u, &flying_saxophone_shot_waits_data, 1 },
+	{ "flying_saxophone_velocities", 0x033F55u, &flying_saxophone_velocities_data, 4 },
+	{ "flying_saxophone_shot_animations", 0x033FE3u, &flying_saxophone_shot_animations_data, 1 },
+	{ "flying_saxophone_shot_speeds", 0x033FE9u, &flying_saxophone_shot_speeds_data, 2 },
 	{ "unused_debug_tile_places", 0x0356E0u, &unused_debug_tile_places_data, 2 },
 	{ "object_1a_next_states", 0x0357BCu, &object_1a_next_states_data, 1 },
 	{ "object_1a_states_after", 0x0357C1u, &object_1a_states_after_data, 1 },
@@ -499,8 +499,8 @@ const game_table game_tables[] =
 	{ "object_1a_sines", 0x035FA3u, &object_1a_sines_data, 1 },
 	{ "door_spawn_lists", 0x036454u, &door_spawn_lists_data, 2 },
 	{ "door_spawns", 0x036458u, &door_spawns_data, 9 },
-	{ "kind_12_door_openings", 0x036488u, &kind_12_door_openings_data, 4 },
-	{ "kind_10_door_openings", 0x0364FEu, &kind_10_door_openings_data, 4 },
+	{ "channel_6_scenery_door_openings", 0x036488u, &channel_6_scenery_door_openings_data, 4 },
+	{ "moes_street_scenery_door_openings", 0x0364FEu, &moes_street_scenery_door_openings_data, 4 },
 	{ "kind_0f_door_openings", 0x03654Du, &kind_0f_door_openings_data, 4 },
 	{ "team_move_attack_states", 0x039DD5u, &team_move_attack_states_data, 1 },
 	{ "object_1c_move_steps", 0x039DEBu, &object_1c_move_steps_data, 1 },

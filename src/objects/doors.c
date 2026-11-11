@@ -1,6 +1,6 @@
 /**
  *    Name:        objects/doors.c
- *    Description: bank 1B: the doors that open when the stage reaches them and let out enemies (kinds 0F, 10, 12), the car whose doors let enemies out, the kind-93 passer-by
+ *    Description: the doors that open when the stage reaches them and let out enemies (kinds 0F, 10, 12), the car whose doors let enemies out, the kind-93 passer-by
  *    Version:     0.1.0
  *    Created:     06-11-2026
  *    Modified:    11-11-2026
@@ -130,49 +130,49 @@ uint16_t door_kind_12_run(uint16_t object, uint8_t state)
 }
 
 /* The kind-93 passer-by of stage 1 (5280 type 2A): runs its step and leaves the screen with it. */
-uint16_t kind_93_run(uint16_t object, uint8_t state)
+uint16_t kid_in_sunglasses_run(uint16_t object, uint8_t state)
 {
 	uint32_t carry = 0;
 	uint8_t state_2 = 0;
 	uint16_t states = 0;
 
 	state_2 = (uint8_t)state;
-	states = kind_93_states_ADDRESS;
+	states = kid_in_sunglasses_states_ADDRESS;
 	switch ((int8_t)(uint8_t)((uint32_t)state_2 << 1))
 	{
 	case 0:
-		states = kind_93_start(object);
+		states = kid_in_sunglasses_start(object);
 		break;
 	case 2:
-		kind_93_wait_for_scroll(object);
+		kid_in_sunglasses_wait_for_scroll(object);
 		break;
 	case 4:
-		kind_93_run_in(object);
+		kid_in_sunglasses_run_in(object);
 		break;
 	case 6:
-		kind_93_turn_away(object);
+		kid_in_sunglasses_turn_away(object);
 		break;
 	case 8:
-		kind_93_wait_for_floor(object);
+		kid_in_sunglasses_wait_for_floor(object);
 		break;
 	case 10:
-		kind_93_walk_down(object);
+		kid_in_sunglasses_walk_down(object);
 		break;
 	case 12:
-		kind_93_stop(object);
+		kid_in_sunglasses_stop(object);
 		break;
 	case 14:
 	case 20:
-		kind_93_walk_left(object);
+		kid_in_sunglasses_walk_left(object);
 		break;
 	case 16:
-		kind_93_dash_left(object);
+		kid_in_sunglasses_dash_left(object);
 		break;
 	case 18:
-		kind_93_stand(object);
+		kid_in_sunglasses_stand(object);
 		break;
 	case 22:
-		kind_93_idle();
+		kid_in_sunglasses_idle();
 		break;
 	}
 	remove_off_screen(object, carry);
@@ -234,12 +234,12 @@ uint16_t car_doors_run(uint16_t object, uint8_t state)
 
 /* Sets kind 93 up from its setup record, shown, at its first priority, and goes on to wait for the
    scroll. */
-uint16_t kind_93_start(uint16_t object)
+uint16_t kid_in_sunglasses_start(uint16_t object)
 {
 	uint16_t setup = 0;
 	uint8_t attributes = 0, state = 0;
 
-	setup = kind_93_setup_ADDRESS;
+	setup = kid_in_sunglasses_setup_ADDRESS;
 	vector_object_setup(object, setup);
 	OBJECT(object)->flags = 0x80u;
 	attributes = OBJECT(object)->attributes;
@@ -250,7 +250,7 @@ uint16_t kind_93_start(uint16_t object)
 }
 
 /* Waits until the stage has scrolled to 120. */
-void kind_93_wait_for_scroll(uint16_t object)
+void kid_in_sunglasses_wait_for_scroll(uint16_t object)
 {
 	uint8_t state = 0;
 
@@ -262,7 +262,7 @@ void kind_93_wait_for_scroll(uint16_t object)
 }
 
 /* Runs right (x speed 0200, animation 82) for 44 frames. */
-void kind_93_run_in(uint16_t object)
+void kid_in_sunglasses_run_in(uint16_t object)
 {
 	uint8_t state = 0;
 
@@ -275,7 +275,7 @@ void kind_93_run_in(uint16_t object)
 }
 
 /* When its frames run out, heads off at speed 30 in direction E8 with animation 81. */
-void kind_93_turn_away(uint16_t object)
+void kid_in_sunglasses_turn_away(uint16_t object)
 {
 	uint16_t heading = 0;
 	uint8_t timer = 0, state = 0;
@@ -292,7 +292,7 @@ void kind_93_turn_away(uint16_t object)
 }
 
 /* Waits until it stands on a floor of height 0, then takes the second priority. */
-void kind_93_wait_for_floor(uint16_t object)
+void kid_in_sunglasses_wait_for_floor(uint16_t object)
 {
 	uint32_t negative = 0;
 	uint8_t cell = 0;
@@ -311,7 +311,7 @@ void kind_93_wait_for_floor(uint16_t object)
 }
 
 /* Walks right and down (x speed 0140, y speed 0080, animation 82) for 12 frames. */
-void kind_93_walk_down(uint16_t object)
+void kid_in_sunglasses_walk_down(uint16_t object)
 {
 	uint8_t state = 0;
 
@@ -325,7 +325,7 @@ void kind_93_walk_down(uint16_t object)
 }
 
 /* When its frames run out, stops facing left (animation 83) for 64 frames. */
-void kind_93_stop(uint16_t object)
+void kid_in_sunglasses_stop(uint16_t object)
 {
 	uint8_t timer = 0, attributes = 0, state = 0;
 
@@ -345,7 +345,7 @@ void kind_93_stop(uint16_t object)
 }
 
 /* When its frames run out, stops (animation 83) for 64 frames, after its dash. */
-void kind_93_stand(uint16_t object)
+void kid_in_sunglasses_stand(uint16_t object)
 {
 	uint8_t timer = 0, state = 0;
 
@@ -362,7 +362,7 @@ void kind_93_stand(uint16_t object)
 }
 
 /* When its frames run out, walks left (x speed FE00, animation 82) for 16 frames (after each stop). */
-void kind_93_walk_left(uint16_t object)
+void kid_in_sunglasses_walk_left(uint16_t object)
 {
 	uint8_t timer = 0, state = 0;
 
@@ -370,7 +370,7 @@ void kind_93_walk_left(uint16_t object)
 	OBJECT(object)->timer = timer - 1u;
 	if (timer != 1u)
 	{
-		kind_93_idle();
+		kid_in_sunglasses_idle();
 		return;
 	}
 	OBJECT(object)->animation = 0x82u;
@@ -382,12 +382,12 @@ void kind_93_walk_left(uint16_t object)
 }
 
 /* Its last step: nothing (it walks on at its speed until it leaves the screen). */
-void kind_93_idle(void)
+void kid_in_sunglasses_idle(void)
 {
 }
 
 /* When its frames run out, dashes left (x speed FB00, animation 84) for 24 frames. */
-void kind_93_dash_left(uint16_t object)
+void kid_in_sunglasses_dash_left(uint16_t object)
 {
 	uint8_t timer = 0, state = 0;
 
@@ -621,8 +621,8 @@ void car_doors_idle(void)
 {
 }
 
-/* Sets the kind-12 door up from its setup record and its kind_12_door_openings record (by its spawn
-   state): where it opens and which list it lets out. */
+/* Sets the kind-12 door up from its setup record and its channel_6_scenery_door_openings record (by its
+   spawn state): where it opens and which list it lets out. */
 uint16_t door_kind_12_start(uint16_t object)
 {
 	uint16_t opening = 0, setup = 0;
@@ -633,7 +633,7 @@ uint16_t door_kind_12_start(uint16_t object)
 	vector_object_setup(object, setup);
 	OBJECT(object)->flags = 0x80u;
 	spawn_list = OBJECT(object)->door.spawn_list;
-	opening = kind_12_door_openings_ADDRESS + (int8_t)(((uint32_t)spawn_list << 1) << 1);
+	opening = channel_6_scenery_door_openings_ADDRESS + (int8_t)(((uint32_t)spawn_list << 1) << 1);
 	opening_x = DOOR_OPENING(opening)->x;
 	OBJECT(object)->door.open_x = opening_x;
 	wait = (((uint32_t)DOOR_OPENING(opening)->wait << 8u) | DOOR_OPENING(opening)->list);
@@ -684,8 +684,8 @@ void door_kind_12_close(uint16_t object)
 	}
 }
 
-/* Sets the kind-10 door up from its setup record and its kind_10_door_openings record: where it opens,
-   how long it waits and which list it lets out. */
+/* Sets the kind-10 door up from its setup record and its moes_street_scenery_door_openings record: where
+   it opens, how long it waits and which list it lets out. */
 uint16_t door_kind_10_start(uint16_t object)
 {
 	uint16_t opening = 0, setup = 0;
@@ -696,7 +696,7 @@ uint16_t door_kind_10_start(uint16_t object)
 	vector_object_setup(object, setup);
 	OBJECT(object)->flags = 0x80u;
 	spawn_list = OBJECT(object)->door.spawn_list;
-	opening = kind_10_door_openings_ADDRESS + (int8_t)(((uint32_t)spawn_list << 1) << 1);
+	opening = moes_street_scenery_door_openings_ADDRESS + (int8_t)(((uint32_t)spawn_list << 1) << 1);
 	opening_x = DOOR_OPENING(opening)->x;
 	OBJECT(object)->door.open_x = opening_x;
 	wait = (((uint32_t)DOOR_OPENING(opening)->wait << 8u) | DOOR_OPENING(opening)->list);

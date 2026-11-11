@@ -1595,7 +1595,7 @@ uint16_t story_actor_remove(uint16_t object, uint16_t u)
 		io_write8(players_all_idle, 0u);
 		io_write16(stage_kept_object, 0u);
 		io_write16(stage_kept_object_2, 0u);
-		io_write16(0x1856u, 0u);
+		io_write16(unread_kept_word, 0u);
 		io_write16(player_drop_x, 0u);
 		OBJECT(object)->flags = 0u;
 		saved_actor = object;

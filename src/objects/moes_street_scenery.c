@@ -1,0 +1,279 @@
+/**
+ *    Name:        objects/moes_street_scenery.c
+ *    Description: stage 4's kind 10 scenery: what rises at the end and what comes down
+ *    Version:     0.1.0
+ *    Created:     06-11-2026
+ *    Modified:    11-11-2026
+ *    Author:      Sebastian Toyos
+ *
+ *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
+ *    tools/decompile.py, with the names of symbols.txt.
+ */
+#include "game.h"
+
+/* Sets up the kind 10 scenery that will rise, behind the players. */
+uint16_t moes_street_scenery_riser_start(uint16_t object)
+{
+	uint16_t setup = 0;
+	uint8_t animation_flags = 0, parameter = 0, animation = 0, attributes = 0, state = 0;
+	uint16_t old_x = 0, new_x = 0;
+
+	setup = moes_street_scenery_riser_setup_ADDRESS;
+	vector_object_setup(object, setup);
+	old_x = OBJECT(object)->x;
+	new_x = old_x + 0x10u;
+	OBJECT(object)->x = new_x;
+	animation_flags = OBJECT(object)->animation_flags;
+	OBJECT(object)->animation_flags = animation_flags | 0x80u;
+	parameter = OBJECT(object)->parameter;
+	if (parameter != 0u)
+	{
+		animation = OBJECT(object)->animation;
+		OBJECT(object)->animation = (animation + 1u) | 0x80u;
+	}
+	OBJECT(object)->flags = 0x80u;
+	attributes = OBJECT(object)->attributes;
+	OBJECT(object)->attributes = (attributes & 0xCFu) | 0x20u;
+	state = OBJECT(object)->state;
+	OBJECT(object)->state = state + 1u;
+	return setup;
+}
+
+/* Waits until the stage's boss is beaten, then starts rising (sound 1500 for the second one). */
+void moes_street_scenery_riser_wait_boss(uint16_t object)
+{
+	uint16_t command = 0;
+	uint8_t parameter = 0, state = 0;
+
+	if (boss_beaten == 0u)
+		return;
+	parameter = OBJECT(object)->parameter;
+	if (parameter != 0u)
+	{
+		command = 0x1500u;
+		vector_queue_sound(command);
+	}
+	OBJECT(object)->z_speed = 0x40;
+	OBJECT(object)->timer = 4u;
+	OBJECT(object)->moes_street_scenery_riser.rise_steps = 8u;
+	state = OBJECT(object)->state;
+	OBJECT(object)->state = state + 1u;
+}
+
+/* Rises slowly for 32 frames. */
+void moes_street_scenery_riser_rise_slowly(uint16_t object)
+{
+	uint8_t timer = 0, rise_steps = 0, state = 0;
+
+	timer = OBJECT(object)->timer;
+	OBJECT(object)->timer = timer - 1u;
+	if (timer == 1u)
+	{
+		OBJECT(object)->timer = 4u;
+		rise_steps = OBJECT(object)->moes_street_scenery_riser.rise_steps;
+		OBJECT(object)->moes_street_scenery_riser.rise_steps = rise_steps - 1u;
+		if (rise_steps == 1u)
+		{
+			OBJECT(object)->timer = 0x40u;
+			OBJECT(object)->z_speed = 0x40;
+			state = OBJECT(object)->state;
+			OBJECT(object)->state = state + 1u;
+		}
+	}
+}
+
+/* Rises faster and faster for 64 frames. */
+void moes_street_scenery_riser_rise_faster(uint16_t object)
+{
+	uint8_t timer = 0, state = 0;
+	uint16_t z_speed = 0;
+
+	z_speed = OBJECT(object)->z_speed;
+	OBJECT(object)->z_speed = z_speed + 4u;
+	timer = OBJECT(object)->timer;
+	OBJECT(object)->timer = timer - 1u;
+	if (timer == 1u)
+	{
+		state = OBJECT(object)->state;
+		OBJECT(object)->state = state + 1u;
+	}
+}
+
+/* Stops rising once high enough. */
+void moes_street_scenery_riser_stop(uint16_t object)
+{
+	uint8_t state = 0;
+	uint16_t z = 0;
+
+	z = OBJECT(object)->z;
+	if (z < 0x80u)
+	{
+		moes_street_scenery_riser_idle();
+		return;
+	}
+	OBJECT(object)->z_speed = 0;
+	state = OBJECT(object)->state;
+	OBJECT(object)->state = state + 1u;
+	moes_street_scenery_riser_idle();
+}
+
+/* Does nothing once it has risen. */
+void moes_street_scenery_riser_idle(void)
+{
+}
+
+/* Sets up the kind 10 scenery that comes down, taking the floor map's row and column under it. */
+uint16_t moes_street_scenery_dropper_start(uint16_t object)
+{
+	uint8_t floor_cell_2 = 0, floor_place_low = 0;
+	uint16_t floor_cell = 0, floor_start = 0;
+	uint16_t floor_place = 0;
+	uint8_t animation_flags = 0, parameter = 0, animation = 0, attributes = 0, state = 0;
+	uint16_t old_x = 0, new_x = 0;
+
+	floor_start = moes_street_scenery_dropper_setup_ADDRESS;
+	vector_object_setup(object, floor_start);
+	OBJECT(object)->flags = 0x80u;
+	old_x = OBJECT(object)->x;
+	new_x = old_x + 0x10u;
+	OBJECT(object)->x = new_x;
+	animation_flags = OBJECT(object)->animation_flags;
+	OBJECT(object)->animation_flags = animation_flags | 0x80u;
+	parameter = OBJECT(object)->parameter;
+	if (parameter == 0u)
+	{
+		animation = OBJECT(object)->animation;
+		OBJECT(object)->animation = (animation - 1u) | 0x80u;
+		floor_cell_under(object, &floor_start, &floor_cell);
+		floor_cell_2 = (uint8_t)(floor_cell >> 8);
+		OBJECT(object)->moes_street_scenery_dropper.floor_start = floor_start;
+		OBJECT(object)->moes_street_scenery_dropper.floor_cell = floor_cell_2;
+		floor_place = floor_start;
+		floor_place_low = (uint8_t)floor_place;
+		scenery_floor_column = floor_place_low;
+		OBJECT(object)->moes_street_scenery_dropper.floor_row = ((uint32_t)(floor_place >> 8) << 8) | (floor_place_low & 0xC0u);
+	}
+	OBJECT(object)->floor_z = 0u;
+	attributes = OBJECT(object)->attributes;
+	OBJECT(object)->attributes = (attributes & 0xCFu) | 0x20u;
+	state = OBJECT(object)->state;
+	OBJECT(object)->state = state + 1u;
+	return floor_start;
+}
+
+/* Waits until direct page 92 is clear, then 32 frames more. */
+void moes_street_scenery_dropper_wait(uint16_t object)
+{
+	uint8_t state = 0;
+
+	if (stage_scrolls_on == 0u)
+	{
+		OBJECT(object)->timer = 0x20u;
+		state = OBJECT(object)->state;
+		OBJECT(object)->state = state + 1u;
+	}
+}
+
+/* Starts coming down for 64 frames (sound 1300 for the first). */
+void moes_street_scenery_dropper_come_down(uint16_t object)
+{
+	uint16_t command = 0;
+	uint8_t timer = 0, parameter = 0, state = 0;
+
+	timer = OBJECT(object)->timer;
+	OBJECT(object)->timer = timer - 1u;
+	if (timer != 1u)
+		return;
+	parameter = OBJECT(object)->parameter;
+	if (parameter == 0u)
+	{
+		command = 0x1300u;
+		vector_queue_sound(command);
+	}
+	OBJECT(object)->timer = 0x40u;
+	OBJECT(object)->z_speed = -0x80;
+	state = OBJECT(object)->state;
+	OBJECT(object)->state = state + 1u;
+}
+
+/* Stops when down; the first counts itself in 184A and rewrites the floor. */
+uint16_t moes_street_scenery_dropper_land(uint16_t object, uint16_t states)
+{
+	uint8_t timer = 0, parameter = 0, animation_flags = 0, droppers_down = 0, state = 0;
+
+	timer = OBJECT(object)->timer;
+	OBJECT(object)->timer = timer - 1u;
+	if (timer != 1u)
+	{
+		moes_street_scenery_dropper_idle();
+		return states;
+	}
+	OBJECT(object)->z_speed = 0;
+	parameter = OBJECT(object)->parameter;
+	if (parameter == 0u)
+	{
+		animation_flags = OBJECT(object)->animation_flags;
+		OBJECT(object)->animation_flags = animation_flags | 0x80u;
+		droppers_down = io_read8(object_group_count);
+		io_write8(object_group_count, droppers_down + 1u);
+		states = moes_street_scenery_dropper_write_floor(object);
+	}
+	state = OBJECT(object)->state;
+	OBJECT(object)->state = state + 1u;
+	moes_street_scenery_dropper_idle();
+	return states;
+}
+
+/* Does nothing once down. */
+void moes_street_scenery_dropper_idle(void)
+{
+}
+
+/* Rewrites 32 columns of the floor map from its place, six cells each, the last columns as edges. */
+uint16_t moes_street_scenery_dropper_write_floor(uint16_t object)
+{
+	uint8_t control = 0, floor_column = 0;
+	uint16_t column = 0, floor_place = 0;
+	uint8_t start_place_low = 0;
+	uint8_t row = 0, row_2 = 0, row_3 = 0, row_4 = 0, row_5 = 0, columns_to_write = 0;
+	uint16_t floor_start = 0, floor_row = 0;
+
+	control = board_control | 2u;
+	board_control = control;
+	io_write8(board_control_register, control);
+	floor_columns_left = 0x20u;
+	floor_start = OBJECT(object)->moes_street_scenery_dropper.floor_start;
+	start_place_low = floor_start;
+	floor_column = start_place_low;
+	OBJECT(object)->moes_street_scenery_dropper.floor_column = floor_column;
+	floor_column -= 5u;
+	do
+	{
+		if (moes_street_scenery_floor_edge_flags[(int8_t)floor_columns_left] != 0u)
+			column = moes_street_scenery_edge_floor_cells_ADDRESS;
+		else
+			column = moes_street_scenery_floor_cells_ADDRESS;
+		floor_row = OBJECT(object)->moes_street_scenery_dropper.floor_row;
+		floor_column &= 0x3Fu;
+		floor_place = floor_row + floor_column;
+		mem_write8(floor_place, FLOOR_COLUMN(column)->row_0);
+		row = FLOOR_COLUMN(column)->row_1;
+		mem_write8(floor_place + 0x40u, row);
+		row_2 = FLOOR_COLUMN(column)->row_2;
+		mem_write8(floor_place + 0x80u, row_2);
+		row_3 = FLOOR_COLUMN(column)->row_3;
+		mem_write8(floor_place + 0xC0u, row_3);
+		row_4 = FLOOR_COLUMN(column)->row_4;
+		mem_write8(floor_place + 0x100u, row_4);
+		row_5 = FLOOR_COLUMN(column)->row_5;
+		mem_write8(floor_place + 0x140u, row_5);
+		floor_column++;
+		columns_to_write = floor_columns_left;
+		floor_columns_left = columns_to_write - 1u;
+	} while (columns_to_write != 1u);
+	control = board_control & ~3u;
+	board_control = control;
+	io_write8(board_control_register, control);
+	leftover_y = column;
+	return floor_place;
+}

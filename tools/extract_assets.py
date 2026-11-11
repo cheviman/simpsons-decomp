@@ -32,6 +32,7 @@ and the EEPROM's with the set's.
 """
 import bisect
 import re
+import shutil
 import sys
 from collections import Counter, defaultdict
 from pathlib import Path
@@ -71,13 +72,32 @@ SET_NAMES = {0x00: "marge", 0x01: "homer", 0x02: "bart", 0x03: "lisa", 0x04: "hi
              0xBE: "knight_3", 0xBF: "knight_4", 0xC0: "knight_5", 0xC1: "knight_6", 0xC2: "grim_reaper",
              0xC5: "dog_2", 0xC8: "pointing_hand", 0xCC: "burns_robot", 0xCD: "burns_robot_2", 0xCE: "burns_robot_3",
              0xD0: "bubbles_3", 0xD2: "burns_robot_4", 0xD3: "mr_burns", 0xD4: "burns_robot_5", 0xD5: "numbers"}
+# ... and the rest, by their sprites put back together from the animations with the palette of a frame where an
+# object of the kind is on screen (the sheets of the first frames were black); kind AD, which nothing sets up or
+# shows, stays kind_AD
+SET_NAMES.update({0x05: "obstacles", 0x06: "broom", 0x08: "slingshot", 0x0E: "screen_pieces",
+                  0x10: "moes_and_gorge_scenery", 0x12: "channel_6_scenery", 0x13: "boss_doors_and_rubble",
+                  0x85: "fat_goon_with_mallet", 0x87: "woman_in_apron", 0x88: "fat_goon_in_teacup",
+                  0x8A: "woman_in_green", 0x8C: "barney", 0x8E: "belly_dancer", 0x90: "fireman_goon", 0x91: "zombie",
+                  0x93: "kid_in_sunglasses", 0x95: "rabbit", 0x97: "grabbing_zombie", 0x98: "one_eared_rabbit",
+                  0x9A: "ghost_on_rope", 0x9C: "smithers", 0x9E: "moe", 0xA0: "bluebird", 0xA1: "ninja",
+                  0xA3: "kabuki_warrior", 0xA4: "krusty_toys_helicopter", 0xA5: "girl_with_food", 0xA6: "nelson",
+                  0xA7: "milhouse", 0xA8: "skinner", 0xA9: "sideshow_bob", 0xAA: "posters", 0xAB: "drink_vendor",
+                  0xAC: "burger_eater", 0xB2: "caged_gorilla", 0xB3: "kent_brockman", 0xB5: "schoolboy_with_books",
+                  0xB7: "walking_donut", 0xB8: "flying_saxophone", 0xB9: "marge_cloud", 0xC3: "gangster",
+                  0xC4: "gangster_2", 0xC6: "crypt_slab", 0xC7: "cloud_devil", 0xC9: "patty_and_selma", 0xCA: "grandpa",
+                  0xCB: "bleeding_gums_murphy", 0xCF: "frog", 0xD1: "dreamland_boss_balls", 0xD6: "crawling_man",
+                  0xD7: "itchy_and_scratchy_heads"})
 # the background scenes by their number (direct page 75, which the stage's script sets: 80-FF the high tables), as kref's
-# RAM shows them with the step (4803) over the stage scenarios; 85 (the second story's) and 00-03 (the attract's) none
-# showed apart
+# RAM shows them with the step (4803) over the stage scenarios; 00-03 and 85 by their maps drawn: 00 the attract's
+# opening, 02 the stage cards' TV and the score ranking, 03 the name entry (name_entry_start), 01 and 85 none
+# the code selects (85: the forest's maps and blocks with other tile banks)
 SCENE_NAMES = {0x80: "game_start", 0x81: "story_1", 0x82: "stage_1_downtown", 0x83: "bonus_1",
                0x84: "stage_2_krustyland", 0x86: "stage_3_forest", 0x87: "stage_3_cemetery",
                0x88: "stage_4_moes_street", 0x89: "stage_5_gorge", 0x8A: "stage_6_dreamland", 0x8B: "bonus_2",
                0x8C: "stage_7_channel_6", 0x8D: "stage_8_power_plant", 0x8E: "ending"}
+SCENE_NAMES.update({0x00: "attract_intro", 0x01: "unused_title_card", 0x02: "title_card_and_high_scores",
+                    0x03: "name_entry", 0x85: "unused_stage_3_forest"})
 TILE_FILES = ("072-b07.18h", "072-b06.16h")
 SPRITE_FILES = ("072-b08.3n", "072-b09.8n", "072-b10.12n", "072-b11.16l")
 SAMPLE_FILES = ("072-d05.1f", "072-d04.1d")
@@ -333,6 +353,10 @@ def main():
             failures += not same
             print(f"{name}: {'the same' if same else 'DIFFERENT'}")
         return 1 if failures else 0
+    # (the folders this writes whole start empty: a sheet or a piece an earlier extraction named otherwise does not stay)
+    for folder in ("sprites", "tiles", "data", "sound_data", "sounds"):
+        if (out / folder).is_dir():
+            shutil.rmtree(out / folder)
     image = rom.build_program(found_set)
     analysis = konami_analysis.Analysis(image, konami_analysis.load_symbols(ROOT / "symbols.txt"))
     analysis.run()

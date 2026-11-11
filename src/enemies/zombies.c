@@ -275,34 +275,34 @@ void zombie_come_out(uint16_t object)
 		zombie_swipe_end(object);
 		return;
 	case 40:
-		kind_9a_dropper_fall(object, 0u);
+		ghost_on_rope_fall(object, 0u);
 		return;
 	case 42:
-		kind_9a_dropper_hurt(object);
+		ghost_on_rope_hurt(object);
 		return;
 	case 44:
-		kind_9a_dropper_setup(object);
+		ghost_on_rope_setup(object);
 		return;
 	case 46:
-		kind_9a_dropper_wait_mode(object);
+		ghost_on_rope_wait_mode(object);
 		return;
 	case 48:
-		kind_9a_dropper_watch(object, 0u);
+		ghost_on_rope_watch(object, 0u);
 		return;
 	case 50:
-		kind_9a_dropper_drop(object, 0u);
+		ghost_on_rope_drop(object, 0u);
 		return;
 	case 52:
-		kind_9a_dropper_hang(object);
+		ghost_on_rope_hang(object);
 		return;
 	case 54:
-		kind_9a_dropper_climb(object);
+		ghost_on_rope_climb(object);
 		return;
 	case 56:
-		kind_9a_dropper_hurt_start(object);
+		ghost_on_rope_hurt_start(object);
 		return;
 	case 58:
-		kind_9a_dropper_hurt_flash(object);
+		ghost_on_rope_hurt_flash(object);
 		return;
 	}
 }

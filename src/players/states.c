@@ -18,18 +18,18 @@ void player_team_move(uint16_t player)
 {
 	bool L_038311 = false, L_038314 = false, L_038365 = false, L_03836A = false, L_0384D1 = false, L_0386E1 = false, L_0391EB = false, L_039205 = false, L_039216 = false;
 	uint8_t animation_base = 0, animation_offset = 0, attack_state = 0, joystick_bits = 0, move_number = 0, owner_kind = 0, pressed_either = 0, voice_high = 0, voice_low = 0, walk_controls = 0, z_low = 0;
-	uint16_t floor_z = 0, joystick = 0, spark_height = 0, teammate = 0, voice_command = 0, walk_velocities = 0;
+	uint16_t joystick = 0, player_z = 0, spark_height = 0, teammate = 0, voice_command = 0, walk_velocities = 0;
 	uint16_t saved_walk_velocities = 0;
 	uint8_t controls_pressed = 0, partner_pressed = 0, team_move_number = 0, kind = 0, animation_entry = 0, kind_2 = 0, team_move_number_2 = 0, team_move_number_3 = 0, kind_3 = 0, team_move_number_4 = 0, controls = 0, partner_joystick = 0, controls_2 = 0, own_joystick = 0, team_move_number_5 = 0, animation_flags = 0, team_move_number_6 = 0, voice_timer = 0, controls_pressed_2 = 0, controls_pressed_3 = 0, blow_landed = 0, team_direction = 0, controls_pressed_4 = 0, controls_pressed_5 = 0, controls_3 = 0, team_direction_2 = 0, active_controls = 0, controls_4 = 0, controls_5 = 0, controls_6 = 0;
-	uint16_t partner = 0, z = 0, floor_z_2 = 0, partner_2 = 0, action = 0, z_2 = 0, floor_z_3 = 0;
+	uint16_t partner = 0, z = 0, floor_z = 0, partner_2 = 0, action = 0, z_2 = 0, floor_z_2 = 0;
 	uint32_t action_halfword = 0;
 
 	partner = OBJECT(player)->player.partner;
 	teammate = partner;
 	z = OBJECT(player)->z;
 	z_low = (uint8_t)z;
-	floor_z_2 = OBJECT(player)->floor_z;
-	if ((int16_t)(((uint32_t)(z >> 8) << 8) | z_low) <= (int16_t)floor_z_2)
+	floor_z = OBJECT(player)->floor_z;
+	if ((int16_t)(((uint32_t)(z >> 8) << 8) | z_low) <= (int16_t)floor_z)
 	{
 		controls_pressed = OBJECT(player)->player.controls_pressed;
 		partner_pressed = OBJECT(teammate)->player.controls_pressed;
@@ -111,11 +111,11 @@ void player_team_move(uint16_t player)
 												OBJECT(player)->damage = 0xCu;
 												OBJECT(player)->attack = 0x13u;
 												z_2 = OBJECT(player)->z;
-												floor_z = z_2;
-												floor_z_3 = OBJECT(player)->floor_z;
-												if ((int16_t)floor_z_3 < (int16_t)floor_z)
+												player_z = z_2;
+												floor_z_2 = OBJECT(player)->floor_z;
+												if ((int16_t)floor_z_2 < (int16_t)player_z)
 												{
-													player_start_jump_attack(floor_z, player);
+													player_start_jump_attack(player_z, player);
 													animation_base = 0xFCu;
 												}
 												else
@@ -613,9 +613,9 @@ void player_stand(uint16_t y, uint16_t player)
 void player_walk(uint16_t velocities, uint16_t player, uint16_t joystick)
 {
 	uint8_t animation_base = 0, animation_offset = 0, attack_state = 0, base_animation = 0, owner_kind = 0, team_way = 0, walk_animation = 0, x_speed_high = 0;
-	uint16_t carry_offsets = 0, floor_z = 0, teammate = 0, velocity = 0;
+	uint16_t carry_offsets = 0, player_z = 0, teammate = 0, velocity = 0;
 	uint8_t attributes = 0, teamed = 0, attributes_2 = 0, state_frames = 0, teamed_2 = 0, controls = 0, team_direction = 0, controls_2 = 0, teamed_3 = 0, controls_3 = 0, kind = 0, kind_2 = 0, team_move_number = 0, team_move_number_2 = 0, team_move_number_3 = 0, kind_3 = 0, animation_entry = 0;
-	uint16_t velocity_record = 0, x_speed = 0, walk_x_speed = 0, partner = 0, partner_2 = 0, partner_3 = 0, action = 0, z = 0, floor_z_2 = 0;
+	uint16_t velocity_record = 0, x_speed = 0, walk_x_speed = 0, partner = 0, partner_2 = 0, partner_3 = 0, action = 0, z = 0, floor_z = 0;
 	uint32_t action_halfword = 0;
 
 	velocity_record = velocities + (uint8_t)(((uint32_t)(joystick >> 8) << 1) << 1);
@@ -736,11 +736,11 @@ void player_walk(uint16_t velocities, uint16_t player, uint16_t joystick)
 		OBJECT(player)->damage = 0xCu;
 		OBJECT(player)->attack = 0x13u;
 		z = OBJECT(player)->z;
-		floor_z = z;
-		floor_z_2 = OBJECT(player)->floor_z;
-		if ((int16_t)floor_z_2 < (int16_t)floor_z)
+		player_z = z;
+		floor_z = OBJECT(player)->floor_z;
+		if ((int16_t)floor_z < (int16_t)player_z)
 		{
-			player_start_jump_attack(floor_z, player);
+			player_start_jump_attack(player_z, player);
 			animation_base = 0xFCu;
 		}
 		else
@@ -775,9 +775,9 @@ void player_team_jump(uint16_t player)
 {
 	bool L_038533 = false;
 	uint8_t animation_base = 0, animation_offset = 0, attack_state = 0, owner_kind = 0;
-	uint16_t floor_z = 0, joystick = 0, teammate = 0, velocity = 0;
+	uint16_t joystick = 0, player_z = 0, teammate = 0, velocity = 0;
 	uint8_t controls = 0, controls_2 = 0, attack_started = 0, team_move_number = 0, controls_pressed = 0, partner_pressed = 0, state_timer = 0, controls_3 = 0, controls_4 = 0, state_timer_2 = 0, kind = 0, kind_2 = 0, team_move_number_2 = 0, team_move_number_3 = 0, team_move_number_4 = 0, kind_3 = 0, animation_entry = 0;
-	uint16_t partner = 0, z_speed = 0, new_z_speed = 0, slowed_z_speed = 0, partner_2 = 0, action = 0, z = 0, floor_z_2 = 0;
+	uint16_t partner = 0, z_speed = 0, new_z_speed = 0, slowed_z_speed = 0, partner_2 = 0, action = 0, z = 0, floor_z = 0;
 	uint32_t action_halfword = 0, action_halfword_2 = 0;
 
 	partner = OBJECT(player)->player.partner;
@@ -864,11 +864,11 @@ void player_team_jump(uint16_t player)
 		OBJECT(player)->damage = 0xCu;
 		OBJECT(player)->attack = 0x13u;
 		z = OBJECT(player)->z;
-		floor_z = z;
-		floor_z_2 = OBJECT(player)->floor_z;
-		if ((int16_t)floor_z_2 < (int16_t)floor_z)
+		player_z = z;
+		floor_z = OBJECT(player)->floor_z;
+		if ((int16_t)floor_z < (int16_t)player_z)
 		{
-			player_start_jump_attack(floor_z, player);
+			player_start_jump_attack(player_z, player);
 			animation_base = 0xFCu;
 		}
 		else
@@ -921,9 +921,9 @@ void player_team_jump(uint16_t player)
 void player_team_start_fall(uint16_t player)
 {
 	uint8_t animation_base = 0, animation_offset = 0, attack_state = 0, owner_kind = 0;
-	uint16_t animation_offsets = 0, floor_z = 0, teammate = 0;
+	uint16_t animation_offsets = 0, player_z = 0, teammate = 0;
 	uint8_t team_move_number = 0, kind = 0, animation_entry = 0, kind_2 = 0, kind_3 = 0, team_move_number_2 = 0, team_move_number_3 = 0;
-	uint16_t partner = 0, action = 0, z = 0, floor_z_2 = 0;
+	uint16_t partner = 0, action = 0, z = 0, floor_z = 0;
 	uint32_t action_halfword = 0;
 
 	OBJECT(player)->player.player_state = 0x34u;
@@ -967,11 +967,11 @@ void player_team_start_fall(uint16_t player)
 		OBJECT(player)->damage = 0xCu;
 		OBJECT(player)->attack = 0x13u;
 		z = OBJECT(player)->z;
-		floor_z = z;
-		floor_z_2 = OBJECT(player)->floor_z;
-		if ((int16_t)floor_z_2 < (int16_t)floor_z)
+		player_z = z;
+		floor_z = OBJECT(player)->floor_z;
+		if ((int16_t)floor_z < (int16_t)player_z)
 		{
-			player_start_jump_attack(floor_z, player);
+			player_start_jump_attack(player_z, player);
 			animation_base = 0xFCu;
 		}
 		else
@@ -997,9 +997,9 @@ void player_team_fall(uint16_t player)
 	bool L_038583 = false;
 	uint32_t at_floor = 0, below_floor = 0, compare_overflow = 0;
 	uint8_t animation_base = 0, animation_offset = 0, attack_state = 0, owner_kind = 0, z_speed_high = 0, z_speed_low = 0;
-	uint16_t floor_z = 0, joystick = 0, teammate = 0, velocity = 0, z = 0;
+	uint16_t joystick = 0, player_z = 0, teammate = 0, velocity = 0, z = 0;
 	uint8_t controls = 0, controls_2 = 0, attack_started = 0, team_move_number = 0, controls_pressed = 0, partner_pressed = 0, kind = 0, kind_2 = 0, kind_3 = 0, team_move_number_2 = 0, team_move_number_3 = 0, team_move_number_4 = 0, kind_4 = 0, animation_entry = 0;
-	uint16_t partner = 0, floor_z_2 = 0, z_speed = 0, bounce_z_speed = 0, bounce_up_speed = 0, z_speed_2 = 0, new_z_speed = 0, faster_z_speed = 0, partner_2 = 0, action = 0, z_2 = 0, floor_z_3 = 0;
+	uint16_t partner = 0, floor_z = 0, z_speed = 0, bounce_z_speed = 0, bounce_up_speed = 0, z_speed_2 = 0, new_z_speed = 0, faster_z_speed = 0, partner_2 = 0, action = 0, z_2 = 0, floor_z_2 = 0;
 	uint32_t action_halfword = 0, action_halfword_2 = 0;
 
 	partner = OBJECT(player)->player.partner;
@@ -1028,8 +1028,8 @@ void player_team_fall(uint16_t player)
 		{
 			OBJECT(player)->x_speed = 0;
 			OBJECT(player)->y_speed = 0;
-			floor_z_2 = OBJECT(player)->floor_z;
-			z = floor_z_2;
+			floor_z = OBJECT(player)->floor_z;
+			z = floor_z;
 			OBJECT(player)->z = z;
 			OBJECT(teammate)->z = z;
 			OBJECT(player)->z_fraction = 0u;
@@ -1111,11 +1111,11 @@ void player_team_fall(uint16_t player)
 		OBJECT(player)->damage = 0xCu;
 		OBJECT(player)->attack = 0x13u;
 		z_2 = OBJECT(player)->z;
-		floor_z = z_2;
-		floor_z_3 = OBJECT(player)->floor_z;
-		if ((int16_t)floor_z_3 < (int16_t)floor_z)
+		player_z = z_2;
+		floor_z_2 = OBJECT(player)->floor_z;
+		if ((int16_t)floor_z_2 < (int16_t)player_z)
 		{
-			player_start_jump_attack(floor_z, player);
+			player_start_jump_attack(player_z, player);
 			animation_base = 0xFCu;
 		}
 		else
@@ -1621,35 +1621,35 @@ void player_plain_attack(uint16_t player)
 /* Starts the attack move in D (state and animation) with the hit in Y: in the air its jump version. */
 void player_start_move(uint16_t move_hit, uint16_t player, uint16_t move_and_animation)
 {
-	uint16_t floor_z = 0;
-	uint16_t z = 0, floor_z_2 = 0;
+	uint16_t player_z = 0;
+	uint16_t z = 0, floor_z = 0;
 
 	z = OBJECT(player)->z;
-	floor_z = z;
-	floor_z_2 = OBJECT(player)->floor_z;
-	if ((int16_t)floor_z <= (int16_t)floor_z_2)
+	player_z = z;
+	floor_z = OBJECT(player)->floor_z;
+	if ((int16_t)player_z <= (int16_t)floor_z)
 	{
 		player_set_move_with_hit(move_hit, player, move_and_animation);
 		return;
 	}
-	move_hit = player_start_jump_attack(floor_z, player);
+	move_hit = player_start_jump_attack(player_z, player);
 	player_set_air_move(move_hit, player, move_and_animation);
 }
 
 /* Sets up a jump attack by its height above the floor: its hit, gravity, up and x speeds and box, with
    the player's shout. */
-uint16_t player_start_jump_attack(uint16_t floor_z, uint16_t player)
+uint16_t player_start_jump_attack(uint16_t z, uint16_t player)
 {
 	uint16_t command = 0, cursor = 0, move_hit = 0;
 	uint16_t player_z = 0;
 	uint8_t attributes = 0;
-	uint16_t floor_z_2 = 0, height_above_floor = 0, settings = 0, gravity_address = 0, gravity = 0, rise_address = 0, rise_speed = 0;
+	uint16_t floor_z = 0, height_above_floor = 0, settings = 0, gravity_address = 0, gravity = 0, rise_address = 0, rise_speed = 0;
 
 	command = 0x3F20u;
 	player_play_voice(player, command);
-	player_z = floor_z;
-	floor_z_2 = OBJECT(player)->floor_z;
-	height_above_floor = player_z - floor_z_2;
+	player_z = z;
+	floor_z = OBJECT(player)->floor_z;
+	height_above_floor = player_z - floor_z;
 	cursor = player_jump_attack_settings_ADDRESS;
 	if ((int16_t)height_above_floor < 0x40)
 		cursor += 0xAu;
@@ -2249,10 +2249,10 @@ void player_attack_land(uint16_t animation_offsets, uint16_t player)
 void player_attack_end(uint16_t animation_offsets, uint16_t player)
 {
 	uint8_t animation_base = 0, animation_offset = 0, attack_state = 0, facing_left = 0, floor_high = 0, floor_low = 0, owner_kind = 0;
-	uint16_t floor_z = 0, teammate = 0, x_speed = 0;
+	uint16_t player_z = 0, teammate = 0, x_speed = 0;
 	uint8_t facing_for_teammate = 0;
 	uint8_t teamed = 0, animation_flags = 0, kind = 0, kind_2 = 0, team_move_number = 0, team_move_number_2 = 0, team_move_number_3 = 0, kind_3 = 0, animation_entry = 0, player_state = 0, attributes = 0, facing_left_bit = 0, attributes_2 = 0;
-	uint16_t partner = 0, action = 0, z = 0, floor_z_2 = 0, z_2 = 0, floor_z_3 = 0, floor_z_4 = 0, z_3 = 0, partner_2 = 0, z_4 = 0;
+	uint16_t partner = 0, action = 0, z = 0, floor_z = 0, z_2 = 0, floor_z_2 = 0, floor_z_3 = 0, z_3 = 0, partner_2 = 0, z_4 = 0;
 	uint32_t action_halfword = 0;
 
 	teamed = OBJECT(player)->player.teamed;
@@ -2295,11 +2295,11 @@ void player_attack_end(uint16_t animation_offsets, uint16_t player)
 			OBJECT(player)->damage = 0xCu;
 			OBJECT(player)->attack = 0x13u;
 			z = OBJECT(player)->z;
-			floor_z = z;
-			floor_z_2 = OBJECT(player)->floor_z;
-			if ((int16_t)floor_z_2 < (int16_t)floor_z)
+			player_z = z;
+			floor_z = OBJECT(player)->floor_z;
+			if ((int16_t)floor_z < (int16_t)player_z)
 			{
-				player_start_jump_attack(floor_z, player);
+				player_start_jump_attack(player_z, player);
 				animation_base = 0xFCu;
 			}
 			else
@@ -2334,8 +2334,8 @@ void player_attack_end(uint16_t animation_offsets, uint16_t player)
 	if (player_state != 0x35u)
 	{
 		z_2 = OBJECT(player)->z;
-		floor_z_3 = OBJECT(player)->floor_z;
-		if ((int16_t)z_2 <= (int16_t)floor_z_3)
+		floor_z_2 = OBJECT(player)->floor_z;
+		if ((int16_t)z_2 <= (int16_t)floor_z_2)
 		{
 			player_team_together(player);
 			return;
@@ -2343,9 +2343,9 @@ void player_attack_end(uint16_t animation_offsets, uint16_t player)
 		player_team_start_fall(player);
 		return;
 	}
-	floor_z_4 = OBJECT(player)->floor_z;
-	floor_high = (uint8_t)(floor_z_4 >> 8);
-	floor_low = (uint8_t)floor_z_4;
+	floor_z_3 = OBJECT(player)->floor_z;
+	floor_high = (uint8_t)(floor_z_3 >> 8);
+	floor_low = (uint8_t)floor_z_3;
 	z_3 = OBJECT(player)->z;
 	if ((int16_t)z_3 <= (int16_t)(((uint32_t)floor_high << 8) | floor_low))
 	{
@@ -3354,9 +3354,9 @@ void player_work_heavy_object(uint16_t kind, uint16_t player)
 void player_team_ready(uint16_t animation_offsets, uint16_t player)
 {
 	uint8_t animation_base = 0, animation_offset = 0, attack_state = 0, owner_kind = 0, pressed_either = 0;
-	uint16_t effect_state = 0, floor_z = 0, kind = 0, teammate = 0;
+	uint16_t effect_state = 0, kind = 0, player_z = 0, teammate = 0;
 	uint8_t stage_is_over = 0, controls_pressed = 0, partner_pressed = 0, team_move_number = 0, team_move_number_2 = 0, kind_2 = 0, animation_entry = 0, kind_3 = 0, kind_4 = 0, team_move_number_3 = 0, team_move_number_4 = 0;
-	uint16_t partner = 0, z = 0, floor_z_2 = 0, partner_2 = 0, action = 0, z_2 = 0, floor_z_3 = 0;
+	uint16_t partner = 0, z = 0, floor_z = 0, partner_2 = 0, action = 0, z_2 = 0, floor_z_2 = 0;
 	uint32_t action_halfword = 0;
 
 	partner = OBJECT(player)->player.partner;
@@ -3370,8 +3370,8 @@ void player_team_ready(uint16_t animation_offsets, uint16_t player)
 		return;
 	}
 	z = OBJECT(player)->z;
-	floor_z_2 = OBJECT(player)->floor_z;
-	if ((int16_t)floor_z_2 < (int16_t)z)
+	floor_z = OBJECT(player)->floor_z;
+	if ((int16_t)floor_z < (int16_t)z)
 	{
 		player_team_split(teammate, player);
 		OBJECT(teammate)->flags = 0xC0u;
@@ -3443,11 +3443,11 @@ void player_team_ready(uint16_t animation_offsets, uint16_t player)
 		OBJECT(player)->damage = 0xCu;
 		OBJECT(player)->attack = 0x13u;
 		z_2 = OBJECT(player)->z;
-		floor_z = z_2;
-		floor_z_3 = OBJECT(player)->floor_z;
-		if ((int16_t)floor_z_3 < (int16_t)floor_z)
+		player_z = z_2;
+		floor_z_2 = OBJECT(player)->floor_z;
+		if ((int16_t)floor_z_2 < (int16_t)player_z)
 		{
-			player_start_jump_attack(floor_z, player);
+			player_start_jump_attack(player_z, player);
 			animation_base = 0xFCu;
 		}
 		else
@@ -3493,13 +3493,13 @@ void player_team_resume(uint16_t player)
 void player_team_together(uint16_t player)
 {
 	uint8_t animation_base = 0, animation_offset = 0, attack_state = 0, owner_kind = 0;
-	uint16_t animation_offsets = 0, floor_z = 0, teammate = 0;
+	uint16_t animation_offsets = 0, player_z = 0, teammate = 0;
 	uint8_t team_move_number = 0, team_move_number_2 = 0, kind = 0, animation_entry = 0, kind_2 = 0, kind_3 = 0, team_move_number_3 = 0, team_move_number_4 = 0;
-	uint16_t floor_z_2 = 0, partner = 0, action = 0, z = 0, floor_z_3 = 0;
+	uint16_t floor_z = 0, partner = 0, action = 0, z = 0, floor_z_2 = 0;
 	uint32_t action_halfword = 0;
 
-	floor_z_2 = OBJECT(player)->floor_z;
-	animation_offsets = floor_z_2;
+	floor_z = OBJECT(player)->floor_z;
+	animation_offsets = floor_z;
 	OBJECT(player)->z = animation_offsets;
 	OBJECT(player)->z_fraction = 0u;
 	player_stop(player);
@@ -3550,11 +3550,11 @@ void player_team_together(uint16_t player)
 		OBJECT(player)->damage = 0xCu;
 		OBJECT(player)->attack = 0x13u;
 		z = OBJECT(player)->z;
-		floor_z = z;
-		floor_z_3 = OBJECT(player)->floor_z;
-		if ((int16_t)floor_z_3 < (int16_t)floor_z)
+		player_z = z;
+		floor_z_2 = OBJECT(player)->floor_z;
+		if ((int16_t)floor_z_2 < (int16_t)player_z)
 		{
-			player_start_jump_attack(floor_z, player);
+			player_start_jump_attack(player_z, player);
 			animation_base = 0xFCu;
 		}
 		else

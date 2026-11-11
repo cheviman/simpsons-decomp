@@ -1,6 +1,6 @@
 /**
  *    Name:        enemies/enemy_hit_reactions.c
- *    Description: flinching, knocked down, getting up, dying (they go on in fixed_3F to 07E1CC)
+ *    Description: flinching, knocked down, getting up, dying
  *    Version:     0.1.0
  *    Created:     06-11-2026
  *    Modified:    11-11-2026

@@ -174,7 +174,7 @@ void stage_7_scene_put_chain(uint16_t *p_last_link, uint16_t *p_new_object)
 	uint8_t links_left = 0, old_scene_substate = 0;
 	uint16_t first_link = 0;
 
-	io_write16(bonus_1_intro_player, 0x808u);
+	io_write16(scene_shared_value, 0x808u);
 	new_object = stage_7_scene_new_object();
 	io_write16(chain_lead_link, new_object);
 	io_write16(chain_end_link, new_object);
@@ -243,7 +243,7 @@ void stage_7_scene_move_chain(uint16_t *p_link, uint16_t *p_pair)
 		lead_link = io_read16(chain_lead_link);
 		link = lead_link;
 		lead_x = OBJECT(link)->x;
-		chain_spacing = io_read16(bonus_1_intro_player);
+		chain_spacing = io_read16(scene_shared_value);
 		if ((uint16_t)(lead_x - 0x40u + camera_x - chain_spacing) != 0x60u)
 		{
 			OBJECT(link)->x_speed = 0x200;

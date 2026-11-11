@@ -5,7 +5,7 @@
  *                 assets, by name and by the addresses it keeps
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    07-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    license:BSD-3-Clause
@@ -18,10 +18,13 @@
  *    found; it hands the interrupted code nothing: what the original pushes for it, the C keeps in its own variables
  *    (the 053248's stack is no state of the game's: the state hash leaves it out).
  *
- *    The program's data is its assets' (game/assets.h): the board's program region holds the bytes the assets give
- *    (runtime/src/game.c), and the program reads them through the bank the CPU has, as the original does: by name,
- *    the tables of src/table.c's registry, copied once with each element in the host's byte order; by the addresses
- *    the program keeps, data_at(). A byte only the original's code holds stops the program.
+ *    The program's data is its assets' (game/assets.h), and the game builds no image of the ROM's regions: the assets
+ *    keep the program's data as its pieces, by the place the program knows each by (its region's offset, a bank's
+ *    window resolved), and the board finds a byte among them (simpsons_board.program_at = game_assets_program_at,
+ *    runtime/src/game.c). The program reads them through the bank the CPU has, as the original does: by name, the
+ *    tables of src/table.c's registry, each copied once from the pieces around its place with each element in the
+ *    host's byte order (load_tables); by the addresses the program keeps, data_at() and data_record(). A byte the
+ *    assets give nothing at, which only the original's code holds, stops the program.
  */
 #include "game/support.h"
 

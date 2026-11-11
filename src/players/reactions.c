@@ -477,15 +477,15 @@ void player_take_fling_blow(uint16_t player)
 void player_take_blow(uint16_t player)
 {
 	uint8_t animation = 0;
-	uint16_t floor_z = 0, object = 0, state_and_time = 0;
-	uint16_t player_z = 0;
+	uint16_t object = 0, player_z = 0, state_and_time = 0;
+	uint16_t player_z_2 = 0;
 	uint8_t vitality = 0, blows_taken = 0, blows_taken_2 = 0, attributes = 0, attributes_2 = 0, blows_taken_3 = 0, blows_taken_4 = 0, x_low = 0;
-	uint16_t z = 0, floor_z_2 = 0, hit_by = 0, z_above = 0, z_2 = 0, z_speed = 0, floor_z_3 = 0;
+	uint16_t z = 0, floor_z = 0, hit_by = 0, z_above = 0, z_2 = 0, z_speed = 0, floor_z_2 = 0;
 
 	z = OBJECT(player)->z;
-	floor_z = z;
-	floor_z_2 = OBJECT(player)->floor_z;
-	if ((int16_t)floor_z_2 < (int16_t)floor_z)
+	player_z = z;
+	floor_z = OBJECT(player)->floor_z;
+	if ((int16_t)floor_z < (int16_t)player_z)
 	{
 		player_knock_up(player);
 		return;
@@ -501,16 +501,16 @@ void player_take_blow(uint16_t player)
 	object = hit_by;
 	blows_taken = OBJECT(player)->player.blows_taken;
 	OBJECT(player)->player.blows_taken = blows_taken + 1u;
-	player_z = floor_z;
-	z_above = player_z + 0x10u;
+	player_z_2 = player_z;
+	z_above = player_z_2 + 0x10u;
 	z_2 = OBJECT(object)->z;
 	if ((int16_t)z_above < (int16_t)z_2)
 	{
 		z_speed = OBJECT(object)->z_speed;
 		if ((int16_t)z_speed < 0)
 		{
-			floor_z_3 = OBJECT(player)->floor_z;
-			OBJECT(player)->z = floor_z_3;
+			floor_z_2 = OBJECT(player)->floor_z;
+			OBJECT(player)->z = floor_z_2;
 			blows_taken_2 = OBJECT(player)->player.blows_taken;
 			if ((int8_t)blows_taken_2 < 3)
 			{

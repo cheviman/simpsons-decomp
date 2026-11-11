@@ -3,16 +3,18 @@ Name:        rom_in_executables.py
 Description: looks for the ROM set's content in the built executables: none of the game's may hold any
 Version:     0.1.0
 Created:     06-11-2026
-Modified:    06-11-2026
+Modified:    11-11-2026
 Author:      Sebastian Toyos
 
-Usage: py tools/rom_in_executables.py [EXECUTABLE ...]   (default: the game's in build/bin)
+Usage: python tools/rom_in_executables.py [EXECUTABLE ...]   (default: the game's in build/bin)
 
 Every 32-byte stretch of the ROM set (rom/), at every 32nd byte, is looked for in the executables, as the files
 have it (each chip) and as the board lays it out (the regions: the 053248's program, the Z80's, the tiles, the
 sprites, the samples, the EEPROM); a stretch any binary could hold (almost all one byte, up to three runs of two
 bytes, or bytes or 16-bit words in an arithmetic progression) is left out. Prints, for each executable, how many
-stretches of each it holds; the game's must hold none. (The tools that run the original program, kref and its
+stretches of each it holds; the game's must hold none. An executable that is not there is said so and left out
+(the game's window is built only with SDL2, the translation scaffold only after tools/recompile.py); when none of
+them is there, nothing is checked and the check fails. (The tools that run the original program, kref and its
 oracles, read the ROM set when they start: they are not the game's.)
 """
 import struct
@@ -26,7 +28,8 @@ import game_profile  # noqa: E402  (the game's: its root, its ROM set)
 ROOT = game_profile.ROOT
 rom = game_profile.rom
 SPAN = 32
-GAME = ["simpsons_game_headless.exe", "simpsons_headless.exe", "simpsons.exe"]
+EXTENSION = ".exe" if sys.platform == "win32" else ""
+GAME = [name + EXTENSION for name in ("simpsons_game_headless", "simpsons_headless", "simpsons")]
 
 
 def trivial(chunk):
@@ -47,8 +50,14 @@ def trivial(chunk):
 
 
 def main():
-    paths = [Path(argument) for argument in sys.argv[1:]] or \
-        [ROOT / "build" / "bin" / name for name in GAME if (ROOT / "build" / "bin" / name).exists()]
+    paths = [Path(argument) for argument in sys.argv[1:]] or [ROOT / "build" / "bin" / name for name in GAME]
+    for path in paths:
+        if not path.is_file():
+            print(f"{path}: not there")
+    paths = [path for path in paths if path.is_file()]
+    if not paths:
+        print("none of the executables is there: nothing checked")
+        return 1
     found_set = rom.load_set(ROOT / "rom")
     regions = {"program": rom.build_program(found_set), "sound": rom.build_sound(found_set),
                "tiles": rom.build_tiles(found_set), "sprites": rom.build_sprites(found_set),

@@ -56,7 +56,7 @@ uint32_t run_enemies(uint32_t left_caller)
 				left_caller = hat_goon(object, state);
 				break;
 			case 4:
-				left_caller = kind_90_update(object, state);
+				left_caller = fireman_goon_update(object, state);
 				break;
 			case 6:
 				left_caller = goon_close_grabber(object, state);
@@ -71,7 +71,7 @@ uint32_t run_enemies(uint32_t left_caller)
 				left_caller = hat_goon_waiting(object, state);
 				break;
 			case 14:
-				left_caller = kind_98_update(object, state);
+				left_caller = one_eared_rabbit_update(object, state);
 				break;
 			case 16:
 				left_caller = umbrella_goon_float_down(object, state);
@@ -101,7 +101,7 @@ uint32_t run_enemies(uint32_t left_caller)
 				left_caller = zombie_update(object, state);
 				break;
 			case 34:
-				kind_9a_dropper_update(object, state);
+				ghost_on_rope_update(object, state);
 				break;
 			case 36:
 				left_caller = fat_goon_thrower_update(object, state);
@@ -128,7 +128,7 @@ uint32_t run_enemies(uint32_t left_caller)
 				football_player(object, enemy_handlers);
 				break;
 			case 52:
-				left_caller = kind_88_update(object, state, left_caller);
+				left_caller = teacup_goon_update(object, state, left_caller);
 				break;
 			case 54:
 				left_caller = shovel_goon_step_out(object, state);
@@ -149,16 +149,16 @@ uint32_t run_enemies(uint32_t left_caller)
 				object = bear(object, enemy_handlers);
 				break;
 			case 66:
-				kind_8a_carrier_update(object, state);
+				woman_in_green_carrier_update(object, state);
 				break;
 			case 68:
-				kind_8c_bystander_update(object, state);
+				barney_bystander_update(object, state);
 				break;
 			case 70:
 				wandering_zombie_update(object, state);
 				break;
 			case 72:
-				kind_8e_thrower_update(object, state);
+				belly_dancer_thrower_update(object, state);
 				break;
 			case 74:
 				left_caller = goon_rush_in(object, state);
@@ -302,7 +302,7 @@ uint32_t run_enemies(uint32_t left_caller)
 				dreamland_boss_update(object, state);
 				break;
 			case -14:
-				object_f9(object);
+				marge_cloud(object);
 				break;
 			case -12:
 				left_caller = fat_goon_puncher_update(object, state);
@@ -311,7 +311,7 @@ uint32_t run_enemies(uint32_t left_caller)
 				left_caller = fat_goon_grabber_update(object, state);
 				break;
 			case -8:
-				kind_b8_flyer_update(object, state);
+				flying_saxophone_update(object, state);
 				break;
 			case -6:
 				left_caller = donut_update(object, state);
@@ -383,7 +383,7 @@ void run_list_1_objects(uint16_t *p_list_1_handlers, uint32_t *p_left_caller)
 				list_1_handlers = running_animal_update(object, state);
 				break;
 			case 8:
-				list_1_handlers = kind_90_effect(object, state);
+				list_1_handlers = fireman_goon_effect(object, state);
 				break;
 			case 10:
 				list_1_handlers = platform_scenery_update(object, state);
@@ -395,10 +395,10 @@ void run_list_1_objects(uint16_t *p_list_1_handlers, uint32_t *p_left_caller)
 				list_1_handlers = floor_blocker_update(object, state);
 				break;
 			case 16:
-				list_1_handlers = kind_87_update(object, state);
+				list_1_handlers = woman_in_apron_update(object, state);
 				break;
 			case 18:
-				list_1_handlers = kind_95_update(object, state);
+				list_1_handlers = rabbit_update(object, state);
 				break;
 			case 20:
 				empty_object_type_0a_handler();
@@ -416,7 +416,7 @@ void run_list_1_objects(uint16_t *p_list_1_handlers, uint32_t *p_left_caller)
 				bear_part(object);
 				break;
 			case 30:
-				list_1_handlers = kind_88_ride_update(object, state);
+				list_1_handlers = teacup_goon_ride_update(object, state);
 				break;
 			case 34:
 				list_1_handlers = solid_scenery_update(object, state);
@@ -452,7 +452,7 @@ void run_list_1_objects(uint16_t *p_list_1_handlers, uint32_t *p_left_caller)
 				list_1_handlers = charging_scenery_update(object, state);
 				break;
 			case 56:
-				list_1_handlers = kind_a0_update(object, state);
+				list_1_handlers = bluebird_update(object, state);
 				break;
 			case 58:
 				list_1_handlers = walking_kind_87_update(object, state);
@@ -461,16 +461,16 @@ void run_list_1_objects(uint16_t *p_list_1_handlers, uint32_t *p_left_caller)
 				story_marker();
 				break;
 			case 62:
-				list_1_handlers = kind_10_dropper_update(object, state);
+				list_1_handlers = moes_street_scenery_dropper_update(object, state);
 				break;
 			case 64:
-				list_1_handlers = kind_8e_watcher_update(object, state);
+				list_1_handlers = belly_dancer_watcher_update(object, state);
 				break;
 			case 66:
-				kind_10_riser_update(object, state, &list_1_handlers, p_left_caller);
+				moes_street_scenery_riser_update(object, state, &list_1_handlers, p_left_caller);
 				break;
 			case 68:
-				list_1_handlers = kind_9e_update(object, state);
+				list_1_handlers = moe_update(object, state);
 				break;
 			case 70:
 				list_1_handlers = shaken_bit_update(object, state);
@@ -482,7 +482,7 @@ void run_list_1_objects(uint16_t *p_list_1_handlers, uint32_t *p_left_caller)
 				list_1_handlers = looping_scenery_update(object, state);
 				break;
 			case 76:
-				list_1_handlers = kind_87_device_update(object, state);
+				list_1_handlers = woman_in_apron_device_update(object, state);
 				break;
 			case 78:
 				list_1_handlers = food_update(object, state);
@@ -494,7 +494,7 @@ void run_list_1_objects(uint16_t *p_list_1_handlers, uint32_t *p_left_caller)
 				list_1_handlers = bystander_update(object, state);
 				break;
 			case 84:
-				list_1_handlers = kind_93_run(object, state);
+				list_1_handlers = kid_in_sunglasses_run(object, state);
 				break;
 			case 86:
 				list_1_handlers = gorge_rock_update(object, state);
@@ -512,13 +512,13 @@ void run_list_1_objects(uint16_t *p_list_1_handlers, uint32_t *p_left_caller)
 				list_1_handlers = shaken_object_update(object, state);
 				break;
 			case 96:
-				list_1_handlers = kind_a5_update(object, state);
+				list_1_handlers = girl_with_food_update(object, state);
 				break;
 			case 98:
 				krusty_balloon_shot(&object, &list_1_handlers);
 				break;
 			case 100:
-				list_1_handlers = kind_b3_update(object, state);
+				list_1_handlers = kent_brockman_update(object, state);
 				break;
 			case 102:
 				list_1_handlers = robot_piece_update(object, state);
@@ -548,19 +548,19 @@ void run_list_1_objects(uint16_t *p_list_1_handlers, uint32_t *p_left_caller)
 				unused_goon_update(object, state, &list_1_handlers, p_left_caller);
 				break;
 			case 120:
-				list_1_handlers = kind_b2_update(object, state);
+				list_1_handlers = caged_gorilla_update(object, state);
 				break;
 			case 122:
 				list_1_handlers = prop_update(object, state);
 				break;
 			case 124:
-				list_1_handlers = kind_b2_leaper_update(object, state);
+				list_1_handlers = caged_gorilla_leaper_update(object, state);
 				break;
 			case 126:
 				list_1_handlers = krustyland_bear_update(object, state);
 				break;
 			case -70:
-				list_1_handlers = kind_9e_spawner_update(object, state);
+				list_1_handlers = moe_spawner_update(object, state);
 				break;
 			case -68:
 				list_1_handlers = donut_shot_update(object, state);
@@ -602,7 +602,7 @@ void run_list_1_objects(uint16_t *p_list_1_handlers, uint32_t *p_left_caller)
 				list_1_handlers = boss_ball_trail_update(object, state);
 				break;
 			case -42:
-				list_1_handlers = kind_cb_update(object, state);
+				list_1_handlers = bleeding_gums_murphy_update(object, state);
 				break;
 			case -40:
 				list_1_handlers = police_car_update(object, state);
@@ -611,10 +611,10 @@ void run_list_1_objects(uint16_t *p_list_1_handlers, uint32_t *p_left_caller)
 				list_1_handlers = boss_door(object);
 				break;
 			case -36:
-				list_1_handlers = kind_aa_pair_update(object, state);
+				list_1_handlers = poster_pair_update(object, state);
 				break;
 			case -34:
-				list_1_handlers = kind_aa_update(object, state);
+				list_1_handlers = poster_update(object, state);
 				break;
 			case -32:
 				list_1_handlers = cemetery_piece_update(object, state);
@@ -626,7 +626,7 @@ void run_list_1_objects(uint16_t *p_list_1_handlers, uint32_t *p_left_caller)
 				list_1_handlers = dreamland_obstacle_update(object, state);
 				break;
 			case -26:
-				list_1_handlers = kind_b8_shot_update(object, state);
+				list_1_handlers = flying_saxophone_shot_update(object, state);
 				break;
 			case -24:
 				object_does_nothing();
@@ -638,16 +638,16 @@ void run_list_1_objects(uint16_t *p_list_1_handlers, uint32_t *p_left_caller)
 				list_1_handlers = robot_spark_update(object, state);
 				break;
 			case -18:
-				list_1_handlers = kind_ac_update(object, state);
+				list_1_handlers = burger_eater_update(object, state);
 				break;
 			case -16:
-				list_1_handlers = kind_ab_update(object, state);
+				list_1_handlers = drink_vendor_update(object, state);
 				break;
 			case -14:
 				list_1_handlers = item_carrier_update(object, state);
 				break;
 			case -12:
-				list_1_handlers = kind_a9_update(object, state);
+				list_1_handlers = sideshow_bob_update(object, state);
 				break;
 			case -10:
 				list_1_handlers = bouncing_prop_update(object, state);
@@ -733,10 +733,10 @@ uint16_t run_child_objects(uint16_t child_handlers)
 				child_handlers = clown_ball_update(object, state);
 				break;
 			case 20:
-				child_handlers = kind_90_missile_update(object, state);
+				child_handlers = fireman_goon_missile_update(object, state);
 				break;
 			case 22:
-				child_handlers = kind_88_piece_update(object, state);
+				child_handlers = teacup_goon_piece_update(object, state);
 				break;
 			case 24:
 				story_noted_actor(&object, &child_handlers);
@@ -760,7 +760,7 @@ uint16_t run_child_objects(uint16_t child_handlers)
 				child_handlers = dropped_food_update(object, state);
 				break;
 			case 38:
-				child_handlers = kind_90_effect(object, state);
+				child_handlers = fireman_goon_effect(object, state);
 				break;
 			case 40:
 				story_extra_actor_2(&object, &child_handlers);
@@ -790,7 +790,7 @@ uint16_t run_child_objects(uint16_t child_handlers)
 				child_handlers = stage_8_boss_bomb_run(object, child_handlers);
 				break;
 			case 60:
-				child_handlers = kind_88_ride_arm_update(object, state);
+				child_handlers = teacup_goon_ride_arm_update(object, state);
 				break;
 			case 62:
 				child_handlers = boss_door_stage_8(object);
@@ -808,7 +808,7 @@ uint16_t run_child_objects(uint16_t child_handlers)
 				child_handlers = burns_bomb_run(object);
 				break;
 			case 78:
-				child_handlers = kind_d1_fling_update(object, state);
+				child_handlers = dream_ball_fling_update(object, state);
 				break;
 			case 80:
 				child_handlers = lightning_bolt_update(object, state);

@@ -1881,7 +1881,7 @@ local unused_effect_3f_update 28DF h passes_high
 
 # ======== the PCM effects (pcm_effects.c): the names, families, patches and comments ========
 # The PCM effects (pcm_effects.c, 2EB8-41AD): proposals for sound_symbols.txt
-# (an agent's proposal; every value below read from the listing and the program ROM 072-e03.6g)
+# (every value below read from the listing and the program ROM 072-e03.6g)
 
 # ======== renames (apply to the func lines and every other use) ========
 # pcm_effect_42_retrigger 375D-378C: no key off before its key on; it reads the list's next note (pitch, length) and keys it on
@@ -3248,9 +3248,9 @@ local   start_music_channel 03D2 d track_high
 # nz,$0B28"), else the last record stop_all_channels leaves there
 local   sound_main entry ix channel
 
-# ======== names, batch 6: what the sound program's flags say, its temporaries (build/names6/names_sound.txt; merged by the lead) ========
-# batch 6, sound: names for the flags' variables and the temporaries of src/sound/ (sound_symbols.txt syntax)
-# (evidence: build/names6/sound_c/listing.s and the C of src/sound/; the callers listed in work_sound.txt as "caller"
+# ======== what the sound program's flags say, its temporaries ========
+# sound: names for the flags' variables and the temporaries of src/sound/ (sound_symbols.txt syntax)
+# (evidence: the listing and the C of src/sound/; the callers listed in work_sound.txt as "caller"
 # take a source's name by themselves: none needs a line of its own)
 
 # ======== flag sources ========

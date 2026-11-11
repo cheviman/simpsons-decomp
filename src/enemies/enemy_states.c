@@ -506,7 +506,7 @@ void enemy_attack(uint16_t object, uint16_t *p_attack_handlers, uint32_t *p_left
 		attack_handlers = goon_strike_and_run(object, step);
 		break;
 	case 16:
-		attack_handlers = kind_90_throw_update(object, step);
+		attack_handlers = fireman_goon_throw_update(object, step);
 		break;
 	case 18:
 		attack_handlers = fat_goon_walk_up_strike_update(object, step);
@@ -530,7 +530,7 @@ void enemy_attack(uint16_t object, uint16_t *p_attack_handlers, uint32_t *p_left
 		goon_grab(object, step, &attack_handlers, p_left_caller);
 		break;
 	case 32:
-		attack_handlers = kind_98_strike_update(object, step);
+		attack_handlers = one_eared_rabbit_strike_update(object, step);
 		break;
 	case 34:
 		attack_handlers = umbrella_goon_strike(object, step);
@@ -644,7 +644,7 @@ void enemy_attack(uint16_t object, uint16_t *p_attack_handlers, uint32_t *p_left
 		attack_handlers = gorilla_back_off_action(object, step);
 		break;
 	case 108:
-		attack_handlers = kind_98_step_back_update(object, step);
+		attack_handlers = one_eared_rabbit_step_back_update(object, step);
 		break;
 	case 110:
 		attack_handlers = ninja_crouch_strike_action(object, step);

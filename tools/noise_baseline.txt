@@ -28,12 +28,12 @@ address_names 0
 passed_registers 625
 passed_flags 254
 functions 4362
-lines 150545
-casts 7925
+lines 150462
+casts 7924
 partial_writes 35
 mixed_partial_writes 30
 board_registers 1294
 clean_functions 856
 clean_lines 991
-faithful_functions 864
+faithful_functions 869
 faithful_lines 992

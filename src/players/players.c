@@ -1,6 +1,6 @@
 /**
  *    Name:        players/players.c
- *    Description: bank 1C: the four players run each frame with their controls, and how a player joins the stage
+ *    Description: the four players run each frame with their controls, and how a player joins the stage
  *    Version:     0.1.0
  *    Created:     06-11-2026
  *    Modified:    11-11-2026

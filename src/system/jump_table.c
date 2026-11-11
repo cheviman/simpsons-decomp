@@ -1,6 +1,6 @@
 /**
  *    Name:        system/jump_table.c
- *    Description: the fixed program's entry points for the banks (an LBRA each, 078593-0786CB) and the routines the decompiler folded into them
+ *    Description: the fixed program's entry points for the banks (an LBRA each) and the routines the decompiler folded into them
  *    Version:     0.1.0
  *    Created:     06-11-2026
  *    Modified:    11-11-2026
@@ -293,20 +293,20 @@ void print_bcd_byte(uint16_t place, uint16_t value)
 	mem_write8(place, saved_bcd_byte & 0xFu);
 }
 
-/* Unused: jumps to kind_90_effect. */
+/* Unused: jumps to fireman_goon_effect. */
 void unused_vector_kind_90_effect(uint16_t object, uint8_t state)
 {
-	kind_90_effect(object, state);
+	fireman_goon_effect(object, state);
 }
 
-/* Puts in a kind_90_effect object at the object's place. */
+/* Puts in a fireman_goon_effect object at the object's place. */
 void spawn_kind_90_effect(uint16_t object)
 {
 	uint32_t slot_found = 0;
 	uint16_t ignored16 = 0, ignored16_2 = 0, record = 0;
 
-	leftover_y = kind_90_effect_child_ADDRESS;
-	record = kind_90_effect_child_ADDRESS;
+	leftover_y = fireman_goon_effect_child_ADDRESS;
+	record = fireman_goon_effect_child_ADDRESS;
 	spawn_child_object(object, record, &ignored16, &ignored16_2, &slot_found);
 }
 

@@ -240,22 +240,22 @@ void heavy_obstacle_hit_steps(uint16_t object, uint16_t *p_action_handlers, uint
 			obstacle_smash_end(object);
 			break;
 		case 4:
-			action_handlers = kind_10_riser_start(object);
+			action_handlers = moes_street_scenery_riser_start(object);
 			break;
 		case 6:
-			kind_10_riser_wait_boss(object);
+			moes_street_scenery_riser_wait_boss(object);
 			break;
 		case 8:
-			kind_10_riser_rise_slowly(object);
+			moes_street_scenery_riser_rise_slowly(object);
 			break;
 		case 10:
-			kind_10_riser_rise_faster(object);
+			moes_street_scenery_riser_rise_faster(object);
 			break;
 		case 12:
-			kind_10_riser_stop(object);
+			moes_street_scenery_riser_stop(object);
 			break;
 		case 14:
-			kind_10_riser_idle();
+			moes_street_scenery_riser_idle();
 			break;
 		case -30:
 			action_handlers = obstacle_smashed_steps(object);

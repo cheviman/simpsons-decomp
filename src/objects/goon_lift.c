@@ -145,7 +145,7 @@ void goon_lift_remove(uint16_t object)
 }
 
 /* Sets the lift's part up with the lift's step it changes at, its wait and its height from
-   kind_12_parts. */
+   channel_6_scenery_parts. */
 uint16_t goon_lift_part_setup(uint16_t object)
 {
 	uint16_t part = 0, setup = 0;
@@ -157,11 +157,11 @@ uint16_t goon_lift_part_setup(uint16_t object)
 	OBJECT(object)->flags = 0x80u;
 	OBJECT(object)->attributes = 0x20u;
 	parameter = OBJECT(object)->parameter;
-	part = kind_12_parts_ADDRESS + (int8_t)(((uint32_t)parameter << 1) << 1);
-	parent_step = (((uint32_t)KIND_12_PART(part)->parent_step << 8u) | KIND_12_PART(part)->wait);
+	part = channel_6_scenery_parts_ADDRESS + (int8_t)(((uint32_t)parameter << 1) << 1);
+	parent_step = (((uint32_t)CHANNEL_6_SCENERY_PART(part)->parent_step << 8u) | CHANNEL_6_SCENERY_PART(part)->wait);
 	OBJECT(object)->goon_lift_part.lift_step = parent_step >> 8;
 	OBJECT(object)->goon_lift_part.wait = parent_step;
-	height = KIND_12_PART(part)->height;
+	height = CHANNEL_6_SCENERY_PART(part)->height;
 	OBJECT(object)->z = height;
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;

@@ -2,7 +2,7 @@
 # Description: build of The Simpsons: the game (from its assets, in a window or headless) and its development tools
 # Version:     0.1.0
 # Created:     05-11-2026
-# Modified:    06-11-2026
+# Modified:    11-11-2026
 # Author:      Sebastian Toyos
 cmake_minimum_required(VERSION 3.20)
 project(simpsons C CXX)
@@ -22,6 +22,23 @@ if(MSVC)
 	add_compile_options(/W3 /utf-8)
 	add_compile_definitions(_CRT_SECURE_NO_WARNINGS)
 endif()
+
+# The game's executables nest their calls as the program's do (a jump to another function is a call that returns,
+# and the translated code's locals are many): their main thread gets a stack of 64 MB, which on Windows the
+# executable sets at link time: /STACK for MSVC and clang-cl, through the compiler's driver for Clang aimed at MSVC's
+# runtime, --stack for MinGW's GCC and Clang (ld, lld). On Linux and macOS the main thread's stack is the system's,
+# not the executable's: the limit the game is started under (`ulimit -s`, 8 MB by default on most systems; macOS's
+# linker can also write one into the executable, -stack_size), and nothing here asks for one. The game has been run
+# with 64 MB only.
+function(simpsons_game_stack target)
+	if(MSVC)
+		target_link_options(${target} PRIVATE /STACK:67108864)
+	elseif(WIN32 AND CMAKE_C_SIMULATE_ID STREQUAL "MSVC")
+		target_link_options(${target} PRIVATE LINKER:/STACK:67108864)
+	elseif(WIN32)
+		target_link_options(${target} PRIVATE LINKER:--stack,67108864)
+	endif()
+endfunction()
 
 # The board as the program sees it (memory map, banks, interrupts, the EEPROM), the controls' scripts, and the
 # ROM set's regions
@@ -110,10 +127,8 @@ if(SIMPSONS_DECOMPILED)
 		simpsons_assets)
 	add_executable(simpsons_game_headless ports/headless/main.c)
 	target_link_libraries(simpsons_game_headless PRIVATE simpsons_game_decompiled)
-	if(MSVC)
-		# (the decompiled calls nest as the program's do; a jump to another function is a call that returns)
-		target_link_options(simpsons_game_headless PRIVATE /STACK:67108864)
-	endif()
+	# (the decompiled calls nest as the program's do; a jump to another function is a call that returns)
+	simpsons_game_stack(simpsons_game_headless)
 	set(SIMPSONS_WINDOW_PROGRAM simpsons_game_decompiled)
 else()
 	message(STATUS "No decompiled program in src/ (tools/decompile.py): no simpsons_game_headless")
@@ -136,9 +151,9 @@ if(SIMPSONS_GENERATED)
 	target_link_libraries(simpsons_headless PRIVATE simpsons_game)
 	if(MSVC)
 		target_compile_options(simpsons_program PRIVATE /bigobj /wd4102 /wd4244)
-		# (the translated calls nest as the program's do, and the code's locals are many)
-		target_link_options(simpsons_headless PRIVATE /STACK:67108864)
 	endif()
+	# (the translated calls nest as the program's do, and the code's locals are many)
+	simpsons_game_stack(simpsons_headless)
 	if(NOT SIMPSONS_WINDOW_PROGRAM)
 		set(SIMPSONS_WINDOW_PROGRAM simpsons_game)
 	endif()
@@ -162,9 +177,7 @@ if(SIMPSONS_WINDOW_PROGRAM)
 		endif()
 		add_executable(simpsons WIN32 ports/sdl2/main.c)
 		target_link_libraries(simpsons PRIVATE ${SIMPSONS_WINDOW_PROGRAM} ${SIMPSONS_SDL2})
-		if(MSVC)
-			target_link_options(simpsons PRIVATE /STACK:67108864)
-		endif()
+		simpsons_game_stack(simpsons)
 		if(WIN32)
 			add_custom_command(TARGET simpsons POST_BUILD
 				COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:SDL2::SDL2> $<TARGET_FILE_DIR:simpsons>)

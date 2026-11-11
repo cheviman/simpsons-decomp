@@ -4,15 +4,16 @@ Description: what the shared decompiler core (tools/core) needs to know of The S
              ROM set, and its settings
 Version:     0.1.0
 Created:     05-11-2026
-Modified:    07-11-2026
+Modified:    11-11-2026
 Author:      Sebastian Toyos
 
 The core (arcade-decomp: the decompiler, the CPU frontends, the analysis, the checks) is the same for every
 game; this module gives it The Simpsons': the repository's root, the ROM set's module (simpsons_rom: the
-regions as the board has them) and the names the generated files carry. The decompiler's settings for the
-053248 program come here as the steps that need them are reached; until then the core's neutral defaults
-stand. The core's frontend for Konami's 053248 is konami_cpu (its decoder; the static analysis is to come); its
-reference, kref, runs the original program on MAME's core against the board model (runtime/).
+regions as the board has them), the names the generated files carry, and the settings of each step for both
+programs; a setting this module does not give keeps the core's neutral default. The core's frontend for Konami's
+053248 is konami_cpu (its decoder, its static analysis with the banks followed, its lift, the translation scaffold
+and the decompiler); the Z80's settings are the SOUND_ ones. The reference, kref, runs the original programs on
+MAME's cores against the board model (runtime/).
 """
 import sys
 from pathlib import Path
@@ -66,6 +67,59 @@ NOISE_PASSED_VALUES = True
 # stack_N ones (it is no name either)
 NOISE_PLAIN_STACK_SLOTS = True
 ADDRESS_NAMES = True
+# ... and the routines that work on memory by its address, whatever is there (a test, a sum, a clear, a fill, a copy),
+# whose memory reached through an address they work out is the original's (the faithful measure): function -> why.
+# A clear of a stretch of RAM is the CPU's BMOVE from its first byte, zeroed, onto the next (a loop of mem_read8 and
+# mem_write8); a routine that clears or copies a stretch as one step among others is not one of these
+MEMORY_ROUTINES = {
+    # the boot's: it tests the RAM at 5D00-5FFF with patterns written and read back, then clears 4000-5FFF, the
+    # K052109's RAM at 1840-19FF and 3840-39FF, the palette jobs (3C00-3FFF), the sprite RAM and the palette RAM with
+    # BMOVE (0787A8-0787F0), marks the sound and job queues free a word at a time and copies the default high scores
+    # over the table
+    "boot": "the reset: tests, clears and fills the RAMs and copies the default high scores by their addresses",
+    "test_ram_words": "the boot's RAM test: FFFF, AAAA, 5555 and 0000 written and read back at each word it is handed",
+    "test_ram_bytes": "the boot's palette RAM test: FF, AA, 55 and 00 written and read back at every other byte it is "
+                      "handed",
+    "BOARD_ORIGINAL": "the sum of the program's bytes the ROM test hands it, read by their address (the board puts its "
+                      "own in its place)",
+    "test_sum_tile_rom": "the test mode's ROM check: the sum of a tile ROM's bytes, read at every 4th byte of the "
+                         "K052109's window at 2000, 2048 a page for 64 pages",
+    "draw_boot_pattern": "fills the text layer's middle with a pattern of tiles a word at a time, row by row",
+    "set_check_colours": "fills two runs of the palette RAM with one colour each a word at a time (white from 0400, "
+                         "red from 0420)",
+    # the objects: 0x60 bytes each, cleared a word at a time, a pointer moving through them (no field)
+    "clear_objects": "clears the 33 objects from 4A40 to 56A0 a word at a time, giving each its sprites' place "
+                     "(field 59)",
+    "clear_enemy_objects": "clears list 0's 8 objects (4F80) a word at a time but for the ones lending their sprites, "
+                           "keeping field 59",
+    "clear_list_1_objects": "clears list 1's 10 objects (5280) a word at a time but for the ones lending their "
+                            "sprites, keeping field 59",
+    "clear_child_objects": "clears list 2's 6 objects (4D40) a word at a time but for the ones lending their sprites, "
+                           "keeping field 59",
+    "take_free_object": "clears the free object it finds in a list a word at a time, keeping field 59",
+    "find_free_object_from_4d40": "clears the free object it finds from 4D40 a word at a time, keeping field 59",
+    "story_clear_player": "clears the 47 bytes of a player's object from field 28 on, a byte at a time",
+    # the video's RAMs, cleared or filled a word at a time
+    "clear_layer_a": "clears layer A's tiles and colours (2800-2FFF, 0800-0FFF) a word at a time",
+    "clear_layer_b": "clears layer B's tiles and colours (3000-37FF, 1000-17FF) a word at a time",
+    "clear_text_layer": "clears the text layer's tiles and colours a word at a time and fills its side columns with "
+                        "tile 3F",
+    "clear_sprites": "clears the sprite RAM (2000-2FFF) a word at a time",
+    "dream_wave_straighten": "fills layer A's 256 line scrolls (1A00) with one value a word at a time",
+    "palette_job_clear": "clears the palette RAM's ranges its job names (palette_clears) with BMOVE",
+    "load_palettes": "copies palettes of 16 colours a word at a time from where it is told in bank 2D into the "
+                     "palette RAM",
+    # the resets between the game's parts: stretches of variables cleared with BMOVE, wherever their names are
+    "reset_for_stage": "clears the stage's variables (4870-48FF) with BMOVE",
+    "reset_sprites_and_objects": "clears the K052109's RAM the game keeps variables in (1840-18FF) and the palette "
+                                 "jobs (3C00-3DFF) with BMOVE",
+    "reset_for_play": "clears the game's variables (4860-48FF, 3840-386F) with BMOVE",
+    # copies of settings, a byte at a time
+    "scene_load_story_settings": "copies the scene's 8 bytes of settings (story_scene_settings) to 1840-1847 with "
+                                 "BMOVE",
+    "eeprom_load_settings": "copies the EEPROM's settings (68-7D) into the work RAM from 59F0, a byte at a time",
+    "eeprom_write_defaults": "writes the factory settings into the EEPROM from 68, read a byte at a time up to an FF",
+}
 # The program's data read through the pointers the program keeps, by name (konami_cpu/emit.py): the values a pointer
 # walks (symbols.txt elements lines) read one at a time at their address, NAME(p), and a record reached by a pointer
 # moved any number of bytes, STRUCT(p + n)->field, as the records' copies are made from where they are read
@@ -94,7 +148,7 @@ INSTANCE_FAMILIES_BY_FUNCTION = {(0x5640, "story"): "story_actor", (0x5640, "sta
 # bonus_results_read_places (symbols.txt's batch 4 has the evidence of each, as "# instance" lines)
 INSTANCE_FAMILIES_BY_FUNCTION.update({(0x4A40 + 0xC0 * number, prefix): "player" for number in range(4)
                                       for prefix in ("story_actor_drop_players_held", "gorge_rock_start",
-                                                     "kind_8e_watcher_wait_signal")})
+                                                     "belly_dancer_watcher_wait_signal")})
 INSTANCE_FAMILIES_BY_FUNCTION.update({(0x4F80 + 0x60 * (2 * number), "bonus_results_read_places"): "bonus_results"
                                       for number in range(4)})
 OWN_OBJECT_POINTERS = True     # (the object register is the family's object in the pointer analysis too)

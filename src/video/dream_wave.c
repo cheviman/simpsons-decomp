@@ -192,7 +192,7 @@ uint16_t dream_wave_draw_lines(uint8_t size)
 	uint8_t previous_line_count = 0, wave_line = 0, wave_phase = 0, line_wave_size = 0, lines_left_before = 0, wave_phase_before = 0;
 	uint16_t line_x_scroll = 0, swapped_scroll = 0, written_place = 0;
 
-	io_write8(bonus_1_intro_player, size);
+	io_write8(scene_shared_value, size);
 	previous_line_count = io_read8(dream_wave_line);
 	io_write8(dream_wave_line, 0u);
 	line_scroll = tile_chip_layer_a_x;
@@ -200,7 +200,7 @@ uint16_t dream_wave_draw_lines(uint8_t size)
 	{
 		wave_line = io_read8(dream_wave_line);
 		wave_phase = io_read8(scene_layer_b_speed);
-		line_wave_size = io_read8(bonus_1_intro_player);
+		line_wave_size = io_read8(scene_shared_value);
 		line_wave_offset = ((uint32_t)(uint8_t)((uint32_t)(wave_line + wave_phase) << 1) << 8) | line_wave_size;
 		line_wave_offset = wave_sine(line_wave_offset);
 		line_offset_high = (uint8_t)(line_wave_offset >> 8);

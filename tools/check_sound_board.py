@@ -4,15 +4,18 @@ Description: runs every control script on kref with the game's own sound board b
              frames differ in each
 Version:     0.1.0
 Created:     06-11-2026
-Modified:    06-11-2026
+Modified:    11-11-2026
 Author:      Sebastian Toyos
 
 Usage: python tools/check_sound_board.py [NAME ...] [--jobs N] [--bin DIR] [--out DIR] [--timing FILE]
-  NAME      scripts of tests/controls to run (file names without .txt); all of them by default
-  --jobs N  scripts at a time (3 by default)
-  --bin     where kref is (build/bin by default), built with the game's sound board (src/sound/: K_GAME_SOUND)
-  --out     where the runs go (build/sound_check by default)
-  --timing  the timing model's table (build/sound/timing.txt by default, which tools/decompile_sound.py writes)
+                                         [--references DIR]
+  NAME          scripts of tests/controls to run (file names without .txt); all of them by default
+  --jobs N      scripts at a time (3 by default)
+  --bin         where kref is (build/bin by default), built with the game's sound board (src/sound/: K_GAME_SOUND)
+  --out         where the runs go (build/sound_check by default)
+  --timing      the timing model's table (build/sound/timing.txt by default, which tools/decompile_sound.py writes)
+  --references  the scenarios' reference runs, a folder a script (build/scenarios by default, where
+                tools/check_scenarios.py writes them)
 
 For each script, kref runs the original 053248 program (with its default frame timing) with MAME's sound board
 under the game's timing model (--sound-timing) and the game's own sound board beside it (--sound-board-check: the
@@ -20,8 +23,10 @@ decompiled sound program of src/sound/ on runtime/src/sound_cpu.c and sound_boar
 same times; per frame the hashes of the samples of the two chips and of the Z80's RAM (without its stack, with its
 two answers to the 053248) are compared, and OUT/NAME.txt has them ("FRAME REFERENCE_SAMPLES REFERENCE_RAM
 OWN_SAMPLES OWN_RAM"). Each run's 053248 state hashes (OUT/NAME_hashes.txt) are compared with the scenario's
-reference under MAME's own Z80 pace (build/scenarios_frames/NAME/hashes.txt), to tell where the timing model moves
-the game: "state same" or the first frame that differs.
+reference (REFERENCES/NAME/hashes.txt): "state same" or the first frame that differs; a run of another number of
+frames than the reference's fails. check_scenarios.py --sound runs its references under the same timing model, so
+their state is the same; references run without --sound (MAME's own Z80 pace) tell where the timing model moves the
+game. A script with no reference says so, and is checked on its sound alone.
 """
 import subprocess
 import sys
@@ -31,18 +36,17 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 CONTROLS = ROOT / "tests" / "controls"
-REFERENCES = ROOT / "build" / "scenarios_frames"
 
 
-def reference_frames(name):
+def reference_frames(references, name):
     """The frames the scenario's reference ran (its hashes: a frame number and a hash each), or None."""
-    hashes = REFERENCES / name / "hashes.txt"
+    hashes = references / name / "hashes.txt"
     return len(hashes.read_text(encoding="ascii").split()) // 2 if hashes.exists() else None
 
 
-def first_state_difference(name, out):
+def first_state_difference(references, name, out):
     """'same', or the first frame whose 053248 state hash differs from the scenario's reference"""
-    reference = REFERENCES / name / "hashes.txt"
+    reference = references / name / "hashes.txt"
     ours = out / f"{name}_hashes.txt"
     if not reference.exists() or not ours.exists():
         return "no reference"
@@ -70,6 +74,7 @@ def main():
     arguments = sys.argv[1:]
     jobs, bin_dir, out = 3, ROOT / "build" / "bin", ROOT / "build" / "sound_check"
     timing = ROOT / "build" / "sound" / "timing.txt"
+    references = ROOT / "build" / "scenarios"
     names = []
     while arguments:
         argument = arguments.pop(0)
@@ -81,6 +86,8 @@ def main():
             out = Path(arguments.pop(0))
         elif argument == "--timing" and arguments:
             timing = Path(arguments.pop(0))
+        elif argument == "--references" and arguments:
+            references = Path(arguments.pop(0))
         elif argument.startswith("--"):
             print(__doc__)
             return 1
@@ -100,14 +107,14 @@ def main():
         for name, code, frames, summary, details, seconds in pool.map(
                 lambda script: run(kref, timing, script, out), scripts):
             differs = summary is None or not summary.startswith("sound board check: 0 frames")
-            expected = reference_frames(name)
+            expected = reference_frames(references, name)
             short = expected is not None and frames != str(expected)
             failed += differs or code != 0 or short
             frames_total += int(frames) if frames.isdigit() else 0
             print(f"{name:<16} {frames:>7} frames{'' if not short else f' (of {expected})'}  "
                   + (summary[len('sound board check: '):] if summary else "did not run")
                   + ("" if code == 0 else f"  (exit {code})")
-                  + f"  {first_state_difference(name, out)}  {seconds:.0f} s", flush=True)
+                  + f"  {first_state_difference(references, name, out)}  {seconds:.0f} s", flush=True)
             for line in details[:12] if differs or code != 0 else []:
                 print("    " + line)
     print(f"{len(scripts)} scripts, {frames_total} frames in {time.time() - started:.0f} s: "

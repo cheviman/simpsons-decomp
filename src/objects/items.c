@@ -256,23 +256,23 @@ uint16_t dropped_food_start(uint16_t object)
 
 /* Sets up the kind A5 character walking in from the right, with a partner when more than 2 players are
    present. */
-uint16_t kind_a5_start(uint16_t object)
+uint16_t girl_with_food_start(uint16_t object)
 {
 	uint32_t carry = 0;
 	uint8_t partner_number = 0;
 	uint16_t hit_kinds = 0, ignored16 = 0, ignored16_2 = 0, setup = 0;
 	uint8_t attributes = 0, old_food_drops = 0, old_leavers = 0, parameter = 0, players_counted = 0, parameter_2 = 0, state = 0;
 
-	setup = kind_a5_setup_ADDRESS;
+	setup = girl_with_food_setup_ADDRESS;
 	vector_object_setup(object, setup);
 	hit_kinds = food_set_hit_kind(object);
 	attributes = OBJECT(object)->attributes;
 	OBJECT(object)->attributes = (attributes & 0xCFu) | 0x10u;
-	old_food_drops = io_read8(kind_a5_drop_count);
-	io_write8(kind_a5_drop_count, 0u);
-	old_leavers = io_read8(kind_a5_leave_count);
-	io_write8(kind_a5_leave_count, 0u);
-	OBJECT(object)->kind_a5.food_dropped = 0u;
+	old_food_drops = io_read8(girl_with_food_drop_count);
+	io_write8(girl_with_food_drop_count, 0u);
+	old_leavers = io_read8(girl_with_food_leave_count);
+	io_write8(girl_with_food_leave_count, 0u);
+	OBJECT(object)->girl_with_food.food_dropped = 0u;
 	parameter = OBJECT(object)->parameter;
 	partner_number = parameter;
 	if ((int8_t)parameter >= 0)
@@ -280,7 +280,7 @@ uint16_t kind_a5_start(uint16_t object)
 		players_counted = io_read8(stage_player_count);
 		if (players_counted > 2u)
 		{
-			leftover_y = kind_a5_partners[partner_number & 3u];
+			leftover_y = girl_with_food_partners[partner_number & 3u];
 			vector_spawn_child(object, &ignored16, &hit_kinds, &ignored16_2, &carry);
 		}
 	}
@@ -295,7 +295,7 @@ uint16_t kind_a5_start(uint16_t object)
 }
 
 /* Walks in for 64 frames and stops, or stops at once when another one has dropped food. */
-void kind_a5_walk_in(uint16_t object)
+void girl_with_food_walk_in(uint16_t object)
 {
 	uint8_t timer = 0, food_drops = 0, state = 0;
 
@@ -307,7 +307,7 @@ void kind_a5_walk_in(uint16_t object)
 		OBJECT(object)->state = 5u;
 		return;
 	}
-	food_drops = io_read8(kind_a5_drop_count);
+	food_drops = io_read8(girl_with_food_drop_count);
 	if (food_drops != 0u)
 	{
 		state = OBJECT(object)->state;
@@ -316,24 +316,24 @@ void kind_a5_walk_in(uint16_t object)
 }
 
 /* Drops its food (counted in 187C) and shows its dropping animation. */
-uint16_t kind_a5_drop_food(uint16_t object, uint16_t states)
+uint16_t girl_with_food_drop_food(uint16_t object, uint16_t states)
 {
 	uint32_t carry = 0;
 	uint16_t food = 0, ignored16 = 0, ignored16_2 = 0;
 	uint8_t food_dropped = 0, food_drops_before = 0, parameter = 0, state = 0;
 
 	OBJECT(object)->x_speed = 0;
-	food_dropped = OBJECT(object)->kind_a5.food_dropped;
+	food_dropped = OBJECT(object)->girl_with_food.food_dropped;
 	if (food_dropped == 0u)
 	{
 		OBJECT(object)->timer = 0u;
 		OBJECT(object)->state = 5u;
 		return states;
 	}
-	food_drops_before = io_read8(kind_a5_drop_count);
-	io_write8(kind_a5_drop_count, food_drops_before + 1u);
+	food_drops_before = io_read8(girl_with_food_drop_count);
+	io_write8(girl_with_food_drop_count, food_drops_before + 1u);
 	parameter = OBJECT(object)->parameter;
-	leftover_y = kind_a5_food_drops[(int8_t)((uint8_t)((uint32_t)parameter << 1)) / 2];
+	leftover_y = girl_with_food_food_drops[(int8_t)((uint8_t)((uint32_t)parameter << 1)) / 2];
 	vector_spawn_child(object, &ignored16, &food, &ignored16_2, &carry);
 	OBJECT(object)->flags = 0x80u;
 	OBJECT(object)->animation = 0x8Au;
@@ -343,38 +343,38 @@ uint16_t kind_a5_drop_food(uint16_t object, uint16_t states)
 }
 
 /* When the dropping animation ends, walks off, or waits. */
-void kind_a5_after_drop(uint16_t object)
+void girl_with_food_after_drop(uint16_t object)
 {
 	uint8_t animation_flags = 0, food_dropped = 0, state = 0;
 
 	animation_flags = OBJECT(object)->animation_flags;
 	if ((animation_flags & 1u) == 0u)
 	{
-		kind_a5_walking();
+		girl_with_food_walking();
 		return;
 	}
-	food_dropped = OBJECT(object)->kind_a5.food_dropped;
+	food_dropped = OBJECT(object)->girl_with_food.food_dropped;
 	if (food_dropped != 0u)
 	{
 		state = OBJECT(object)->state;
 		OBJECT(object)->state = state + 1u;
 		OBJECT(object)->animation = 0x88u;
-		kind_a5_walk_off(object);
+		girl_with_food_walk_off(object);
 		return;
 	}
 	OBJECT(object)->state = 6u;
 }
 
 /* Walks off (counted in 187D), the first one and the partner going opposite ways. */
-void kind_a5_walk_off(uint16_t object)
+void girl_with_food_walk_off(uint16_t object)
 {
 	uint8_t leavers_before = 0, leavers = 0, parameter = 0, parameter_2 = 0;
 	uint16_t x_speed = 0, x_speed_2 = 0;
 
 	OBJECT(object)->x_speed = 0x180;
-	leavers_before = io_read8(kind_a5_leave_count);
-	io_write8(kind_a5_leave_count, leavers_before + 1u);
-	leavers = io_read8(kind_a5_leave_count);
+	leavers_before = io_read8(girl_with_food_leave_count);
+	io_write8(girl_with_food_leave_count, leavers_before + 1u);
+	leavers = io_read8(girl_with_food_leave_count);
 	if (leavers == 1u)
 	{
 		parameter = OBJECT(object)->parameter;
@@ -400,12 +400,12 @@ void kind_a5_walk_off(uint16_t object)
 }
 
 /* Does nothing while it walks. */
-void kind_a5_walking(void)
+void girl_with_food_walking(void)
 {
 }
 
 /* Shows its next animation. */
-void kind_a5_turn(uint16_t object)
+void girl_with_food_turn(uint16_t object)
 {
 	uint8_t animation = 0, state = 0;
 
@@ -416,7 +416,7 @@ void kind_a5_turn(uint16_t object)
 }
 
 /* After its wait, walks off. */
-void kind_a5_wait(uint16_t object)
+void girl_with_food_wait(uint16_t object)
 {
 	uint8_t timer = 0, parameter = 0;
 
@@ -427,16 +427,16 @@ void kind_a5_wait(uint16_t object)
 	parameter = OBJECT(object)->parameter;
 	OBJECT(object)->animation = ((uint32_t)parameter << 1) | 0x80u;
 	OBJECT(object)->state = 4u;
-	kind_a5_walk_off(object);
+	girl_with_food_walk_off(object);
 }
 
 /* Sets up the kind A9 character walking in from the right. */
-uint16_t kind_a9_start(uint16_t object)
+uint16_t sideshow_bob_start(uint16_t object)
 {
 	uint16_t setup = 0;
 	uint8_t state = 0;
 
-	setup = kind_a9_setup_ADDRESS;
+	setup = sideshow_bob_setup_ADDRESS;
 	vector_object_setup(object, setup);
 	OBJECT(object)->x_speed = -0x100;
 	OBJECT(object)->timer = 0x40u;
@@ -447,7 +447,7 @@ uint16_t kind_a9_start(uint16_t object)
 }
 
 /* Walks in for 64 frames and stops. */
-void kind_a9_walk_in(uint16_t object)
+void sideshow_bob_walk_in(uint16_t object)
 {
 	uint8_t timer = 0;
 
@@ -461,17 +461,17 @@ void kind_a9_walk_in(uint16_t object)
 }
 
 /* Once told to (field 3D), drops its food and shows its dropping animation. */
-uint16_t kind_a9_drop_food(uint16_t object, uint16_t food)
+uint16_t sideshow_bob_drop_food(uint16_t object, uint16_t food)
 {
 	uint32_t carry = 0;
 	uint16_t ignored16 = 0, ignored16_2 = 0;
 	uint8_t food_dropped = 0, state = 0;
 
 	OBJECT(object)->x_speed = 0;
-	food_dropped = OBJECT(object)->kind_a9.food_dropped;
+	food_dropped = OBJECT(object)->sideshow_bob.food_dropped;
 	if (food_dropped == 0u)
 		return food;
-	leftover_y = kind_a9_drop_food_child_ADDRESS;
+	leftover_y = sideshow_bob_drop_food_child_ADDRESS;
 	vector_spawn_child(object, &ignored16, &food, &ignored16_2, &carry);
 	OBJECT(object)->flags = 0x80u;
 	OBJECT(object)->animation = 0x82u;
@@ -481,7 +481,7 @@ uint16_t kind_a9_drop_food(uint16_t object, uint16_t food)
 }
 
 /* After the drop, walks off to the left. */
-void kind_a9_leave(uint16_t object)
+void sideshow_bob_leave(uint16_t object)
 {
 	uint8_t timer = 0, state = 0;
 
@@ -489,23 +489,23 @@ void kind_a9_leave(uint16_t object)
 	OBJECT(object)->timer = timer - 1u;
 	if (timer != 1u)
 	{
-		kind_a9_walking();
+		sideshow_bob_walking();
 		return;
 	}
 	OBJECT(object)->x_speed = -0x200;
 	OBJECT(object)->animation = 0x80u;
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
-	kind_a9_walking();
+	sideshow_bob_walking();
 }
 
 /* Does nothing while it walks. */
-void kind_a9_walking(void)
+void sideshow_bob_walking(void)
 {
 }
 
 /* Stops and shows its waiting animation. */
-void kind_a9_pause(uint16_t object)
+void sideshow_bob_pause(uint16_t object)
 {
 	uint8_t state = 0;
 
@@ -515,7 +515,7 @@ void kind_a9_pause(uint16_t object)
 }
 
 /* After its wait, walks on to the left. */
-void kind_a9_pause_end(uint16_t object)
+void sideshow_bob_pause_end(uint16_t object)
 {
 	uint8_t timer = 0;
 

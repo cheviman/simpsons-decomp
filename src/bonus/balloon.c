@@ -534,7 +534,7 @@ void bonus_1_intro_set_up(uint16_t *p_balloon, uint16_t *p_d, uint32_t *p_carry)
 		else
 		{
 			OBJECT(balloon)->attributes = 0x30u;
-			io_write8(bonus_1_intro_player, intro_player_number);
+			io_write8(scene_shared_value, intro_player_number);
 			intro_player_shown++;
 			OBJECT(balloon)->x = 0x9Cu;
 			OBJECT(balloon)->y = 0xE8u;
@@ -577,7 +577,7 @@ void bonus_1_intro_show_how(uint16_t *p_player_balloon, uint16_t *p_d, uint32_t 
 	uint16_t object = 0;
 
 	bonus_blink_hints();
-	shown_player_number = io_read8(bonus_1_intro_player);
+	shown_player_number = io_read8(scene_shared_value);
 	bonus_player = bonus_1_player_records[(int8_t)((uint8_t)((uint32_t)shown_player_number << 1)) / 2];
 	object = BONUS_PLAYER(bonus_player)->object;
 	player_balloon = object;
@@ -590,7 +590,7 @@ void bonus_1_intro_show_how(uint16_t *p_player_balloon, uint16_t *p_d, uint32_t 
 	bonus_1_press_sound(&ignored16, &ignored16_2, &at_limit);
 	player_balloon = saved_player_balloon;
 	record = saved_bonus_player;
-	player_number = io_read8(bonus_1_intro_player);
+	player_number = io_read8(scene_shared_value);
 	d = (uint32_t)player_number << 8;
 	*p_player_balloon = player_balloon;
 	*p_d = d;

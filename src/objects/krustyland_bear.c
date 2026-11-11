@@ -104,28 +104,28 @@ void krustyland_bear_idle(void)
 }
 
 /* Sets up the kind B2 object. */
-uint16_t kind_b2_start(uint16_t object)
+uint16_t caged_gorilla_start(uint16_t object)
 {
 	uint16_t setup = 0;
 	uint8_t state = 0;
 
-	setup = kind_b2_setup_ADDRESS;
+	setup = caged_gorilla_setup_ADDRESS;
 	vector_object_setup(object, setup);
 	OBJECT(object)->attributes = 0x10u;
-	OBJECT(object)->kind_b2.idle_frames = 0x10u;
+	OBJECT(object)->caged_gorilla.idle_frames = 0x10u;
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
 	return setup;
 }
 
 /* Calls out (sound 6800) once on screen, switches between its two idle animations, until hit. */
-uint16_t kind_b2_idle(uint16_t object, uint16_t states)
+uint16_t caged_gorilla_idle(uint16_t object, uint16_t states)
 {
 	uint16_t command = 0;
 	uint8_t idle_frames = 0, state = 0, idle_frames_2 = 0, timer = 0, timer_2 = 0, idle_number = 0, idle_number_2 = 0;
 	uint16_t screen_x = 0, own_y = 0;
 
-	idle_frames = OBJECT(object)->kind_b2.idle_frames;
+	idle_frames = OBJECT(object)->caged_gorilla.idle_frames;
 	if (idle_frames != 0u)
 	{
 		screen_x = OBJECT(object)->x;
@@ -134,7 +134,7 @@ uint16_t kind_b2_idle(uint16_t object, uint16_t states)
 			own_y = OBJECT(object)->y;
 			if (own_y < 0x120u)
 			{
-				OBJECT(object)->kind_b2.idle_frames = 0u;
+				OBJECT(object)->caged_gorilla.idle_frames = 0u;
 				command = 0x6800u;
 				vector_queue_sound(command);
 			}
@@ -143,12 +143,12 @@ uint16_t kind_b2_idle(uint16_t object, uint16_t states)
 	if ((OBJECT(object)->flags & 0x20u) != 0u)
 	{
 		OBJECT(object)->animation = 0x85u;
-		OBJECT(object)->kind_b2.idle_frames = 0u;
+		OBJECT(object)->caged_gorilla.idle_frames = 0u;
 		state = OBJECT(object)->state;
 		OBJECT(object)->state = state + 1u;
 		return states;
 	}
-	idle_frames_2 = OBJECT(object)->kind_b2.idle_frames;
+	idle_frames_2 = OBJECT(object)->caged_gorilla.idle_frames;
 	if (idle_frames_2 == 0u)
 	{
 		timer = OBJECT(object)->timer;
@@ -156,33 +156,33 @@ uint16_t kind_b2_idle(uint16_t object, uint16_t states)
 		timer_2 = OBJECT(object)->timer;
 		if ((timer_2 & 0x7Fu) == 0u)
 		{
-			states = kind_b2_idle_animations_ADDRESS;
-			idle_number = OBJECT(object)->kind_b2.idle_number;
-			OBJECT(object)->kind_b2.idle_number = idle_number + 1u;
-			idle_number_2 = OBJECT(object)->kind_b2.idle_number;
-			OBJECT(object)->animation = kind_b2_idle_animations[idle_number_2 & 1u];
+			states = caged_gorilla_idle_animations_ADDRESS;
+			idle_number = OBJECT(object)->caged_gorilla.idle_number;
+			OBJECT(object)->caged_gorilla.idle_number = idle_number + 1u;
+			idle_number_2 = OBJECT(object)->caged_gorilla.idle_number;
+			OBJECT(object)->animation = caged_gorilla_idle_animations[idle_number_2 & 1u];
 		}
 	}
 	return states;
 }
 
 /* Hit: takes its hit hit box. */
-void kind_b2_hit(uint16_t object)
+void caged_gorilla_hit(uint16_t object)
 {
 	uint8_t state = 0;
 
-	leftover_y = kind_b2_hit_box_ADDRESS;
+	leftover_y = caged_gorilla_hit_box_ADDRESS;
 	vector_set_hit_box(object);
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
 }
 
 /* Takes its standing hit box back and waits 128 frames. */
-void kind_b2_hit_wait(uint16_t object)
+void caged_gorilla_hit_wait(uint16_t object)
 {
 	uint8_t state = 0;
 
-	leftover_y = kind_b2_body_box_ADDRESS;
+	leftover_y = caged_gorilla_body_box_ADDRESS;
 	vector_set_hit_box(object);
 	OBJECT(object)->timer = 0x80u;
 	state = OBJECT(object)->state;
@@ -190,7 +190,7 @@ void kind_b2_hit_wait(uint16_t object)
 }
 
 /* Calls out again (sound 6800) and gets up. */
-void kind_b2_recover(uint16_t object)
+void caged_gorilla_recover(uint16_t object)
 {
 	uint16_t command = 0;
 	uint8_t timer = 0, state = 0;
@@ -208,7 +208,7 @@ void kind_b2_recover(uint16_t object)
 }
 
 /* After 96 frames goes back to idling. */
-void kind_b2_recover_end(uint16_t object)
+void caged_gorilla_recover_end(uint16_t object)
 {
 	uint8_t timer = 0;
 
@@ -218,6 +218,6 @@ void kind_b2_recover_end(uint16_t object)
 	{
 		OBJECT(object)->state = 1u;
 		OBJECT(object)->timer = 1u;
-		OBJECT(object)->kind_b2.idle_number = 1u;
+		OBJECT(object)->caged_gorilla.idle_number = 1u;
 	}
 }

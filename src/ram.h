@@ -299,44 +299,6 @@
 #define players_push_x RAM16S(players_push_x_ADDRESS)
 #define players_push_y_ADDRESS 0x48E6u
 #define players_push_y RAM16S(players_push_y_ADDRESS)
-#define unk_48E8_ADDRESS 0x48E8u
-#define unk_48E8 RAM8(unk_48E8_ADDRESS)
-#define unk_48E9_ADDRESS 0x48E9u
-#define unk_48E9 RAM8(unk_48E9_ADDRESS)
-#define unk_48EA_ADDRESS 0x48EAu
-#define unk_48EA RAM8(unk_48EA_ADDRESS)
-#define unk_48EB_ADDRESS 0x48EBu
-#define unk_48EB RAM8(unk_48EB_ADDRESS)
-#define unk_48EC_ADDRESS 0x48ECu
-#define unk_48EC RAM8(unk_48EC_ADDRESS)
-#define unk_48ED_ADDRESS 0x48EDu
-#define unk_48ED RAM8(unk_48ED_ADDRESS)
-#define unk_48EE_ADDRESS 0x48EEu
-#define unk_48EE RAM8(unk_48EE_ADDRESS)
-#define unk_48EF_ADDRESS 0x48EFu
-#define unk_48EF RAM8(unk_48EF_ADDRESS)
-#define unk_48F0_ADDRESS 0x48F0u
-#define unk_48F0 RAM8(unk_48F0_ADDRESS)
-#define unk_48F1_ADDRESS 0x48F1u
-#define unk_48F1 RAM8(unk_48F1_ADDRESS)
-#define unk_48F2_ADDRESS 0x48F2u
-#define unk_48F2 RAM8(unk_48F2_ADDRESS)
-#define unk_48F3_ADDRESS 0x48F3u
-#define unk_48F3 RAM8(unk_48F3_ADDRESS)
-#define unk_48F4_ADDRESS 0x48F4u
-#define unk_48F4 RAM8(unk_48F4_ADDRESS)
-#define unk_48F5_ADDRESS 0x48F5u
-#define unk_48F5 RAM8(unk_48F5_ADDRESS)
-#define unk_48F6_ADDRESS 0x48F6u
-#define unk_48F6 RAM16(unk_48F6_ADDRESS)
-#define unk_48F8_ADDRESS 0x48F8u
-#define unk_48F8 RAM16(unk_48F8_ADDRESS)
-#define unk_48FA_ADDRESS 0x48FAu
-#define unk_48FA RAM16(unk_48FA_ADDRESS)
-#define unk_48FC_ADDRESS 0x48FCu
-#define unk_48FC RAM16(unk_48FC_ADDRESS)
-#define unk_48FE_ADDRESS 0x48FEu
-#define unk_48FE RAM16(unk_48FE_ADDRESS)
 #define sound_queue_write_ADDRESS 0x4900u
 #define sound_queue_write RAM16(sound_queue_write_ADDRESS)
 #define sound_queue_read_ADDRESS 0x4902u
@@ -439,208 +401,6 @@
 #define continue_seconds_heard RAM8(continue_seconds_heard_ADDRESS)
 #define continue_frames_ADDRESS 0x4A22u
 #define continue_frames RAM8(continue_frames_ADDRESS)
-#define unk_4A40_ADDRESS 0x4A40u
-#define unk_4A40 RAM8(unk_4A40_ADDRESS)
-#define unk_4A42_ADDRESS 0x4A42u
-#define unk_4A42 RAM8(unk_4A42_ADDRESS)
-#define unk_4A4C_ADDRESS 0x4A4Cu
-#define unk_4A4C RAM16(unk_4A4C_ADDRESS)
-#define unk_4A51_ADDRESS 0x4A51u
-#define unk_4A51 RAM16(unk_4A51_ADDRESS)
-#define unk_4A70_ADDRESS 0x4A70u
-#define unk_4A70 RAM8(unk_4A70_ADDRESS)
-#define unk_4A7F_ADDRESS 0x4A7Fu
-#define unk_4A7F RAM16(unk_4A7F_ADDRESS)
-#define unk_4A84_ADDRESS 0x4A84u
-#define unk_4A84 RAM8(unk_4A84_ADDRESS)
-#define unk_4B00_ADDRESS 0x4B00u
-#define unk_4B00 RAM8(unk_4B00_ADDRESS)
-#define unk_4B02_ADDRESS 0x4B02u
-#define unk_4B02 RAM8(unk_4B02_ADDRESS)
-#define unk_4B0C_ADDRESS 0x4B0Cu
-#define unk_4B0C RAM16(unk_4B0C_ADDRESS)
-#define unk_4B11_ADDRESS 0x4B11u
-#define unk_4B11 RAM16(unk_4B11_ADDRESS)
-#define unk_4B30_ADDRESS 0x4B30u
-#define unk_4B30 RAM8(unk_4B30_ADDRESS)
-#define unk_4B3F_ADDRESS 0x4B3Fu
-#define unk_4B3F RAM16(unk_4B3F_ADDRESS)
-#define unk_4B44_ADDRESS 0x4B44u
-#define unk_4B44 RAM8(unk_4B44_ADDRESS)
-#define unk_4BC0_ADDRESS 0x4BC0u
-#define unk_4BC0 RAM8(unk_4BC0_ADDRESS)
-#define unk_4BC2_ADDRESS 0x4BC2u
-#define unk_4BC2 RAM8(unk_4BC2_ADDRESS)
-#define unk_4BCC_ADDRESS 0x4BCCu
-#define unk_4BCC RAM16(unk_4BCC_ADDRESS)
-#define unk_4BD1_ADDRESS 0x4BD1u
-#define unk_4BD1 RAM16(unk_4BD1_ADDRESS)
-#define unk_4BF0_ADDRESS 0x4BF0u
-#define unk_4BF0 RAM8(unk_4BF0_ADDRESS)
-#define unk_4BFF_ADDRESS 0x4BFFu
-#define unk_4BFF RAM16(unk_4BFF_ADDRESS)
-#define unk_4C04_ADDRESS 0x4C04u
-#define unk_4C04 RAM8(unk_4C04_ADDRESS)
-#define unk_4C80_ADDRESS 0x4C80u
-#define unk_4C80 RAM8(unk_4C80_ADDRESS)
-#define unk_4C82_ADDRESS 0x4C82u
-#define unk_4C82 RAM8(unk_4C82_ADDRESS)
-#define unk_4C8C_ADDRESS 0x4C8Cu
-#define unk_4C8C RAM16(unk_4C8C_ADDRESS)
-#define unk_4C91_ADDRESS 0x4C91u
-#define unk_4C91 RAM16(unk_4C91_ADDRESS)
-#define unk_4CB0_ADDRESS 0x4CB0u
-#define unk_4CB0 RAM8(unk_4CB0_ADDRESS)
-#define unk_4CBF_ADDRESS 0x4CBFu
-#define unk_4CBF RAM16(unk_4CBF_ADDRESS)
-#define unk_4CC4_ADDRESS 0x4CC4u
-#define unk_4CC4 RAM8(unk_4CC4_ADDRESS)
-#define unk_4D40_ADDRESS 0x4D40u
-#define unk_4D40 RAM8(unk_4D40_ADDRESS)
-#define unk_4D44_ADDRESS 0x4D44u
-#define unk_4D44 RAM8(unk_4D44_ADDRESS)
-#define unk_4D45_ADDRESS 0x4D45u
-#define unk_4D45 RAM8(unk_4D45_ADDRESS)
-#define unk_4D46_ADDRESS 0x4D46u
-#define unk_4D46 RAM8(unk_4D46_ADDRESS)
-#define unk_4D49_ADDRESS 0x4D49u
-#define unk_4D49 RAM8(unk_4D49_ADDRESS)
-#define unk_4D4A_ADDRESS 0x4D4Au
-#define unk_4D4A RAM8(unk_4D4A_ADDRESS)
-#define unk_4D4C_ADDRESS 0x4D4Cu
-#define unk_4D4C RAM16(unk_4D4C_ADDRESS)
-#define unk_4D4F_ADDRESS 0x4D4Fu
-#define unk_4D4F RAM16(unk_4D4F_ADDRESS)
-#define unk_4D51_ADDRESS 0x4D51u
-#define unk_4D51 RAM16(unk_4D51_ADDRESS)
-#define unk_4D54_ADDRESS 0x4D54u
-#define unk_4D54 RAM16(unk_4D54_ADDRESS)
-#define unk_4D56_ADDRESS 0x4D56u
-#define unk_4D56 RAM16(unk_4D56_ADDRESS)
-#define unk_4D59_ADDRESS 0x4D59u
-#define unk_4D59 RAM16(unk_4D59_ADDRESS)
-#define unk_4DA0_ADDRESS 0x4DA0u
-#define unk_4DA0 RAM8(unk_4DA0_ADDRESS)
-#define unk_4DA6_ADDRESS 0x4DA6u
-#define unk_4DA6 RAM8(unk_4DA6_ADDRESS)
-#define unk_4DA9_ADDRESS 0x4DA9u
-#define unk_4DA9 RAM8(unk_4DA9_ADDRESS)
-#define unk_4DC8_ADDRESS 0x4DC8u
-#define unk_4DC8 RAM8(unk_4DC8_ADDRESS)
-#define unk_4E00_ADDRESS 0x4E00u
-#define unk_4E00 RAM8(unk_4E00_ADDRESS)
-#define unk_4E09_ADDRESS 0x4E09u
-#define unk_4E09 RAM8(unk_4E09_ADDRESS)
-#define unk_4E16_ADDRESS 0x4E16u
-#define unk_4E16 RAM16(unk_4E16_ADDRESS)
-#define unk_4E19_ADDRESS 0x4E19u
-#define unk_4E19 RAM16(unk_4E19_ADDRESS)
-#define unk_4E28_ADDRESS 0x4E28u
-#define unk_4E28 RAM8(unk_4E28_ADDRESS)
-#define unk_4E5B_ADDRESS 0x4E5Bu
-#define unk_4E5B RAM8(unk_4E5B_ADDRESS)
-#define unk_4E69_ADDRESS 0x4E69u
-#define unk_4E69 RAM8(unk_4E69_ADDRESS)
-#define unk_4EC9_ADDRESS 0x4EC9u
-#define unk_4EC9 RAM8(unk_4EC9_ADDRESS)
-#define unk_4F80_ADDRESS 0x4F80u
-#define unk_4F80 RAM8(unk_4F80_ADDRESS)
-#define unk_4F81_ADDRESS 0x4F81u
-#define unk_4F81 RAM8(unk_4F81_ADDRESS)
-#define unk_4F84_ADDRESS 0x4F84u
-#define unk_4F84 RAM16(unk_4F84_ADDRESS)
-#define unk_4F86_ADDRESS 0x4F86u
-#define unk_4F86 RAM8(unk_4F86_ADDRESS)
-#define unk_4F89_ADDRESS 0x4F89u
-#define unk_4F89 RAM8(unk_4F89_ADDRESS)
-#define unk_4F8A_ADDRESS 0x4F8Au
-#define unk_4F8A RAM8(unk_4F8A_ADDRESS)
-#define unk_4F8B_ADDRESS 0x4F8Bu
-#define unk_4F8B RAM8(unk_4F8B_ADDRESS)
-#define unk_4F8C_ADDRESS 0x4F8Cu
-#define unk_4F8C RAM16(unk_4F8C_ADDRESS)
-#define unk_4F8F_ADDRESS 0x4F8Fu
-#define unk_4F8F RAM16(unk_4F8F_ADDRESS)
-#define unk_4F91_ADDRESS 0x4F91u
-#define unk_4F91 RAM16(unk_4F91_ADDRESS)
-#define unk_4F99_ADDRESS 0x4F99u
-#define unk_4F99 RAM16(unk_4F99_ADDRESS)
-#define unk_4F9B_ADDRESS 0x4F9Bu
-#define unk_4F9B RAM8(unk_4F9B_ADDRESS)
-#define unk_4FA8_ADDRESS 0x4FA8u
-#define unk_4FA8 RAM16(unk_4FA8_ADDRESS)
-#define unk_4FC5_ADDRESS 0x4FC5u
-#define unk_4FC5 RAM8(unk_4FC5_ADDRESS)
-#define unk_4FE5_ADDRESS 0x4FE5u
-#define unk_4FE5 RAM8(unk_4FE5_ADDRESS)
-#define unk_4FE6_ADDRESS 0x4FE6u
-#define unk_4FE6 RAM8(unk_4FE6_ADDRESS)
-#define unk_5040_ADDRESS 0x5040u
-#define unk_5040 RAM8(unk_5040_ADDRESS)
-#define unk_5085_ADDRESS 0x5085u
-#define unk_5085 RAM8(unk_5085_ADDRESS)
-#define unk_5109_ADDRESS 0x5109u
-#define unk_5109 RAM8(unk_5109_ADDRESS)
-#define unk_510C_ADDRESS 0x510Cu
-#define unk_510C RAM16(unk_510C_ADDRESS)
-#define unk_510F_ADDRESS 0x510Fu
-#define unk_510F RAM16(unk_510F_ADDRESS)
-#define unk_5114_ADDRESS 0x5114u
-#define unk_5114 RAM16(unk_5114_ADDRESS)
-#define unk_5145_ADDRESS 0x5145u
-#define unk_5145 RAM8(unk_5145_ADDRESS)
-#define unk_5205_ADDRESS 0x5205u
-#define unk_5205 RAM8(unk_5205_ADDRESS)
-#define unk_5404_ADDRESS 0x5404u
-#define unk_5404 RAM8(unk_5404_ADDRESS)
-#define unk_5405_ADDRESS 0x5405u
-#define unk_5405 RAM8(unk_5405_ADDRESS)
-#define unk_540C_ADDRESS 0x540Cu
-#define unk_540C RAM16(unk_540C_ADDRESS)
-#define unk_540F_ADDRESS 0x540Fu
-#define unk_540F RAM16(unk_540F_ADDRESS)
-#define unk_5419_ADDRESS 0x5419u
-#define unk_5419 RAM16(unk_5419_ADDRESS)
-#define unk_5520_ADDRESS 0x5520u
-#define unk_5520 RAM8(unk_5520_ADDRESS)
-#define unk_5521_ADDRESS 0x5521u
-#define unk_5521 RAM8(unk_5521_ADDRESS)
-#define unk_5524_ADDRESS 0x5524u
-#define unk_5524 RAM16(unk_5524_ADDRESS)
-#define unk_5529_ADDRESS 0x5529u
-#define unk_5529 RAM8(unk_5529_ADDRESS)
-#define unk_552C_ADDRESS 0x552Cu
-#define unk_552C RAM16(unk_552C_ADDRESS)
-#define unk_5531_ADDRESS 0x5531u
-#define unk_5531 RAM16(unk_5531_ADDRESS)
-#define unk_5580_ADDRESS 0x5580u
-#define unk_5580 RAM8(unk_5580_ADDRESS)
-#define unk_5581_ADDRESS 0x5581u
-#define unk_5581 RAM8(unk_5581_ADDRESS)
-#define unk_5584_ADDRESS 0x5584u
-#define unk_5584 RAM16(unk_5584_ADDRESS)
-#define unk_5589_ADDRESS 0x5589u
-#define unk_5589 RAM8(unk_5589_ADDRESS)
-#define unk_558C_ADDRESS 0x558Cu
-#define unk_558C RAM16(unk_558C_ADDRESS)
-#define unk_5591_ADDRESS 0x5591u
-#define unk_5591 RAM16(unk_5591_ADDRESS)
-#define unk_55E0_ADDRESS 0x55E0u
-#define unk_55E0 RAM8(unk_55E0_ADDRESS)
-#define unk_55E4_ADDRESS 0x55E4u
-#define unk_55E4 RAM16(unk_55E4_ADDRESS)
-#define unk_55EC_ADDRESS 0x55ECu
-#define unk_55EC RAM16(unk_55EC_ADDRESS)
-#define unk_55F1_ADDRESS 0x55F1u
-#define unk_55F1 RAM16(unk_55F1_ADDRESS)
-#define unk_55F6_ADDRESS 0x55F6u
-#define unk_55F6 RAM16(unk_55F6_ADDRESS)
-#define unk_5670_ADDRESS 0x5670u
-#define unk_5670 RAM8(unk_5670_ADDRESS)
-#define unk_5671_ADDRESS 0x5671u
-#define unk_5671 RAM16(unk_5671_ADDRESS)
-#define unk_5685_ADDRESS 0x5685u
-#define unk_5685 RAM16(unk_5685_ADDRESS)
 #define demo_frames_ADDRESS 0x5800u
 #define demo_frames RAM16(demo_frames_ADDRESS)
 #define marge_demo_controls_ADDRESS 0x5813u
@@ -1201,6 +961,8 @@
 #define nearest_player_distance RAM16(nearest_player_distance_ADDRESS)
 #define nearest_player_distance_high_ADDRESS 0x48ECu
 #define nearest_player_distance_high RAM8(nearest_player_distance_high_ADDRESS)
+#define priority_bits_ADDRESS 0x48F0u
+#define priority_bits RAM8(priority_bits_ADDRESS)
 #define floor_offset_x_ADDRESS 0x48E9u
 #define floor_offset_x RAM16S(floor_offset_x_ADDRESS)
 #define floor_offset_x_pixels_ADDRESS 0x48E9u
@@ -1233,6 +995,8 @@
 #define floor_offset_y_sign RAM8(floor_offset_y_sign_ADDRESS)
 #define floor_offset_y_ADDRESS 0x48EDu
 #define floor_offset_y RAM16S(floor_offset_y_ADDRESS)
+#define steer_dy_high_ADDRESS 0x48F0u
+#define steer_dy_high RAM8S(steer_dy_high_ADDRESS)
 #define reach_x_ADDRESS 0x48F8u
 #define reach_x RAM16S(reach_x_ADDRESS)
 #define reach_y_ADDRESS 0x48FAu
@@ -1317,22 +1081,6 @@
 #define high_score_words_left RAM8(high_score_words_left_ADDRESS)
 #define new_high_score_ADDRESS 0x48F0u
 #define new_high_score RAM16(new_high_score_ADDRESS)
-#define scenery_floor_column_ADDRESS 0x48F0u
-#define scenery_floor_column RAM8(scenery_floor_column_ADDRESS)
-#define floor_columns_left_ADDRESS 0x48F4u
-#define floor_columns_left RAM8(floor_columns_left_ADDRESS)
-#define orbit_x_offset_ADDRESS 0x48E8u
-#define orbit_x_offset RAM16S(orbit_x_offset_ADDRESS)
-#define orbit_y_offset_ADDRESS 0x48EAu
-#define orbit_y_offset RAM16S(orbit_y_offset_ADDRESS)
-#define ride_parts_left_ADDRESS 0x48F0u
-#define ride_parts_left RAM8(ride_parts_left_ADDRESS)
-#define ride_part_angle_ADDRESS 0x48F1u
-#define ride_part_angle RAM8(ride_part_angle_ADDRESS)
-#define priority_bits_ADDRESS 0x48F0u
-#define priority_bits RAM8(priority_bits_ADDRESS)
-#define steer_dy_high_ADDRESS 0x48F0u
-#define steer_dy_high RAM8S(steer_dy_high_ADDRESS)
 #define area_next_x_high_ADDRESS 0x48F0u
 #define area_next_x_high RAM8(area_next_x_high_ADDRESS)
 #define area_next_x_ADDRESS 0x48F1u
@@ -1357,6 +1105,14 @@
 #define palettes_to_load RAM8(palettes_to_load_ADDRESS)
 #define palette_colours_left_ADDRESS 0x48E9u
 #define palette_colours_left RAM8(palette_colours_left_ADDRESS)
+#define reach_x_ADDRESS 0x48F8u
+#define reach_x RAM16S(reach_x_ADDRESS)
+#define reach_y_ADDRESS 0x48FAu
+#define reach_y RAM16S(reach_y_ADDRESS)
+#define scenery_floor_column_ADDRESS 0x48F0u
+#define scenery_floor_column RAM8(scenery_floor_column_ADDRESS)
+#define floor_columns_left_ADDRESS 0x48F4u
+#define floor_columns_left RAM8(floor_columns_left_ADDRESS)
 #define camera_move_x_ADDRESS 0x48F0u
 #define camera_move_x RAM16S(camera_move_x_ADDRESS)
 #define camera_move_y_ADDRESS 0x48F2u
@@ -1413,10 +1169,6 @@
 #define sprite_text_x RAM16(sprite_text_x_ADDRESS)
 #define sprite_text_y_ADDRESS 0x48FAu
 #define sprite_text_y RAM16(sprite_text_y_ADDRESS)
-#define reach_x_ADDRESS 0x48F8u
-#define reach_x RAM16S(reach_x_ADDRESS)
-#define reach_y_ADDRESS 0x48FAu
-#define reach_y RAM16S(reach_y_ADDRESS)
 #define floor_columns_left_ADDRESS 0x48F4u
 #define floor_columns_left RAM8(floor_columns_left_ADDRESS)
 #define floor_raise_steps_ADDRESS 0x48F5u
@@ -1721,6 +1473,14 @@
 #define actor_reach_centre_x RAM16(actor_reach_centre_x_ADDRESS)
 #define free_slot_sprites_ADDRESS 0x48E8u
 #define free_slot_sprites RAM16(free_slot_sprites_ADDRESS)
+#define orbit_x_offset_ADDRESS 0x48E8u
+#define orbit_x_offset RAM16S(orbit_x_offset_ADDRESS)
+#define orbit_y_offset_ADDRESS 0x48EAu
+#define orbit_y_offset RAM16S(orbit_y_offset_ADDRESS)
+#define ride_parts_left_ADDRESS 0x48F0u
+#define ride_parts_left RAM8(ride_parts_left_ADDRESS)
+#define ride_part_angle_ADDRESS 0x48F1u
+#define ride_part_angle RAM8(ride_part_angle_ADDRESS)
 #define colour_blocks_left_ADDRESS 0x48F0u
 #define colour_blocks_left RAM8(colour_blocks_left_ADDRESS)
 #define colour_block_rows_left_ADDRESS 0x48F1u
@@ -2077,9 +1837,9 @@ extern const void *cemetery_obstacle_xs_data;
 #define cemetery_obstacle_food_ADDRESS 0x7B68u    /* 02DB68: bank 16 */
 extern const void *cemetery_obstacle_food_data;
 #define cemetery_obstacle_food ((const uint8_t *)cemetery_obstacle_food_data)
-#define kind_10_floor_edge_flags_ADDRESS 0x7BF2u    /* 02DBF2: bank 16 */
-extern const void *kind_10_floor_edge_flags_data;
-#define kind_10_floor_edge_flags ((const uint8_t *)kind_10_floor_edge_flags_data)
+#define moes_street_scenery_floor_edge_flags_ADDRESS 0x7BF2u    /* 02DBF2: bank 16 */
+extern const void *moes_street_scenery_floor_edge_flags_data;
+#define moes_street_scenery_floor_edge_flags ((const uint8_t *)moes_street_scenery_floor_edge_flags_data)
 #define police_car_door_lists_ADDRESS 0x7C3Eu    /* 02DC3E: bank 16 */
 extern const void *police_car_door_lists_data;
 #define police_car_door_lists ((const uint16_t *)police_car_door_lists_data)
@@ -2110,12 +1870,12 @@ extern const void *food_move_choices_data;
 #define food_hit_kinds_ADDRESS 0x7ACEu    /* 02FACE: bank 17 */
 extern const void *food_hit_kinds_data;
 #define food_hit_kinds ((const uint8_t *)food_hit_kinds_data)
-#define kind_a5_partners_ADDRESS 0x7B00u    /* 02FB00: bank 17 */
-extern const void *kind_a5_partners_data;
-#define kind_a5_partners ((const uint16_t *)kind_a5_partners_data)
-#define kind_a5_food_drops_ADDRESS 0x7B28u    /* 02FB28: bank 17 */
-extern const void *kind_a5_food_drops_data;
-#define kind_a5_food_drops ((const uint16_t *)kind_a5_food_drops_data)
+#define girl_with_food_partners_ADDRESS 0x7B00u    /* 02FB00: bank 17 */
+extern const void *girl_with_food_partners_data;
+#define girl_with_food_partners ((const uint16_t *)girl_with_food_partners_data)
+#define girl_with_food_food_drops_ADDRESS 0x7B28u    /* 02FB28: bank 17 */
+extern const void *girl_with_food_food_drops_data;
+#define girl_with_food_food_drops ((const uint16_t *)girl_with_food_food_drops_data)
 #define item_carrier_setups_ADDRESS 0x7B7Au    /* 02FB7A: bank 17 */
 extern const void *item_carrier_setups_data;
 #define item_carrier_setups ((const uint16_t *)item_carrier_setups_data)
@@ -2125,24 +1885,24 @@ extern const void *item_carrier_items_data;
 #define carried_item_kinds_ADDRESS 0x7BB8u    /* 02FBB8: bank 17 */
 extern const void *carried_item_kinds_data;
 #define carried_item_kinds ((const uint8_t *)carried_item_kinds_data)
-#define kind_b3_damage_animations_ADDRESS 0x7C9Fu    /* 02FC9F: bank 17 */
-extern const void *kind_b3_damage_animations_data;
-#define kind_b3_damage_animations ((const uint8_t *)kind_b3_damage_animations_data)
+#define kent_brockman_damage_animations_ADDRESS 0x7C9Fu    /* 02FC9F: bank 17 */
+extern const void *kent_brockman_damage_animations_data;
+#define kent_brockman_damage_animations ((const uint8_t *)kent_brockman_damage_animations_data)
 #define krustyland_child_limits_by_players_ADDRESS 0x7DA2u    /* 02FDA2: bank 17 */
 extern const void *krustyland_child_limits_by_players_data;
 #define krustyland_child_limits_by_players ((const uint8_t *)krustyland_child_limits_by_players_data)
-#define kind_88_attributes_by_health_ADDRESS 0x7DFFu    /* 02FDFF: bank 17 */
-extern const void *kind_88_attributes_by_health_data;
-#define kind_88_attributes_by_health ((const uint8_t *)kind_88_attributes_by_health_data)
+#define teacup_goon_attributes_by_health_ADDRESS 0x7DFFu    /* 02FDFF: bank 17 */
+extern const void *teacup_goon_attributes_by_health_data;
+#define teacup_goon_attributes_by_health ((const uint8_t *)teacup_goon_attributes_by_health_data)
 #define clown_on_ball_pause_waits_by_rank_ADDRESS 0x7E87u    /* 02FE87: bank 17 */
 extern const void *clown_on_ball_pause_waits_by_rank_data;
 #define clown_on_ball_pause_waits_by_rank ((const uint8_t *)clown_on_ball_pause_waits_by_rank_data)
 #define orbit_cosines_ADDRESS 0x7E8Fu    /* 02FE8F: bank 17 */
 extern const void *orbit_cosines_data;
 #define orbit_cosines ((const uint8_t *)orbit_cosines_data)
-#define kind_b2_idle_animations_ADDRESS 0x7F3Bu    /* 02FF3B: bank 17 */
-extern const void *kind_b2_idle_animations_data;
-#define kind_b2_idle_animations ((const uint8_t *)kind_b2_idle_animations_data)
+#define caged_gorilla_idle_animations_ADDRESS 0x7F3Bu    /* 02FF3B: bank 17 */
+extern const void *caged_gorilla_idle_animations_data;
+#define caged_gorilla_idle_animations ((const uint8_t *)caged_gorilla_idle_animations_data)
 #define random_figure_poses_ADDRESS 0x7FB9u    /* 02FFB9: bank 17 */
 extern const void *random_figure_poses_data;
 #define random_figure_poses ((const uint8_t *)random_figure_poses_data)
@@ -2179,9 +1939,9 @@ extern const void *kind_c7_bob_down_data;
 #define kind_c7_shot_waits_ADDRESS 0x7E1Cu    /* 031E1C: bank 18 */
 extern const void *kind_c7_shot_waits_data;
 #define kind_c7_shot_waits ((const uint8_t *)kind_c7_shot_waits_data)
-#define kind_8c_animations_ADDRESS 0x7F7Au    /* 031F7A: bank 18 */
-extern const void *kind_8c_animations_data;
-#define kind_8c_animations ((const uint8_t *)kind_8c_animations_data)
+#define barney_animations_ADDRESS 0x7F7Au    /* 031F7A: bank 18 */
+extern const void *barney_animations_data;
+#define barney_animations ((const uint8_t *)barney_animations_data)
 #define kind_a1_entrance_steps_ADDRESS 0x7A72u    /* 033A72: bank 19 */
 extern const void *kind_a1_entrance_steps_data;
 #define kind_a1_entrance_steps ((const uint8_t *)kind_a1_entrance_steps_data)
@@ -2209,45 +1969,45 @@ extern const void *robot_status_after_hit_data;
 #define robot_part_zooms_ADDRESS 0x7D22u    /* 033D22: bank 19 */
 extern const void *robot_part_zooms_data;
 #define robot_part_zooms ((const uint8_t *)robot_part_zooms_data)
-#define kind_b8_sweep_ways_ADDRESS 0x7E86u    /* 033E86: bank 19 */
-extern const void *kind_b8_sweep_ways_data;
-#define kind_b8_sweep_ways ((const uint8_t *)kind_b8_sweep_ways_data)
-#define kind_b8_headings_ADDRESS 0x7E8Du    /* 033E8D: bank 19 */
-extern const void *kind_b8_headings_data;
-#define kind_b8_headings ((const uint8_t *)kind_b8_headings_data)
-#define kind_b8_sweep_rates_ADDRESS 0x7E94u    /* 033E94: bank 19 */
-extern const void *kind_b8_sweep_rates_data;
-#define kind_b8_sweep_rates ((const uint8_t *)kind_b8_sweep_rates_data)
-#define kind_b8_descent_slowdowns_ADDRESS 0x7E9Bu    /* 033E9B: bank 19 */
-extern const void *kind_b8_descent_slowdowns_data;
-#define kind_b8_descent_slowdowns ((const uint16_t *)kind_b8_descent_slowdowns_data)
-#define kind_b8_descent_y_speeds_ADDRESS 0x7EA9u    /* 033EA9: bank 19 */
-extern const void *kind_b8_descent_y_speeds_data;
-#define kind_b8_descent_y_speeds ((const int16_t *)kind_b8_descent_y_speeds_data)
-#define kind_b8_volley_shots_ADDRESS 0x7EC7u    /* 033EC7: bank 19 */
-extern const void *kind_b8_volley_shots_data;
-#define kind_b8_volley_shots ((const uint16_t *)kind_b8_volley_shots_data)
-#define kind_b8_single_shots_ADDRESS 0x7EEFu    /* 033EEF: bank 19 */
-extern const void *kind_b8_single_shots_data;
-#define kind_b8_single_shots ((const uint16_t *)kind_b8_single_shots_data)
-#define kind_b8_hurt_shakes_ADDRESS 0x7F0Du    /* 033F0D: bank 19 */
-extern const void *kind_b8_hurt_shakes_data;
-#define kind_b8_hurt_shakes ((const uint8_t *)kind_b8_hurt_shakes_data)
-#define kind_b8_bob_up_ADDRESS 0x7F11u    /* 033F11: bank 19 */
-extern const void *kind_b8_bob_up_data;
-#define kind_b8_bob_up ((const uint8_t *)kind_b8_bob_up_data)
-#define kind_b8_bob_down_ADDRESS 0x7F31u    /* 033F31: bank 19 */
-extern const void *kind_b8_bob_down_data;
-#define kind_b8_bob_down ((const int8_t *)kind_b8_bob_down_data)
-#define kind_b8_shot_waits_ADDRESS 0x7F51u    /* 033F51: bank 19 */
-extern const void *kind_b8_shot_waits_data;
-#define kind_b8_shot_waits ((const uint8_t *)kind_b8_shot_waits_data)
-#define kind_b8_shot_animations_ADDRESS 0x7FE3u    /* 033FE3: bank 19 */
-extern const void *kind_b8_shot_animations_data;
-#define kind_b8_shot_animations ((const uint8_t *)kind_b8_shot_animations_data)
-#define kind_b8_shot_speeds_ADDRESS 0x7FE9u    /* 033FE9: bank 19 */
-extern const void *kind_b8_shot_speeds_data;
-#define kind_b8_shot_speeds ((const uint16_t *)kind_b8_shot_speeds_data)
+#define flying_saxophone_sweep_ways_ADDRESS 0x7E86u    /* 033E86: bank 19 */
+extern const void *flying_saxophone_sweep_ways_data;
+#define flying_saxophone_sweep_ways ((const uint8_t *)flying_saxophone_sweep_ways_data)
+#define flying_saxophone_headings_ADDRESS 0x7E8Du    /* 033E8D: bank 19 */
+extern const void *flying_saxophone_headings_data;
+#define flying_saxophone_headings ((const uint8_t *)flying_saxophone_headings_data)
+#define flying_saxophone_sweep_rates_ADDRESS 0x7E94u    /* 033E94: bank 19 */
+extern const void *flying_saxophone_sweep_rates_data;
+#define flying_saxophone_sweep_rates ((const uint8_t *)flying_saxophone_sweep_rates_data)
+#define flying_saxophone_descent_slowdowns_ADDRESS 0x7E9Bu    /* 033E9B: bank 19 */
+extern const void *flying_saxophone_descent_slowdowns_data;
+#define flying_saxophone_descent_slowdowns ((const uint16_t *)flying_saxophone_descent_slowdowns_data)
+#define flying_saxophone_descent_y_speeds_ADDRESS 0x7EA9u    /* 033EA9: bank 19 */
+extern const void *flying_saxophone_descent_y_speeds_data;
+#define flying_saxophone_descent_y_speeds ((const int16_t *)flying_saxophone_descent_y_speeds_data)
+#define flying_saxophone_volley_shots_ADDRESS 0x7EC7u    /* 033EC7: bank 19 */
+extern const void *flying_saxophone_volley_shots_data;
+#define flying_saxophone_volley_shots ((const uint16_t *)flying_saxophone_volley_shots_data)
+#define flying_saxophone_single_shots_ADDRESS 0x7EEFu    /* 033EEF: bank 19 */
+extern const void *flying_saxophone_single_shots_data;
+#define flying_saxophone_single_shots ((const uint16_t *)flying_saxophone_single_shots_data)
+#define flying_saxophone_hurt_shakes_ADDRESS 0x7F0Du    /* 033F0D: bank 19 */
+extern const void *flying_saxophone_hurt_shakes_data;
+#define flying_saxophone_hurt_shakes ((const uint8_t *)flying_saxophone_hurt_shakes_data)
+#define flying_saxophone_bob_up_ADDRESS 0x7F11u    /* 033F11: bank 19 */
+extern const void *flying_saxophone_bob_up_data;
+#define flying_saxophone_bob_up ((const uint8_t *)flying_saxophone_bob_up_data)
+#define flying_saxophone_bob_down_ADDRESS 0x7F31u    /* 033F31: bank 19 */
+extern const void *flying_saxophone_bob_down_data;
+#define flying_saxophone_bob_down ((const int8_t *)flying_saxophone_bob_down_data)
+#define flying_saxophone_shot_waits_ADDRESS 0x7F51u    /* 033F51: bank 19 */
+extern const void *flying_saxophone_shot_waits_data;
+#define flying_saxophone_shot_waits ((const uint8_t *)flying_saxophone_shot_waits_data)
+#define flying_saxophone_shot_animations_ADDRESS 0x7FE3u    /* 033FE3: bank 19 */
+extern const void *flying_saxophone_shot_animations_data;
+#define flying_saxophone_shot_animations ((const uint8_t *)flying_saxophone_shot_animations_data)
+#define flying_saxophone_shot_speeds_ADDRESS 0x7FE9u    /* 033FE9: bank 19 */
+extern const void *flying_saxophone_shot_speeds_data;
+#define flying_saxophone_shot_speeds ((const uint16_t *)flying_saxophone_shot_speeds_data)
 #define unused_spawn_tail_ADDRESS 0x76DDu    /* 0356DD: bank 1A */
 extern const void *unused_spawn_tail_data;
 #define unused_spawn_tail ((const uint8_t *)unused_spawn_tail_data)
@@ -2766,7 +2526,7 @@ extern const void *reset_vector_data;
 #define VIDEO_1850 0x1850u
 #define stage_kept_object 0x1852u
 #define stage_kept_object_2 0x1854u
-#define VIDEO_1856 0x1856u
+#define unread_kept_word 0x1856u
 #define player_drop_x 0x1858u
 #define player_balloons_off 0x185Au
 #define VIDEO_1860 0x1860u
@@ -2779,8 +2539,8 @@ extern const void *reset_vector_data;
 #define list_1_objects_in_play 0x1879u
 #define child_objects_in_play 0x187Au
 #define knockdown_turn 0x187Bu
-#define kind_a5_drop_count 0x187Cu
-#define kind_a5_leave_count 0x187Du
+#define girl_with_food_drop_count 0x187Cu
+#define girl_with_food_leave_count 0x187Du
 #define ninjas_dismissed 0x187Eu
 #define rising_scenery_cue 0x187Fu
 #define enemies_present_last_frame 0x1880u
@@ -2808,7 +2568,7 @@ extern const void *reset_vector_data;
 #define scene_layer_b_speed 0x18EBu
 #define dream_wave_step 0x18ECu
 #define dream_wave_size 0x18EDu
-#define bonus_1_intro_player 0x18EEu
+#define scene_shared_value 0x18EEu
 #define bonus_title_frames 0x18EFu
 #define chain_lead_link 0x18F0u
 #define bonus_title_step 0x18F1u
@@ -3632,7 +3392,7 @@ extern const void *reset_vector_data;
 #define police_car_driving_off_fill_ADDRESS 0x7518u    /* 02B518 */
 #define fat_goon_object_setup_box_ADDRESS 0x75E0u    /* 02B5E0 */
 #define fat_goon_behaviour_ADDRESS 0x75E8u    /* 02B5E8 */
-#define kind_9e_spawner_update_table_ADDRESS 0x7640u    /* 02B640 */
+#define moe_spawner_update_table_ADDRESS 0x7640u    /* 02B640 */
 #define fat_goon_object_setup_ADDRESS 0x764Cu    /* 02B64C */
 #define fat_goon_base_object_setup_box_ADDRESS 0x7652u    /* 02B652 */
 #define fat_goon_grabber_setup_enemy_behaviour_ADDRESS 0x765Au    /* 02B65A */
@@ -3702,35 +3462,35 @@ extern const void *reset_vector_data;
 #define object_15_spawn_lists_8_ADDRESS 0x7CCCu    /* 02BCCC */
 #define object_15_spawn_lists_11_ADDRESS 0x7CF4u    /* 02BCF4 */
 #define object_15_spawn_lists_12_ADDRESS 0x7D2Cu    /* 02BD2C */
-#define kind_9e_spawner_setup_box_ADDRESS 0x7D4Cu    /* 02BD4C */
-#define kind_ac_setup_box_ADDRESS 0x7D54u    /* 02BD54 */
-#define kind_cb_setup_box_ADDRESS 0x7D5Cu    /* 02BD5C */
-#define kind_b2_leaper_setup_box_ADDRESS 0x7D64u    /* 02BD64 */
-#define kind_9e_spawner_states_ADDRESS 0x7D6Cu    /* 02BD6C */
-#define kind_9e_spawner_setup_ADDRESS 0x7D72u    /* 02BD72 */
-#define kind_9e_spawner_object_child_ADDRESS 0x7D78u    /* 02BD78 */
-#define kind_ac_states_ADDRESS 0x7D80u    /* 02BD80 */
-#define kind_ac_setup_ADDRESS 0x7D88u    /* 02BD88 */
-#define kind_ac_drop_food_child_ADDRESS 0x7D8Eu    /* 02BD8E */
-#define kind_ab_states_ADDRESS 0x7D96u    /* 02BD96 */
-#define kind_ab_setup_ADDRESS 0x7DA2u    /* 02BDA2 */
-#define kind_ab_let_out_child_ADDRESS 0x7DA8u    /* 02BDA8 */
+#define moe_spawner_setup_box_ADDRESS 0x7D4Cu    /* 02BD4C */
+#define burger_eater_setup_box_ADDRESS 0x7D54u    /* 02BD54 */
+#define bleeding_gums_murphy_setup_box_ADDRESS 0x7D5Cu    /* 02BD5C */
+#define caged_gorilla_leaper_setup_box_ADDRESS 0x7D64u    /* 02BD64 */
+#define moe_spawner_states_ADDRESS 0x7D6Cu    /* 02BD6C */
+#define moe_spawner_setup_ADDRESS 0x7D72u    /* 02BD72 */
+#define moe_spawner_object_child_ADDRESS 0x7D78u    /* 02BD78 */
+#define burger_eater_states_ADDRESS 0x7D80u    /* 02BD80 */
+#define burger_eater_setup_ADDRESS 0x7D88u    /* 02BD88 */
+#define burger_eater_drop_food_child_ADDRESS 0x7D8Eu    /* 02BD8E */
+#define drink_vendor_states_ADDRESS 0x7D96u    /* 02BD96 */
+#define drink_vendor_setup_ADDRESS 0x7DA2u    /* 02BDA2 */
+#define drink_vendor_let_out_child_ADDRESS 0x7DA8u    /* 02BDA8 */
 #define krustyland_door_states_ADDRESS 0x7DB0u    /* 02BDB0 */
 #define krustyland_door_setup_ADDRESS 0x7DBCu    /* 02BDBC */
-#define kind_b2_leaper_states_ADDRESS 0x7DFDu    /* 02BDFD */
-#define kind_b2_leaper_child_ADDRESS 0x7E0Bu    /* 02BE0B */
-#define kind_b2_leaper_setup_ADDRESS 0x7E13u    /* 02BE13 */
+#define caged_gorilla_leaper_states_ADDRESS 0x7DFDu    /* 02BDFD */
+#define caged_gorilla_leaper_child_ADDRESS 0x7E0Bu    /* 02BE0B */
+#define caged_gorilla_leaper_setup_ADDRESS 0x7E13u    /* 02BE13 */
 #define prop_states_ADDRESS 0x7E19u    /* 02BE19 */
 #define prop_setup_ADDRESS 0x7E1Du    /* 02BE1D */
-#define kind_aa_states_ADDRESS 0x7E53u    /* 02BE53 */
-#define kind_aa_setup_ADDRESS 0x7E57u    /* 02BE57 */
-#define kind_aa_pair_states_ADDRESS 0x7E5Du    /* 02BE5D */
-#define kind_aa_pair_setup_ADDRESS 0x7E61u    /* 02BE61 */
-#define kind_aa_pair_child_ADDRESS 0x7E67u    /* 02BE67 */
-#define kind_cb_states_ADDRESS 0x7E6Fu    /* 02BE6F */
-#define kind_cb_setup_ADDRESS 0x7E79u    /* 02BE79 */
-#define kind_d1_fling_states_ADDRESS 0x7E7Fu    /* 02BE7F */
-#define kind_d1_fling_setup_ADDRESS 0x7E83u    /* 02BE83 */
+#define poster_states_ADDRESS 0x7E53u    /* 02BE53 */
+#define poster_setup_ADDRESS 0x7E57u    /* 02BE57 */
+#define poster_pair_states_ADDRESS 0x7E5Du    /* 02BE5D */
+#define poster_pair_setup_ADDRESS 0x7E61u    /* 02BE61 */
+#define poster_pair_child_ADDRESS 0x7E67u    /* 02BE67 */
+#define bleeding_gums_murphy_states_ADDRESS 0x7E6Fu    /* 02BE6F */
+#define bleeding_gums_murphy_setup_ADDRESS 0x7E79u    /* 02BE79 */
+#define dream_ball_fling_states_ADDRESS 0x7E7Fu    /* 02BE7F */
+#define dream_ball_fling_setup_ADDRESS 0x7E83u    /* 02BE83 */
 #define cemetery_piece_setup_box_ADDRESS 0x7E99u    /* 02BE99 */
 #define cemetery_piece_states_ADDRESS 0x7EA1u    /* 02BEA1 */
 #define cemetery_piece_setup_ADDRESS 0x7ED1u    /* 02BED1 */
@@ -3750,7 +3510,7 @@ extern const void *reset_vector_data;
 #define police_car_hit_step_handlers_ADDRESS 0x7F5Du    /* 02BF5D */
 #define police_car_setup_ADDRESS 0x7F63u    /* 02BF63 */
 #define police_car_arrivals_fill_ADDRESS 0x7F71u    /* 02BF71 */
-#define kind_95_stand_fill_ADDRESS 0x7A14u    /* 02DA14 */
+#define rabbit_stand_fill_ADDRESS 0x7A14u    /* 02DA14 */
 #define obstacle_settle_box_ADDRESS 0x7A98u    /* 02DA98 */
 #define obstacle_knocked_box_ADDRESS 0x7AA0u    /* 02DAA0 */
 #define carried_obstacle_fly_box_ADDRESS 0x7AA8u    /* 02DAA8 */
@@ -3767,7 +3527,7 @@ extern const void *reset_vector_data;
 #define charging_scenery_setup_box_ADDRESS 0x7B00u    /* 02DB00 */
 #define platform_scenery_setup_box_ADDRESS 0x7B08u    /* 02DB08 */
 #define platform_scenery_launch_box_ADDRESS 0x7B10u    /* 02DB10 */
-#define kind_10_riser_setup_box_ADDRESS 0x7B18u    /* 02DB18 */
+#define moes_street_scenery_riser_setup_box_ADDRESS 0x7B18u    /* 02DB18 */
 #define running_animal_thrown_box_ADDRESS 0x7B20u    /* 02DB20 */
 #define bouncing_throwable_setup_box_ADDRESS 0x7B28u    /* 02DB28 */
 #define bouncing_throwable_throw_box_ADDRESS 0x7B30u    /* 02DB30 */
@@ -3781,10 +3541,10 @@ extern const void *reset_vector_data;
 #define heavy_obstacle_states_ADDRESS 0x7BB2u    /* 02DBB2 */
 #define timed_throwable_states_ADDRESS 0x7BBAu    /* 02DBBA */
 #define heavy_obstacle_hit_actions_ADDRESS 0x7BCCu    /* 02DBCC */
-#define kind_10_riser_states_ADDRESS 0x7BD0u    /* 02DBD0 */
-#define kind_10_riser_setup_ADDRESS 0x7BDCu    /* 02DBDC */
-#define kind_10_dropper_states_ADDRESS 0x7BE2u    /* 02DBE2 */
-#define kind_10_dropper_setup_ADDRESS 0x7BECu    /* 02DBEC */
+#define moes_street_scenery_riser_states_ADDRESS 0x7BD0u    /* 02DBD0 */
+#define moes_street_scenery_riser_setup_ADDRESS 0x7BDCu    /* 02DBDC */
+#define moes_street_scenery_dropper_states_ADDRESS 0x7BE2u    /* 02DBE2 */
+#define moes_street_scenery_dropper_setup_ADDRESS 0x7BECu    /* 02DBEC */
 #define police_car_door_states_ADDRESS 0x7C1Eu    /* 02DC1E */
 #define police_car_door_setup_ADDRESS 0x7C28u    /* 02DC28 */
 #define police_car_door_releases_rest_ADDRESS 0x7C6Du    /* 02DC6D */
@@ -3861,29 +3621,29 @@ extern const void *reset_vector_data;
 #define bird_item_setup_box_ADDRESS 0x7F6Du    /* 02DF6D */
 #define bird_item_states_ADDRESS 0x7F75u    /* 02DF75 */
 #define bird_item_setup_ADDRESS 0x7F7Du    /* 02DF7D */
-#define kind_87_body_box_ADDRESS 0x7F83u    /* 02DF83 */
-#define kind_87_device_strike_box_ADDRESS 0x7F8Bu    /* 02DF8B */
-#define kind_87_device_strike_box_rest_ADDRESS 0x7F93u    /* 02DF93 */
+#define woman_in_apron_body_box_ADDRESS 0x7F83u    /* 02DF83 */
+#define woman_in_apron_device_strike_box_ADDRESS 0x7F8Bu    /* 02DF8B */
+#define woman_in_apron_device_strike_box_rest_ADDRESS 0x7F93u    /* 02DF93 */
 #define rising_scenery_steps_ADDRESS 0x7F9Bu    /* 02DF9B */
 #define rising_scenery_steps_rest_ADDRESS 0x7FA3u    /* 02DFA3 */
 #define rising_scenery_setup_ADDRESS 0x7FA5u    /* 02DFA5 */
-#define kind_87_device_states_ADDRESS 0x7FABu    /* 02DFAB */
-#define kind_87_device_setup_ADDRESS 0x7FBBu    /* 02DFBB */
-#define kind_87_states_ADDRESS 0x7FC1u    /* 02DFC1 */
-#define kind_87_states_rest_ADDRESS 0x7FCDu    /* 02DFCD */
-#define kind_87_child_ADDRESS 0x7FD1u    /* 02DFD1 */
-#define kind_87_setup_ADDRESS 0x7FD9u    /* 02DFD9 */
-#define kind_87_setup_rest_ADDRESS 0x7FDFu    /* 02DFDF */
-#define kind_95_states_ADDRESS 0x7FE5u    /* 02DFE5 */
-#define kind_95_hit_step_handlers_ADDRESS 0x7FE9u    /* 02DFE9 */
-#define kind_95_setup_ADDRESS 0x7FEDu    /* 02DFED */
-#define kind_95_setup_fill_ADDRESS 0x7FF3u    /* 02DFF3 */
+#define woman_in_apron_device_states_ADDRESS 0x7FABu    /* 02DFAB */
+#define woman_in_apron_device_setup_ADDRESS 0x7FBBu    /* 02DFBB */
+#define woman_in_apron_states_ADDRESS 0x7FC1u    /* 02DFC1 */
+#define woman_in_apron_states_rest_ADDRESS 0x7FCDu    /* 02DFCD */
+#define woman_in_apron_child_ADDRESS 0x7FD1u    /* 02DFD1 */
+#define woman_in_apron_setup_ADDRESS 0x7FD9u    /* 02DFD9 */
+#define woman_in_apron_setup_rest_ADDRESS 0x7FDFu    /* 02DFDF */
+#define rabbit_states_ADDRESS 0x7FE5u    /* 02DFE5 */
+#define rabbit_hit_step_handlers_ADDRESS 0x7FE9u    /* 02DFE9 */
+#define rabbit_setup_ADDRESS 0x7FEDu    /* 02DFED */
+#define rabbit_setup_fill_ADDRESS 0x7FF3u    /* 02DFF3 */
 #define unused_obstacle_setup_box_ADDRESS 0x6151u    /* 02E151 */
 #define unused_obstacle_setup_box_rest_ADDRESS 0x6159u    /* 02E159 */
 #define unused_obstacle_setup_box_rest_2_ADDRESS 0x6161u    /* 02E161 */
 #define unused_obstacle_setup_box_rest_3_ADDRESS 0x6169u    /* 02E169 */
-#define kind_a9_setup_box_ADDRESS 0x6171u    /* 02E171 */
-#define kind_a5_setup_box_ADDRESS 0x6179u    /* 02E179 */
+#define sideshow_bob_setup_box_ADDRESS 0x6171u    /* 02E171 */
+#define girl_with_food_setup_box_ADDRESS 0x6179u    /* 02E179 */
 #define food_setup_box_ADDRESS 0x6181u    /* 02E181 */
 #define food_jump_out_setup_box_ADDRESS 0x6189u    /* 02E189 */
 #define carried_item_setup_box_ADDRESS 0x6191u    /* 02E191 */
@@ -3910,19 +3670,19 @@ extern const void *reset_vector_data;
 #define food_states_ADDRESS 0x7AC4u    /* 02FAC4 */
 #define food_setup_ADDRESS 0x7ADEu    /* 02FADE */
 #define dropped_food_states_ADDRESS 0x7AE4u    /* 02FAE4 */
-#define kind_a5_states_ADDRESS 0x7AECu    /* 02FAEC */
-#define kind_a5_setup_ADDRESS 0x7AFAu    /* 02FAFA */
-#define kind_a5_partners_rest_ADDRESS 0x7B08u    /* 02FB08 */
-#define kind_a5_partners_rest_2_ADDRESS 0x7B10u    /* 02FB10 */
-#define kind_a5_partners_rest_3_ADDRESS 0x7B18u    /* 02FB18 */
-#define kind_a5_partners_rest_4_ADDRESS 0x7B20u    /* 02FB20 */
-#define kind_a5_food_drops_rest_ADDRESS 0x7B30u    /* 02FB30 */
-#define kind_a5_food_drops_rest_2_ADDRESS 0x7B38u    /* 02FB38 */
-#define kind_a5_food_drops_rest_3_ADDRESS 0x7B40u    /* 02FB40 */
-#define kind_a5_food_drops_rest_4_ADDRESS 0x7B48u    /* 02FB48 */
-#define kind_a9_states_ADDRESS 0x7B50u    /* 02FB50 */
-#define kind_a9_setup_ADDRESS 0x7B5Eu    /* 02FB5E */
-#define kind_a9_drop_food_child_ADDRESS 0x7B64u    /* 02FB64 */
+#define girl_with_food_states_ADDRESS 0x7AECu    /* 02FAEC */
+#define girl_with_food_setup_ADDRESS 0x7AFAu    /* 02FAFA */
+#define girl_with_food_partners_rest_ADDRESS 0x7B08u    /* 02FB08 */
+#define girl_with_food_partners_rest_2_ADDRESS 0x7B10u    /* 02FB10 */
+#define girl_with_food_partners_rest_3_ADDRESS 0x7B18u    /* 02FB18 */
+#define girl_with_food_partners_rest_4_ADDRESS 0x7B20u    /* 02FB20 */
+#define girl_with_food_food_drops_rest_ADDRESS 0x7B30u    /* 02FB30 */
+#define girl_with_food_food_drops_rest_2_ADDRESS 0x7B38u    /* 02FB38 */
+#define girl_with_food_food_drops_rest_3_ADDRESS 0x7B40u    /* 02FB40 */
+#define girl_with_food_food_drops_rest_4_ADDRESS 0x7B48u    /* 02FB48 */
+#define sideshow_bob_states_ADDRESS 0x7B50u    /* 02FB50 */
+#define sideshow_bob_setup_ADDRESS 0x7B5Eu    /* 02FB5E */
+#define sideshow_bob_drop_food_child_ADDRESS 0x7B64u    /* 02FB64 */
 #define item_carrier_states_ADDRESS 0x7B6Cu    /* 02FB6C */
 #define carried_item_setup_ADDRESS 0x7B80u    /* 02FB80 */
 #define carried_item_setup_rest_ADDRESS 0x7B86u    /* 02FB86 */
@@ -3934,49 +3694,49 @@ extern const void *reset_vector_data;
 #define bystander_setup_box_ADDRESS 0x7BBBu    /* 02FBBB */
 #define bystander_states_ADDRESS 0x7BC3u    /* 02FBC3 */
 #define bystander_setup_ADDRESS 0x7BD9u    /* 02FBD9 */
-#define kind_90_object_setup_box_ADDRESS 0x7BDFu    /* 02FBDF */
-#define kind_90_missile_setup_box_ADDRESS 0x7BE7u    /* 02FBE7 */
-#define kind_90_setup_enemy_behaviour_ADDRESS 0x7BEFu    /* 02FBEF */
+#define fireman_goon_object_setup_box_ADDRESS 0x7BDFu    /* 02FBDF */
+#define fireman_goon_missile_setup_box_ADDRESS 0x7BE7u    /* 02FBE7 */
+#define fireman_goon_setup_enemy_behaviour_ADDRESS 0x7BEFu    /* 02FBEF */
 #define bystander_gone_table_ADDRESS 0x7C47u    /* 02FC47 */
-#define kind_90_object_setup_ADDRESS 0x7C53u    /* 02FC53 */
-#define kind_90_entrance_steps_table_ADDRESS 0x7C65u    /* 02FC65 */
-#define kind_90_throw_steps_ADDRESS 0x7C6Du    /* 02FC6D */
-#define kind_90_put_in_missile_child_ADDRESS 0x7C73u    /* 02FC73 */
-#define kind_90_missile_states_ADDRESS 0x7C79u    /* 02FC79 */
-#define kind_90_missile_setup_ADDRESS 0x7C81u    /* 02FC81 */
-#define kind_b3_setup_box_ADDRESS 0x7C87u    /* 02FC87 */
-#define kind_b3_states_ADDRESS 0x7C8Fu    /* 02FC8F */
-#define kind_b3_setup_ADDRESS 0x7C99u    /* 02FC99 */
-#define kind_98_body_box_ADDRESS 0x7CA6u    /* 02FCA6 */
+#define fireman_goon_object_setup_ADDRESS 0x7C53u    /* 02FC53 */
+#define fireman_goon_entrance_steps_table_ADDRESS 0x7C65u    /* 02FC65 */
+#define fireman_goon_throw_steps_ADDRESS 0x7C6Du    /* 02FC6D */
+#define fireman_goon_put_in_missile_child_ADDRESS 0x7C73u    /* 02FC73 */
+#define fireman_goon_missile_states_ADDRESS 0x7C79u    /* 02FC79 */
+#define fireman_goon_missile_setup_ADDRESS 0x7C81u    /* 02FC81 */
+#define kent_brockman_setup_box_ADDRESS 0x7C87u    /* 02FC87 */
+#define kent_brockman_states_ADDRESS 0x7C8Fu    /* 02FC8F */
+#define kent_brockman_setup_ADDRESS 0x7C99u    /* 02FC99 */
+#define one_eared_rabbit_body_box_ADDRESS 0x7CA6u    /* 02FCA6 */
 #define clown_ball_setup_box_ADDRESS 0x7CAEu    /* 02FCAE */
-#define kind_98_strike_hit_box_ADDRESS 0x7CB6u    /* 02FCB6 */
+#define one_eared_rabbit_strike_hit_box_ADDRESS 0x7CB6u    /* 02FCB6 */
 #define clown_on_ball_body_box_ADDRESS 0x7CBEu    /* 02FCBE */
 #define clown_on_ball_strike_box_ADDRESS 0x7CC6u    /* 02FCC6 */
-#define kind_88_body_box_ADDRESS 0x7CCEu    /* 02FCCE */
-#define kind_88_leap_off_box_ADDRESS 0x7CD6u    /* 02FCD6 */
-#define kind_88_piece_setup_box_ADDRESS 0x7CDEu    /* 02FCDE */
-#define kind_98_start_enemy_behaviour_ADDRESS 0x7CE6u    /* 02FCE6 */
+#define teacup_goon_body_box_ADDRESS 0x7CCEu    /* 02FCCE */
+#define teacup_goon_leap_off_box_ADDRESS 0x7CD6u    /* 02FCD6 */
+#define teacup_goon_piece_setup_box_ADDRESS 0x7CDEu    /* 02FCDE */
+#define one_eared_rabbit_start_enemy_behaviour_ADDRESS 0x7CE6u    /* 02FCE6 */
 #define clown_on_ball_start_enemy_behaviour_ADDRESS 0x7D3Eu    /* 02FD3E */
-#define kind_88_ride_states_ADDRESS 0x7D96u    /* 02FD96 */
-#define kind_88_ride_put_in_arms_child_ADDRESS 0x7DA7u    /* 02FDA7 */
-#define kind_88_ride_end_child_ADDRESS 0x7DADu    /* 02FDAD */
-#define kind_88_ride_arm_states_ADDRESS 0x7DB5u    /* 02FDB5 */
-#define kind_88_ride_setup_ADDRESS 0x7DBFu    /* 02FDBF */
-#define kind_88_ride_arm_put_in_riders_child_ADDRESS 0x7DC5u    /* 02FDC5 */
-#define kind_88_piece_states_ADDRESS 0x7DCDu    /* 02FDCD */
-#define kind_88_piece_setup_ADDRESS 0x7DD3u    /* 02FDD3 */
-#define kind_88_piece_setup_rest_ADDRESS 0x7DD9u    /* 02FDD9 */
-#define kind_88_piece_blink_table_ADDRESS 0x7DDDu    /* 02FDDD */
-#define kind_88_beaten_child_ADDRESS 0x7DF3u    /* 02FDF3 */
-#define kind_88_hit_steps_table_ADDRESS 0x7DF9u    /* 02FDF9 */
-#define kind_88_setup_ADDRESS 0x7E01u    /* 02FE01 */
-#define kind_88_fight_steps_table_ADDRESS 0x7E07u    /* 02FE07 */
+#define teacup_goon_ride_states_ADDRESS 0x7D96u    /* 02FD96 */
+#define teacup_goon_ride_put_in_arms_child_ADDRESS 0x7DA7u    /* 02FDA7 */
+#define teacup_goon_ride_end_child_ADDRESS 0x7DADu    /* 02FDAD */
+#define teacup_goon_ride_arm_states_ADDRESS 0x7DB5u    /* 02FDB5 */
+#define teacup_goon_ride_setup_ADDRESS 0x7DBFu    /* 02FDBF */
+#define teacup_goon_ride_arm_put_in_riders_child_ADDRESS 0x7DC5u    /* 02FDC5 */
+#define teacup_goon_piece_states_ADDRESS 0x7DCDu    /* 02FDCD */
+#define teacup_goon_piece_setup_ADDRESS 0x7DD3u    /* 02FDD3 */
+#define teacup_goon_piece_setup_rest_ADDRESS 0x7DD9u    /* 02FDD9 */
+#define teacup_goon_piece_blink_table_ADDRESS 0x7DDDu    /* 02FDDD */
+#define teacup_goon_beaten_child_ADDRESS 0x7DF3u    /* 02FDF3 */
+#define teacup_goon_hit_steps_table_ADDRESS 0x7DF9u    /* 02FDF9 */
+#define teacup_goon_setup_ADDRESS 0x7E01u    /* 02FE01 */
+#define teacup_goon_fight_steps_table_ADDRESS 0x7E07u    /* 02FE07 */
 #define unused_goon_states_ADDRESS 0x7E0Fu    /* 02FE0F */
-#define kind_88_hop_wait_table_ADDRESS 0x7E1Bu    /* 02FE1B */
-#define kind_98_setup_ADDRESS 0x7E27u    /* 02FE27 */
-#define kind_98_entrance_step_handlers_ADDRESS 0x7E2Du    /* 02FE2D */
-#define kind_98_step_back_steps_ADDRESS 0x7E37u    /* 02FE37 */
-#define kind_98_strike_steps_ADDRESS 0x7E3Bu    /* 02FE3B */
+#define teacup_goon_hop_wait_table_ADDRESS 0x7E1Bu    /* 02FE1B */
+#define one_eared_rabbit_setup_ADDRESS 0x7E27u    /* 02FE27 */
+#define one_eared_rabbit_entrance_step_handlers_ADDRESS 0x7E2Du    /* 02FE2D */
+#define one_eared_rabbit_step_back_steps_ADDRESS 0x7E37u    /* 02FE37 */
+#define one_eared_rabbit_strike_steps_ADDRESS 0x7E3Bu    /* 02FE3B */
 #define clown_ball_states_ADDRESS 0x7E47u    /* 02FE47 */
 #define clown_ball_burst_actions_ADDRESS 0x7E4Fu    /* 02FE4F */
 #define clown_ball_setup_ADDRESS 0x7E53u    /* 02FE53 */
@@ -3988,21 +3748,21 @@ extern const void *reset_vector_data;
 #define clown_on_ball_pause_steps_ADDRESS 0x7E83u    /* 02FE83 */
 #define clown_on_ball_hop_steps_ADDRESS 0x7E8Bu    /* 02FE8B */
 #define krustyland_bear_setup_box_ADDRESS 0x7ECFu    /* 02FECF */
-#define kind_b2_body_box_ADDRESS 0x7ED7u    /* 02FED7 */
-#define kind_b2_hit_box_ADDRESS 0x7EDFu    /* 02FEDF */
+#define caged_gorilla_body_box_ADDRESS 0x7ED7u    /* 02FED7 */
+#define caged_gorilla_hit_box_ADDRESS 0x7EDFu    /* 02FEDF */
 #define buzzing_chaser_setup_box_ADDRESS 0x7EE7u    /* 02FEE7 */
-#define kind_a0_setup_box_ADDRESS 0x7EEFu    /* 02FEEF */
+#define bluebird_setup_box_ADDRESS 0x7EEFu    /* 02FEEF */
 #define random_pose_figure_setup_box_ADDRESS 0x7EF7u    /* 02FEF7 */
 #define random_pose_figure_setup_box_rest_ADDRESS 0x7EFFu    /* 02FEFF */
 #define unused_homer_object_setup_box_ADDRESS 0x7F0Fu    /* 02FF0F */
 #define krustyland_bear_states_ADDRESS 0x7F17u    /* 02FF17 */
 #define krustyland_bear_setup_ADDRESS 0x7F23u    /* 02FF23 */
-#define kind_b2_states_ADDRESS 0x7F29u    /* 02FF29 */
-#define kind_b2_setup_ADDRESS 0x7F35u    /* 02FF35 */
+#define caged_gorilla_states_ADDRESS 0x7F29u    /* 02FF29 */
+#define caged_gorilla_setup_ADDRESS 0x7F35u    /* 02FF35 */
 #define buzzing_chaser_states_ADDRESS 0x7F3Du    /* 02FF3D */
 #define buzzing_chaser_setup_ADDRESS 0x7F49u    /* 02FF49 */
-#define kind_a0_states_ADDRESS 0x7F4Fu    /* 02FF4F */
-#define kind_a0_setup_ADDRESS 0x7F65u    /* 02FF65 */
+#define bluebird_states_ADDRESS 0x7F4Fu    /* 02FF4F */
+#define bluebird_setup_ADDRESS 0x7F65u    /* 02FF65 */
 #define random_pose_figure_states_ADDRESS 0x7FA3u    /* 02FFA3 */
 #define random_pose_figure_setup_ADDRESS 0x7FA7u    /* 02FFA7 */
 #define random_figure_poses_rest_ADDRESS 0x7FC5u    /* 02FFC5 */
@@ -4010,14 +3770,14 @@ extern const void *reset_vector_data;
 #define unused_homer_object_setup_ADDRESS 0x7FD5u    /* 02FFD5 */
 #define unused_homer_object_setup_fill_ADDRESS 0x7FDBu    /* 02FFDB */
 #define cloud_devil_drop_bolt_child_ADDRESS 0x6FAEu    /* 030FAE */
-#define kind_8a_carrier_done_fill_ADDRESS 0x76C3u    /* 0316C3 */
+#define woman_in_green_carrier_done_fill_ADDRESS 0x76C3u    /* 0316C3 */
 #define rising_zombie_object_setup_box_ADDRESS 0x7880u    /* 031880 */
 #define rising_zombie_object_setup_box_rest_ADDRESS 0x7888u    /* 031888 */
 #define zombie_body_box_ADDRESS 0x7890u    /* 031890 */
 #define zombie_swipe_hit_box_ADDRESS 0x7898u    /* 031898 */
 #define zombie_leap_rise_box_ADDRESS 0x78A0u    /* 0318A0 */
-#define kind_9a_dropper_body_box_ADDRESS 0x78A8u    /* 0318A8 */
-#define kind_9a_dropper_drop_box_ADDRESS 0x78B0u    /* 0318B0 */
+#define ghost_on_rope_body_box_ADDRESS 0x78A8u    /* 0318A8 */
+#define ghost_on_rope_drop_box_ADDRESS 0x78B0u    /* 0318B0 */
 #define wandering_zombie_object_setup_box_ADDRESS 0x78B8u    /* 0318B8 */
 #define zombie_behaviour_ADDRESS 0x78C0u    /* 0318C0 */
 #define object_18_behaviours_3_ADDRESS 0x7918u    /* 031918 */
@@ -4032,8 +3792,8 @@ extern const void *reset_vector_data;
 #define zombie_leap_steps_ADDRESS 0x7A00u    /* 031A00 */
 #define zombie_swipe_steps_ADDRESS 0x7A0Cu    /* 031A0C */
 #define unused_zombie_restart_at_animation_end_table_ADDRESS 0x7A1Au    /* 031A1A */
-#define kind_9a_dropper_hurt_steps_ADDRESS 0x7A26u    /* 031A26 */
-#define kind_9a_dropper_object_setup_ADDRESS 0x7A2Au    /* 031A2A */
+#define ghost_on_rope_hurt_steps_ADDRESS 0x7A26u    /* 031A26 */
+#define ghost_on_rope_object_setup_ADDRESS 0x7A2Au    /* 031A2A */
 #define rising_zombie_states_ADDRESS 0x7A38u    /* 031A38 */
 #define rising_zombie_object_setup_ADDRESS 0x7A72u    /* 031A72 */
 #define grabbing_zombie_object_setup_box_ADDRESS 0x7A78u    /* 031A78 */
@@ -4080,13 +3840,13 @@ extern const void *reset_vector_data;
 #define cloud_devil_come_in_table_ADDRESS 0x7DC8u    /* 031DC8 */
 #define cloud_devil_hurt_table_ADDRESS 0x7DCEu    /* 031DCE */
 #define cloud_devil_die_table_ADDRESS 0x7DD2u    /* 031DD2 */
-#define kind_8a_carrier_object_setup_box_ADDRESS 0x7EA0u    /* 031EA0 */
-#define kind_8e_watcher_object_setup_box_ADDRESS 0x7EA8u    /* 031EA8 */
-#define kind_9e_object_setup_box_ADDRESS 0x7EB0u    /* 031EB0 */
+#define woman_in_green_carrier_object_setup_box_ADDRESS 0x7EA0u    /* 031EA0 */
+#define belly_dancer_watcher_object_setup_box_ADDRESS 0x7EA8u    /* 031EA8 */
+#define moe_object_setup_box_ADDRESS 0x7EB0u    /* 031EB0 */
 #define walking_kind_87_object_setup_box_ADDRESS 0x7EB8u    /* 031EB8 */
-#define kind_8e_thrower_object_setup_box_ADDRESS 0x7EC0u    /* 031EC0 */
+#define belly_dancer_thrower_object_setup_box_ADDRESS 0x7EC0u    /* 031EC0 */
 #define spark_shot_object_setup_box_ADDRESS 0x7EC8u    /* 031EC8 */
-#define kind_8c_bystander_object_setup_box_ADDRESS 0x7ED0u    /* 031ED0 */
+#define barney_bystander_object_setup_box_ADDRESS 0x7ED0u    /* 031ED0 */
 #define unused_figure_hit_box_fill_ADDRESS 0x7EE0u    /* 031EE0 */
 #define unused_figure_hit_box_rest_ADDRESS 0x7EE8u    /* 031EE8 */
 #define spark_shot_states_ADDRESS 0x7EECu    /* 031EEC */
@@ -4094,27 +3854,27 @@ extern const void *reset_vector_data;
 #define spark_shot_object_setup_ADDRESS 0x7EF4u    /* 031EF4 */
 #define spark_shot_object_setup_rest_ADDRESS 0x7EFAu    /* 031EFA */
 #define spark_shot_fly_table_ADDRESS 0x7EFCu    /* 031EFC */
-#define kind_8e_thrower_hurt_table_ADDRESS 0x7F08u    /* 031F08 */
+#define belly_dancer_thrower_hurt_table_ADDRESS 0x7F08u    /* 031F08 */
 #define unused_kind_8e_thrower_run_step_table_ADDRESS 0x7F0Cu    /* 031F0C */
-#define kind_8e_thrower_object_setup_ADDRESS 0x7F10u    /* 031F10 */
-#define kind_8e_thrower_throw_child_ADDRESS 0x7F16u    /* 031F16 */
+#define belly_dancer_thrower_object_setup_ADDRESS 0x7F10u    /* 031F10 */
+#define belly_dancer_thrower_throw_child_ADDRESS 0x7F16u    /* 031F16 */
 #define walking_kind_87_states_ADDRESS 0x7F1Cu    /* 031F1C */
 #define walking_kind_87_object_setup_ADDRESS 0x7F2Au    /* 031F2A */
-#define kind_9e_states_ADDRESS 0x7F30u    /* 031F30 */
-#define kind_9e_object_setup_ADDRESS 0x7F44u    /* 031F44 */
-#define kind_8e_watcher_states_ADDRESS 0x7F4Au    /* 031F4A */
-#define kind_8e_watcher_object_setup_ADDRESS 0x7F58u    /* 031F58 */
-#define kind_8e_watcher_object_setup_rest_ADDRESS 0x7F5Eu    /* 031F5E */
+#define moe_states_ADDRESS 0x7F30u    /* 031F30 */
+#define moe_object_setup_ADDRESS 0x7F44u    /* 031F44 */
+#define belly_dancer_watcher_states_ADDRESS 0x7F4Au    /* 031F4A */
+#define belly_dancer_watcher_object_setup_ADDRESS 0x7F58u    /* 031F58 */
+#define belly_dancer_watcher_object_setup_rest_ADDRESS 0x7F5Eu    /* 031F5E */
 #define unused_kind_8e_watcher_no_op_table_ADDRESS 0x7F64u    /* 031F64 */
-#define kind_8c_bystander_leave_table_ADDRESS 0x7F68u    /* 031F68 */
-#define kind_8c_bystander_hurt_table_ADDRESS 0x7F6Eu    /* 031F6E */
-#define kind_8c_bystander_object_setup_ADDRESS 0x7F74u    /* 031F74 */
-#define kind_8c_bystander_pose_table_ADDRESS 0x7F82u    /* 031F82 */
-#define kind_8a_carrier_hurt_table_ADDRESS 0x7F8Eu    /* 031F8E */
-#define kind_8a_carrier_object_setup_ADDRESS 0x7F92u    /* 031F92 */
-#define kind_8a_carrier_pick_up_child_ADDRESS 0x7F98u    /* 031F98 */
-#define kind_8a_carrier_pick_up_child_fill_ADDRESS 0x7FA0u    /* 031FA0 */
-#define kind_b8_shot_remove_fill_ADDRESS 0x76B2u    /* 0336B2 */
+#define barney_bystander_leave_table_ADDRESS 0x7F68u    /* 031F68 */
+#define barney_bystander_hurt_table_ADDRESS 0x7F6Eu    /* 031F6E */
+#define barney_bystander_object_setup_ADDRESS 0x7F74u    /* 031F74 */
+#define barney_bystander_pose_table_ADDRESS 0x7F82u    /* 031F82 */
+#define woman_in_green_carrier_hurt_table_ADDRESS 0x7F8Eu    /* 031F8E */
+#define woman_in_green_carrier_object_setup_ADDRESS 0x7F92u    /* 031F92 */
+#define woman_in_green_carrier_pick_up_child_ADDRESS 0x7F98u    /* 031F98 */
+#define woman_in_green_carrier_pick_up_child_fill_ADDRESS 0x7FA0u    /* 031FA0 */
+#define flying_saxophone_shot_remove_fill_ADDRESS 0x76B2u    /* 0336B2 */
 #define bouncing_prop_bounce_off_edge_box_ADDRESS 0x78A4u    /* 0338A4 */
 #define bouncing_prop_bounce_start_box_ADDRESS 0x78ACu    /* 0338AC */
 #define bouncing_prop_bounce_start_box_rest_ADDRESS 0x78B4u    /* 0338B4 */
@@ -4202,23 +3962,23 @@ extern const void *reset_vector_data;
 #define donut_throw_release_child_ADDRESS 0x7E56u    /* 033E56 */
 #define donut_shot_states_ADDRESS 0x7E5Eu    /* 033E5E */
 #define donut_shot_object_setup_ADDRESS 0x7E62u    /* 033E62 */
-#define kind_b8_flyer_object_setup_box_ADDRESS 0x7E68u    /* 033E68 */
-#define kind_b8_shot_object_setup_box_ADDRESS 0x7E70u    /* 033E70 */
-#define kind_b8_shot_object_setup_box_rest_ADDRESS 0x7E78u    /* 033E78 */
+#define flying_saxophone_object_setup_box_ADDRESS 0x7E68u    /* 033E68 */
+#define flying_saxophone_shot_object_setup_box_ADDRESS 0x7E70u    /* 033E70 */
+#define flying_saxophone_shot_object_setup_box_rest_ADDRESS 0x7E78u    /* 033E78 */
 #define donut_shot_fly_table_ADDRESS 0x7E7Cu    /* 033E7C */
-#define kind_b8_flyer_object_setup_ADDRESS 0x7EB7u    /* 033EB7 */
-#define kind_b8_flyer_come_in_table_ADDRESS 0x7EBDu    /* 033EBD */
-#define kind_b8_volley_shots_child_object_ADDRESS 0x7ECFu    /* 033ECF */
-#define kind_b8_volley_shots_child_object_2_ADDRESS 0x7ED7u    /* 033ED7 */
-#define kind_b8_volley_shots_child_object_3_ADDRESS 0x7EDFu    /* 033EDF */
-#define kind_b8_volley_shots_child_object_4_ADDRESS 0x7EE7u    /* 033EE7 */
-#define kind_b8_single_shots_child_object_ADDRESS 0x7EF3u    /* 033EF3 */
-#define kind_b8_single_shots_child_object_2_ADDRESS 0x7EFBu    /* 033EFB */
-#define kind_b8_flyer_hurt_table_ADDRESS 0x7F03u    /* 033F03 */
-#define kind_b8_flyer_die_table_ADDRESS 0x7F07u    /* 033F07 */
-#define kind_b8_shot_states_ADDRESS 0x7FD5u    /* 033FD5 */
-#define kind_b8_shot_object_setup_ADDRESS 0x7FDDu    /* 033FDD */
-#define kind_b8_shot_speeds_fill_ADDRESS 0x7FFFu    /* 033FFF */
+#define flying_saxophone_object_setup_ADDRESS 0x7EB7u    /* 033EB7 */
+#define flying_saxophone_come_in_table_ADDRESS 0x7EBDu    /* 033EBD */
+#define flying_saxophone_volley_shots_child_object_ADDRESS 0x7ECFu    /* 033ECF */
+#define flying_saxophone_volley_shots_child_object_2_ADDRESS 0x7ED7u    /* 033ED7 */
+#define flying_saxophone_volley_shots_child_object_3_ADDRESS 0x7EDFu    /* 033EDF */
+#define flying_saxophone_volley_shots_child_object_4_ADDRESS 0x7EE7u    /* 033EE7 */
+#define flying_saxophone_single_shots_child_object_ADDRESS 0x7EF3u    /* 033EF3 */
+#define flying_saxophone_single_shots_child_object_2_ADDRESS 0x7EFBu    /* 033EFB */
+#define flying_saxophone_hurt_table_ADDRESS 0x7F03u    /* 033F03 */
+#define flying_saxophone_die_table_ADDRESS 0x7F07u    /* 033F07 */
+#define flying_saxophone_shot_states_ADDRESS 0x7FD5u    /* 033FD5 */
+#define flying_saxophone_shot_object_setup_ADDRESS 0x7FDDu    /* 033FDD */
+#define flying_saxophone_shot_speeds_fill_ADDRESS 0x7FFFu    /* 033FFF */
 #define dreamland_boss_lash_end_fill_ADDRESS 0x6C82u    /* 034C82 */
 #define dreamland_boss_chain_link_follow_data_ADDRESS 0x72FCu    /* 0352FC */
 #define dreamland_boss_chain_link_follow_table_ADDRESS 0x7300u    /* 035300 */
@@ -4290,13 +4050,13 @@ extern const void *reset_vector_data;
 #define object_1a_dive_path_rest_4_ADDRESS 0x7EAEu    /* 035EAE */
 #define object_1a_dive_path_rest_5_ADDRESS 0x7F35u    /* 035F35 */
 #define object_1a_dive_path_rest_6_ADDRESS 0x7F5Cu    /* 035F5C */
-#define kind_93_walk_down_fill_ADDRESS 0x60B4u    /* 0360B4 */
+#define kid_in_sunglasses_walk_down_fill_ADDRESS 0x60B4u    /* 0360B4 */
 #define door_idle_fill_ADDRESS 0x63C6u    /* 0363C6 */
-#define kind_93_setup_box_ADDRESS 0x6400u    /* 036400 */
-#define kind_93_setup_box_rest_ADDRESS 0x6408u    /* 036408 */
+#define kid_in_sunglasses_setup_box_ADDRESS 0x6400u    /* 036400 */
+#define kid_in_sunglasses_setup_box_rest_ADDRESS 0x6408u    /* 036408 */
 #define door_kind_12_setup_box_ADDRESS 0x6410u    /* 036410 */
-#define kind_93_states_ADDRESS 0x6418u    /* 036418 */
-#define kind_93_setup_ADDRESS 0x6430u    /* 036430 */
+#define kid_in_sunglasses_states_ADDRESS 0x6418u    /* 036418 */
+#define kid_in_sunglasses_setup_ADDRESS 0x6430u    /* 036430 */
 #define car_doors_states_ADDRESS 0x6436u    /* 036436 */
 #define car_doors_setup_ADDRESS 0x644Eu    /* 03644E */
 #define door_kind_12_states_ADDRESS 0x6474u    /* 036474 */
@@ -4448,11 +4208,11 @@ extern const void *reset_vector_data;
 #define stage_3_boss_walk_speeds_1_ADDRESS 0x7F42u    /* 03DF42 */
 #define stage_3_boss_walk_speeds_2_ADDRESS 0x7F52u    /* 03DF52 */
 #define bank_1e_states_ADDRESS 0x7F62u    /* 03DF62 */
-#define object_f9_box_ADDRESS 0x7F9Au    /* 03DF9A */
-#define object_f9_box_rest_ADDRESS 0x7F9Cu    /* 03DF9C */
-#define object_f9_windup_box_ADDRESS 0x7F9Eu    /* 03DF9E */
-#define object_f9_windup_box_rest_ADDRESS 0x7FA0u    /* 03DFA0 */
-#define object_f9_windup_box_rest_2_ADDRESS 0x7FA2u    /* 03DFA2 */
+#define marge_cloud_box_ADDRESS 0x7F9Au    /* 03DF9A */
+#define marge_cloud_box_rest_ADDRESS 0x7F9Cu    /* 03DF9C */
+#define marge_cloud_windup_box_ADDRESS 0x7F9Eu    /* 03DF9E */
+#define marge_cloud_windup_box_rest_ADDRESS 0x7FA0u    /* 03DFA0 */
+#define marge_cloud_windup_box_rest_2_ADDRESS 0x7FA2u    /* 03DFA2 */
 #define scripted_object_commands_ADDRESS 0x7FAAu    /* 03DFAA */
 #define story_scripts_19_ADDRESS 0x662Eu    /* 03E62E */
 #define story_scripts_84_ADDRESS 0x68A7u    /* 03E8A7 */
@@ -4621,32 +4381,32 @@ extern const void *reset_vector_data;
 #define speech_balloons_2_animations_23_sprites_ADDRESS 0x6532u    /* 042532 */
 #define speech_balloons_2_animations_2_ADDRESS 0x6562u    /* 042562 */
 #define speech_balloons_2_animations_2_sprites_ADDRESS 0x656Au    /* 04256A */
-#define kind_B2_animations_ADDRESS 0x65CAu    /* 0425CA */
-#define kind_B2_animations_0_ADDRESS 0x65D6u    /* 0425D6 */
-#define kind_B2_animations_0_sprites_ADDRESS 0x65E2u    /* 0425E2 */
-#define kind_B2_animations_0_sprites_2_ADDRESS 0x65F4u    /* 0425F4 */
-#define kind_B2_animations_1_ADDRESS 0x6606u    /* 042606 */
-#define kind_B2_animations_1_sprites_ADDRESS 0x6612u    /* 042612 */
-#define kind_B2_animations_1_sprites_2_ADDRESS 0x6630u    /* 042630 */
-#define kind_B2_animations_2_ADDRESS 0x664Eu    /* 04264E */
-#define kind_B2_animations_2_sprites_ADDRESS 0x6656u    /* 042656 */
-#define kind_B2_animations_3_ADDRESS 0x6674u    /* 042674 */
-#define kind_B2_animations_3_sprites_ADDRESS 0x667Cu    /* 04267C */
-#define kind_B2_animations_4_ADDRESS 0x66A0u    /* 0426A0 */
-#define kind_B2_animations_4_sprites_ADDRESS 0x66A8u    /* 0426A8 */
-#define kind_B2_animations_5_ADDRESS 0x66CCu    /* 0426CC */
-#define kind_B3_animations_ADDRESS 0x66D8u    /* 0426D8 */
-#define kind_B3_animations_0_ADDRESS 0x66E0u    /* 0426E0 */
-#define kind_B3_animations_0_sprites_ADDRESS 0x66F4u    /* 0426F4 */
-#define kind_B3_animations_0_sprites_2_ADDRESS 0x6700u    /* 042700 */
-#define kind_B3_animations_0_sprites_3_ADDRESS 0x670Cu    /* 04270C */
-#define kind_B3_animations_1_ADDRESS 0x6718u    /* 042718 */
-#define kind_B3_animations_1_sprites_ADDRESS 0x6720u    /* 042720 */
-#define kind_B3_animations_2_ADDRESS 0x672Cu    /* 04272C */
-#define kind_B3_animations_2_sprites_ADDRESS 0x6738u    /* 042738 */
-#define kind_B3_animations_2_sprites_2_ADDRESS 0x674Au    /* 04274A */
-#define kind_B3_animations_3_ADDRESS 0x675Cu    /* 04275C */
-#define kind_B3_animations_3_sprites_ADDRESS 0x6764u    /* 042764 */
+#define caged_gorilla_animations_ADDRESS 0x65CAu    /* 0425CA */
+#define caged_gorilla_animations_0_ADDRESS 0x65D6u    /* 0425D6 */
+#define caged_gorilla_animations_0_sprites_ADDRESS 0x65E2u    /* 0425E2 */
+#define caged_gorilla_animations_0_sprites_2_ADDRESS 0x65F4u    /* 0425F4 */
+#define caged_gorilla_animations_1_ADDRESS 0x6606u    /* 042606 */
+#define caged_gorilla_animations_1_sprites_ADDRESS 0x6612u    /* 042612 */
+#define caged_gorilla_animations_1_sprites_2_ADDRESS 0x6630u    /* 042630 */
+#define caged_gorilla_animations_2_ADDRESS 0x664Eu    /* 04264E */
+#define caged_gorilla_animations_2_sprites_ADDRESS 0x6656u    /* 042656 */
+#define caged_gorilla_animations_3_ADDRESS 0x6674u    /* 042674 */
+#define caged_gorilla_animations_3_sprites_ADDRESS 0x667Cu    /* 04267C */
+#define caged_gorilla_animations_4_ADDRESS 0x66A0u    /* 0426A0 */
+#define caged_gorilla_animations_4_sprites_ADDRESS 0x66A8u    /* 0426A8 */
+#define caged_gorilla_animations_5_ADDRESS 0x66CCu    /* 0426CC */
+#define kent_brockman_animations_ADDRESS 0x66D8u    /* 0426D8 */
+#define kent_brockman_animations_0_ADDRESS 0x66E0u    /* 0426E0 */
+#define kent_brockman_animations_0_sprites_ADDRESS 0x66F4u    /* 0426F4 */
+#define kent_brockman_animations_0_sprites_2_ADDRESS 0x6700u    /* 042700 */
+#define kent_brockman_animations_0_sprites_3_ADDRESS 0x670Cu    /* 04270C */
+#define kent_brockman_animations_1_ADDRESS 0x6718u    /* 042718 */
+#define kent_brockman_animations_1_sprites_ADDRESS 0x6720u    /* 042720 */
+#define kent_brockman_animations_2_ADDRESS 0x672Cu    /* 04272C */
+#define kent_brockman_animations_2_sprites_ADDRESS 0x6738u    /* 042738 */
+#define kent_brockman_animations_2_sprites_2_ADDRESS 0x674Au    /* 04274A */
+#define kent_brockman_animations_3_ADDRESS 0x675Cu    /* 04275C */
+#define kent_brockman_animations_3_sprites_ADDRESS 0x6764u    /* 042764 */
 #define octopus_animations_ADDRESS 0x677Cu    /* 04277C */
 #define octopus_animations_0_ADDRESS 0x6784u    /* 042784 */
 #define octopus_animations_0_sprites_ADDRESS 0x6790u    /* 042790 */
@@ -4663,207 +4423,207 @@ extern const void *reset_vector_data;
 #define octopus_animations_3_sprites_ADDRESS 0x6816u    /* 042816 */
 #define octopus_animations_3_sprites_2_ADDRESS 0x6822u    /* 042822 */
 #define octopus_animations_3_sprites_3_ADDRESS 0x682Eu    /* 04282E */
-#define kind_B5_animations_ADDRESS 0x6846u    /* 042846 */
-#define kind_B5_animations_0_ADDRESS 0x684Au    /* 04284A */
-#define kind_B5_animations_0_sprites_ADDRESS 0x686Au    /* 04286A */
-#define kind_B5_animations_0_sprites_2_ADDRESS 0x6876u    /* 042876 */
-#define kind_B5_animations_0_sprites_3_ADDRESS 0x6882u    /* 042882 */
-#define kind_B5_animations_1_ADDRESS 0x688Eu    /* 04288E */
-#define kind_B5_animations_1_sprites_ADDRESS 0x68B2u    /* 0428B2 */
-#define kind_B5_animations_1_sprites_2_ADDRESS 0x68C4u    /* 0428C4 */
-#define kind_B5_animations_1_sprites_3_ADDRESS 0x68D6u    /* 0428D6 */
-#define kind_B5_animations_1_sprites_4_ADDRESS 0x68E8u    /* 0428E8 */
-#define kind_B5_animations_1_sprites_5_ADDRESS 0x68FAu    /* 0428FA */
-#define kind_A0_animations_ADDRESS 0x690Cu    /* 04290C */
-#define kind_A0_animations_0_ADDRESS 0x6916u    /* 042916 */
-#define kind_A0_animations_0_sprites_ADDRESS 0x691Eu    /* 04291E */
-#define kind_A0_animations_1_ADDRESS 0x6924u    /* 042924 */
-#define kind_A0_animations_1_sprites_ADDRESS 0x6930u    /* 042930 */
-#define kind_A0_animations_2_ADDRESS 0x6936u    /* 042936 */
-#define kind_A0_animations_2_sprites_ADDRESS 0x6942u    /* 042942 */
-#define kind_A0_animations_2_sprites_2_ADDRESS 0x6948u    /* 042948 */
-#define kind_A0_animations_3_ADDRESS 0x694Eu    /* 04294E */
-#define kind_A0_animations_3_sprites_ADDRESS 0x695Au    /* 04295A */
-#define kind_A0_animations_3_sprites_2_ADDRESS 0x6960u    /* 042960 */
-#define kind_A0_animations_4_ADDRESS 0x6966u    /* 042966 */
-#define kind_A0_animations_4_sprites_ADDRESS 0x6972u    /* 042972 */
-#define kind_A0_animations_4_sprites_2_ADDRESS 0x6978u    /* 042978 */
-#define kind_A1_animations_ADDRESS 0x697Eu    /* 04297E */
-#define kind_A1_animations_rest_ADDRESS 0x69CEu    /* 0429CE */
-#define kind_A1_animations_rest_2_ADDRESS 0x69D6u    /* 0429D6 */
-#define kind_A1_animations_0_ADDRESS 0x69E2u    /* 0429E2 */
-#define kind_A1_animations_0_sprites_ADDRESS 0x6A06u    /* 042A06 */
-#define kind_A1_animations_0_sprites_2_ADDRESS 0x6A12u    /* 042A12 */
-#define kind_A1_animations_0_sprites_3_ADDRESS 0x6A1Eu    /* 042A1E */
-#define kind_A1_animations_3_ADDRESS 0x6A2Au    /* 042A2A */
-#define kind_A1_animations_3_sprites_ADDRESS 0x6A4Eu    /* 042A4E */
-#define kind_A1_animations_3_sprites_2_ADDRESS 0x6A5Au    /* 042A5A */
-#define kind_A1_animations_3_sprites_3_ADDRESS 0x6A66u    /* 042A66 */
-#define kind_A1_animations_38_ADDRESS 0x6A72u    /* 042A72 */
-#define kind_A1_animations_38_sprites_ADDRESS 0x6A96u    /* 042A96 */
-#define kind_A1_animations_38_sprites_2_ADDRESS 0x6AA2u    /* 042AA2 */
-#define kind_A1_animations_38_sprites_3_ADDRESS 0x6AB4u    /* 042AB4 */
-#define kind_A1_animations_16_ADDRESS 0x6AC0u    /* 042AC0 */
-#define kind_A1_animations_16_sprites_ADDRESS 0x6AE4u    /* 042AE4 */
-#define kind_A1_animations_16_sprites_2_ADDRESS 0x6AF0u    /* 042AF0 */
-#define kind_A1_animations_16_sprites_3_ADDRESS 0x6AFCu    /* 042AFC */
-#define kind_A1_animations_16_sprites_4_ADDRESS 0x6B0Eu    /* 042B0E */
-#define kind_A1_animations_16_sprites_5_ADDRESS 0x6B20u    /* 042B20 */
-#define kind_A1_animations_16_sprites_6_ADDRESS 0x6B38u    /* 042B38 */
-#define kind_A1_animations_17_ADDRESS 0x6B50u    /* 042B50 */
-#define kind_A1_animations_17_sprites_ADDRESS 0x6B74u    /* 042B74 */
-#define kind_A1_animations_17_sprites_2_ADDRESS 0x6B80u    /* 042B80 */
-#define kind_A1_animations_17_sprites_3_ADDRESS 0x6B86u    /* 042B86 */
-#define kind_A1_animations_17_sprites_4_ADDRESS 0x6B8Cu    /* 042B8C */
-#define kind_A1_animations_17_sprites_5_ADDRESS 0x6B98u    /* 042B98 */
-#define kind_A1_animations_17_sprites_6_ADDRESS 0x6BA4u    /* 042BA4 */
-#define kind_A1_animations_18_ADDRESS 0x6BB0u    /* 042BB0 */
-#define kind_A1_animations_18_sprites_ADDRESS 0x6BDCu    /* 042BDC */
-#define kind_A1_animations_18_sprites_2_ADDRESS 0x6BE8u    /* 042BE8 */
-#define kind_A1_animations_18_sprites_3_ADDRESS 0x6BF4u    /* 042BF4 */
-#define kind_A1_animations_18_sprites_4_ADDRESS 0x6C06u    /* 042C06 */
-#define kind_A1_animations_18_sprites_5_ADDRESS 0x6C12u    /* 042C12 */
-#define kind_A1_animations_18_sprites_6_ADDRESS 0x6C24u    /* 042C24 */
-#define kind_A1_animations_31_ADDRESS 0x6C30u    /* 042C30 */
-#define kind_A1_animations_31_sprites_ADDRESS 0x6C44u    /* 042C44 */
-#define kind_A1_animations_31_sprites_2_ADDRESS 0x6C4Au    /* 042C4A */
-#define kind_A1_animations_31_sprites_3_ADDRESS 0x6C50u    /* 042C50 */
-#define kind_A1_animations_31_sprites_4_ADDRESS 0x6C56u    /* 042C56 */
-#define kind_A1_animations_19_ADDRESS 0x6C5Cu    /* 042C5C */
-#define kind_A1_animations_19_sprites_ADDRESS 0x6C74u    /* 042C74 */
-#define kind_A1_animations_19_sprites_2_ADDRESS 0x6C7Au    /* 042C7A */
-#define kind_A1_animations_19_sprites_3_ADDRESS 0x6C80u    /* 042C80 */
-#define kind_A1_animations_21_ADDRESS 0x6C86u    /* 042C86 */
-#define kind_A1_animations_21_sprites_ADDRESS 0x6CBAu    /* 042CBA */
-#define kind_A1_animations_21_sprites_2_ADDRESS 0x6CC0u    /* 042CC0 */
-#define kind_A1_animations_21_sprites_3_ADDRESS 0x6CC6u    /* 042CC6 */
-#define kind_A1_animations_21_sprites_4_ADDRESS 0x6CCCu    /* 042CCC */
-#define kind_A1_animations_21_sprites_5_ADDRESS 0x6CD2u    /* 042CD2 */
-#define kind_A1_animations_21_sprites_6_ADDRESS 0x6CD8u    /* 042CD8 */
-#define kind_A1_animations_21_sprites_7_ADDRESS 0x6CDEu    /* 042CDE */
-#define kind_A1_animations_21_sprites_8_ADDRESS 0x6CE4u    /* 042CE4 */
-#define kind_A1_animations_21_sprites_9_ADDRESS 0x6CEAu    /* 042CEA */
-#define kind_A1_animations_21_sprites_10_ADDRESS 0x6CF0u    /* 042CF0 */
-#define kind_A1_animations_21_sprites_11_ADDRESS 0x6CFCu    /* 042CFC */
-#define kind_A1_animations_22_ADDRESS 0x6D02u    /* 042D02 */
-#define kind_A1_animations_23_ADDRESS 0x6D2Au    /* 042D2A */
-#define kind_A1_animations_24_ADDRESS 0x6D32u    /* 042D32 */
-#define kind_A1_animations_24_sprites_ADDRESS 0x6D46u    /* 042D46 */
-#define kind_A1_animations_24_sprites_2_ADDRESS 0x6D52u    /* 042D52 */
-#define kind_A1_animations_24_sprites_3_ADDRESS 0x6D5Eu    /* 042D5E */
-#define kind_A1_animations_24_sprites_4_ADDRESS 0x6D6Au    /* 042D6A */
-#define kind_A1_animations_25_ADDRESS 0x6D76u    /* 042D76 */
-#define kind_A1_animations_25_sprites_ADDRESS 0x6DA2u    /* 042DA2 */
-#define kind_A1_animations_25_sprites_2_ADDRESS 0x6DBAu    /* 042DBA */
-#define kind_A1_animations_25_sprites_3_ADDRESS 0x6DC6u    /* 042DC6 */
-#define kind_A1_animations_25_sprites_4_ADDRESS 0x6DD2u    /* 042DD2 */
-#define kind_A1_animations_25_sprites_5_ADDRESS 0x6DE4u    /* 042DE4 */
-#define kind_A1_animations_25_sprites_6_ADDRESS 0x6DF0u    /* 042DF0 */
-#define kind_A1_animations_25_sprites_7_ADDRESS 0x6E02u    /* 042E02 */
-#define kind_A1_animations_25_sprites_8_ADDRESS 0x6E0Eu    /* 042E0E */
-#define kind_A1_animations_25_sprites_9_ADDRESS 0x6E1Au    /* 042E1A */
-#define kind_A1_animations_26_ADDRESS 0x6E2Cu    /* 042E2C */
-#define kind_A1_animations_26_sprites_ADDRESS 0x6E38u    /* 042E38 */
-#define kind_A1_animations_27_ADDRESS 0x6E44u    /* 042E44 */
-#define kind_A1_animations_27_sprites_ADDRESS 0x6E58u    /* 042E58 */
-#define kind_A1_animations_27_sprites_2_ADDRESS 0x6E64u    /* 042E64 */
-#define kind_A1_animations_27_sprites_3_ADDRESS 0x6E6Au    /* 042E6A */
-#define kind_A1_animations_28_ADDRESS 0x6E70u    /* 042E70 */
-#define kind_A1_animations_28_sprites_ADDRESS 0x6E80u    /* 042E80 */
-#define kind_A1_animations_28_sprites_2_ADDRESS 0x6E8Cu    /* 042E8C */
-#define kind_A1_animations_29_ADDRESS 0x6E92u    /* 042E92 */
-#define kind_A1_animations_29_sprites_ADDRESS 0x6E9Eu    /* 042E9E */
-#define kind_A1_animations_29_sprites_2_ADDRESS 0x6EA4u    /* 042EA4 */
-#define kind_A1_animations_15_ADDRESS 0x6EB0u    /* 042EB0 */
-#define kind_A1_animations_15_sprites_ADDRESS 0x6EB8u    /* 042EB8 */
-#define kind_A1_animations_4_ADDRESS 0x6ED0u    /* 042ED0 */
-#define kind_A1_animations_8_ADDRESS 0x6ED8u    /* 042ED8 */
-#define kind_A1_animations_8_sprites_ADDRESS 0x6EF4u    /* 042EF4 */
-#define kind_A1_animations_8_sprites_2_ADDRESS 0x6F00u    /* 042F00 */
-#define kind_A1_animations_8_sprites_3_ADDRESS 0x6F12u    /* 042F12 */
-#define kind_A1_animations_8_sprites_4_ADDRESS 0x6F1Eu    /* 042F1E */
-#define kind_A1_animations_33_ADDRESS 0x6F2Au    /* 042F2A */
-#define kind_A1_animations_34_ADDRESS 0x6F3Eu    /* 042F3E */
-#define kind_A1_animations_34_sprites_ADDRESS 0x6F6Au    /* 042F6A */
-#define kind_A1_animations_34_sprites_2_ADDRESS 0x6F82u    /* 042F82 */
-#define kind_A1_animations_34_sprites_3_ADDRESS 0x6F8Eu    /* 042F8E */
-#define kind_A1_animations_34_sprites_4_ADDRESS 0x6F9Au    /* 042F9A */
-#define kind_A1_animations_34_sprites_5_ADDRESS 0x6FACu    /* 042FAC */
-#define kind_A1_animations_34_sprites_6_ADDRESS 0x6FB8u    /* 042FB8 */
-#define kind_A1_animations_34_sprites_7_ADDRESS 0x6FCAu    /* 042FCA */
-#define kind_A1_animations_34_sprites_8_ADDRESS 0x6FD6u    /* 042FD6 */
-#define kind_A1_animations_34_sprites_9_ADDRESS 0x6FE2u    /* 042FE2 */
-#define kind_A1_animations_6_ADDRESS 0x6FF4u    /* 042FF4 */
-#define kind_A1_animations_6_sprites_ADDRESS 0x7024u    /* 043024 */
-#define kind_A1_animations_6_sprites_2_ADDRESS 0x7030u    /* 043030 */
-#define kind_A1_animations_6_sprites_3_ADDRESS 0x7042u    /* 043042 */
-#define kind_A1_animations_6_sprites_4_ADDRESS 0x7054u    /* 043054 */
-#define kind_A1_animations_6_sprites_5_ADDRESS 0x7066u    /* 043066 */
-#define kind_A1_animations_6_sprites_6_ADDRESS 0x707Eu    /* 04307E */
-#define kind_A1_animations_6_sprites_7_ADDRESS 0x7090u    /* 043090 */
-#define kind_A1_animations_6_sprites_8_ADDRESS 0x70A8u    /* 0430A8 */
-#define kind_A1_animations_36_ADDRESS 0x70BAu    /* 0430BA */
-#define kind_A1_animations_36_sprites_ADDRESS 0x70DAu    /* 0430DA */
-#define kind_A1_animations_36_sprites_2_ADDRESS 0x70E6u    /* 0430E6 */
-#define kind_A1_animations_36_sprites_3_ADDRESS 0x70F2u    /* 0430F2 */
-#define kind_A1_animations_36_sprites_4_ADDRESS 0x7104u    /* 043104 */
-#define kind_A1_animations_36_sprites_5_ADDRESS 0x711Cu    /* 04311C */
-#define kind_A1_animations_37_ADDRESS 0x713Au    /* 04313A */
-#define kind_A1_animations_37_sprites_ADDRESS 0x7166u    /* 043166 */
-#define kind_A1_animations_9_ADDRESS 0x7178u    /* 043178 */
-#define kind_A1_animations_9_sprites_ADDRESS 0x71A4u    /* 0431A4 */
-#define kind_A1_animations_9_sprites_2_ADDRESS 0x71C2u    /* 0431C2 */
-#define kind_A1_animations_9_sprites_3_ADDRESS 0x71DAu    /* 0431DA */
-#define kind_A1_animations_9_sprites_4_ADDRESS 0x71ECu    /* 0431EC */
-#define kind_A1_animations_9_sprites_5_ADDRESS 0x71FEu    /* 0431FE */
-#define kind_A1_animations_9_sprites_6_ADDRESS 0x7210u    /* 043210 */
-#define kind_A1_animations_9_sprites_7_ADDRESS 0x7222u    /* 043222 */
-#define kind_A1_animations_39_ADDRESS 0x7234u    /* 043234 */
-#define kind_A3_animations_ADDRESS 0x723Cu    /* 04323C */
-#define kind_A3_animations_0_ADDRESS 0x7254u    /* 043254 */
-#define kind_A3_animations_0_sprites_ADDRESS 0x726Cu    /* 04326C */
-#define kind_A3_animations_0_sprites_2_ADDRESS 0x728Au    /* 04328A */
-#define kind_A3_animations_0_sprites_3_ADDRESS 0x72A8u    /* 0432A8 */
-#define kind_A3_animations_0_sprites_4_ADDRESS 0x72C6u    /* 0432C6 */
-#define kind_A3_animations_0_sprites_5_ADDRESS 0x72E4u    /* 0432E4 */
-#define kind_A3_animations_1_ADDRESS 0x7302u    /* 043302 */
-#define kind_A3_animations_1_sprites_ADDRESS 0x7316u    /* 043316 */
-#define kind_A3_animations_1_sprites_2_ADDRESS 0x7334u    /* 043334 */
-#define kind_A3_animations_1_sprites_3_ADDRESS 0x7364u    /* 043364 */
-#define kind_A3_animations_1_sprites_4_ADDRESS 0x7394u    /* 043394 */
-#define kind_A3_animations_2_ADDRESS 0x73C4u    /* 0433C4 */
-#define kind_A3_animations_2_sprites_ADDRESS 0x73E0u    /* 0433E0 */
-#define kind_A3_animations_2_sprites_2_ADDRESS 0x740Au    /* 04340A */
-#define kind_A3_animations_2_sprites_3_ADDRESS 0x742Eu    /* 04342E */
-#define kind_A3_animations_2_sprites_4_ADDRESS 0x7458u    /* 043458 */
-#define kind_A3_animations_2_sprites_5_ADDRESS 0x7482u    /* 043482 */
-#define kind_A3_animations_2_sprites_6_ADDRESS 0x74A6u    /* 0434A6 */
-#define kind_A3_animations_3_ADDRESS 0x74D0u    /* 0434D0 */
-#define kind_A3_animations_3_sprites_ADDRESS 0x74E4u    /* 0434E4 */
-#define kind_A3_animations_3_sprites_2_ADDRESS 0x7514u    /* 043514 */
-#define kind_A3_animations_3_sprites_3_ADDRESS 0x753Eu    /* 04353E */
-#define kind_A3_animations_4_ADDRESS 0x756Eu    /* 04356E */
-#define kind_A3_animations_4_sprites_ADDRESS 0x7576u    /* 043576 */
-#define kind_A3_animations_5_ADDRESS 0x75A6u    /* 0435A6 */
-#define kind_A3_animations_5_sprites_ADDRESS 0x75B2u    /* 0435B2 */
-#define kind_A3_animations_5_sprites_2_ADDRESS 0x75D6u    /* 0435D6 */
-#define kind_A3_animations_6_ADDRESS 0x75F4u    /* 0435F4 */
-#define kind_A3_animations_6_sprites_ADDRESS 0x7600u    /* 043600 */
-#define kind_A3_animations_6_sprites_2_ADDRESS 0x761Eu    /* 04361E */
-#define kind_A3_animations_7_ADDRESS 0x7642u    /* 043642 */
-#define kind_A3_animations_7_sprites_ADDRESS 0x7656u    /* 043656 */
-#define kind_A3_animations_7_sprites_2_ADDRESS 0x767Au    /* 04367A */
-#define kind_A3_animations_7_sprites_3_ADDRESS 0x76A4u    /* 0436A4 */
-#define kind_A3_animations_7_sprites_4_ADDRESS 0x76CEu    /* 0436CE */
-#define kind_A3_animations_8_ADDRESS 0x76FEu    /* 0436FE */
-#define kind_A3_animations_8_sprites_ADDRESS 0x770Eu    /* 04370E */
-#define kind_A3_animations_8_sprites_2_ADDRESS 0x7732u    /* 043732 */
-#define kind_A3_animations_8_sprites_3_ADDRESS 0x7756u    /* 043756 */
-#define kind_A3_animations_9_ADDRESS 0x7780u    /* 043780 */
-#define kind_A3_animations_10_ADDRESS 0x7788u    /* 043788 */
-#define kind_A3_animations_10_sprites_ADDRESS 0x779Cu    /* 04379C */
-#define kind_A3_animations_10_sprites_2_ADDRESS 0x77C6u    /* 0437C6 */
-#define kind_A3_animations_11_ADDRESS 0x77F0u    /* 0437F0 */
+#define schoolboy_with_books_animations_ADDRESS 0x6846u    /* 042846 */
+#define schoolboy_with_books_animations_0_ADDRESS 0x684Au    /* 04284A */
+#define schoolboy_with_books_animations_0_sprites_ADDRESS 0x686Au    /* 04286A */
+#define schoolboy_with_books_animations_0_sprites_2_ADDRESS 0x6876u    /* 042876 */
+#define schoolboy_with_books_animations_0_sprites_3_ADDRESS 0x6882u    /* 042882 */
+#define schoolboy_with_books_animations_1_ADDRESS 0x688Eu    /* 04288E */
+#define schoolboy_with_books_animations_1_sprites_ADDRESS 0x68B2u    /* 0428B2 */
+#define schoolboy_with_books_animations_1_sprites_2_ADDRESS 0x68C4u    /* 0428C4 */
+#define schoolboy_with_books_animations_1_sprites_3_ADDRESS 0x68D6u    /* 0428D6 */
+#define schoolboy_with_books_animations_1_sprites_4_ADDRESS 0x68E8u    /* 0428E8 */
+#define schoolboy_with_books_animations_1_sprites_5_ADDRESS 0x68FAu    /* 0428FA */
+#define bluebird_animations_ADDRESS 0x690Cu    /* 04290C */
+#define bluebird_animations_0_ADDRESS 0x6916u    /* 042916 */
+#define bluebird_animations_0_sprites_ADDRESS 0x691Eu    /* 04291E */
+#define bluebird_animations_1_ADDRESS 0x6924u    /* 042924 */
+#define bluebird_animations_1_sprites_ADDRESS 0x6930u    /* 042930 */
+#define bluebird_animations_2_ADDRESS 0x6936u    /* 042936 */
+#define bluebird_animations_2_sprites_ADDRESS 0x6942u    /* 042942 */
+#define bluebird_animations_2_sprites_2_ADDRESS 0x6948u    /* 042948 */
+#define bluebird_animations_3_ADDRESS 0x694Eu    /* 04294E */
+#define bluebird_animations_3_sprites_ADDRESS 0x695Au    /* 04295A */
+#define bluebird_animations_3_sprites_2_ADDRESS 0x6960u    /* 042960 */
+#define bluebird_animations_4_ADDRESS 0x6966u    /* 042966 */
+#define bluebird_animations_4_sprites_ADDRESS 0x6972u    /* 042972 */
+#define bluebird_animations_4_sprites_2_ADDRESS 0x6978u    /* 042978 */
+#define ninja_animations_ADDRESS 0x697Eu    /* 04297E */
+#define ninja_animations_rest_ADDRESS 0x69CEu    /* 0429CE */
+#define ninja_animations_rest_2_ADDRESS 0x69D6u    /* 0429D6 */
+#define ninja_animations_0_ADDRESS 0x69E2u    /* 0429E2 */
+#define ninja_animations_0_sprites_ADDRESS 0x6A06u    /* 042A06 */
+#define ninja_animations_0_sprites_2_ADDRESS 0x6A12u    /* 042A12 */
+#define ninja_animations_0_sprites_3_ADDRESS 0x6A1Eu    /* 042A1E */
+#define ninja_animations_3_ADDRESS 0x6A2Au    /* 042A2A */
+#define ninja_animations_3_sprites_ADDRESS 0x6A4Eu    /* 042A4E */
+#define ninja_animations_3_sprites_2_ADDRESS 0x6A5Au    /* 042A5A */
+#define ninja_animations_3_sprites_3_ADDRESS 0x6A66u    /* 042A66 */
+#define ninja_animations_38_ADDRESS 0x6A72u    /* 042A72 */
+#define ninja_animations_38_sprites_ADDRESS 0x6A96u    /* 042A96 */
+#define ninja_animations_38_sprites_2_ADDRESS 0x6AA2u    /* 042AA2 */
+#define ninja_animations_38_sprites_3_ADDRESS 0x6AB4u    /* 042AB4 */
+#define ninja_animations_16_ADDRESS 0x6AC0u    /* 042AC0 */
+#define ninja_animations_16_sprites_ADDRESS 0x6AE4u    /* 042AE4 */
+#define ninja_animations_16_sprites_2_ADDRESS 0x6AF0u    /* 042AF0 */
+#define ninja_animations_16_sprites_3_ADDRESS 0x6AFCu    /* 042AFC */
+#define ninja_animations_16_sprites_4_ADDRESS 0x6B0Eu    /* 042B0E */
+#define ninja_animations_16_sprites_5_ADDRESS 0x6B20u    /* 042B20 */
+#define ninja_animations_16_sprites_6_ADDRESS 0x6B38u    /* 042B38 */
+#define ninja_animations_17_ADDRESS 0x6B50u    /* 042B50 */
+#define ninja_animations_17_sprites_ADDRESS 0x6B74u    /* 042B74 */
+#define ninja_animations_17_sprites_2_ADDRESS 0x6B80u    /* 042B80 */
+#define ninja_animations_17_sprites_3_ADDRESS 0x6B86u    /* 042B86 */
+#define ninja_animations_17_sprites_4_ADDRESS 0x6B8Cu    /* 042B8C */
+#define ninja_animations_17_sprites_5_ADDRESS 0x6B98u    /* 042B98 */
+#define ninja_animations_17_sprites_6_ADDRESS 0x6BA4u    /* 042BA4 */
+#define ninja_animations_18_ADDRESS 0x6BB0u    /* 042BB0 */
+#define ninja_animations_18_sprites_ADDRESS 0x6BDCu    /* 042BDC */
+#define ninja_animations_18_sprites_2_ADDRESS 0x6BE8u    /* 042BE8 */
+#define ninja_animations_18_sprites_3_ADDRESS 0x6BF4u    /* 042BF4 */
+#define ninja_animations_18_sprites_4_ADDRESS 0x6C06u    /* 042C06 */
+#define ninja_animations_18_sprites_5_ADDRESS 0x6C12u    /* 042C12 */
+#define ninja_animations_18_sprites_6_ADDRESS 0x6C24u    /* 042C24 */
+#define ninja_animations_31_ADDRESS 0x6C30u    /* 042C30 */
+#define ninja_animations_31_sprites_ADDRESS 0x6C44u    /* 042C44 */
+#define ninja_animations_31_sprites_2_ADDRESS 0x6C4Au    /* 042C4A */
+#define ninja_animations_31_sprites_3_ADDRESS 0x6C50u    /* 042C50 */
+#define ninja_animations_31_sprites_4_ADDRESS 0x6C56u    /* 042C56 */
+#define ninja_animations_19_ADDRESS 0x6C5Cu    /* 042C5C */
+#define ninja_animations_19_sprites_ADDRESS 0x6C74u    /* 042C74 */
+#define ninja_animations_19_sprites_2_ADDRESS 0x6C7Au    /* 042C7A */
+#define ninja_animations_19_sprites_3_ADDRESS 0x6C80u    /* 042C80 */
+#define ninja_animations_21_ADDRESS 0x6C86u    /* 042C86 */
+#define ninja_animations_21_sprites_ADDRESS 0x6CBAu    /* 042CBA */
+#define ninja_animations_21_sprites_2_ADDRESS 0x6CC0u    /* 042CC0 */
+#define ninja_animations_21_sprites_3_ADDRESS 0x6CC6u    /* 042CC6 */
+#define ninja_animations_21_sprites_4_ADDRESS 0x6CCCu    /* 042CCC */
+#define ninja_animations_21_sprites_5_ADDRESS 0x6CD2u    /* 042CD2 */
+#define ninja_animations_21_sprites_6_ADDRESS 0x6CD8u    /* 042CD8 */
+#define ninja_animations_21_sprites_7_ADDRESS 0x6CDEu    /* 042CDE */
+#define ninja_animations_21_sprites_8_ADDRESS 0x6CE4u    /* 042CE4 */
+#define ninja_animations_21_sprites_9_ADDRESS 0x6CEAu    /* 042CEA */
+#define ninja_animations_21_sprites_10_ADDRESS 0x6CF0u    /* 042CF0 */
+#define ninja_animations_21_sprites_11_ADDRESS 0x6CFCu    /* 042CFC */
+#define ninja_animations_22_ADDRESS 0x6D02u    /* 042D02 */
+#define ninja_animations_23_ADDRESS 0x6D2Au    /* 042D2A */
+#define ninja_animations_24_ADDRESS 0x6D32u    /* 042D32 */
+#define ninja_animations_24_sprites_ADDRESS 0x6D46u    /* 042D46 */
+#define ninja_animations_24_sprites_2_ADDRESS 0x6D52u    /* 042D52 */
+#define ninja_animations_24_sprites_3_ADDRESS 0x6D5Eu    /* 042D5E */
+#define ninja_animations_24_sprites_4_ADDRESS 0x6D6Au    /* 042D6A */
+#define ninja_animations_25_ADDRESS 0x6D76u    /* 042D76 */
+#define ninja_animations_25_sprites_ADDRESS 0x6DA2u    /* 042DA2 */
+#define ninja_animations_25_sprites_2_ADDRESS 0x6DBAu    /* 042DBA */
+#define ninja_animations_25_sprites_3_ADDRESS 0x6DC6u    /* 042DC6 */
+#define ninja_animations_25_sprites_4_ADDRESS 0x6DD2u    /* 042DD2 */
+#define ninja_animations_25_sprites_5_ADDRESS 0x6DE4u    /* 042DE4 */
+#define ninja_animations_25_sprites_6_ADDRESS 0x6DF0u    /* 042DF0 */
+#define ninja_animations_25_sprites_7_ADDRESS 0x6E02u    /* 042E02 */
+#define ninja_animations_25_sprites_8_ADDRESS 0x6E0Eu    /* 042E0E */
+#define ninja_animations_25_sprites_9_ADDRESS 0x6E1Au    /* 042E1A */
+#define ninja_animations_26_ADDRESS 0x6E2Cu    /* 042E2C */
+#define ninja_animations_26_sprites_ADDRESS 0x6E38u    /* 042E38 */
+#define ninja_animations_27_ADDRESS 0x6E44u    /* 042E44 */
+#define ninja_animations_27_sprites_ADDRESS 0x6E58u    /* 042E58 */
+#define ninja_animations_27_sprites_2_ADDRESS 0x6E64u    /* 042E64 */
+#define ninja_animations_27_sprites_3_ADDRESS 0x6E6Au    /* 042E6A */
+#define ninja_animations_28_ADDRESS 0x6E70u    /* 042E70 */
+#define ninja_animations_28_sprites_ADDRESS 0x6E80u    /* 042E80 */
+#define ninja_animations_28_sprites_2_ADDRESS 0x6E8Cu    /* 042E8C */
+#define ninja_animations_29_ADDRESS 0x6E92u    /* 042E92 */
+#define ninja_animations_29_sprites_ADDRESS 0x6E9Eu    /* 042E9E */
+#define ninja_animations_29_sprites_2_ADDRESS 0x6EA4u    /* 042EA4 */
+#define ninja_animations_15_ADDRESS 0x6EB0u    /* 042EB0 */
+#define ninja_animations_15_sprites_ADDRESS 0x6EB8u    /* 042EB8 */
+#define ninja_animations_4_ADDRESS 0x6ED0u    /* 042ED0 */
+#define ninja_animations_8_ADDRESS 0x6ED8u    /* 042ED8 */
+#define ninja_animations_8_sprites_ADDRESS 0x6EF4u    /* 042EF4 */
+#define ninja_animations_8_sprites_2_ADDRESS 0x6F00u    /* 042F00 */
+#define ninja_animations_8_sprites_3_ADDRESS 0x6F12u    /* 042F12 */
+#define ninja_animations_8_sprites_4_ADDRESS 0x6F1Eu    /* 042F1E */
+#define ninja_animations_33_ADDRESS 0x6F2Au    /* 042F2A */
+#define ninja_animations_34_ADDRESS 0x6F3Eu    /* 042F3E */
+#define ninja_animations_34_sprites_ADDRESS 0x6F6Au    /* 042F6A */
+#define ninja_animations_34_sprites_2_ADDRESS 0x6F82u    /* 042F82 */
+#define ninja_animations_34_sprites_3_ADDRESS 0x6F8Eu    /* 042F8E */
+#define ninja_animations_34_sprites_4_ADDRESS 0x6F9Au    /* 042F9A */
+#define ninja_animations_34_sprites_5_ADDRESS 0x6FACu    /* 042FAC */
+#define ninja_animations_34_sprites_6_ADDRESS 0x6FB8u    /* 042FB8 */
+#define ninja_animations_34_sprites_7_ADDRESS 0x6FCAu    /* 042FCA */
+#define ninja_animations_34_sprites_8_ADDRESS 0x6FD6u    /* 042FD6 */
+#define ninja_animations_34_sprites_9_ADDRESS 0x6FE2u    /* 042FE2 */
+#define ninja_animations_6_ADDRESS 0x6FF4u    /* 042FF4 */
+#define ninja_animations_6_sprites_ADDRESS 0x7024u    /* 043024 */
+#define ninja_animations_6_sprites_2_ADDRESS 0x7030u    /* 043030 */
+#define ninja_animations_6_sprites_3_ADDRESS 0x7042u    /* 043042 */
+#define ninja_animations_6_sprites_4_ADDRESS 0x7054u    /* 043054 */
+#define ninja_animations_6_sprites_5_ADDRESS 0x7066u    /* 043066 */
+#define ninja_animations_6_sprites_6_ADDRESS 0x707Eu    /* 04307E */
+#define ninja_animations_6_sprites_7_ADDRESS 0x7090u    /* 043090 */
+#define ninja_animations_6_sprites_8_ADDRESS 0x70A8u    /* 0430A8 */
+#define ninja_animations_36_ADDRESS 0x70BAu    /* 0430BA */
+#define ninja_animations_36_sprites_ADDRESS 0x70DAu    /* 0430DA */
+#define ninja_animations_36_sprites_2_ADDRESS 0x70E6u    /* 0430E6 */
+#define ninja_animations_36_sprites_3_ADDRESS 0x70F2u    /* 0430F2 */
+#define ninja_animations_36_sprites_4_ADDRESS 0x7104u    /* 043104 */
+#define ninja_animations_36_sprites_5_ADDRESS 0x711Cu    /* 04311C */
+#define ninja_animations_37_ADDRESS 0x713Au    /* 04313A */
+#define ninja_animations_37_sprites_ADDRESS 0x7166u    /* 043166 */
+#define ninja_animations_9_ADDRESS 0x7178u    /* 043178 */
+#define ninja_animations_9_sprites_ADDRESS 0x71A4u    /* 0431A4 */
+#define ninja_animations_9_sprites_2_ADDRESS 0x71C2u    /* 0431C2 */
+#define ninja_animations_9_sprites_3_ADDRESS 0x71DAu    /* 0431DA */
+#define ninja_animations_9_sprites_4_ADDRESS 0x71ECu    /* 0431EC */
+#define ninja_animations_9_sprites_5_ADDRESS 0x71FEu    /* 0431FE */
+#define ninja_animations_9_sprites_6_ADDRESS 0x7210u    /* 043210 */
+#define ninja_animations_9_sprites_7_ADDRESS 0x7222u    /* 043222 */
+#define ninja_animations_39_ADDRESS 0x7234u    /* 043234 */
+#define kabuki_warrior_animations_ADDRESS 0x723Cu    /* 04323C */
+#define kabuki_warrior_animations_0_ADDRESS 0x7254u    /* 043254 */
+#define kabuki_warrior_animations_0_sprites_ADDRESS 0x726Cu    /* 04326C */
+#define kabuki_warrior_animations_0_sprites_2_ADDRESS 0x728Au    /* 04328A */
+#define kabuki_warrior_animations_0_sprites_3_ADDRESS 0x72A8u    /* 0432A8 */
+#define kabuki_warrior_animations_0_sprites_4_ADDRESS 0x72C6u    /* 0432C6 */
+#define kabuki_warrior_animations_0_sprites_5_ADDRESS 0x72E4u    /* 0432E4 */
+#define kabuki_warrior_animations_1_ADDRESS 0x7302u    /* 043302 */
+#define kabuki_warrior_animations_1_sprites_ADDRESS 0x7316u    /* 043316 */
+#define kabuki_warrior_animations_1_sprites_2_ADDRESS 0x7334u    /* 043334 */
+#define kabuki_warrior_animations_1_sprites_3_ADDRESS 0x7364u    /* 043364 */
+#define kabuki_warrior_animations_1_sprites_4_ADDRESS 0x7394u    /* 043394 */
+#define kabuki_warrior_animations_2_ADDRESS 0x73C4u    /* 0433C4 */
+#define kabuki_warrior_animations_2_sprites_ADDRESS 0x73E0u    /* 0433E0 */
+#define kabuki_warrior_animations_2_sprites_2_ADDRESS 0x740Au    /* 04340A */
+#define kabuki_warrior_animations_2_sprites_3_ADDRESS 0x742Eu    /* 04342E */
+#define kabuki_warrior_animations_2_sprites_4_ADDRESS 0x7458u    /* 043458 */
+#define kabuki_warrior_animations_2_sprites_5_ADDRESS 0x7482u    /* 043482 */
+#define kabuki_warrior_animations_2_sprites_6_ADDRESS 0x74A6u    /* 0434A6 */
+#define kabuki_warrior_animations_3_ADDRESS 0x74D0u    /* 0434D0 */
+#define kabuki_warrior_animations_3_sprites_ADDRESS 0x74E4u    /* 0434E4 */
+#define kabuki_warrior_animations_3_sprites_2_ADDRESS 0x7514u    /* 043514 */
+#define kabuki_warrior_animations_3_sprites_3_ADDRESS 0x753Eu    /* 04353E */
+#define kabuki_warrior_animations_4_ADDRESS 0x756Eu    /* 04356E */
+#define kabuki_warrior_animations_4_sprites_ADDRESS 0x7576u    /* 043576 */
+#define kabuki_warrior_animations_5_ADDRESS 0x75A6u    /* 0435A6 */
+#define kabuki_warrior_animations_5_sprites_ADDRESS 0x75B2u    /* 0435B2 */
+#define kabuki_warrior_animations_5_sprites_2_ADDRESS 0x75D6u    /* 0435D6 */
+#define kabuki_warrior_animations_6_ADDRESS 0x75F4u    /* 0435F4 */
+#define kabuki_warrior_animations_6_sprites_ADDRESS 0x7600u    /* 043600 */
+#define kabuki_warrior_animations_6_sprites_2_ADDRESS 0x761Eu    /* 04361E */
+#define kabuki_warrior_animations_7_ADDRESS 0x7642u    /* 043642 */
+#define kabuki_warrior_animations_7_sprites_ADDRESS 0x7656u    /* 043656 */
+#define kabuki_warrior_animations_7_sprites_2_ADDRESS 0x767Au    /* 04367A */
+#define kabuki_warrior_animations_7_sprites_3_ADDRESS 0x76A4u    /* 0436A4 */
+#define kabuki_warrior_animations_7_sprites_4_ADDRESS 0x76CEu    /* 0436CE */
+#define kabuki_warrior_animations_8_ADDRESS 0x76FEu    /* 0436FE */
+#define kabuki_warrior_animations_8_sprites_ADDRESS 0x770Eu    /* 04370E */
+#define kabuki_warrior_animations_8_sprites_2_ADDRESS 0x7732u    /* 043732 */
+#define kabuki_warrior_animations_8_sprites_3_ADDRESS 0x7756u    /* 043756 */
+#define kabuki_warrior_animations_9_ADDRESS 0x7780u    /* 043780 */
+#define kabuki_warrior_animations_10_ADDRESS 0x7788u    /* 043788 */
+#define kabuki_warrior_animations_10_sprites_ADDRESS 0x779Cu    /* 04379C */
+#define kabuki_warrior_animations_10_sprites_2_ADDRESS 0x77C6u    /* 0437C6 */
+#define kabuki_warrior_animations_11_ADDRESS 0x77F0u    /* 0437F0 */
 #define dog_2_animations_ADDRESS 0x7810u    /* 043810 */
 #define dog_2_animations_1_ADDRESS 0x7814u    /* 043814 */
 #define dog_2_animations_1_sprites_ADDRESS 0x7858u    /* 043858 */
@@ -4882,89 +4642,89 @@ extern const void *reset_vector_data;
 #define dog_2_animations_0_sprites_2_ADDRESS 0x799Eu    /* 04399E */
 #define dog_2_animations_0_sprites_3_ADDRESS 0x79B6u    /* 0439B6 */
 #define dog_2_animations_0_sprites_4_ADDRESS 0x79D4u    /* 0439D4 */
-#define kind_C6_animations_ADDRESS 0x79ECu    /* 0439EC */
-#define kind_C6_animations_0_ADDRESS 0x7A14u    /* 043A14 */
-#define kind_C6_animations_0_sprites_ADDRESS 0x7A1Cu    /* 043A1C */
-#define kind_C6_animations_1_ADDRESS 0x7A2Eu    /* 043A2E */
-#define kind_C6_animations_1_sprites_ADDRESS 0x7A36u    /* 043A36 */
-#define kind_C6_animations_2_ADDRESS 0x7A48u    /* 043A48 */
-#define kind_C6_animations_2_sprites_ADDRESS 0x7A50u    /* 043A50 */
-#define kind_C6_animations_3_ADDRESS 0x7A62u    /* 043A62 */
-#define kind_C6_animations_3_sprites_ADDRESS 0x7A6Au    /* 043A6A */
-#define kind_C6_animations_4_ADDRESS 0x7A7Cu    /* 043A7C */
-#define kind_C6_animations_4_sprites_ADDRESS 0x7A84u    /* 043A84 */
-#define kind_C6_animations_5_ADDRESS 0x7A96u    /* 043A96 */
-#define kind_C6_animations_5_sprites_ADDRESS 0x7A9Eu    /* 043A9E */
-#define kind_C6_animations_6_ADDRESS 0x7AB0u    /* 043AB0 */
-#define kind_C6_animations_6_sprites_ADDRESS 0x7AB8u    /* 043AB8 */
-#define kind_C6_animations_7_ADDRESS 0x7ACAu    /* 043ACA */
-#define kind_C6_animations_7_sprites_ADDRESS 0x7AD2u    /* 043AD2 */
-#define kind_C6_animations_8_ADDRESS 0x7AE4u    /* 043AE4 */
-#define kind_C6_animations_8_sprites_ADDRESS 0x7AECu    /* 043AEC */
-#define kind_C6_animations_9_ADDRESS 0x7AFEu    /* 043AFE */
-#define kind_C6_animations_9_sprites_ADDRESS 0x7B06u    /* 043B06 */
-#define kind_C6_animations_10_ADDRESS 0x7B18u    /* 043B18 */
-#define kind_C6_animations_10_sprites_ADDRESS 0x7B20u    /* 043B20 */
-#define kind_C6_animations_11_ADDRESS 0x7B32u    /* 043B32 */
-#define kind_C6_animations_11_sprites_ADDRESS 0x7B3Au    /* 043B3A */
-#define kind_C6_animations_12_ADDRESS 0x7B4Cu    /* 043B4C */
-#define kind_C6_animations_12_sprites_ADDRESS 0x7B54u    /* 043B54 */
-#define kind_C6_animations_13_ADDRESS 0x7B66u    /* 043B66 */
-#define kind_C6_animations_13_sprites_ADDRESS 0x7B6Eu    /* 043B6E */
-#define kind_C6_animations_14_ADDRESS 0x7B80u    /* 043B80 */
-#define kind_C6_animations_14_sprites_ADDRESS 0x7B88u    /* 043B88 */
-#define kind_C6_animations_15_ADDRESS 0x7B9Au    /* 043B9A */
-#define kind_C6_animations_15_sprites_ADDRESS 0x7BA2u    /* 043BA2 */
-#define kind_C6_animations_16_ADDRESS 0x7BB4u    /* 043BB4 */
-#define kind_C6_animations_16_sprites_ADDRESS 0x7BBCu    /* 043BBC */
-#define kind_C6_animations_17_ADDRESS 0x7BCEu    /* 043BCE */
-#define kind_C6_animations_17_sprites_ADDRESS 0x7BD6u    /* 043BD6 */
-#define kind_C6_animations_18_ADDRESS 0x7BE8u    /* 043BE8 */
-#define kind_C6_animations_18_sprites_ADDRESS 0x7BF0u    /* 043BF0 */
-#define kind_C6_animations_19_ADDRESS 0x7C08u    /* 043C08 */
-#define kind_C6_animations_19_sprites_ADDRESS 0x7C10u    /* 043C10 */
-#define kind_C6_animations_19_sprites_fill_ADDRESS 0x7C28u    /* 043C28 */
-#define kind_C6_animations_19_sprites_rest_ADDRESS 0x7D48u    /* 043D48 */
-#define kind_C6_animations_19_sprites_rest_2_ADDRESS 0x7D64u    /* 043D64 */
-#define kind_C6_animations_19_sprites_rest_3_ADDRESS 0x7D8Eu    /* 043D8E */
-#define kind_C6_animations_19_sprites_rest_4_ADDRESS 0x7DBEu    /* 043DBE */
-#define kind_C6_animations_19_sprites_rest_5_ADDRESS 0x7DF4u    /* 043DF4 */
-#define kind_C6_animations_19_sprites_rest_6_ADDRESS 0x7E30u    /* 043E30 */
-#define kind_C6_animations_19_sprites_rest_7_ADDRESS 0x7E78u    /* 043E78 */
-#define kind_C6_animations_19_sprites_fill_2_ADDRESS 0x7ECCu    /* 043ECC */
-#define kind_C6_animations_19_sprites_rest_8_ADDRESS 0x6000u    /* 044000 */
-#define kind_13_animations_ADDRESS 0x600Au    /* 04400A */
-#define kind_13_animations_0_ADDRESS 0x601Eu    /* 04401E */
-#define kind_13_animations_0_sprites_ADDRESS 0x604Au    /* 04404A */
-#define kind_13_animations_0_sprites_2_ADDRESS 0x6056u    /* 044056 */
-#define kind_13_animations_0_sprites_3_ADDRESS 0x6062u    /* 044062 */
-#define kind_13_animations_0_sprites_4_ADDRESS 0x606Eu    /* 04406E */
-#define kind_13_animations_1_ADDRESS 0x6074u    /* 044074 */
-#define kind_13_animations_1_sprites_ADDRESS 0x6084u    /* 044084 */
-#define kind_13_animations_1_sprites_2_ADDRESS 0x609Cu    /* 04409C */
-#define kind_13_animations_1_sprites_3_ADDRESS 0x60AEu    /* 0440AE */
-#define kind_13_animations_2_ADDRESS 0x60BAu    /* 0440BA */
-#define kind_13_animations_2_sprites_ADDRESS 0x60C2u    /* 0440C2 */
-#define kind_13_animations_3_ADDRESS 0x60D4u    /* 0440D4 */
-#define kind_13_animations_3_sprites_ADDRESS 0x60DCu    /* 0440DC */
-#define kind_13_animations_4_ADDRESS 0x60E2u    /* 0440E2 */
-#define kind_13_animations_4_sprites_ADDRESS 0x60EAu    /* 0440EA */
-#define kind_13_animations_8_ADDRESS 0x60F6u    /* 0440F6 */
-#define kind_13_animations_8_sprites_ADDRESS 0x60FEu    /* 0440FE */
-#define kind_13_animations_9_ADDRESS 0x611Cu    /* 04411C */
-#define kind_13_animations_9_sprites_ADDRESS 0x613Cu    /* 04413C */
-#define kind_13_animations_9_sprites_2_ADDRESS 0x6142u    /* 044142 */
-#define kind_13_animations_9_sprites_3_ADDRESS 0x6148u    /* 044148 */
-#define kind_13_animations_9_sprites_4_ADDRESS 0x614Eu    /* 04414E */
-#define kind_13_animations_9_sprites_5_ADDRESS 0x6178u    /* 044178 */
-#define kind_13_animations_9_sprites_6_ADDRESS 0x61B4u    /* 0441B4 */
-#define kind_13_animations_9_sprites_7_ADDRESS 0x61F0u    /* 0441F0 */
-#define kind_13_animations_5_ADDRESS 0x6226u    /* 044226 */
-#define kind_13_animations_5_sprites_ADDRESS 0x622Eu    /* 04422E */
-#define kind_13_animations_6_ADDRESS 0x624Cu    /* 04424C */
-#define kind_13_animations_6_sprites_ADDRESS 0x6254u    /* 044254 */
-#define kind_13_animations_7_ADDRESS 0x626Cu    /* 04426C */
-#define kind_13_animations_7_sprites_ADDRESS 0x6274u    /* 044274 */
+#define crypt_slab_animations_ADDRESS 0x79ECu    /* 0439EC */
+#define crypt_slab_animations_0_ADDRESS 0x7A14u    /* 043A14 */
+#define crypt_slab_animations_0_sprites_ADDRESS 0x7A1Cu    /* 043A1C */
+#define crypt_slab_animations_1_ADDRESS 0x7A2Eu    /* 043A2E */
+#define crypt_slab_animations_1_sprites_ADDRESS 0x7A36u    /* 043A36 */
+#define crypt_slab_animations_2_ADDRESS 0x7A48u    /* 043A48 */
+#define crypt_slab_animations_2_sprites_ADDRESS 0x7A50u    /* 043A50 */
+#define crypt_slab_animations_3_ADDRESS 0x7A62u    /* 043A62 */
+#define crypt_slab_animations_3_sprites_ADDRESS 0x7A6Au    /* 043A6A */
+#define crypt_slab_animations_4_ADDRESS 0x7A7Cu    /* 043A7C */
+#define crypt_slab_animations_4_sprites_ADDRESS 0x7A84u    /* 043A84 */
+#define crypt_slab_animations_5_ADDRESS 0x7A96u    /* 043A96 */
+#define crypt_slab_animations_5_sprites_ADDRESS 0x7A9Eu    /* 043A9E */
+#define crypt_slab_animations_6_ADDRESS 0x7AB0u    /* 043AB0 */
+#define crypt_slab_animations_6_sprites_ADDRESS 0x7AB8u    /* 043AB8 */
+#define crypt_slab_animations_7_ADDRESS 0x7ACAu    /* 043ACA */
+#define crypt_slab_animations_7_sprites_ADDRESS 0x7AD2u    /* 043AD2 */
+#define crypt_slab_animations_8_ADDRESS 0x7AE4u    /* 043AE4 */
+#define crypt_slab_animations_8_sprites_ADDRESS 0x7AECu    /* 043AEC */
+#define crypt_slab_animations_9_ADDRESS 0x7AFEu    /* 043AFE */
+#define crypt_slab_animations_9_sprites_ADDRESS 0x7B06u    /* 043B06 */
+#define crypt_slab_animations_10_ADDRESS 0x7B18u    /* 043B18 */
+#define crypt_slab_animations_10_sprites_ADDRESS 0x7B20u    /* 043B20 */
+#define crypt_slab_animations_11_ADDRESS 0x7B32u    /* 043B32 */
+#define crypt_slab_animations_11_sprites_ADDRESS 0x7B3Au    /* 043B3A */
+#define crypt_slab_animations_12_ADDRESS 0x7B4Cu    /* 043B4C */
+#define crypt_slab_animations_12_sprites_ADDRESS 0x7B54u    /* 043B54 */
+#define crypt_slab_animations_13_ADDRESS 0x7B66u    /* 043B66 */
+#define crypt_slab_animations_13_sprites_ADDRESS 0x7B6Eu    /* 043B6E */
+#define crypt_slab_animations_14_ADDRESS 0x7B80u    /* 043B80 */
+#define crypt_slab_animations_14_sprites_ADDRESS 0x7B88u    /* 043B88 */
+#define crypt_slab_animations_15_ADDRESS 0x7B9Au    /* 043B9A */
+#define crypt_slab_animations_15_sprites_ADDRESS 0x7BA2u    /* 043BA2 */
+#define crypt_slab_animations_16_ADDRESS 0x7BB4u    /* 043BB4 */
+#define crypt_slab_animations_16_sprites_ADDRESS 0x7BBCu    /* 043BBC */
+#define crypt_slab_animations_17_ADDRESS 0x7BCEu    /* 043BCE */
+#define crypt_slab_animations_17_sprites_ADDRESS 0x7BD6u    /* 043BD6 */
+#define crypt_slab_animations_18_ADDRESS 0x7BE8u    /* 043BE8 */
+#define crypt_slab_animations_18_sprites_ADDRESS 0x7BF0u    /* 043BF0 */
+#define crypt_slab_animations_19_ADDRESS 0x7C08u    /* 043C08 */
+#define crypt_slab_animations_19_sprites_ADDRESS 0x7C10u    /* 043C10 */
+#define crypt_slab_animations_19_sprites_fill_ADDRESS 0x7C28u    /* 043C28 */
+#define crypt_slab_animations_19_sprites_rest_ADDRESS 0x7D48u    /* 043D48 */
+#define crypt_slab_animations_19_sprites_rest_2_ADDRESS 0x7D64u    /* 043D64 */
+#define crypt_slab_animations_19_sprites_rest_3_ADDRESS 0x7D8Eu    /* 043D8E */
+#define crypt_slab_animations_19_sprites_rest_4_ADDRESS 0x7DBEu    /* 043DBE */
+#define crypt_slab_animations_19_sprites_rest_5_ADDRESS 0x7DF4u    /* 043DF4 */
+#define crypt_slab_animations_19_sprites_rest_6_ADDRESS 0x7E30u    /* 043E30 */
+#define crypt_slab_animations_19_sprites_rest_7_ADDRESS 0x7E78u    /* 043E78 */
+#define crypt_slab_animations_19_sprites_fill_2_ADDRESS 0x7ECCu    /* 043ECC */
+#define crypt_slab_animations_19_sprites_rest_8_ADDRESS 0x6000u    /* 044000 */
+#define boss_doors_and_rubble_animations_ADDRESS 0x600Au    /* 04400A */
+#define boss_doors_and_rubble_animations_0_ADDRESS 0x601Eu    /* 04401E */
+#define boss_doors_and_rubble_animations_0_sprites_ADDRESS 0x604Au    /* 04404A */
+#define boss_doors_and_rubble_animations_0_sprites_2_ADDRESS 0x6056u    /* 044056 */
+#define boss_doors_and_rubble_animations_0_sprites_3_ADDRESS 0x6062u    /* 044062 */
+#define boss_doors_and_rubble_animations_0_sprites_4_ADDRESS 0x606Eu    /* 04406E */
+#define boss_doors_and_rubble_animations_1_ADDRESS 0x6074u    /* 044074 */
+#define boss_doors_and_rubble_animations_1_sprites_ADDRESS 0x6084u    /* 044084 */
+#define boss_doors_and_rubble_animations_1_sprites_2_ADDRESS 0x609Cu    /* 04409C */
+#define boss_doors_and_rubble_animations_1_sprites_3_ADDRESS 0x60AEu    /* 0440AE */
+#define boss_doors_and_rubble_animations_2_ADDRESS 0x60BAu    /* 0440BA */
+#define boss_doors_and_rubble_animations_2_sprites_ADDRESS 0x60C2u    /* 0440C2 */
+#define boss_doors_and_rubble_animations_3_ADDRESS 0x60D4u    /* 0440D4 */
+#define boss_doors_and_rubble_animations_3_sprites_ADDRESS 0x60DCu    /* 0440DC */
+#define boss_doors_and_rubble_animations_4_ADDRESS 0x60E2u    /* 0440E2 */
+#define boss_doors_and_rubble_animations_4_sprites_ADDRESS 0x60EAu    /* 0440EA */
+#define boss_doors_and_rubble_animations_8_ADDRESS 0x60F6u    /* 0440F6 */
+#define boss_doors_and_rubble_animations_8_sprites_ADDRESS 0x60FEu    /* 0440FE */
+#define boss_doors_and_rubble_animations_9_ADDRESS 0x611Cu    /* 04411C */
+#define boss_doors_and_rubble_animations_9_sprites_ADDRESS 0x613Cu    /* 04413C */
+#define boss_doors_and_rubble_animations_9_sprites_2_ADDRESS 0x6142u    /* 044142 */
+#define boss_doors_and_rubble_animations_9_sprites_3_ADDRESS 0x6148u    /* 044148 */
+#define boss_doors_and_rubble_animations_9_sprites_4_ADDRESS 0x614Eu    /* 04414E */
+#define boss_doors_and_rubble_animations_9_sprites_5_ADDRESS 0x6178u    /* 044178 */
+#define boss_doors_and_rubble_animations_9_sprites_6_ADDRESS 0x61B4u    /* 0441B4 */
+#define boss_doors_and_rubble_animations_9_sprites_7_ADDRESS 0x61F0u    /* 0441F0 */
+#define boss_doors_and_rubble_animations_5_ADDRESS 0x6226u    /* 044226 */
+#define boss_doors_and_rubble_animations_5_sprites_ADDRESS 0x622Eu    /* 04422E */
+#define boss_doors_and_rubble_animations_6_ADDRESS 0x624Cu    /* 04424C */
+#define boss_doors_and_rubble_animations_6_sprites_ADDRESS 0x6254u    /* 044254 */
+#define boss_doors_and_rubble_animations_7_ADDRESS 0x626Cu    /* 04426C */
+#define boss_doors_and_rubble_animations_7_sprites_ADDRESS 0x6274u    /* 044274 */
 #define family_animations_ADDRESS 0x6280u    /* 044280 */
 #define family_animations_0_ADDRESS 0x6290u    /* 044290 */
 #define family_animations_0_sprites_ADDRESS 0x62B4u    /* 0442B4 */
@@ -5036,222 +4796,222 @@ extern const void *reset_vector_data;
 #define family_animations_7_sprites_2_ADDRESS 0x6A2Cu    /* 044A2C */
 #define family_animations_7_sprites_3_ADDRESS 0x6A38u    /* 044A38 */
 #define family_animations_7_sprites_4_ADDRESS 0x6A44u    /* 044A44 */
-#define kind_B7_animations_ADDRESS 0x6A50u    /* 044A50 */
-#define kind_B7_animations_0_ADDRESS 0x6A80u    /* 044A80 */
-#define kind_B7_animations_0_sprites_ADDRESS 0x6A88u    /* 044A88 */
-#define kind_B7_animations_1_ADDRESS 0x6AA0u    /* 044AA0 */
-#define kind_B7_animations_1_sprites_ADDRESS 0x6AC4u    /* 044AC4 */
-#define kind_B7_animations_1_sprites_2_ADDRESS 0x6AD6u    /* 044AD6 */
-#define kind_B7_animations_1_sprites_3_ADDRESS 0x6AE8u    /* 044AE8 */
-#define kind_B7_animations_1_sprites_4_ADDRESS 0x6AFAu    /* 044AFA */
-#define kind_B7_animations_1_sprites_5_ADDRESS 0x6B0Cu    /* 044B0C */
-#define kind_B7_animations_1_sprites_6_ADDRESS 0x6B24u    /* 044B24 */
-#define kind_B7_animations_16_ADDRESS 0x6B3Cu    /* 044B3C */
-#define kind_B7_animations_16_sprites_ADDRESS 0x6B5Cu    /* 044B5C */
-#define kind_B7_animations_16_sprites_2_ADDRESS 0x6B74u    /* 044B74 */
-#define kind_B7_animations_16_sprites_3_ADDRESS 0x6B86u    /* 044B86 */
-#define kind_B7_animations_16_sprites_4_ADDRESS 0x6B98u    /* 044B98 */
-#define kind_B7_animations_16_sprites_5_ADDRESS 0x6BB0u    /* 044BB0 */
-#define kind_B7_animations_16_sprites_6_ADDRESS 0x6BC8u    /* 044BC8 */
-#define kind_B7_animations_16_sprites_7_ADDRESS 0x6BE0u    /* 044BE0 */
-#define kind_B7_animations_4_ADDRESS 0x6BF2u    /* 044BF2 */
-#define kind_B7_animations_4_sprites_ADDRESS 0x6C06u    /* 044C06 */
-#define kind_B7_animations_4_sprites_2_ADDRESS 0x6C18u    /* 044C18 */
-#define kind_B7_animations_4_sprites_3_ADDRESS 0x6C36u    /* 044C36 */
-#define kind_B7_animations_17_ADDRESS 0x6C54u    /* 044C54 */
-#define kind_B7_animations_17_sprites_ADDRESS 0x6C6Cu    /* 044C6C */
-#define kind_B7_animations_17_sprites_2_ADDRESS 0x6C84u    /* 044C84 */
-#define kind_B7_animations_17_sprites_3_ADDRESS 0x6C9Cu    /* 044C9C */
-#define kind_B7_animations_17_sprites_4_ADDRESS 0x6CB4u    /* 044CB4 */
-#define kind_B7_animations_17_sprites_5_ADDRESS 0x6CCCu    /* 044CCC */
-#define kind_B7_animations_6_ADDRESS 0x6CEAu    /* 044CEA */
-#define kind_B7_animations_6_sprites_ADDRESS 0x6D06u    /* 044D06 */
-#define kind_B7_animations_7_ADDRESS 0x6D1Eu    /* 044D1E */
-#define kind_B7_animations_9_ADDRESS 0x6D2Au    /* 044D2A */
-#define kind_B7_animations_9_sprites_ADDRESS 0x6D3Eu    /* 044D3E */
-#define kind_B7_animations_9_sprites_2_ADDRESS 0x6D5Cu    /* 044D5C */
-#define kind_B7_animations_8_ADDRESS 0x6D74u    /* 044D74 */
-#define kind_B7_animations_8_sprites_ADDRESS 0x6DA0u    /* 044DA0 */
-#define kind_B7_animations_8_sprites_2_ADDRESS 0x6DB2u    /* 044DB2 */
-#define kind_B7_animations_8_sprites_3_ADDRESS 0x6DCAu    /* 044DCA */
-#define kind_B7_animations_8_sprites_4_ADDRESS 0x6DDCu    /* 044DDC */
-#define kind_B7_animations_8_sprites_5_ADDRESS 0x6DE8u    /* 044DE8 */
-#define kind_B7_animations_8_sprites_6_ADDRESS 0x6DF4u    /* 044DF4 */
-#define kind_B7_animations_8_sprites_7_ADDRESS 0x6E06u    /* 044E06 */
-#define kind_B7_animations_8_sprites_8_ADDRESS 0x6E18u    /* 044E18 */
-#define kind_B7_animations_8_sprites_9_ADDRESS 0x6E24u    /* 044E24 */
-#define kind_B7_animations_8_sprites_10_ADDRESS 0x6E2Au    /* 044E2A */
-#define kind_B7_animations_18_ADDRESS 0x6E30u    /* 044E30 */
-#define kind_B7_animations_18_sprites_ADDRESS 0x6E38u    /* 044E38 */
-#define kind_B7_animations_19_ADDRESS 0x6E3Eu    /* 044E3E */
-#define kind_B7_animations_19_sprites_ADDRESS 0x6E4Eu    /* 044E4E */
-#define kind_B7_animations_19_sprites_2_ADDRESS 0x6E60u    /* 044E60 */
-#define kind_B7_animations_19_sprites_3_ADDRESS 0x6E6Cu    /* 044E6C */
-#define kind_B7_animations_20_ADDRESS 0x6E84u    /* 044E84 */
-#define kind_B7_animations_20_sprites_ADDRESS 0x6E94u    /* 044E94 */
-#define kind_B7_animations_20_sprites_2_ADDRESS 0x6EACu    /* 044EAC */
-#define kind_B7_animations_21_ADDRESS 0x6EC4u    /* 044EC4 */
-#define kind_B7_animations_21_sprites_ADDRESS 0x6EE4u    /* 044EE4 */
-#define kind_B7_animations_21_sprites_2_ADDRESS 0x6EFCu    /* 044EFC */
-#define kind_B7_animations_21_sprites_3_ADDRESS 0x6F0Eu    /* 044F0E */
-#define kind_B7_animations_22_ADDRESS 0x6F26u    /* 044F26 */
-#define kind_B7_animations_22_sprites_ADDRESS 0x6F46u    /* 044F46 */
-#define kind_B7_animations_22_sprites_2_ADDRESS 0x6F4Cu    /* 044F4C */
-#define kind_B7_animations_22_sprites_3_ADDRESS 0x6F52u    /* 044F52 */
-#define kind_B7_animations_22_sprites_4_ADDRESS 0x6F58u    /* 044F58 */
-#define kind_B7_animations_22_sprites_5_ADDRESS 0x6F64u    /* 044F64 */
-#define kind_B7_animations_22_sprites_6_ADDRESS 0x6F6Au    /* 044F6A */
-#define kind_B7_animations_22_sprites_7_ADDRESS 0x6F94u    /* 044F94 */
-#define kind_B7_animations_15_ADDRESS 0x6FB8u    /* 044FB8 */
-#define kind_B7_animations_23_ADDRESS 0x6FD8u    /* 044FD8 */
-#define kind_B8_animations_ADDRESS 0x6FF0u    /* 044FF0 */
-#define kind_B8_animations_0_ADDRESS 0x7024u    /* 045024 */
-#define kind_B8_animations_0_sprites_ADDRESS 0x702Cu    /* 04502C */
-#define kind_B8_animations_1_ADDRESS 0x7044u    /* 045044 */
-#define kind_B8_animations_1_sprites_ADDRESS 0x7060u    /* 045060 */
-#define kind_B8_animations_1_sprites_2_ADDRESS 0x7084u    /* 045084 */
-#define kind_B8_animations_1_sprites_3_ADDRESS 0x70A2u    /* 0450A2 */
-#define kind_B8_animations_1_sprites_4_ADDRESS 0x70C0u    /* 0450C0 */
-#define kind_B8_animations_16_ADDRESS 0x70DEu    /* 0450DE */
-#define kind_B8_animations_16_sprites_ADDRESS 0x7122u    /* 045122 */
-#define kind_B8_animations_16_sprites_2_ADDRESS 0x7146u    /* 045146 */
-#define kind_B8_animations_16_sprites_3_ADDRESS 0x716Au    /* 04516A */
-#define kind_B8_animations_16_sprites_4_ADDRESS 0x718Eu    /* 04518E */
-#define kind_B8_animations_16_sprites_5_ADDRESS 0x71B2u    /* 0451B2 */
-#define kind_B8_animations_16_sprites_6_ADDRESS 0x71DCu    /* 0451DC */
-#define kind_B8_animations_16_sprites_7_ADDRESS 0x7206u    /* 045206 */
-#define kind_B8_animations_16_sprites_8_ADDRESS 0x7224u    /* 045224 */
-#define kind_B8_animations_16_sprites_9_ADDRESS 0x7248u    /* 045248 */
-#define kind_B8_animations_16_sprites_10_ADDRESS 0x726Cu    /* 04526C */
-#define kind_B8_animations_6_ADDRESS 0x7290u    /* 045290 */
-#define kind_B8_animations_6_sprites_ADDRESS 0x72B0u    /* 0452B0 */
-#define kind_B8_animations_6_sprites_2_ADDRESS 0x72CEu    /* 0452CE */
-#define kind_B8_animations_6_sprites_3_ADDRESS 0x72ECu    /* 0452EC */
-#define kind_B8_animations_7_ADDRESS 0x730Au    /* 04530A */
-#define kind_B8_animations_7_sprites_ADDRESS 0x731Eu    /* 04531E */
-#define kind_B8_animations_7_sprites_2_ADDRESS 0x7330u    /* 045330 */
-#define kind_B8_animations_7_sprites_3_ADDRESS 0x7354u    /* 045354 */
-#define kind_B8_animations_9_ADDRESS 0x7372u    /* 045372 */
-#define kind_B8_animations_9_sprites_ADDRESS 0x738Eu    /* 04538E */
-#define kind_B8_animations_9_sprites_2_ADDRESS 0x73ACu    /* 0453AC */
-#define kind_B8_animations_9_sprites_3_ADDRESS 0x73CAu    /* 0453CA */
-#define kind_B8_animations_9_sprites_4_ADDRESS 0x73E8u    /* 0453E8 */
-#define kind_B8_animations_8_ADDRESS 0x7406u    /* 045406 */
-#define kind_B8_animations_8_sprites_ADDRESS 0x7442u    /* 045442 */
-#define kind_B8_animations_8_sprites_2_ADDRESS 0x7460u    /* 045460 */
-#define kind_B8_animations_8_sprites_3_ADDRESS 0x7478u    /* 045478 */
-#define kind_B8_animations_8_sprites_4_ADDRESS 0x7490u    /* 045490 */
-#define kind_B8_animations_8_sprites_5_ADDRESS 0x74A2u    /* 0454A2 */
-#define kind_B8_animations_8_sprites_6_ADDRESS 0x74C0u    /* 0454C0 */
-#define kind_B8_animations_8_sprites_7_ADDRESS 0x74DEu    /* 0454DE */
-#define kind_B8_animations_8_sprites_8_ADDRESS 0x74FCu    /* 0454FC */
-#define kind_B8_animations_8_sprites_9_ADDRESS 0x7514u    /* 045514 */
-#define kind_B8_animations_8_sprites_10_ADDRESS 0x7532u    /* 045532 */
-#define kind_B8_animations_17_ADDRESS 0x7544u    /* 045544 */
-#define kind_B8_animations_17_sprites_ADDRESS 0x754Cu    /* 04554C */
-#define kind_B8_animations_18_ADDRESS 0x7552u    /* 045552 */
-#define kind_B8_animations_18_sprites_ADDRESS 0x755Au    /* 04555A */
-#define kind_B8_animations_19_ADDRESS 0x7560u    /* 045560 */
-#define kind_B8_animations_19_sprites_ADDRESS 0x7568u    /* 045568 */
-#define kind_B8_animations_20_ADDRESS 0x756Eu    /* 04556E */
-#define kind_B8_animations_20_sprites_ADDRESS 0x7576u    /* 045576 */
-#define kind_B8_animations_21_ADDRESS 0x757Cu    /* 04557C */
-#define kind_B8_animations_21_sprites_ADDRESS 0x75ACu    /* 0455AC */
-#define kind_B8_animations_21_sprites_2_ADDRESS 0x75D0u    /* 0455D0 */
-#define kind_B8_animations_21_sprites_3_ADDRESS 0x75E8u    /* 0455E8 */
-#define kind_B8_animations_21_sprites_4_ADDRESS 0x760Cu    /* 04560C */
-#define kind_B8_animations_21_sprites_5_ADDRESS 0x7630u    /* 045630 */
-#define kind_B8_animations_21_sprites_6_ADDRESS 0x764Eu    /* 04564E */
-#define kind_B8_animations_22_ADDRESS 0x766Cu    /* 04566C */
-#define kind_B8_animations_22_sprites_ADDRESS 0x7680u    /* 045680 */
-#define kind_B8_animations_22_sprites_2_ADDRESS 0x7698u    /* 045698 */
-#define kind_B8_animations_22_sprites_3_ADDRESS 0x76B0u    /* 0456B0 */
-#define kind_B8_animations_23_ADDRESS 0x76C8u    /* 0456C8 */
-#define kind_B8_animations_23_sprites_ADDRESS 0x76E8u    /* 0456E8 */
-#define kind_B8_animations_23_sprites_2_ADDRESS 0x76EEu    /* 0456EE */
-#define kind_B8_animations_23_sprites_3_ADDRESS 0x76F4u    /* 0456F4 */
-#define kind_B8_animations_23_sprites_4_ADDRESS 0x76FAu    /* 0456FA */
-#define kind_B8_animations_23_sprites_5_ADDRESS 0x7706u    /* 045706 */
-#define kind_B8_animations_23_sprites_6_ADDRESS 0x770Cu    /* 04570C */
-#define kind_B8_animations_23_sprites_7_ADDRESS 0x7730u    /* 045730 */
-#define kind_B8_animations_24_ADDRESS 0x7754u    /* 045754 */
-#define kind_B8_animations_24_sprites_ADDRESS 0x775Cu    /* 04575C */
-#define kind_B8_animations_25_ADDRESS 0x7762u    /* 045762 */
-#define kind_B8_animations_25_sprites_ADDRESS 0x776Au    /* 04576A */
-#define kind_B9_animations_ADDRESS 0x7770u    /* 045770 */
-#define kind_B9_animations_0_ADDRESS 0x7780u    /* 045780 */
-#define kind_B9_animations_0_sprites_ADDRESS 0x7794u    /* 045794 */
-#define kind_B9_animations_0_sprites_2_ADDRESS 0x779Au    /* 04579A */
-#define kind_B9_animations_0_sprites_3_ADDRESS 0x77A0u    /* 0457A0 */
-#define kind_B9_animations_1_ADDRESS 0x77A6u    /* 0457A6 */
-#define kind_B9_animations_1_sprites_ADDRESS 0x77CAu    /* 0457CA */
-#define kind_B9_animations_1_sprites_2_ADDRESS 0x77D0u    /* 0457D0 */
-#define kind_B9_animations_1_sprites_3_ADDRESS 0x77DCu    /* 0457DC */
-#define kind_B9_animations_1_sprites_4_ADDRESS 0x77E8u    /* 0457E8 */
-#define kind_B9_animations_1_sprites_5_ADDRESS 0x77FAu    /* 0457FA */
-#define kind_B9_animations_2_ADDRESS 0x7806u    /* 045806 */
-#define kind_B9_animations_2_sprites_ADDRESS 0x781Au    /* 04581A */
-#define kind_B9_animations_2_sprites_2_ADDRESS 0x782Cu    /* 04582C */
-#define kind_B9_animations_3_ADDRESS 0x783Eu    /* 04583E */
-#define kind_B9_animations_3_sprites_ADDRESS 0x7872u    /* 045872 */
-#define kind_B9_animations_3_sprites_2_ADDRESS 0x7884u    /* 045884 */
-#define kind_B9_animations_3_sprites_3_ADDRESS 0x7896u    /* 045896 */
-#define kind_B9_animations_3_sprites_4_ADDRESS 0x78A2u    /* 0458A2 */
-#define kind_B9_animations_4_ADDRESS 0x78AEu    /* 0458AE */
-#define kind_B9_animations_4_sprites_ADDRESS 0x78D6u    /* 0458D6 */
-#define kind_B9_animations_4_sprites_2_ADDRESS 0x78E2u    /* 0458E2 */
-#define kind_B9_animations_4_sprites_3_ADDRESS 0x78F4u    /* 0458F4 */
-#define kind_B9_animations_4_sprites_4_ADDRESS 0x7906u    /* 045906 */
-#define kind_B9_animations_4_sprites_5_ADDRESS 0x7912u    /* 045912 */
-#define kind_B9_animations_4_sprites_6_ADDRESS 0x7924u    /* 045924 */
-#define kind_B9_animations_4_sprites_7_ADDRESS 0x7936u    /* 045936 */
-#define kind_B9_animations_5_ADDRESS 0x794Eu    /* 04594E */
-#define kind_B9_animations_5_sprites_ADDRESS 0x795Eu    /* 04595E */
-#define kind_B9_animations_5_sprites_2_ADDRESS 0x796Au    /* 04596A */
-#define kind_B9_animations_6_ADDRESS 0x7976u    /* 045976 */
-#define kind_B9_animations_6_sprites_ADDRESS 0x7992u    /* 045992 */
-#define kind_B9_animations_6_sprites_2_ADDRESS 0x7998u    /* 045998 */
-#define kind_B9_animations_6_sprites_3_ADDRESS 0x799Eu    /* 04599E */
-#define kind_B9_animations_7_ADDRESS 0x79B6u    /* 0459B6 */
-#define kind_B9_animations_7_fill_ADDRESS 0x79D6u    /* 0459D6 */
-#define kind_B9_animations_7_rest_ADDRESS 0x7A4Cu    /* 045A4C */
-#define kind_B9_animations_7_rest_2_ADDRESS 0x7A54u    /* 045A54 */
-#define kind_B9_animations_7_fill_2_ADDRESS 0x7A5Au    /* 045A5A */
-#define kind_B9_animations_7_rest_3_ADDRESS 0x7A9Au    /* 045A9A */
-#define kind_B9_animations_7_rest_4_ADDRESS 0x7AA2u    /* 045AA2 */
-#define kind_B9_animations_7_fill_3_ADDRESS 0x7AA8u    /* 045AA8 */
-#define kind_B9_animations_7_rest_5_ADDRESS 0x7AC0u    /* 045AC0 */
-#define kind_B9_animations_7_rest_6_ADDRESS 0x7AC8u    /* 045AC8 */
-#define kind_B9_animations_7_fill_4_ADDRESS 0x7ACEu    /* 045ACE */
-#define kind_B9_animations_7_rest_7_ADDRESS 0x7ADAu    /* 045ADA */
-#define kind_B9_animations_7_rest_8_ADDRESS 0x7AE2u    /* 045AE2 */
-#define kind_B9_animations_7_rest_9_ADDRESS 0x7AEEu    /* 045AEE */
-#define kind_B9_animations_7_rest_10_ADDRESS 0x7AF6u    /* 045AF6 */
-#define kind_B9_animations_7_rest_11_ADDRESS 0x7B02u    /* 045B02 */
-#define kind_B9_animations_7_rest_12_ADDRESS 0x7B0Au    /* 045B0A */
-#define kind_B9_animations_7_rest_13_ADDRESS 0x7B16u    /* 045B16 */
-#define kind_B9_animations_7_rest_14_ADDRESS 0x7B36u    /* 045B36 */
-#define kind_B9_animations_7_rest_15_ADDRESS 0x7B42u    /* 045B42 */
-#define kind_B9_animations_7_rest_16_ADDRESS 0x7B54u    /* 045B54 */
-#define kind_B9_animations_7_rest_17_ADDRESS 0x7B7Eu    /* 045B7E */
-#define kind_B9_animations_7_rest_18_ADDRESS 0x7BA8u    /* 045BA8 */
-#define kind_B9_animations_7_rest_19_ADDRESS 0x7BC6u    /* 045BC6 */
-#define kind_B9_animations_7_rest_20_ADDRESS 0x7BE4u    /* 045BE4 */
-#define kind_B9_animations_7_fill_5_ADDRESS 0x7BF0u    /* 045BF0 */
-#define kind_B9_animations_7_rest_21_ADDRESS 0x7BF2u    /* 045BF2 */
-#define kind_B9_animations_7_rest_22_ADDRESS 0x7C02u    /* 045C02 */
-#define kind_B9_animations_7_rest_23_ADDRESS 0x7C08u    /* 045C08 */
-#define kind_B9_animations_7_rest_24_ADDRESS 0x7C0Eu    /* 045C0E */
-#define kind_B9_animations_7_fill_6_ADDRESS 0x7C1Au    /* 045C1A */
-#define kind_B9_animations_7_rest_25_ADDRESS 0x7D48u    /* 045D48 */
-#define kind_B9_animations_7_rest_26_ADDRESS 0x7D64u    /* 045D64 */
-#define kind_B9_animations_7_rest_27_ADDRESS 0x7D8Eu    /* 045D8E */
-#define kind_B9_animations_7_rest_28_ADDRESS 0x7DBEu    /* 045DBE */
-#define kind_B9_animations_7_rest_29_ADDRESS 0x7DF4u    /* 045DF4 */
-#define kind_B9_animations_7_rest_30_ADDRESS 0x7E30u    /* 045E30 */
-#define kind_B9_animations_7_rest_31_ADDRESS 0x7E78u    /* 045E78 */
-#define kind_B9_animations_7_fill_7_ADDRESS 0x7ECCu    /* 045ECC */
-#define kind_B9_animations_7_rest_32_ADDRESS 0x6000u    /* 046000 */
+#define walking_donut_animations_ADDRESS 0x6A50u    /* 044A50 */
+#define walking_donut_animations_0_ADDRESS 0x6A80u    /* 044A80 */
+#define walking_donut_animations_0_sprites_ADDRESS 0x6A88u    /* 044A88 */
+#define walking_donut_animations_1_ADDRESS 0x6AA0u    /* 044AA0 */
+#define walking_donut_animations_1_sprites_ADDRESS 0x6AC4u    /* 044AC4 */
+#define walking_donut_animations_1_sprites_2_ADDRESS 0x6AD6u    /* 044AD6 */
+#define walking_donut_animations_1_sprites_3_ADDRESS 0x6AE8u    /* 044AE8 */
+#define walking_donut_animations_1_sprites_4_ADDRESS 0x6AFAu    /* 044AFA */
+#define walking_donut_animations_1_sprites_5_ADDRESS 0x6B0Cu    /* 044B0C */
+#define walking_donut_animations_1_sprites_6_ADDRESS 0x6B24u    /* 044B24 */
+#define walking_donut_animations_16_ADDRESS 0x6B3Cu    /* 044B3C */
+#define walking_donut_animations_16_sprites_ADDRESS 0x6B5Cu    /* 044B5C */
+#define walking_donut_animations_16_sprites_2_ADDRESS 0x6B74u    /* 044B74 */
+#define walking_donut_animations_16_sprites_3_ADDRESS 0x6B86u    /* 044B86 */
+#define walking_donut_animations_16_sprites_4_ADDRESS 0x6B98u    /* 044B98 */
+#define walking_donut_animations_16_sprites_5_ADDRESS 0x6BB0u    /* 044BB0 */
+#define walking_donut_animations_16_sprites_6_ADDRESS 0x6BC8u    /* 044BC8 */
+#define walking_donut_animations_16_sprites_7_ADDRESS 0x6BE0u    /* 044BE0 */
+#define walking_donut_animations_4_ADDRESS 0x6BF2u    /* 044BF2 */
+#define walking_donut_animations_4_sprites_ADDRESS 0x6C06u    /* 044C06 */
+#define walking_donut_animations_4_sprites_2_ADDRESS 0x6C18u    /* 044C18 */
+#define walking_donut_animations_4_sprites_3_ADDRESS 0x6C36u    /* 044C36 */
+#define walking_donut_animations_17_ADDRESS 0x6C54u    /* 044C54 */
+#define walking_donut_animations_17_sprites_ADDRESS 0x6C6Cu    /* 044C6C */
+#define walking_donut_animations_17_sprites_2_ADDRESS 0x6C84u    /* 044C84 */
+#define walking_donut_animations_17_sprites_3_ADDRESS 0x6C9Cu    /* 044C9C */
+#define walking_donut_animations_17_sprites_4_ADDRESS 0x6CB4u    /* 044CB4 */
+#define walking_donut_animations_17_sprites_5_ADDRESS 0x6CCCu    /* 044CCC */
+#define walking_donut_animations_6_ADDRESS 0x6CEAu    /* 044CEA */
+#define walking_donut_animations_6_sprites_ADDRESS 0x6D06u    /* 044D06 */
+#define walking_donut_animations_7_ADDRESS 0x6D1Eu    /* 044D1E */
+#define walking_donut_animations_9_ADDRESS 0x6D2Au    /* 044D2A */
+#define walking_donut_animations_9_sprites_ADDRESS 0x6D3Eu    /* 044D3E */
+#define walking_donut_animations_9_sprites_2_ADDRESS 0x6D5Cu    /* 044D5C */
+#define walking_donut_animations_8_ADDRESS 0x6D74u    /* 044D74 */
+#define walking_donut_animations_8_sprites_ADDRESS 0x6DA0u    /* 044DA0 */
+#define walking_donut_animations_8_sprites_2_ADDRESS 0x6DB2u    /* 044DB2 */
+#define walking_donut_animations_8_sprites_3_ADDRESS 0x6DCAu    /* 044DCA */
+#define walking_donut_animations_8_sprites_4_ADDRESS 0x6DDCu    /* 044DDC */
+#define walking_donut_animations_8_sprites_5_ADDRESS 0x6DE8u    /* 044DE8 */
+#define walking_donut_animations_8_sprites_6_ADDRESS 0x6DF4u    /* 044DF4 */
+#define walking_donut_animations_8_sprites_7_ADDRESS 0x6E06u    /* 044E06 */
+#define walking_donut_animations_8_sprites_8_ADDRESS 0x6E18u    /* 044E18 */
+#define walking_donut_animations_8_sprites_9_ADDRESS 0x6E24u    /* 044E24 */
+#define walking_donut_animations_8_sprites_10_ADDRESS 0x6E2Au    /* 044E2A */
+#define walking_donut_animations_18_ADDRESS 0x6E30u    /* 044E30 */
+#define walking_donut_animations_18_sprites_ADDRESS 0x6E38u    /* 044E38 */
+#define walking_donut_animations_19_ADDRESS 0x6E3Eu    /* 044E3E */
+#define walking_donut_animations_19_sprites_ADDRESS 0x6E4Eu    /* 044E4E */
+#define walking_donut_animations_19_sprites_2_ADDRESS 0x6E60u    /* 044E60 */
+#define walking_donut_animations_19_sprites_3_ADDRESS 0x6E6Cu    /* 044E6C */
+#define walking_donut_animations_20_ADDRESS 0x6E84u    /* 044E84 */
+#define walking_donut_animations_20_sprites_ADDRESS 0x6E94u    /* 044E94 */
+#define walking_donut_animations_20_sprites_2_ADDRESS 0x6EACu    /* 044EAC */
+#define walking_donut_animations_21_ADDRESS 0x6EC4u    /* 044EC4 */
+#define walking_donut_animations_21_sprites_ADDRESS 0x6EE4u    /* 044EE4 */
+#define walking_donut_animations_21_sprites_2_ADDRESS 0x6EFCu    /* 044EFC */
+#define walking_donut_animations_21_sprites_3_ADDRESS 0x6F0Eu    /* 044F0E */
+#define walking_donut_animations_22_ADDRESS 0x6F26u    /* 044F26 */
+#define walking_donut_animations_22_sprites_ADDRESS 0x6F46u    /* 044F46 */
+#define walking_donut_animations_22_sprites_2_ADDRESS 0x6F4Cu    /* 044F4C */
+#define walking_donut_animations_22_sprites_3_ADDRESS 0x6F52u    /* 044F52 */
+#define walking_donut_animations_22_sprites_4_ADDRESS 0x6F58u    /* 044F58 */
+#define walking_donut_animations_22_sprites_5_ADDRESS 0x6F64u    /* 044F64 */
+#define walking_donut_animations_22_sprites_6_ADDRESS 0x6F6Au    /* 044F6A */
+#define walking_donut_animations_22_sprites_7_ADDRESS 0x6F94u    /* 044F94 */
+#define walking_donut_animations_15_ADDRESS 0x6FB8u    /* 044FB8 */
+#define walking_donut_animations_23_ADDRESS 0x6FD8u    /* 044FD8 */
+#define flying_saxophone_animations_ADDRESS 0x6FF0u    /* 044FF0 */
+#define flying_saxophone_animations_0_ADDRESS 0x7024u    /* 045024 */
+#define flying_saxophone_animations_0_sprites_ADDRESS 0x702Cu    /* 04502C */
+#define flying_saxophone_animations_1_ADDRESS 0x7044u    /* 045044 */
+#define flying_saxophone_animations_1_sprites_ADDRESS 0x7060u    /* 045060 */
+#define flying_saxophone_animations_1_sprites_2_ADDRESS 0x7084u    /* 045084 */
+#define flying_saxophone_animations_1_sprites_3_ADDRESS 0x70A2u    /* 0450A2 */
+#define flying_saxophone_animations_1_sprites_4_ADDRESS 0x70C0u    /* 0450C0 */
+#define flying_saxophone_animations_16_ADDRESS 0x70DEu    /* 0450DE */
+#define flying_saxophone_animations_16_sprites_ADDRESS 0x7122u    /* 045122 */
+#define flying_saxophone_animations_16_sprites_2_ADDRESS 0x7146u    /* 045146 */
+#define flying_saxophone_animations_16_sprites_3_ADDRESS 0x716Au    /* 04516A */
+#define flying_saxophone_animations_16_sprites_4_ADDRESS 0x718Eu    /* 04518E */
+#define flying_saxophone_animations_16_sprites_5_ADDRESS 0x71B2u    /* 0451B2 */
+#define flying_saxophone_animations_16_sprites_6_ADDRESS 0x71DCu    /* 0451DC */
+#define flying_saxophone_animations_16_sprites_7_ADDRESS 0x7206u    /* 045206 */
+#define flying_saxophone_animations_16_sprites_8_ADDRESS 0x7224u    /* 045224 */
+#define flying_saxophone_animations_16_sprites_9_ADDRESS 0x7248u    /* 045248 */
+#define flying_saxophone_animations_16_sprites_10_ADDRESS 0x726Cu    /* 04526C */
+#define flying_saxophone_animations_6_ADDRESS 0x7290u    /* 045290 */
+#define flying_saxophone_animations_6_sprites_ADDRESS 0x72B0u    /* 0452B0 */
+#define flying_saxophone_animations_6_sprites_2_ADDRESS 0x72CEu    /* 0452CE */
+#define flying_saxophone_animations_6_sprites_3_ADDRESS 0x72ECu    /* 0452EC */
+#define flying_saxophone_animations_7_ADDRESS 0x730Au    /* 04530A */
+#define flying_saxophone_animations_7_sprites_ADDRESS 0x731Eu    /* 04531E */
+#define flying_saxophone_animations_7_sprites_2_ADDRESS 0x7330u    /* 045330 */
+#define flying_saxophone_animations_7_sprites_3_ADDRESS 0x7354u    /* 045354 */
+#define flying_saxophone_animations_9_ADDRESS 0x7372u    /* 045372 */
+#define flying_saxophone_animations_9_sprites_ADDRESS 0x738Eu    /* 04538E */
+#define flying_saxophone_animations_9_sprites_2_ADDRESS 0x73ACu    /* 0453AC */
+#define flying_saxophone_animations_9_sprites_3_ADDRESS 0x73CAu    /* 0453CA */
+#define flying_saxophone_animations_9_sprites_4_ADDRESS 0x73E8u    /* 0453E8 */
+#define flying_saxophone_animations_8_ADDRESS 0x7406u    /* 045406 */
+#define flying_saxophone_animations_8_sprites_ADDRESS 0x7442u    /* 045442 */
+#define flying_saxophone_animations_8_sprites_2_ADDRESS 0x7460u    /* 045460 */
+#define flying_saxophone_animations_8_sprites_3_ADDRESS 0x7478u    /* 045478 */
+#define flying_saxophone_animations_8_sprites_4_ADDRESS 0x7490u    /* 045490 */
+#define flying_saxophone_animations_8_sprites_5_ADDRESS 0x74A2u    /* 0454A2 */
+#define flying_saxophone_animations_8_sprites_6_ADDRESS 0x74C0u    /* 0454C0 */
+#define flying_saxophone_animations_8_sprites_7_ADDRESS 0x74DEu    /* 0454DE */
+#define flying_saxophone_animations_8_sprites_8_ADDRESS 0x74FCu    /* 0454FC */
+#define flying_saxophone_animations_8_sprites_9_ADDRESS 0x7514u    /* 045514 */
+#define flying_saxophone_animations_8_sprites_10_ADDRESS 0x7532u    /* 045532 */
+#define flying_saxophone_animations_17_ADDRESS 0x7544u    /* 045544 */
+#define flying_saxophone_animations_17_sprites_ADDRESS 0x754Cu    /* 04554C */
+#define flying_saxophone_animations_18_ADDRESS 0x7552u    /* 045552 */
+#define flying_saxophone_animations_18_sprites_ADDRESS 0x755Au    /* 04555A */
+#define flying_saxophone_animations_19_ADDRESS 0x7560u    /* 045560 */
+#define flying_saxophone_animations_19_sprites_ADDRESS 0x7568u    /* 045568 */
+#define flying_saxophone_animations_20_ADDRESS 0x756Eu    /* 04556E */
+#define flying_saxophone_animations_20_sprites_ADDRESS 0x7576u    /* 045576 */
+#define flying_saxophone_animations_21_ADDRESS 0x757Cu    /* 04557C */
+#define flying_saxophone_animations_21_sprites_ADDRESS 0x75ACu    /* 0455AC */
+#define flying_saxophone_animations_21_sprites_2_ADDRESS 0x75D0u    /* 0455D0 */
+#define flying_saxophone_animations_21_sprites_3_ADDRESS 0x75E8u    /* 0455E8 */
+#define flying_saxophone_animations_21_sprites_4_ADDRESS 0x760Cu    /* 04560C */
+#define flying_saxophone_animations_21_sprites_5_ADDRESS 0x7630u    /* 045630 */
+#define flying_saxophone_animations_21_sprites_6_ADDRESS 0x764Eu    /* 04564E */
+#define flying_saxophone_animations_22_ADDRESS 0x766Cu    /* 04566C */
+#define flying_saxophone_animations_22_sprites_ADDRESS 0x7680u    /* 045680 */
+#define flying_saxophone_animations_22_sprites_2_ADDRESS 0x7698u    /* 045698 */
+#define flying_saxophone_animations_22_sprites_3_ADDRESS 0x76B0u    /* 0456B0 */
+#define flying_saxophone_animations_23_ADDRESS 0x76C8u    /* 0456C8 */
+#define flying_saxophone_animations_23_sprites_ADDRESS 0x76E8u    /* 0456E8 */
+#define flying_saxophone_animations_23_sprites_2_ADDRESS 0x76EEu    /* 0456EE */
+#define flying_saxophone_animations_23_sprites_3_ADDRESS 0x76F4u    /* 0456F4 */
+#define flying_saxophone_animations_23_sprites_4_ADDRESS 0x76FAu    /* 0456FA */
+#define flying_saxophone_animations_23_sprites_5_ADDRESS 0x7706u    /* 045706 */
+#define flying_saxophone_animations_23_sprites_6_ADDRESS 0x770Cu    /* 04570C */
+#define flying_saxophone_animations_23_sprites_7_ADDRESS 0x7730u    /* 045730 */
+#define flying_saxophone_animations_24_ADDRESS 0x7754u    /* 045754 */
+#define flying_saxophone_animations_24_sprites_ADDRESS 0x775Cu    /* 04575C */
+#define flying_saxophone_animations_25_ADDRESS 0x7762u    /* 045762 */
+#define flying_saxophone_animations_25_sprites_ADDRESS 0x776Au    /* 04576A */
+#define marge_cloud_animations_ADDRESS 0x7770u    /* 045770 */
+#define marge_cloud_animations_0_ADDRESS 0x7780u    /* 045780 */
+#define marge_cloud_animations_0_sprites_ADDRESS 0x7794u    /* 045794 */
+#define marge_cloud_animations_0_sprites_2_ADDRESS 0x779Au    /* 04579A */
+#define marge_cloud_animations_0_sprites_3_ADDRESS 0x77A0u    /* 0457A0 */
+#define marge_cloud_animations_1_ADDRESS 0x77A6u    /* 0457A6 */
+#define marge_cloud_animations_1_sprites_ADDRESS 0x77CAu    /* 0457CA */
+#define marge_cloud_animations_1_sprites_2_ADDRESS 0x77D0u    /* 0457D0 */
+#define marge_cloud_animations_1_sprites_3_ADDRESS 0x77DCu    /* 0457DC */
+#define marge_cloud_animations_1_sprites_4_ADDRESS 0x77E8u    /* 0457E8 */
+#define marge_cloud_animations_1_sprites_5_ADDRESS 0x77FAu    /* 0457FA */
+#define marge_cloud_animations_2_ADDRESS 0x7806u    /* 045806 */
+#define marge_cloud_animations_2_sprites_ADDRESS 0x781Au    /* 04581A */
+#define marge_cloud_animations_2_sprites_2_ADDRESS 0x782Cu    /* 04582C */
+#define marge_cloud_animations_3_ADDRESS 0x783Eu    /* 04583E */
+#define marge_cloud_animations_3_sprites_ADDRESS 0x7872u    /* 045872 */
+#define marge_cloud_animations_3_sprites_2_ADDRESS 0x7884u    /* 045884 */
+#define marge_cloud_animations_3_sprites_3_ADDRESS 0x7896u    /* 045896 */
+#define marge_cloud_animations_3_sprites_4_ADDRESS 0x78A2u    /* 0458A2 */
+#define marge_cloud_animations_4_ADDRESS 0x78AEu    /* 0458AE */
+#define marge_cloud_animations_4_sprites_ADDRESS 0x78D6u    /* 0458D6 */
+#define marge_cloud_animations_4_sprites_2_ADDRESS 0x78E2u    /* 0458E2 */
+#define marge_cloud_animations_4_sprites_3_ADDRESS 0x78F4u    /* 0458F4 */
+#define marge_cloud_animations_4_sprites_4_ADDRESS 0x7906u    /* 045906 */
+#define marge_cloud_animations_4_sprites_5_ADDRESS 0x7912u    /* 045912 */
+#define marge_cloud_animations_4_sprites_6_ADDRESS 0x7924u    /* 045924 */
+#define marge_cloud_animations_4_sprites_7_ADDRESS 0x7936u    /* 045936 */
+#define marge_cloud_animations_5_ADDRESS 0x794Eu    /* 04594E */
+#define marge_cloud_animations_5_sprites_ADDRESS 0x795Eu    /* 04595E */
+#define marge_cloud_animations_5_sprites_2_ADDRESS 0x796Au    /* 04596A */
+#define marge_cloud_animations_6_ADDRESS 0x7976u    /* 045976 */
+#define marge_cloud_animations_6_sprites_ADDRESS 0x7992u    /* 045992 */
+#define marge_cloud_animations_6_sprites_2_ADDRESS 0x7998u    /* 045998 */
+#define marge_cloud_animations_6_sprites_3_ADDRESS 0x799Eu    /* 04599E */
+#define marge_cloud_animations_7_ADDRESS 0x79B6u    /* 0459B6 */
+#define marge_cloud_animations_7_fill_ADDRESS 0x79D6u    /* 0459D6 */
+#define marge_cloud_animations_7_rest_ADDRESS 0x7A4Cu    /* 045A4C */
+#define marge_cloud_animations_7_rest_2_ADDRESS 0x7A54u    /* 045A54 */
+#define marge_cloud_animations_7_fill_2_ADDRESS 0x7A5Au    /* 045A5A */
+#define marge_cloud_animations_7_rest_3_ADDRESS 0x7A9Au    /* 045A9A */
+#define marge_cloud_animations_7_rest_4_ADDRESS 0x7AA2u    /* 045AA2 */
+#define marge_cloud_animations_7_fill_3_ADDRESS 0x7AA8u    /* 045AA8 */
+#define marge_cloud_animations_7_rest_5_ADDRESS 0x7AC0u    /* 045AC0 */
+#define marge_cloud_animations_7_rest_6_ADDRESS 0x7AC8u    /* 045AC8 */
+#define marge_cloud_animations_7_fill_4_ADDRESS 0x7ACEu    /* 045ACE */
+#define marge_cloud_animations_7_rest_7_ADDRESS 0x7ADAu    /* 045ADA */
+#define marge_cloud_animations_7_rest_8_ADDRESS 0x7AE2u    /* 045AE2 */
+#define marge_cloud_animations_7_rest_9_ADDRESS 0x7AEEu    /* 045AEE */
+#define marge_cloud_animations_7_rest_10_ADDRESS 0x7AF6u    /* 045AF6 */
+#define marge_cloud_animations_7_rest_11_ADDRESS 0x7B02u    /* 045B02 */
+#define marge_cloud_animations_7_rest_12_ADDRESS 0x7B0Au    /* 045B0A */
+#define marge_cloud_animations_7_rest_13_ADDRESS 0x7B16u    /* 045B16 */
+#define marge_cloud_animations_7_rest_14_ADDRESS 0x7B36u    /* 045B36 */
+#define marge_cloud_animations_7_rest_15_ADDRESS 0x7B42u    /* 045B42 */
+#define marge_cloud_animations_7_rest_16_ADDRESS 0x7B54u    /* 045B54 */
+#define marge_cloud_animations_7_rest_17_ADDRESS 0x7B7Eu    /* 045B7E */
+#define marge_cloud_animations_7_rest_18_ADDRESS 0x7BA8u    /* 045BA8 */
+#define marge_cloud_animations_7_rest_19_ADDRESS 0x7BC6u    /* 045BC6 */
+#define marge_cloud_animations_7_rest_20_ADDRESS 0x7BE4u    /* 045BE4 */
+#define marge_cloud_animations_7_fill_5_ADDRESS 0x7BF0u    /* 045BF0 */
+#define marge_cloud_animations_7_rest_21_ADDRESS 0x7BF2u    /* 045BF2 */
+#define marge_cloud_animations_7_rest_22_ADDRESS 0x7C02u    /* 045C02 */
+#define marge_cloud_animations_7_rest_23_ADDRESS 0x7C08u    /* 045C08 */
+#define marge_cloud_animations_7_rest_24_ADDRESS 0x7C0Eu    /* 045C0E */
+#define marge_cloud_animations_7_fill_6_ADDRESS 0x7C1Au    /* 045C1A */
+#define marge_cloud_animations_7_rest_25_ADDRESS 0x7D48u    /* 045D48 */
+#define marge_cloud_animations_7_rest_26_ADDRESS 0x7D64u    /* 045D64 */
+#define marge_cloud_animations_7_rest_27_ADDRESS 0x7D8Eu    /* 045D8E */
+#define marge_cloud_animations_7_rest_28_ADDRESS 0x7DBEu    /* 045DBE */
+#define marge_cloud_animations_7_rest_29_ADDRESS 0x7DF4u    /* 045DF4 */
+#define marge_cloud_animations_7_rest_30_ADDRESS 0x7E30u    /* 045E30 */
+#define marge_cloud_animations_7_rest_31_ADDRESS 0x7E78u    /* 045E78 */
+#define marge_cloud_animations_7_fill_7_ADDRESS 0x7ECCu    /* 045ECC */
+#define marge_cloud_animations_7_rest_32_ADDRESS 0x6000u    /* 046000 */
 #define fat_goon_animations_ADDRESS 0x6008u    /* 046008 */
 #define fat_goon_animations_0_ADDRESS 0x6080u    /* 046080 */
 #define fat_goon_animations_0_sprites_ADDRESS 0x6088u    /* 046088 */
@@ -5477,185 +5237,185 @@ extern const void *reset_vector_data;
 #define fat_goon_animations_57_sprites_5_ADDRESS 0x6F1Eu    /* 046F1E */
 #define fat_goon_animations_58_ADDRESS 0x6F2Au    /* 046F2A */
 #define fat_goon_animations_59_ADDRESS 0x6F36u    /* 046F36 */
-#define kind_85_animations_ADDRESS 0x6F42u    /* 046F42 */
-#define kind_85_animations_0_ADDRESS 0x6F8Cu    /* 046F8C */
-#define kind_85_animations_0_sprites_ADDRESS 0x6F94u    /* 046F94 */
-#define kind_85_animations_1_ADDRESS 0x6FACu    /* 046FAC */
-#define kind_85_animations_1_sprites_ADDRESS 0x6FD0u    /* 046FD0 */
-#define kind_85_animations_1_sprites_2_ADDRESS 0x6FE8u    /* 046FE8 */
-#define kind_85_animations_1_sprites_3_ADDRESS 0x7000u    /* 047000 */
-#define kind_85_animations_1_sprites_4_ADDRESS 0x7018u    /* 047018 */
-#define kind_85_animations_1_sprites_5_ADDRESS 0x7030u    /* 047030 */
-#define kind_85_animations_1_sprites_6_ADDRESS 0x704Eu    /* 04704E */
-#define kind_85_animations_1_sprites_7_ADDRESS 0x706Cu    /* 04706C */
-#define kind_85_animations_1_sprites_8_ADDRESS 0x708Au    /* 04708A */
-#define kind_85_animations_2_ADDRESS 0x70A8u    /* 0470A8 */
-#define kind_85_animations_2_sprites_ADDRESS 0x70CCu    /* 0470CC */
-#define kind_85_animations_2_sprites_2_ADDRESS 0x70E4u    /* 0470E4 */
-#define kind_85_animations_2_sprites_3_ADDRESS 0x70FCu    /* 0470FC */
-#define kind_85_animations_2_sprites_4_ADDRESS 0x7114u    /* 047114 */
-#define kind_85_animations_2_sprites_5_ADDRESS 0x712Cu    /* 04712C */
-#define kind_85_animations_2_sprites_6_ADDRESS 0x714Au    /* 04714A */
-#define kind_85_animations_2_sprites_7_ADDRESS 0x7168u    /* 047168 */
-#define kind_85_animations_2_sprites_8_ADDRESS 0x7186u    /* 047186 */
-#define kind_85_animations_3_ADDRESS 0x71A4u    /* 0471A4 */
-#define kind_85_animations_3_sprites_ADDRESS 0x71C8u    /* 0471C8 */
-#define kind_85_animations_3_sprites_2_ADDRESS 0x71DAu    /* 0471DA */
-#define kind_85_animations_3_sprites_3_ADDRESS 0x71ECu    /* 0471EC */
-#define kind_85_animations_3_sprites_4_ADDRESS 0x71FEu    /* 0471FE */
-#define kind_85_animations_3_sprites_5_ADDRESS 0x7210u    /* 047210 */
-#define kind_85_animations_3_sprites_6_ADDRESS 0x7222u    /* 047222 */
-#define kind_85_animations_3_sprites_7_ADDRESS 0x7234u    /* 047234 */
-#define kind_85_animations_3_sprites_8_ADDRESS 0x7246u    /* 047246 */
-#define kind_85_animations_4_ADDRESS 0x7258u    /* 047258 */
-#define kind_85_animations_4_sprites_ADDRESS 0x7268u    /* 047268 */
-#define kind_85_animations_4_sprites_2_ADDRESS 0x7274u    /* 047274 */
-#define kind_85_animations_4_sprites_3_ADDRESS 0x7280u    /* 047280 */
-#define kind_85_animations_5_ADDRESS 0x7292u    /* 047292 */
-#define kind_85_animations_5_sprites_ADDRESS 0x72A2u    /* 0472A2 */
-#define kind_85_animations_5_sprites_2_ADDRESS 0x72B4u    /* 0472B4 */
-#define kind_85_animations_5_sprites_3_ADDRESS 0x72C6u    /* 0472C6 */
-#define kind_85_animations_6_ADDRESS 0x72DEu    /* 0472DE */
-#define kind_85_animations_6_sprites_ADDRESS 0x72EAu    /* 0472EA */
-#define kind_85_animations_6_sprites_2_ADDRESS 0x7308u    /* 047308 */
-#define kind_85_animations_7_ADDRESS 0x7326u    /* 047326 */
-#define kind_85_animations_7_sprites_ADDRESS 0x7332u    /* 047332 */
-#define kind_85_animations_7_sprites_2_ADDRESS 0x7350u    /* 047350 */
-#define kind_85_animations_9_ADDRESS 0x7374u    /* 047374 */
-#define kind_85_animations_9_sprites_ADDRESS 0x7388u    /* 047388 */
-#define kind_85_animations_9_sprites_2_ADDRESS 0x739Au    /* 04739A */
-#define kind_85_animations_9_sprites_3_ADDRESS 0x73ACu    /* 0473AC */
-#define kind_85_animations_10_ADDRESS 0x73BEu    /* 0473BE */
-#define kind_85_animations_10_sprites_ADDRESS 0x73D6u    /* 0473D6 */
-#define kind_85_animations_10_sprites_2_ADDRESS 0x73EEu    /* 0473EE */
-#define kind_85_animations_10_sprites_3_ADDRESS 0x740Cu    /* 04740C */
-#define kind_85_animations_11_ADDRESS 0x742Au    /* 04742A */
-#define kind_85_animations_11_sprites_ADDRESS 0x743Eu    /* 04743E */
-#define kind_85_animations_11_sprites_2_ADDRESS 0x7450u    /* 047450 */
-#define kind_85_animations_11_sprites_3_ADDRESS 0x745Cu    /* 04745C */
-#define kind_85_animations_11_sprites_4_ADDRESS 0x7468u    /* 047468 */
-#define kind_85_animations_14_ADDRESS 0x747Au    /* 04747A */
-#define kind_85_animations_14_sprites_ADDRESS 0x749Au    /* 04749A */
-#define kind_85_animations_14_sprites_2_ADDRESS 0x74B2u    /* 0474B2 */
-#define kind_85_animations_14_sprites_3_ADDRESS 0x74BEu    /* 0474BE */
-#define kind_85_animations_14_sprites_4_ADDRESS 0x74CAu    /* 0474CA */
-#define kind_85_animations_14_sprites_5_ADDRESS 0x74DCu    /* 0474DC */
-#define kind_85_animations_14_sprites_6_ADDRESS 0x74E8u    /* 0474E8 */
-#define kind_85_animations_13_ADDRESS 0x74F4u    /* 0474F4 */
-#define kind_85_animations_13_sprites_ADDRESS 0x7500u    /* 047500 */
-#define kind_85_animations_13_sprites_2_ADDRESS 0x750Cu    /* 04750C */
-#define kind_85_animations_12_ADDRESS 0x751Eu    /* 04751E */
-#define kind_85_animations_12_sprites_ADDRESS 0x7536u    /* 047536 */
-#define kind_85_animations_12_sprites_2_ADDRESS 0x7542u    /* 047542 */
-#define kind_85_animations_12_sprites_3_ADDRESS 0x754Eu    /* 04754E */
-#define kind_85_animations_12_sprites_4_ADDRESS 0x755Au    /* 04755A */
-#define kind_85_animations_12_sprites_5_ADDRESS 0x7572u    /* 047572 */
-#define kind_85_animations_15_ADDRESS 0x7590u    /* 047590 */
-#define kind_85_animations_15_sprites_ADDRESS 0x75A4u    /* 0475A4 */
-#define kind_85_animations_15_sprites_2_ADDRESS 0x75C2u    /* 0475C2 */
-#define kind_85_animations_15_sprites_3_ADDRESS 0x75E0u    /* 0475E0 */
-#define kind_85_animations_15_sprites_4_ADDRESS 0x75F8u    /* 0475F8 */
-#define kind_85_animations_16_ADDRESS 0x7610u    /* 047610 */
-#define kind_85_animations_16_sprites_ADDRESS 0x7634u    /* 047634 */
-#define kind_85_animations_16_sprites_2_ADDRESS 0x7646u    /* 047646 */
-#define kind_85_animations_16_sprites_3_ADDRESS 0x7658u    /* 047658 */
-#define kind_85_animations_16_sprites_4_ADDRESS 0x766Au    /* 04766A */
-#define kind_85_animations_16_sprites_5_ADDRESS 0x767Cu    /* 04767C */
-#define kind_85_animations_16_sprites_6_ADDRESS 0x7694u    /* 047694 */
-#define kind_85_animations_16_sprites_7_ADDRESS 0x76ACu    /* 0476AC */
-#define kind_85_animations_16_sprites_8_ADDRESS 0x76C4u    /* 0476C4 */
-#define kind_85_animations_18_ADDRESS 0x76DCu    /* 0476DC */
-#define kind_85_animations_18_sprites_ADDRESS 0x76ECu    /* 0476EC */
-#define kind_85_animations_18_sprites_2_ADDRESS 0x770Au    /* 04770A */
-#define kind_85_animations_18_sprites_3_ADDRESS 0x7728u    /* 047728 */
-#define kind_85_animations_19_ADDRESS 0x7746u    /* 047746 */
-#define kind_85_animations_19_sprites_ADDRESS 0x775Au    /* 04775A */
-#define kind_85_animations_19_sprites_2_ADDRESS 0x7778u    /* 047778 */
-#define kind_85_animations_19_sprites_3_ADDRESS 0x7796u    /* 047796 */
-#define kind_85_animations_35_ADDRESS 0x77B4u    /* 0477B4 */
-#define kind_85_animations_35_sprites_ADDRESS 0x77E0u    /* 0477E0 */
-#define kind_85_animations_35_sprites_2_ADDRESS 0x77ECu    /* 0477EC */
-#define kind_85_animations_35_sprites_3_ADDRESS 0x77FEu    /* 0477FE */
-#define kind_85_animations_35_sprites_4_ADDRESS 0x7816u    /* 047816 */
-#define kind_85_animations_35_sprites_5_ADDRESS 0x782Eu    /* 04782E */
-#define kind_85_animations_35_sprites_6_ADDRESS 0x7840u    /* 047840 */
-#define kind_85_animations_35_sprites_7_ADDRESS 0x784Cu    /* 04784C */
-#define kind_85_animations_35_sprites_8_ADDRESS 0x7864u    /* 047864 */
-#define kind_85_animations_20_ADDRESS 0x7870u    /* 047870 */
-#define kind_85_animations_20_sprites_ADDRESS 0x7878u    /* 047878 */
-#define kind_D6_animations_ADDRESS 0x788Au    /* 04788A */
-#define kind_D6_animations_0_ADDRESS 0x7890u    /* 047890 */
-#define kind_D6_animations_0_sprites_ADDRESS 0x789Cu    /* 04789C */
-#define kind_D6_animations_0_sprites_2_ADDRESS 0x78A8u    /* 0478A8 */
-#define kind_D6_animations_1_ADDRESS 0x78B4u    /* 0478B4 */
-#define kind_D6_animations_1_sprites_ADDRESS 0x78C8u    /* 0478C8 */
-#define kind_D6_animations_1_sprites_2_ADDRESS 0x78D4u    /* 0478D4 */
-#define kind_D6_animations_2_ADDRESS 0x78E0u    /* 0478E0 */
-#define kind_D6_animations_2_sprites_ADDRESS 0x78E8u    /* 0478E8 */
-#define kind_D7_animations_ADDRESS 0x78FAu    /* 0478FA */
-#define kind_D7_animations_0_ADDRESS 0x7900u    /* 047900 */
-#define kind_D7_animations_0_sprites_ADDRESS 0x7908u    /* 047908 */
-#define kind_D7_animations_1_ADDRESS 0x793Eu    /* 04793E */
-#define kind_D7_animations_1_sprites_ADDRESS 0x7946u    /* 047946 */
-#define kind_D7_animations_2_ADDRESS 0x794Cu    /* 04794C */
-#define kind_D7_animations_2_sprites_ADDRESS 0x7954u    /* 047954 */
-#define kind_D7_animations_2_sprites_fill_ADDRESS 0x795Au    /* 04795A */
-#define kind_D7_animations_2_sprites_rest_ADDRESS 0x796Cu    /* 04796C */
-#define kind_D7_animations_2_sprites_rest_2_ADDRESS 0x7980u    /* 047980 */
-#define kind_D7_animations_2_sprites_rest_3_ADDRESS 0x799Eu    /* 04799E */
-#define kind_D7_animations_2_sprites_rest_4_ADDRESS 0x79B6u    /* 0479B6 */
-#define kind_D7_animations_2_sprites_rest_5_ADDRESS 0x79D4u    /* 0479D4 */
-#define kind_D7_animations_2_sprites_fill_2_ADDRESS 0x79ECu    /* 0479EC */
-#define kind_D7_animations_2_sprites_rest_6_ADDRESS 0x7A14u    /* 047A14 */
-#define kind_D7_animations_2_sprites_rest_7_ADDRESS 0x7A1Cu    /* 047A1C */
-#define kind_D7_animations_2_sprites_rest_8_ADDRESS 0x7A2Eu    /* 047A2E */
-#define kind_D7_animations_2_sprites_rest_9_ADDRESS 0x7A36u    /* 047A36 */
-#define kind_D7_animations_2_sprites_rest_10_ADDRESS 0x7A48u    /* 047A48 */
-#define kind_D7_animations_2_sprites_rest_11_ADDRESS 0x7A50u    /* 047A50 */
-#define kind_D7_animations_2_sprites_rest_12_ADDRESS 0x7A62u    /* 047A62 */
-#define kind_D7_animations_2_sprites_rest_13_ADDRESS 0x7A6Au    /* 047A6A */
-#define kind_D7_animations_2_sprites_rest_14_ADDRESS 0x7A7Cu    /* 047A7C */
-#define kind_D7_animations_2_sprites_rest_15_ADDRESS 0x7A84u    /* 047A84 */
-#define kind_D7_animations_2_sprites_rest_16_ADDRESS 0x7A96u    /* 047A96 */
-#define kind_D7_animations_2_sprites_rest_17_ADDRESS 0x7A9Eu    /* 047A9E */
-#define kind_D7_animations_2_sprites_rest_18_ADDRESS 0x7AB0u    /* 047AB0 */
-#define kind_D7_animations_2_sprites_rest_19_ADDRESS 0x7AB8u    /* 047AB8 */
-#define kind_D7_animations_2_sprites_rest_20_ADDRESS 0x7ACAu    /* 047ACA */
-#define kind_D7_animations_2_sprites_rest_21_ADDRESS 0x7AD2u    /* 047AD2 */
-#define kind_D7_animations_2_sprites_rest_22_ADDRESS 0x7AE4u    /* 047AE4 */
-#define kind_D7_animations_2_sprites_rest_23_ADDRESS 0x7AECu    /* 047AEC */
-#define kind_D7_animations_2_sprites_rest_24_ADDRESS 0x7AFEu    /* 047AFE */
-#define kind_D7_animations_2_sprites_rest_25_ADDRESS 0x7B06u    /* 047B06 */
-#define kind_D7_animations_2_sprites_rest_26_ADDRESS 0x7B18u    /* 047B18 */
-#define kind_D7_animations_2_sprites_rest_27_ADDRESS 0x7B20u    /* 047B20 */
-#define kind_D7_animations_2_sprites_rest_28_ADDRESS 0x7B32u    /* 047B32 */
-#define kind_D7_animations_2_sprites_rest_29_ADDRESS 0x7B3Au    /* 047B3A */
-#define kind_D7_animations_2_sprites_rest_30_ADDRESS 0x7B4Cu    /* 047B4C */
-#define kind_D7_animations_2_sprites_rest_31_ADDRESS 0x7B54u    /* 047B54 */
-#define kind_D7_animations_2_sprites_rest_32_ADDRESS 0x7B66u    /* 047B66 */
-#define kind_D7_animations_2_sprites_rest_33_ADDRESS 0x7B6Eu    /* 047B6E */
-#define kind_D7_animations_2_sprites_rest_34_ADDRESS 0x7B80u    /* 047B80 */
-#define kind_D7_animations_2_sprites_rest_35_ADDRESS 0x7B88u    /* 047B88 */
-#define kind_D7_animations_2_sprites_rest_36_ADDRESS 0x7B9Au    /* 047B9A */
-#define kind_D7_animations_2_sprites_rest_37_ADDRESS 0x7BA2u    /* 047BA2 */
-#define kind_D7_animations_2_sprites_rest_38_ADDRESS 0x7BB4u    /* 047BB4 */
-#define kind_D7_animations_2_sprites_rest_39_ADDRESS 0x7BBCu    /* 047BBC */
-#define kind_D7_animations_2_sprites_rest_40_ADDRESS 0x7BCEu    /* 047BCE */
-#define kind_D7_animations_2_sprites_rest_41_ADDRESS 0x7BD6u    /* 047BD6 */
-#define kind_D7_animations_2_sprites_rest_42_ADDRESS 0x7BE8u    /* 047BE8 */
-#define kind_D7_animations_2_sprites_rest_43_ADDRESS 0x7BF0u    /* 047BF0 */
-#define kind_D7_animations_2_sprites_rest_44_ADDRESS 0x7C08u    /* 047C08 */
-#define kind_D7_animations_2_sprites_rest_45_ADDRESS 0x7C10u    /* 047C10 */
-#define kind_D7_animations_2_sprites_fill_3_ADDRESS 0x7C28u    /* 047C28 */
-#define kind_D7_animations_2_sprites_rest_46_ADDRESS 0x7D48u    /* 047D48 */
-#define kind_D7_animations_2_sprites_rest_47_ADDRESS 0x7D64u    /* 047D64 */
-#define kind_D7_animations_2_sprites_rest_48_ADDRESS 0x7D8Eu    /* 047D8E */
-#define kind_D7_animations_2_sprites_rest_49_ADDRESS 0x7DBEu    /* 047DBE */
-#define kind_D7_animations_2_sprites_rest_50_ADDRESS 0x7DF4u    /* 047DF4 */
-#define kind_D7_animations_2_sprites_rest_51_ADDRESS 0x7E30u    /* 047E30 */
-#define kind_D7_animations_2_sprites_rest_52_ADDRESS 0x7E78u    /* 047E78 */
-#define kind_D7_animations_2_sprites_fill_4_ADDRESS 0x7ECCu    /* 047ECC */
-#define kind_D7_animations_2_sprites_rest_53_ADDRESS 0x6000u    /* 048000 */
+#define fat_goon_with_mallet_animations_ADDRESS 0x6F42u    /* 046F42 */
+#define fat_goon_with_mallet_animations_0_ADDRESS 0x6F8Cu    /* 046F8C */
+#define fat_goon_with_mallet_animations_0_sprites_ADDRESS 0x6F94u    /* 046F94 */
+#define fat_goon_with_mallet_animations_1_ADDRESS 0x6FACu    /* 046FAC */
+#define fat_goon_with_mallet_animations_1_sprites_ADDRESS 0x6FD0u    /* 046FD0 */
+#define fat_goon_with_mallet_animations_1_sprites_2_ADDRESS 0x6FE8u    /* 046FE8 */
+#define fat_goon_with_mallet_animations_1_sprites_3_ADDRESS 0x7000u    /* 047000 */
+#define fat_goon_with_mallet_animations_1_sprites_4_ADDRESS 0x7018u    /* 047018 */
+#define fat_goon_with_mallet_animations_1_sprites_5_ADDRESS 0x7030u    /* 047030 */
+#define fat_goon_with_mallet_animations_1_sprites_6_ADDRESS 0x704Eu    /* 04704E */
+#define fat_goon_with_mallet_animations_1_sprites_7_ADDRESS 0x706Cu    /* 04706C */
+#define fat_goon_with_mallet_animations_1_sprites_8_ADDRESS 0x708Au    /* 04708A */
+#define fat_goon_with_mallet_animations_2_ADDRESS 0x70A8u    /* 0470A8 */
+#define fat_goon_with_mallet_animations_2_sprites_ADDRESS 0x70CCu    /* 0470CC */
+#define fat_goon_with_mallet_animations_2_sprites_2_ADDRESS 0x70E4u    /* 0470E4 */
+#define fat_goon_with_mallet_animations_2_sprites_3_ADDRESS 0x70FCu    /* 0470FC */
+#define fat_goon_with_mallet_animations_2_sprites_4_ADDRESS 0x7114u    /* 047114 */
+#define fat_goon_with_mallet_animations_2_sprites_5_ADDRESS 0x712Cu    /* 04712C */
+#define fat_goon_with_mallet_animations_2_sprites_6_ADDRESS 0x714Au    /* 04714A */
+#define fat_goon_with_mallet_animations_2_sprites_7_ADDRESS 0x7168u    /* 047168 */
+#define fat_goon_with_mallet_animations_2_sprites_8_ADDRESS 0x7186u    /* 047186 */
+#define fat_goon_with_mallet_animations_3_ADDRESS 0x71A4u    /* 0471A4 */
+#define fat_goon_with_mallet_animations_3_sprites_ADDRESS 0x71C8u    /* 0471C8 */
+#define fat_goon_with_mallet_animations_3_sprites_2_ADDRESS 0x71DAu    /* 0471DA */
+#define fat_goon_with_mallet_animations_3_sprites_3_ADDRESS 0x71ECu    /* 0471EC */
+#define fat_goon_with_mallet_animations_3_sprites_4_ADDRESS 0x71FEu    /* 0471FE */
+#define fat_goon_with_mallet_animations_3_sprites_5_ADDRESS 0x7210u    /* 047210 */
+#define fat_goon_with_mallet_animations_3_sprites_6_ADDRESS 0x7222u    /* 047222 */
+#define fat_goon_with_mallet_animations_3_sprites_7_ADDRESS 0x7234u    /* 047234 */
+#define fat_goon_with_mallet_animations_3_sprites_8_ADDRESS 0x7246u    /* 047246 */
+#define fat_goon_with_mallet_animations_4_ADDRESS 0x7258u    /* 047258 */
+#define fat_goon_with_mallet_animations_4_sprites_ADDRESS 0x7268u    /* 047268 */
+#define fat_goon_with_mallet_animations_4_sprites_2_ADDRESS 0x7274u    /* 047274 */
+#define fat_goon_with_mallet_animations_4_sprites_3_ADDRESS 0x7280u    /* 047280 */
+#define fat_goon_with_mallet_animations_5_ADDRESS 0x7292u    /* 047292 */
+#define fat_goon_with_mallet_animations_5_sprites_ADDRESS 0x72A2u    /* 0472A2 */
+#define fat_goon_with_mallet_animations_5_sprites_2_ADDRESS 0x72B4u    /* 0472B4 */
+#define fat_goon_with_mallet_animations_5_sprites_3_ADDRESS 0x72C6u    /* 0472C6 */
+#define fat_goon_with_mallet_animations_6_ADDRESS 0x72DEu    /* 0472DE */
+#define fat_goon_with_mallet_animations_6_sprites_ADDRESS 0x72EAu    /* 0472EA */
+#define fat_goon_with_mallet_animations_6_sprites_2_ADDRESS 0x7308u    /* 047308 */
+#define fat_goon_with_mallet_animations_7_ADDRESS 0x7326u    /* 047326 */
+#define fat_goon_with_mallet_animations_7_sprites_ADDRESS 0x7332u    /* 047332 */
+#define fat_goon_with_mallet_animations_7_sprites_2_ADDRESS 0x7350u    /* 047350 */
+#define fat_goon_with_mallet_animations_9_ADDRESS 0x7374u    /* 047374 */
+#define fat_goon_with_mallet_animations_9_sprites_ADDRESS 0x7388u    /* 047388 */
+#define fat_goon_with_mallet_animations_9_sprites_2_ADDRESS 0x739Au    /* 04739A */
+#define fat_goon_with_mallet_animations_9_sprites_3_ADDRESS 0x73ACu    /* 0473AC */
+#define fat_goon_with_mallet_animations_10_ADDRESS 0x73BEu    /* 0473BE */
+#define fat_goon_with_mallet_animations_10_sprites_ADDRESS 0x73D6u    /* 0473D6 */
+#define fat_goon_with_mallet_animations_10_sprites_2_ADDRESS 0x73EEu    /* 0473EE */
+#define fat_goon_with_mallet_animations_10_sprites_3_ADDRESS 0x740Cu    /* 04740C */
+#define fat_goon_with_mallet_animations_11_ADDRESS 0x742Au    /* 04742A */
+#define fat_goon_with_mallet_animations_11_sprites_ADDRESS 0x743Eu    /* 04743E */
+#define fat_goon_with_mallet_animations_11_sprites_2_ADDRESS 0x7450u    /* 047450 */
+#define fat_goon_with_mallet_animations_11_sprites_3_ADDRESS 0x745Cu    /* 04745C */
+#define fat_goon_with_mallet_animations_11_sprites_4_ADDRESS 0x7468u    /* 047468 */
+#define fat_goon_with_mallet_animations_14_ADDRESS 0x747Au    /* 04747A */
+#define fat_goon_with_mallet_animations_14_sprites_ADDRESS 0x749Au    /* 04749A */
+#define fat_goon_with_mallet_animations_14_sprites_2_ADDRESS 0x74B2u    /* 0474B2 */
+#define fat_goon_with_mallet_animations_14_sprites_3_ADDRESS 0x74BEu    /* 0474BE */
+#define fat_goon_with_mallet_animations_14_sprites_4_ADDRESS 0x74CAu    /* 0474CA */
+#define fat_goon_with_mallet_animations_14_sprites_5_ADDRESS 0x74DCu    /* 0474DC */
+#define fat_goon_with_mallet_animations_14_sprites_6_ADDRESS 0x74E8u    /* 0474E8 */
+#define fat_goon_with_mallet_animations_13_ADDRESS 0x74F4u    /* 0474F4 */
+#define fat_goon_with_mallet_animations_13_sprites_ADDRESS 0x7500u    /* 047500 */
+#define fat_goon_with_mallet_animations_13_sprites_2_ADDRESS 0x750Cu    /* 04750C */
+#define fat_goon_with_mallet_animations_12_ADDRESS 0x751Eu    /* 04751E */
+#define fat_goon_with_mallet_animations_12_sprites_ADDRESS 0x7536u    /* 047536 */
+#define fat_goon_with_mallet_animations_12_sprites_2_ADDRESS 0x7542u    /* 047542 */
+#define fat_goon_with_mallet_animations_12_sprites_3_ADDRESS 0x754Eu    /* 04754E */
+#define fat_goon_with_mallet_animations_12_sprites_4_ADDRESS 0x755Au    /* 04755A */
+#define fat_goon_with_mallet_animations_12_sprites_5_ADDRESS 0x7572u    /* 047572 */
+#define fat_goon_with_mallet_animations_15_ADDRESS 0x7590u    /* 047590 */
+#define fat_goon_with_mallet_animations_15_sprites_ADDRESS 0x75A4u    /* 0475A4 */
+#define fat_goon_with_mallet_animations_15_sprites_2_ADDRESS 0x75C2u    /* 0475C2 */
+#define fat_goon_with_mallet_animations_15_sprites_3_ADDRESS 0x75E0u    /* 0475E0 */
+#define fat_goon_with_mallet_animations_15_sprites_4_ADDRESS 0x75F8u    /* 0475F8 */
+#define fat_goon_with_mallet_animations_16_ADDRESS 0x7610u    /* 047610 */
+#define fat_goon_with_mallet_animations_16_sprites_ADDRESS 0x7634u    /* 047634 */
+#define fat_goon_with_mallet_animations_16_sprites_2_ADDRESS 0x7646u    /* 047646 */
+#define fat_goon_with_mallet_animations_16_sprites_3_ADDRESS 0x7658u    /* 047658 */
+#define fat_goon_with_mallet_animations_16_sprites_4_ADDRESS 0x766Au    /* 04766A */
+#define fat_goon_with_mallet_animations_16_sprites_5_ADDRESS 0x767Cu    /* 04767C */
+#define fat_goon_with_mallet_animations_16_sprites_6_ADDRESS 0x7694u    /* 047694 */
+#define fat_goon_with_mallet_animations_16_sprites_7_ADDRESS 0x76ACu    /* 0476AC */
+#define fat_goon_with_mallet_animations_16_sprites_8_ADDRESS 0x76C4u    /* 0476C4 */
+#define fat_goon_with_mallet_animations_18_ADDRESS 0x76DCu    /* 0476DC */
+#define fat_goon_with_mallet_animations_18_sprites_ADDRESS 0x76ECu    /* 0476EC */
+#define fat_goon_with_mallet_animations_18_sprites_2_ADDRESS 0x770Au    /* 04770A */
+#define fat_goon_with_mallet_animations_18_sprites_3_ADDRESS 0x7728u    /* 047728 */
+#define fat_goon_with_mallet_animations_19_ADDRESS 0x7746u    /* 047746 */
+#define fat_goon_with_mallet_animations_19_sprites_ADDRESS 0x775Au    /* 04775A */
+#define fat_goon_with_mallet_animations_19_sprites_2_ADDRESS 0x7778u    /* 047778 */
+#define fat_goon_with_mallet_animations_19_sprites_3_ADDRESS 0x7796u    /* 047796 */
+#define fat_goon_with_mallet_animations_35_ADDRESS 0x77B4u    /* 0477B4 */
+#define fat_goon_with_mallet_animations_35_sprites_ADDRESS 0x77E0u    /* 0477E0 */
+#define fat_goon_with_mallet_animations_35_sprites_2_ADDRESS 0x77ECu    /* 0477EC */
+#define fat_goon_with_mallet_animations_35_sprites_3_ADDRESS 0x77FEu    /* 0477FE */
+#define fat_goon_with_mallet_animations_35_sprites_4_ADDRESS 0x7816u    /* 047816 */
+#define fat_goon_with_mallet_animations_35_sprites_5_ADDRESS 0x782Eu    /* 04782E */
+#define fat_goon_with_mallet_animations_35_sprites_6_ADDRESS 0x7840u    /* 047840 */
+#define fat_goon_with_mallet_animations_35_sprites_7_ADDRESS 0x784Cu    /* 04784C */
+#define fat_goon_with_mallet_animations_35_sprites_8_ADDRESS 0x7864u    /* 047864 */
+#define fat_goon_with_mallet_animations_20_ADDRESS 0x7870u    /* 047870 */
+#define fat_goon_with_mallet_animations_20_sprites_ADDRESS 0x7878u    /* 047878 */
+#define crawling_man_animations_ADDRESS 0x788Au    /* 04788A */
+#define crawling_man_animations_0_ADDRESS 0x7890u    /* 047890 */
+#define crawling_man_animations_0_sprites_ADDRESS 0x789Cu    /* 04789C */
+#define crawling_man_animations_0_sprites_2_ADDRESS 0x78A8u    /* 0478A8 */
+#define crawling_man_animations_1_ADDRESS 0x78B4u    /* 0478B4 */
+#define crawling_man_animations_1_sprites_ADDRESS 0x78C8u    /* 0478C8 */
+#define crawling_man_animations_1_sprites_2_ADDRESS 0x78D4u    /* 0478D4 */
+#define crawling_man_animations_2_ADDRESS 0x78E0u    /* 0478E0 */
+#define crawling_man_animations_2_sprites_ADDRESS 0x78E8u    /* 0478E8 */
+#define itchy_and_scratchy_heads_animations_ADDRESS 0x78FAu    /* 0478FA */
+#define itchy_and_scratchy_heads_animations_0_ADDRESS 0x7900u    /* 047900 */
+#define itchy_and_scratchy_heads_animations_0_sprites_ADDRESS 0x7908u    /* 047908 */
+#define itchy_and_scratchy_heads_animations_1_ADDRESS 0x793Eu    /* 04793E */
+#define itchy_and_scratchy_heads_animations_1_sprites_ADDRESS 0x7946u    /* 047946 */
+#define itchy_and_scratchy_heads_animations_2_ADDRESS 0x794Cu    /* 04794C */
+#define itchy_and_scratchy_heads_animations_2_sprites_ADDRESS 0x7954u    /* 047954 */
+#define itchy_and_scratchy_heads_animations_2_sprites_fill_ADDRESS 0x795Au    /* 04795A */
+#define itchy_and_scratchy_heads_animations_2_sprites_rest_ADDRESS 0x796Cu    /* 04796C */
+#define itchy_and_scratchy_heads_animations_2_sprites_rest_2_ADDRESS 0x7980u    /* 047980 */
+#define itchy_and_scratchy_heads_animations_2_sprites_rest_3_ADDRESS 0x799Eu    /* 04799E */
+#define itchy_and_scratchy_heads_animations_2_sprites_rest_4_ADDRESS 0x79B6u    /* 0479B6 */
+#define itchy_and_scratchy_heads_animations_2_sprites_rest_5_ADDRESS 0x79D4u    /* 0479D4 */
+#define itchy_and_scratchy_heads_animations_2_sprites_fill_2_ADDRESS 0x79ECu    /* 0479EC */
+#define itchy_and_scratchy_heads_animations_2_sprites_rest_6_ADDRESS 0x7A14u    /* 047A14 */
+#define itchy_and_scratchy_heads_animations_2_sprites_rest_7_ADDRESS 0x7A1Cu    /* 047A1C */
+#define itchy_and_scratchy_heads_animations_2_sprites_rest_8_ADDRESS 0x7A2Eu    /* 047A2E */
+#define itchy_and_scratchy_heads_animations_2_sprites_rest_9_ADDRESS 0x7A36u    /* 047A36 */
+#define itchy_and_scratchy_heads_animations_2_sprites_rest_10_ADDRESS 0x7A48u    /* 047A48 */
+#define itchy_and_scratchy_heads_animations_2_sprites_rest_11_ADDRESS 0x7A50u    /* 047A50 */
+#define itchy_and_scratchy_heads_animations_2_sprites_rest_12_ADDRESS 0x7A62u    /* 047A62 */
+#define itchy_and_scratchy_heads_animations_2_sprites_rest_13_ADDRESS 0x7A6Au    /* 047A6A */
+#define itchy_and_scratchy_heads_animations_2_sprites_rest_14_ADDRESS 0x7A7Cu    /* 047A7C */
+#define itchy_and_scratchy_heads_animations_2_sprites_rest_15_ADDRESS 0x7A84u    /* 047A84 */
+#define itchy_and_scratchy_heads_animations_2_sprites_rest_16_ADDRESS 0x7A96u    /* 047A96 */
+#define itchy_and_scratchy_heads_animations_2_sprites_rest_17_ADDRESS 0x7A9Eu    /* 047A9E */
+#define itchy_and_scratchy_heads_animations_2_sprites_rest_18_ADDRESS 0x7AB0u    /* 047AB0 */
+#define itchy_and_scratchy_heads_animations_2_sprites_rest_19_ADDRESS 0x7AB8u    /* 047AB8 */
+#define itchy_and_scratchy_heads_animations_2_sprites_rest_20_ADDRESS 0x7ACAu    /* 047ACA */
+#define itchy_and_scratchy_heads_animations_2_sprites_rest_21_ADDRESS 0x7AD2u    /* 047AD2 */
+#define itchy_and_scratchy_heads_animations_2_sprites_rest_22_ADDRESS 0x7AE4u    /* 047AE4 */
+#define itchy_and_scratchy_heads_animations_2_sprites_rest_23_ADDRESS 0x7AECu    /* 047AEC */
+#define itchy_and_scratchy_heads_animations_2_sprites_rest_24_ADDRESS 0x7AFEu    /* 047AFE */
+#define itchy_and_scratchy_heads_animations_2_sprites_rest_25_ADDRESS 0x7B06u    /* 047B06 */
+#define itchy_and_scratchy_heads_animations_2_sprites_rest_26_ADDRESS 0x7B18u    /* 047B18 */
+#define itchy_and_scratchy_heads_animations_2_sprites_rest_27_ADDRESS 0x7B20u    /* 047B20 */
+#define itchy_and_scratchy_heads_animations_2_sprites_rest_28_ADDRESS 0x7B32u    /* 047B32 */
+#define itchy_and_scratchy_heads_animations_2_sprites_rest_29_ADDRESS 0x7B3Au    /* 047B3A */
+#define itchy_and_scratchy_heads_animations_2_sprites_rest_30_ADDRESS 0x7B4Cu    /* 047B4C */
+#define itchy_and_scratchy_heads_animations_2_sprites_rest_31_ADDRESS 0x7B54u    /* 047B54 */
+#define itchy_and_scratchy_heads_animations_2_sprites_rest_32_ADDRESS 0x7B66u    /* 047B66 */
+#define itchy_and_scratchy_heads_animations_2_sprites_rest_33_ADDRESS 0x7B6Eu    /* 047B6E */
+#define itchy_and_scratchy_heads_animations_2_sprites_rest_34_ADDRESS 0x7B80u    /* 047B80 */
+#define itchy_and_scratchy_heads_animations_2_sprites_rest_35_ADDRESS 0x7B88u    /* 047B88 */
+#define itchy_and_scratchy_heads_animations_2_sprites_rest_36_ADDRESS 0x7B9Au    /* 047B9A */
+#define itchy_and_scratchy_heads_animations_2_sprites_rest_37_ADDRESS 0x7BA2u    /* 047BA2 */
+#define itchy_and_scratchy_heads_animations_2_sprites_rest_38_ADDRESS 0x7BB4u    /* 047BB4 */
+#define itchy_and_scratchy_heads_animations_2_sprites_rest_39_ADDRESS 0x7BBCu    /* 047BBC */
+#define itchy_and_scratchy_heads_animations_2_sprites_rest_40_ADDRESS 0x7BCEu    /* 047BCE */
+#define itchy_and_scratchy_heads_animations_2_sprites_rest_41_ADDRESS 0x7BD6u    /* 047BD6 */
+#define itchy_and_scratchy_heads_animations_2_sprites_rest_42_ADDRESS 0x7BE8u    /* 047BE8 */
+#define itchy_and_scratchy_heads_animations_2_sprites_rest_43_ADDRESS 0x7BF0u    /* 047BF0 */
+#define itchy_and_scratchy_heads_animations_2_sprites_rest_44_ADDRESS 0x7C08u    /* 047C08 */
+#define itchy_and_scratchy_heads_animations_2_sprites_rest_45_ADDRESS 0x7C10u    /* 047C10 */
+#define itchy_and_scratchy_heads_animations_2_sprites_fill_3_ADDRESS 0x7C28u    /* 047C28 */
+#define itchy_and_scratchy_heads_animations_2_sprites_rest_46_ADDRESS 0x7D48u    /* 047D48 */
+#define itchy_and_scratchy_heads_animations_2_sprites_rest_47_ADDRESS 0x7D64u    /* 047D64 */
+#define itchy_and_scratchy_heads_animations_2_sprites_rest_48_ADDRESS 0x7D8Eu    /* 047D8E */
+#define itchy_and_scratchy_heads_animations_2_sprites_rest_49_ADDRESS 0x7DBEu    /* 047DBE */
+#define itchy_and_scratchy_heads_animations_2_sprites_rest_50_ADDRESS 0x7DF4u    /* 047DF4 */
+#define itchy_and_scratchy_heads_animations_2_sprites_rest_51_ADDRESS 0x7E30u    /* 047E30 */
+#define itchy_and_scratchy_heads_animations_2_sprites_rest_52_ADDRESS 0x7E78u    /* 047E78 */
+#define itchy_and_scratchy_heads_animations_2_sprites_fill_4_ADDRESS 0x7ECCu    /* 047ECC */
+#define itchy_and_scratchy_heads_animations_2_sprites_rest_53_ADDRESS 0x6000u    /* 048000 */
 #define bubbles_animations_ADDRESS 0x6008u    /* 048008 */
 #define bubbles_animations_0_ADDRESS 0x6024u    /* 048024 */
 #define bubbles_animations_0_sprites_ADDRESS 0x602Cu    /* 04802C */
@@ -5771,73 +5531,73 @@ extern const void *reset_vector_data;
 #define bubbles_3_animations_10_sprites_3_ADDRESS 0x75E4u    /* 0495E4 */
 #define bubbles_3_animations_10_sprites_4_ADDRESS 0x7626u    /* 049626 */
 #define bubbles_3_animations_10_sprites_5_ADDRESS 0x7656u    /* 049656 */
-#define kind_D1_animations_ADDRESS 0x7680u    /* 049680 */
-#define kind_D1_animations_0_ADDRESS 0x76A6u    /* 0496A6 */
-#define kind_D1_animations_0_sprites_ADDRESS 0x76AEu    /* 0496AE */
-#define kind_D1_animations_1_ADDRESS 0x76B4u    /* 0496B4 */
-#define kind_D1_animations_1_sprites_ADDRESS 0x76BCu    /* 0496BC */
-#define kind_D1_animations_2_ADDRESS 0x76C2u    /* 0496C2 */
-#define kind_D1_animations_2_sprites_ADDRESS 0x76CAu    /* 0496CA */
-#define kind_D1_animations_3_ADDRESS 0x76E2u    /* 0496E2 */
-#define kind_D1_animations_3_sprites_ADDRESS 0x76EEu    /* 0496EE */
-#define kind_D1_animations_3_sprites_2_ADDRESS 0x76FAu    /* 0496FA */
-#define kind_D1_animations_4_ADDRESS 0x7706u    /* 049706 */
-#define kind_D1_animations_4_rest_ADDRESS 0x7716u    /* 049716 */
-#define kind_D1_animations_4_sprites_ADDRESS 0x7728u    /* 049728 */
-#define kind_D1_animations_4_sprites_2_ADDRESS 0x772Eu    /* 04972E */
-#define kind_D1_animations_4_sprites_3_ADDRESS 0x773Au    /* 04973A */
-#define kind_D1_animations_5_ADDRESS 0x7746u    /* 049746 */
-#define kind_D1_animations_5_sprites_ADDRESS 0x775Au    /* 04975A */
-#define kind_D1_animations_5_sprites_2_ADDRESS 0x7760u    /* 049760 */
-#define kind_D1_animations_5_sprites_3_ADDRESS 0x7766u    /* 049766 */
-#define kind_D1_animations_5_sprites_4_ADDRESS 0x7784u    /* 049784 */
-#define kind_D1_animations_6_ADDRESS 0x77A2u    /* 0497A2 */
-#define kind_D1_animations_6_sprites_ADDRESS 0x77AAu    /* 0497AA */
-#define kind_D1_animations_7_ADDRESS 0x77B6u    /* 0497B6 */
-#define kind_D1_animations_7_sprites_ADDRESS 0x77C2u    /* 0497C2 */
-#define kind_D1_animations_7_sprites_2_ADDRESS 0x77C8u    /* 0497C8 */
-#define kind_D1_animations_8_ADDRESS 0x77CEu    /* 0497CE */
-#define kind_D1_animations_8_sprites_ADDRESS 0x77FAu    /* 0497FA */
-#define kind_D1_animations_8_sprites_2_ADDRESS 0x781Eu    /* 04981E */
-#define kind_D1_animations_8_sprites_3_ADDRESS 0x784Eu    /* 04984E */
-#define kind_D1_animations_8_sprites_4_ADDRESS 0x7890u    /* 049890 */
-#define kind_D1_animations_8_sprites_5_ADDRESS 0x78D8u    /* 0498D8 */
-#define kind_D1_animations_8_sprites_6_ADDRESS 0x7938u    /* 049938 */
-#define kind_D1_animations_8_sprites_7_ADDRESS 0x798Cu    /* 04998C */
-#define kind_D1_animations_8_sprites_8_ADDRESS 0x79DAu    /* 0499DA */
-#define kind_D1_animations_8_sprites_9_ADDRESS 0x7A1Cu    /* 049A1C */
-#define kind_D1_animations_8_sprites_10_ADDRESS 0x7A3Au    /* 049A3A */
-#define kind_D1_animations_9_ADDRESS 0x7A4Cu    /* 049A4C */
-#define kind_D1_animations_9_sprites_ADDRESS 0x7A54u    /* 049A54 */
-#define kind_D1_animations_10_ADDRESS 0x7A5Au    /* 049A5A */
-#define kind_D1_animations_10_sprites_ADDRESS 0x7A76u    /* 049A76 */
-#define kind_D1_animations_10_sprites_2_ADDRESS 0x7A7Cu    /* 049A7C */
-#define kind_D1_animations_10_sprites_3_ADDRESS 0x7A82u    /* 049A82 */
-#define kind_D1_animations_10_sprites_4_ADDRESS 0x7A88u    /* 049A88 */
-#define kind_D1_animations_10_sprites_5_ADDRESS 0x7A8Eu    /* 049A8E */
-#define kind_D1_animations_10_sprites_6_ADDRESS 0x7A94u    /* 049A94 */
-#define kind_D1_animations_11_ADDRESS 0x7A9Au    /* 049A9A */
-#define kind_D1_animations_11_sprites_ADDRESS 0x7AA2u    /* 049AA2 */
-#define kind_D1_animations_12_ADDRESS 0x7AA8u    /* 049AA8 */
-#define kind_D1_animations_12_sprites_ADDRESS 0x7AB4u    /* 049AB4 */
-#define kind_D1_animations_12_sprites_2_ADDRESS 0x7ABAu    /* 049ABA */
-#define kind_D1_animations_13_ADDRESS 0x7AC0u    /* 049AC0 */
-#define kind_D1_animations_13_sprites_ADDRESS 0x7AC8u    /* 049AC8 */
-#define kind_D1_animations_14_ADDRESS 0x7ACEu    /* 049ACE */
-#define kind_D1_animations_15_ADDRESS 0x7ADAu    /* 049ADA */
-#define kind_D1_animations_15_sprites_ADDRESS 0x7AE2u    /* 049AE2 */
-#define kind_D1_animations_16_ADDRESS 0x7AEEu    /* 049AEE */
-#define kind_D1_animations_16_sprites_ADDRESS 0x7AF6u    /* 049AF6 */
-#define kind_D1_animations_17_ADDRESS 0x7B02u    /* 049B02 */
-#define kind_D1_animations_17_sprites_ADDRESS 0x7B0Au    /* 049B0A */
-#define kind_D1_animations_18_ADDRESS 0x7B16u    /* 049B16 */
-#define kind_D1_animations_18_sprites_ADDRESS 0x7B36u    /* 049B36 */
-#define kind_D1_animations_18_sprites_2_ADDRESS 0x7B42u    /* 049B42 */
-#define kind_D1_animations_18_sprites_3_ADDRESS 0x7B54u    /* 049B54 */
-#define kind_D1_animations_18_sprites_4_ADDRESS 0x7B7Eu    /* 049B7E */
-#define kind_D1_animations_18_sprites_5_ADDRESS 0x7BA8u    /* 049BA8 */
-#define kind_D1_animations_18_sprites_6_ADDRESS 0x7BC6u    /* 049BC6 */
-#define kind_D1_animations_18_sprites_7_ADDRESS 0x7BE4u    /* 049BE4 */
+#define dreamland_boss_balls_animations_ADDRESS 0x7680u    /* 049680 */
+#define dreamland_boss_balls_animations_0_ADDRESS 0x76A6u    /* 0496A6 */
+#define dreamland_boss_balls_animations_0_sprites_ADDRESS 0x76AEu    /* 0496AE */
+#define dreamland_boss_balls_animations_1_ADDRESS 0x76B4u    /* 0496B4 */
+#define dreamland_boss_balls_animations_1_sprites_ADDRESS 0x76BCu    /* 0496BC */
+#define dreamland_boss_balls_animations_2_ADDRESS 0x76C2u    /* 0496C2 */
+#define dreamland_boss_balls_animations_2_sprites_ADDRESS 0x76CAu    /* 0496CA */
+#define dreamland_boss_balls_animations_3_ADDRESS 0x76E2u    /* 0496E2 */
+#define dreamland_boss_balls_animations_3_sprites_ADDRESS 0x76EEu    /* 0496EE */
+#define dreamland_boss_balls_animations_3_sprites_2_ADDRESS 0x76FAu    /* 0496FA */
+#define dreamland_boss_balls_animations_4_ADDRESS 0x7706u    /* 049706 */
+#define dreamland_boss_balls_animations_4_rest_ADDRESS 0x7716u    /* 049716 */
+#define dreamland_boss_balls_animations_4_sprites_ADDRESS 0x7728u    /* 049728 */
+#define dreamland_boss_balls_animations_4_sprites_2_ADDRESS 0x772Eu    /* 04972E */
+#define dreamland_boss_balls_animations_4_sprites_3_ADDRESS 0x773Au    /* 04973A */
+#define dreamland_boss_balls_animations_5_ADDRESS 0x7746u    /* 049746 */
+#define dreamland_boss_balls_animations_5_sprites_ADDRESS 0x775Au    /* 04975A */
+#define dreamland_boss_balls_animations_5_sprites_2_ADDRESS 0x7760u    /* 049760 */
+#define dreamland_boss_balls_animations_5_sprites_3_ADDRESS 0x7766u    /* 049766 */
+#define dreamland_boss_balls_animations_5_sprites_4_ADDRESS 0x7784u    /* 049784 */
+#define dreamland_boss_balls_animations_6_ADDRESS 0x77A2u    /* 0497A2 */
+#define dreamland_boss_balls_animations_6_sprites_ADDRESS 0x77AAu    /* 0497AA */
+#define dreamland_boss_balls_animations_7_ADDRESS 0x77B6u    /* 0497B6 */
+#define dreamland_boss_balls_animations_7_sprites_ADDRESS 0x77C2u    /* 0497C2 */
+#define dreamland_boss_balls_animations_7_sprites_2_ADDRESS 0x77C8u    /* 0497C8 */
+#define dreamland_boss_balls_animations_8_ADDRESS 0x77CEu    /* 0497CE */
+#define dreamland_boss_balls_animations_8_sprites_ADDRESS 0x77FAu    /* 0497FA */
+#define dreamland_boss_balls_animations_8_sprites_2_ADDRESS 0x781Eu    /* 04981E */
+#define dreamland_boss_balls_animations_8_sprites_3_ADDRESS 0x784Eu    /* 04984E */
+#define dreamland_boss_balls_animations_8_sprites_4_ADDRESS 0x7890u    /* 049890 */
+#define dreamland_boss_balls_animations_8_sprites_5_ADDRESS 0x78D8u    /* 0498D8 */
+#define dreamland_boss_balls_animations_8_sprites_6_ADDRESS 0x7938u    /* 049938 */
+#define dreamland_boss_balls_animations_8_sprites_7_ADDRESS 0x798Cu    /* 04998C */
+#define dreamland_boss_balls_animations_8_sprites_8_ADDRESS 0x79DAu    /* 0499DA */
+#define dreamland_boss_balls_animations_8_sprites_9_ADDRESS 0x7A1Cu    /* 049A1C */
+#define dreamland_boss_balls_animations_8_sprites_10_ADDRESS 0x7A3Au    /* 049A3A */
+#define dreamland_boss_balls_animations_9_ADDRESS 0x7A4Cu    /* 049A4C */
+#define dreamland_boss_balls_animations_9_sprites_ADDRESS 0x7A54u    /* 049A54 */
+#define dreamland_boss_balls_animations_10_ADDRESS 0x7A5Au    /* 049A5A */
+#define dreamland_boss_balls_animations_10_sprites_ADDRESS 0x7A76u    /* 049A76 */
+#define dreamland_boss_balls_animations_10_sprites_2_ADDRESS 0x7A7Cu    /* 049A7C */
+#define dreamland_boss_balls_animations_10_sprites_3_ADDRESS 0x7A82u    /* 049A82 */
+#define dreamland_boss_balls_animations_10_sprites_4_ADDRESS 0x7A88u    /* 049A88 */
+#define dreamland_boss_balls_animations_10_sprites_5_ADDRESS 0x7A8Eu    /* 049A8E */
+#define dreamland_boss_balls_animations_10_sprites_6_ADDRESS 0x7A94u    /* 049A94 */
+#define dreamland_boss_balls_animations_11_ADDRESS 0x7A9Au    /* 049A9A */
+#define dreamland_boss_balls_animations_11_sprites_ADDRESS 0x7AA2u    /* 049AA2 */
+#define dreamland_boss_balls_animations_12_ADDRESS 0x7AA8u    /* 049AA8 */
+#define dreamland_boss_balls_animations_12_sprites_ADDRESS 0x7AB4u    /* 049AB4 */
+#define dreamland_boss_balls_animations_12_sprites_2_ADDRESS 0x7ABAu    /* 049ABA */
+#define dreamland_boss_balls_animations_13_ADDRESS 0x7AC0u    /* 049AC0 */
+#define dreamland_boss_balls_animations_13_sprites_ADDRESS 0x7AC8u    /* 049AC8 */
+#define dreamland_boss_balls_animations_14_ADDRESS 0x7ACEu    /* 049ACE */
+#define dreamland_boss_balls_animations_15_ADDRESS 0x7ADAu    /* 049ADA */
+#define dreamland_boss_balls_animations_15_sprites_ADDRESS 0x7AE2u    /* 049AE2 */
+#define dreamland_boss_balls_animations_16_ADDRESS 0x7AEEu    /* 049AEE */
+#define dreamland_boss_balls_animations_16_sprites_ADDRESS 0x7AF6u    /* 049AF6 */
+#define dreamland_boss_balls_animations_17_ADDRESS 0x7B02u    /* 049B02 */
+#define dreamland_boss_balls_animations_17_sprites_ADDRESS 0x7B0Au    /* 049B0A */
+#define dreamland_boss_balls_animations_18_ADDRESS 0x7B16u    /* 049B16 */
+#define dreamland_boss_balls_animations_18_sprites_ADDRESS 0x7B36u    /* 049B36 */
+#define dreamland_boss_balls_animations_18_sprites_2_ADDRESS 0x7B42u    /* 049B42 */
+#define dreamland_boss_balls_animations_18_sprites_3_ADDRESS 0x7B54u    /* 049B54 */
+#define dreamland_boss_balls_animations_18_sprites_4_ADDRESS 0x7B7Eu    /* 049B7E */
+#define dreamland_boss_balls_animations_18_sprites_5_ADDRESS 0x7BA8u    /* 049BA8 */
+#define dreamland_boss_balls_animations_18_sprites_6_ADDRESS 0x7BC6u    /* 049BC6 */
+#define dreamland_boss_balls_animations_18_sprites_7_ADDRESS 0x7BE4u    /* 049BE4 */
 #define numbers_animations_ADDRESS 0x7BF0u    /* 049BF0 */
 #define numbers_animations_0_ADDRESS 0x7BF2u    /* 049BF2 */
 #define numbers_animations_0_sprites_ADDRESS 0x7C02u    /* 049C02 */
@@ -6409,221 +6169,221 @@ extern const void *reset_vector_data;
 #define hit_sparks_animations_41_sprites_3_ADDRESS 0x6EAAu    /* 04EEAA */
 #define hit_sparks_animations_42_ADDRESS 0x6EB0u    /* 04EEB0 */
 #define hit_sparks_animations_42_sprites_ADDRESS 0x6EB8u    /* 04EEB8 */
-#define kind_05_animations_ADDRESS 0x6EBEu    /* 04EEBE */
-#define kind_05_animations_0_ADDRESS 0x6F2Eu    /* 04EF2E */
-#define kind_05_animations_0_sprites_ADDRESS 0x6F4Au    /* 04EF4A */
-#define kind_05_animations_0_sprites_2_ADDRESS 0x6F50u    /* 04EF50 */
-#define kind_05_animations_0_sprites_3_ADDRESS 0x6F56u    /* 04EF56 */
-#define kind_05_animations_2_ADDRESS 0x6F5Cu    /* 04EF5C */
-#define kind_05_animations_2_sprites_ADDRESS 0x6F64u    /* 04EF64 */
-#define kind_05_animations_3_ADDRESS 0x6F70u    /* 04EF70 */
-#define kind_05_animations_3_sprites_ADDRESS 0x6F78u    /* 04EF78 */
-#define kind_05_animations_4_ADDRESS 0x6F84u    /* 04EF84 */
-#define kind_05_animations_4_sprites_ADDRESS 0x6F8Cu    /* 04EF8C */
-#define kind_05_animations_5_ADDRESS 0x6F98u    /* 04EF98 */
-#define kind_05_animations_5_sprites_ADDRESS 0x6FA0u    /* 04EFA0 */
-#define kind_05_animations_6_ADDRESS 0x6FACu    /* 04EFAC */
-#define kind_05_animations_6_sprites_ADDRESS 0x6FB4u    /* 04EFB4 */
-#define kind_05_animations_7_ADDRESS 0x6FBAu    /* 04EFBA */
-#define kind_05_animations_7_sprites_ADDRESS 0x6FCEu    /* 04EFCE */
-#define kind_05_animations_7_sprites_2_ADDRESS 0x6FD4u    /* 04EFD4 */
-#define kind_05_animations_7_sprites_3_ADDRESS 0x6FDAu    /* 04EFDA */
-#define kind_05_animations_7_sprites_4_ADDRESS 0x6FE0u    /* 04EFE0 */
-#define kind_05_animations_8_ADDRESS 0x6FE6u    /* 04EFE6 */
-#define kind_05_animations_8_sprites_ADDRESS 0x6FEEu    /* 04EFEE */
-#define kind_05_animations_9_ADDRESS 0x6FFAu    /* 04EFFA */
-#define kind_05_animations_9_sprites_ADDRESS 0x7002u    /* 04F002 */
-#define kind_05_animations_10_ADDRESS 0x700Eu    /* 04F00E */
-#define kind_05_animations_10_sprites_ADDRESS 0x7016u    /* 04F016 */
-#define kind_05_animations_11_ADDRESS 0x701Cu    /* 04F01C */
-#define kind_05_animations_12_ADDRESS 0x7024u    /* 04F024 */
-#define kind_05_animations_12_sprites_ADDRESS 0x7038u    /* 04F038 */
-#define kind_05_animations_12_sprites_2_ADDRESS 0x703Eu    /* 04F03E */
-#define kind_05_animations_12_sprites_3_ADDRESS 0x7044u    /* 04F044 */
-#define kind_05_animations_13_ADDRESS 0x704Au    /* 04F04A */
-#define kind_05_animations_14_ADDRESS 0x705Eu    /* 04F05E */
-#define kind_05_animations_14_sprites_ADDRESS 0x7066u    /* 04F066 */
-#define kind_05_animations_15_ADDRESS 0x706Cu    /* 04F06C */
-#define kind_05_animations_15_sprites_ADDRESS 0x7074u    /* 04F074 */
-#define kind_05_animations_16_ADDRESS 0x707Au    /* 04F07A */
-#define kind_05_animations_16_sprites_ADDRESS 0x7082u    /* 04F082 */
-#define kind_05_animations_17_ADDRESS 0x7088u    /* 04F088 */
-#define kind_05_animations_17_sprites_ADDRESS 0x7090u    /* 04F090 */
-#define kind_05_animations_18_ADDRESS 0x7096u    /* 04F096 */
-#define kind_05_animations_18_sprites_ADDRESS 0x70A2u    /* 04F0A2 */
-#define kind_05_animations_18_sprites_2_ADDRESS 0x70A8u    /* 04F0A8 */
-#define kind_05_animations_19_ADDRESS 0x70AEu    /* 04F0AE */
-#define kind_05_animations_19_sprites_ADDRESS 0x70BEu    /* 04F0BE */
-#define kind_05_animations_19_sprites_2_ADDRESS 0x70CAu    /* 04F0CA */
-#define kind_05_animations_19_sprites_3_ADDRESS 0x70D6u    /* 04F0D6 */
-#define kind_05_animations_20_ADDRESS 0x70E2u    /* 04F0E2 */
-#define kind_05_animations_20_sprites_ADDRESS 0x70F6u    /* 04F0F6 */
-#define kind_05_animations_20_sprites_2_ADDRESS 0x70FCu    /* 04F0FC */
-#define kind_05_animations_20_sprites_3_ADDRESS 0x7102u    /* 04F102 */
-#define kind_05_animations_21_ADDRESS 0x7114u    /* 04F114 */
-#define kind_05_animations_21_sprites_ADDRESS 0x7128u    /* 04F128 */
-#define kind_05_animations_21_sprites_2_ADDRESS 0x7134u    /* 04F134 */
-#define kind_05_animations_21_sprites_3_ADDRESS 0x7140u    /* 04F140 */
-#define kind_05_animations_22_ADDRESS 0x7158u    /* 04F158 */
-#define kind_05_animations_22_sprites_ADDRESS 0x7160u    /* 04F160 */
-#define kind_05_animations_23_ADDRESS 0x7166u    /* 04F166 */
-#define kind_05_animations_23_sprites_ADDRESS 0x717Eu    /* 04F17E */
-#define kind_05_animations_23_sprites_2_ADDRESS 0x718Au    /* 04F18A */
-#define kind_05_animations_23_sprites_3_ADDRESS 0x7196u    /* 04F196 */
-#define kind_05_animations_23_sprites_4_ADDRESS 0x71A2u    /* 04F1A2 */
-#define kind_05_animations_23_sprites_5_ADDRESS 0x71AEu    /* 04F1AE */
-#define kind_05_animations_24_ADDRESS 0x71C0u    /* 04F1C0 */
-#define kind_05_animations_25_ADDRESS 0x71C8u    /* 04F1C8 */
-#define kind_05_animations_26_ADDRESS 0x71D0u    /* 04F1D0 */
-#define kind_05_animations_26_sprites_ADDRESS 0x71D8u    /* 04F1D8 */
-#define kind_05_animations_27_ADDRESS 0x71DEu    /* 04F1DE */
-#define kind_05_animations_27_sprites_ADDRESS 0x71F6u    /* 04F1F6 */
-#define kind_05_animations_27_sprites_2_ADDRESS 0x7202u    /* 04F202 */
-#define kind_05_animations_27_sprites_3_ADDRESS 0x720Eu    /* 04F20E */
-#define kind_05_animations_27_sprites_4_ADDRESS 0x721Au    /* 04F21A */
-#define kind_05_animations_27_sprites_5_ADDRESS 0x7226u    /* 04F226 */
-#define kind_05_animations_28_ADDRESS 0x7238u    /* 04F238 */
-#define kind_05_animations_29_ADDRESS 0x7240u    /* 04F240 */
-#define kind_05_animations_30_ADDRESS 0x7248u    /* 04F248 */
-#define kind_05_animations_30_sprites_ADDRESS 0x7250u    /* 04F250 */
-#define kind_05_animations_31_ADDRESS 0x7256u    /* 04F256 */
-#define kind_05_animations_31_sprites_ADDRESS 0x726Eu    /* 04F26E */
-#define kind_05_animations_31_sprites_2_ADDRESS 0x727Au    /* 04F27A */
-#define kind_05_animations_31_sprites_3_ADDRESS 0x7286u    /* 04F286 */
-#define kind_05_animations_31_sprites_4_ADDRESS 0x7292u    /* 04F292 */
-#define kind_05_animations_31_sprites_5_ADDRESS 0x729Eu    /* 04F29E */
-#define kind_05_animations_32_ADDRESS 0x72B0u    /* 04F2B0 */
-#define kind_05_animations_33_ADDRESS 0x72B8u    /* 04F2B8 */
-#define kind_05_animations_34_ADDRESS 0x72C0u    /* 04F2C0 */
-#define kind_05_animations_34_sprites_ADDRESS 0x72C8u    /* 04F2C8 */
-#define kind_05_animations_35_ADDRESS 0x72CEu    /* 04F2CE */
-#define kind_05_animations_35_sprites_ADDRESS 0x72E6u    /* 04F2E6 */
-#define kind_05_animations_35_sprites_2_ADDRESS 0x72F2u    /* 04F2F2 */
-#define kind_05_animations_35_sprites_3_ADDRESS 0x72FEu    /* 04F2FE */
-#define kind_05_animations_35_sprites_4_ADDRESS 0x730Au    /* 04F30A */
-#define kind_05_animations_35_sprites_5_ADDRESS 0x7316u    /* 04F316 */
-#define kind_05_animations_36_ADDRESS 0x7328u    /* 04F328 */
-#define kind_05_animations_37_ADDRESS 0x7330u    /* 04F330 */
-#define kind_05_animations_38_ADDRESS 0x7338u    /* 04F338 */
-#define kind_05_animations_38_sprites_ADDRESS 0x7340u    /* 04F340 */
-#define kind_05_animations_39_ADDRESS 0x7346u    /* 04F346 */
-#define kind_05_animations_39_sprites_ADDRESS 0x735Eu    /* 04F35E */
-#define kind_05_animations_39_sprites_2_ADDRESS 0x736Au    /* 04F36A */
-#define kind_05_animations_39_sprites_3_ADDRESS 0x7376u    /* 04F376 */
-#define kind_05_animations_39_sprites_4_ADDRESS 0x7382u    /* 04F382 */
-#define kind_05_animations_39_sprites_5_ADDRESS 0x738Eu    /* 04F38E */
-#define kind_05_animations_40_ADDRESS 0x73A0u    /* 04F3A0 */
-#define kind_05_animations_41_ADDRESS 0x73A8u    /* 04F3A8 */
-#define kind_05_animations_42_ADDRESS 0x73B0u    /* 04F3B0 */
-#define kind_05_animations_42_sprites_ADDRESS 0x73B8u    /* 04F3B8 */
-#define kind_05_animations_43_ADDRESS 0x73BEu    /* 04F3BE */
-#define kind_05_animations_43_sprites_ADDRESS 0x73D6u    /* 04F3D6 */
-#define kind_05_animations_43_sprites_2_ADDRESS 0x73E2u    /* 04F3E2 */
-#define kind_05_animations_43_sprites_3_ADDRESS 0x73EEu    /* 04F3EE */
-#define kind_05_animations_43_sprites_4_ADDRESS 0x73FAu    /* 04F3FA */
-#define kind_05_animations_43_sprites_5_ADDRESS 0x7406u    /* 04F406 */
-#define kind_05_animations_44_ADDRESS 0x7418u    /* 04F418 */
-#define kind_05_animations_45_ADDRESS 0x7420u    /* 04F420 */
-#define kind_05_animations_46_ADDRESS 0x7428u    /* 04F428 */
-#define kind_05_animations_46_sprites_ADDRESS 0x7430u    /* 04F430 */
-#define kind_05_animations_47_ADDRESS 0x7436u    /* 04F436 */
-#define kind_05_animations_47_sprites_ADDRESS 0x744Eu    /* 04F44E */
-#define kind_05_animations_47_sprites_2_ADDRESS 0x745Au    /* 04F45A */
-#define kind_05_animations_47_sprites_3_ADDRESS 0x7466u    /* 04F466 */
-#define kind_05_animations_47_sprites_4_ADDRESS 0x7472u    /* 04F472 */
-#define kind_05_animations_47_sprites_5_ADDRESS 0x747Eu    /* 04F47E */
-#define kind_05_animations_48_ADDRESS 0x7490u    /* 04F490 */
-#define kind_05_animations_49_ADDRESS 0x7498u    /* 04F498 */
-#define kind_05_animations_50_ADDRESS 0x74A0u    /* 04F4A0 */
-#define kind_05_animations_50_sprites_ADDRESS 0x74A8u    /* 04F4A8 */
-#define kind_05_animations_52_ADDRESS 0x74AEu    /* 04F4AE */
-#define kind_05_animations_52_sprites_ADDRESS 0x74B6u    /* 04F4B6 */
-#define kind_05_animations_53_ADDRESS 0x74BCu    /* 04F4BC */
-#define kind_05_animations_53_sprites_ADDRESS 0x74D0u    /* 04F4D0 */
-#define kind_05_animations_53_sprites_2_ADDRESS 0x74D6u    /* 04F4D6 */
-#define kind_05_animations_53_sprites_3_ADDRESS 0x74DCu    /* 04F4DC */
-#define kind_05_animations_53_sprites_4_ADDRESS 0x74E2u    /* 04F4E2 */
-#define kind_05_animations_54_ADDRESS 0x74E8u    /* 04F4E8 */
-#define kind_05_animations_55_ADDRESS 0x74F0u    /* 04F4F0 */
-#define kind_05_animations_54_sprites_ADDRESS 0x7504u    /* 04F504 */
-#define kind_05_animations_55_sprites_ADDRESS 0x7516u    /* 04F516 */
-#define kind_05_animations_55_sprites_2_ADDRESS 0x7528u    /* 04F528 */
-#define kind_05_animations_55_sprites_3_ADDRESS 0x753Au    /* 04F53A */
-#define kind_06_animations_ADDRESS 0x754Cu    /* 04F54C */
-#define kind_06_animations_0_ADDRESS 0x7550u    /* 04F550 */
-#define kind_06_animations_0_sprites_ADDRESS 0x7558u    /* 04F558 */
-#define kind_06_animations_1_ADDRESS 0x7564u    /* 04F564 */
-#define kind_06_animations_1_sprites_ADDRESS 0x756Cu    /* 04F56C */
-#define kind_C7_animations_ADDRESS 0x758Au    /* 04F58A */
-#define kind_C7_animations_0_ADDRESS 0x759Eu    /* 04F59E */
-#define kind_C7_animations_0_sprites_ADDRESS 0x75B2u    /* 04F5B2 */
-#define kind_C7_animations_0_sprites_2_ADDRESS 0x75CAu    /* 04F5CA */
-#define kind_C7_animations_0_sprites_3_ADDRESS 0x75E2u    /* 04F5E2 */
-#define kind_C7_animations_0_sprites_4_ADDRESS 0x75FAu    /* 04F5FA */
-#define kind_C7_animations_1_ADDRESS 0x7612u    /* 04F612 */
-#define kind_C7_animations_2_ADDRESS 0x7626u    /* 04F626 */
-#define kind_C7_animations_2_sprites_ADDRESS 0x763Au    /* 04F63A */
-#define kind_C7_animations_2_sprites_2_ADDRESS 0x764Cu    /* 04F64C */
-#define kind_C7_animations_2_sprites_3_ADDRESS 0x7664u    /* 04F664 */
-#define kind_C7_animations_3_ADDRESS 0x767Cu    /* 04F67C */
-#define kind_C7_animations_3_sprites_ADDRESS 0x76D0u    /* 04F6D0 */
-#define kind_C7_animations_3_sprites_2_ADDRESS 0x76E8u    /* 04F6E8 */
-#define kind_C7_animations_3_sprites_3_ADDRESS 0x7700u    /* 04F700 */
-#define kind_C7_animations_3_sprites_4_ADDRESS 0x7718u    /* 04F718 */
-#define kind_C7_animations_3_sprites_5_ADDRESS 0x7730u    /* 04F730 */
-#define kind_C7_animations_3_sprites_6_ADDRESS 0x7760u    /* 04F760 */
-#define kind_C7_animations_3_sprites_7_ADDRESS 0x7796u    /* 04F796 */
-#define kind_C7_animations_3_sprites_8_ADDRESS 0x77BAu    /* 04F7BA */
-#define kind_C7_animations_3_sprites_9_ADDRESS 0x77D8u    /* 04F7D8 */
-#define kind_C7_animations_3_sprites_10_ADDRESS 0x77F6u    /* 04F7F6 */
-#define kind_C7_animations_3_sprites_11_ADDRESS 0x7814u    /* 04F814 */
-#define kind_C7_animations_3_sprites_12_ADDRESS 0x7832u    /* 04F832 */
-#define kind_C7_animations_3_sprites_13_ADDRESS 0x7850u    /* 04F850 */
-#define kind_C7_animations_3_sprites_14_ADDRESS 0x786Eu    /* 04F86E */
-#define kind_C7_animations_3_sprites_15_ADDRESS 0x788Cu    /* 04F88C */
-#define kind_C7_animations_3_sprites_16_ADDRESS 0x78AAu    /* 04F8AA */
-#define kind_C7_animations_3_sprites_17_ADDRESS 0x78C8u    /* 04F8C8 */
-#define kind_C7_animations_4_ADDRESS 0x78E6u    /* 04F8E6 */
-#define kind_C7_animations_4_sprites_ADDRESS 0x7906u    /* 04F906 */
-#define kind_C7_animations_4_sprites_2_ADDRESS 0x790Cu    /* 04F90C */
-#define kind_C7_animations_4_sprites_3_ADDRESS 0x7912u    /* 04F912 */
-#define kind_C7_animations_4_sprites_4_ADDRESS 0x7918u    /* 04F918 */
-#define kind_C7_animations_4_sprites_5_ADDRESS 0x7924u    /* 04F924 */
-#define kind_C7_animations_4_sprites_6_ADDRESS 0x792Au    /* 04F92A */
-#define kind_C7_animations_4_sprites_7_ADDRESS 0x7954u    /* 04F954 */
-#define kind_C7_animations_5_ADDRESS 0x797Eu    /* 04F97E */
-#define kind_C7_animations_5_sprites_ADDRESS 0x799Eu    /* 04F99E */
-#define kind_C7_animations_5_sprites_2_ADDRESS 0x79C2u    /* 04F9C2 */
-#define kind_C7_animations_5_sprites_3_ADDRESS 0x79E0u    /* 04F9E0 */
-#define kind_C7_animations_5_sprites_4_ADDRESS 0x79FEu    /* 04F9FE */
-#define kind_C7_animations_5_sprites_5_ADDRESS 0x7A1Cu    /* 04FA1C */
-#define kind_C7_animations_5_sprites_6_ADDRESS 0x7A3Au    /* 04FA3A */
-#define kind_C7_animations_6_ADDRESS 0x7A58u    /* 04FA58 */
-#define kind_C7_animations_6_sprites_ADDRESS 0x7A7Cu    /* 04FA7C */
-#define kind_C7_animations_6_sprites_2_ADDRESS 0x7A8Eu    /* 04FA8E */
-#define kind_C7_animations_6_sprites_3_ADDRESS 0x7AA6u    /* 04FAA6 */
-#define kind_C7_animations_6_sprites_4_ADDRESS 0x7ABEu    /* 04FABE */
-#define kind_C7_animations_6_sprites_5_ADDRESS 0x7AD0u    /* 04FAD0 */
-#define kind_C7_animations_6_sprites_6_ADDRESS 0x7AE2u    /* 04FAE2 */
-#define kind_C7_animations_6_sprites_7_ADDRESS 0x7AFAu    /* 04FAFA */
-#define kind_C7_animations_7_ADDRESS 0x7B12u    /* 04FB12 */
-#define kind_C7_animations_7_sprites_ADDRESS 0x7B26u    /* 04FB26 */
-#define kind_C7_animations_7_sprites_2_ADDRESS 0x7B38u    /* 04FB38 */
-#define kind_C7_animations_7_sprites_3_ADDRESS 0x7B4Au    /* 04FB4A */
-#define kind_C7_animations_8_ADDRESS 0x7B62u    /* 04FB62 */
-#define kind_C7_animations_8_sprites_ADDRESS 0x7B7Eu    /* 04FB7E */
-#define kind_C7_animations_8_sprites_2_ADDRESS 0x7B9Cu    /* 04FB9C */
-#define kind_C7_animations_8_sprites_3_ADDRESS 0x7BBAu    /* 04FBBA */
-#define kind_C7_animations_8_sprites_4_ADDRESS 0x7BC6u    /* 04FBC6 */
-#define kind_C7_animations_8_sprites_5_ADDRESS 0x7BD2u    /* 04FBD2 */
-#define kind_C7_animations_8_sprites_6_ADDRESS 0x7BDEu    /* 04FBDE */
-#define kind_C7_animations_9_ADDRESS 0x7BF0u    /* 04FBF0 */
-#define kind_C7_animations_9_sprites_ADDRESS 0x7C28u    /* 04FC28 */
-#define kind_C7_animations_9_sprites_2_ADDRESS 0x7C2Eu    /* 04FC2E */
-#define kind_C7_animations_9_sprites_3_ADDRESS 0x7C34u    /* 04FC34 */
-#define kind_C7_animations_9_sprites_4_ADDRESS 0x7C40u    /* 04FC40 */
-#define kind_C7_animations_9_sprites_5_ADDRESS 0x7C46u    /* 04FC46 */
-#define kind_C7_animations_9_sprites_6_ADDRESS 0x7C52u    /* 04FC52 */
+#define obstacles_animations_ADDRESS 0x6EBEu    /* 04EEBE */
+#define obstacles_animations_0_ADDRESS 0x6F2Eu    /* 04EF2E */
+#define obstacles_animations_0_sprites_ADDRESS 0x6F4Au    /* 04EF4A */
+#define obstacles_animations_0_sprites_2_ADDRESS 0x6F50u    /* 04EF50 */
+#define obstacles_animations_0_sprites_3_ADDRESS 0x6F56u    /* 04EF56 */
+#define obstacles_animations_2_ADDRESS 0x6F5Cu    /* 04EF5C */
+#define obstacles_animations_2_sprites_ADDRESS 0x6F64u    /* 04EF64 */
+#define obstacles_animations_3_ADDRESS 0x6F70u    /* 04EF70 */
+#define obstacles_animations_3_sprites_ADDRESS 0x6F78u    /* 04EF78 */
+#define obstacles_animations_4_ADDRESS 0x6F84u    /* 04EF84 */
+#define obstacles_animations_4_sprites_ADDRESS 0x6F8Cu    /* 04EF8C */
+#define obstacles_animations_5_ADDRESS 0x6F98u    /* 04EF98 */
+#define obstacles_animations_5_sprites_ADDRESS 0x6FA0u    /* 04EFA0 */
+#define obstacles_animations_6_ADDRESS 0x6FACu    /* 04EFAC */
+#define obstacles_animations_6_sprites_ADDRESS 0x6FB4u    /* 04EFB4 */
+#define obstacles_animations_7_ADDRESS 0x6FBAu    /* 04EFBA */
+#define obstacles_animations_7_sprites_ADDRESS 0x6FCEu    /* 04EFCE */
+#define obstacles_animations_7_sprites_2_ADDRESS 0x6FD4u    /* 04EFD4 */
+#define obstacles_animations_7_sprites_3_ADDRESS 0x6FDAu    /* 04EFDA */
+#define obstacles_animations_7_sprites_4_ADDRESS 0x6FE0u    /* 04EFE0 */
+#define obstacles_animations_8_ADDRESS 0x6FE6u    /* 04EFE6 */
+#define obstacles_animations_8_sprites_ADDRESS 0x6FEEu    /* 04EFEE */
+#define obstacles_animations_9_ADDRESS 0x6FFAu    /* 04EFFA */
+#define obstacles_animations_9_sprites_ADDRESS 0x7002u    /* 04F002 */
+#define obstacles_animations_10_ADDRESS 0x700Eu    /* 04F00E */
+#define obstacles_animations_10_sprites_ADDRESS 0x7016u    /* 04F016 */
+#define obstacles_animations_11_ADDRESS 0x701Cu    /* 04F01C */
+#define obstacles_animations_12_ADDRESS 0x7024u    /* 04F024 */
+#define obstacles_animations_12_sprites_ADDRESS 0x7038u    /* 04F038 */
+#define obstacles_animations_12_sprites_2_ADDRESS 0x703Eu    /* 04F03E */
+#define obstacles_animations_12_sprites_3_ADDRESS 0x7044u    /* 04F044 */
+#define obstacles_animations_13_ADDRESS 0x704Au    /* 04F04A */
+#define obstacles_animations_14_ADDRESS 0x705Eu    /* 04F05E */
+#define obstacles_animations_14_sprites_ADDRESS 0x7066u    /* 04F066 */
+#define obstacles_animations_15_ADDRESS 0x706Cu    /* 04F06C */
+#define obstacles_animations_15_sprites_ADDRESS 0x7074u    /* 04F074 */
+#define obstacles_animations_16_ADDRESS 0x707Au    /* 04F07A */
+#define obstacles_animations_16_sprites_ADDRESS 0x7082u    /* 04F082 */
+#define obstacles_animations_17_ADDRESS 0x7088u    /* 04F088 */
+#define obstacles_animations_17_sprites_ADDRESS 0x7090u    /* 04F090 */
+#define obstacles_animations_18_ADDRESS 0x7096u    /* 04F096 */
+#define obstacles_animations_18_sprites_ADDRESS 0x70A2u    /* 04F0A2 */
+#define obstacles_animations_18_sprites_2_ADDRESS 0x70A8u    /* 04F0A8 */
+#define obstacles_animations_19_ADDRESS 0x70AEu    /* 04F0AE */
+#define obstacles_animations_19_sprites_ADDRESS 0x70BEu    /* 04F0BE */
+#define obstacles_animations_19_sprites_2_ADDRESS 0x70CAu    /* 04F0CA */
+#define obstacles_animations_19_sprites_3_ADDRESS 0x70D6u    /* 04F0D6 */
+#define obstacles_animations_20_ADDRESS 0x70E2u    /* 04F0E2 */
+#define obstacles_animations_20_sprites_ADDRESS 0x70F6u    /* 04F0F6 */
+#define obstacles_animations_20_sprites_2_ADDRESS 0x70FCu    /* 04F0FC */
+#define obstacles_animations_20_sprites_3_ADDRESS 0x7102u    /* 04F102 */
+#define obstacles_animations_21_ADDRESS 0x7114u    /* 04F114 */
+#define obstacles_animations_21_sprites_ADDRESS 0x7128u    /* 04F128 */
+#define obstacles_animations_21_sprites_2_ADDRESS 0x7134u    /* 04F134 */
+#define obstacles_animations_21_sprites_3_ADDRESS 0x7140u    /* 04F140 */
+#define obstacles_animations_22_ADDRESS 0x7158u    /* 04F158 */
+#define obstacles_animations_22_sprites_ADDRESS 0x7160u    /* 04F160 */
+#define obstacles_animations_23_ADDRESS 0x7166u    /* 04F166 */
+#define obstacles_animations_23_sprites_ADDRESS 0x717Eu    /* 04F17E */
+#define obstacles_animations_23_sprites_2_ADDRESS 0x718Au    /* 04F18A */
+#define obstacles_animations_23_sprites_3_ADDRESS 0x7196u    /* 04F196 */
+#define obstacles_animations_23_sprites_4_ADDRESS 0x71A2u    /* 04F1A2 */
+#define obstacles_animations_23_sprites_5_ADDRESS 0x71AEu    /* 04F1AE */
+#define obstacles_animations_24_ADDRESS 0x71C0u    /* 04F1C0 */
+#define obstacles_animations_25_ADDRESS 0x71C8u    /* 04F1C8 */
+#define obstacles_animations_26_ADDRESS 0x71D0u    /* 04F1D0 */
+#define obstacles_animations_26_sprites_ADDRESS 0x71D8u    /* 04F1D8 */
+#define obstacles_animations_27_ADDRESS 0x71DEu    /* 04F1DE */
+#define obstacles_animations_27_sprites_ADDRESS 0x71F6u    /* 04F1F6 */
+#define obstacles_animations_27_sprites_2_ADDRESS 0x7202u    /* 04F202 */
+#define obstacles_animations_27_sprites_3_ADDRESS 0x720Eu    /* 04F20E */
+#define obstacles_animations_27_sprites_4_ADDRESS 0x721Au    /* 04F21A */
+#define obstacles_animations_27_sprites_5_ADDRESS 0x7226u    /* 04F226 */
+#define obstacles_animations_28_ADDRESS 0x7238u    /* 04F238 */
+#define obstacles_animations_29_ADDRESS 0x7240u    /* 04F240 */
+#define obstacles_animations_30_ADDRESS 0x7248u    /* 04F248 */
+#define obstacles_animations_30_sprites_ADDRESS 0x7250u    /* 04F250 */
+#define obstacles_animations_31_ADDRESS 0x7256u    /* 04F256 */
+#define obstacles_animations_31_sprites_ADDRESS 0x726Eu    /* 04F26E */
+#define obstacles_animations_31_sprites_2_ADDRESS 0x727Au    /* 04F27A */
+#define obstacles_animations_31_sprites_3_ADDRESS 0x7286u    /* 04F286 */
+#define obstacles_animations_31_sprites_4_ADDRESS 0x7292u    /* 04F292 */
+#define obstacles_animations_31_sprites_5_ADDRESS 0x729Eu    /* 04F29E */
+#define obstacles_animations_32_ADDRESS 0x72B0u    /* 04F2B0 */
+#define obstacles_animations_33_ADDRESS 0x72B8u    /* 04F2B8 */
+#define obstacles_animations_34_ADDRESS 0x72C0u    /* 04F2C0 */
+#define obstacles_animations_34_sprites_ADDRESS 0x72C8u    /* 04F2C8 */
+#define obstacles_animations_35_ADDRESS 0x72CEu    /* 04F2CE */
+#define obstacles_animations_35_sprites_ADDRESS 0x72E6u    /* 04F2E6 */
+#define obstacles_animations_35_sprites_2_ADDRESS 0x72F2u    /* 04F2F2 */
+#define obstacles_animations_35_sprites_3_ADDRESS 0x72FEu    /* 04F2FE */
+#define obstacles_animations_35_sprites_4_ADDRESS 0x730Au    /* 04F30A */
+#define obstacles_animations_35_sprites_5_ADDRESS 0x7316u    /* 04F316 */
+#define obstacles_animations_36_ADDRESS 0x7328u    /* 04F328 */
+#define obstacles_animations_37_ADDRESS 0x7330u    /* 04F330 */
+#define obstacles_animations_38_ADDRESS 0x7338u    /* 04F338 */
+#define obstacles_animations_38_sprites_ADDRESS 0x7340u    /* 04F340 */
+#define obstacles_animations_39_ADDRESS 0x7346u    /* 04F346 */
+#define obstacles_animations_39_sprites_ADDRESS 0x735Eu    /* 04F35E */
+#define obstacles_animations_39_sprites_2_ADDRESS 0x736Au    /* 04F36A */
+#define obstacles_animations_39_sprites_3_ADDRESS 0x7376u    /* 04F376 */
+#define obstacles_animations_39_sprites_4_ADDRESS 0x7382u    /* 04F382 */
+#define obstacles_animations_39_sprites_5_ADDRESS 0x738Eu    /* 04F38E */
+#define obstacles_animations_40_ADDRESS 0x73A0u    /* 04F3A0 */
+#define obstacles_animations_41_ADDRESS 0x73A8u    /* 04F3A8 */
+#define obstacles_animations_42_ADDRESS 0x73B0u    /* 04F3B0 */
+#define obstacles_animations_42_sprites_ADDRESS 0x73B8u    /* 04F3B8 */
+#define obstacles_animations_43_ADDRESS 0x73BEu    /* 04F3BE */
+#define obstacles_animations_43_sprites_ADDRESS 0x73D6u    /* 04F3D6 */
+#define obstacles_animations_43_sprites_2_ADDRESS 0x73E2u    /* 04F3E2 */
+#define obstacles_animations_43_sprites_3_ADDRESS 0x73EEu    /* 04F3EE */
+#define obstacles_animations_43_sprites_4_ADDRESS 0x73FAu    /* 04F3FA */
+#define obstacles_animations_43_sprites_5_ADDRESS 0x7406u    /* 04F406 */
+#define obstacles_animations_44_ADDRESS 0x7418u    /* 04F418 */
+#define obstacles_animations_45_ADDRESS 0x7420u    /* 04F420 */
+#define obstacles_animations_46_ADDRESS 0x7428u    /* 04F428 */
+#define obstacles_animations_46_sprites_ADDRESS 0x7430u    /* 04F430 */
+#define obstacles_animations_47_ADDRESS 0x7436u    /* 04F436 */
+#define obstacles_animations_47_sprites_ADDRESS 0x744Eu    /* 04F44E */
+#define obstacles_animations_47_sprites_2_ADDRESS 0x745Au    /* 04F45A */
+#define obstacles_animations_47_sprites_3_ADDRESS 0x7466u    /* 04F466 */
+#define obstacles_animations_47_sprites_4_ADDRESS 0x7472u    /* 04F472 */
+#define obstacles_animations_47_sprites_5_ADDRESS 0x747Eu    /* 04F47E */
+#define obstacles_animations_48_ADDRESS 0x7490u    /* 04F490 */
+#define obstacles_animations_49_ADDRESS 0x7498u    /* 04F498 */
+#define obstacles_animations_50_ADDRESS 0x74A0u    /* 04F4A0 */
+#define obstacles_animations_50_sprites_ADDRESS 0x74A8u    /* 04F4A8 */
+#define obstacles_animations_52_ADDRESS 0x74AEu    /* 04F4AE */
+#define obstacles_animations_52_sprites_ADDRESS 0x74B6u    /* 04F4B6 */
+#define obstacles_animations_53_ADDRESS 0x74BCu    /* 04F4BC */
+#define obstacles_animations_53_sprites_ADDRESS 0x74D0u    /* 04F4D0 */
+#define obstacles_animations_53_sprites_2_ADDRESS 0x74D6u    /* 04F4D6 */
+#define obstacles_animations_53_sprites_3_ADDRESS 0x74DCu    /* 04F4DC */
+#define obstacles_animations_53_sprites_4_ADDRESS 0x74E2u    /* 04F4E2 */
+#define obstacles_animations_54_ADDRESS 0x74E8u    /* 04F4E8 */
+#define obstacles_animations_55_ADDRESS 0x74F0u    /* 04F4F0 */
+#define obstacles_animations_54_sprites_ADDRESS 0x7504u    /* 04F504 */
+#define obstacles_animations_55_sprites_ADDRESS 0x7516u    /* 04F516 */
+#define obstacles_animations_55_sprites_2_ADDRESS 0x7528u    /* 04F528 */
+#define obstacles_animations_55_sprites_3_ADDRESS 0x753Au    /* 04F53A */
+#define broom_animations_ADDRESS 0x754Cu    /* 04F54C */
+#define broom_animations_0_ADDRESS 0x7550u    /* 04F550 */
+#define broom_animations_0_sprites_ADDRESS 0x7558u    /* 04F558 */
+#define broom_animations_1_ADDRESS 0x7564u    /* 04F564 */
+#define broom_animations_1_sprites_ADDRESS 0x756Cu    /* 04F56C */
+#define cloud_devil_animations_ADDRESS 0x758Au    /* 04F58A */
+#define cloud_devil_animations_0_ADDRESS 0x759Eu    /* 04F59E */
+#define cloud_devil_animations_0_sprites_ADDRESS 0x75B2u    /* 04F5B2 */
+#define cloud_devil_animations_0_sprites_2_ADDRESS 0x75CAu    /* 04F5CA */
+#define cloud_devil_animations_0_sprites_3_ADDRESS 0x75E2u    /* 04F5E2 */
+#define cloud_devil_animations_0_sprites_4_ADDRESS 0x75FAu    /* 04F5FA */
+#define cloud_devil_animations_1_ADDRESS 0x7612u    /* 04F612 */
+#define cloud_devil_animations_2_ADDRESS 0x7626u    /* 04F626 */
+#define cloud_devil_animations_2_sprites_ADDRESS 0x763Au    /* 04F63A */
+#define cloud_devil_animations_2_sprites_2_ADDRESS 0x764Cu    /* 04F64C */
+#define cloud_devil_animations_2_sprites_3_ADDRESS 0x7664u    /* 04F664 */
+#define cloud_devil_animations_3_ADDRESS 0x767Cu    /* 04F67C */
+#define cloud_devil_animations_3_sprites_ADDRESS 0x76D0u    /* 04F6D0 */
+#define cloud_devil_animations_3_sprites_2_ADDRESS 0x76E8u    /* 04F6E8 */
+#define cloud_devil_animations_3_sprites_3_ADDRESS 0x7700u    /* 04F700 */
+#define cloud_devil_animations_3_sprites_4_ADDRESS 0x7718u    /* 04F718 */
+#define cloud_devil_animations_3_sprites_5_ADDRESS 0x7730u    /* 04F730 */
+#define cloud_devil_animations_3_sprites_6_ADDRESS 0x7760u    /* 04F760 */
+#define cloud_devil_animations_3_sprites_7_ADDRESS 0x7796u    /* 04F796 */
+#define cloud_devil_animations_3_sprites_8_ADDRESS 0x77BAu    /* 04F7BA */
+#define cloud_devil_animations_3_sprites_9_ADDRESS 0x77D8u    /* 04F7D8 */
+#define cloud_devil_animations_3_sprites_10_ADDRESS 0x77F6u    /* 04F7F6 */
+#define cloud_devil_animations_3_sprites_11_ADDRESS 0x7814u    /* 04F814 */
+#define cloud_devil_animations_3_sprites_12_ADDRESS 0x7832u    /* 04F832 */
+#define cloud_devil_animations_3_sprites_13_ADDRESS 0x7850u    /* 04F850 */
+#define cloud_devil_animations_3_sprites_14_ADDRESS 0x786Eu    /* 04F86E */
+#define cloud_devil_animations_3_sprites_15_ADDRESS 0x788Cu    /* 04F88C */
+#define cloud_devil_animations_3_sprites_16_ADDRESS 0x78AAu    /* 04F8AA */
+#define cloud_devil_animations_3_sprites_17_ADDRESS 0x78C8u    /* 04F8C8 */
+#define cloud_devil_animations_4_ADDRESS 0x78E6u    /* 04F8E6 */
+#define cloud_devil_animations_4_sprites_ADDRESS 0x7906u    /* 04F906 */
+#define cloud_devil_animations_4_sprites_2_ADDRESS 0x790Cu    /* 04F90C */
+#define cloud_devil_animations_4_sprites_3_ADDRESS 0x7912u    /* 04F912 */
+#define cloud_devil_animations_4_sprites_4_ADDRESS 0x7918u    /* 04F918 */
+#define cloud_devil_animations_4_sprites_5_ADDRESS 0x7924u    /* 04F924 */
+#define cloud_devil_animations_4_sprites_6_ADDRESS 0x792Au    /* 04F92A */
+#define cloud_devil_animations_4_sprites_7_ADDRESS 0x7954u    /* 04F954 */
+#define cloud_devil_animations_5_ADDRESS 0x797Eu    /* 04F97E */
+#define cloud_devil_animations_5_sprites_ADDRESS 0x799Eu    /* 04F99E */
+#define cloud_devil_animations_5_sprites_2_ADDRESS 0x79C2u    /* 04F9C2 */
+#define cloud_devil_animations_5_sprites_3_ADDRESS 0x79E0u    /* 04F9E0 */
+#define cloud_devil_animations_5_sprites_4_ADDRESS 0x79FEu    /* 04F9FE */
+#define cloud_devil_animations_5_sprites_5_ADDRESS 0x7A1Cu    /* 04FA1C */
+#define cloud_devil_animations_5_sprites_6_ADDRESS 0x7A3Au    /* 04FA3A */
+#define cloud_devil_animations_6_ADDRESS 0x7A58u    /* 04FA58 */
+#define cloud_devil_animations_6_sprites_ADDRESS 0x7A7Cu    /* 04FA7C */
+#define cloud_devil_animations_6_sprites_2_ADDRESS 0x7A8Eu    /* 04FA8E */
+#define cloud_devil_animations_6_sprites_3_ADDRESS 0x7AA6u    /* 04FAA6 */
+#define cloud_devil_animations_6_sprites_4_ADDRESS 0x7ABEu    /* 04FABE */
+#define cloud_devil_animations_6_sprites_5_ADDRESS 0x7AD0u    /* 04FAD0 */
+#define cloud_devil_animations_6_sprites_6_ADDRESS 0x7AE2u    /* 04FAE2 */
+#define cloud_devil_animations_6_sprites_7_ADDRESS 0x7AFAu    /* 04FAFA */
+#define cloud_devil_animations_7_ADDRESS 0x7B12u    /* 04FB12 */
+#define cloud_devil_animations_7_sprites_ADDRESS 0x7B26u    /* 04FB26 */
+#define cloud_devil_animations_7_sprites_2_ADDRESS 0x7B38u    /* 04FB38 */
+#define cloud_devil_animations_7_sprites_3_ADDRESS 0x7B4Au    /* 04FB4A */
+#define cloud_devil_animations_8_ADDRESS 0x7B62u    /* 04FB62 */
+#define cloud_devil_animations_8_sprites_ADDRESS 0x7B7Eu    /* 04FB7E */
+#define cloud_devil_animations_8_sprites_2_ADDRESS 0x7B9Cu    /* 04FB9C */
+#define cloud_devil_animations_8_sprites_3_ADDRESS 0x7BBAu    /* 04FBBA */
+#define cloud_devil_animations_8_sprites_4_ADDRESS 0x7BC6u    /* 04FBC6 */
+#define cloud_devil_animations_8_sprites_5_ADDRESS 0x7BD2u    /* 04FBD2 */
+#define cloud_devil_animations_8_sprites_6_ADDRESS 0x7BDEu    /* 04FBDE */
+#define cloud_devil_animations_9_ADDRESS 0x7BF0u    /* 04FBF0 */
+#define cloud_devil_animations_9_sprites_ADDRESS 0x7C28u    /* 04FC28 */
+#define cloud_devil_animations_9_sprites_2_ADDRESS 0x7C2Eu    /* 04FC2E */
+#define cloud_devil_animations_9_sprites_3_ADDRESS 0x7C34u    /* 04FC34 */
+#define cloud_devil_animations_9_sprites_4_ADDRESS 0x7C40u    /* 04FC40 */
+#define cloud_devil_animations_9_sprites_5_ADDRESS 0x7C46u    /* 04FC46 */
+#define cloud_devil_animations_9_sprites_6_ADDRESS 0x7C52u    /* 04FC52 */
 #define pointing_hand_animations_ADDRESS 0x7C5Eu    /* 04FC5E */
 #define pointing_hand_animations_0_ADDRESS 0x7C66u    /* 04FC66 */
 #define pointing_hand_animations_0_sprites_ADDRESS 0x7C6Eu    /* 04FC6E */
@@ -6714,42 +6474,42 @@ extern const void *reset_vector_data;
 #define knight_6_animations_9_sprites_6_ADDRESS 0x6528u    /* 050528 */
 #define knight_6_animations_9_sprites_7_ADDRESS 0x653Au    /* 05053A */
 #define knight_6_animations_9_sprites_8_ADDRESS 0x654Cu    /* 05054C */
-#define kind_C9_animations_ADDRESS 0x655Eu    /* 05055E */
-#define kind_C9_animations_0_ADDRESS 0x6566u    /* 050566 */
-#define kind_C9_animations_0_sprites_ADDRESS 0x6572u    /* 050572 */
-#define kind_C9_animations_0_sprites_2_ADDRESS 0x6584u    /* 050584 */
-#define kind_C9_animations_1_ADDRESS 0x6596u    /* 050596 */
-#define kind_C9_animations_1_sprites_ADDRESS 0x65BAu    /* 0505BA */
-#define kind_C9_animations_1_sprites_2_ADDRESS 0x65CCu    /* 0505CC */
-#define kind_C9_animations_1_sprites_3_ADDRESS 0x65DEu    /* 0505DE */
-#define kind_C9_animations_1_sprites_4_ADDRESS 0x65F0u    /* 0505F0 */
-#define kind_C9_animations_1_sprites_5_ADDRESS 0x6602u    /* 050602 */
-#define kind_C9_animations_2_ADDRESS 0x6614u    /* 050614 */
-#define kind_C9_animations_2_sprites_ADDRESS 0x6620u    /* 050620 */
-#define kind_C9_animations_2_sprites_2_ADDRESS 0x6632u    /* 050632 */
-#define kind_C9_animations_3_ADDRESS 0x6644u    /* 050644 */
-#define kind_C9_animations_3_sprites_ADDRESS 0x6668u    /* 050668 */
-#define kind_C9_animations_3_sprites_2_ADDRESS 0x667Au    /* 05067A */
-#define kind_C9_animations_3_sprites_3_ADDRESS 0x668Cu    /* 05068C */
-#define kind_C9_animations_3_sprites_4_ADDRESS 0x669Eu    /* 05069E */
-#define kind_C9_animations_3_sprites_5_ADDRESS 0x66B0u    /* 0506B0 */
-#define kind_CA_animations_ADDRESS 0x66C2u    /* 0506C2 */
-#define kind_CA_animations_0_ADDRESS 0x66C6u    /* 0506C6 */
-#define kind_CA_animations_0_sprites_ADDRESS 0x66D2u    /* 0506D2 */
-#define kind_CA_animations_0_sprites_2_ADDRESS 0x66EAu    /* 0506EA */
-#define kind_CA_animations_1_ADDRESS 0x6702u    /* 050702 */
-#define kind_CA_animations_1_sprites_ADDRESS 0x6726u    /* 050726 */
-#define kind_CA_animations_1_sprites_2_ADDRESS 0x673Eu    /* 05073E */
-#define kind_CA_animations_1_sprites_3_ADDRESS 0x6756u    /* 050756 */
-#define kind_CA_animations_1_sprites_4_ADDRESS 0x676Eu    /* 05076E */
-#define kind_CA_animations_1_sprites_5_ADDRESS 0x6786u    /* 050786 */
-#define kind_CB_animations_ADDRESS 0x67AAu    /* 0507AA */
-#define kind_CB_animations_0_ADDRESS 0x67AEu    /* 0507AE */
-#define kind_CB_animations_0_sprites_ADDRESS 0x67C2u    /* 0507C2 */
-#define kind_CB_animations_0_sprites_2_ADDRESS 0x67D4u    /* 0507D4 */
-#define kind_CB_animations_0_sprites_3_ADDRESS 0x67E6u    /* 0507E6 */
-#define kind_CB_animations_1_ADDRESS 0x6804u    /* 050804 */
-#define kind_CB_animations_1_sprites_ADDRESS 0x6810u    /* 050810 */
+#define patty_and_selma_animations_ADDRESS 0x655Eu    /* 05055E */
+#define patty_and_selma_animations_0_ADDRESS 0x6566u    /* 050566 */
+#define patty_and_selma_animations_0_sprites_ADDRESS 0x6572u    /* 050572 */
+#define patty_and_selma_animations_0_sprites_2_ADDRESS 0x6584u    /* 050584 */
+#define patty_and_selma_animations_1_ADDRESS 0x6596u    /* 050596 */
+#define patty_and_selma_animations_1_sprites_ADDRESS 0x65BAu    /* 0505BA */
+#define patty_and_selma_animations_1_sprites_2_ADDRESS 0x65CCu    /* 0505CC */
+#define patty_and_selma_animations_1_sprites_3_ADDRESS 0x65DEu    /* 0505DE */
+#define patty_and_selma_animations_1_sprites_4_ADDRESS 0x65F0u    /* 0505F0 */
+#define patty_and_selma_animations_1_sprites_5_ADDRESS 0x6602u    /* 050602 */
+#define patty_and_selma_animations_2_ADDRESS 0x6614u    /* 050614 */
+#define patty_and_selma_animations_2_sprites_ADDRESS 0x6620u    /* 050620 */
+#define patty_and_selma_animations_2_sprites_2_ADDRESS 0x6632u    /* 050632 */
+#define patty_and_selma_animations_3_ADDRESS 0x6644u    /* 050644 */
+#define patty_and_selma_animations_3_sprites_ADDRESS 0x6668u    /* 050668 */
+#define patty_and_selma_animations_3_sprites_2_ADDRESS 0x667Au    /* 05067A */
+#define patty_and_selma_animations_3_sprites_3_ADDRESS 0x668Cu    /* 05068C */
+#define patty_and_selma_animations_3_sprites_4_ADDRESS 0x669Eu    /* 05069E */
+#define patty_and_selma_animations_3_sprites_5_ADDRESS 0x66B0u    /* 0506B0 */
+#define grandpa_animations_ADDRESS 0x66C2u    /* 0506C2 */
+#define grandpa_animations_0_ADDRESS 0x66C6u    /* 0506C6 */
+#define grandpa_animations_0_sprites_ADDRESS 0x66D2u    /* 0506D2 */
+#define grandpa_animations_0_sprites_2_ADDRESS 0x66EAu    /* 0506EA */
+#define grandpa_animations_1_ADDRESS 0x6702u    /* 050702 */
+#define grandpa_animations_1_sprites_ADDRESS 0x6726u    /* 050726 */
+#define grandpa_animations_1_sprites_2_ADDRESS 0x673Eu    /* 05073E */
+#define grandpa_animations_1_sprites_3_ADDRESS 0x6756u    /* 050756 */
+#define grandpa_animations_1_sprites_4_ADDRESS 0x676Eu    /* 05076E */
+#define grandpa_animations_1_sprites_5_ADDRESS 0x6786u    /* 050786 */
+#define bleeding_gums_murphy_animations_ADDRESS 0x67AAu    /* 0507AA */
+#define bleeding_gums_murphy_animations_0_ADDRESS 0x67AEu    /* 0507AE */
+#define bleeding_gums_murphy_animations_0_sprites_ADDRESS 0x67C2u    /* 0507C2 */
+#define bleeding_gums_murphy_animations_0_sprites_2_ADDRESS 0x67D4u    /* 0507D4 */
+#define bleeding_gums_murphy_animations_0_sprites_3_ADDRESS 0x67E6u    /* 0507E6 */
+#define bleeding_gums_murphy_animations_1_ADDRESS 0x6804u    /* 050804 */
+#define bleeding_gums_murphy_animations_1_sprites_ADDRESS 0x6810u    /* 050810 */
 #define burns_robot_3_animations_ADDRESS 0x683Au    /* 05083A */
 #define burns_robot_3_animations_0_ADDRESS 0x685Eu    /* 05085E */
 #define burns_robot_3_animations_0_sprites_ADDRESS 0x6872u    /* 050872 */
@@ -6843,53 +6603,53 @@ extern const void *reset_vector_data;
 #define burns_robot_3_animations_16_sprites_4_ADDRESS 0x7BCAu    /* 051BCA */
 #define burns_robot_3_animations_17_ADDRESS 0x7BD0u    /* 051BD0 */
 #define burns_robot_3_animations_17_sprites_ADDRESS 0x7BD8u    /* 051BD8 */
-#define kind_CF_animations_ADDRESS 0x7BDEu    /* 051BDE */
-#define kind_CF_animations_0_ADDRESS 0x7BE6u    /* 051BE6 */
-#define kind_CF_animations_0_sprites_ADDRESS 0x7BFAu    /* 051BFA */
-#define kind_CF_animations_0_sprites_2_ADDRESS 0x7C00u    /* 051C00 */
-#define kind_CF_animations_0_sprites_3_ADDRESS 0x7C0Cu    /* 051C0C */
-#define kind_CF_animations_1_ADDRESS 0x7C18u    /* 051C18 */
-#define kind_CF_animations_1_sprites_ADDRESS 0x7C38u    /* 051C38 */
-#define kind_CF_animations_1_sprites_2_ADDRESS 0x7C3Eu    /* 051C3E */
-#define kind_CF_animations_1_sprites_3_ADDRESS 0x7C4Au    /* 051C4A */
-#define kind_CF_animations_2_ADDRESS 0x7C50u    /* 051C50 */
-#define kind_CF_animations_3_ADDRESS 0x7C5Cu    /* 051C5C */
-#define kind_CF_animations_3_sprites_ADDRESS 0x7C64u    /* 051C64 */
-#define kind_CF_animations_3_sprites_fill_ADDRESS 0x7C6Au    /* 051C6A */
-#define kind_CF_animations_3_sprites_rest_ADDRESS 0x7C6Cu    /* 051C6C */
-#define kind_CF_animations_3_sprites_rest_2_ADDRESS 0x7C78u    /* 051C78 */
-#define kind_CF_animations_3_sprites_rest_3_ADDRESS 0x7C8Au    /* 051C8A */
-#define kind_CF_animations_3_sprites_rest_4_ADDRESS 0x7C9Cu    /* 051C9C */
-#define kind_CF_animations_3_sprites_rest_5_ADDRESS 0x7CA8u    /* 051CA8 */
-#define kind_CF_animations_3_sprites_rest_6_ADDRESS 0x7CBAu    /* 051CBA */
-#define kind_CF_animations_3_sprites_rest_7_ADDRESS 0x7CCCu    /* 051CCC */
-#define kind_CF_animations_3_sprites_rest_8_ADDRESS 0x7CD8u    /* 051CD8 */
-#define kind_CF_animations_3_sprites_rest_9_ADDRESS 0x7CEAu    /* 051CEA */
-#define kind_CF_animations_3_sprites_rest_10_ADDRESS 0x7CFCu    /* 051CFC */
-#define kind_CF_animations_3_sprites_rest_11_ADDRESS 0x7D08u    /* 051D08 */
-#define kind_CF_animations_3_sprites_rest_12_ADDRESS 0x7D14u    /* 051D14 */
-#define kind_CF_animations_3_sprites_fill_2_ADDRESS 0x7D20u    /* 051D20 */
-#define kind_CF_animations_3_sprites_rest_13_ADDRESS 0x7D2Au    /* 051D2A */
-#define kind_CF_animations_3_sprites_rest_14_ADDRESS 0x7D46u    /* 051D46 */
-#define kind_CF_animations_3_sprites_rest_15_ADDRESS 0x7D52u    /* 051D52 */
-#define kind_CF_animations_3_sprites_rest_16_ADDRESS 0x7D5Eu    /* 051D5E */
-#define kind_CF_animations_3_sprites_rest_17_ADDRESS 0x7D6Au    /* 051D6A */
-#define kind_CF_animations_3_sprites_rest_18_ADDRESS 0x7D76u    /* 051D76 */
-#define kind_CF_animations_3_sprites_rest_19_ADDRESS 0x7D92u    /* 051D92 */
-#define kind_CF_animations_3_sprites_rest_20_ADDRESS 0x7DAAu    /* 051DAA */
-#define kind_CF_animations_3_sprites_rest_21_ADDRESS 0x7DC2u    /* 051DC2 */
-#define kind_CF_animations_3_sprites_rest_22_ADDRESS 0x7DDAu    /* 051DDA */
-#define kind_CF_animations_3_sprites_rest_23_ADDRESS 0x7DF2u    /* 051DF2 */
-#define kind_CF_animations_3_sprites_rest_24_ADDRESS 0x7DFEu    /* 051DFE */
-#define kind_CF_animations_3_sprites_rest_25_ADDRESS 0x7E16u    /* 051E16 */
-#define kind_CF_animations_3_sprites_rest_26_ADDRESS 0x7E2Eu    /* 051E2E */
-#define kind_CF_animations_3_sprites_rest_27_ADDRESS 0x7E3Au    /* 051E3A */
-#define kind_CF_animations_3_sprites_rest_28_ADDRESS 0x7E46u    /* 051E46 */
-#define kind_CF_animations_3_sprites_rest_29_ADDRESS 0x7E52u    /* 051E52 */
-#define kind_CF_animations_3_sprites_rest_30_ADDRESS 0x7E5Eu    /* 051E5E */
-#define kind_CF_animations_3_sprites_rest_31_ADDRESS 0x7E6Au    /* 051E6A */
-#define kind_CF_animations_3_sprites_fill_3_ADDRESS 0x7E76u    /* 051E76 */
-#define kind_CF_animations_3_sprites_rest_32_ADDRESS 0x6000u    /* 052000 */
+#define frog_animations_ADDRESS 0x7BDEu    /* 051BDE */
+#define frog_animations_0_ADDRESS 0x7BE6u    /* 051BE6 */
+#define frog_animations_0_sprites_ADDRESS 0x7BFAu    /* 051BFA */
+#define frog_animations_0_sprites_2_ADDRESS 0x7C00u    /* 051C00 */
+#define frog_animations_0_sprites_3_ADDRESS 0x7C0Cu    /* 051C0C */
+#define frog_animations_1_ADDRESS 0x7C18u    /* 051C18 */
+#define frog_animations_1_sprites_ADDRESS 0x7C38u    /* 051C38 */
+#define frog_animations_1_sprites_2_ADDRESS 0x7C3Eu    /* 051C3E */
+#define frog_animations_1_sprites_3_ADDRESS 0x7C4Au    /* 051C4A */
+#define frog_animations_2_ADDRESS 0x7C50u    /* 051C50 */
+#define frog_animations_3_ADDRESS 0x7C5Cu    /* 051C5C */
+#define frog_animations_3_sprites_ADDRESS 0x7C64u    /* 051C64 */
+#define frog_animations_3_sprites_fill_ADDRESS 0x7C6Au    /* 051C6A */
+#define frog_animations_3_sprites_rest_ADDRESS 0x7C6Cu    /* 051C6C */
+#define frog_animations_3_sprites_rest_2_ADDRESS 0x7C78u    /* 051C78 */
+#define frog_animations_3_sprites_rest_3_ADDRESS 0x7C8Au    /* 051C8A */
+#define frog_animations_3_sprites_rest_4_ADDRESS 0x7C9Cu    /* 051C9C */
+#define frog_animations_3_sprites_rest_5_ADDRESS 0x7CA8u    /* 051CA8 */
+#define frog_animations_3_sprites_rest_6_ADDRESS 0x7CBAu    /* 051CBA */
+#define frog_animations_3_sprites_rest_7_ADDRESS 0x7CCCu    /* 051CCC */
+#define frog_animations_3_sprites_rest_8_ADDRESS 0x7CD8u    /* 051CD8 */
+#define frog_animations_3_sprites_rest_9_ADDRESS 0x7CEAu    /* 051CEA */
+#define frog_animations_3_sprites_rest_10_ADDRESS 0x7CFCu    /* 051CFC */
+#define frog_animations_3_sprites_rest_11_ADDRESS 0x7D08u    /* 051D08 */
+#define frog_animations_3_sprites_rest_12_ADDRESS 0x7D14u    /* 051D14 */
+#define frog_animations_3_sprites_fill_2_ADDRESS 0x7D20u    /* 051D20 */
+#define frog_animations_3_sprites_rest_13_ADDRESS 0x7D2Au    /* 051D2A */
+#define frog_animations_3_sprites_rest_14_ADDRESS 0x7D46u    /* 051D46 */
+#define frog_animations_3_sprites_rest_15_ADDRESS 0x7D52u    /* 051D52 */
+#define frog_animations_3_sprites_rest_16_ADDRESS 0x7D5Eu    /* 051D5E */
+#define frog_animations_3_sprites_rest_17_ADDRESS 0x7D6Au    /* 051D6A */
+#define frog_animations_3_sprites_rest_18_ADDRESS 0x7D76u    /* 051D76 */
+#define frog_animations_3_sprites_rest_19_ADDRESS 0x7D92u    /* 051D92 */
+#define frog_animations_3_sprites_rest_20_ADDRESS 0x7DAAu    /* 051DAA */
+#define frog_animations_3_sprites_rest_21_ADDRESS 0x7DC2u    /* 051DC2 */
+#define frog_animations_3_sprites_rest_22_ADDRESS 0x7DDAu    /* 051DDA */
+#define frog_animations_3_sprites_rest_23_ADDRESS 0x7DF2u    /* 051DF2 */
+#define frog_animations_3_sprites_rest_24_ADDRESS 0x7DFEu    /* 051DFE */
+#define frog_animations_3_sprites_rest_25_ADDRESS 0x7E16u    /* 051E16 */
+#define frog_animations_3_sprites_rest_26_ADDRESS 0x7E2Eu    /* 051E2E */
+#define frog_animations_3_sprites_rest_27_ADDRESS 0x7E3Au    /* 051E3A */
+#define frog_animations_3_sprites_rest_28_ADDRESS 0x7E46u    /* 051E46 */
+#define frog_animations_3_sprites_rest_29_ADDRESS 0x7E52u    /* 051E52 */
+#define frog_animations_3_sprites_rest_30_ADDRESS 0x7E5Eu    /* 051E5E */
+#define frog_animations_3_sprites_rest_31_ADDRESS 0x7E6Au    /* 051E6A */
+#define frog_animations_3_sprites_fill_3_ADDRESS 0x7E76u    /* 051E76 */
+#define frog_animations_3_sprites_rest_32_ADDRESS 0x6000u    /* 052000 */
 #define burns_robot_animations_2_ADDRESS 0x600Au    /* 05200A */
 #define burns_robot_animations_2_0_ADDRESS 0x6032u    /* 052032 */
 #define burns_robot_animations_2_0_sprites_ADDRESS 0x604Au    /* 05204A */
@@ -7007,130 +6767,130 @@ extern const void *reset_vector_data;
 #define mr_burns_animations_2_sprites_ADDRESS 0x75BAu    /* 0535BA */
 #define mr_burns_animations_3_ADDRESS 0x75CCu    /* 0535CC */
 #define mr_burns_animations_3_sprites_ADDRESS 0x75D4u    /* 0535D4 */
-#define kind_12_animations_ADDRESS 0x75E6u    /* 0535E6 */
-#define kind_12_animations_0_ADDRESS 0x7614u    /* 053614 */
-#define kind_12_animations_0_sprites_ADDRESS 0x7620u    /* 053620 */
-#define kind_12_animations_0_sprites_2_ADDRESS 0x7626u    /* 053626 */
-#define kind_12_animations_1_ADDRESS 0x762Cu    /* 05362C */
-#define kind_12_animations_1_sprites_ADDRESS 0x7634u    /* 053634 */
-#define kind_12_animations_2_ADDRESS 0x7640u    /* 053640 */
-#define kind_12_animations_2_sprites_ADDRESS 0x7654u    /* 053654 */
-#define kind_12_animations_2_sprites_2_ADDRESS 0x7660u    /* 053660 */
-#define kind_12_animations_2_sprites_3_ADDRESS 0x766Cu    /* 05366C */
-#define kind_12_animations_2_sprites_4_ADDRESS 0x7678u    /* 053678 */
-#define kind_12_animations_3_ADDRESS 0x7684u    /* 053684 */
-#define kind_12_animations_3_sprites_ADDRESS 0x7698u    /* 053698 */
-#define kind_12_animations_3_sprites_2_ADDRESS 0x76AAu    /* 0536AA */
-#define kind_12_animations_3_sprites_3_ADDRESS 0x76C8u    /* 0536C8 */
-#define kind_12_animations_3_sprites_4_ADDRESS 0x76E6u    /* 0536E6 */
-#define kind_12_animations_4_ADDRESS 0x76F8u    /* 0536F8 */
-#define kind_12_animations_4_sprites_ADDRESS 0x7708u    /* 053708 */
-#define kind_12_animations_4_sprites_2_ADDRESS 0x7726u    /* 053726 */
-#define kind_12_animations_5_ADDRESS 0x7750u    /* 053750 */
-#define kind_12_animations_5_sprites_ADDRESS 0x7764u    /* 053764 */
-#define kind_12_animations_5_sprites_2_ADDRESS 0x7776u    /* 053776 */
-#define kind_12_animations_6_ADDRESS 0x7794u    /* 053794 */
-#define kind_12_animations_6_sprites_ADDRESS 0x77A4u    /* 0537A4 */
-#define kind_12_animations_7_ADDRESS 0x77CEu    /* 0537CE */
-#define kind_12_animations_8_ADDRESS 0x77D6u    /* 0537D6 */
-#define kind_12_animations_9_ADDRESS 0x77DEu    /* 0537DE */
-#define kind_12_animations_9_sprites_ADDRESS 0x77E6u    /* 0537E6 */
-#define kind_12_animations_10_ADDRESS 0x77F2u    /* 0537F2 */
-#define kind_12_animations_10_sprites_ADDRESS 0x77FEu    /* 0537FE */
-#define kind_12_animations_10_sprites_2_ADDRESS 0x7810u    /* 053810 */
-#define kind_12_animations_11_ADDRESS 0x7822u    /* 053822 */
-#define kind_12_animations_12_ADDRESS 0x782Eu    /* 05382E */
-#define kind_12_animations_12_sprites_ADDRESS 0x7836u    /* 053836 */
-#define kind_12_animations_13_ADDRESS 0x7842u    /* 053842 */
-#define kind_12_animations_13_sprites_ADDRESS 0x784Au    /* 05384A */
-#define kind_12_animations_14_ADDRESS 0x7862u    /* 053862 */
-#define kind_12_animations_14_sprites_ADDRESS 0x786Au    /* 05386A */
-#define kind_12_animations_15_ADDRESS 0x7882u    /* 053882 */
-#define kind_12_animations_16_ADDRESS 0x789Au    /* 05389A */
-#define kind_12_animations_16_sprites_ADDRESS 0x78A2u    /* 0538A2 */
-#define kind_12_animations_17_ADDRESS 0x78B4u    /* 0538B4 */
-#define kind_12_animations_17_sprites_ADDRESS 0x78C0u    /* 0538C0 */
-#define kind_12_animations_18_ADDRESS 0x78D2u    /* 0538D2 */
-#define kind_12_animations_18_sprites_ADDRESS 0x78E2u    /* 0538E2 */
-#define kind_12_animations_18_sprites_2_ADDRESS 0x78E8u    /* 0538E8 */
-#define kind_12_animations_18_sprites_3_ADDRESS 0x78EEu    /* 0538EE */
-#define kind_12_animations_19_ADDRESS 0x78F4u    /* 0538F4 */
-#define kind_12_animations_19_sprites_ADDRESS 0x7908u    /* 053908 */
-#define kind_12_animations_19_sprites_2_ADDRESS 0x7920u    /* 053920 */
-#define kind_12_animations_19_sprites_3_ADDRESS 0x7938u    /* 053938 */
-#define kind_12_animations_19_sprites_4_ADDRESS 0x7950u    /* 053950 */
-#define kind_12_animations_20_ADDRESS 0x797Au    /* 05397A */
-#define kind_12_animations_20_sprites_ADDRESS 0x7986u    /* 053986 */
-#define kind_12_animations_21_ADDRESS 0x79B0u    /* 0539B0 */
-#define kind_12_animations_21_sprites_ADDRESS 0x79BCu    /* 0539BC */
-#define kind_12_animations_21_sprites_2_ADDRESS 0x79E6u    /* 0539E6 */
-#define kind_12_animations_22_ADDRESS 0x7A16u    /* 053A16 */
-#define kind_A5_animations_ADDRESS 0x7A26u    /* 053A26 */
-#define kind_A5_animations_8_ADDRESS 0x7A3Cu    /* 053A3C */
-#define kind_A5_animations_8_sprites_ADDRESS 0x7A58u    /* 053A58 */
-#define kind_A5_animations_8_sprites_2_ADDRESS 0x7A64u    /* 053A64 */
-#define kind_A5_animations_8_sprites_3_ADDRESS 0x7A70u    /* 053A70 */
-#define kind_A5_animations_8_sprites_4_ADDRESS 0x7A7Cu    /* 053A7C */
-#define kind_A5_animations_0_ADDRESS 0x7A88u    /* 053A88 */
-#define kind_A5_animations_0_sprites_ADDRESS 0x7AA4u    /* 053AA4 */
-#define kind_A5_animations_0_sprites_2_ADDRESS 0x7AB6u    /* 053AB6 */
-#define kind_A5_animations_0_sprites_3_ADDRESS 0x7AC8u    /* 053AC8 */
-#define kind_A5_animations_0_sprites_4_ADDRESS 0x7ADAu    /* 053ADA */
-#define kind_A5_animations_2_ADDRESS 0x7AECu    /* 053AEC */
-#define kind_A5_animations_2_sprites_ADDRESS 0x7B08u    /* 053B08 */
-#define kind_A5_animations_2_sprites_2_ADDRESS 0x7B1Au    /* 053B1A */
-#define kind_A5_animations_2_sprites_3_ADDRESS 0x7B2Cu    /* 053B2C */
-#define kind_A5_animations_2_sprites_4_ADDRESS 0x7B3Eu    /* 053B3E */
-#define kind_A5_animations_4_ADDRESS 0x7B50u    /* 053B50 */
-#define kind_A5_animations_4_sprites_ADDRESS 0x7B6Cu    /* 053B6C */
-#define kind_A5_animations_4_sprites_2_ADDRESS 0x7B7Eu    /* 053B7E */
-#define kind_A5_animations_4_sprites_3_ADDRESS 0x7B90u    /* 053B90 */
-#define kind_A5_animations_4_sprites_4_ADDRESS 0x7BA2u    /* 053BA2 */
-#define kind_A5_animations_6_ADDRESS 0x7BB4u    /* 053BB4 */
-#define kind_A5_animations_6_sprites_ADDRESS 0x7BD0u    /* 053BD0 */
-#define kind_A5_animations_6_sprites_2_ADDRESS 0x7BE2u    /* 053BE2 */
-#define kind_A5_animations_6_sprites_3_ADDRESS 0x7BF4u    /* 053BF4 */
-#define kind_A5_animations_6_sprites_4_ADDRESS 0x7C06u    /* 053C06 */
-#define kind_A5_animations_9_ADDRESS 0x7C18u    /* 053C18 */
-#define kind_A5_animations_9_sprites_ADDRESS 0x7C24u    /* 053C24 */
-#define kind_A5_animations_9_sprites_2_ADDRESS 0x7C30u    /* 053C30 */
-#define kind_A5_animations_1_ADDRESS 0x7C3Cu    /* 053C3C */
-#define kind_A5_animations_1_sprites_ADDRESS 0x7C48u    /* 053C48 */
-#define kind_A5_animations_1_sprites_2_ADDRESS 0x7C5Au    /* 053C5A */
-#define kind_A5_animations_3_ADDRESS 0x7C6Cu    /* 053C6C */
-#define kind_A5_animations_3_sprites_ADDRESS 0x7C78u    /* 053C78 */
-#define kind_A5_animations_3_sprites_2_ADDRESS 0x7C8Au    /* 053C8A */
-#define kind_A5_animations_5_ADDRESS 0x7C9Cu    /* 053C9C */
-#define kind_A5_animations_5_sprites_ADDRESS 0x7CA8u    /* 053CA8 */
-#define kind_A5_animations_5_sprites_2_ADDRESS 0x7CBAu    /* 053CBA */
-#define kind_A5_animations_7_ADDRESS 0x7CCCu    /* 053CCC */
-#define kind_A5_animations_7_sprites_ADDRESS 0x7CD8u    /* 053CD8 */
-#define kind_A5_animations_7_sprites_2_ADDRESS 0x7CEAu    /* 053CEA */
-#define kind_A5_animations_10_ADDRESS 0x7CFCu    /* 053CFC */
-#define kind_A5_animations_10_sprites_ADDRESS 0x7D08u    /* 053D08 */
-#define kind_A5_animations_10_sprites_2_ADDRESS 0x7D14u    /* 053D14 */
-#define kind_A6_animations_ADDRESS 0x7D20u    /* 053D20 */
-#define kind_A6_animations_0_ADDRESS 0x7D2Au    /* 053D2A */
-#define kind_A6_animations_0_sprites_ADDRESS 0x7D46u    /* 053D46 */
-#define kind_A6_animations_0_sprites_2_ADDRESS 0x7D52u    /* 053D52 */
-#define kind_A6_animations_0_sprites_3_ADDRESS 0x7D5Eu    /* 053D5E */
-#define kind_A6_animations_0_sprites_4_ADDRESS 0x7D6Au    /* 053D6A */
-#define kind_A6_animations_1_ADDRESS 0x7D76u    /* 053D76 */
-#define kind_A6_animations_1_sprites_ADDRESS 0x7D92u    /* 053D92 */
-#define kind_A6_animations_1_sprites_2_ADDRESS 0x7DAAu    /* 053DAA */
-#define kind_A6_animations_1_sprites_3_ADDRESS 0x7DC2u    /* 053DC2 */
-#define kind_A6_animations_1_sprites_4_ADDRESS 0x7DDAu    /* 053DDA */
-#define kind_A6_animations_2_ADDRESS 0x7DF2u    /* 053DF2 */
-#define kind_A6_animations_2_sprites_ADDRESS 0x7DFEu    /* 053DFE */
-#define kind_A6_animations_2_sprites_2_ADDRESS 0x7E16u    /* 053E16 */
-#define kind_A6_animations_3_ADDRESS 0x7E2Eu    /* 053E2E */
-#define kind_A6_animations_3_sprites_ADDRESS 0x7E3Au    /* 053E3A */
-#define kind_A6_animations_3_sprites_2_ADDRESS 0x7E46u    /* 053E46 */
-#define kind_A6_animations_4_ADDRESS 0x7E52u    /* 053E52 */
-#define kind_A6_animations_4_sprites_ADDRESS 0x7E5Eu    /* 053E5E */
-#define kind_A6_animations_4_sprites_2_ADDRESS 0x7E6Au    /* 053E6A */
-#define kind_A6_animations_4_sprites_2_fill_ADDRESS 0x7E76u    /* 053E76 */
-#define kind_A6_animations_4_sprites_2_rest_ADDRESS 0x6000u    /* 054000 */
+#define channel_6_scenery_animations_ADDRESS 0x75E6u    /* 0535E6 */
+#define channel_6_scenery_animations_0_ADDRESS 0x7614u    /* 053614 */
+#define channel_6_scenery_animations_0_sprites_ADDRESS 0x7620u    /* 053620 */
+#define channel_6_scenery_animations_0_sprites_2_ADDRESS 0x7626u    /* 053626 */
+#define channel_6_scenery_animations_1_ADDRESS 0x762Cu    /* 05362C */
+#define channel_6_scenery_animations_1_sprites_ADDRESS 0x7634u    /* 053634 */
+#define channel_6_scenery_animations_2_ADDRESS 0x7640u    /* 053640 */
+#define channel_6_scenery_animations_2_sprites_ADDRESS 0x7654u    /* 053654 */
+#define channel_6_scenery_animations_2_sprites_2_ADDRESS 0x7660u    /* 053660 */
+#define channel_6_scenery_animations_2_sprites_3_ADDRESS 0x766Cu    /* 05366C */
+#define channel_6_scenery_animations_2_sprites_4_ADDRESS 0x7678u    /* 053678 */
+#define channel_6_scenery_animations_3_ADDRESS 0x7684u    /* 053684 */
+#define channel_6_scenery_animations_3_sprites_ADDRESS 0x7698u    /* 053698 */
+#define channel_6_scenery_animations_3_sprites_2_ADDRESS 0x76AAu    /* 0536AA */
+#define channel_6_scenery_animations_3_sprites_3_ADDRESS 0x76C8u    /* 0536C8 */
+#define channel_6_scenery_animations_3_sprites_4_ADDRESS 0x76E6u    /* 0536E6 */
+#define channel_6_scenery_animations_4_ADDRESS 0x76F8u    /* 0536F8 */
+#define channel_6_scenery_animations_4_sprites_ADDRESS 0x7708u    /* 053708 */
+#define channel_6_scenery_animations_4_sprites_2_ADDRESS 0x7726u    /* 053726 */
+#define channel_6_scenery_animations_5_ADDRESS 0x7750u    /* 053750 */
+#define channel_6_scenery_animations_5_sprites_ADDRESS 0x7764u    /* 053764 */
+#define channel_6_scenery_animations_5_sprites_2_ADDRESS 0x7776u    /* 053776 */
+#define channel_6_scenery_animations_6_ADDRESS 0x7794u    /* 053794 */
+#define channel_6_scenery_animations_6_sprites_ADDRESS 0x77A4u    /* 0537A4 */
+#define channel_6_scenery_animations_7_ADDRESS 0x77CEu    /* 0537CE */
+#define channel_6_scenery_animations_8_ADDRESS 0x77D6u    /* 0537D6 */
+#define channel_6_scenery_animations_9_ADDRESS 0x77DEu    /* 0537DE */
+#define channel_6_scenery_animations_9_sprites_ADDRESS 0x77E6u    /* 0537E6 */
+#define channel_6_scenery_animations_10_ADDRESS 0x77F2u    /* 0537F2 */
+#define channel_6_scenery_animations_10_sprites_ADDRESS 0x77FEu    /* 0537FE */
+#define channel_6_scenery_animations_10_sprites_2_ADDRESS 0x7810u    /* 053810 */
+#define channel_6_scenery_animations_11_ADDRESS 0x7822u    /* 053822 */
+#define channel_6_scenery_animations_12_ADDRESS 0x782Eu    /* 05382E */
+#define channel_6_scenery_animations_12_sprites_ADDRESS 0x7836u    /* 053836 */
+#define channel_6_scenery_animations_13_ADDRESS 0x7842u    /* 053842 */
+#define channel_6_scenery_animations_13_sprites_ADDRESS 0x784Au    /* 05384A */
+#define channel_6_scenery_animations_14_ADDRESS 0x7862u    /* 053862 */
+#define channel_6_scenery_animations_14_sprites_ADDRESS 0x786Au    /* 05386A */
+#define channel_6_scenery_animations_15_ADDRESS 0x7882u    /* 053882 */
+#define channel_6_scenery_animations_16_ADDRESS 0x789Au    /* 05389A */
+#define channel_6_scenery_animations_16_sprites_ADDRESS 0x78A2u    /* 0538A2 */
+#define channel_6_scenery_animations_17_ADDRESS 0x78B4u    /* 0538B4 */
+#define channel_6_scenery_animations_17_sprites_ADDRESS 0x78C0u    /* 0538C0 */
+#define channel_6_scenery_animations_18_ADDRESS 0x78D2u    /* 0538D2 */
+#define channel_6_scenery_animations_18_sprites_ADDRESS 0x78E2u    /* 0538E2 */
+#define channel_6_scenery_animations_18_sprites_2_ADDRESS 0x78E8u    /* 0538E8 */
+#define channel_6_scenery_animations_18_sprites_3_ADDRESS 0x78EEu    /* 0538EE */
+#define channel_6_scenery_animations_19_ADDRESS 0x78F4u    /* 0538F4 */
+#define channel_6_scenery_animations_19_sprites_ADDRESS 0x7908u    /* 053908 */
+#define channel_6_scenery_animations_19_sprites_2_ADDRESS 0x7920u    /* 053920 */
+#define channel_6_scenery_animations_19_sprites_3_ADDRESS 0x7938u    /* 053938 */
+#define channel_6_scenery_animations_19_sprites_4_ADDRESS 0x7950u    /* 053950 */
+#define channel_6_scenery_animations_20_ADDRESS 0x797Au    /* 05397A */
+#define channel_6_scenery_animations_20_sprites_ADDRESS 0x7986u    /* 053986 */
+#define channel_6_scenery_animations_21_ADDRESS 0x79B0u    /* 0539B0 */
+#define channel_6_scenery_animations_21_sprites_ADDRESS 0x79BCu    /* 0539BC */
+#define channel_6_scenery_animations_21_sprites_2_ADDRESS 0x79E6u    /* 0539E6 */
+#define channel_6_scenery_animations_22_ADDRESS 0x7A16u    /* 053A16 */
+#define girl_with_food_animations_ADDRESS 0x7A26u    /* 053A26 */
+#define girl_with_food_animations_8_ADDRESS 0x7A3Cu    /* 053A3C */
+#define girl_with_food_animations_8_sprites_ADDRESS 0x7A58u    /* 053A58 */
+#define girl_with_food_animations_8_sprites_2_ADDRESS 0x7A64u    /* 053A64 */
+#define girl_with_food_animations_8_sprites_3_ADDRESS 0x7A70u    /* 053A70 */
+#define girl_with_food_animations_8_sprites_4_ADDRESS 0x7A7Cu    /* 053A7C */
+#define girl_with_food_animations_0_ADDRESS 0x7A88u    /* 053A88 */
+#define girl_with_food_animations_0_sprites_ADDRESS 0x7AA4u    /* 053AA4 */
+#define girl_with_food_animations_0_sprites_2_ADDRESS 0x7AB6u    /* 053AB6 */
+#define girl_with_food_animations_0_sprites_3_ADDRESS 0x7AC8u    /* 053AC8 */
+#define girl_with_food_animations_0_sprites_4_ADDRESS 0x7ADAu    /* 053ADA */
+#define girl_with_food_animations_2_ADDRESS 0x7AECu    /* 053AEC */
+#define girl_with_food_animations_2_sprites_ADDRESS 0x7B08u    /* 053B08 */
+#define girl_with_food_animations_2_sprites_2_ADDRESS 0x7B1Au    /* 053B1A */
+#define girl_with_food_animations_2_sprites_3_ADDRESS 0x7B2Cu    /* 053B2C */
+#define girl_with_food_animations_2_sprites_4_ADDRESS 0x7B3Eu    /* 053B3E */
+#define girl_with_food_animations_4_ADDRESS 0x7B50u    /* 053B50 */
+#define girl_with_food_animations_4_sprites_ADDRESS 0x7B6Cu    /* 053B6C */
+#define girl_with_food_animations_4_sprites_2_ADDRESS 0x7B7Eu    /* 053B7E */
+#define girl_with_food_animations_4_sprites_3_ADDRESS 0x7B90u    /* 053B90 */
+#define girl_with_food_animations_4_sprites_4_ADDRESS 0x7BA2u    /* 053BA2 */
+#define girl_with_food_animations_6_ADDRESS 0x7BB4u    /* 053BB4 */
+#define girl_with_food_animations_6_sprites_ADDRESS 0x7BD0u    /* 053BD0 */
+#define girl_with_food_animations_6_sprites_2_ADDRESS 0x7BE2u    /* 053BE2 */
+#define girl_with_food_animations_6_sprites_3_ADDRESS 0x7BF4u    /* 053BF4 */
+#define girl_with_food_animations_6_sprites_4_ADDRESS 0x7C06u    /* 053C06 */
+#define girl_with_food_animations_9_ADDRESS 0x7C18u    /* 053C18 */
+#define girl_with_food_animations_9_sprites_ADDRESS 0x7C24u    /* 053C24 */
+#define girl_with_food_animations_9_sprites_2_ADDRESS 0x7C30u    /* 053C30 */
+#define girl_with_food_animations_1_ADDRESS 0x7C3Cu    /* 053C3C */
+#define girl_with_food_animations_1_sprites_ADDRESS 0x7C48u    /* 053C48 */
+#define girl_with_food_animations_1_sprites_2_ADDRESS 0x7C5Au    /* 053C5A */
+#define girl_with_food_animations_3_ADDRESS 0x7C6Cu    /* 053C6C */
+#define girl_with_food_animations_3_sprites_ADDRESS 0x7C78u    /* 053C78 */
+#define girl_with_food_animations_3_sprites_2_ADDRESS 0x7C8Au    /* 053C8A */
+#define girl_with_food_animations_5_ADDRESS 0x7C9Cu    /* 053C9C */
+#define girl_with_food_animations_5_sprites_ADDRESS 0x7CA8u    /* 053CA8 */
+#define girl_with_food_animations_5_sprites_2_ADDRESS 0x7CBAu    /* 053CBA */
+#define girl_with_food_animations_7_ADDRESS 0x7CCCu    /* 053CCC */
+#define girl_with_food_animations_7_sprites_ADDRESS 0x7CD8u    /* 053CD8 */
+#define girl_with_food_animations_7_sprites_2_ADDRESS 0x7CEAu    /* 053CEA */
+#define girl_with_food_animations_10_ADDRESS 0x7CFCu    /* 053CFC */
+#define girl_with_food_animations_10_sprites_ADDRESS 0x7D08u    /* 053D08 */
+#define girl_with_food_animations_10_sprites_2_ADDRESS 0x7D14u    /* 053D14 */
+#define nelson_animations_ADDRESS 0x7D20u    /* 053D20 */
+#define nelson_animations_0_ADDRESS 0x7D2Au    /* 053D2A */
+#define nelson_animations_0_sprites_ADDRESS 0x7D46u    /* 053D46 */
+#define nelson_animations_0_sprites_2_ADDRESS 0x7D52u    /* 053D52 */
+#define nelson_animations_0_sprites_3_ADDRESS 0x7D5Eu    /* 053D5E */
+#define nelson_animations_0_sprites_4_ADDRESS 0x7D6Au    /* 053D6A */
+#define nelson_animations_1_ADDRESS 0x7D76u    /* 053D76 */
+#define nelson_animations_1_sprites_ADDRESS 0x7D92u    /* 053D92 */
+#define nelson_animations_1_sprites_2_ADDRESS 0x7DAAu    /* 053DAA */
+#define nelson_animations_1_sprites_3_ADDRESS 0x7DC2u    /* 053DC2 */
+#define nelson_animations_1_sprites_4_ADDRESS 0x7DDAu    /* 053DDA */
+#define nelson_animations_2_ADDRESS 0x7DF2u    /* 053DF2 */
+#define nelson_animations_2_sprites_ADDRESS 0x7DFEu    /* 053DFE */
+#define nelson_animations_2_sprites_2_ADDRESS 0x7E16u    /* 053E16 */
+#define nelson_animations_3_ADDRESS 0x7E2Eu    /* 053E2E */
+#define nelson_animations_3_sprites_ADDRESS 0x7E3Au    /* 053E3A */
+#define nelson_animations_3_sprites_2_ADDRESS 0x7E46u    /* 053E46 */
+#define nelson_animations_4_ADDRESS 0x7E52u    /* 053E52 */
+#define nelson_animations_4_sprites_ADDRESS 0x7E5Eu    /* 053E5E */
+#define nelson_animations_4_sprites_2_ADDRESS 0x7E6Au    /* 053E6A */
+#define nelson_animations_4_sprites_2_fill_ADDRESS 0x7E76u    /* 053E76 */
+#define nelson_animations_4_sprites_2_rest_ADDRESS 0x6000u    /* 054000 */
 #define burns_robot_2_animations_ADDRESS 0x6004u    /* 054004 */
 #define burns_robot_2_animations_0_ADDRESS 0x6024u    /* 054024 */
 #define burns_robot_2_animations_0_sprites_ADDRESS 0x6034u    /* 054034 */
@@ -8289,107 +8049,107 @@ extern const void *reset_vector_data;
 #define marge_animations_46_ADDRESS 0x787Eu    /* 06187E */
 #define marge_animations_46_sprites_ADDRESS 0x788Au    /* 06188A */
 #define marge_animations_46_sprites_2_ADDRESS 0x7896u    /* 061896 */
-#define kind_A7_animations_ADDRESS 0x78A8u    /* 0618A8 */
-#define kind_A7_animations_0_ADDRESS 0x78B2u    /* 0618B2 */
-#define kind_A7_animations_0_sprites_ADDRESS 0x78CEu    /* 0618CE */
-#define kind_A7_animations_0_sprites_2_ADDRESS 0x78DAu    /* 0618DA */
-#define kind_A7_animations_0_sprites_3_ADDRESS 0x78E6u    /* 0618E6 */
-#define kind_A7_animations_0_sprites_4_ADDRESS 0x78F2u    /* 0618F2 */
-#define kind_A7_animations_1_ADDRESS 0x78FEu    /* 0618FE */
-#define kind_A7_animations_1_sprites_ADDRESS 0x791Au    /* 06191A */
-#define kind_A7_animations_1_sprites_2_ADDRESS 0x7932u    /* 061932 */
-#define kind_A7_animations_1_sprites_3_ADDRESS 0x794Au    /* 06194A */
-#define kind_A7_animations_1_sprites_4_ADDRESS 0x7962u    /* 061962 */
-#define kind_A7_animations_2_ADDRESS 0x797Au    /* 06197A */
-#define kind_A7_animations_2_sprites_ADDRESS 0x7986u    /* 061986 */
-#define kind_A7_animations_2_sprites_2_ADDRESS 0x799Eu    /* 06199E */
-#define kind_A7_animations_3_ADDRESS 0x79B6u    /* 0619B6 */
-#define kind_A7_animations_3_sprites_ADDRESS 0x79C2u    /* 0619C2 */
-#define kind_A7_animations_3_sprites_2_ADDRESS 0x79CEu    /* 0619CE */
-#define kind_A7_animations_4_ADDRESS 0x79DAu    /* 0619DA */
-#define kind_A7_animations_4_sprites_ADDRESS 0x79E6u    /* 0619E6 */
-#define kind_A7_animations_4_sprites_2_ADDRESS 0x79F2u    /* 0619F2 */
-#define kind_A8_animations_ADDRESS 0x79FEu    /* 0619FE */
-#define kind_A8_animations_0_ADDRESS 0x7A0Cu    /* 061A0C */
-#define kind_A8_animations_0_sprites_ADDRESS 0x7A28u    /* 061A28 */
-#define kind_A8_animations_0_sprites_2_ADDRESS 0x7A3Au    /* 061A3A */
-#define kind_A8_animations_0_sprites_3_ADDRESS 0x7A4Cu    /* 061A4C */
-#define kind_A8_animations_0_sprites_4_ADDRESS 0x7A5Eu    /* 061A5E */
-#define kind_A8_animations_1_ADDRESS 0x7A70u    /* 061A70 */
-#define kind_A8_animations_1_sprites_ADDRESS 0x7A8Cu    /* 061A8C */
-#define kind_A8_animations_1_sprites_2_ADDRESS 0x7AAAu    /* 061AAA */
-#define kind_A8_animations_1_sprites_3_ADDRESS 0x7AC8u    /* 061AC8 */
-#define kind_A8_animations_1_sprites_4_ADDRESS 0x7AE6u    /* 061AE6 */
-#define kind_A8_animations_2_ADDRESS 0x7B04u    /* 061B04 */
-#define kind_A8_animations_2_sprites_ADDRESS 0x7B10u    /* 061B10 */
-#define kind_A8_animations_2_sprites_2_ADDRESS 0x7B28u    /* 061B28 */
-#define kind_A8_animations_3_ADDRESS 0x7B40u    /* 061B40 */
-#define kind_A8_animations_3_sprites_ADDRESS 0x7B4Cu    /* 061B4C */
-#define kind_A8_animations_3_sprites_2_ADDRESS 0x7B6Au    /* 061B6A */
-#define kind_A8_animations_4_ADDRESS 0x7B82u    /* 061B82 */
-#define kind_A8_animations_4_sprites_ADDRESS 0x7B8Eu    /* 061B8E */
-#define kind_A8_animations_4_sprites_2_ADDRESS 0x7B94u    /* 061B94 */
-#define kind_A8_animations_5_ADDRESS 0x7BA0u    /* 061BA0 */
-#define kind_A8_animations_5_sprites_ADDRESS 0x7BC0u    /* 061BC0 */
-#define kind_A8_animations_5_sprites_2_ADDRESS 0x7BCCu    /* 061BCC */
-#define kind_A8_animations_5_sprites_3_ADDRESS 0x7BD8u    /* 061BD8 */
-#define kind_A8_animations_6_ADDRESS 0x7BE4u    /* 061BE4 */
-#define kind_A8_animations_6_sprites_ADDRESS 0x7C08u    /* 061C08 */
-#define kind_A8_animations_6_sprites_2_ADDRESS 0x7C26u    /* 061C26 */
-#define kind_A8_animations_6_sprites_3_ADDRESS 0x7C3Eu    /* 061C3E */
-#define kind_A8_animations_6_sprites_4_ADDRESS 0x7C4Au    /* 061C4A */
-#define kind_A8_animations_6_sprites_5_ADDRESS 0x7C62u    /* 061C62 */
-#define kind_A9_animations_ADDRESS 0x7C86u    /* 061C86 */
-#define kind_A9_animations_0_ADDRESS 0x7C8Eu    /* 061C8E */
-#define kind_A9_animations_0_sprites_ADDRESS 0x7CB2u    /* 061CB2 */
-#define kind_A9_animations_0_sprites_2_ADDRESS 0x7CCAu    /* 061CCA */
-#define kind_A9_animations_0_sprites_3_ADDRESS 0x7CE2u    /* 061CE2 */
-#define kind_A9_animations_0_sprites_4_ADDRESS 0x7CFAu    /* 061CFA */
-#define kind_A9_animations_0_sprites_5_ADDRESS 0x7D12u    /* 061D12 */
-#define kind_A9_animations_1_ADDRESS 0x7D2Au    /* 061D2A */
-#define kind_A9_animations_1_sprites_ADDRESS 0x7D4Eu    /* 061D4E */
-#define kind_A9_animations_1_sprites_2_ADDRESS 0x7D6Cu    /* 061D6C */
-#define kind_A9_animations_1_sprites_3_ADDRESS 0x7D8Au    /* 061D8A */
-#define kind_A9_animations_1_sprites_4_ADDRESS 0x7DA8u    /* 061DA8 */
-#define kind_A9_animations_1_sprites_5_ADDRESS 0x7DC6u    /* 061DC6 */
-#define kind_A9_animations_2_ADDRESS 0x7DE4u    /* 061DE4 */
-#define kind_A9_animations_2_sprites_ADDRESS 0x7DFCu    /* 061DFC */
-#define kind_A9_animations_2_sprites_2_ADDRESS 0x7E14u    /* 061E14 */
-#define kind_A9_animations_3_ADDRESS 0x7E2Cu    /* 061E2C */
-#define kind_A9_animations_3_sprites_ADDRESS 0x7E44u    /* 061E44 */
-#define kind_A9_animations_3_sprites_2_ADDRESS 0x7E62u    /* 061E62 */
-#define kind_A9_animations_3_sprites_2_fill_ADDRESS 0x7E80u    /* 061E80 */
-#define kind_A9_animations_3_sprites_2_rest_ADDRESS 0x7EA4u    /* 061EA4 */
-#define kind_A9_animations_3_sprites_2_rest_2_ADDRESS 0x7EB0u    /* 061EB0 */
-#define kind_A9_animations_3_sprites_2_rest_3_ADDRESS 0x7EDAu    /* 061EDA */
-#define kind_A9_animations_3_sprites_2_rest_4_ADDRESS 0x7F04u    /* 061F04 */
-#define kind_A9_animations_3_sprites_2_rest_5_ADDRESS 0x7F0Cu    /* 061F0C */
-#define kind_A9_animations_3_sprites_2_rest_6_ADDRESS 0x7F12u    /* 061F12 */
-#define kind_A9_animations_3_sprites_2_rest_7_ADDRESS 0x7F1Au    /* 061F1A */
-#define kind_A9_animations_3_sprites_2_rest_8_ADDRESS 0x7F38u    /* 061F38 */
-#define kind_A9_animations_3_sprites_2_rest_9_ADDRESS 0x7F40u    /* 061F40 */
-#define kind_A9_animations_3_sprites_2_rest_10_ADDRESS 0x7F58u    /* 061F58 */
-#define kind_A9_animations_3_sprites_2_rest_11_ADDRESS 0x7F60u    /* 061F60 */
-#define kind_A9_animations_3_sprites_2_fill_2_ADDRESS 0x7F6Cu    /* 061F6C */
-#define kind_A9_animations_3_sprites_2_rest_12_ADDRESS 0x7F6Eu    /* 061F6E */
-#define kind_A9_animations_3_sprites_2_rest_13_ADDRESS 0x7F76u    /* 061F76 */
-#define kind_A9_animations_3_sprites_2_rest_14_ADDRESS 0x7F7Cu    /* 061F7C */
-#define kind_A9_animations_3_sprites_2_rest_15_ADDRESS 0x7F84u    /* 061F84 */
-#define kind_A9_animations_3_sprites_2_rest_16_ADDRESS 0x7F8Au    /* 061F8A */
-#define kind_A9_animations_3_sprites_2_rest_17_ADDRESS 0x7F92u    /* 061F92 */
-#define kind_A9_animations_3_sprites_2_rest_18_ADDRESS 0x7F9Eu    /* 061F9E */
-#define kind_A9_animations_3_sprites_2_rest_19_ADDRESS 0x7FAAu    /* 061FAA */
-#define kind_A9_animations_3_sprites_2_rest_20_ADDRESS 0x7FB0u    /* 061FB0 */
-#define kind_A9_animations_3_sprites_2_rest_21_ADDRESS 0x7FB6u    /* 061FB6 */
-#define kind_A9_animations_3_sprites_2_rest_22_ADDRESS 0x7FBEu    /* 061FBE */
-#define kind_A9_animations_3_sprites_2_rest_23_ADDRESS 0x7FC4u    /* 061FC4 */
-#define kind_A9_animations_3_sprites_2_rest_24_ADDRESS 0x7FCCu    /* 061FCC */
-#define kind_A9_animations_3_sprites_2_rest_25_ADDRESS 0x7FD2u    /* 061FD2 */
-#define kind_A9_animations_3_sprites_2_rest_26_ADDRESS 0x7FDAu    /* 061FDA */
-#define kind_A9_animations_3_sprites_2_rest_27_ADDRESS 0x7FE0u    /* 061FE0 */
-#define kind_A9_animations_3_sprites_2_rest_28_ADDRESS 0x7FE8u    /* 061FE8 */
-#define kind_A9_animations_3_sprites_2_fill_3_ADDRESS 0x7FEEu    /* 061FEE */
-#define kind_A9_animations_3_sprites_2_rest_29_ADDRESS 0x6000u    /* 062000 */
+#define milhouse_animations_ADDRESS 0x78A8u    /* 0618A8 */
+#define milhouse_animations_0_ADDRESS 0x78B2u    /* 0618B2 */
+#define milhouse_animations_0_sprites_ADDRESS 0x78CEu    /* 0618CE */
+#define milhouse_animations_0_sprites_2_ADDRESS 0x78DAu    /* 0618DA */
+#define milhouse_animations_0_sprites_3_ADDRESS 0x78E6u    /* 0618E6 */
+#define milhouse_animations_0_sprites_4_ADDRESS 0x78F2u    /* 0618F2 */
+#define milhouse_animations_1_ADDRESS 0x78FEu    /* 0618FE */
+#define milhouse_animations_1_sprites_ADDRESS 0x791Au    /* 06191A */
+#define milhouse_animations_1_sprites_2_ADDRESS 0x7932u    /* 061932 */
+#define milhouse_animations_1_sprites_3_ADDRESS 0x794Au    /* 06194A */
+#define milhouse_animations_1_sprites_4_ADDRESS 0x7962u    /* 061962 */
+#define milhouse_animations_2_ADDRESS 0x797Au    /* 06197A */
+#define milhouse_animations_2_sprites_ADDRESS 0x7986u    /* 061986 */
+#define milhouse_animations_2_sprites_2_ADDRESS 0x799Eu    /* 06199E */
+#define milhouse_animations_3_ADDRESS 0x79B6u    /* 0619B6 */
+#define milhouse_animations_3_sprites_ADDRESS 0x79C2u    /* 0619C2 */
+#define milhouse_animations_3_sprites_2_ADDRESS 0x79CEu    /* 0619CE */
+#define milhouse_animations_4_ADDRESS 0x79DAu    /* 0619DA */
+#define milhouse_animations_4_sprites_ADDRESS 0x79E6u    /* 0619E6 */
+#define milhouse_animations_4_sprites_2_ADDRESS 0x79F2u    /* 0619F2 */
+#define skinner_animations_ADDRESS 0x79FEu    /* 0619FE */
+#define skinner_animations_0_ADDRESS 0x7A0Cu    /* 061A0C */
+#define skinner_animations_0_sprites_ADDRESS 0x7A28u    /* 061A28 */
+#define skinner_animations_0_sprites_2_ADDRESS 0x7A3Au    /* 061A3A */
+#define skinner_animations_0_sprites_3_ADDRESS 0x7A4Cu    /* 061A4C */
+#define skinner_animations_0_sprites_4_ADDRESS 0x7A5Eu    /* 061A5E */
+#define skinner_animations_1_ADDRESS 0x7A70u    /* 061A70 */
+#define skinner_animations_1_sprites_ADDRESS 0x7A8Cu    /* 061A8C */
+#define skinner_animations_1_sprites_2_ADDRESS 0x7AAAu    /* 061AAA */
+#define skinner_animations_1_sprites_3_ADDRESS 0x7AC8u    /* 061AC8 */
+#define skinner_animations_1_sprites_4_ADDRESS 0x7AE6u    /* 061AE6 */
+#define skinner_animations_2_ADDRESS 0x7B04u    /* 061B04 */
+#define skinner_animations_2_sprites_ADDRESS 0x7B10u    /* 061B10 */
+#define skinner_animations_2_sprites_2_ADDRESS 0x7B28u    /* 061B28 */
+#define skinner_animations_3_ADDRESS 0x7B40u    /* 061B40 */
+#define skinner_animations_3_sprites_ADDRESS 0x7B4Cu    /* 061B4C */
+#define skinner_animations_3_sprites_2_ADDRESS 0x7B6Au    /* 061B6A */
+#define skinner_animations_4_ADDRESS 0x7B82u    /* 061B82 */
+#define skinner_animations_4_sprites_ADDRESS 0x7B8Eu    /* 061B8E */
+#define skinner_animations_4_sprites_2_ADDRESS 0x7B94u    /* 061B94 */
+#define skinner_animations_5_ADDRESS 0x7BA0u    /* 061BA0 */
+#define skinner_animations_5_sprites_ADDRESS 0x7BC0u    /* 061BC0 */
+#define skinner_animations_5_sprites_2_ADDRESS 0x7BCCu    /* 061BCC */
+#define skinner_animations_5_sprites_3_ADDRESS 0x7BD8u    /* 061BD8 */
+#define skinner_animations_6_ADDRESS 0x7BE4u    /* 061BE4 */
+#define skinner_animations_6_sprites_ADDRESS 0x7C08u    /* 061C08 */
+#define skinner_animations_6_sprites_2_ADDRESS 0x7C26u    /* 061C26 */
+#define skinner_animations_6_sprites_3_ADDRESS 0x7C3Eu    /* 061C3E */
+#define skinner_animations_6_sprites_4_ADDRESS 0x7C4Au    /* 061C4A */
+#define skinner_animations_6_sprites_5_ADDRESS 0x7C62u    /* 061C62 */
+#define sideshow_bob_animations_ADDRESS 0x7C86u    /* 061C86 */
+#define sideshow_bob_animations_0_ADDRESS 0x7C8Eu    /* 061C8E */
+#define sideshow_bob_animations_0_sprites_ADDRESS 0x7CB2u    /* 061CB2 */
+#define sideshow_bob_animations_0_sprites_2_ADDRESS 0x7CCAu    /* 061CCA */
+#define sideshow_bob_animations_0_sprites_3_ADDRESS 0x7CE2u    /* 061CE2 */
+#define sideshow_bob_animations_0_sprites_4_ADDRESS 0x7CFAu    /* 061CFA */
+#define sideshow_bob_animations_0_sprites_5_ADDRESS 0x7D12u    /* 061D12 */
+#define sideshow_bob_animations_1_ADDRESS 0x7D2Au    /* 061D2A */
+#define sideshow_bob_animations_1_sprites_ADDRESS 0x7D4Eu    /* 061D4E */
+#define sideshow_bob_animations_1_sprites_2_ADDRESS 0x7D6Cu    /* 061D6C */
+#define sideshow_bob_animations_1_sprites_3_ADDRESS 0x7D8Au    /* 061D8A */
+#define sideshow_bob_animations_1_sprites_4_ADDRESS 0x7DA8u    /* 061DA8 */
+#define sideshow_bob_animations_1_sprites_5_ADDRESS 0x7DC6u    /* 061DC6 */
+#define sideshow_bob_animations_2_ADDRESS 0x7DE4u    /* 061DE4 */
+#define sideshow_bob_animations_2_sprites_ADDRESS 0x7DFCu    /* 061DFC */
+#define sideshow_bob_animations_2_sprites_2_ADDRESS 0x7E14u    /* 061E14 */
+#define sideshow_bob_animations_3_ADDRESS 0x7E2Cu    /* 061E2C */
+#define sideshow_bob_animations_3_sprites_ADDRESS 0x7E44u    /* 061E44 */
+#define sideshow_bob_animations_3_sprites_2_ADDRESS 0x7E62u    /* 061E62 */
+#define sideshow_bob_animations_3_sprites_2_fill_ADDRESS 0x7E80u    /* 061E80 */
+#define sideshow_bob_animations_3_sprites_2_rest_ADDRESS 0x7EA4u    /* 061EA4 */
+#define sideshow_bob_animations_3_sprites_2_rest_2_ADDRESS 0x7EB0u    /* 061EB0 */
+#define sideshow_bob_animations_3_sprites_2_rest_3_ADDRESS 0x7EDAu    /* 061EDA */
+#define sideshow_bob_animations_3_sprites_2_rest_4_ADDRESS 0x7F04u    /* 061F04 */
+#define sideshow_bob_animations_3_sprites_2_rest_5_ADDRESS 0x7F0Cu    /* 061F0C */
+#define sideshow_bob_animations_3_sprites_2_rest_6_ADDRESS 0x7F12u    /* 061F12 */
+#define sideshow_bob_animations_3_sprites_2_rest_7_ADDRESS 0x7F1Au    /* 061F1A */
+#define sideshow_bob_animations_3_sprites_2_rest_8_ADDRESS 0x7F38u    /* 061F38 */
+#define sideshow_bob_animations_3_sprites_2_rest_9_ADDRESS 0x7F40u    /* 061F40 */
+#define sideshow_bob_animations_3_sprites_2_rest_10_ADDRESS 0x7F58u    /* 061F58 */
+#define sideshow_bob_animations_3_sprites_2_rest_11_ADDRESS 0x7F60u    /* 061F60 */
+#define sideshow_bob_animations_3_sprites_2_fill_2_ADDRESS 0x7F6Cu    /* 061F6C */
+#define sideshow_bob_animations_3_sprites_2_rest_12_ADDRESS 0x7F6Eu    /* 061F6E */
+#define sideshow_bob_animations_3_sprites_2_rest_13_ADDRESS 0x7F76u    /* 061F76 */
+#define sideshow_bob_animations_3_sprites_2_rest_14_ADDRESS 0x7F7Cu    /* 061F7C */
+#define sideshow_bob_animations_3_sprites_2_rest_15_ADDRESS 0x7F84u    /* 061F84 */
+#define sideshow_bob_animations_3_sprites_2_rest_16_ADDRESS 0x7F8Au    /* 061F8A */
+#define sideshow_bob_animations_3_sprites_2_rest_17_ADDRESS 0x7F92u    /* 061F92 */
+#define sideshow_bob_animations_3_sprites_2_rest_18_ADDRESS 0x7F9Eu    /* 061F9E */
+#define sideshow_bob_animations_3_sprites_2_rest_19_ADDRESS 0x7FAAu    /* 061FAA */
+#define sideshow_bob_animations_3_sprites_2_rest_20_ADDRESS 0x7FB0u    /* 061FB0 */
+#define sideshow_bob_animations_3_sprites_2_rest_21_ADDRESS 0x7FB6u    /* 061FB6 */
+#define sideshow_bob_animations_3_sprites_2_rest_22_ADDRESS 0x7FBEu    /* 061FBE */
+#define sideshow_bob_animations_3_sprites_2_rest_23_ADDRESS 0x7FC4u    /* 061FC4 */
+#define sideshow_bob_animations_3_sprites_2_rest_24_ADDRESS 0x7FCCu    /* 061FCC */
+#define sideshow_bob_animations_3_sprites_2_rest_25_ADDRESS 0x7FD2u    /* 061FD2 */
+#define sideshow_bob_animations_3_sprites_2_rest_26_ADDRESS 0x7FDAu    /* 061FDA */
+#define sideshow_bob_animations_3_sprites_2_rest_27_ADDRESS 0x7FE0u    /* 061FE0 */
+#define sideshow_bob_animations_3_sprites_2_rest_28_ADDRESS 0x7FE8u    /* 061FE8 */
+#define sideshow_bob_animations_3_sprites_2_fill_3_ADDRESS 0x7FEEu    /* 061FEE */
+#define sideshow_bob_animations_3_sprites_2_rest_29_ADDRESS 0x6000u    /* 062000 */
 #define homer_animations_ADDRESS 0x600Au    /* 06200A */
 #define homer_animations_7_ADDRESS 0x60ECu    /* 0620EC */
 #define homer_animations_7_sprites_ADDRESS 0x60F4u    /* 0620F4 */
@@ -8738,13 +8498,13 @@ extern const void *reset_vector_data;
 #define hammer_animations_0_sprites_ADDRESS 0x7726u    /* 063726 */
 #define hammer_animations_1_ADDRESS 0x772Cu    /* 06372C */
 #define hammer_animations_1_sprites_ADDRESS 0x7734u    /* 063734 */
-#define kind_08_animations_ADDRESS 0x7752u    /* 063752 */
-#define kind_08_animations_0_ADDRESS 0x7758u    /* 063758 */
-#define kind_08_animations_0_sprites_ADDRESS 0x7760u    /* 063760 */
-#define kind_08_animations_1_ADDRESS 0x7766u    /* 063766 */
-#define kind_08_animations_1_sprites_ADDRESS 0x776Eu    /* 06376E */
-#define kind_08_animations_2_ADDRESS 0x778Cu    /* 06378C */
-#define kind_08_animations_2_sprites_ADDRESS 0x7794u    /* 063794 */
+#define slingshot_animations_ADDRESS 0x7752u    /* 063752 */
+#define slingshot_animations_0_ADDRESS 0x7758u    /* 063758 */
+#define slingshot_animations_0_sprites_ADDRESS 0x7760u    /* 063760 */
+#define slingshot_animations_1_ADDRESS 0x7766u    /* 063766 */
+#define slingshot_animations_1_sprites_ADDRESS 0x776Eu    /* 06376E */
+#define slingshot_animations_2_ADDRESS 0x778Cu    /* 06378C */
+#define slingshot_animations_2_sprites_ADDRESS 0x7794u    /* 063794 */
 #define food_animations_ADDRESS 0x779Au    /* 06379A */
 #define food_animations_14_ADDRESS 0x77C2u    /* 0637C2 */
 #define food_animations_14_sprites_ADDRESS 0x77D6u    /* 0637D6 */
@@ -9930,198 +9690,198 @@ extern const void *reset_vector_data;
 #define bart_portrait_animations_16_sprites_rest_17_ADDRESS 0x7FE8u    /* 067FE8 */
 #define bart_portrait_animations_16_sprites_fill_ADDRESS 0x7FEEu    /* 067FEE */
 #define bart_portrait_animations_16_sprites_rest_18_ADDRESS 0x6000u    /* 068000 */
-#define kind_0E_animations_ADDRESS 0x6006u    /* 068006 */
-#define kind_0E_animations_0_ADDRESS 0x609Cu    /* 06809C */
-#define kind_0E_animations_0_sprites_ADDRESS 0x60A4u    /* 0680A4 */
-#define kind_0E_animations_1_ADDRESS 0x60AAu    /* 0680AA */
-#define kind_0E_animations_1_sprites_ADDRESS 0x60B2u    /* 0680B2 */
-#define kind_0E_animations_2_ADDRESS 0x60C4u    /* 0680C4 */
-#define kind_0E_animations_2_sprites_ADDRESS 0x60D4u    /* 0680D4 */
-#define kind_0E_animations_2_sprites_2_ADDRESS 0x60E6u    /* 0680E6 */
-#define kind_0E_animations_2_sprites_3_ADDRESS 0x60F8u    /* 0680F8 */
-#define kind_0E_animations_3_ADDRESS 0x610Au    /* 06810A */
-#define kind_0E_animations_3_sprites_ADDRESS 0x6112u    /* 068112 */
-#define kind_0E_animations_4_ADDRESS 0x6124u    /* 068124 */
-#define kind_0E_animations_4_sprites_ADDRESS 0x612Cu    /* 06812C */
-#define kind_0E_animations_5_ADDRESS 0x6132u    /* 068132 */
-#define kind_0E_animations_5_sprites_ADDRESS 0x613Au    /* 06813A */
-#define kind_0E_animations_6_ADDRESS 0x6146u    /* 068146 */
-#define kind_0E_animations_6_sprites_ADDRESS 0x614Eu    /* 06814E */
-#define kind_0E_animations_7_ADDRESS 0x6160u    /* 068160 */
-#define kind_0E_animations_7_sprites_ADDRESS 0x6168u    /* 068168 */
-#define kind_0E_animations_8_ADDRESS 0x616Eu    /* 06816E */
-#define kind_0E_animations_8_sprites_ADDRESS 0x6176u    /* 068176 */
-#define kind_0E_animations_9_ADDRESS 0x617Cu    /* 06817C */
-#define kind_0E_animations_9_sprites_ADDRESS 0x619Cu    /* 06819C */
-#define kind_0E_animations_9_sprites_2_ADDRESS 0x61A2u    /* 0681A2 */
-#define kind_0E_animations_9_sprites_3_ADDRESS 0x61A8u    /* 0681A8 */
-#define kind_0E_animations_9_sprites_4_ADDRESS 0x61AEu    /* 0681AE */
-#define kind_0E_animations_9_sprites_5_ADDRESS 0x61BAu    /* 0681BA */
-#define kind_0E_animations_9_sprites_6_ADDRESS 0x61C6u    /* 0681C6 */
-#define kind_0E_animations_9_sprites_7_ADDRESS 0x61D2u    /* 0681D2 */
-#define kind_0E_animations_10_ADDRESS 0x61D8u    /* 0681D8 */
-#define kind_0E_animations_10_sprites_ADDRESS 0x61E0u    /* 0681E0 */
-#define kind_0E_animations_11_ADDRESS 0x61E6u    /* 0681E6 */
-#define kind_0E_animations_11_sprites_ADDRESS 0x61EEu    /* 0681EE */
-#define kind_0E_animations_12_ADDRESS 0x61FAu    /* 0681FA */
-#define kind_0E_animations_12_sprites_ADDRESS 0x6202u    /* 068202 */
-#define kind_0E_animations_13_ADDRESS 0x620Eu    /* 06820E */
-#define kind_0E_animations_13_sprites_ADDRESS 0x6216u    /* 068216 */
-#define kind_0E_animations_14_ADDRESS 0x6222u    /* 068222 */
-#define kind_0E_animations_14_sprites_ADDRESS 0x622Au    /* 06822A */
-#define kind_0E_animations_15_ADDRESS 0x6236u    /* 068236 */
-#define kind_0E_animations_15_sprites_ADDRESS 0x623Eu    /* 06823E */
-#define kind_0E_animations_16_ADDRESS 0x624Au    /* 06824A */
-#define kind_0E_animations_16_sprites_ADDRESS 0x6252u    /* 068252 */
-#define kind_0E_animations_20_ADDRESS 0x6282u    /* 068282 */
-#define kind_0E_animations_20_sprites_ADDRESS 0x628Au    /* 06828A */
-#define kind_0E_animations_21_ADDRESS 0x6290u    /* 068290 */
-#define kind_0E_animations_21_sprites_ADDRESS 0x629Cu    /* 06829C */
-#define kind_0E_animations_21_sprites_2_ADDRESS 0x62A8u    /* 0682A8 */
-#define kind_0E_animations_22_ADDRESS 0x62B4u    /* 0682B4 */
-#define kind_0E_animations_22_sprites_ADDRESS 0x62C8u    /* 0682C8 */
-#define kind_0E_animations_22_sprites_2_ADDRESS 0x62E6u    /* 0682E6 */
-#define kind_0E_animations_22_sprites_3_ADDRESS 0x62FEu    /* 0682FE */
-#define kind_0E_animations_22_sprites_4_ADDRESS 0x6316u    /* 068316 */
-#define kind_0E_animations_23_ADDRESS 0x6346u    /* 068346 */
-#define kind_0E_animations_23_sprites_ADDRESS 0x635Au    /* 06835A */
-#define kind_0E_animations_23_sprites_2_ADDRESS 0x6390u    /* 068390 */
-#define kind_0E_animations_23_sprites_3_ADDRESS 0x63C0u    /* 0683C0 */
-#define kind_0E_animations_23_sprites_4_ADDRESS 0x6408u    /* 068408 */
-#define kind_0E_animations_24_ADDRESS 0x6450u    /* 068450 */
-#define kind_0E_animations_24_sprites_ADDRESS 0x6460u    /* 068460 */
-#define kind_0E_animations_24_sprites_2_ADDRESS 0x6490u    /* 068490 */
-#define kind_0E_animations_26_ADDRESS 0x64C0u    /* 0684C0 */
-#define kind_0E_animations_27_ADDRESS 0x64C8u    /* 0684C8 */
-#define kind_0E_animations_28_ADDRESS 0x64D0u    /* 0684D0 */
-#define kind_0E_animations_29_ADDRESS 0x64D8u    /* 0684D8 */
-#define kind_0E_animations_26_sprites_ADDRESS 0x64E0u    /* 0684E0 */
-#define kind_0E_animations_28_sprites_ADDRESS 0x652Eu    /* 06852E */
-#define kind_0E_animations_27_sprites_ADDRESS 0x654Cu    /* 06854C */
-#define kind_0E_animations_29_sprites_ADDRESS 0x658Eu    /* 06858E */
-#define kind_0E_animations_33_ADDRESS 0x65B2u    /* 0685B2 */
-#define kind_0E_animations_33_sprites_ADDRESS 0x65BAu    /* 0685BA */
-#define kind_0E_animations_34_ADDRESS 0x65C0u    /* 0685C0 */
-#define kind_0E_animations_34_sprites_ADDRESS 0x65C8u    /* 0685C8 */
-#define kind_0E_animations_32_ADDRESS 0x65CEu    /* 0685CE */
-#define kind_0E_animations_32_sprites_ADDRESS 0x65D6u    /* 0685D6 */
-#define kind_0E_animations_31_ADDRESS 0x65DCu    /* 0685DC */
-#define kind_0E_animations_31_sprites_ADDRESS 0x65E4u    /* 0685E4 */
-#define kind_0E_animations_30_ADDRESS 0x6614u    /* 068614 */
-#define kind_0E_animations_30_sprites_ADDRESS 0x6624u    /* 068624 */
-#define kind_0E_animations_30_sprites_2_ADDRESS 0x663Cu    /* 06863C */
-#define kind_0E_animations_30_sprites_3_ADDRESS 0x6678u    /* 068678 */
-#define kind_0E_animations_35_ADDRESS 0x6696u    /* 068696 */
-#define kind_0E_animations_35_sprites_ADDRESS 0x669Eu    /* 06869E */
-#define kind_0E_animations_25_ADDRESS 0x66C2u    /* 0686C2 */
-#define kind_0E_animations_25_sprites_ADDRESS 0x66CAu    /* 0686CA */
-#define kind_0E_animations_36_ADDRESS 0x66D0u    /* 0686D0 */
-#define kind_0E_animations_36_sprites_ADDRESS 0x66D8u    /* 0686D8 */
-#define kind_0E_animations_37_ADDRESS 0x671Au    /* 06871A */
-#define kind_0E_animations_37_sprites_ADDRESS 0x673Eu    /* 06873E */
-#define kind_0E_animations_37_sprites_2_ADDRESS 0x6744u    /* 068744 */
-#define kind_0E_animations_37_sprites_3_ADDRESS 0x674Au    /* 06874A */
-#define kind_0E_animations_37_sprites_4_ADDRESS 0x6750u    /* 068750 */
-#define kind_0E_animations_37_sprites_5_ADDRESS 0x6756u    /* 068756 */
-#define kind_0E_animations_37_sprites_6_ADDRESS 0x6762u    /* 068762 */
-#define kind_0E_animations_37_sprites_7_ADDRESS 0x6768u    /* 068768 */
-#define kind_0E_animations_37_sprites_8_ADDRESS 0x676Eu    /* 06876E */
-#define kind_0E_animations_38_ADDRESS 0x6774u    /* 068774 */
-#define kind_0E_animations_38_sprites_ADDRESS 0x677Cu    /* 06877C */
-#define kind_0E_animations_39_ADDRESS 0x6788u    /* 068788 */
-#define kind_0E_animations_39_sprites_ADDRESS 0x6790u    /* 068790 */
-#define kind_0E_animations_40_ADDRESS 0x67A8u    /* 0687A8 */
-#define kind_0E_animations_40_sprites_ADDRESS 0x67D8u    /* 0687D8 */
-#define kind_0E_animations_40_sprites_2_ADDRESS 0x6814u    /* 068814 */
-#define kind_0E_animations_40_sprites_3_ADDRESS 0x684Au    /* 06884A */
-#define kind_0E_animations_40_sprites_4_ADDRESS 0x689Eu    /* 06889E */
-#define kind_0E_animations_40_sprites_5_ADDRESS 0x68F8u    /* 0688F8 */
-#define kind_0E_animations_40_sprites_6_ADDRESS 0x6952u    /* 068952 */
-#define kind_0E_animations_40_sprites_7_ADDRESS 0x69ACu    /* 0689AC */
-#define kind_0E_animations_40_sprites_8_ADDRESS 0x6A06u    /* 068A06 */
-#define kind_0E_animations_40_sprites_9_ADDRESS 0x6A60u    /* 068A60 */
-#define kind_0E_animations_41_ADDRESS 0x6A7Eu    /* 068A7E */
-#define kind_0E_animations_41_sprites_ADDRESS 0x6A86u    /* 068A86 */
-#define kind_0E_animations_42_ADDRESS 0x6A92u    /* 068A92 */
-#define kind_0E_animations_42_sprites_ADDRESS 0x6AA2u    /* 068AA2 */
-#define kind_0E_animations_42_sprites_2_ADDRESS 0x6AAEu    /* 068AAE */
-#define kind_0E_animations_42_sprites_3_ADDRESS 0x6ABAu    /* 068ABA */
-#define kind_0E_animations_43_ADDRESS 0x6ACCu    /* 068ACC */
-#define kind_0E_animations_43_sprites_ADDRESS 0x6AD8u    /* 068AD8 */
-#define kind_0E_animations_43_sprites_2_ADDRESS 0x6AF0u    /* 068AF0 */
-#define kind_0E_animations_44_ADDRESS 0x6B02u    /* 068B02 */
-#define kind_0E_animations_44_sprites_ADDRESS 0x6B0Au    /* 068B0A */
-#define kind_0E_animations_45_ADDRESS 0x6B2Eu    /* 068B2E */
-#define kind_0E_animations_45_sprites_ADDRESS 0x6B36u    /* 068B36 */
-#define kind_0E_animations_47_ADDRESS 0x6B48u    /* 068B48 */
-#define kind_0E_animations_47_sprites_ADDRESS 0x6B50u    /* 068B50 */
-#define kind_0E_animations_58_ADDRESS 0x6B5Cu    /* 068B5C */
-#define kind_0E_animations_58_sprites_ADDRESS 0x6B64u    /* 068B64 */
-#define kind_0E_animations_59_ADDRESS 0x6B7Cu    /* 068B7C */
-#define kind_0E_animations_59_sprites_ADDRESS 0x6B84u    /* 068B84 */
-#define kind_0E_animations_60_ADDRESS 0x6BA2u    /* 068BA2 */
-#define kind_0E_animations_60_sprites_ADDRESS 0x6BAAu    /* 068BAA */
-#define kind_0E_animations_61_ADDRESS 0x6BFEu    /* 068BFE */
-#define kind_0E_animations_61_sprites_ADDRESS 0x6C06u    /* 068C06 */
-#define kind_0E_animations_62_ADDRESS 0x6C1Eu    /* 068C1E */
-#define kind_0E_animations_62_sprites_ADDRESS 0x6C26u    /* 068C26 */
-#define kind_0E_animations_48_ADDRESS 0x6C7Au    /* 068C7A */
-#define kind_0E_animations_48_sprites_ADDRESS 0x6C82u    /* 068C82 */
-#define kind_0E_animations_49_ADDRESS 0x6C88u    /* 068C88 */
-#define kind_0E_animations_49_sprites_ADDRESS 0x6C90u    /* 068C90 */
-#define kind_0E_animations_50_ADDRESS 0x6C96u    /* 068C96 */
-#define kind_0E_animations_50_sprites_ADDRESS 0x6C9Eu    /* 068C9E */
-#define kind_0E_animations_51_ADDRESS 0x6CA4u    /* 068CA4 */
-#define kind_0E_animations_51_sprites_ADDRESS 0x6CACu    /* 068CAC */
-#define kind_0E_animations_52_ADDRESS 0x6CB2u    /* 068CB2 */
-#define kind_0E_animations_52_sprites_ADDRESS 0x6CBAu    /* 068CBA */
-#define kind_0E_animations_53_ADDRESS 0x6CC0u    /* 068CC0 */
-#define kind_0E_animations_53_sprites_ADDRESS 0x6CC8u    /* 068CC8 */
-#define kind_0E_animations_54_ADDRESS 0x6CCEu    /* 068CCE */
-#define kind_0E_animations_54_sprites_ADDRESS 0x6CD6u    /* 068CD6 */
-#define kind_0E_animations_55_ADDRESS 0x6CDCu    /* 068CDC */
-#define kind_0E_animations_55_sprites_ADDRESS 0x6CE4u    /* 068CE4 */
-#define kind_0E_animations_56_ADDRESS 0x6CEAu    /* 068CEA */
-#define kind_0E_animations_56_sprites_ADDRESS 0x6CF2u    /* 068CF2 */
-#define kind_0E_animations_57_ADDRESS 0x6CF8u    /* 068CF8 */
-#define kind_0E_animations_57_sprites_ADDRESS 0x6D00u    /* 068D00 */
-#define kind_0E_animations_63_ADDRESS 0x6D06u    /* 068D06 */
-#define kind_0E_animations_63_sprites_ADDRESS 0x6D12u    /* 068D12 */
-#define kind_0E_animations_63_sprites_2_ADDRESS 0x6D18u    /* 068D18 */
-#define kind_0E_animations_65_ADDRESS 0x6D1Eu    /* 068D1E */
-#define kind_0E_animations_65_sprites_ADDRESS 0x6D26u    /* 068D26 */
-#define kind_0E_animations_64_ADDRESS 0x6D2Cu    /* 068D2C */
-#define kind_0E_animations_64_sprites_ADDRESS 0x6D34u    /* 068D34 */
-#define kind_0E_animations_69_ADDRESS 0x6D46u    /* 068D46 */
-#define kind_0E_animations_69_sprites_ADDRESS 0x6D4Eu    /* 068D4E */
-#define kind_0E_animations_70_ADDRESS 0x6D54u    /* 068D54 */
-#define kind_0E_animations_70_sprites_ADDRESS 0x6D78u    /* 068D78 */
-#define kind_0E_animations_70_sprites_2_ADDRESS 0x6D7Eu    /* 068D7E */
-#define kind_0E_animations_70_sprites_3_ADDRESS 0x6D84u    /* 068D84 */
-#define kind_0E_animations_70_sprites_4_ADDRESS 0x6D8Au    /* 068D8A */
-#define kind_0E_animations_70_sprites_5_ADDRESS 0x6D96u    /* 068D96 */
-#define kind_0E_animations_70_sprites_6_ADDRESS 0x6DA2u    /* 068DA2 */
-#define kind_0E_animations_70_sprites_7_ADDRESS 0x6DAEu    /* 068DAE */
-#define kind_0E_animations_70_sprites_8_ADDRESS 0x6DB4u    /* 068DB4 */
-#define kind_0E_animations_71_ADDRESS 0x6DBAu    /* 068DBA */
-#define kind_0E_animations_71_sprites_ADDRESS 0x6DC2u    /* 068DC2 */
-#define kind_0E_animations_72_ADDRESS 0x6DC8u    /* 068DC8 */
-#define kind_0E_animations_72_sprites_ADDRESS 0x6E0Cu    /* 068E0C */
-#define kind_0E_animations_72_sprites_2_ADDRESS 0x6E1Eu    /* 068E1E */
-#define kind_0E_animations_72_sprites_3_ADDRESS 0x6E36u    /* 068E36 */
-#define kind_0E_animations_72_sprites_4_ADDRESS 0x6E48u    /* 068E48 */
-#define kind_0E_animations_72_sprites_5_ADDRESS 0x6E60u    /* 068E60 */
-#define kind_0E_animations_72_sprites_6_ADDRESS 0x6E78u    /* 068E78 */
-#define kind_0E_animations_72_sprites_7_ADDRESS 0x6E8Au    /* 068E8A */
-#define kind_0E_animations_72_sprites_8_ADDRESS 0x6EA2u    /* 068EA2 */
-#define kind_0E_animations_72_sprites_9_ADDRESS 0x6EBAu    /* 068EBA */
-#define kind_0E_animations_72_sprites_10_ADDRESS 0x6ECCu    /* 068ECC */
-#define kind_0E_animations_73_ADDRESS 0x6EE4u    /* 068EE4 */
-#define kind_0E_animations_73_sprites_ADDRESS 0x6EECu    /* 068EEC */
-#define kind_0E_animations_74_ADDRESS 0x6EF8u    /* 068EF8 */
-#define kind_0E_animations_74_sprites_ADDRESS 0x6F00u    /* 068F00 */
-#define kind_0E_animations_66_ADDRESS 0x6F12u    /* 068F12 */
-#define kind_0E_animations_66_sprites_ADDRESS 0x6F1Au    /* 068F1A */
+#define screen_pieces_animations_ADDRESS 0x6006u    /* 068006 */
+#define screen_pieces_animations_0_ADDRESS 0x609Cu    /* 06809C */
+#define screen_pieces_animations_0_sprites_ADDRESS 0x60A4u    /* 0680A4 */
+#define screen_pieces_animations_1_ADDRESS 0x60AAu    /* 0680AA */
+#define screen_pieces_animations_1_sprites_ADDRESS 0x60B2u    /* 0680B2 */
+#define screen_pieces_animations_2_ADDRESS 0x60C4u    /* 0680C4 */
+#define screen_pieces_animations_2_sprites_ADDRESS 0x60D4u    /* 0680D4 */
+#define screen_pieces_animations_2_sprites_2_ADDRESS 0x60E6u    /* 0680E6 */
+#define screen_pieces_animations_2_sprites_3_ADDRESS 0x60F8u    /* 0680F8 */
+#define screen_pieces_animations_3_ADDRESS 0x610Au    /* 06810A */
+#define screen_pieces_animations_3_sprites_ADDRESS 0x6112u    /* 068112 */
+#define screen_pieces_animations_4_ADDRESS 0x6124u    /* 068124 */
+#define screen_pieces_animations_4_sprites_ADDRESS 0x612Cu    /* 06812C */
+#define screen_pieces_animations_5_ADDRESS 0x6132u    /* 068132 */
+#define screen_pieces_animations_5_sprites_ADDRESS 0x613Au    /* 06813A */
+#define screen_pieces_animations_6_ADDRESS 0x6146u    /* 068146 */
+#define screen_pieces_animations_6_sprites_ADDRESS 0x614Eu    /* 06814E */
+#define screen_pieces_animations_7_ADDRESS 0x6160u    /* 068160 */
+#define screen_pieces_animations_7_sprites_ADDRESS 0x6168u    /* 068168 */
+#define screen_pieces_animations_8_ADDRESS 0x616Eu    /* 06816E */
+#define screen_pieces_animations_8_sprites_ADDRESS 0x6176u    /* 068176 */
+#define screen_pieces_animations_9_ADDRESS 0x617Cu    /* 06817C */
+#define screen_pieces_animations_9_sprites_ADDRESS 0x619Cu    /* 06819C */
+#define screen_pieces_animations_9_sprites_2_ADDRESS 0x61A2u    /* 0681A2 */
+#define screen_pieces_animations_9_sprites_3_ADDRESS 0x61A8u    /* 0681A8 */
+#define screen_pieces_animations_9_sprites_4_ADDRESS 0x61AEu    /* 0681AE */
+#define screen_pieces_animations_9_sprites_5_ADDRESS 0x61BAu    /* 0681BA */
+#define screen_pieces_animations_9_sprites_6_ADDRESS 0x61C6u    /* 0681C6 */
+#define screen_pieces_animations_9_sprites_7_ADDRESS 0x61D2u    /* 0681D2 */
+#define screen_pieces_animations_10_ADDRESS 0x61D8u    /* 0681D8 */
+#define screen_pieces_animations_10_sprites_ADDRESS 0x61E0u    /* 0681E0 */
+#define screen_pieces_animations_11_ADDRESS 0x61E6u    /* 0681E6 */
+#define screen_pieces_animations_11_sprites_ADDRESS 0x61EEu    /* 0681EE */
+#define screen_pieces_animations_12_ADDRESS 0x61FAu    /* 0681FA */
+#define screen_pieces_animations_12_sprites_ADDRESS 0x6202u    /* 068202 */
+#define screen_pieces_animations_13_ADDRESS 0x620Eu    /* 06820E */
+#define screen_pieces_animations_13_sprites_ADDRESS 0x6216u    /* 068216 */
+#define screen_pieces_animations_14_ADDRESS 0x6222u    /* 068222 */
+#define screen_pieces_animations_14_sprites_ADDRESS 0x622Au    /* 06822A */
+#define screen_pieces_animations_15_ADDRESS 0x6236u    /* 068236 */
+#define screen_pieces_animations_15_sprites_ADDRESS 0x623Eu    /* 06823E */
+#define screen_pieces_animations_16_ADDRESS 0x624Au    /* 06824A */
+#define screen_pieces_animations_16_sprites_ADDRESS 0x6252u    /* 068252 */
+#define screen_pieces_animations_20_ADDRESS 0x6282u    /* 068282 */
+#define screen_pieces_animations_20_sprites_ADDRESS 0x628Au    /* 06828A */
+#define screen_pieces_animations_21_ADDRESS 0x6290u    /* 068290 */
+#define screen_pieces_animations_21_sprites_ADDRESS 0x629Cu    /* 06829C */
+#define screen_pieces_animations_21_sprites_2_ADDRESS 0x62A8u    /* 0682A8 */
+#define screen_pieces_animations_22_ADDRESS 0x62B4u    /* 0682B4 */
+#define screen_pieces_animations_22_sprites_ADDRESS 0x62C8u    /* 0682C8 */
+#define screen_pieces_animations_22_sprites_2_ADDRESS 0x62E6u    /* 0682E6 */
+#define screen_pieces_animations_22_sprites_3_ADDRESS 0x62FEu    /* 0682FE */
+#define screen_pieces_animations_22_sprites_4_ADDRESS 0x6316u    /* 068316 */
+#define screen_pieces_animations_23_ADDRESS 0x6346u    /* 068346 */
+#define screen_pieces_animations_23_sprites_ADDRESS 0x635Au    /* 06835A */
+#define screen_pieces_animations_23_sprites_2_ADDRESS 0x6390u    /* 068390 */
+#define screen_pieces_animations_23_sprites_3_ADDRESS 0x63C0u    /* 0683C0 */
+#define screen_pieces_animations_23_sprites_4_ADDRESS 0x6408u    /* 068408 */
+#define screen_pieces_animations_24_ADDRESS 0x6450u    /* 068450 */
+#define screen_pieces_animations_24_sprites_ADDRESS 0x6460u    /* 068460 */
+#define screen_pieces_animations_24_sprites_2_ADDRESS 0x6490u    /* 068490 */
+#define screen_pieces_animations_26_ADDRESS 0x64C0u    /* 0684C0 */
+#define screen_pieces_animations_27_ADDRESS 0x64C8u    /* 0684C8 */
+#define screen_pieces_animations_28_ADDRESS 0x64D0u    /* 0684D0 */
+#define screen_pieces_animations_29_ADDRESS 0x64D8u    /* 0684D8 */
+#define screen_pieces_animations_26_sprites_ADDRESS 0x64E0u    /* 0684E0 */
+#define screen_pieces_animations_28_sprites_ADDRESS 0x652Eu    /* 06852E */
+#define screen_pieces_animations_27_sprites_ADDRESS 0x654Cu    /* 06854C */
+#define screen_pieces_animations_29_sprites_ADDRESS 0x658Eu    /* 06858E */
+#define screen_pieces_animations_33_ADDRESS 0x65B2u    /* 0685B2 */
+#define screen_pieces_animations_33_sprites_ADDRESS 0x65BAu    /* 0685BA */
+#define screen_pieces_animations_34_ADDRESS 0x65C0u    /* 0685C0 */
+#define screen_pieces_animations_34_sprites_ADDRESS 0x65C8u    /* 0685C8 */
+#define screen_pieces_animations_32_ADDRESS 0x65CEu    /* 0685CE */
+#define screen_pieces_animations_32_sprites_ADDRESS 0x65D6u    /* 0685D6 */
+#define screen_pieces_animations_31_ADDRESS 0x65DCu    /* 0685DC */
+#define screen_pieces_animations_31_sprites_ADDRESS 0x65E4u    /* 0685E4 */
+#define screen_pieces_animations_30_ADDRESS 0x6614u    /* 068614 */
+#define screen_pieces_animations_30_sprites_ADDRESS 0x6624u    /* 068624 */
+#define screen_pieces_animations_30_sprites_2_ADDRESS 0x663Cu    /* 06863C */
+#define screen_pieces_animations_30_sprites_3_ADDRESS 0x6678u    /* 068678 */
+#define screen_pieces_animations_35_ADDRESS 0x6696u    /* 068696 */
+#define screen_pieces_animations_35_sprites_ADDRESS 0x669Eu    /* 06869E */
+#define screen_pieces_animations_25_ADDRESS 0x66C2u    /* 0686C2 */
+#define screen_pieces_animations_25_sprites_ADDRESS 0x66CAu    /* 0686CA */
+#define screen_pieces_animations_36_ADDRESS 0x66D0u    /* 0686D0 */
+#define screen_pieces_animations_36_sprites_ADDRESS 0x66D8u    /* 0686D8 */
+#define screen_pieces_animations_37_ADDRESS 0x671Au    /* 06871A */
+#define screen_pieces_animations_37_sprites_ADDRESS 0x673Eu    /* 06873E */
+#define screen_pieces_animations_37_sprites_2_ADDRESS 0x6744u    /* 068744 */
+#define screen_pieces_animations_37_sprites_3_ADDRESS 0x674Au    /* 06874A */
+#define screen_pieces_animations_37_sprites_4_ADDRESS 0x6750u    /* 068750 */
+#define screen_pieces_animations_37_sprites_5_ADDRESS 0x6756u    /* 068756 */
+#define screen_pieces_animations_37_sprites_6_ADDRESS 0x6762u    /* 068762 */
+#define screen_pieces_animations_37_sprites_7_ADDRESS 0x6768u    /* 068768 */
+#define screen_pieces_animations_37_sprites_8_ADDRESS 0x676Eu    /* 06876E */
+#define screen_pieces_animations_38_ADDRESS 0x6774u    /* 068774 */
+#define screen_pieces_animations_38_sprites_ADDRESS 0x677Cu    /* 06877C */
+#define screen_pieces_animations_39_ADDRESS 0x6788u    /* 068788 */
+#define screen_pieces_animations_39_sprites_ADDRESS 0x6790u    /* 068790 */
+#define screen_pieces_animations_40_ADDRESS 0x67A8u    /* 0687A8 */
+#define screen_pieces_animations_40_sprites_ADDRESS 0x67D8u    /* 0687D8 */
+#define screen_pieces_animations_40_sprites_2_ADDRESS 0x6814u    /* 068814 */
+#define screen_pieces_animations_40_sprites_3_ADDRESS 0x684Au    /* 06884A */
+#define screen_pieces_animations_40_sprites_4_ADDRESS 0x689Eu    /* 06889E */
+#define screen_pieces_animations_40_sprites_5_ADDRESS 0x68F8u    /* 0688F8 */
+#define screen_pieces_animations_40_sprites_6_ADDRESS 0x6952u    /* 068952 */
+#define screen_pieces_animations_40_sprites_7_ADDRESS 0x69ACu    /* 0689AC */
+#define screen_pieces_animations_40_sprites_8_ADDRESS 0x6A06u    /* 068A06 */
+#define screen_pieces_animations_40_sprites_9_ADDRESS 0x6A60u    /* 068A60 */
+#define screen_pieces_animations_41_ADDRESS 0x6A7Eu    /* 068A7E */
+#define screen_pieces_animations_41_sprites_ADDRESS 0x6A86u    /* 068A86 */
+#define screen_pieces_animations_42_ADDRESS 0x6A92u    /* 068A92 */
+#define screen_pieces_animations_42_sprites_ADDRESS 0x6AA2u    /* 068AA2 */
+#define screen_pieces_animations_42_sprites_2_ADDRESS 0x6AAEu    /* 068AAE */
+#define screen_pieces_animations_42_sprites_3_ADDRESS 0x6ABAu    /* 068ABA */
+#define screen_pieces_animations_43_ADDRESS 0x6ACCu    /* 068ACC */
+#define screen_pieces_animations_43_sprites_ADDRESS 0x6AD8u    /* 068AD8 */
+#define screen_pieces_animations_43_sprites_2_ADDRESS 0x6AF0u    /* 068AF0 */
+#define screen_pieces_animations_44_ADDRESS 0x6B02u    /* 068B02 */
+#define screen_pieces_animations_44_sprites_ADDRESS 0x6B0Au    /* 068B0A */
+#define screen_pieces_animations_45_ADDRESS 0x6B2Eu    /* 068B2E */
+#define screen_pieces_animations_45_sprites_ADDRESS 0x6B36u    /* 068B36 */
+#define screen_pieces_animations_47_ADDRESS 0x6B48u    /* 068B48 */
+#define screen_pieces_animations_47_sprites_ADDRESS 0x6B50u    /* 068B50 */
+#define screen_pieces_animations_58_ADDRESS 0x6B5Cu    /* 068B5C */
+#define screen_pieces_animations_58_sprites_ADDRESS 0x6B64u    /* 068B64 */
+#define screen_pieces_animations_59_ADDRESS 0x6B7Cu    /* 068B7C */
+#define screen_pieces_animations_59_sprites_ADDRESS 0x6B84u    /* 068B84 */
+#define screen_pieces_animations_60_ADDRESS 0x6BA2u    /* 068BA2 */
+#define screen_pieces_animations_60_sprites_ADDRESS 0x6BAAu    /* 068BAA */
+#define screen_pieces_animations_61_ADDRESS 0x6BFEu    /* 068BFE */
+#define screen_pieces_animations_61_sprites_ADDRESS 0x6C06u    /* 068C06 */
+#define screen_pieces_animations_62_ADDRESS 0x6C1Eu    /* 068C1E */
+#define screen_pieces_animations_62_sprites_ADDRESS 0x6C26u    /* 068C26 */
+#define screen_pieces_animations_48_ADDRESS 0x6C7Au    /* 068C7A */
+#define screen_pieces_animations_48_sprites_ADDRESS 0x6C82u    /* 068C82 */
+#define screen_pieces_animations_49_ADDRESS 0x6C88u    /* 068C88 */
+#define screen_pieces_animations_49_sprites_ADDRESS 0x6C90u    /* 068C90 */
+#define screen_pieces_animations_50_ADDRESS 0x6C96u    /* 068C96 */
+#define screen_pieces_animations_50_sprites_ADDRESS 0x6C9Eu    /* 068C9E */
+#define screen_pieces_animations_51_ADDRESS 0x6CA4u    /* 068CA4 */
+#define screen_pieces_animations_51_sprites_ADDRESS 0x6CACu    /* 068CAC */
+#define screen_pieces_animations_52_ADDRESS 0x6CB2u    /* 068CB2 */
+#define screen_pieces_animations_52_sprites_ADDRESS 0x6CBAu    /* 068CBA */
+#define screen_pieces_animations_53_ADDRESS 0x6CC0u    /* 068CC0 */
+#define screen_pieces_animations_53_sprites_ADDRESS 0x6CC8u    /* 068CC8 */
+#define screen_pieces_animations_54_ADDRESS 0x6CCEu    /* 068CCE */
+#define screen_pieces_animations_54_sprites_ADDRESS 0x6CD6u    /* 068CD6 */
+#define screen_pieces_animations_55_ADDRESS 0x6CDCu    /* 068CDC */
+#define screen_pieces_animations_55_sprites_ADDRESS 0x6CE4u    /* 068CE4 */
+#define screen_pieces_animations_56_ADDRESS 0x6CEAu    /* 068CEA */
+#define screen_pieces_animations_56_sprites_ADDRESS 0x6CF2u    /* 068CF2 */
+#define screen_pieces_animations_57_ADDRESS 0x6CF8u    /* 068CF8 */
+#define screen_pieces_animations_57_sprites_ADDRESS 0x6D00u    /* 068D00 */
+#define screen_pieces_animations_63_ADDRESS 0x6D06u    /* 068D06 */
+#define screen_pieces_animations_63_sprites_ADDRESS 0x6D12u    /* 068D12 */
+#define screen_pieces_animations_63_sprites_2_ADDRESS 0x6D18u    /* 068D18 */
+#define screen_pieces_animations_65_ADDRESS 0x6D1Eu    /* 068D1E */
+#define screen_pieces_animations_65_sprites_ADDRESS 0x6D26u    /* 068D26 */
+#define screen_pieces_animations_64_ADDRESS 0x6D2Cu    /* 068D2C */
+#define screen_pieces_animations_64_sprites_ADDRESS 0x6D34u    /* 068D34 */
+#define screen_pieces_animations_69_ADDRESS 0x6D46u    /* 068D46 */
+#define screen_pieces_animations_69_sprites_ADDRESS 0x6D4Eu    /* 068D4E */
+#define screen_pieces_animations_70_ADDRESS 0x6D54u    /* 068D54 */
+#define screen_pieces_animations_70_sprites_ADDRESS 0x6D78u    /* 068D78 */
+#define screen_pieces_animations_70_sprites_2_ADDRESS 0x6D7Eu    /* 068D7E */
+#define screen_pieces_animations_70_sprites_3_ADDRESS 0x6D84u    /* 068D84 */
+#define screen_pieces_animations_70_sprites_4_ADDRESS 0x6D8Au    /* 068D8A */
+#define screen_pieces_animations_70_sprites_5_ADDRESS 0x6D96u    /* 068D96 */
+#define screen_pieces_animations_70_sprites_6_ADDRESS 0x6DA2u    /* 068DA2 */
+#define screen_pieces_animations_70_sprites_7_ADDRESS 0x6DAEu    /* 068DAE */
+#define screen_pieces_animations_70_sprites_8_ADDRESS 0x6DB4u    /* 068DB4 */
+#define screen_pieces_animations_71_ADDRESS 0x6DBAu    /* 068DBA */
+#define screen_pieces_animations_71_sprites_ADDRESS 0x6DC2u    /* 068DC2 */
+#define screen_pieces_animations_72_ADDRESS 0x6DC8u    /* 068DC8 */
+#define screen_pieces_animations_72_sprites_ADDRESS 0x6E0Cu    /* 068E0C */
+#define screen_pieces_animations_72_sprites_2_ADDRESS 0x6E1Eu    /* 068E1E */
+#define screen_pieces_animations_72_sprites_3_ADDRESS 0x6E36u    /* 068E36 */
+#define screen_pieces_animations_72_sprites_4_ADDRESS 0x6E48u    /* 068E48 */
+#define screen_pieces_animations_72_sprites_5_ADDRESS 0x6E60u    /* 068E60 */
+#define screen_pieces_animations_72_sprites_6_ADDRESS 0x6E78u    /* 068E78 */
+#define screen_pieces_animations_72_sprites_7_ADDRESS 0x6E8Au    /* 068E8A */
+#define screen_pieces_animations_72_sprites_8_ADDRESS 0x6EA2u    /* 068EA2 */
+#define screen_pieces_animations_72_sprites_9_ADDRESS 0x6EBAu    /* 068EBA */
+#define screen_pieces_animations_72_sprites_10_ADDRESS 0x6ECCu    /* 068ECC */
+#define screen_pieces_animations_73_ADDRESS 0x6EE4u    /* 068EE4 */
+#define screen_pieces_animations_73_sprites_ADDRESS 0x6EECu    /* 068EEC */
+#define screen_pieces_animations_74_ADDRESS 0x6EF8u    /* 068EF8 */
+#define screen_pieces_animations_74_sprites_ADDRESS 0x6F00u    /* 068F00 */
+#define screen_pieces_animations_66_ADDRESS 0x6F12u    /* 068F12 */
+#define screen_pieces_animations_66_sprites_ADDRESS 0x6F1Au    /* 068F1A */
 #define police_car_and_doors_animations_ADDRESS 0x6F2Cu    /* 068F2C */
 #define police_car_and_doors_animations_0_ADDRESS 0x6F82u    /* 068F82 */
 #define police_car_and_doors_animations_0_sprites_ADDRESS 0x6F8Au    /* 068F8A */
@@ -10233,395 +9993,395 @@ extern const void *reset_vector_data;
 #define police_car_and_doors_animations_41_sprites_ADDRESS 0x7746u    /* 069746 */
 #define police_car_and_doors_animations_41_sprites_2_ADDRESS 0x7770u    /* 069770 */
 #define police_car_and_doors_animations_42_ADDRESS 0x77A0u    /* 0697A0 */
-#define kind_10_animations_ADDRESS 0x77B0u    /* 0697B0 */
-#define kind_10_animations_0_ADDRESS 0x77F6u    /* 0697F6 */
-#define kind_10_animations_0_sprites_ADDRESS 0x77FEu    /* 0697FE */
-#define kind_10_animations_1_ADDRESS 0x7828u    /* 069828 */
-#define kind_10_animations_1_sprites_ADDRESS 0x7830u    /* 069830 */
-#define kind_10_animations_2_ADDRESS 0x785Au    /* 06985A */
-#define kind_10_animations_2_sprites_ADDRESS 0x7862u    /* 069862 */
-#define kind_10_animations_3_ADDRESS 0x7892u    /* 069892 */
-#define kind_10_animations_3_sprites_ADDRESS 0x789Au    /* 06989A */
-#define kind_10_animations_4_ADDRESS 0x78CAu    /* 0698CA */
-#define kind_10_animations_4_sprites_ADDRESS 0x78F2u    /* 0698F2 */
-#define kind_10_animations_4_sprites_2_ADDRESS 0x7928u    /* 069928 */
-#define kind_10_animations_4_sprites_3_ADDRESS 0x7952u    /* 069952 */
-#define kind_10_animations_4_sprites_4_ADDRESS 0x798Eu    /* 06998E */
-#define kind_10_animations_4_sprites_5_ADDRESS 0x79CAu    /* 0699CA */
-#define kind_10_animations_4_sprites_6_ADDRESS 0x79E8u    /* 0699E8 */
-#define kind_10_animations_4_sprites_7_ADDRESS 0x79FAu    /* 0699FA */
-#define kind_10_animations_4_sprites_8_ADDRESS 0x7A0Cu    /* 069A0C */
-#define kind_10_animations_4_sprites_9_ADDRESS 0x7A1Eu    /* 069A1E */
-#define kind_10_animations_5_ADDRESS 0x7A30u    /* 069A30 */
-#define kind_10_animations_5_sprites_ADDRESS 0x7A44u    /* 069A44 */
-#define kind_10_animations_5_sprites_2_ADDRESS 0x7A68u    /* 069A68 */
-#define kind_10_animations_5_sprites_3_ADDRESS 0x7A8Cu    /* 069A8C */
-#define kind_10_animations_5_sprites_4_ADDRESS 0x7AB0u    /* 069AB0 */
-#define kind_10_animations_6_ADDRESS 0x7AD4u    /* 069AD4 */
-#define kind_10_animations_6_sprites_ADDRESS 0x7ADCu    /* 069ADC */
-#define kind_10_animations_7_ADDRESS 0x7AE2u    /* 069AE2 */
-#define kind_10_animations_7_sprites_ADDRESS 0x7AEAu    /* 069AEA */
-#define kind_10_animations_8_ADDRESS 0x7B32u    /* 069B32 */
-#define kind_10_animations_8_sprites_ADDRESS 0x7B3Au    /* 069B3A */
-#define kind_10_animations_9_ADDRESS 0x7B64u    /* 069B64 */
-#define kind_10_animations_9_sprites_ADDRESS 0x7B6Cu    /* 069B6C */
-#define kind_10_animations_10_ADDRESS 0x7B72u    /* 069B72 */
-#define kind_10_animations_10_sprites_ADDRESS 0x7B7Au    /* 069B7A */
-#define kind_10_animations_11_ADDRESS 0x7B92u    /* 069B92 */
-#define kind_10_animations_11_sprites_ADDRESS 0x7B9Au    /* 069B9A */
-#define kind_10_animations_12_ADDRESS 0x7BEEu    /* 069BEE */
-#define kind_10_animations_12_sprites_ADDRESS 0x7BF6u    /* 069BF6 */
-#define kind_10_animations_13_ADDRESS 0x7C32u    /* 069C32 */
-#define kind_10_animations_13_sprites_ADDRESS 0x7C3Au    /* 069C3A */
-#define kind_10_animations_14_ADDRESS 0x7C6Au    /* 069C6A */
-#define kind_10_animations_14_sprites_ADDRESS 0x7C72u    /* 069C72 */
-#define kind_10_animations_15_ADDRESS 0x7C96u    /* 069C96 */
-#define kind_10_animations_15_sprites_ADDRESS 0x7C9Eu    /* 069C9E */
-#define kind_10_animations_16_ADDRESS 0x7CBCu    /* 069CBC */
-#define kind_10_animations_16_sprites_ADDRESS 0x7CC4u    /* 069CC4 */
-#define kind_10_animations_17_ADDRESS 0x7CEEu    /* 069CEE */
-#define kind_10_animations_17_sprites_ADDRESS 0x7CF6u    /* 069CF6 */
-#define kind_10_animations_18_ADDRESS 0x7CFCu    /* 069CFC */
-#define kind_10_animations_18_sprites_ADDRESS 0x7D08u    /* 069D08 */
-#define kind_10_animations_18_sprites_2_ADDRESS 0x7D1Au    /* 069D1A */
-#define kind_10_animations_19_ADDRESS 0x7D2Cu    /* 069D2C */
-#define kind_10_animations_19_sprites_ADDRESS 0x7D34u    /* 069D34 */
-#define kind_10_animations_20_ADDRESS 0x7D40u    /* 069D40 */
-#define kind_10_animations_20_sprites_ADDRESS 0x7D48u    /* 069D48 */
-#define kind_10_animations_21_ADDRESS 0x7D4Eu    /* 069D4E */
-#define kind_10_animations_21_sprites_ADDRESS 0x7D6Eu    /* 069D6E */
-#define kind_10_animations_21_sprites_2_ADDRESS 0x7D7Au    /* 069D7A */
-#define kind_10_animations_21_sprites_3_ADDRESS 0x7D8Cu    /* 069D8C */
-#define kind_10_animations_21_sprites_4_ADDRESS 0x7D98u    /* 069D98 */
-#define kind_10_animations_21_sprites_5_ADDRESS 0x7DB6u    /* 069DB6 */
-#define kind_10_animations_21_sprites_6_ADDRESS 0x7DC8u    /* 069DC8 */
-#define kind_10_animations_21_sprites_7_ADDRESS 0x7DCEu    /* 069DCE */
-#define kind_10_animations_26_ADDRESS 0x7DDAu    /* 069DDA */
-#define kind_10_animations_26_sprites_ADDRESS 0x7DE2u    /* 069DE2 */
-#define kind_10_animations_25_ADDRESS 0x7DE8u    /* 069DE8 */
-#define kind_10_animations_25_sprites_ADDRESS 0x7DF0u    /* 069DF0 */
-#define kind_10_animations_24_ADDRESS 0x7DF6u    /* 069DF6 */
-#define kind_10_animations_24_sprites_ADDRESS 0x7DFEu    /* 069DFE */
-#define kind_10_animations_27_ADDRESS 0x7E04u    /* 069E04 */
-#define kind_10_animations_27_sprites_ADDRESS 0x7E0Cu    /* 069E0C */
-#define kind_10_animations_28_ADDRESS 0x7E12u    /* 069E12 */
-#define kind_10_animations_28_sprites_ADDRESS 0x7E2Au    /* 069E2A */
-#define kind_10_animations_28_sprites_2_ADDRESS 0x7E30u    /* 069E30 */
-#define kind_10_animations_28_sprites_3_ADDRESS 0x7E36u    /* 069E36 */
-#define kind_10_animations_28_sprites_4_ADDRESS 0x7E3Cu    /* 069E3C */
-#define kind_10_animations_28_sprites_5_ADDRESS 0x7E42u    /* 069E42 */
-#define kind_10_animations_29_ADDRESS 0x7E48u    /* 069E48 */
-#define kind_10_animations_29_sprites_ADDRESS 0x7E5Cu    /* 069E5C */
-#define kind_10_animations_29_sprites_2_ADDRESS 0x7E62u    /* 069E62 */
-#define kind_10_animations_29_sprites_3_ADDRESS 0x7E74u    /* 069E74 */
-#define kind_10_animations_29_sprites_4_ADDRESS 0x7E8Cu    /* 069E8C */
-#define kind_10_animations_30_ADDRESS 0x7EA4u    /* 069EA4 */
-#define kind_10_animations_30_sprites_ADDRESS 0x7EB0u    /* 069EB0 */
-#define kind_10_animations_30_sprites_2_ADDRESS 0x7EDAu    /* 069EDA */
-#define kind_10_animations_31_ADDRESS 0x7F04u    /* 069F04 */
-#define kind_10_animations_31_sprites_ADDRESS 0x7F0Cu    /* 069F0C */
-#define kind_10_animations_32_ADDRESS 0x7F12u    /* 069F12 */
-#define kind_10_animations_32_sprites_ADDRESS 0x7F1Au    /* 069F1A */
-#define kind_10_animations_33_ADDRESS 0x7F38u    /* 069F38 */
-#define kind_10_animations_33_sprites_ADDRESS 0x7F40u    /* 069F40 */
-#define kind_10_animations_34_ADDRESS 0x7F58u    /* 069F58 */
-#define kind_10_animations_34_sprites_ADDRESS 0x7F60u    /* 069F60 */
-#define kind_10_animations_34_sprites_fill_ADDRESS 0x7F6Cu    /* 069F6C */
-#define kind_10_animations_34_sprites_rest_ADDRESS 0x7F6Eu    /* 069F6E */
-#define kind_10_animations_34_sprites_rest_2_ADDRESS 0x7F76u    /* 069F76 */
-#define kind_10_animations_34_sprites_rest_3_ADDRESS 0x7F7Cu    /* 069F7C */
-#define kind_10_animations_34_sprites_rest_4_ADDRESS 0x7F84u    /* 069F84 */
-#define kind_10_animations_34_sprites_rest_5_ADDRESS 0x7F8Au    /* 069F8A */
-#define kind_10_animations_34_sprites_rest_6_ADDRESS 0x7F92u    /* 069F92 */
-#define kind_10_animations_34_sprites_rest_7_ADDRESS 0x7F9Eu    /* 069F9E */
-#define kind_10_animations_34_sprites_rest_8_ADDRESS 0x7FAAu    /* 069FAA */
-#define kind_10_animations_34_sprites_rest_9_ADDRESS 0x7FB0u    /* 069FB0 */
-#define kind_10_animations_34_sprites_rest_10_ADDRESS 0x7FB6u    /* 069FB6 */
-#define kind_10_animations_34_sprites_rest_11_ADDRESS 0x7FBEu    /* 069FBE */
-#define kind_10_animations_34_sprites_rest_12_ADDRESS 0x7FC4u    /* 069FC4 */
-#define kind_10_animations_34_sprites_rest_13_ADDRESS 0x7FCCu    /* 069FCC */
-#define kind_10_animations_34_sprites_rest_14_ADDRESS 0x7FD2u    /* 069FD2 */
-#define kind_10_animations_34_sprites_rest_15_ADDRESS 0x7FDAu    /* 069FDA */
-#define kind_10_animations_34_sprites_rest_16_ADDRESS 0x7FE0u    /* 069FE0 */
-#define kind_10_animations_34_sprites_rest_17_ADDRESS 0x7FE8u    /* 069FE8 */
-#define kind_10_animations_34_sprites_fill_2_ADDRESS 0x7FEEu    /* 069FEE */
-#define kind_10_animations_34_sprites_rest_18_ADDRESS 0x6000u    /* 06A000 */
-#define kind_9C_animations_ADDRESS 0x6004u    /* 06A004 */
-#define kind_9C_animations_14_ADDRESS 0x604Eu    /* 06A04E */
-#define kind_9C_animations_14_sprites_ADDRESS 0x6056u    /* 06A056 */
-#define kind_9C_animations_0_ADDRESS 0x6068u    /* 06A068 */
-#define kind_9C_animations_0_sprites_ADDRESS 0x608Cu    /* 06A08C */
-#define kind_9C_animations_0_sprites_2_ADDRESS 0x60AAu    /* 06A0AA */
-#define kind_9C_animations_0_sprites_3_ADDRESS 0x60C8u    /* 06A0C8 */
-#define kind_9C_animations_0_sprites_4_ADDRESS 0x60E6u    /* 06A0E6 */
-#define kind_9C_animations_0_sprites_5_ADDRESS 0x610Au    /* 06A10A */
-#define kind_9C_animations_0_sprites_6_ADDRESS 0x611Cu    /* 06A11C */
-#define kind_9C_animations_0_sprites_7_ADDRESS 0x6146u    /* 06A146 */
-#define kind_9C_animations_0_sprites_8_ADDRESS 0x616Au    /* 06A16A */
-#define kind_9C_animations_1_ADDRESS 0x6188u    /* 06A188 */
-#define kind_9C_animations_1_sprites_ADDRESS 0x61ACu    /* 06A1AC */
-#define kind_9C_animations_1_sprites_2_ADDRESS 0x61CAu    /* 06A1CA */
-#define kind_9C_animations_1_sprites_3_ADDRESS 0x61E8u    /* 06A1E8 */
-#define kind_9C_animations_1_sprites_4_ADDRESS 0x6206u    /* 06A206 */
-#define kind_9C_animations_1_sprites_5_ADDRESS 0x622Au    /* 06A22A */
-#define kind_9C_animations_1_sprites_6_ADDRESS 0x623Cu    /* 06A23C */
-#define kind_9C_animations_1_sprites_7_ADDRESS 0x6266u    /* 06A266 */
-#define kind_9C_animations_1_sprites_8_ADDRESS 0x628Au    /* 06A28A */
-#define kind_9C_animations_2_ADDRESS 0x62A8u    /* 06A2A8 */
-#define kind_9C_animations_2_sprites_ADDRESS 0x62CCu    /* 06A2CC */
-#define kind_9C_animations_2_sprites_2_ADDRESS 0x62EAu    /* 06A2EA */
-#define kind_9C_animations_2_sprites_3_ADDRESS 0x6308u    /* 06A308 */
-#define kind_9C_animations_2_sprites_4_ADDRESS 0x6320u    /* 06A320 */
-#define kind_9C_animations_2_sprites_5_ADDRESS 0x6338u    /* 06A338 */
-#define kind_9C_animations_3_ADDRESS 0x6350u    /* 06A350 */
-#define kind_9C_animations_3_sprites_ADDRESS 0x6358u    /* 06A358 */
-#define kind_9C_animations_4_ADDRESS 0x6370u    /* 06A370 */
-#define kind_9C_animations_4_sprites_ADDRESS 0x637Cu    /* 06A37C */
-#define kind_9C_animations_4_sprites_2_ADDRESS 0x639Au    /* 06A39A */
-#define kind_9C_animations_5_ADDRESS 0x63ACu    /* 06A3AC */
-#define kind_9C_animations_6_ADDRESS 0x63B4u    /* 06A3B4 */
-#define kind_9C_animations_6_sprites_ADDRESS 0x63C0u    /* 06A3C0 */
-#define kind_9C_animations_6_sprites_2_ADDRESS 0x63FCu    /* 06A3FC */
-#define kind_9C_animations_7_ADDRESS 0x6432u    /* 06A432 */
-#define kind_9C_animations_7_sprites_ADDRESS 0x6442u    /* 06A442 */
-#define kind_9C_animations_7_sprites_2_ADDRESS 0x6454u    /* 06A454 */
-#define kind_9C_animations_7_sprites_3_ADDRESS 0x6466u    /* 06A466 */
-#define kind_9C_animations_8_ADDRESS 0x647Eu    /* 06A47E */
-#define kind_9C_animations_8_sprites_ADDRESS 0x64A6u    /* 06A4A6 */
-#define kind_9C_animations_8_sprites_2_ADDRESS 0x64C4u    /* 06A4C4 */
-#define kind_9C_animations_8_sprites_3_ADDRESS 0x64E8u    /* 06A4E8 */
-#define kind_9C_animations_8_sprites_4_ADDRESS 0x650Cu    /* 06A50C */
-#define kind_9C_animations_8_sprites_5_ADDRESS 0x6536u    /* 06A536 */
-#define kind_9C_animations_8_sprites_6_ADDRESS 0x6560u    /* 06A560 */
-#define kind_9C_animations_8_sprites_7_ADDRESS 0x658Au    /* 06A58A */
-#define kind_9C_animations_9_ADDRESS 0x65A8u    /* 06A5A8 */
-#define kind_9C_animations_9_sprites_ADDRESS 0x65CCu    /* 06A5CC */
-#define kind_9C_animations_9_sprites_2_ADDRESS 0x65D2u    /* 06A5D2 */
-#define kind_9C_animations_9_sprites_3_ADDRESS 0x65D8u    /* 06A5D8 */
-#define kind_9C_animations_9_sprites_4_ADDRESS 0x65DEu    /* 06A5DE */
-#define kind_9C_animations_9_sprites_5_ADDRESS 0x65E4u    /* 06A5E4 */
-#define kind_9C_animations_9_sprites_6_ADDRESS 0x65EAu    /* 06A5EA */
-#define kind_9C_animations_9_sprites_7_ADDRESS 0x65F0u    /* 06A5F0 */
-#define kind_9C_animations_9_sprites_8_ADDRESS 0x65F6u    /* 06A5F6 */
-#define kind_9C_animations_10_ADDRESS 0x65FCu    /* 06A5FC */
-#define kind_9C_animations_10_sprites_ADDRESS 0x6620u    /* 06A620 */
-#define kind_9C_animations_10_sprites_2_ADDRESS 0x6626u    /* 06A626 */
-#define kind_9C_animations_10_sprites_3_ADDRESS 0x6632u    /* 06A632 */
-#define kind_9C_animations_10_sprites_4_ADDRESS 0x6638u    /* 06A638 */
-#define kind_9C_animations_10_sprites_5_ADDRESS 0x663Eu    /* 06A63E */
-#define kind_9C_animations_10_sprites_6_ADDRESS 0x6650u    /* 06A650 */
-#define kind_9C_animations_10_sprites_7_ADDRESS 0x6656u    /* 06A656 */
-#define kind_9C_animations_10_sprites_8_ADDRESS 0x665Cu    /* 06A65C */
-#define kind_9C_animations_11_ADDRESS 0x6662u    /* 06A662 */
-#define kind_9C_animations_11_sprites_ADDRESS 0x6686u    /* 06A686 */
-#define kind_9C_animations_11_sprites_2_ADDRESS 0x66A4u    /* 06A6A4 */
-#define kind_9C_animations_11_sprites_3_ADDRESS 0x66C8u    /* 06A6C8 */
-#define kind_9C_animations_11_sprites_4_ADDRESS 0x66ECu    /* 06A6EC */
-#define kind_9C_animations_11_sprites_5_ADDRESS 0x6710u    /* 06A710 */
-#define kind_9C_animations_11_sprites_6_ADDRESS 0x6734u    /* 06A734 */
-#define kind_9C_animations_11_sprites_7_ADDRESS 0x6746u    /* 06A746 */
-#define kind_9C_animations_11_sprites_8_ADDRESS 0x6770u    /* 06A770 */
-#define kind_9C_animations_12_ADDRESS 0x6794u    /* 06A794 */
-#define kind_9C_animations_12_sprites_ADDRESS 0x67A8u    /* 06A7A8 */
-#define kind_9C_animations_12_sprites_2_ADDRESS 0x67BAu    /* 06A7BA */
-#define kind_9C_animations_12_sprites_3_ADDRESS 0x67D8u    /* 06A7D8 */
-#define kind_9C_animations_12_sprites_4_ADDRESS 0x6802u    /* 06A802 */
-#define kind_9C_animations_13_ADDRESS 0x6820u    /* 06A820 */
-#define kind_9C_animations_13_sprites_ADDRESS 0x6848u    /* 06A848 */
-#define kind_9C_animations_13_sprites_2_ADDRESS 0x6860u    /* 06A860 */
-#define kind_9C_animations_13_sprites_3_ADDRESS 0x687Eu    /* 06A87E */
-#define kind_9C_animations_13_sprites_4_ADDRESS 0x68A2u    /* 06A8A2 */
-#define kind_9C_animations_13_sprites_5_ADDRESS 0x68C6u    /* 06A8C6 */
-#define kind_9C_animations_13_sprites_6_ADDRESS 0x68F0u    /* 06A8F0 */
-#define kind_9C_animations_13_sprites_7_ADDRESS 0x691Au    /* 06A91A */
-#define kind_9C_animations_16_ADDRESS 0x693Eu    /* 06A93E */
-#define kind_9C_animations_16_sprites_ADDRESS 0x6962u    /* 06A962 */
-#define kind_9C_animations_16_sprites_2_ADDRESS 0x6980u    /* 06A980 */
-#define kind_9C_animations_16_sprites_3_ADDRESS 0x69A4u    /* 06A9A4 */
-#define kind_9C_animations_16_sprites_4_ADDRESS 0x69C8u    /* 06A9C8 */
-#define kind_9C_animations_16_sprites_5_ADDRESS 0x69ECu    /* 06A9EC */
-#define kind_9C_animations_16_sprites_6_ADDRESS 0x6A04u    /* 06AA04 */
-#define kind_9C_animations_16_sprites_7_ADDRESS 0x6A2Eu    /* 06AA2E */
-#define kind_9C_animations_16_sprites_8_ADDRESS 0x6A58u    /* 06AA58 */
-#define kind_9C_animations_17_ADDRESS 0x6A7Cu    /* 06AA7C */
-#define kind_9C_animations_17_sprites_ADDRESS 0x6AA0u    /* 06AAA0 */
-#define kind_9C_animations_17_sprites_2_ADDRESS 0x6AC4u    /* 06AAC4 */
-#define kind_9C_animations_17_sprites_3_ADDRESS 0x6AEEu    /* 06AAEE */
-#define kind_9C_animations_17_sprites_4_ADDRESS 0x6B0Cu    /* 06AB0C */
-#define kind_9C_animations_17_sprites_5_ADDRESS 0x6B36u    /* 06AB36 */
-#define kind_9C_animations_18_ADDRESS 0x6B5Au    /* 06AB5A */
-#define kind_9C_animations_18_sprites_ADDRESS 0x6B7Eu    /* 06AB7E */
-#define kind_9C_animations_18_sprites_2_ADDRESS 0x6B96u    /* 06AB96 */
-#define kind_9C_animations_18_sprites_3_ADDRESS 0x6BB4u    /* 06ABB4 */
-#define kind_9C_animations_18_sprites_4_ADDRESS 0x6BD8u    /* 06ABD8 */
-#define kind_9C_animations_18_sprites_5_ADDRESS 0x6BF6u    /* 06ABF6 */
-#define kind_9C_animations_18_sprites_6_ADDRESS 0x6C20u    /* 06AC20 */
-#define kind_9C_animations_18_sprites_7_ADDRESS 0x6C50u    /* 06AC50 */
-#define kind_9C_animations_18_sprites_8_ADDRESS 0x6C7Au    /* 06AC7A */
-#define kind_9C_animations_19_ADDRESS 0x6C9Eu    /* 06AC9E */
-#define kind_9C_animations_19_sprites_ADDRESS 0x6CC2u    /* 06ACC2 */
-#define kind_9C_animations_19_sprites_2_ADDRESS 0x6CE6u    /* 06ACE6 */
-#define kind_9C_animations_19_sprites_3_ADDRESS 0x6D0Au    /* 06AD0A */
-#define kind_9C_animations_19_sprites_4_ADDRESS 0x6D2Eu    /* 06AD2E */
-#define kind_9C_animations_19_sprites_5_ADDRESS 0x6D58u    /* 06AD58 */
-#define kind_9C_animations_19_sprites_6_ADDRESS 0x6D8Eu    /* 06AD8E */
-#define kind_9C_animations_19_sprites_7_ADDRESS 0x6DB8u    /* 06ADB8 */
-#define kind_9C_animations_19_sprites_8_ADDRESS 0x6DE8u    /* 06ADE8 */
-#define kind_9C_animations_20_ADDRESS 0x6E00u    /* 06AE00 */
-#define kind_9C_animations_20_sprites_ADDRESS 0x6E80u    /* 06AE80 */
-#define kind_9C_animations_20_sprites_2_ADDRESS 0x6E98u    /* 06AE98 */
-#define kind_9C_animations_20_sprites_3_ADDRESS 0x6EB6u    /* 06AEB6 */
-#define kind_9C_animations_20_sprites_4_ADDRESS 0x6ED4u    /* 06AED4 */
-#define kind_9C_animations_20_sprites_5_ADDRESS 0x6EF2u    /* 06AEF2 */
-#define kind_9C_animations_20_sprites_6_ADDRESS 0x6F10u    /* 06AF10 */
-#define kind_9C_animations_20_sprites_7_ADDRESS 0x6F28u    /* 06AF28 */
-#define kind_9C_animations_21_ADDRESS 0x6F46u    /* 06AF46 */
-#define kind_9C_animations_21_sprites_ADDRESS 0x6F4Eu    /* 06AF4E */
-#define kind_9C_animations_22_ADDRESS 0x6F5Au    /* 06AF5A */
-#define kind_9C_animations_22_sprites_ADDRESS 0x6F72u    /* 06AF72 */
-#define kind_9C_animations_22_sprites_2_ADDRESS 0x6F8Au    /* 06AF8A */
-#define kind_9C_animations_22_sprites_3_ADDRESS 0x6FA2u    /* 06AFA2 */
-#define kind_9C_animations_22_sprites_4_ADDRESS 0x6FB4u    /* 06AFB4 */
-#define kind_9C_animations_22_sprites_5_ADDRESS 0x6FC0u    /* 06AFC0 */
-#define kind_9C_animations_23_ADDRESS 0x6FCCu    /* 06AFCC */
-#define kind_9C_animations_23_sprites_ADDRESS 0x6FF0u    /* 06AFF0 */
-#define kind_9C_animations_23_sprites_2_ADDRESS 0x7020u    /* 06B020 */
-#define kind_9C_animations_23_sprites_3_ADDRESS 0x7038u    /* 06B038 */
-#define kind_9C_animations_23_sprites_4_ADDRESS 0x7056u    /* 06B056 */
-#define kind_9C_animations_23_sprites_5_ADDRESS 0x707Au    /* 06B07A */
-#define kind_9C_animations_24_ADDRESS 0x7098u    /* 06B098 */
-#define kind_9C_animations_24_sprites_ADDRESS 0x70A8u    /* 06B0A8 */
-#define kind_9C_animations_24_sprites_2_ADDRESS 0x70B4u    /* 06B0B4 */
-#define kind_9C_animations_24_sprites_3_ADDRESS 0x70C6u    /* 06B0C6 */
-#define kind_9C_animations_25_ADDRESS 0x70D8u    /* 06B0D8 */
-#define kind_9C_animations_25_sprites_ADDRESS 0x70F4u    /* 06B0F4 */
-#define kind_9C_animations_25_sprites_2_ADDRESS 0x7112u    /* 06B112 */
-#define kind_9C_animations_25_sprites_3_ADDRESS 0x712Au    /* 06B12A */
-#define kind_9C_animations_25_sprites_4_ADDRESS 0x713Cu    /* 06B13C */
-#define kind_9C_animations_26_ADDRESS 0x7154u    /* 06B154 */
-#define kind_9C_animations_26_sprites_ADDRESS 0x7164u    /* 06B164 */
-#define kind_9C_animations_26_sprites_2_ADDRESS 0x717Cu    /* 06B17C */
-#define kind_9C_animations_26_sprites_3_ADDRESS 0x71A0u    /* 06B1A0 */
-#define kind_9C_animations_27_ADDRESS 0x71BEu    /* 06B1BE */
-#define kind_9C_animations_27_sprites_ADDRESS 0x71CAu    /* 06B1CA */
-#define kind_9C_animations_27_sprites_2_ADDRESS 0x71EEu    /* 06B1EE */
-#define kind_9C_animations_28_ADDRESS 0x720Cu    /* 06B20C */
-#define kind_9C_animations_35_ADDRESS 0x7278u    /* 06B278 */
-#define kind_9C_animations_28_sprites_ADDRESS 0x72B4u    /* 06B2B4 */
-#define kind_9C_animations_28_sprites_2_ADDRESS 0x72DEu    /* 06B2DE */
-#define kind_9C_animations_28_sprites_3_ADDRESS 0x7308u    /* 06B308 */
-#define kind_9C_animations_28_sprites_4_ADDRESS 0x733Eu    /* 06B33E */
-#define kind_9C_animations_28_sprites_5_ADDRESS 0x7374u    /* 06B374 */
-#define kind_9C_animations_28_sprites_6_ADDRESS 0x73B0u    /* 06B3B0 */
-#define kind_9C_animations_28_sprites_7_ADDRESS 0x73E0u    /* 06B3E0 */
-#define kind_9C_animations_28_sprites_8_ADDRESS 0x7422u    /* 06B422 */
-#define kind_9C_animations_28_sprites_9_ADDRESS 0x746Au    /* 06B46A */
-#define kind_9C_animations_28_sprites_10_ADDRESS 0x74A6u    /* 06B4A6 */
-#define kind_9C_animations_28_sprites_11_ADDRESS 0x74DCu    /* 06B4DC */
-#define kind_9C_animations_28_sprites_12_ADDRESS 0x7512u    /* 06B512 */
-#define kind_9C_animations_28_sprites_13_ADDRESS 0x7536u    /* 06B536 */
-#define kind_9C_animations_35_sprites_ADDRESS 0x7560u    /* 06B560 */
-#define kind_9C_animations_35_sprites_2_ADDRESS 0x758Au    /* 06B58A */
-#define kind_9C_animations_35_sprites_3_ADDRESS 0x75C0u    /* 06B5C0 */
-#define kind_9C_animations_35_sprites_4_ADDRESS 0x7608u    /* 06B608 */
-#define kind_9C_animations_35_sprites_5_ADDRESS 0x7668u    /* 06B668 */
-#define kind_9C_animations_35_sprites_6_ADDRESS 0x76C8u    /* 06B6C8 */
-#define kind_9C_animations_35_sprites_7_ADDRESS 0x7728u    /* 06B728 */
-#define kind_9C_animations_35_sprites_8_ADDRESS 0x7788u    /* 06B788 */
-#define kind_9C_animations_35_sprites_9_ADDRESS 0x77D0u    /* 06B7D0 */
-#define kind_9C_animations_35_sprites_10_ADDRESS 0x780Cu    /* 06B80C */
-#define kind_9C_animations_35_sprites_11_ADDRESS 0x783Cu    /* 06B83C */
-#define kind_9C_animations_35_sprites_12_ADDRESS 0x786Cu    /* 06B86C */
-#define kind_9C_animations_29_sprites_2_ADDRESS 0x7890u    /* 06B890 */
-#define kind_9C_animations_29_ADDRESS 0x78AEu    /* 06B8AE */
-#define kind_9C_animations_29_sprites_ADDRESS 0x78CAu    /* 06B8CA */
-#define kind_9C_animations_30_ADDRESS 0x78E8u    /* 06B8E8 */
-#define kind_9C_animations_30_sprites_ADDRESS 0x7908u    /* 06B908 */
-#define kind_9C_animations_30_sprites_2_ADDRESS 0x7926u    /* 06B926 */
-#define kind_9C_animations_30_sprites_3_ADDRESS 0x7938u    /* 06B938 */
-#define kind_9C_animations_30_sprites_4_ADDRESS 0x7950u    /* 06B950 */
-#define kind_9C_animations_32_ADDRESS 0x7968u    /* 06B968 */
-#define kind_9C_animations_32_sprites_ADDRESS 0x7978u    /* 06B978 */
-#define kind_9C_animations_32_sprites_2_ADDRESS 0x7996u    /* 06B996 */
-#define kind_9C_animations_32_sprites_3_ADDRESS 0x79AEu    /* 06B9AE */
-#define kind_9C_animations_33_ADDRESS 0x79C0u    /* 06B9C0 */
-#define kind_9C_animations_31_ADDRESS 0x79C8u    /* 06B9C8 */
-#define kind_9C_animations_31_sprites_ADDRESS 0x79ECu    /* 06B9EC */
-#define kind_9C_animations_31_sprites_2_ADDRESS 0x79F2u    /* 06B9F2 */
-#define kind_9C_animations_31_sprites_3_ADDRESS 0x79F8u    /* 06B9F8 */
-#define kind_9C_animations_31_sprites_4_ADDRESS 0x79FEu    /* 06B9FE */
-#define kind_9C_animations_31_sprites_5_ADDRESS 0x7A04u    /* 06BA04 */
-#define kind_9C_animations_31_sprites_6_ADDRESS 0x7A0Au    /* 06BA0A */
-#define kind_9C_animations_31_sprites_7_ADDRESS 0x7A10u    /* 06BA10 */
-#define kind_9C_animations_31_sprites_8_ADDRESS 0x7A16u    /* 06BA16 */
-#define kind_9C_animations_34_ADDRESS 0x7A1Cu    /* 06BA1C */
-#define kind_9C_animations_34_sprites_ADDRESS 0x7A44u    /* 06BA44 */
-#define kind_9C_animations_34_sprites_2_ADDRESS 0x7A4Au    /* 06BA4A */
-#define kind_9C_animations_34_sprites_3_ADDRESS 0x7A50u    /* 06BA50 */
-#define kind_9C_animations_34_sprites_4_ADDRESS 0x7A56u    /* 06BA56 */
-#define kind_9C_animations_34_sprites_5_ADDRESS 0x7A5Cu    /* 06BA5C */
-#define kind_9C_animations_34_sprites_6_ADDRESS 0x7A62u    /* 06BA62 */
-#define kind_9C_animations_34_sprites_7_ADDRESS 0x7A68u    /* 06BA68 */
-#define kind_9C_animations_34_sprites_8_ADDRESS 0x7A6Eu    /* 06BA6E */
-#define kind_9C_animations_34_sprites_9_ADDRESS 0x7A74u    /* 06BA74 */
-#define kind_9C_animations_36_ADDRESS 0x7A7Au    /* 06BA7A */
-#define kind_9C_animations_36_sprites_ADDRESS 0x7AAEu    /* 06BAAE */
-#define kind_9C_animations_36_sprites_2_ADDRESS 0x7AB4u    /* 06BAB4 */
-#define kind_9C_animations_36_sprites_3_ADDRESS 0x7AC0u    /* 06BAC0 */
-#define kind_9C_animations_36_sprites_4_ADDRESS 0x7AD2u    /* 06BAD2 */
-#define kind_9C_animations_36_sprites_5_ADDRESS 0x7AF6u    /* 06BAF6 */
-#define kind_9C_animations_36_sprites_6_ADDRESS 0x7B26u    /* 06BB26 */
-#define kind_9C_animations_36_sprites_7_ADDRESS 0x7B5Cu    /* 06BB5C */
-#define kind_9C_animations_36_sprites_8_ADDRESS 0x7B98u    /* 06BB98 */
-#define kind_A4_animations_ADDRESS 0x7B9Eu    /* 06BB9E */
-#define kind_A4_animations_8_ADDRESS 0x7BC2u    /* 06BBC2 */
-#define kind_A4_animations_8_sprites_ADDRESS 0x7BCEu    /* 06BBCE */
-#define kind_A4_animations_8_sprites_2_ADDRESS 0x7BDAu    /* 06BBDA */
-#define kind_A4_animations_0_ADDRESS 0x7BE6u    /* 06BBE6 */
-#define kind_A4_animations_0_sprites_ADDRESS 0x7BF2u    /* 06BBF2 */
-#define kind_A4_animations_0_sprites_2_ADDRESS 0x7C46u    /* 06BC46 */
-#define kind_A4_animations_1_ADDRESS 0x7CA0u    /* 06BCA0 */
-#define kind_A4_animations_1_sprites_ADDRESS 0x7CB8u    /* 06BCB8 */
-#define kind_A4_animations_1_sprites_2_ADDRESS 0x7D0Cu    /* 06BD0C */
-#define kind_A4_animations_1_sprites_3_ADDRESS 0x7D66u    /* 06BD66 */
-#define kind_A4_animations_1_sprites_4_ADDRESS 0x7DBAu    /* 06BDBA */
-#define kind_A4_animations_1_sprites_5_ADDRESS 0x7E14u    /* 06BE14 */
-#define kind_A4_animations_2_ADDRESS 0x7E6Eu    /* 06BE6E */
-#define kind_A4_animations_3_ADDRESS 0x7E7Au    /* 06BE7A */
-#define kind_A4_animations_3_sprites_ADDRESS 0x7E86u    /* 06BE86 */
-#define kind_A4_animations_3_sprites_2_ADDRESS 0x7E92u    /* 06BE92 */
-#define kind_A4_animations_4_ADDRESS 0x7E9Eu    /* 06BE9E */
-#define kind_A4_animations_4_sprites_ADDRESS 0x7EAAu    /* 06BEAA */
-#define kind_A4_animations_4_sprites_2_ADDRESS 0x7EBCu    /* 06BEBC */
-#define kind_A4_animations_5_ADDRESS 0x7ECEu    /* 06BECE */
-#define kind_A4_animations_5_sprites_ADDRESS 0x7EDAu    /* 06BEDA */
-#define kind_A4_animations_5_sprites_2_ADDRESS 0x7EECu    /* 06BEEC */
-#define kind_A4_animations_6_ADDRESS 0x7EFEu    /* 06BEFE */
-#define kind_A4_animations_6_sprites_ADDRESS 0x7F06u    /* 06BF06 */
-#define kind_A4_animations_7_ADDRESS 0x7F24u    /* 06BF24 */
-#define kind_A4_animations_7_sprites_ADDRESS 0x7F30u    /* 06BF30 */
-#define kind_A4_animations_7_sprites_2_ADDRESS 0x7F48u    /* 06BF48 */
-#define kind_A4_animations_10_ADDRESS 0x7F60u    /* 06BF60 */
-#define kind_A4_animations_10_sprites_ADDRESS 0x7F68u    /* 06BF68 */
-#define kind_A4_animations_11_ADDRESS 0x7F6Eu    /* 06BF6E */
-#define kind_A4_animations_11_sprites_ADDRESS 0x7F76u    /* 06BF76 */
-#define kind_A4_animations_12_ADDRESS 0x7F7Cu    /* 06BF7C */
-#define kind_A4_animations_12_sprites_ADDRESS 0x7F84u    /* 06BF84 */
-#define kind_A4_animations_9_ADDRESS 0x7F8Au    /* 06BF8A */
-#define kind_A4_animations_9_sprites_ADDRESS 0x7F92u    /* 06BF92 */
-#define kind_A4_animations_13_ADDRESS 0x7F9Eu    /* 06BF9E */
-#define kind_A4_animations_13_sprites_ADDRESS 0x7FAAu    /* 06BFAA */
-#define kind_A4_animations_13_sprites_2_ADDRESS 0x7FB0u    /* 06BFB0 */
-#define kind_A4_animations_15_ADDRESS 0x7FB6u    /* 06BFB6 */
-#define kind_A4_animations_15_sprites_ADDRESS 0x7FBEu    /* 06BFBE */
-#define kind_A4_animations_14_ADDRESS 0x7FC4u    /* 06BFC4 */
-#define kind_A4_animations_14_sprites_ADDRESS 0x7FCCu    /* 06BFCC */
-#define kind_A4_animations_17_ADDRESS 0x7FD2u    /* 06BFD2 */
-#define kind_A4_animations_17_sprites_ADDRESS 0x7FDAu    /* 06BFDA */
-#define kind_A4_animations_16_ADDRESS 0x7FE0u    /* 06BFE0 */
-#define kind_A4_animations_16_sprites_ADDRESS 0x7FE8u    /* 06BFE8 */
-#define kind_A4_animations_16_sprites_fill_ADDRESS 0x7FEEu    /* 06BFEE */
-#define kind_A4_animations_16_sprites_rest_ADDRESS 0x6000u    /* 06C000 */
+#define moes_and_gorge_scenery_animations_ADDRESS 0x77B0u    /* 0697B0 */
+#define moes_and_gorge_scenery_animations_0_ADDRESS 0x77F6u    /* 0697F6 */
+#define moes_and_gorge_scenery_animations_0_sprites_ADDRESS 0x77FEu    /* 0697FE */
+#define moes_and_gorge_scenery_animations_1_ADDRESS 0x7828u    /* 069828 */
+#define moes_and_gorge_scenery_animations_1_sprites_ADDRESS 0x7830u    /* 069830 */
+#define moes_and_gorge_scenery_animations_2_ADDRESS 0x785Au    /* 06985A */
+#define moes_and_gorge_scenery_animations_2_sprites_ADDRESS 0x7862u    /* 069862 */
+#define moes_and_gorge_scenery_animations_3_ADDRESS 0x7892u    /* 069892 */
+#define moes_and_gorge_scenery_animations_3_sprites_ADDRESS 0x789Au    /* 06989A */
+#define moes_and_gorge_scenery_animations_4_ADDRESS 0x78CAu    /* 0698CA */
+#define moes_and_gorge_scenery_animations_4_sprites_ADDRESS 0x78F2u    /* 0698F2 */
+#define moes_and_gorge_scenery_animations_4_sprites_2_ADDRESS 0x7928u    /* 069928 */
+#define moes_and_gorge_scenery_animations_4_sprites_3_ADDRESS 0x7952u    /* 069952 */
+#define moes_and_gorge_scenery_animations_4_sprites_4_ADDRESS 0x798Eu    /* 06998E */
+#define moes_and_gorge_scenery_animations_4_sprites_5_ADDRESS 0x79CAu    /* 0699CA */
+#define moes_and_gorge_scenery_animations_4_sprites_6_ADDRESS 0x79E8u    /* 0699E8 */
+#define moes_and_gorge_scenery_animations_4_sprites_7_ADDRESS 0x79FAu    /* 0699FA */
+#define moes_and_gorge_scenery_animations_4_sprites_8_ADDRESS 0x7A0Cu    /* 069A0C */
+#define moes_and_gorge_scenery_animations_4_sprites_9_ADDRESS 0x7A1Eu    /* 069A1E */
+#define moes_and_gorge_scenery_animations_5_ADDRESS 0x7A30u    /* 069A30 */
+#define moes_and_gorge_scenery_animations_5_sprites_ADDRESS 0x7A44u    /* 069A44 */
+#define moes_and_gorge_scenery_animations_5_sprites_2_ADDRESS 0x7A68u    /* 069A68 */
+#define moes_and_gorge_scenery_animations_5_sprites_3_ADDRESS 0x7A8Cu    /* 069A8C */
+#define moes_and_gorge_scenery_animations_5_sprites_4_ADDRESS 0x7AB0u    /* 069AB0 */
+#define moes_and_gorge_scenery_animations_6_ADDRESS 0x7AD4u    /* 069AD4 */
+#define moes_and_gorge_scenery_animations_6_sprites_ADDRESS 0x7ADCu    /* 069ADC */
+#define moes_and_gorge_scenery_animations_7_ADDRESS 0x7AE2u    /* 069AE2 */
+#define moes_and_gorge_scenery_animations_7_sprites_ADDRESS 0x7AEAu    /* 069AEA */
+#define moes_and_gorge_scenery_animations_8_ADDRESS 0x7B32u    /* 069B32 */
+#define moes_and_gorge_scenery_animations_8_sprites_ADDRESS 0x7B3Au    /* 069B3A */
+#define moes_and_gorge_scenery_animations_9_ADDRESS 0x7B64u    /* 069B64 */
+#define moes_and_gorge_scenery_animations_9_sprites_ADDRESS 0x7B6Cu    /* 069B6C */
+#define moes_and_gorge_scenery_animations_10_ADDRESS 0x7B72u    /* 069B72 */
+#define moes_and_gorge_scenery_animations_10_sprites_ADDRESS 0x7B7Au    /* 069B7A */
+#define moes_and_gorge_scenery_animations_11_ADDRESS 0x7B92u    /* 069B92 */
+#define moes_and_gorge_scenery_animations_11_sprites_ADDRESS 0x7B9Au    /* 069B9A */
+#define moes_and_gorge_scenery_animations_12_ADDRESS 0x7BEEu    /* 069BEE */
+#define moes_and_gorge_scenery_animations_12_sprites_ADDRESS 0x7BF6u    /* 069BF6 */
+#define moes_and_gorge_scenery_animations_13_ADDRESS 0x7C32u    /* 069C32 */
+#define moes_and_gorge_scenery_animations_13_sprites_ADDRESS 0x7C3Au    /* 069C3A */
+#define moes_and_gorge_scenery_animations_14_ADDRESS 0x7C6Au    /* 069C6A */
+#define moes_and_gorge_scenery_animations_14_sprites_ADDRESS 0x7C72u    /* 069C72 */
+#define moes_and_gorge_scenery_animations_15_ADDRESS 0x7C96u    /* 069C96 */
+#define moes_and_gorge_scenery_animations_15_sprites_ADDRESS 0x7C9Eu    /* 069C9E */
+#define moes_and_gorge_scenery_animations_16_ADDRESS 0x7CBCu    /* 069CBC */
+#define moes_and_gorge_scenery_animations_16_sprites_ADDRESS 0x7CC4u    /* 069CC4 */
+#define moes_and_gorge_scenery_animations_17_ADDRESS 0x7CEEu    /* 069CEE */
+#define moes_and_gorge_scenery_animations_17_sprites_ADDRESS 0x7CF6u    /* 069CF6 */
+#define moes_and_gorge_scenery_animations_18_ADDRESS 0x7CFCu    /* 069CFC */
+#define moes_and_gorge_scenery_animations_18_sprites_ADDRESS 0x7D08u    /* 069D08 */
+#define moes_and_gorge_scenery_animations_18_sprites_2_ADDRESS 0x7D1Au    /* 069D1A */
+#define moes_and_gorge_scenery_animations_19_ADDRESS 0x7D2Cu    /* 069D2C */
+#define moes_and_gorge_scenery_animations_19_sprites_ADDRESS 0x7D34u    /* 069D34 */
+#define moes_and_gorge_scenery_animations_20_ADDRESS 0x7D40u    /* 069D40 */
+#define moes_and_gorge_scenery_animations_20_sprites_ADDRESS 0x7D48u    /* 069D48 */
+#define moes_and_gorge_scenery_animations_21_ADDRESS 0x7D4Eu    /* 069D4E */
+#define moes_and_gorge_scenery_animations_21_sprites_ADDRESS 0x7D6Eu    /* 069D6E */
+#define moes_and_gorge_scenery_animations_21_sprites_2_ADDRESS 0x7D7Au    /* 069D7A */
+#define moes_and_gorge_scenery_animations_21_sprites_3_ADDRESS 0x7D8Cu    /* 069D8C */
+#define moes_and_gorge_scenery_animations_21_sprites_4_ADDRESS 0x7D98u    /* 069D98 */
+#define moes_and_gorge_scenery_animations_21_sprites_5_ADDRESS 0x7DB6u    /* 069DB6 */
+#define moes_and_gorge_scenery_animations_21_sprites_6_ADDRESS 0x7DC8u    /* 069DC8 */
+#define moes_and_gorge_scenery_animations_21_sprites_7_ADDRESS 0x7DCEu    /* 069DCE */
+#define moes_and_gorge_scenery_animations_26_ADDRESS 0x7DDAu    /* 069DDA */
+#define moes_and_gorge_scenery_animations_26_sprites_ADDRESS 0x7DE2u    /* 069DE2 */
+#define moes_and_gorge_scenery_animations_25_ADDRESS 0x7DE8u    /* 069DE8 */
+#define moes_and_gorge_scenery_animations_25_sprites_ADDRESS 0x7DF0u    /* 069DF0 */
+#define moes_and_gorge_scenery_animations_24_ADDRESS 0x7DF6u    /* 069DF6 */
+#define moes_and_gorge_scenery_animations_24_sprites_ADDRESS 0x7DFEu    /* 069DFE */
+#define moes_and_gorge_scenery_animations_27_ADDRESS 0x7E04u    /* 069E04 */
+#define moes_and_gorge_scenery_animations_27_sprites_ADDRESS 0x7E0Cu    /* 069E0C */
+#define moes_and_gorge_scenery_animations_28_ADDRESS 0x7E12u    /* 069E12 */
+#define moes_and_gorge_scenery_animations_28_sprites_ADDRESS 0x7E2Au    /* 069E2A */
+#define moes_and_gorge_scenery_animations_28_sprites_2_ADDRESS 0x7E30u    /* 069E30 */
+#define moes_and_gorge_scenery_animations_28_sprites_3_ADDRESS 0x7E36u    /* 069E36 */
+#define moes_and_gorge_scenery_animations_28_sprites_4_ADDRESS 0x7E3Cu    /* 069E3C */
+#define moes_and_gorge_scenery_animations_28_sprites_5_ADDRESS 0x7E42u    /* 069E42 */
+#define moes_and_gorge_scenery_animations_29_ADDRESS 0x7E48u    /* 069E48 */
+#define moes_and_gorge_scenery_animations_29_sprites_ADDRESS 0x7E5Cu    /* 069E5C */
+#define moes_and_gorge_scenery_animations_29_sprites_2_ADDRESS 0x7E62u    /* 069E62 */
+#define moes_and_gorge_scenery_animations_29_sprites_3_ADDRESS 0x7E74u    /* 069E74 */
+#define moes_and_gorge_scenery_animations_29_sprites_4_ADDRESS 0x7E8Cu    /* 069E8C */
+#define moes_and_gorge_scenery_animations_30_ADDRESS 0x7EA4u    /* 069EA4 */
+#define moes_and_gorge_scenery_animations_30_sprites_ADDRESS 0x7EB0u    /* 069EB0 */
+#define moes_and_gorge_scenery_animations_30_sprites_2_ADDRESS 0x7EDAu    /* 069EDA */
+#define moes_and_gorge_scenery_animations_31_ADDRESS 0x7F04u    /* 069F04 */
+#define moes_and_gorge_scenery_animations_31_sprites_ADDRESS 0x7F0Cu    /* 069F0C */
+#define moes_and_gorge_scenery_animations_32_ADDRESS 0x7F12u    /* 069F12 */
+#define moes_and_gorge_scenery_animations_32_sprites_ADDRESS 0x7F1Au    /* 069F1A */
+#define moes_and_gorge_scenery_animations_33_ADDRESS 0x7F38u    /* 069F38 */
+#define moes_and_gorge_scenery_animations_33_sprites_ADDRESS 0x7F40u    /* 069F40 */
+#define moes_and_gorge_scenery_animations_34_ADDRESS 0x7F58u    /* 069F58 */
+#define moes_and_gorge_scenery_animations_34_sprites_ADDRESS 0x7F60u    /* 069F60 */
+#define moes_and_gorge_scenery_animations_34_sprites_fill_ADDRESS 0x7F6Cu    /* 069F6C */
+#define moes_and_gorge_scenery_animations_34_sprites_rest_ADDRESS 0x7F6Eu    /* 069F6E */
+#define moes_and_gorge_scenery_animations_34_sprites_rest_2_ADDRESS 0x7F76u    /* 069F76 */
+#define moes_and_gorge_scenery_animations_34_sprites_rest_3_ADDRESS 0x7F7Cu    /* 069F7C */
+#define moes_and_gorge_scenery_animations_34_sprites_rest_4_ADDRESS 0x7F84u    /* 069F84 */
+#define moes_and_gorge_scenery_animations_34_sprites_rest_5_ADDRESS 0x7F8Au    /* 069F8A */
+#define moes_and_gorge_scenery_animations_34_sprites_rest_6_ADDRESS 0x7F92u    /* 069F92 */
+#define moes_and_gorge_scenery_animations_34_sprites_rest_7_ADDRESS 0x7F9Eu    /* 069F9E */
+#define moes_and_gorge_scenery_animations_34_sprites_rest_8_ADDRESS 0x7FAAu    /* 069FAA */
+#define moes_and_gorge_scenery_animations_34_sprites_rest_9_ADDRESS 0x7FB0u    /* 069FB0 */
+#define moes_and_gorge_scenery_animations_34_sprites_rest_10_ADDRESS 0x7FB6u    /* 069FB6 */
+#define moes_and_gorge_scenery_animations_34_sprites_rest_11_ADDRESS 0x7FBEu    /* 069FBE */
+#define moes_and_gorge_scenery_animations_34_sprites_rest_12_ADDRESS 0x7FC4u    /* 069FC4 */
+#define moes_and_gorge_scenery_animations_34_sprites_rest_13_ADDRESS 0x7FCCu    /* 069FCC */
+#define moes_and_gorge_scenery_animations_34_sprites_rest_14_ADDRESS 0x7FD2u    /* 069FD2 */
+#define moes_and_gorge_scenery_animations_34_sprites_rest_15_ADDRESS 0x7FDAu    /* 069FDA */
+#define moes_and_gorge_scenery_animations_34_sprites_rest_16_ADDRESS 0x7FE0u    /* 069FE0 */
+#define moes_and_gorge_scenery_animations_34_sprites_rest_17_ADDRESS 0x7FE8u    /* 069FE8 */
+#define moes_and_gorge_scenery_animations_34_sprites_fill_2_ADDRESS 0x7FEEu    /* 069FEE */
+#define moes_and_gorge_scenery_animations_34_sprites_rest_18_ADDRESS 0x6000u    /* 06A000 */
+#define smithers_animations_ADDRESS 0x6004u    /* 06A004 */
+#define smithers_animations_14_ADDRESS 0x604Eu    /* 06A04E */
+#define smithers_animations_14_sprites_ADDRESS 0x6056u    /* 06A056 */
+#define smithers_animations_0_ADDRESS 0x6068u    /* 06A068 */
+#define smithers_animations_0_sprites_ADDRESS 0x608Cu    /* 06A08C */
+#define smithers_animations_0_sprites_2_ADDRESS 0x60AAu    /* 06A0AA */
+#define smithers_animations_0_sprites_3_ADDRESS 0x60C8u    /* 06A0C8 */
+#define smithers_animations_0_sprites_4_ADDRESS 0x60E6u    /* 06A0E6 */
+#define smithers_animations_0_sprites_5_ADDRESS 0x610Au    /* 06A10A */
+#define smithers_animations_0_sprites_6_ADDRESS 0x611Cu    /* 06A11C */
+#define smithers_animations_0_sprites_7_ADDRESS 0x6146u    /* 06A146 */
+#define smithers_animations_0_sprites_8_ADDRESS 0x616Au    /* 06A16A */
+#define smithers_animations_1_ADDRESS 0x6188u    /* 06A188 */
+#define smithers_animations_1_sprites_ADDRESS 0x61ACu    /* 06A1AC */
+#define smithers_animations_1_sprites_2_ADDRESS 0x61CAu    /* 06A1CA */
+#define smithers_animations_1_sprites_3_ADDRESS 0x61E8u    /* 06A1E8 */
+#define smithers_animations_1_sprites_4_ADDRESS 0x6206u    /* 06A206 */
+#define smithers_animations_1_sprites_5_ADDRESS 0x622Au    /* 06A22A */
+#define smithers_animations_1_sprites_6_ADDRESS 0x623Cu    /* 06A23C */
+#define smithers_animations_1_sprites_7_ADDRESS 0x6266u    /* 06A266 */
+#define smithers_animations_1_sprites_8_ADDRESS 0x628Au    /* 06A28A */
+#define smithers_animations_2_ADDRESS 0x62A8u    /* 06A2A8 */
+#define smithers_animations_2_sprites_ADDRESS 0x62CCu    /* 06A2CC */
+#define smithers_animations_2_sprites_2_ADDRESS 0x62EAu    /* 06A2EA */
+#define smithers_animations_2_sprites_3_ADDRESS 0x6308u    /* 06A308 */
+#define smithers_animations_2_sprites_4_ADDRESS 0x6320u    /* 06A320 */
+#define smithers_animations_2_sprites_5_ADDRESS 0x6338u    /* 06A338 */
+#define smithers_animations_3_ADDRESS 0x6350u    /* 06A350 */
+#define smithers_animations_3_sprites_ADDRESS 0x6358u    /* 06A358 */
+#define smithers_animations_4_ADDRESS 0x6370u    /* 06A370 */
+#define smithers_animations_4_sprites_ADDRESS 0x637Cu    /* 06A37C */
+#define smithers_animations_4_sprites_2_ADDRESS 0x639Au    /* 06A39A */
+#define smithers_animations_5_ADDRESS 0x63ACu    /* 06A3AC */
+#define smithers_animations_6_ADDRESS 0x63B4u    /* 06A3B4 */
+#define smithers_animations_6_sprites_ADDRESS 0x63C0u    /* 06A3C0 */
+#define smithers_animations_6_sprites_2_ADDRESS 0x63FCu    /* 06A3FC */
+#define smithers_animations_7_ADDRESS 0x6432u    /* 06A432 */
+#define smithers_animations_7_sprites_ADDRESS 0x6442u    /* 06A442 */
+#define smithers_animations_7_sprites_2_ADDRESS 0x6454u    /* 06A454 */
+#define smithers_animations_7_sprites_3_ADDRESS 0x6466u    /* 06A466 */
+#define smithers_animations_8_ADDRESS 0x647Eu    /* 06A47E */
+#define smithers_animations_8_sprites_ADDRESS 0x64A6u    /* 06A4A6 */
+#define smithers_animations_8_sprites_2_ADDRESS 0x64C4u    /* 06A4C4 */
+#define smithers_animations_8_sprites_3_ADDRESS 0x64E8u    /* 06A4E8 */
+#define smithers_animations_8_sprites_4_ADDRESS 0x650Cu    /* 06A50C */
+#define smithers_animations_8_sprites_5_ADDRESS 0x6536u    /* 06A536 */
+#define smithers_animations_8_sprites_6_ADDRESS 0x6560u    /* 06A560 */
+#define smithers_animations_8_sprites_7_ADDRESS 0x658Au    /* 06A58A */
+#define smithers_animations_9_ADDRESS 0x65A8u    /* 06A5A8 */
+#define smithers_animations_9_sprites_ADDRESS 0x65CCu    /* 06A5CC */
+#define smithers_animations_9_sprites_2_ADDRESS 0x65D2u    /* 06A5D2 */
+#define smithers_animations_9_sprites_3_ADDRESS 0x65D8u    /* 06A5D8 */
+#define smithers_animations_9_sprites_4_ADDRESS 0x65DEu    /* 06A5DE */
+#define smithers_animations_9_sprites_5_ADDRESS 0x65E4u    /* 06A5E4 */
+#define smithers_animations_9_sprites_6_ADDRESS 0x65EAu    /* 06A5EA */
+#define smithers_animations_9_sprites_7_ADDRESS 0x65F0u    /* 06A5F0 */
+#define smithers_animations_9_sprites_8_ADDRESS 0x65F6u    /* 06A5F6 */
+#define smithers_animations_10_ADDRESS 0x65FCu    /* 06A5FC */
+#define smithers_animations_10_sprites_ADDRESS 0x6620u    /* 06A620 */
+#define smithers_animations_10_sprites_2_ADDRESS 0x6626u    /* 06A626 */
+#define smithers_animations_10_sprites_3_ADDRESS 0x6632u    /* 06A632 */
+#define smithers_animations_10_sprites_4_ADDRESS 0x6638u    /* 06A638 */
+#define smithers_animations_10_sprites_5_ADDRESS 0x663Eu    /* 06A63E */
+#define smithers_animations_10_sprites_6_ADDRESS 0x6650u    /* 06A650 */
+#define smithers_animations_10_sprites_7_ADDRESS 0x6656u    /* 06A656 */
+#define smithers_animations_10_sprites_8_ADDRESS 0x665Cu    /* 06A65C */
+#define smithers_animations_11_ADDRESS 0x6662u    /* 06A662 */
+#define smithers_animations_11_sprites_ADDRESS 0x6686u    /* 06A686 */
+#define smithers_animations_11_sprites_2_ADDRESS 0x66A4u    /* 06A6A4 */
+#define smithers_animations_11_sprites_3_ADDRESS 0x66C8u    /* 06A6C8 */
+#define smithers_animations_11_sprites_4_ADDRESS 0x66ECu    /* 06A6EC */
+#define smithers_animations_11_sprites_5_ADDRESS 0x6710u    /* 06A710 */
+#define smithers_animations_11_sprites_6_ADDRESS 0x6734u    /* 06A734 */
+#define smithers_animations_11_sprites_7_ADDRESS 0x6746u    /* 06A746 */
+#define smithers_animations_11_sprites_8_ADDRESS 0x6770u    /* 06A770 */
+#define smithers_animations_12_ADDRESS 0x6794u    /* 06A794 */
+#define smithers_animations_12_sprites_ADDRESS 0x67A8u    /* 06A7A8 */
+#define smithers_animations_12_sprites_2_ADDRESS 0x67BAu    /* 06A7BA */
+#define smithers_animations_12_sprites_3_ADDRESS 0x67D8u    /* 06A7D8 */
+#define smithers_animations_12_sprites_4_ADDRESS 0x6802u    /* 06A802 */
+#define smithers_animations_13_ADDRESS 0x6820u    /* 06A820 */
+#define smithers_animations_13_sprites_ADDRESS 0x6848u    /* 06A848 */
+#define smithers_animations_13_sprites_2_ADDRESS 0x6860u    /* 06A860 */
+#define smithers_animations_13_sprites_3_ADDRESS 0x687Eu    /* 06A87E */
+#define smithers_animations_13_sprites_4_ADDRESS 0x68A2u    /* 06A8A2 */
+#define smithers_animations_13_sprites_5_ADDRESS 0x68C6u    /* 06A8C6 */
+#define smithers_animations_13_sprites_6_ADDRESS 0x68F0u    /* 06A8F0 */
+#define smithers_animations_13_sprites_7_ADDRESS 0x691Au    /* 06A91A */
+#define smithers_animations_16_ADDRESS 0x693Eu    /* 06A93E */
+#define smithers_animations_16_sprites_ADDRESS 0x6962u    /* 06A962 */
+#define smithers_animations_16_sprites_2_ADDRESS 0x6980u    /* 06A980 */
+#define smithers_animations_16_sprites_3_ADDRESS 0x69A4u    /* 06A9A4 */
+#define smithers_animations_16_sprites_4_ADDRESS 0x69C8u    /* 06A9C8 */
+#define smithers_animations_16_sprites_5_ADDRESS 0x69ECu    /* 06A9EC */
+#define smithers_animations_16_sprites_6_ADDRESS 0x6A04u    /* 06AA04 */
+#define smithers_animations_16_sprites_7_ADDRESS 0x6A2Eu    /* 06AA2E */
+#define smithers_animations_16_sprites_8_ADDRESS 0x6A58u    /* 06AA58 */
+#define smithers_animations_17_ADDRESS 0x6A7Cu    /* 06AA7C */
+#define smithers_animations_17_sprites_ADDRESS 0x6AA0u    /* 06AAA0 */
+#define smithers_animations_17_sprites_2_ADDRESS 0x6AC4u    /* 06AAC4 */
+#define smithers_animations_17_sprites_3_ADDRESS 0x6AEEu    /* 06AAEE */
+#define smithers_animations_17_sprites_4_ADDRESS 0x6B0Cu    /* 06AB0C */
+#define smithers_animations_17_sprites_5_ADDRESS 0x6B36u    /* 06AB36 */
+#define smithers_animations_18_ADDRESS 0x6B5Au    /* 06AB5A */
+#define smithers_animations_18_sprites_ADDRESS 0x6B7Eu    /* 06AB7E */
+#define smithers_animations_18_sprites_2_ADDRESS 0x6B96u    /* 06AB96 */
+#define smithers_animations_18_sprites_3_ADDRESS 0x6BB4u    /* 06ABB4 */
+#define smithers_animations_18_sprites_4_ADDRESS 0x6BD8u    /* 06ABD8 */
+#define smithers_animations_18_sprites_5_ADDRESS 0x6BF6u    /* 06ABF6 */
+#define smithers_animations_18_sprites_6_ADDRESS 0x6C20u    /* 06AC20 */
+#define smithers_animations_18_sprites_7_ADDRESS 0x6C50u    /* 06AC50 */
+#define smithers_animations_18_sprites_8_ADDRESS 0x6C7Au    /* 06AC7A */
+#define smithers_animations_19_ADDRESS 0x6C9Eu    /* 06AC9E */
+#define smithers_animations_19_sprites_ADDRESS 0x6CC2u    /* 06ACC2 */
+#define smithers_animations_19_sprites_2_ADDRESS 0x6CE6u    /* 06ACE6 */
+#define smithers_animations_19_sprites_3_ADDRESS 0x6D0Au    /* 06AD0A */
+#define smithers_animations_19_sprites_4_ADDRESS 0x6D2Eu    /* 06AD2E */
+#define smithers_animations_19_sprites_5_ADDRESS 0x6D58u    /* 06AD58 */
+#define smithers_animations_19_sprites_6_ADDRESS 0x6D8Eu    /* 06AD8E */
+#define smithers_animations_19_sprites_7_ADDRESS 0x6DB8u    /* 06ADB8 */
+#define smithers_animations_19_sprites_8_ADDRESS 0x6DE8u    /* 06ADE8 */
+#define smithers_animations_20_ADDRESS 0x6E00u    /* 06AE00 */
+#define smithers_animations_20_sprites_ADDRESS 0x6E80u    /* 06AE80 */
+#define smithers_animations_20_sprites_2_ADDRESS 0x6E98u    /* 06AE98 */
+#define smithers_animations_20_sprites_3_ADDRESS 0x6EB6u    /* 06AEB6 */
+#define smithers_animations_20_sprites_4_ADDRESS 0x6ED4u    /* 06AED4 */
+#define smithers_animations_20_sprites_5_ADDRESS 0x6EF2u    /* 06AEF2 */
+#define smithers_animations_20_sprites_6_ADDRESS 0x6F10u    /* 06AF10 */
+#define smithers_animations_20_sprites_7_ADDRESS 0x6F28u    /* 06AF28 */
+#define smithers_animations_21_ADDRESS 0x6F46u    /* 06AF46 */
+#define smithers_animations_21_sprites_ADDRESS 0x6F4Eu    /* 06AF4E */
+#define smithers_animations_22_ADDRESS 0x6F5Au    /* 06AF5A */
+#define smithers_animations_22_sprites_ADDRESS 0x6F72u    /* 06AF72 */
+#define smithers_animations_22_sprites_2_ADDRESS 0x6F8Au    /* 06AF8A */
+#define smithers_animations_22_sprites_3_ADDRESS 0x6FA2u    /* 06AFA2 */
+#define smithers_animations_22_sprites_4_ADDRESS 0x6FB4u    /* 06AFB4 */
+#define smithers_animations_22_sprites_5_ADDRESS 0x6FC0u    /* 06AFC0 */
+#define smithers_animations_23_ADDRESS 0x6FCCu    /* 06AFCC */
+#define smithers_animations_23_sprites_ADDRESS 0x6FF0u    /* 06AFF0 */
+#define smithers_animations_23_sprites_2_ADDRESS 0x7020u    /* 06B020 */
+#define smithers_animations_23_sprites_3_ADDRESS 0x7038u    /* 06B038 */
+#define smithers_animations_23_sprites_4_ADDRESS 0x7056u    /* 06B056 */
+#define smithers_animations_23_sprites_5_ADDRESS 0x707Au    /* 06B07A */
+#define smithers_animations_24_ADDRESS 0x7098u    /* 06B098 */
+#define smithers_animations_24_sprites_ADDRESS 0x70A8u    /* 06B0A8 */
+#define smithers_animations_24_sprites_2_ADDRESS 0x70B4u    /* 06B0B4 */
+#define smithers_animations_24_sprites_3_ADDRESS 0x70C6u    /* 06B0C6 */
+#define smithers_animations_25_ADDRESS 0x70D8u    /* 06B0D8 */
+#define smithers_animations_25_sprites_ADDRESS 0x70F4u    /* 06B0F4 */
+#define smithers_animations_25_sprites_2_ADDRESS 0x7112u    /* 06B112 */
+#define smithers_animations_25_sprites_3_ADDRESS 0x712Au    /* 06B12A */
+#define smithers_animations_25_sprites_4_ADDRESS 0x713Cu    /* 06B13C */
+#define smithers_animations_26_ADDRESS 0x7154u    /* 06B154 */
+#define smithers_animations_26_sprites_ADDRESS 0x7164u    /* 06B164 */
+#define smithers_animations_26_sprites_2_ADDRESS 0x717Cu    /* 06B17C */
+#define smithers_animations_26_sprites_3_ADDRESS 0x71A0u    /* 06B1A0 */
+#define smithers_animations_27_ADDRESS 0x71BEu    /* 06B1BE */
+#define smithers_animations_27_sprites_ADDRESS 0x71CAu    /* 06B1CA */
+#define smithers_animations_27_sprites_2_ADDRESS 0x71EEu    /* 06B1EE */
+#define smithers_animations_28_ADDRESS 0x720Cu    /* 06B20C */
+#define smithers_animations_35_ADDRESS 0x7278u    /* 06B278 */
+#define smithers_animations_28_sprites_ADDRESS 0x72B4u    /* 06B2B4 */
+#define smithers_animations_28_sprites_2_ADDRESS 0x72DEu    /* 06B2DE */
+#define smithers_animations_28_sprites_3_ADDRESS 0x7308u    /* 06B308 */
+#define smithers_animations_28_sprites_4_ADDRESS 0x733Eu    /* 06B33E */
+#define smithers_animations_28_sprites_5_ADDRESS 0x7374u    /* 06B374 */
+#define smithers_animations_28_sprites_6_ADDRESS 0x73B0u    /* 06B3B0 */
+#define smithers_animations_28_sprites_7_ADDRESS 0x73E0u    /* 06B3E0 */
+#define smithers_animations_28_sprites_8_ADDRESS 0x7422u    /* 06B422 */
+#define smithers_animations_28_sprites_9_ADDRESS 0x746Au    /* 06B46A */
+#define smithers_animations_28_sprites_10_ADDRESS 0x74A6u    /* 06B4A6 */
+#define smithers_animations_28_sprites_11_ADDRESS 0x74DCu    /* 06B4DC */
+#define smithers_animations_28_sprites_12_ADDRESS 0x7512u    /* 06B512 */
+#define smithers_animations_28_sprites_13_ADDRESS 0x7536u    /* 06B536 */
+#define smithers_animations_35_sprites_ADDRESS 0x7560u    /* 06B560 */
+#define smithers_animations_35_sprites_2_ADDRESS 0x758Au    /* 06B58A */
+#define smithers_animations_35_sprites_3_ADDRESS 0x75C0u    /* 06B5C0 */
+#define smithers_animations_35_sprites_4_ADDRESS 0x7608u    /* 06B608 */
+#define smithers_animations_35_sprites_5_ADDRESS 0x7668u    /* 06B668 */
+#define smithers_animations_35_sprites_6_ADDRESS 0x76C8u    /* 06B6C8 */
+#define smithers_animations_35_sprites_7_ADDRESS 0x7728u    /* 06B728 */
+#define smithers_animations_35_sprites_8_ADDRESS 0x7788u    /* 06B788 */
+#define smithers_animations_35_sprites_9_ADDRESS 0x77D0u    /* 06B7D0 */
+#define smithers_animations_35_sprites_10_ADDRESS 0x780Cu    /* 06B80C */
+#define smithers_animations_35_sprites_11_ADDRESS 0x783Cu    /* 06B83C */
+#define smithers_animations_35_sprites_12_ADDRESS 0x786Cu    /* 06B86C */
+#define smithers_animations_29_sprites_2_ADDRESS 0x7890u    /* 06B890 */
+#define smithers_animations_29_ADDRESS 0x78AEu    /* 06B8AE */
+#define smithers_animations_29_sprites_ADDRESS 0x78CAu    /* 06B8CA */
+#define smithers_animations_30_ADDRESS 0x78E8u    /* 06B8E8 */
+#define smithers_animations_30_sprites_ADDRESS 0x7908u    /* 06B908 */
+#define smithers_animations_30_sprites_2_ADDRESS 0x7926u    /* 06B926 */
+#define smithers_animations_30_sprites_3_ADDRESS 0x7938u    /* 06B938 */
+#define smithers_animations_30_sprites_4_ADDRESS 0x7950u    /* 06B950 */
+#define smithers_animations_32_ADDRESS 0x7968u    /* 06B968 */
+#define smithers_animations_32_sprites_ADDRESS 0x7978u    /* 06B978 */
+#define smithers_animations_32_sprites_2_ADDRESS 0x7996u    /* 06B996 */
+#define smithers_animations_32_sprites_3_ADDRESS 0x79AEu    /* 06B9AE */
+#define smithers_animations_33_ADDRESS 0x79C0u    /* 06B9C0 */
+#define smithers_animations_31_ADDRESS 0x79C8u    /* 06B9C8 */
+#define smithers_animations_31_sprites_ADDRESS 0x79ECu    /* 06B9EC */
+#define smithers_animations_31_sprites_2_ADDRESS 0x79F2u    /* 06B9F2 */
+#define smithers_animations_31_sprites_3_ADDRESS 0x79F8u    /* 06B9F8 */
+#define smithers_animations_31_sprites_4_ADDRESS 0x79FEu    /* 06B9FE */
+#define smithers_animations_31_sprites_5_ADDRESS 0x7A04u    /* 06BA04 */
+#define smithers_animations_31_sprites_6_ADDRESS 0x7A0Au    /* 06BA0A */
+#define smithers_animations_31_sprites_7_ADDRESS 0x7A10u    /* 06BA10 */
+#define smithers_animations_31_sprites_8_ADDRESS 0x7A16u    /* 06BA16 */
+#define smithers_animations_34_ADDRESS 0x7A1Cu    /* 06BA1C */
+#define smithers_animations_34_sprites_ADDRESS 0x7A44u    /* 06BA44 */
+#define smithers_animations_34_sprites_2_ADDRESS 0x7A4Au    /* 06BA4A */
+#define smithers_animations_34_sprites_3_ADDRESS 0x7A50u    /* 06BA50 */
+#define smithers_animations_34_sprites_4_ADDRESS 0x7A56u    /* 06BA56 */
+#define smithers_animations_34_sprites_5_ADDRESS 0x7A5Cu    /* 06BA5C */
+#define smithers_animations_34_sprites_6_ADDRESS 0x7A62u    /* 06BA62 */
+#define smithers_animations_34_sprites_7_ADDRESS 0x7A68u    /* 06BA68 */
+#define smithers_animations_34_sprites_8_ADDRESS 0x7A6Eu    /* 06BA6E */
+#define smithers_animations_34_sprites_9_ADDRESS 0x7A74u    /* 06BA74 */
+#define smithers_animations_36_ADDRESS 0x7A7Au    /* 06BA7A */
+#define smithers_animations_36_sprites_ADDRESS 0x7AAEu    /* 06BAAE */
+#define smithers_animations_36_sprites_2_ADDRESS 0x7AB4u    /* 06BAB4 */
+#define smithers_animations_36_sprites_3_ADDRESS 0x7AC0u    /* 06BAC0 */
+#define smithers_animations_36_sprites_4_ADDRESS 0x7AD2u    /* 06BAD2 */
+#define smithers_animations_36_sprites_5_ADDRESS 0x7AF6u    /* 06BAF6 */
+#define smithers_animations_36_sprites_6_ADDRESS 0x7B26u    /* 06BB26 */
+#define smithers_animations_36_sprites_7_ADDRESS 0x7B5Cu    /* 06BB5C */
+#define smithers_animations_36_sprites_8_ADDRESS 0x7B98u    /* 06BB98 */
+#define krusty_toys_helicopter_animations_ADDRESS 0x7B9Eu    /* 06BB9E */
+#define krusty_toys_helicopter_animations_8_ADDRESS 0x7BC2u    /* 06BBC2 */
+#define krusty_toys_helicopter_animations_8_sprites_ADDRESS 0x7BCEu    /* 06BBCE */
+#define krusty_toys_helicopter_animations_8_sprites_2_ADDRESS 0x7BDAu    /* 06BBDA */
+#define krusty_toys_helicopter_animations_0_ADDRESS 0x7BE6u    /* 06BBE6 */
+#define krusty_toys_helicopter_animations_0_sprites_ADDRESS 0x7BF2u    /* 06BBF2 */
+#define krusty_toys_helicopter_animations_0_sprites_2_ADDRESS 0x7C46u    /* 06BC46 */
+#define krusty_toys_helicopter_animations_1_ADDRESS 0x7CA0u    /* 06BCA0 */
+#define krusty_toys_helicopter_animations_1_sprites_ADDRESS 0x7CB8u    /* 06BCB8 */
+#define krusty_toys_helicopter_animations_1_sprites_2_ADDRESS 0x7D0Cu    /* 06BD0C */
+#define krusty_toys_helicopter_animations_1_sprites_3_ADDRESS 0x7D66u    /* 06BD66 */
+#define krusty_toys_helicopter_animations_1_sprites_4_ADDRESS 0x7DBAu    /* 06BDBA */
+#define krusty_toys_helicopter_animations_1_sprites_5_ADDRESS 0x7E14u    /* 06BE14 */
+#define krusty_toys_helicopter_animations_2_ADDRESS 0x7E6Eu    /* 06BE6E */
+#define krusty_toys_helicopter_animations_3_ADDRESS 0x7E7Au    /* 06BE7A */
+#define krusty_toys_helicopter_animations_3_sprites_ADDRESS 0x7E86u    /* 06BE86 */
+#define krusty_toys_helicopter_animations_3_sprites_2_ADDRESS 0x7E92u    /* 06BE92 */
+#define krusty_toys_helicopter_animations_4_ADDRESS 0x7E9Eu    /* 06BE9E */
+#define krusty_toys_helicopter_animations_4_sprites_ADDRESS 0x7EAAu    /* 06BEAA */
+#define krusty_toys_helicopter_animations_4_sprites_2_ADDRESS 0x7EBCu    /* 06BEBC */
+#define krusty_toys_helicopter_animations_5_ADDRESS 0x7ECEu    /* 06BECE */
+#define krusty_toys_helicopter_animations_5_sprites_ADDRESS 0x7EDAu    /* 06BEDA */
+#define krusty_toys_helicopter_animations_5_sprites_2_ADDRESS 0x7EECu    /* 06BEEC */
+#define krusty_toys_helicopter_animations_6_ADDRESS 0x7EFEu    /* 06BEFE */
+#define krusty_toys_helicopter_animations_6_sprites_ADDRESS 0x7F06u    /* 06BF06 */
+#define krusty_toys_helicopter_animations_7_ADDRESS 0x7F24u    /* 06BF24 */
+#define krusty_toys_helicopter_animations_7_sprites_ADDRESS 0x7F30u    /* 06BF30 */
+#define krusty_toys_helicopter_animations_7_sprites_2_ADDRESS 0x7F48u    /* 06BF48 */
+#define krusty_toys_helicopter_animations_10_ADDRESS 0x7F60u    /* 06BF60 */
+#define krusty_toys_helicopter_animations_10_sprites_ADDRESS 0x7F68u    /* 06BF68 */
+#define krusty_toys_helicopter_animations_11_ADDRESS 0x7F6Eu    /* 06BF6E */
+#define krusty_toys_helicopter_animations_11_sprites_ADDRESS 0x7F76u    /* 06BF76 */
+#define krusty_toys_helicopter_animations_12_ADDRESS 0x7F7Cu    /* 06BF7C */
+#define krusty_toys_helicopter_animations_12_sprites_ADDRESS 0x7F84u    /* 06BF84 */
+#define krusty_toys_helicopter_animations_9_ADDRESS 0x7F8Au    /* 06BF8A */
+#define krusty_toys_helicopter_animations_9_sprites_ADDRESS 0x7F92u    /* 06BF92 */
+#define krusty_toys_helicopter_animations_13_ADDRESS 0x7F9Eu    /* 06BF9E */
+#define krusty_toys_helicopter_animations_13_sprites_ADDRESS 0x7FAAu    /* 06BFAA */
+#define krusty_toys_helicopter_animations_13_sprites_2_ADDRESS 0x7FB0u    /* 06BFB0 */
+#define krusty_toys_helicopter_animations_15_ADDRESS 0x7FB6u    /* 06BFB6 */
+#define krusty_toys_helicopter_animations_15_sprites_ADDRESS 0x7FBEu    /* 06BFBE */
+#define krusty_toys_helicopter_animations_14_ADDRESS 0x7FC4u    /* 06BFC4 */
+#define krusty_toys_helicopter_animations_14_sprites_ADDRESS 0x7FCCu    /* 06BFCC */
+#define krusty_toys_helicopter_animations_17_ADDRESS 0x7FD2u    /* 06BFD2 */
+#define krusty_toys_helicopter_animations_17_sprites_ADDRESS 0x7FDAu    /* 06BFDA */
+#define krusty_toys_helicopter_animations_16_ADDRESS 0x7FE0u    /* 06BFE0 */
+#define krusty_toys_helicopter_animations_16_sprites_ADDRESS 0x7FE8u    /* 06BFE8 */
+#define krusty_toys_helicopter_animations_16_sprites_fill_ADDRESS 0x7FEEu    /* 06BFEE */
+#define krusty_toys_helicopter_animations_16_sprites_rest_ADDRESS 0x6000u    /* 06C000 */
 #define goon_with_hat_animations_ADDRESS 0x600Cu    /* 06C00C */
 #define goon_with_hat_animations_0_ADDRESS 0x6082u    /* 06C082 */
 #define goon_with_hat_animations_0_sprites_ADDRESS 0x608Au    /* 06C08A */
@@ -10925,79 +10685,79 @@ extern const void *reset_vector_data;
 #define bear_animations_15_sprites_2_ADDRESS 0x791Cu    /* 06D91C */
 #define bear_animations_15_sprites_3_ADDRESS 0x7928u    /* 06D928 */
 #define kind_B6_animations_ADDRESS 0x7934u    /* 06D934 */
-#define kind_AA_animations_ADDRESS 0x79AAu    /* 06D9AA */
-#define kind_AA_animations_0_ADDRESS 0x79B6u    /* 06D9B6 */
-#define kind_AA_animations_0_sprites_ADDRESS 0x79FAu    /* 06D9FA */
-#define kind_AA_animations_0_sprites_2_ADDRESS 0x7A00u    /* 06DA00 */
-#define kind_AA_animations_0_sprites_3_ADDRESS 0x7A06u    /* 06DA06 */
-#define kind_AA_animations_0_sprites_4_ADDRESS 0x7A0Cu    /* 06DA0C */
-#define kind_AA_animations_0_sprites_5_ADDRESS 0x7A12u    /* 06DA12 */
-#define kind_AA_animations_0_sprites_6_ADDRESS 0x7A18u    /* 06DA18 */
-#define kind_AA_animations_0_sprites_7_ADDRESS 0x7A1Eu    /* 06DA1E */
-#define kind_AA_animations_0_sprites_8_ADDRESS 0x7A24u    /* 06DA24 */
-#define kind_AA_animations_1_ADDRESS 0x7A2Au    /* 06DA2A */
-#define kind_AA_animations_1_sprites_ADDRESS 0x7A6Eu    /* 06DA6E */
-#define kind_AA_animations_1_sprites_2_ADDRESS 0x7A74u    /* 06DA74 */
-#define kind_AA_animations_1_sprites_3_ADDRESS 0x7A7Au    /* 06DA7A */
-#define kind_AA_animations_1_sprites_4_ADDRESS 0x7A80u    /* 06DA80 */
-#define kind_AA_animations_1_sprites_5_ADDRESS 0x7A86u    /* 06DA86 */
-#define kind_AA_animations_1_sprites_6_ADDRESS 0x7A8Cu    /* 06DA8C */
-#define kind_AA_animations_1_sprites_7_ADDRESS 0x7A92u    /* 06DA92 */
-#define kind_AA_animations_1_sprites_8_ADDRESS 0x7A98u    /* 06DA98 */
-#define kind_AA_animations_1_sprites_9_ADDRESS 0x7A9Eu    /* 06DA9E */
-#define kind_AA_animations_1_sprites_10_ADDRESS 0x7AA4u    /* 06DAA4 */
-#define kind_AA_animations_1_sprites_11_ADDRESS 0x7AAAu    /* 06DAAA */
-#define kind_AA_animations_2_ADDRESS 0x7AB0u    /* 06DAB0 */
-#define kind_AA_animations_2_sprites_ADDRESS 0x7AD0u    /* 06DAD0 */
-#define kind_AA_animations_2_sprites_2_ADDRESS 0x7AD6u    /* 06DAD6 */
-#define kind_AA_animations_2_sprites_3_ADDRESS 0x7ADCu    /* 06DADC */
-#define kind_AA_animations_2_sprites_4_ADDRESS 0x7AE2u    /* 06DAE2 */
-#define kind_AA_animations_2_sprites_5_ADDRESS 0x7AE8u    /* 06DAE8 */
-#define kind_AA_animations_2_sprites_6_ADDRESS 0x7AEEu    /* 06DAEE */
-#define kind_AA_animations_2_sprites_7_ADDRESS 0x7AFAu    /* 06DAFA */
-#define kind_AA_animations_4_ADDRESS 0x7B00u    /* 06DB00 */
-#define kind_AA_animations_4_sprites_ADDRESS 0x7B24u    /* 06DB24 */
-#define kind_AA_animations_4_sprites_2_ADDRESS 0x7B36u    /* 06DB36 */
-#define kind_AA_animations_5_ADDRESS 0x7B48u    /* 06DB48 */
-#define kind_AA_animations_5_sprites_ADDRESS 0x7B60u    /* 06DB60 */
-#define kind_AA_animations_5_sprites_2_ADDRESS 0x7B72u    /* 06DB72 */
-#define kind_AA_animations_5_sprites_3_ADDRESS 0x7B84u    /* 06DB84 */
-#define kind_AA_animations_5_sprites_4_ADDRESS 0x7B96u    /* 06DB96 */
-#define kind_AA_animations_5_sprites_5_ADDRESS 0x7BA8u    /* 06DBA8 */
-#define kind_AA_animations_3_ADDRESS 0x7BBAu    /* 06DBBA */
-#define kind_AA_animations_3_sprites_ADDRESS 0x7BDEu    /* 06DBDE */
-#define kind_AA_animations_3_sprites_2_ADDRESS 0x7BEAu    /* 06DBEA */
-#define kind_AA_animations_3_sprites_3_ADDRESS 0x7BF6u    /* 06DBF6 */
-#define kind_AB_animations_ADDRESS 0x7C1Au    /* 06DC1A */
-#define kind_AB_animations_0_ADDRESS 0x7C20u    /* 06DC20 */
-#define kind_AB_animations_0_sprites_ADDRESS 0x7C30u    /* 06DC30 */
-#define kind_AB_animations_0_sprites_2_ADDRESS 0x7C48u    /* 06DC48 */
-#define kind_AB_animations_0_sprites_3_ADDRESS 0x7C60u    /* 06DC60 */
-#define kind_AB_animations_1_ADDRESS 0x7C78u    /* 06DC78 */
-#define kind_AB_animations_1_sprites_ADDRESS 0x7C8Cu    /* 06DC8C */
-#define kind_AB_animations_1_sprites_2_ADDRESS 0x7CAAu    /* 06DCAA */
-#define kind_AB_animations_2_ADDRESS 0x7CC8u    /* 06DCC8 */
-#define kind_AB_animations_2_sprites_ADDRESS 0x7CDCu    /* 06DCDC */
-#define kind_AB_animations_2_sprites_2_ADDRESS 0x7CEEu    /* 06DCEE */
-#define kind_AB_animations_2_sprites_3_ADDRESS 0x7D00u    /* 06DD00 */
-#define kind_AB_animations_2_sprites_4_ADDRESS 0x7D18u    /* 06DD18 */
-#define kind_AC_animations_ADDRESS 0x7D2Au    /* 06DD2A */
-#define kind_AC_animations_0_ADDRESS 0x7D30u    /* 06DD30 */
-#define kind_AC_animations_0_sprites_ADDRESS 0x7D80u    /* 06DD80 */
-#define kind_AC_animations_0_sprites_2_ADDRESS 0x7D98u    /* 06DD98 */
-#define kind_AC_animations_0_sprites_3_ADDRESS 0x7DAAu    /* 06DDAA */
-#define kind_AC_animations_0_sprites_4_ADDRESS 0x7DBCu    /* 06DDBC */
-#define kind_AC_animations_0_sprites_5_ADDRESS 0x7DD4u    /* 06DDD4 */
-#define kind_AC_animations_0_sprites_6_ADDRESS 0x7DF2u    /* 06DDF2 */
-#define kind_AC_animations_0_sprites_7_ADDRESS 0x7E10u    /* 06DE10 */
-#define kind_AC_animations_1_ADDRESS 0x7E28u    /* 06DE28 */
-#define kind_AC_animations_1_sprites_ADDRESS 0x7E30u    /* 06DE30 */
-#define kind_AC_animations_2_ADDRESS 0x7E36u    /* 06DE36 */
-#define kind_AC_animations_2_sprites_ADDRESS 0x7E46u    /* 06DE46 */
-#define kind_AC_animations_2_sprites_2_ADDRESS 0x7E58u    /* 06DE58 */
-#define kind_AC_animations_2_sprites_3_ADDRESS 0x7E70u    /* 06DE70 */
-#define kind_AC_animations_2_sprites_3_fill_ADDRESS 0x7E88u    /* 06DE88 */
-#define kind_AC_animations_2_sprites_3_rest_ADDRESS 0x6000u    /* 06E000 */
+#define posters_animations_ADDRESS 0x79AAu    /* 06D9AA */
+#define posters_animations_0_ADDRESS 0x79B6u    /* 06D9B6 */
+#define posters_animations_0_sprites_ADDRESS 0x79FAu    /* 06D9FA */
+#define posters_animations_0_sprites_2_ADDRESS 0x7A00u    /* 06DA00 */
+#define posters_animations_0_sprites_3_ADDRESS 0x7A06u    /* 06DA06 */
+#define posters_animations_0_sprites_4_ADDRESS 0x7A0Cu    /* 06DA0C */
+#define posters_animations_0_sprites_5_ADDRESS 0x7A12u    /* 06DA12 */
+#define posters_animations_0_sprites_6_ADDRESS 0x7A18u    /* 06DA18 */
+#define posters_animations_0_sprites_7_ADDRESS 0x7A1Eu    /* 06DA1E */
+#define posters_animations_0_sprites_8_ADDRESS 0x7A24u    /* 06DA24 */
+#define posters_animations_1_ADDRESS 0x7A2Au    /* 06DA2A */
+#define posters_animations_1_sprites_ADDRESS 0x7A6Eu    /* 06DA6E */
+#define posters_animations_1_sprites_2_ADDRESS 0x7A74u    /* 06DA74 */
+#define posters_animations_1_sprites_3_ADDRESS 0x7A7Au    /* 06DA7A */
+#define posters_animations_1_sprites_4_ADDRESS 0x7A80u    /* 06DA80 */
+#define posters_animations_1_sprites_5_ADDRESS 0x7A86u    /* 06DA86 */
+#define posters_animations_1_sprites_6_ADDRESS 0x7A8Cu    /* 06DA8C */
+#define posters_animations_1_sprites_7_ADDRESS 0x7A92u    /* 06DA92 */
+#define posters_animations_1_sprites_8_ADDRESS 0x7A98u    /* 06DA98 */
+#define posters_animations_1_sprites_9_ADDRESS 0x7A9Eu    /* 06DA9E */
+#define posters_animations_1_sprites_10_ADDRESS 0x7AA4u    /* 06DAA4 */
+#define posters_animations_1_sprites_11_ADDRESS 0x7AAAu    /* 06DAAA */
+#define posters_animations_2_ADDRESS 0x7AB0u    /* 06DAB0 */
+#define posters_animations_2_sprites_ADDRESS 0x7AD0u    /* 06DAD0 */
+#define posters_animations_2_sprites_2_ADDRESS 0x7AD6u    /* 06DAD6 */
+#define posters_animations_2_sprites_3_ADDRESS 0x7ADCu    /* 06DADC */
+#define posters_animations_2_sprites_4_ADDRESS 0x7AE2u    /* 06DAE2 */
+#define posters_animations_2_sprites_5_ADDRESS 0x7AE8u    /* 06DAE8 */
+#define posters_animations_2_sprites_6_ADDRESS 0x7AEEu    /* 06DAEE */
+#define posters_animations_2_sprites_7_ADDRESS 0x7AFAu    /* 06DAFA */
+#define posters_animations_4_ADDRESS 0x7B00u    /* 06DB00 */
+#define posters_animations_4_sprites_ADDRESS 0x7B24u    /* 06DB24 */
+#define posters_animations_4_sprites_2_ADDRESS 0x7B36u    /* 06DB36 */
+#define posters_animations_5_ADDRESS 0x7B48u    /* 06DB48 */
+#define posters_animations_5_sprites_ADDRESS 0x7B60u    /* 06DB60 */
+#define posters_animations_5_sprites_2_ADDRESS 0x7B72u    /* 06DB72 */
+#define posters_animations_5_sprites_3_ADDRESS 0x7B84u    /* 06DB84 */
+#define posters_animations_5_sprites_4_ADDRESS 0x7B96u    /* 06DB96 */
+#define posters_animations_5_sprites_5_ADDRESS 0x7BA8u    /* 06DBA8 */
+#define posters_animations_3_ADDRESS 0x7BBAu    /* 06DBBA */
+#define posters_animations_3_sprites_ADDRESS 0x7BDEu    /* 06DBDE */
+#define posters_animations_3_sprites_2_ADDRESS 0x7BEAu    /* 06DBEA */
+#define posters_animations_3_sprites_3_ADDRESS 0x7BF6u    /* 06DBF6 */
+#define drink_vendor_animations_ADDRESS 0x7C1Au    /* 06DC1A */
+#define drink_vendor_animations_0_ADDRESS 0x7C20u    /* 06DC20 */
+#define drink_vendor_animations_0_sprites_ADDRESS 0x7C30u    /* 06DC30 */
+#define drink_vendor_animations_0_sprites_2_ADDRESS 0x7C48u    /* 06DC48 */
+#define drink_vendor_animations_0_sprites_3_ADDRESS 0x7C60u    /* 06DC60 */
+#define drink_vendor_animations_1_ADDRESS 0x7C78u    /* 06DC78 */
+#define drink_vendor_animations_1_sprites_ADDRESS 0x7C8Cu    /* 06DC8C */
+#define drink_vendor_animations_1_sprites_2_ADDRESS 0x7CAAu    /* 06DCAA */
+#define drink_vendor_animations_2_ADDRESS 0x7CC8u    /* 06DCC8 */
+#define drink_vendor_animations_2_sprites_ADDRESS 0x7CDCu    /* 06DCDC */
+#define drink_vendor_animations_2_sprites_2_ADDRESS 0x7CEEu    /* 06DCEE */
+#define drink_vendor_animations_2_sprites_3_ADDRESS 0x7D00u    /* 06DD00 */
+#define drink_vendor_animations_2_sprites_4_ADDRESS 0x7D18u    /* 06DD18 */
+#define burger_eater_animations_ADDRESS 0x7D2Au    /* 06DD2A */
+#define burger_eater_animations_0_ADDRESS 0x7D30u    /* 06DD30 */
+#define burger_eater_animations_0_sprites_ADDRESS 0x7D80u    /* 06DD80 */
+#define burger_eater_animations_0_sprites_2_ADDRESS 0x7D98u    /* 06DD98 */
+#define burger_eater_animations_0_sprites_3_ADDRESS 0x7DAAu    /* 06DDAA */
+#define burger_eater_animations_0_sprites_4_ADDRESS 0x7DBCu    /* 06DDBC */
+#define burger_eater_animations_0_sprites_5_ADDRESS 0x7DD4u    /* 06DDD4 */
+#define burger_eater_animations_0_sprites_6_ADDRESS 0x7DF2u    /* 06DDF2 */
+#define burger_eater_animations_0_sprites_7_ADDRESS 0x7E10u    /* 06DE10 */
+#define burger_eater_animations_1_ADDRESS 0x7E28u    /* 06DE28 */
+#define burger_eater_animations_1_sprites_ADDRESS 0x7E30u    /* 06DE30 */
+#define burger_eater_animations_2_ADDRESS 0x7E36u    /* 06DE36 */
+#define burger_eater_animations_2_sprites_ADDRESS 0x7E46u    /* 06DE46 */
+#define burger_eater_animations_2_sprites_2_ADDRESS 0x7E58u    /* 06DE58 */
+#define burger_eater_animations_2_sprites_3_ADDRESS 0x7E70u    /* 06DE70 */
+#define burger_eater_animations_2_sprites_3_fill_ADDRESS 0x7E88u    /* 06DE88 */
+#define burger_eater_animations_2_sprites_3_rest_ADDRESS 0x6000u    /* 06E000 */
 #define krusty_balloon_animations_2_ADDRESS 0x6008u    /* 06E008 */
 #define krusty_balloon_animations_2_0_ADDRESS 0x601Eu    /* 06E01E */
 #define krusty_balloon_animations_2_0_sprites_ADDRESS 0x602Eu    /* 06E02E */
@@ -11044,26 +10804,26 @@ extern const void *reset_vector_data;
 #define krusty_balloon_animations_2_10_sprites_3_ADDRESS 0x6808u    /* 06E808 */
 #define krusty_balloon_animations_2_10_sprites_4_ADDRESS 0x6856u    /* 06E856 */
 #define krusty_balloon_animations_2_10_sprites_5_ADDRESS 0x68A4u    /* 06E8A4 */
-#define kind_9E_animations_ADDRESS 0x68FEu    /* 06E8FE */
-#define kind_9E_animations_0_ADDRESS 0x690Cu    /* 06E90C */
-#define kind_9E_animations_0_sprites_ADDRESS 0x691Cu    /* 06E91C */
-#define kind_9E_animations_0_sprites_2_ADDRESS 0x692Eu    /* 06E92E */
-#define kind_9E_animations_0_sprites_3_ADDRESS 0x6946u    /* 06E946 */
-#define kind_9E_animations_1_ADDRESS 0x695Eu    /* 06E95E */
-#define kind_9E_animations_1_sprites_ADDRESS 0x696Au    /* 06E96A */
-#define kind_9E_animations_1_sprites_2_ADDRESS 0x697Cu    /* 06E97C */
-#define kind_9E_animations_2_ADDRESS 0x6988u    /* 06E988 */
-#define kind_9E_animations_2_sprites_ADDRESS 0x6998u    /* 06E998 */
-#define kind_9E_animations_2_sprites_2_ADDRESS 0x69B6u    /* 06E9B6 */
-#define kind_9E_animations_2_sprites_3_ADDRESS 0x69C8u    /* 06E9C8 */
-#define kind_9E_animations_3_ADDRESS 0x69DAu    /* 06E9DA */
-#define kind_9E_animations_3_sprites_ADDRESS 0x69EEu    /* 06E9EE */
-#define kind_9E_animations_4_ADDRESS 0x69FAu    /* 06E9FA */
-#define kind_9E_animations_5_ADDRESS 0x6A06u    /* 06EA06 */
-#define kind_9E_animations_5_sprites_ADDRESS 0x6A1Au    /* 06EA1A */
-#define kind_9E_animations_5_sprites_2_ADDRESS 0x6A4Au    /* 06EA4A */
-#define kind_9E_animations_6_ADDRESS 0x6A80u    /* 06EA80 */
-#define kind_9E_animations_6_sprites_ADDRESS 0x6A88u    /* 06EA88 */
+#define moe_animations_ADDRESS 0x68FEu    /* 06E8FE */
+#define moe_animations_0_ADDRESS 0x690Cu    /* 06E90C */
+#define moe_animations_0_sprites_ADDRESS 0x691Cu    /* 06E91C */
+#define moe_animations_0_sprites_2_ADDRESS 0x692Eu    /* 06E92E */
+#define moe_animations_0_sprites_3_ADDRESS 0x6946u    /* 06E946 */
+#define moe_animations_1_ADDRESS 0x695Eu    /* 06E95E */
+#define moe_animations_1_sprites_ADDRESS 0x696Au    /* 06E96A */
+#define moe_animations_1_sprites_2_ADDRESS 0x697Cu    /* 06E97C */
+#define moe_animations_2_ADDRESS 0x6988u    /* 06E988 */
+#define moe_animations_2_sprites_ADDRESS 0x6998u    /* 06E998 */
+#define moe_animations_2_sprites_2_ADDRESS 0x69B6u    /* 06E9B6 */
+#define moe_animations_2_sprites_3_ADDRESS 0x69C8u    /* 06E9C8 */
+#define moe_animations_3_ADDRESS 0x69DAu    /* 06E9DA */
+#define moe_animations_3_sprites_ADDRESS 0x69EEu    /* 06E9EE */
+#define moe_animations_4_ADDRESS 0x69FAu    /* 06E9FA */
+#define moe_animations_5_ADDRESS 0x6A06u    /* 06EA06 */
+#define moe_animations_5_sprites_ADDRESS 0x6A1Au    /* 06EA1A */
+#define moe_animations_5_sprites_2_ADDRESS 0x6A4Au    /* 06EA4A */
+#define moe_animations_6_ADDRESS 0x6A80u    /* 06EA80 */
+#define moe_animations_6_sprites_ADDRESS 0x6A88u    /* 06EA88 */
 #define robot_animations_ADDRESS 0x6A8Eu    /* 06EA8E */
 #define robot_animations_0_ADDRESS 0x6ACCu    /* 06EACC */
 #define robot_animations_0_sprites_ADDRESS 0x6B00u    /* 06EB00 */
@@ -11236,23 +10996,23 @@ extern const void *reset_vector_data;
 #define gorilla_animations_19_sprites_rest_23_ADDRESS 0x7EBAu    /* 06FEBA */
 #define gorilla_animations_19_sprites_fill_4_ADDRESS 0x7EE4u    /* 06FEE4 */
 #define gorilla_animations_19_sprites_rest_24_ADDRESS 0x6000u    /* 070000 */
-#define kind_93_animations_ADDRESS 0x6012u    /* 070012 */
-#define kind_93_animations_0_ADDRESS 0x601Cu    /* 07001C */
-#define kind_93_animations_1_ADDRESS 0x6024u    /* 070024 */
-#define kind_93_animations_1_sprites_ADDRESS 0x6038u    /* 070038 */
-#define kind_93_animations_0_sprites_ADDRESS 0x6044u    /* 070044 */
-#define kind_93_animations_1_sprites_2_ADDRESS 0x6050u    /* 070050 */
-#define kind_93_animations_1_sprites_3_ADDRESS 0x605Cu    /* 07005C */
-#define kind_93_animations_2_ADDRESS 0x6068u    /* 070068 */
-#define kind_93_animations_2_sprites_ADDRESS 0x607Cu    /* 07007C */
-#define kind_93_animations_2_sprites_2_ADDRESS 0x6088u    /* 070088 */
-#define kind_93_animations_2_sprites_3_ADDRESS 0x6094u    /* 070094 */
-#define kind_93_animations_2_sprites_4_ADDRESS 0x60A0u    /* 0700A0 */
-#define kind_93_animations_3_ADDRESS 0x60ACu    /* 0700AC */
-#define kind_93_animations_3_sprites_ADDRESS 0x60B8u    /* 0700B8 */
-#define kind_93_animations_3_sprites_2_ADDRESS 0x60CAu    /* 0700CA */
-#define kind_93_animations_4_ADDRESS 0x60DCu    /* 0700DC */
-#define kind_93_animations_4_sprites_ADDRESS 0x60E4u    /* 0700E4 */
+#define kid_in_sunglasses_animations_ADDRESS 0x6012u    /* 070012 */
+#define kid_in_sunglasses_animations_0_ADDRESS 0x601Cu    /* 07001C */
+#define kid_in_sunglasses_animations_1_ADDRESS 0x6024u    /* 070024 */
+#define kid_in_sunglasses_animations_1_sprites_ADDRESS 0x6038u    /* 070038 */
+#define kid_in_sunglasses_animations_0_sprites_ADDRESS 0x6044u    /* 070044 */
+#define kid_in_sunglasses_animations_1_sprites_2_ADDRESS 0x6050u    /* 070050 */
+#define kid_in_sunglasses_animations_1_sprites_3_ADDRESS 0x605Cu    /* 07005C */
+#define kid_in_sunglasses_animations_2_ADDRESS 0x6068u    /* 070068 */
+#define kid_in_sunglasses_animations_2_sprites_ADDRESS 0x607Cu    /* 07007C */
+#define kid_in_sunglasses_animations_2_sprites_2_ADDRESS 0x6088u    /* 070088 */
+#define kid_in_sunglasses_animations_2_sprites_3_ADDRESS 0x6094u    /* 070094 */
+#define kid_in_sunglasses_animations_2_sprites_4_ADDRESS 0x60A0u    /* 0700A0 */
+#define kid_in_sunglasses_animations_3_ADDRESS 0x60ACu    /* 0700AC */
+#define kid_in_sunglasses_animations_3_sprites_ADDRESS 0x60B8u    /* 0700B8 */
+#define kid_in_sunglasses_animations_3_sprites_2_ADDRESS 0x60CAu    /* 0700CA */
+#define kid_in_sunglasses_animations_4_ADDRESS 0x60DCu    /* 0700DC */
+#define kid_in_sunglasses_animations_4_sprites_ADDRESS 0x60E4u    /* 0700E4 */
 #define wrestler_animations_2_ADDRESS 0x60F6u    /* 0700F6 */
 #define wrestler_animations_2_0_ADDRESS 0x6116u    /* 070116 */
 #define wrestler_animations_2_0_sprites_ADDRESS 0x6142u    /* 070142 */
@@ -11314,16 +11074,16 @@ extern const void *reset_vector_data;
 #define wrestler_animations_2_15_ADDRESS 0x68B6u    /* 0708B6 */
 #define wrestler_animations_2_15_sprites_ADDRESS 0x68C2u    /* 0708C2 */
 #define wrestler_animations_2_15_sprites_2_ADDRESS 0x6904u    /* 070904 */
-#define kind_95_animations_ADDRESS 0x6952u    /* 070952 */
-#define kind_95_animations_0_ADDRESS 0x6958u    /* 070958 */
-#define kind_95_animations_0_sprites_ADDRESS 0x6964u    /* 070964 */
-#define kind_95_animations_0_sprites_2_ADDRESS 0x6976u    /* 070976 */
-#define kind_95_animations_1_ADDRESS 0x698Eu    /* 07098E */
-#define kind_95_animations_1_sprites_ADDRESS 0x69A2u    /* 0709A2 */
-#define kind_95_animations_1_sprites_2_ADDRESS 0x69B4u    /* 0709B4 */
-#define kind_95_animations_1_sprites_3_ADDRESS 0x69D2u    /* 0709D2 */
-#define kind_95_animations_2_ADDRESS 0x69F0u    /* 0709F0 */
-#define kind_95_animations_2_sprites_ADDRESS 0x69FCu    /* 0709FC */
+#define rabbit_animations_ADDRESS 0x6952u    /* 070952 */
+#define rabbit_animations_0_ADDRESS 0x6958u    /* 070958 */
+#define rabbit_animations_0_sprites_ADDRESS 0x6964u    /* 070964 */
+#define rabbit_animations_0_sprites_2_ADDRESS 0x6976u    /* 070976 */
+#define rabbit_animations_1_ADDRESS 0x698Eu    /* 07098E */
+#define rabbit_animations_1_sprites_ADDRESS 0x69A2u    /* 0709A2 */
+#define rabbit_animations_1_sprites_2_ADDRESS 0x69B4u    /* 0709B4 */
+#define rabbit_animations_1_sprites_3_ADDRESS 0x69D2u    /* 0709D2 */
+#define rabbit_animations_2_ADDRESS 0x69F0u    /* 0709F0 */
+#define rabbit_animations_2_sprites_ADDRESS 0x69FCu    /* 0709FC */
 #define clown_on_ball_animations_ADDRESS 0x6A0Eu    /* 070A0E */
 #define clown_on_ball_animations_0_ADDRESS 0x6A3Au    /* 070A3A */
 #define clown_on_ball_animations_0_sprites_ADDRESS 0x6A42u    /* 070A42 */
@@ -11382,98 +11142,98 @@ extern const void *reset_vector_data;
 #define clown_on_ball_animations_8_sprites_4_ADDRESS 0x6F1Eu    /* 070F1E */
 #define clown_on_ball_animations_21_ADDRESS 0x6F30u    /* 070F30 */
 #define clown_on_ball_animations_21_sprites_ADDRESS 0x6F38u    /* 070F38 */
-#define kind_97_animations_ADDRESS 0x6F44u    /* 070F44 */
-#define kind_97_animations_16_ADDRESS 0x6F70u    /* 070F70 */
-#define kind_97_animations_16_sprites_ADDRESS 0x6F7Cu    /* 070F7C */
-#define kind_97_animations_16_sprites_2_ADDRESS 0x6F88u    /* 070F88 */
-#define kind_97_animations_17_ADDRESS 0x6F8Eu    /* 070F8E */
-#define kind_97_animations_17_sprites_ADDRESS 0x6FAAu    /* 070FAA */
-#define kind_97_animations_17_sprites_2_ADDRESS 0x6FB0u    /* 070FB0 */
-#define kind_97_animations_17_sprites_3_ADDRESS 0x6FC2u    /* 070FC2 */
-#define kind_97_animations_17_sprites_4_ADDRESS 0x6FC8u    /* 070FC8 */
-#define kind_97_animations_17_sprites_5_ADDRESS 0x6FCEu    /* 070FCE */
-#define kind_97_animations_17_sprites_6_ADDRESS 0x6FD4u    /* 070FD4 */
-#define kind_97_animations_0_ADDRESS 0x6FE6u    /* 070FE6 */
-#define kind_97_animations_0_sprites_ADDRESS 0x700Au    /* 07100A */
-#define kind_97_animations_0_sprites_2_ADDRESS 0x701Cu    /* 07101C */
-#define kind_97_animations_0_sprites_3_ADDRESS 0x702Eu    /* 07102E */
-#define kind_97_animations_0_sprites_4_ADDRESS 0x7046u    /* 071046 */
-#define kind_97_animations_0_sprites_5_ADDRESS 0x7064u    /* 071064 */
-#define kind_97_animations_0_sprites_6_ADDRESS 0x7076u    /* 071076 */
-#define kind_97_animations_0_sprites_7_ADDRESS 0x7088u    /* 071088 */
-#define kind_97_animations_0_sprites_8_ADDRESS 0x70A0u    /* 0710A0 */
-#define kind_97_animations_20_ADDRESS 0x70BEu    /* 0710BE */
-#define kind_97_animations_20_sprites_ADDRESS 0x70DAu    /* 0710DA */
-#define kind_97_animations_20_sprites_2_ADDRESS 0x70FEu    /* 0710FE */
-#define kind_97_animations_20_sprites_3_ADDRESS 0x711Cu    /* 07111C */
-#define kind_97_animations_20_sprites_4_ADDRESS 0x7134u    /* 071134 */
-#define kind_97_animations_20_sprites_5_ADDRESS 0x7152u    /* 071152 */
-#define kind_97_animations_20_sprites_6_ADDRESS 0x7170u    /* 071170 */
-#define kind_97_animations_19_ADDRESS 0x718Eu    /* 07118E */
-#define kind_97_animations_19_sprites_ADDRESS 0x71AAu    /* 0711AA */
-#define kind_97_animations_19_sprites_2_ADDRESS 0x71C8u    /* 0711C8 */
-#define kind_97_animations_19_sprites_3_ADDRESS 0x71E6u    /* 0711E6 */
-#define kind_97_animations_19_sprites_4_ADDRESS 0x720Au    /* 07120A */
-#define kind_97_animations_19_sprites_5_ADDRESS 0x7234u    /* 071234 */
-#define kind_97_animations_19_sprites_6_ADDRESS 0x7258u    /* 071258 */
-#define kind_97_animations_21_ADDRESS 0x7282u    /* 071282 */
-#define kind_97_animations_21_sprites_ADDRESS 0x729Eu    /* 07129E */
-#define kind_97_animations_21_sprites_2_ADDRESS 0x72C2u    /* 0712C2 */
-#define kind_97_animations_21_sprites_3_ADDRESS 0x72E0u    /* 0712E0 */
-#define kind_97_animations_21_sprites_4_ADDRESS 0x7304u    /* 071304 */
-#define kind_97_animations_21_sprites_5_ADDRESS 0x7328u    /* 071328 */
-#define kind_97_animations_21_sprites_6_ADDRESS 0x734Cu    /* 07134C */
-#define kind_97_animations_18_ADDRESS 0x7370u    /* 071370 */
-#define kind_97_animations_18_sprites_ADDRESS 0x738Cu    /* 07138C */
-#define kind_97_animations_18_sprites_2_ADDRESS 0x73B0u    /* 0713B0 */
-#define kind_97_animations_18_sprites_3_ADDRESS 0x73D4u    /* 0713D4 */
-#define kind_97_animations_18_sprites_4_ADDRESS 0x73FEu    /* 0713FE */
-#define kind_97_animations_18_sprites_5_ADDRESS 0x742Eu    /* 07142E */
-#define kind_97_animations_18_sprites_6_ADDRESS 0x745Eu    /* 07145E */
-#define kind_97_animations_9_ADDRESS 0x7488u    /* 071488 */
-#define kind_97_animations_9_sprites_ADDRESS 0x7494u    /* 071494 */
-#define kind_97_animations_9_sprites_2_ADDRESS 0x74A6u    /* 0714A6 */
-#define kind_97_animations_8_ADDRESS 0x74B8u    /* 0714B8 */
-#define kind_97_animations_8_sprites_ADDRESS 0x74E8u    /* 0714E8 */
-#define kind_97_animations_8_sprites_2_ADDRESS 0x7500u    /* 071500 */
-#define kind_97_animations_8_sprites_3_ADDRESS 0x751Eu    /* 07151E */
-#define kind_97_animations_8_sprites_4_ADDRESS 0x752Au    /* 07152A */
-#define kind_97_animations_8_sprites_5_ADDRESS 0x753Cu    /* 07153C */
-#define kind_97_animations_8_sprites_6_ADDRESS 0x7554u    /* 071554 */
-#define kind_97_animations_8_sprites_7_ADDRESS 0x7560u    /* 071560 */
-#define kind_97_animations_8_sprites_8_ADDRESS 0x756Cu    /* 07156C */
-#define kind_97_animations_8_sprites_9_ADDRESS 0x7578u    /* 071578 */
-#define kind_97_animations_8_sprites_10_ADDRESS 0x7584u    /* 071584 */
-#define kind_97_animations_8_sprites_11_ADDRESS 0x7590u    /* 071590 */
-#define kind_98_animations_ADDRESS 0x759Cu    /* 07159C */
-#define kind_98_animations_0_ADDRESS 0x75C0u    /* 0715C0 */
-#define kind_98_animations_0_sprites_ADDRESS 0x75CCu    /* 0715CC */
-#define kind_98_animations_0_sprites_2_ADDRESS 0x75DEu    /* 0715DE */
-#define kind_98_animations_1_ADDRESS 0x75F6u    /* 0715F6 */
-#define kind_98_animations_1_sprites_ADDRESS 0x760Au    /* 07160A */
-#define kind_98_animations_1_sprites_2_ADDRESS 0x7622u    /* 071622 */
-#define kind_98_animations_1_sprites_3_ADDRESS 0x763Au    /* 07163A */
-#define kind_98_animations_6_ADDRESS 0x7652u    /* 071652 */
-#define kind_98_animations_6_sprites_ADDRESS 0x765Eu    /* 07165E */
-#define kind_98_animations_6_sprites_2_ADDRESS 0x767Cu    /* 07167C */
-#define kind_98_animations_16_ADDRESS 0x769Au    /* 07169A */
-#define kind_98_animations_16_sprites_ADDRESS 0x76B2u    /* 0716B2 */
-#define kind_98_animations_16_sprites_2_ADDRESS 0x76C4u    /* 0716C4 */
-#define kind_98_animations_16_sprites_3_ADDRESS 0x76DCu    /* 0716DC */
-#define kind_98_animations_16_sprites_4_ADDRESS 0x76E8u    /* 0716E8 */
-#define kind_98_animations_8_ADDRESS 0x7700u    /* 071700 */
-#define kind_98_animations_8_sprites_ADDRESS 0x7718u    /* 071718 */
-#define kind_98_animations_8_sprites_2_ADDRESS 0x7736u    /* 071736 */
-#define kind_98_animations_8_sprites_3_ADDRESS 0x7754u    /* 071754 */
-#define kind_98_animations_8_sprites_4_ADDRESS 0x7772u    /* 071772 */
-#define kind_98_animations_8_sprites_5_ADDRESS 0x778Au    /* 07178A */
-#define kind_98_animations_7_ADDRESS 0x77A2u    /* 0717A2 */
-#define kind_98_animations_7_sprites_ADDRESS 0x77B2u    /* 0717B2 */
-#define kind_98_animations_9_ADDRESS 0x77D0u    /* 0717D0 */
-#define kind_98_animations_9_sprites_ADDRESS 0x77ECu    /* 0717EC */
-#define kind_98_animations_9_sprites_2_ADDRESS 0x77FEu    /* 0717FE */
-#define kind_98_animations_9_sprites_3_ADDRESS 0x7810u    /* 071810 */
-#define kind_98_animations_9_sprites_4_ADDRESS 0x7828u    /* 071828 */
+#define grabbing_zombie_animations_ADDRESS 0x6F44u    /* 070F44 */
+#define grabbing_zombie_animations_16_ADDRESS 0x6F70u    /* 070F70 */
+#define grabbing_zombie_animations_16_sprites_ADDRESS 0x6F7Cu    /* 070F7C */
+#define grabbing_zombie_animations_16_sprites_2_ADDRESS 0x6F88u    /* 070F88 */
+#define grabbing_zombie_animations_17_ADDRESS 0x6F8Eu    /* 070F8E */
+#define grabbing_zombie_animations_17_sprites_ADDRESS 0x6FAAu    /* 070FAA */
+#define grabbing_zombie_animations_17_sprites_2_ADDRESS 0x6FB0u    /* 070FB0 */
+#define grabbing_zombie_animations_17_sprites_3_ADDRESS 0x6FC2u    /* 070FC2 */
+#define grabbing_zombie_animations_17_sprites_4_ADDRESS 0x6FC8u    /* 070FC8 */
+#define grabbing_zombie_animations_17_sprites_5_ADDRESS 0x6FCEu    /* 070FCE */
+#define grabbing_zombie_animations_17_sprites_6_ADDRESS 0x6FD4u    /* 070FD4 */
+#define grabbing_zombie_animations_0_ADDRESS 0x6FE6u    /* 070FE6 */
+#define grabbing_zombie_animations_0_sprites_ADDRESS 0x700Au    /* 07100A */
+#define grabbing_zombie_animations_0_sprites_2_ADDRESS 0x701Cu    /* 07101C */
+#define grabbing_zombie_animations_0_sprites_3_ADDRESS 0x702Eu    /* 07102E */
+#define grabbing_zombie_animations_0_sprites_4_ADDRESS 0x7046u    /* 071046 */
+#define grabbing_zombie_animations_0_sprites_5_ADDRESS 0x7064u    /* 071064 */
+#define grabbing_zombie_animations_0_sprites_6_ADDRESS 0x7076u    /* 071076 */
+#define grabbing_zombie_animations_0_sprites_7_ADDRESS 0x7088u    /* 071088 */
+#define grabbing_zombie_animations_0_sprites_8_ADDRESS 0x70A0u    /* 0710A0 */
+#define grabbing_zombie_animations_20_ADDRESS 0x70BEu    /* 0710BE */
+#define grabbing_zombie_animations_20_sprites_ADDRESS 0x70DAu    /* 0710DA */
+#define grabbing_zombie_animations_20_sprites_2_ADDRESS 0x70FEu    /* 0710FE */
+#define grabbing_zombie_animations_20_sprites_3_ADDRESS 0x711Cu    /* 07111C */
+#define grabbing_zombie_animations_20_sprites_4_ADDRESS 0x7134u    /* 071134 */
+#define grabbing_zombie_animations_20_sprites_5_ADDRESS 0x7152u    /* 071152 */
+#define grabbing_zombie_animations_20_sprites_6_ADDRESS 0x7170u    /* 071170 */
+#define grabbing_zombie_animations_19_ADDRESS 0x718Eu    /* 07118E */
+#define grabbing_zombie_animations_19_sprites_ADDRESS 0x71AAu    /* 0711AA */
+#define grabbing_zombie_animations_19_sprites_2_ADDRESS 0x71C8u    /* 0711C8 */
+#define grabbing_zombie_animations_19_sprites_3_ADDRESS 0x71E6u    /* 0711E6 */
+#define grabbing_zombie_animations_19_sprites_4_ADDRESS 0x720Au    /* 07120A */
+#define grabbing_zombie_animations_19_sprites_5_ADDRESS 0x7234u    /* 071234 */
+#define grabbing_zombie_animations_19_sprites_6_ADDRESS 0x7258u    /* 071258 */
+#define grabbing_zombie_animations_21_ADDRESS 0x7282u    /* 071282 */
+#define grabbing_zombie_animations_21_sprites_ADDRESS 0x729Eu    /* 07129E */
+#define grabbing_zombie_animations_21_sprites_2_ADDRESS 0x72C2u    /* 0712C2 */
+#define grabbing_zombie_animations_21_sprites_3_ADDRESS 0x72E0u    /* 0712E0 */
+#define grabbing_zombie_animations_21_sprites_4_ADDRESS 0x7304u    /* 071304 */
+#define grabbing_zombie_animations_21_sprites_5_ADDRESS 0x7328u    /* 071328 */
+#define grabbing_zombie_animations_21_sprites_6_ADDRESS 0x734Cu    /* 07134C */
+#define grabbing_zombie_animations_18_ADDRESS 0x7370u    /* 071370 */
+#define grabbing_zombie_animations_18_sprites_ADDRESS 0x738Cu    /* 07138C */
+#define grabbing_zombie_animations_18_sprites_2_ADDRESS 0x73B0u    /* 0713B0 */
+#define grabbing_zombie_animations_18_sprites_3_ADDRESS 0x73D4u    /* 0713D4 */
+#define grabbing_zombie_animations_18_sprites_4_ADDRESS 0x73FEu    /* 0713FE */
+#define grabbing_zombie_animations_18_sprites_5_ADDRESS 0x742Eu    /* 07142E */
+#define grabbing_zombie_animations_18_sprites_6_ADDRESS 0x745Eu    /* 07145E */
+#define grabbing_zombie_animations_9_ADDRESS 0x7488u    /* 071488 */
+#define grabbing_zombie_animations_9_sprites_ADDRESS 0x7494u    /* 071494 */
+#define grabbing_zombie_animations_9_sprites_2_ADDRESS 0x74A6u    /* 0714A6 */
+#define grabbing_zombie_animations_8_ADDRESS 0x74B8u    /* 0714B8 */
+#define grabbing_zombie_animations_8_sprites_ADDRESS 0x74E8u    /* 0714E8 */
+#define grabbing_zombie_animations_8_sprites_2_ADDRESS 0x7500u    /* 071500 */
+#define grabbing_zombie_animations_8_sprites_3_ADDRESS 0x751Eu    /* 07151E */
+#define grabbing_zombie_animations_8_sprites_4_ADDRESS 0x752Au    /* 07152A */
+#define grabbing_zombie_animations_8_sprites_5_ADDRESS 0x753Cu    /* 07153C */
+#define grabbing_zombie_animations_8_sprites_6_ADDRESS 0x7554u    /* 071554 */
+#define grabbing_zombie_animations_8_sprites_7_ADDRESS 0x7560u    /* 071560 */
+#define grabbing_zombie_animations_8_sprites_8_ADDRESS 0x756Cu    /* 07156C */
+#define grabbing_zombie_animations_8_sprites_9_ADDRESS 0x7578u    /* 071578 */
+#define grabbing_zombie_animations_8_sprites_10_ADDRESS 0x7584u    /* 071584 */
+#define grabbing_zombie_animations_8_sprites_11_ADDRESS 0x7590u    /* 071590 */
+#define one_eared_rabbit_animations_ADDRESS 0x759Cu    /* 07159C */
+#define one_eared_rabbit_animations_0_ADDRESS 0x75C0u    /* 0715C0 */
+#define one_eared_rabbit_animations_0_sprites_ADDRESS 0x75CCu    /* 0715CC */
+#define one_eared_rabbit_animations_0_sprites_2_ADDRESS 0x75DEu    /* 0715DE */
+#define one_eared_rabbit_animations_1_ADDRESS 0x75F6u    /* 0715F6 */
+#define one_eared_rabbit_animations_1_sprites_ADDRESS 0x760Au    /* 07160A */
+#define one_eared_rabbit_animations_1_sprites_2_ADDRESS 0x7622u    /* 071622 */
+#define one_eared_rabbit_animations_1_sprites_3_ADDRESS 0x763Au    /* 07163A */
+#define one_eared_rabbit_animations_6_ADDRESS 0x7652u    /* 071652 */
+#define one_eared_rabbit_animations_6_sprites_ADDRESS 0x765Eu    /* 07165E */
+#define one_eared_rabbit_animations_6_sprites_2_ADDRESS 0x767Cu    /* 07167C */
+#define one_eared_rabbit_animations_16_ADDRESS 0x769Au    /* 07169A */
+#define one_eared_rabbit_animations_16_sprites_ADDRESS 0x76B2u    /* 0716B2 */
+#define one_eared_rabbit_animations_16_sprites_2_ADDRESS 0x76C4u    /* 0716C4 */
+#define one_eared_rabbit_animations_16_sprites_3_ADDRESS 0x76DCu    /* 0716DC */
+#define one_eared_rabbit_animations_16_sprites_4_ADDRESS 0x76E8u    /* 0716E8 */
+#define one_eared_rabbit_animations_8_ADDRESS 0x7700u    /* 071700 */
+#define one_eared_rabbit_animations_8_sprites_ADDRESS 0x7718u    /* 071718 */
+#define one_eared_rabbit_animations_8_sprites_2_ADDRESS 0x7736u    /* 071736 */
+#define one_eared_rabbit_animations_8_sprites_3_ADDRESS 0x7754u    /* 071754 */
+#define one_eared_rabbit_animations_8_sprites_4_ADDRESS 0x7772u    /* 071772 */
+#define one_eared_rabbit_animations_8_sprites_5_ADDRESS 0x778Au    /* 07178A */
+#define one_eared_rabbit_animations_7_ADDRESS 0x77A2u    /* 0717A2 */
+#define one_eared_rabbit_animations_7_sprites_ADDRESS 0x77B2u    /* 0717B2 */
+#define one_eared_rabbit_animations_9_ADDRESS 0x77D0u    /* 0717D0 */
+#define one_eared_rabbit_animations_9_sprites_ADDRESS 0x77ECu    /* 0717EC */
+#define one_eared_rabbit_animations_9_sprites_2_ADDRESS 0x77FEu    /* 0717FE */
+#define one_eared_rabbit_animations_9_sprites_3_ADDRESS 0x7810u    /* 071810 */
+#define one_eared_rabbit_animations_9_sprites_4_ADDRESS 0x7828u    /* 071828 */
 #define clown_on_ball_2_animations_ADDRESS 0x7840u    /* 071840 */
 #define clown_on_ball_2_animations_0_ADDRESS 0x7866u    /* 071866 */
 #define clown_on_ball_2_animations_0_sprites_ADDRESS 0x786Eu    /* 07186E */
@@ -11516,16 +11276,16 @@ extern const void *reset_vector_data;
 #define clown_on_ball_2_animations_7_ADDRESS 0x7BBCu    /* 071BBC */
 #define clown_on_ball_2_animations_16_ADDRESS 0x7BD4u    /* 071BD4 */
 #define clown_on_ball_2_animations_16_sprites_ADDRESS 0x7C1Cu    /* 071C1C */
-#define kind_9A_animations_ADDRESS 0x7C3Au    /* 071C3A */
-#define kind_9A_animations_0_ADDRESS 0x7C3Eu    /* 071C3E */
-#define kind_9A_animations_0_sprites_ADDRESS 0x7C5Au    /* 071C5A */
-#define kind_9A_animations_0_sprites_2_ADDRESS 0x7C78u    /* 071C78 */
-#define kind_9A_animations_0_sprites_3_ADDRESS 0x7C96u    /* 071C96 */
-#define kind_9A_animations_0_sprites_4_ADDRESS 0x7CB4u    /* 071CB4 */
-#define kind_9A_animations_0_sprites_5_ADDRESS 0x7CD2u    /* 071CD2 */
-#define kind_9A_animations_0_sprites_6_ADDRESS 0x7CF0u    /* 071CF0 */
-#define kind_9A_animations_1_ADDRESS 0x7D0Eu    /* 071D0E */
-#define kind_9A_animations_1_sprites_ADDRESS 0x7D16u    /* 071D16 */
+#define ghost_on_rope_animations_ADDRESS 0x7C3Au    /* 071C3A */
+#define ghost_on_rope_animations_0_ADDRESS 0x7C3Eu    /* 071C3E */
+#define ghost_on_rope_animations_0_sprites_ADDRESS 0x7C5Au    /* 071C5A */
+#define ghost_on_rope_animations_0_sprites_2_ADDRESS 0x7C78u    /* 071C78 */
+#define ghost_on_rope_animations_0_sprites_3_ADDRESS 0x7C96u    /* 071C96 */
+#define ghost_on_rope_animations_0_sprites_4_ADDRESS 0x7CB4u    /* 071CB4 */
+#define ghost_on_rope_animations_0_sprites_5_ADDRESS 0x7CD2u    /* 071CD2 */
+#define ghost_on_rope_animations_0_sprites_6_ADDRESS 0x7CF0u    /* 071CF0 */
+#define ghost_on_rope_animations_1_ADDRESS 0x7D0Eu    /* 071D0E */
+#define ghost_on_rope_animations_1_sprites_ADDRESS 0x7D16u    /* 071D16 */
 #define ghost_animations_ADDRESS 0x7D34u    /* 071D34 */
 #define ghost_animations_0_ADDRESS 0x7D38u    /* 071D38 */
 #define ghost_animations_0_sprites_ADDRESS 0x7D4Cu    /* 071D4C */
@@ -11544,26 +11304,26 @@ extern const void *reset_vector_data;
 #define ghost_animations_1_sprites_4_rest_4_ADDRESS 0x7EBAu    /* 071EBA */
 #define ghost_animations_1_sprites_4_fill_2_ADDRESS 0x7EE4u    /* 071EE4 */
 #define ghost_animations_1_sprites_4_rest_5_ADDRESS 0x6000u    /* 072000 */
-#define kind_8A_animations_ADDRESS 0x6010u    /* 072010 */
-#define kind_8A_animations_0_ADDRESS 0x601Au    /* 07201A */
-#define kind_8A_animations_0_sprites_ADDRESS 0x6022u    /* 072022 */
-#define kind_8A_animations_1_ADDRESS 0x6034u    /* 072034 */
-#define kind_8A_animations_1_sprites_ADDRESS 0x6048u    /* 072048 */
-#define kind_8A_animations_1_sprites_2_ADDRESS 0x6060u    /* 072060 */
-#define kind_8A_animations_1_sprites_3_ADDRESS 0x6072u    /* 072072 */
-#define kind_8A_animations_1_sprites_4_ADDRESS 0x608Au    /* 07208A */
-#define kind_8A_animations_2_ADDRESS 0x609Cu    /* 07209C */
-#define kind_8A_animations_2_sprites_ADDRESS 0x60B0u    /* 0720B0 */
-#define kind_8A_animations_2_sprites_2_ADDRESS 0x60C2u    /* 0720C2 */
-#define kind_8A_animations_2_sprites_3_ADDRESS 0x60D4u    /* 0720D4 */
-#define kind_8A_animations_3_ADDRESS 0x60E6u    /* 0720E6 */
-#define kind_8A_animations_3_sprites_ADDRESS 0x60FAu    /* 0720FA */
-#define kind_8A_animations_3_sprites_2_ADDRESS 0x610Cu    /* 07210C */
-#define kind_8A_animations_3_sprites_3_ADDRESS 0x6124u    /* 072124 */
-#define kind_8A_animations_3_sprites_4_ADDRESS 0x613Cu    /* 07213C */
-#define kind_8A_animations_4_ADDRESS 0x6154u    /* 072154 */
-#define kind_8A_animations_4_sprites_ADDRESS 0x6164u    /* 072164 */
-#define kind_8A_animations_4_sprites_2_ADDRESS 0x617Cu    /* 07217C */
+#define woman_in_green_animations_ADDRESS 0x6010u    /* 072010 */
+#define woman_in_green_animations_0_ADDRESS 0x601Au    /* 07201A */
+#define woman_in_green_animations_0_sprites_ADDRESS 0x6022u    /* 072022 */
+#define woman_in_green_animations_1_ADDRESS 0x6034u    /* 072034 */
+#define woman_in_green_animations_1_sprites_ADDRESS 0x6048u    /* 072048 */
+#define woman_in_green_animations_1_sprites_2_ADDRESS 0x6060u    /* 072060 */
+#define woman_in_green_animations_1_sprites_3_ADDRESS 0x6072u    /* 072072 */
+#define woman_in_green_animations_1_sprites_4_ADDRESS 0x608Au    /* 07208A */
+#define woman_in_green_animations_2_ADDRESS 0x609Cu    /* 07209C */
+#define woman_in_green_animations_2_sprites_ADDRESS 0x60B0u    /* 0720B0 */
+#define woman_in_green_animations_2_sprites_2_ADDRESS 0x60C2u    /* 0720C2 */
+#define woman_in_green_animations_2_sprites_3_ADDRESS 0x60D4u    /* 0720D4 */
+#define woman_in_green_animations_3_ADDRESS 0x60E6u    /* 0720E6 */
+#define woman_in_green_animations_3_sprites_ADDRESS 0x60FAu    /* 0720FA */
+#define woman_in_green_animations_3_sprites_2_ADDRESS 0x610Cu    /* 07210C */
+#define woman_in_green_animations_3_sprites_3_ADDRESS 0x6124u    /* 072124 */
+#define woman_in_green_animations_3_sprites_4_ADDRESS 0x613Cu    /* 07213C */
+#define woman_in_green_animations_4_ADDRESS 0x6154u    /* 072154 */
+#define woman_in_green_animations_4_sprites_ADDRESS 0x6164u    /* 072164 */
+#define woman_in_green_animations_4_sprites_2_ADDRESS 0x617Cu    /* 07217C */
 #define bird_animations_ADDRESS 0x618Eu    /* 07218E */
 #define bird_animations_0_ADDRESS 0x6192u    /* 072192 */
 #define bird_animations_0_sprites_ADDRESS 0x61A6u    /* 0721A6 */
@@ -11573,37 +11333,37 @@ extern const void *reset_vector_data;
 #define bird_animations_1_sprites_ADDRESS 0x61CCu    /* 0721CC */
 #define bird_animations_1_sprites_2_ADDRESS 0x61D2u    /* 0721D2 */
 #define bird_animations_1_sprites_3_ADDRESS 0x61D8u    /* 0721D8 */
-#define kind_8C_animations_ADDRESS 0x61DEu    /* 0721DE */
-#define kind_8C_animations_0_ADDRESS 0x6204u    /* 072204 */
-#define kind_8C_animations_0_sprites_ADDRESS 0x620Cu    /* 07220C */
-#define kind_8C_animations_1_ADDRESS 0x621Eu    /* 07221E */
-#define kind_8C_animations_1_sprites_ADDRESS 0x6242u    /* 072242 */
-#define kind_8C_animations_1_sprites_2_ADDRESS 0x6254u    /* 072254 */
-#define kind_8C_animations_1_sprites_3_ADDRESS 0x6266u    /* 072266 */
-#define kind_8C_animations_1_sprites_4_ADDRESS 0x6278u    /* 072278 */
-#define kind_8C_animations_1_sprites_5_ADDRESS 0x628Au    /* 07228A */
-#define kind_8C_animations_1_sprites_6_ADDRESS 0x629Cu    /* 07229C */
-#define kind_8C_animations_1_sprites_7_ADDRESS 0x62AEu    /* 0722AE */
-#define kind_8C_animations_1_sprites_8_ADDRESS 0x62C0u    /* 0722C0 */
-#define kind_8C_animations_6_ADDRESS 0x62D2u    /* 0722D2 */
-#define kind_8C_animations_6_sprites_ADDRESS 0x62DEu    /* 0722DE */
-#define kind_8C_animations_16_ADDRESS 0x62F0u    /* 0722F0 */
-#define kind_8C_animations_16_sprites_ADDRESS 0x6304u    /* 072304 */
-#define kind_8C_animations_16_sprites_2_ADDRESS 0x6316u    /* 072316 */
-#define kind_8C_animations_16_sprites_3_ADDRESS 0x632Eu    /* 07232E */
-#define kind_8C_animations_16_sprites_4_ADDRESS 0x6346u    /* 072346 */
-#define kind_8C_animations_9_ADDRESS 0x635Eu    /* 07235E */
-#define kind_8C_animations_9_sprites_ADDRESS 0x636Eu    /* 07236E */
-#define kind_8C_animations_9_sprites_2_ADDRESS 0x6386u    /* 072386 */
-#define kind_8C_animations_9_sprites_3_ADDRESS 0x639Eu    /* 07239E */
-#define kind_8C_animations_17_ADDRESS 0x63B6u    /* 0723B6 */
-#define kind_8C_animations_17_sprites_ADDRESS 0x63CAu    /* 0723CA */
-#define kind_8C_animations_17_sprites_2_ADDRESS 0x63E2u    /* 0723E2 */
-#define kind_8C_animations_17_sprites_3_ADDRESS 0x63FAu    /* 0723FA */
-#define kind_8C_animations_17_sprites_4_ADDRESS 0x6412u    /* 072412 */
-#define kind_8C_animations_18_ADDRESS 0x6424u    /* 072424 */
-#define kind_8C_animations_18_sprites_ADDRESS 0x6438u    /* 072438 */
-#define kind_8C_animations_18_sprites_2_ADDRESS 0x645Cu    /* 07245C */
+#define barney_animations_2_ADDRESS 0x61DEu    /* 0721DE */
+#define barney_animations_2_0_ADDRESS 0x6204u    /* 072204 */
+#define barney_animations_2_0_sprites_ADDRESS 0x620Cu    /* 07220C */
+#define barney_animations_2_1_ADDRESS 0x621Eu    /* 07221E */
+#define barney_animations_2_1_sprites_ADDRESS 0x6242u    /* 072242 */
+#define barney_animations_2_1_sprites_2_ADDRESS 0x6254u    /* 072254 */
+#define barney_animations_2_1_sprites_3_ADDRESS 0x6266u    /* 072266 */
+#define barney_animations_2_1_sprites_4_ADDRESS 0x6278u    /* 072278 */
+#define barney_animations_2_1_sprites_5_ADDRESS 0x628Au    /* 07228A */
+#define barney_animations_2_1_sprites_6_ADDRESS 0x629Cu    /* 07229C */
+#define barney_animations_2_1_sprites_7_ADDRESS 0x62AEu    /* 0722AE */
+#define barney_animations_2_1_sprites_8_ADDRESS 0x62C0u    /* 0722C0 */
+#define barney_animations_2_6_ADDRESS 0x62D2u    /* 0722D2 */
+#define barney_animations_2_6_sprites_ADDRESS 0x62DEu    /* 0722DE */
+#define barney_animations_2_16_ADDRESS 0x62F0u    /* 0722F0 */
+#define barney_animations_2_16_sprites_ADDRESS 0x6304u    /* 072304 */
+#define barney_animations_2_16_sprites_2_ADDRESS 0x6316u    /* 072316 */
+#define barney_animations_2_16_sprites_3_ADDRESS 0x632Eu    /* 07232E */
+#define barney_animations_2_16_sprites_4_ADDRESS 0x6346u    /* 072346 */
+#define barney_animations_2_9_ADDRESS 0x635Eu    /* 07235E */
+#define barney_animations_2_9_sprites_ADDRESS 0x636Eu    /* 07236E */
+#define barney_animations_2_9_sprites_2_ADDRESS 0x6386u    /* 072386 */
+#define barney_animations_2_9_sprites_3_ADDRESS 0x639Eu    /* 07239E */
+#define barney_animations_2_17_ADDRESS 0x63B6u    /* 0723B6 */
+#define barney_animations_2_17_sprites_ADDRESS 0x63CAu    /* 0723CA */
+#define barney_animations_2_17_sprites_2_ADDRESS 0x63E2u    /* 0723E2 */
+#define barney_animations_2_17_sprites_3_ADDRESS 0x63FAu    /* 0723FA */
+#define barney_animations_2_17_sprites_4_ADDRESS 0x6412u    /* 072412 */
+#define barney_animations_2_18_ADDRESS 0x6424u    /* 072424 */
+#define barney_animations_2_18_sprites_ADDRESS 0x6438u    /* 072438 */
+#define barney_animations_2_18_sprites_2_ADDRESS 0x645Cu    /* 07245C */
 #define lumberjack_animations_ADDRESS 0x6474u    /* 072474 */
 #define lumberjack_animations_0_ADDRESS 0x6496u    /* 072496 */
 #define lumberjack_animations_0_sprites_ADDRESS 0x64BAu    /* 0724BA */
@@ -11637,186 +11397,186 @@ extern const void *reset_vector_data;
 #define lumberjack_animations_8_sprites_5_ADDRESS 0x671Cu    /* 07271C */
 #define lumberjack_animations_8_sprites_6_ADDRESS 0x672Eu    /* 07272E */
 #define lumberjack_animations_8_sprites_7_ADDRESS 0x6740u    /* 072740 */
-#define kind_8E_animations_ADDRESS 0x6758u    /* 072758 */
-#define kind_8E_animations_0_ADDRESS 0x6762u    /* 072762 */
-#define kind_8E_animations_0_sprites_ADDRESS 0x676Au    /* 07276A */
-#define kind_8E_animations_1_ADDRESS 0x6782u    /* 072782 */
-#define kind_8E_animations_1_sprites_ADDRESS 0x67AEu    /* 0727AE */
-#define kind_8E_animations_1_sprites_2_ADDRESS 0x67C6u    /* 0727C6 */
-#define kind_8E_animations_1_sprites_3_ADDRESS 0x67DEu    /* 0727DE */
-#define kind_8E_animations_1_sprites_4_ADDRESS 0x67F6u    /* 0727F6 */
-#define kind_8E_animations_2_ADDRESS 0x680Eu    /* 07280E */
-#define kind_8E_animations_2_sprites_ADDRESS 0x6832u    /* 072832 */
-#define kind_8E_animations_2_sprites_2_ADDRESS 0x684Au    /* 07284A */
-#define kind_8E_animations_2_sprites_3_ADDRESS 0x6862u    /* 072862 */
-#define kind_8E_animations_2_sprites_4_ADDRESS 0x6874u    /* 072874 */
-#define kind_8E_animations_2_sprites_5_ADDRESS 0x6886u    /* 072886 */
-#define kind_8E_animations_2_sprites_6_ADDRESS 0x689Eu    /* 07289E */
-#define kind_8E_animations_2_sprites_7_ADDRESS 0x68B0u    /* 0728B0 */
-#define kind_8E_animations_2_sprites_8_ADDRESS 0x68C2u    /* 0728C2 */
-#define kind_8E_animations_3_ADDRESS 0x68DAu    /* 0728DA */
-#define kind_8E_animations_3_sprites_ADDRESS 0x68F6u    /* 0728F6 */
-#define kind_8E_animations_3_sprites_2_ADDRESS 0x6902u    /* 072902 */
-#define kind_8E_animations_3_sprites_3_ADDRESS 0x690Eu    /* 07290E */
-#define kind_8E_animations_3_sprites_4_ADDRESS 0x6920u    /* 072920 */
-#define kind_8E_animations_3_sprites_5_ADDRESS 0x6932u    /* 072932 */
-#define kind_8E_animations_3_sprites_6_ADDRESS 0x694Au    /* 07294A */
-#define kind_8E_animations_4_ADDRESS 0x6962u    /* 072962 */
-#define kind_8E_animations_4_sprites_ADDRESS 0x696Eu    /* 07296E */
-#define kind_8E_animations_4_sprites_2_ADDRESS 0x6980u    /* 072980 */
-#define kind_90_animations_ADDRESS 0x6998u    /* 072998 */
-#define kind_90_animations_0_ADDRESS 0x69C0u    /* 0729C0 */
-#define kind_90_animations_0_sprites_ADDRESS 0x69C8u    /* 0729C8 */
-#define kind_90_animations_1_ADDRESS 0x69D4u    /* 0729D4 */
-#define kind_90_animations_1_sprites_ADDRESS 0x69F8u    /* 0729F8 */
-#define kind_90_animations_1_sprites_2_ADDRESS 0x6A04u    /* 072A04 */
-#define kind_90_animations_1_sprites_3_ADDRESS 0x6A10u    /* 072A10 */
-#define kind_90_animations_1_sprites_4_ADDRESS 0x6A1Cu    /* 072A1C */
-#define kind_90_animations_1_sprites_5_ADDRESS 0x6A34u    /* 072A34 */
-#define kind_90_animations_1_sprites_6_ADDRESS 0x6A52u    /* 072A52 */
-#define kind_90_animations_1_sprites_7_ADDRESS 0x6A6Au    /* 072A6A */
-#define kind_90_animations_1_sprites_8_ADDRESS 0x6A82u    /* 072A82 */
-#define kind_90_animations_6_ADDRESS 0x6A9Au    /* 072A9A */
-#define kind_90_animations_6_sprites_ADDRESS 0x6AA6u    /* 072AA6 */
-#define kind_90_animations_6_sprites_2_ADDRESS 0x6AB8u    /* 072AB8 */
-#define kind_90_animations_9_ADDRESS 0x6ACAu    /* 072ACA */
-#define kind_90_animations_9_sprites_ADDRESS 0x6AD6u    /* 072AD6 */
-#define kind_90_animations_9_sprites_2_ADDRESS 0x6AE8u    /* 072AE8 */
-#define kind_90_animations_8_ADDRESS 0x6B00u    /* 072B00 */
-#define kind_90_animations_8_sprites_ADDRESS 0x6B14u    /* 072B14 */
-#define kind_90_animations_8_sprites_2_ADDRESS 0x6B26u    /* 072B26 */
-#define kind_90_animations_16_ADDRESS 0x6B38u    /* 072B38 */
-#define kind_90_animations_16_sprites_ADDRESS 0x6B48u    /* 072B48 */
-#define kind_90_animations_16_sprites_2_ADDRESS 0x6B66u    /* 072B66 */
-#define kind_90_animations_16_sprites_3_ADDRESS 0x6B8Au    /* 072B8A */
-#define kind_90_animations_17_ADDRESS 0x6BA2u    /* 072BA2 */
-#define kind_90_animations_17_sprites_ADDRESS 0x6BD2u    /* 072BD2 */
-#define kind_90_animations_17_sprites_2_ADDRESS 0x6BD8u    /* 072BD8 */
-#define kind_90_animations_17_sprites_3_ADDRESS 0x6BEAu    /* 072BEA */
-#define kind_90_animations_17_sprites_4_ADDRESS 0x6C02u    /* 072C02 */
-#define kind_90_animations_17_sprites_5_ADDRESS 0x6C26u    /* 072C26 */
-#define kind_90_animations_17_sprites_6_ADDRESS 0x6C4Au    /* 072C4A */
-#define kind_90_animations_17_sprites_7_ADDRESS 0x6C6Eu    /* 072C6E */
-#define kind_90_animations_17_sprites_8_ADDRESS 0x6C92u    /* 072C92 */
-#define kind_90_animations_17_sprites_9_ADDRESS 0x6CB6u    /* 072CB6 */
-#define kind_90_animations_17_sprites_10_ADDRESS 0x6CD4u    /* 072CD4 */
-#define kind_90_animations_17_sprites_11_ADDRESS 0x6CE6u    /* 072CE6 */
-#define kind_90_animations_18_ADDRESS 0x6CF2u    /* 072CF2 */
-#define kind_90_animations_18_sprites_ADDRESS 0x6D22u    /* 072D22 */
-#define kind_90_animations_18_sprites_2_ADDRESS 0x6D28u    /* 072D28 */
-#define kind_90_animations_18_sprites_3_ADDRESS 0x6D3Au    /* 072D3A */
-#define kind_90_animations_18_sprites_4_ADDRESS 0x6D64u    /* 072D64 */
-#define kind_90_animations_18_sprites_5_ADDRESS 0x6DA0u    /* 072DA0 */
-#define kind_90_animations_18_sprites_6_ADDRESS 0x6DDCu    /* 072DDC */
-#define kind_90_animations_18_sprites_7_ADDRESS 0x6E18u    /* 072E18 */
-#define kind_90_animations_18_sprites_8_ADDRESS 0x6E54u    /* 072E54 */
-#define kind_90_animations_18_sprites_9_ADDRESS 0x6E90u    /* 072E90 */
-#define kind_90_animations_18_sprites_10_ADDRESS 0x6ECCu    /* 072ECC */
-#define kind_90_animations_18_sprites_11_ADDRESS 0x6EF0u    /* 072EF0 */
-#define kind_90_animations_2_ADDRESS 0x6EFCu    /* 072EFC */
-#define kind_90_animations_2_sprites_ADDRESS 0x6F20u    /* 072F20 */
-#define kind_90_animations_2_sprites_2_ADDRESS 0x6F32u    /* 072F32 */
-#define kind_90_animations_2_sprites_3_ADDRESS 0x6F44u    /* 072F44 */
-#define kind_90_animations_2_sprites_4_ADDRESS 0x6F5Cu    /* 072F5C */
-#define kind_90_animations_2_sprites_5_ADDRESS 0x6F74u    /* 072F74 */
-#define kind_90_animations_2_sprites_6_ADDRESS 0x6F92u    /* 072F92 */
-#define kind_90_animations_2_sprites_7_ADDRESS 0x6FAAu    /* 072FAA */
-#define kind_90_animations_2_sprites_8_ADDRESS 0x6FC2u    /* 072FC2 */
-#define kind_90_animations_19_ADDRESS 0x6FDAu    /* 072FDA */
-#define kind_90_animations_19_sprites_ADDRESS 0x700Au    /* 07300A */
-#define kind_90_animations_19_sprites_2_ADDRESS 0x7010u    /* 073010 */
-#define kind_90_animations_19_sprites_3_ADDRESS 0x7022u    /* 073022 */
-#define kind_90_animations_19_sprites_4_ADDRESS 0x7034u    /* 073034 */
-#define kind_90_animations_19_sprites_5_ADDRESS 0x7046u    /* 073046 */
-#define kind_90_animations_19_sprites_6_ADDRESS 0x705Eu    /* 07305E */
-#define kind_90_animations_19_sprites_7_ADDRESS 0x7076u    /* 073076 */
-#define kind_90_animations_19_sprites_8_ADDRESS 0x708Eu    /* 07308E */
-#define kind_90_animations_19_sprites_9_ADDRESS 0x70A6u    /* 0730A6 */
-#define kind_90_animations_19_sprites_10_ADDRESS 0x70B8u    /* 0730B8 */
-#define kind_90_animations_19_sprites_11_ADDRESS 0x70BEu    /* 0730BE */
-#define kind_91_animations_ADDRESS 0x70CAu    /* 0730CA */
-#define kind_91_animations_0_ADDRESS 0x7100u    /* 073100 */
-#define kind_91_animations_0_sprites_ADDRESS 0x7108u    /* 073108 */
-#define kind_91_animations_19_ADDRESS 0x7120u    /* 073120 */
-#define kind_91_animations_18_ADDRESS 0x713Cu    /* 07313C */
-#define kind_91_animations_19_sprites_ADDRESS 0x7158u    /* 073158 */
-#define kind_91_animations_19_sprites_2_ADDRESS 0x715Eu    /* 07315E */
-#define kind_91_animations_19_sprites_3_ADDRESS 0x716Au    /* 07316A */
-#define kind_91_animations_19_sprites_4_ADDRESS 0x7170u    /* 073170 */
-#define kind_91_animations_19_sprites_5_ADDRESS 0x7176u    /* 073176 */
-#define kind_91_animations_19_sprites_6_ADDRESS 0x717Cu    /* 07317C */
-#define kind_91_animations_17_ADDRESS 0x718Eu    /* 07318E */
-#define kind_91_animations_17_sprites_ADDRESS 0x71A2u    /* 0731A2 */
-#define kind_91_animations_17_sprites_2_ADDRESS 0x71B4u    /* 0731B4 */
-#define kind_91_animations_17_sprites_3_ADDRESS 0x71C6u    /* 0731C6 */
-#define kind_91_animations_17_sprites_4_ADDRESS 0x71E4u    /* 0731E4 */
-#define kind_91_animations_1_ADDRESS 0x71FCu    /* 0731FC */
-#define kind_91_animations_1_sprites_ADDRESS 0x7220u    /* 073220 */
-#define kind_91_animations_1_sprites_2_ADDRESS 0x7232u    /* 073232 */
-#define kind_91_animations_1_sprites_3_ADDRESS 0x724Au    /* 07324A */
-#define kind_91_animations_1_sprites_4_ADDRESS 0x725Cu    /* 07325C */
-#define kind_91_animations_1_sprites_5_ADDRESS 0x7274u    /* 073274 */
-#define kind_91_animations_1_sprites_6_ADDRESS 0x728Cu    /* 07328C */
-#define kind_91_animations_1_sprites_7_ADDRESS 0x72A4u    /* 0732A4 */
-#define kind_91_animations_1_sprites_8_ADDRESS 0x72B6u    /* 0732B6 */
-#define kind_91_animations_11_ADDRESS 0x72CEu    /* 0732CE */
-#define kind_91_animations_11_sprites_ADDRESS 0x72F2u    /* 0732F2 */
-#define kind_91_animations_11_sprites_2_ADDRESS 0x730Au    /* 07330A */
-#define kind_91_animations_11_sprites_3_ADDRESS 0x7322u    /* 073322 */
-#define kind_91_animations_11_sprites_4_ADDRESS 0x733Au    /* 07333A */
-#define kind_91_animations_9_ADDRESS 0x7346u    /* 073346 */
-#define kind_91_animations_9_sprites_ADDRESS 0x736Au    /* 07336A */
-#define kind_91_animations_9_sprites_2_ADDRESS 0x7382u    /* 073382 */
-#define kind_91_animations_8_ADDRESS 0x7394u    /* 073394 */
-#define kind_91_animations_8_sprites_ADDRESS 0x73B4u    /* 0733B4 */
-#define kind_91_animations_8_sprites_2_ADDRESS 0x73C6u    /* 0733C6 */
-#define kind_91_animations_8_sprites_3_ADDRESS 0x73D8u    /* 0733D8 */
-#define kind_91_animations_8_sprites_4_ADDRESS 0x73EAu    /* 0733EA */
-#define kind_91_animations_8_sprites_5_ADDRESS 0x7402u    /* 073402 */
-#define kind_91_animations_8_sprites_6_ADDRESS 0x7414u    /* 073414 */
-#define kind_91_animations_8_sprites_7_ADDRESS 0x7426u    /* 073426 */
-#define kind_91_animations_6_ADDRESS 0x7438u    /* 073438 */
-#define kind_91_animations_6_sprites_ADDRESS 0x747Cu    /* 07347C */
-#define kind_91_animations_6_sprites_2_ADDRESS 0x7494u    /* 073494 */
-#define kind_91_animations_6_sprites_3_ADDRESS 0x74ACu    /* 0734AC */
-#define kind_91_animations_6_sprites_4_ADDRESS 0x74C4u    /* 0734C4 */
-#define kind_91_animations_6_sprites_5_ADDRESS 0x74D6u    /* 0734D6 */
-#define kind_91_animations_6_sprites_6_ADDRESS 0x74EEu    /* 0734EE */
-#define kind_91_animations_6_sprites_7_ADDRESS 0x7500u    /* 073500 */
-#define kind_91_animations_6_sprites_8_ADDRESS 0x7512u    /* 073512 */
-#define kind_91_animations_6_sprites_9_ADDRESS 0x752Au    /* 07352A */
-#define kind_91_animations_6_sprites_10_ADDRESS 0x753Cu    /* 07353C */
-#define kind_91_animations_16_ADDRESS 0x754Eu    /* 07354E */
-#define kind_91_animations_16_sprites_ADDRESS 0x7572u    /* 073572 */
-#define kind_91_animations_16_sprites_2_ADDRESS 0x758Au    /* 07358A */
-#define kind_91_animations_16_sprites_3_ADDRESS 0x759Cu    /* 07359C */
-#define kind_91_animations_16_sprites_4_ADDRESS 0x75B4u    /* 0735B4 */
-#define kind_91_animations_20_ADDRESS 0x75C6u    /* 0735C6 */
-#define kind_91_animations_20_sprites_ADDRESS 0x75F2u    /* 0735F2 */
-#define kind_91_animations_20_sprites_2_ADDRESS 0x75FEu    /* 0735FE */
-#define kind_91_animations_20_sprites_3_ADDRESS 0x7610u    /* 073610 */
-#define kind_91_animations_20_sprites_4_ADDRESS 0x7622u    /* 073622 */
-#define kind_91_animations_20_sprites_5_ADDRESS 0x763Au    /* 07363A */
-#define kind_91_animations_22_ADDRESS 0x7652u    /* 073652 */
-#define kind_91_animations_22_sprites_ADDRESS 0x7676u    /* 073676 */
-#define kind_91_animations_22_sprites_2_ADDRESS 0x7682u    /* 073682 */
-#define kind_91_animations_22_sprites_3_ADDRESS 0x7694u    /* 073694 */
-#define kind_91_animations_22_sprites_4_ADDRESS 0x76A0u    /* 0736A0 */
-#define kind_91_animations_22_sprites_5_ADDRESS 0x76B2u    /* 0736B2 */
-#define kind_91_animations_22_sprites_6_ADDRESS 0x76C4u    /* 0736C4 */
-#define kind_91_animations_22_sprites_7_ADDRESS 0x76D6u    /* 0736D6 */
-#define kind_91_animations_22_sprites_8_ADDRESS 0x76E2u    /* 0736E2 */
-#define kind_91_animations_25_ADDRESS 0x76F4u    /* 0736F4 */
-#define kind_91_animations_25_sprites_ADDRESS 0x7700u    /* 073700 */
-#define kind_91_animations_26_ADDRESS 0x7718u    /* 073718 */
-#define kind_91_animations_26_sprites_ADDRESS 0x773Cu    /* 07373C */
-#define kind_91_animations_26_sprites_2_ADDRESS 0x774Eu    /* 07374E */
-#define kind_91_animations_26_sprites_3_ADDRESS 0x7766u    /* 073766 */
-#define kind_91_animations_26_sprites_4_ADDRESS 0x7778u    /* 073778 */
-#define kind_91_animations_26_sprites_5_ADDRESS 0x7790u    /* 073790 */
-#define kind_91_animations_26_sprites_6_ADDRESS 0x77A8u    /* 0737A8 */
-#define kind_91_animations_26_sprites_7_ADDRESS 0x77C0u    /* 0737C0 */
-#define kind_91_animations_26_sprites_8_ADDRESS 0x77D2u    /* 0737D2 */
+#define belly_dancer_animations_ADDRESS 0x6758u    /* 072758 */
+#define belly_dancer_animations_0_ADDRESS 0x6762u    /* 072762 */
+#define belly_dancer_animations_0_sprites_ADDRESS 0x676Au    /* 07276A */
+#define belly_dancer_animations_1_ADDRESS 0x6782u    /* 072782 */
+#define belly_dancer_animations_1_sprites_ADDRESS 0x67AEu    /* 0727AE */
+#define belly_dancer_animations_1_sprites_2_ADDRESS 0x67C6u    /* 0727C6 */
+#define belly_dancer_animations_1_sprites_3_ADDRESS 0x67DEu    /* 0727DE */
+#define belly_dancer_animations_1_sprites_4_ADDRESS 0x67F6u    /* 0727F6 */
+#define belly_dancer_animations_2_ADDRESS 0x680Eu    /* 07280E */
+#define belly_dancer_animations_2_sprites_ADDRESS 0x6832u    /* 072832 */
+#define belly_dancer_animations_2_sprites_2_ADDRESS 0x684Au    /* 07284A */
+#define belly_dancer_animations_2_sprites_3_ADDRESS 0x6862u    /* 072862 */
+#define belly_dancer_animations_2_sprites_4_ADDRESS 0x6874u    /* 072874 */
+#define belly_dancer_animations_2_sprites_5_ADDRESS 0x6886u    /* 072886 */
+#define belly_dancer_animations_2_sprites_6_ADDRESS 0x689Eu    /* 07289E */
+#define belly_dancer_animations_2_sprites_7_ADDRESS 0x68B0u    /* 0728B0 */
+#define belly_dancer_animations_2_sprites_8_ADDRESS 0x68C2u    /* 0728C2 */
+#define belly_dancer_animations_3_ADDRESS 0x68DAu    /* 0728DA */
+#define belly_dancer_animations_3_sprites_ADDRESS 0x68F6u    /* 0728F6 */
+#define belly_dancer_animations_3_sprites_2_ADDRESS 0x6902u    /* 072902 */
+#define belly_dancer_animations_3_sprites_3_ADDRESS 0x690Eu    /* 07290E */
+#define belly_dancer_animations_3_sprites_4_ADDRESS 0x6920u    /* 072920 */
+#define belly_dancer_animations_3_sprites_5_ADDRESS 0x6932u    /* 072932 */
+#define belly_dancer_animations_3_sprites_6_ADDRESS 0x694Au    /* 07294A */
+#define belly_dancer_animations_4_ADDRESS 0x6962u    /* 072962 */
+#define belly_dancer_animations_4_sprites_ADDRESS 0x696Eu    /* 07296E */
+#define belly_dancer_animations_4_sprites_2_ADDRESS 0x6980u    /* 072980 */
+#define fireman_goon_animations_ADDRESS 0x6998u    /* 072998 */
+#define fireman_goon_animations_0_ADDRESS 0x69C0u    /* 0729C0 */
+#define fireman_goon_animations_0_sprites_ADDRESS 0x69C8u    /* 0729C8 */
+#define fireman_goon_animations_1_ADDRESS 0x69D4u    /* 0729D4 */
+#define fireman_goon_animations_1_sprites_ADDRESS 0x69F8u    /* 0729F8 */
+#define fireman_goon_animations_1_sprites_2_ADDRESS 0x6A04u    /* 072A04 */
+#define fireman_goon_animations_1_sprites_3_ADDRESS 0x6A10u    /* 072A10 */
+#define fireman_goon_animations_1_sprites_4_ADDRESS 0x6A1Cu    /* 072A1C */
+#define fireman_goon_animations_1_sprites_5_ADDRESS 0x6A34u    /* 072A34 */
+#define fireman_goon_animations_1_sprites_6_ADDRESS 0x6A52u    /* 072A52 */
+#define fireman_goon_animations_1_sprites_7_ADDRESS 0x6A6Au    /* 072A6A */
+#define fireman_goon_animations_1_sprites_8_ADDRESS 0x6A82u    /* 072A82 */
+#define fireman_goon_animations_6_ADDRESS 0x6A9Au    /* 072A9A */
+#define fireman_goon_animations_6_sprites_ADDRESS 0x6AA6u    /* 072AA6 */
+#define fireman_goon_animations_6_sprites_2_ADDRESS 0x6AB8u    /* 072AB8 */
+#define fireman_goon_animations_9_ADDRESS 0x6ACAu    /* 072ACA */
+#define fireman_goon_animations_9_sprites_ADDRESS 0x6AD6u    /* 072AD6 */
+#define fireman_goon_animations_9_sprites_2_ADDRESS 0x6AE8u    /* 072AE8 */
+#define fireman_goon_animations_8_ADDRESS 0x6B00u    /* 072B00 */
+#define fireman_goon_animations_8_sprites_ADDRESS 0x6B14u    /* 072B14 */
+#define fireman_goon_animations_8_sprites_2_ADDRESS 0x6B26u    /* 072B26 */
+#define fireman_goon_animations_16_ADDRESS 0x6B38u    /* 072B38 */
+#define fireman_goon_animations_16_sprites_ADDRESS 0x6B48u    /* 072B48 */
+#define fireman_goon_animations_16_sprites_2_ADDRESS 0x6B66u    /* 072B66 */
+#define fireman_goon_animations_16_sprites_3_ADDRESS 0x6B8Au    /* 072B8A */
+#define fireman_goon_animations_17_ADDRESS 0x6BA2u    /* 072BA2 */
+#define fireman_goon_animations_17_sprites_ADDRESS 0x6BD2u    /* 072BD2 */
+#define fireman_goon_animations_17_sprites_2_ADDRESS 0x6BD8u    /* 072BD8 */
+#define fireman_goon_animations_17_sprites_3_ADDRESS 0x6BEAu    /* 072BEA */
+#define fireman_goon_animations_17_sprites_4_ADDRESS 0x6C02u    /* 072C02 */
+#define fireman_goon_animations_17_sprites_5_ADDRESS 0x6C26u    /* 072C26 */
+#define fireman_goon_animations_17_sprites_6_ADDRESS 0x6C4Au    /* 072C4A */
+#define fireman_goon_animations_17_sprites_7_ADDRESS 0x6C6Eu    /* 072C6E */
+#define fireman_goon_animations_17_sprites_8_ADDRESS 0x6C92u    /* 072C92 */
+#define fireman_goon_animations_17_sprites_9_ADDRESS 0x6CB6u    /* 072CB6 */
+#define fireman_goon_animations_17_sprites_10_ADDRESS 0x6CD4u    /* 072CD4 */
+#define fireman_goon_animations_17_sprites_11_ADDRESS 0x6CE6u    /* 072CE6 */
+#define fireman_goon_animations_18_ADDRESS 0x6CF2u    /* 072CF2 */
+#define fireman_goon_animations_18_sprites_ADDRESS 0x6D22u    /* 072D22 */
+#define fireman_goon_animations_18_sprites_2_ADDRESS 0x6D28u    /* 072D28 */
+#define fireman_goon_animations_18_sprites_3_ADDRESS 0x6D3Au    /* 072D3A */
+#define fireman_goon_animations_18_sprites_4_ADDRESS 0x6D64u    /* 072D64 */
+#define fireman_goon_animations_18_sprites_5_ADDRESS 0x6DA0u    /* 072DA0 */
+#define fireman_goon_animations_18_sprites_6_ADDRESS 0x6DDCu    /* 072DDC */
+#define fireman_goon_animations_18_sprites_7_ADDRESS 0x6E18u    /* 072E18 */
+#define fireman_goon_animations_18_sprites_8_ADDRESS 0x6E54u    /* 072E54 */
+#define fireman_goon_animations_18_sprites_9_ADDRESS 0x6E90u    /* 072E90 */
+#define fireman_goon_animations_18_sprites_10_ADDRESS 0x6ECCu    /* 072ECC */
+#define fireman_goon_animations_18_sprites_11_ADDRESS 0x6EF0u    /* 072EF0 */
+#define fireman_goon_animations_2_ADDRESS 0x6EFCu    /* 072EFC */
+#define fireman_goon_animations_2_sprites_ADDRESS 0x6F20u    /* 072F20 */
+#define fireman_goon_animations_2_sprites_2_ADDRESS 0x6F32u    /* 072F32 */
+#define fireman_goon_animations_2_sprites_3_ADDRESS 0x6F44u    /* 072F44 */
+#define fireman_goon_animations_2_sprites_4_ADDRESS 0x6F5Cu    /* 072F5C */
+#define fireman_goon_animations_2_sprites_5_ADDRESS 0x6F74u    /* 072F74 */
+#define fireman_goon_animations_2_sprites_6_ADDRESS 0x6F92u    /* 072F92 */
+#define fireman_goon_animations_2_sprites_7_ADDRESS 0x6FAAu    /* 072FAA */
+#define fireman_goon_animations_2_sprites_8_ADDRESS 0x6FC2u    /* 072FC2 */
+#define fireman_goon_animations_19_ADDRESS 0x6FDAu    /* 072FDA */
+#define fireman_goon_animations_19_sprites_ADDRESS 0x700Au    /* 07300A */
+#define fireman_goon_animations_19_sprites_2_ADDRESS 0x7010u    /* 073010 */
+#define fireman_goon_animations_19_sprites_3_ADDRESS 0x7022u    /* 073022 */
+#define fireman_goon_animations_19_sprites_4_ADDRESS 0x7034u    /* 073034 */
+#define fireman_goon_animations_19_sprites_5_ADDRESS 0x7046u    /* 073046 */
+#define fireman_goon_animations_19_sprites_6_ADDRESS 0x705Eu    /* 07305E */
+#define fireman_goon_animations_19_sprites_7_ADDRESS 0x7076u    /* 073076 */
+#define fireman_goon_animations_19_sprites_8_ADDRESS 0x708Eu    /* 07308E */
+#define fireman_goon_animations_19_sprites_9_ADDRESS 0x70A6u    /* 0730A6 */
+#define fireman_goon_animations_19_sprites_10_ADDRESS 0x70B8u    /* 0730B8 */
+#define fireman_goon_animations_19_sprites_11_ADDRESS 0x70BEu    /* 0730BE */
+#define zombie_animations_ADDRESS 0x70CAu    /* 0730CA */
+#define zombie_animations_0_ADDRESS 0x7100u    /* 073100 */
+#define zombie_animations_0_sprites_ADDRESS 0x7108u    /* 073108 */
+#define zombie_animations_19_ADDRESS 0x7120u    /* 073120 */
+#define zombie_animations_18_ADDRESS 0x713Cu    /* 07313C */
+#define zombie_animations_19_sprites_ADDRESS 0x7158u    /* 073158 */
+#define zombie_animations_19_sprites_2_ADDRESS 0x715Eu    /* 07315E */
+#define zombie_animations_19_sprites_3_ADDRESS 0x716Au    /* 07316A */
+#define zombie_animations_19_sprites_4_ADDRESS 0x7170u    /* 073170 */
+#define zombie_animations_19_sprites_5_ADDRESS 0x7176u    /* 073176 */
+#define zombie_animations_19_sprites_6_ADDRESS 0x717Cu    /* 07317C */
+#define zombie_animations_17_ADDRESS 0x718Eu    /* 07318E */
+#define zombie_animations_17_sprites_ADDRESS 0x71A2u    /* 0731A2 */
+#define zombie_animations_17_sprites_2_ADDRESS 0x71B4u    /* 0731B4 */
+#define zombie_animations_17_sprites_3_ADDRESS 0x71C6u    /* 0731C6 */
+#define zombie_animations_17_sprites_4_ADDRESS 0x71E4u    /* 0731E4 */
+#define zombie_animations_1_ADDRESS 0x71FCu    /* 0731FC */
+#define zombie_animations_1_sprites_ADDRESS 0x7220u    /* 073220 */
+#define zombie_animations_1_sprites_2_ADDRESS 0x7232u    /* 073232 */
+#define zombie_animations_1_sprites_3_ADDRESS 0x724Au    /* 07324A */
+#define zombie_animations_1_sprites_4_ADDRESS 0x725Cu    /* 07325C */
+#define zombie_animations_1_sprites_5_ADDRESS 0x7274u    /* 073274 */
+#define zombie_animations_1_sprites_6_ADDRESS 0x728Cu    /* 07328C */
+#define zombie_animations_1_sprites_7_ADDRESS 0x72A4u    /* 0732A4 */
+#define zombie_animations_1_sprites_8_ADDRESS 0x72B6u    /* 0732B6 */
+#define zombie_animations_11_ADDRESS 0x72CEu    /* 0732CE */
+#define zombie_animations_11_sprites_ADDRESS 0x72F2u    /* 0732F2 */
+#define zombie_animations_11_sprites_2_ADDRESS 0x730Au    /* 07330A */
+#define zombie_animations_11_sprites_3_ADDRESS 0x7322u    /* 073322 */
+#define zombie_animations_11_sprites_4_ADDRESS 0x733Au    /* 07333A */
+#define zombie_animations_9_ADDRESS 0x7346u    /* 073346 */
+#define zombie_animations_9_sprites_ADDRESS 0x736Au    /* 07336A */
+#define zombie_animations_9_sprites_2_ADDRESS 0x7382u    /* 073382 */
+#define zombie_animations_8_ADDRESS 0x7394u    /* 073394 */
+#define zombie_animations_8_sprites_ADDRESS 0x73B4u    /* 0733B4 */
+#define zombie_animations_8_sprites_2_ADDRESS 0x73C6u    /* 0733C6 */
+#define zombie_animations_8_sprites_3_ADDRESS 0x73D8u    /* 0733D8 */
+#define zombie_animations_8_sprites_4_ADDRESS 0x73EAu    /* 0733EA */
+#define zombie_animations_8_sprites_5_ADDRESS 0x7402u    /* 073402 */
+#define zombie_animations_8_sprites_6_ADDRESS 0x7414u    /* 073414 */
+#define zombie_animations_8_sprites_7_ADDRESS 0x7426u    /* 073426 */
+#define zombie_animations_6_ADDRESS 0x7438u    /* 073438 */
+#define zombie_animations_6_sprites_ADDRESS 0x747Cu    /* 07347C */
+#define zombie_animations_6_sprites_2_ADDRESS 0x7494u    /* 073494 */
+#define zombie_animations_6_sprites_3_ADDRESS 0x74ACu    /* 0734AC */
+#define zombie_animations_6_sprites_4_ADDRESS 0x74C4u    /* 0734C4 */
+#define zombie_animations_6_sprites_5_ADDRESS 0x74D6u    /* 0734D6 */
+#define zombie_animations_6_sprites_6_ADDRESS 0x74EEu    /* 0734EE */
+#define zombie_animations_6_sprites_7_ADDRESS 0x7500u    /* 073500 */
+#define zombie_animations_6_sprites_8_ADDRESS 0x7512u    /* 073512 */
+#define zombie_animations_6_sprites_9_ADDRESS 0x752Au    /* 07352A */
+#define zombie_animations_6_sprites_10_ADDRESS 0x753Cu    /* 07353C */
+#define zombie_animations_16_ADDRESS 0x754Eu    /* 07354E */
+#define zombie_animations_16_sprites_ADDRESS 0x7572u    /* 073572 */
+#define zombie_animations_16_sprites_2_ADDRESS 0x758Au    /* 07358A */
+#define zombie_animations_16_sprites_3_ADDRESS 0x759Cu    /* 07359C */
+#define zombie_animations_16_sprites_4_ADDRESS 0x75B4u    /* 0735B4 */
+#define zombie_animations_20_ADDRESS 0x75C6u    /* 0735C6 */
+#define zombie_animations_20_sprites_ADDRESS 0x75F2u    /* 0735F2 */
+#define zombie_animations_20_sprites_2_ADDRESS 0x75FEu    /* 0735FE */
+#define zombie_animations_20_sprites_3_ADDRESS 0x7610u    /* 073610 */
+#define zombie_animations_20_sprites_4_ADDRESS 0x7622u    /* 073622 */
+#define zombie_animations_20_sprites_5_ADDRESS 0x763Au    /* 07363A */
+#define zombie_animations_22_ADDRESS 0x7652u    /* 073652 */
+#define zombie_animations_22_sprites_ADDRESS 0x7676u    /* 073676 */
+#define zombie_animations_22_sprites_2_ADDRESS 0x7682u    /* 073682 */
+#define zombie_animations_22_sprites_3_ADDRESS 0x7694u    /* 073694 */
+#define zombie_animations_22_sprites_4_ADDRESS 0x76A0u    /* 0736A0 */
+#define zombie_animations_22_sprites_5_ADDRESS 0x76B2u    /* 0736B2 */
+#define zombie_animations_22_sprites_6_ADDRESS 0x76C4u    /* 0736C4 */
+#define zombie_animations_22_sprites_7_ADDRESS 0x76D6u    /* 0736D6 */
+#define zombie_animations_22_sprites_8_ADDRESS 0x76E2u    /* 0736E2 */
+#define zombie_animations_25_ADDRESS 0x76F4u    /* 0736F4 */
+#define zombie_animations_25_sprites_ADDRESS 0x7700u    /* 073700 */
+#define zombie_animations_26_ADDRESS 0x7718u    /* 073718 */
+#define zombie_animations_26_sprites_ADDRESS 0x773Cu    /* 07373C */
+#define zombie_animations_26_sprites_2_ADDRESS 0x774Eu    /* 07374E */
+#define zombie_animations_26_sprites_3_ADDRESS 0x7766u    /* 073766 */
+#define zombie_animations_26_sprites_4_ADDRESS 0x7778u    /* 073778 */
+#define zombie_animations_26_sprites_5_ADDRESS 0x7790u    /* 073790 */
+#define zombie_animations_26_sprites_6_ADDRESS 0x77A8u    /* 0737A8 */
+#define zombie_animations_26_sprites_7_ADDRESS 0x77C0u    /* 0737C0 */
+#define zombie_animations_26_sprites_8_ADDRESS 0x77D2u    /* 0737D2 */
 #define football_player_animations_ADDRESS 0x77EAu    /* 0737EA */
 #define football_player_animations_0_ADDRESS 0x7810u    /* 073810 */
 #define football_player_animations_0_sprites_ADDRESS 0x7824u    /* 073824 */
@@ -12032,58 +11792,58 @@ extern const void *reset_vector_data;
 #define dog_animations_1_ADDRESS 0x6C1Cu    /* 074C1C */
 #define dog_animations_1_sprites_ADDRESS 0x6C2Cu    /* 074C2C */
 #define dog_animations_1_sprites_2_ADDRESS 0x6C38u    /* 074C38 */
-#define kind_87_animations_ADDRESS 0x6C44u    /* 074C44 */
-#define kind_87_animations_rest_ADDRESS 0x6C4Au    /* 074C4A */
-#define kind_87_animations_rest_2_ADDRESS 0x6C52u    /* 074C52 */
-#define kind_87_animations_0_ADDRESS 0x6C64u    /* 074C64 */
-#define kind_87_animations_0_sprites_ADDRESS 0x6C80u    /* 074C80 */
-#define kind_87_animations_0_sprites_2_ADDRESS 0x6C92u    /* 074C92 */
-#define kind_87_animations_0_sprites_3_ADDRESS 0x6CA4u    /* 074CA4 */
-#define kind_87_animations_0_sprites_4_ADDRESS 0x6CB6u    /* 074CB6 */
-#define kind_87_animations_0_sprites_5_ADDRESS 0x6CC8u    /* 074CC8 */
-#define kind_87_animations_0_sprites_6_ADDRESS 0x6CDAu    /* 074CDA */
-#define kind_87_animations_1_ADDRESS 0x6CECu    /* 074CEC */
-#define kind_87_animations_1_sprites_ADDRESS 0x6D20u    /* 074D20 */
-#define kind_87_animations_1_sprites_2_ADDRESS 0x6D32u    /* 074D32 */
-#define kind_87_animations_1_sprites_3_ADDRESS 0x6D44u    /* 074D44 */
-#define kind_87_animations_1_sprites_4_ADDRESS 0x6D56u    /* 074D56 */
-#define kind_87_animations_1_sprites_5_ADDRESS 0x6D6Eu    /* 074D6E */
-#define kind_87_animations_1_sprites_6_ADDRESS 0x6D8Cu    /* 074D8C */
-#define kind_87_animations_1_sprites_7_ADDRESS 0x6DA4u    /* 074DA4 */
-#define kind_87_animations_2_ADDRESS 0x6DC2u    /* 074DC2 */
-#define kind_87_animations_2_sprites_ADDRESS 0x6DDAu    /* 074DDA */
-#define kind_87_animations_2_sprites_2_ADDRESS 0x6DF2u    /* 074DF2 */
-#define kind_88_animations_ADDRESS 0x6E0Au    /* 074E0A */
-#define kind_88_animations_0_ADDRESS 0x6E14u    /* 074E14 */
-#define kind_88_animations_0_sprites_ADDRESS 0x6E1Cu    /* 074E1C */
-#define kind_88_animations_1_ADDRESS 0x6E22u    /* 074E22 */
-#define kind_88_animations_1_sprites_ADDRESS 0x6E46u    /* 074E46 */
-#define kind_88_animations_1_sprites_2_ADDRESS 0x6E58u    /* 074E58 */
-#define kind_88_animations_1_sprites_3_ADDRESS 0x6E6Au    /* 074E6A */
-#define kind_88_animations_1_sprites_4_ADDRESS 0x6E82u    /* 074E82 */
-#define kind_88_animations_1_sprites_5_ADDRESS 0x6E9Au    /* 074E9A */
-#define kind_88_animations_1_sprites_6_ADDRESS 0x6EB2u    /* 074EB2 */
-#define kind_88_animations_1_sprites_7_ADDRESS 0x6ECAu    /* 074ECA */
-#define kind_88_animations_1_sprites_8_ADDRESS 0x6EE2u    /* 074EE2 */
-#define kind_88_animations_2_ADDRESS 0x6EFAu    /* 074EFA */
-#define kind_88_animations_2_sprites_ADDRESS 0x6F1Eu    /* 074F1E */
-#define kind_88_animations_2_sprites_2_ADDRESS 0x6F36u    /* 074F36 */
-#define kind_88_animations_2_sprites_3_ADDRESS 0x6F4Eu    /* 074F4E */
-#define kind_88_animations_2_sprites_4_ADDRESS 0x6F66u    /* 074F66 */
-#define kind_88_animations_2_sprites_5_ADDRESS 0x6F7Eu    /* 074F7E */
-#define kind_88_animations_2_sprites_6_ADDRESS 0x6F96u    /* 074F96 */
-#define kind_88_animations_2_sprites_7_ADDRESS 0x6FAEu    /* 074FAE */
-#define kind_88_animations_3_ADDRESS 0x6FC6u    /* 074FC6 */
-#define kind_88_animations_3_sprites_ADDRESS 0x6FEAu    /* 074FEA */
-#define kind_88_animations_3_sprites_2_ADDRESS 0x6FFCu    /* 074FFC */
-#define kind_88_animations_3_sprites_3_ADDRESS 0x7014u    /* 075014 */
-#define kind_88_animations_3_sprites_4_ADDRESS 0x7032u    /* 075032 */
-#define kind_88_animations_3_sprites_5_ADDRESS 0x704Au    /* 07504A */
-#define kind_88_animations_3_sprites_6_ADDRESS 0x7062u    /* 075062 */
-#define kind_88_animations_3_sprites_7_ADDRESS 0x7080u    /* 075080 */
-#define kind_88_animations_3_sprites_8_ADDRESS 0x709Eu    /* 07509E */
-#define kind_88_animations_4_ADDRESS 0x70B6u    /* 0750B6 */
-#define kind_88_animations_4_sprites_ADDRESS 0x70C2u    /* 0750C2 */
+#define woman_in_apron_animations_ADDRESS 0x6C44u    /* 074C44 */
+#define woman_in_apron_animations_rest_ADDRESS 0x6C4Au    /* 074C4A */
+#define woman_in_apron_animations_rest_2_ADDRESS 0x6C52u    /* 074C52 */
+#define woman_in_apron_animations_0_ADDRESS 0x6C64u    /* 074C64 */
+#define woman_in_apron_animations_0_sprites_ADDRESS 0x6C80u    /* 074C80 */
+#define woman_in_apron_animations_0_sprites_2_ADDRESS 0x6C92u    /* 074C92 */
+#define woman_in_apron_animations_0_sprites_3_ADDRESS 0x6CA4u    /* 074CA4 */
+#define woman_in_apron_animations_0_sprites_4_ADDRESS 0x6CB6u    /* 074CB6 */
+#define woman_in_apron_animations_0_sprites_5_ADDRESS 0x6CC8u    /* 074CC8 */
+#define woman_in_apron_animations_0_sprites_6_ADDRESS 0x6CDAu    /* 074CDA */
+#define woman_in_apron_animations_1_ADDRESS 0x6CECu    /* 074CEC */
+#define woman_in_apron_animations_1_sprites_ADDRESS 0x6D20u    /* 074D20 */
+#define woman_in_apron_animations_1_sprites_2_ADDRESS 0x6D32u    /* 074D32 */
+#define woman_in_apron_animations_1_sprites_3_ADDRESS 0x6D44u    /* 074D44 */
+#define woman_in_apron_animations_1_sprites_4_ADDRESS 0x6D56u    /* 074D56 */
+#define woman_in_apron_animations_1_sprites_5_ADDRESS 0x6D6Eu    /* 074D6E */
+#define woman_in_apron_animations_1_sprites_6_ADDRESS 0x6D8Cu    /* 074D8C */
+#define woman_in_apron_animations_1_sprites_7_ADDRESS 0x6DA4u    /* 074DA4 */
+#define woman_in_apron_animations_2_ADDRESS 0x6DC2u    /* 074DC2 */
+#define woman_in_apron_animations_2_sprites_ADDRESS 0x6DDAu    /* 074DDA */
+#define woman_in_apron_animations_2_sprites_2_ADDRESS 0x6DF2u    /* 074DF2 */
+#define fat_goon_in_teacup_animations_ADDRESS 0x6E0Au    /* 074E0A */
+#define fat_goon_in_teacup_animations_0_ADDRESS 0x6E14u    /* 074E14 */
+#define fat_goon_in_teacup_animations_0_sprites_ADDRESS 0x6E1Cu    /* 074E1C */
+#define fat_goon_in_teacup_animations_1_ADDRESS 0x6E22u    /* 074E22 */
+#define fat_goon_in_teacup_animations_1_sprites_ADDRESS 0x6E46u    /* 074E46 */
+#define fat_goon_in_teacup_animations_1_sprites_2_ADDRESS 0x6E58u    /* 074E58 */
+#define fat_goon_in_teacup_animations_1_sprites_3_ADDRESS 0x6E6Au    /* 074E6A */
+#define fat_goon_in_teacup_animations_1_sprites_4_ADDRESS 0x6E82u    /* 074E82 */
+#define fat_goon_in_teacup_animations_1_sprites_5_ADDRESS 0x6E9Au    /* 074E9A */
+#define fat_goon_in_teacup_animations_1_sprites_6_ADDRESS 0x6EB2u    /* 074EB2 */
+#define fat_goon_in_teacup_animations_1_sprites_7_ADDRESS 0x6ECAu    /* 074ECA */
+#define fat_goon_in_teacup_animations_1_sprites_8_ADDRESS 0x6EE2u    /* 074EE2 */
+#define fat_goon_in_teacup_animations_2_ADDRESS 0x6EFAu    /* 074EFA */
+#define fat_goon_in_teacup_animations_2_sprites_ADDRESS 0x6F1Eu    /* 074F1E */
+#define fat_goon_in_teacup_animations_2_sprites_2_ADDRESS 0x6F36u    /* 074F36 */
+#define fat_goon_in_teacup_animations_2_sprites_3_ADDRESS 0x6F4Eu    /* 074F4E */
+#define fat_goon_in_teacup_animations_2_sprites_4_ADDRESS 0x6F66u    /* 074F66 */
+#define fat_goon_in_teacup_animations_2_sprites_5_ADDRESS 0x6F7Eu    /* 074F7E */
+#define fat_goon_in_teacup_animations_2_sprites_6_ADDRESS 0x6F96u    /* 074F96 */
+#define fat_goon_in_teacup_animations_2_sprites_7_ADDRESS 0x6FAEu    /* 074FAE */
+#define fat_goon_in_teacup_animations_3_ADDRESS 0x6FC6u    /* 074FC6 */
+#define fat_goon_in_teacup_animations_3_sprites_ADDRESS 0x6FEAu    /* 074FEA */
+#define fat_goon_in_teacup_animations_3_sprites_2_ADDRESS 0x6FFCu    /* 074FFC */
+#define fat_goon_in_teacup_animations_3_sprites_3_ADDRESS 0x7014u    /* 075014 */
+#define fat_goon_in_teacup_animations_3_sprites_4_ADDRESS 0x7032u    /* 075032 */
+#define fat_goon_in_teacup_animations_3_sprites_5_ADDRESS 0x704Au    /* 07504A */
+#define fat_goon_in_teacup_animations_3_sprites_6_ADDRESS 0x7062u    /* 075062 */
+#define fat_goon_in_teacup_animations_3_sprites_7_ADDRESS 0x7080u    /* 075080 */
+#define fat_goon_in_teacup_animations_3_sprites_8_ADDRESS 0x709Eu    /* 07509E */
+#define fat_goon_in_teacup_animations_4_ADDRESS 0x70B6u    /* 0750B6 */
+#define fat_goon_in_teacup_animations_4_sprites_ADDRESS 0x70C2u    /* 0750C2 */
 #define squirrel_animations_ADDRESS 0x70D4u    /* 0750D4 */
 #define squirrel_animations_1_ADDRESS 0x70D8u    /* 0750D8 */
 #define squirrel_animations_1_sprites_ADDRESS 0x7114u    /* 075114 */
@@ -12096,109 +11856,109 @@ extern const void *reset_vector_data;
 #define squirrel_animations_0_sprites_2_ADDRESS 0x7182u    /* 075182 */
 #define squirrel_animations_0_sprites_3_ADDRESS 0x7194u    /* 075194 */
 #define squirrel_animations_0_sprites_4_ADDRESS 0x71A6u    /* 0751A6 */
-#define kind_C3_animations_ADDRESS 0x71ACu    /* 0751AC */
-#define kind_C3_animations_7_ADDRESS 0x71C2u    /* 0751C2 */
-#define kind_C3_animations_7_sprites_ADDRESS 0x71CAu    /* 0751CA */
-#define kind_C3_animations_10_ADDRESS 0x71D0u    /* 0751D0 */
-#define kind_C3_animations_10_sprites_ADDRESS 0x71E4u    /* 0751E4 */
-#define kind_C3_animations_10_sprites_2_ADDRESS 0x71FCu    /* 0751FC */
-#define kind_C3_animations_10_sprites_3_ADDRESS 0x721Au    /* 07521A */
-#define kind_C3_animations_0_ADDRESS 0x7238u    /* 075238 */
-#define kind_C3_animations_0_sprites_ADDRESS 0x724Cu    /* 07524C */
-#define kind_C3_animations_0_sprites_2_ADDRESS 0x7264u    /* 075264 */
-#define kind_C3_animations_0_sprites_3_ADDRESS 0x7282u    /* 075282 */
-#define kind_C3_animations_2_ADDRESS 0x72A0u    /* 0752A0 */
-#define kind_C3_animations_2_sprites_ADDRESS 0x72ACu    /* 0752AC */
-#define kind_C3_animations_2_sprites_2_ADDRESS 0x72C4u    /* 0752C4 */
-#define kind_C3_animations_1_ADDRESS 0x72DCu    /* 0752DC */
-#define kind_C3_animations_1_sprites_ADDRESS 0x7300u    /* 075300 */
-#define kind_C3_animations_1_sprites_2_ADDRESS 0x7312u    /* 075312 */
-#define kind_C3_animations_1_sprites_3_ADDRESS 0x732Au    /* 07532A */
-#define kind_C3_animations_1_sprites_4_ADDRESS 0x7342u    /* 075342 */
-#define kind_C3_animations_1_sprites_5_ADDRESS 0x735Au    /* 07535A */
-#define kind_C3_animations_1_sprites_6_ADDRESS 0x7372u    /* 075372 */
-#define kind_C3_animations_1_sprites_7_ADDRESS 0x738Au    /* 07538A */
-#define kind_C3_animations_1_sprites_8_ADDRESS 0x739Cu    /* 07539C */
-#define kind_C3_animations_3_ADDRESS 0x73B4u    /* 0753B4 */
-#define kind_C3_animations_3_sprites_ADDRESS 0x73C4u    /* 0753C4 */
-#define kind_C3_animations_3_sprites_2_ADDRESS 0x73E2u    /* 0753E2 */
-#define kind_C3_animations_3_sprites_3_ADDRESS 0x7400u    /* 075400 */
-#define kind_C3_animations_6_ADDRESS 0x741Eu    /* 07541E */
-#define kind_C3_animations_6_sprites_ADDRESS 0x7436u    /* 075436 */
-#define kind_C3_animations_6_sprites_2_ADDRESS 0x744Eu    /* 07544E */
-#define kind_C3_animations_6_sprites_3_ADDRESS 0x7466u    /* 075466 */
-#define kind_C3_animations_6_sprites_4_ADDRESS 0x7484u    /* 075484 */
-#define kind_C3_animations_6_sprites_5_ADDRESS 0x74A2u    /* 0754A2 */
-#define kind_C3_animations_5_ADDRESS 0x74BAu    /* 0754BA */
-#define kind_C3_animations_5_sprites_ADDRESS 0x74C6u    /* 0754C6 */
-#define kind_C3_animations_5_sprites_2_ADDRESS 0x74DEu    /* 0754DE */
-#define kind_C3_animations_4_ADDRESS 0x74F6u    /* 0754F6 */
-#define kind_C3_animations_9_ADDRESS 0x7506u    /* 075506 */
-#define kind_C4_animations_ADDRESS 0x751Au    /* 07551A */
-#define kind_C4_animations_9_ADDRESS 0x7532u    /* 075532 */
-#define kind_C4_animations_9_sprites_ADDRESS 0x755Au    /* 07555A */
-#define kind_C4_animations_9_sprites_2_ADDRESS 0x7584u    /* 075584 */
-#define kind_C4_animations_9_sprites_3_ADDRESS 0x75B4u    /* 0755B4 */
-#define kind_C4_animations_9_sprites_4_ADDRESS 0x75DEu    /* 0755DE */
-#define kind_C4_animations_9_sprites_5_ADDRESS 0x7614u    /* 075614 */
-#define kind_C4_animations_9_sprites_6_ADDRESS 0x763Eu    /* 07563E */
-#define kind_C4_animations_9_sprites_7_ADDRESS 0x7668u    /* 075668 */
-#define kind_C4_animations_10_ADDRESS 0x7692u    /* 075692 */
-#define kind_C4_animations_10_sprites_ADDRESS 0x76A6u    /* 0756A6 */
-#define kind_C4_animations_0_ADDRESS 0x76D0u    /* 0756D0 */
-#define kind_C4_animations_1_ADDRESS 0x76E4u    /* 0756E4 */
-#define kind_C4_animations_1_sprites_ADDRESS 0x7708u    /* 075708 */
-#define kind_C4_animations_1_sprites_2_ADDRESS 0x771Au    /* 07571A */
-#define kind_C4_animations_1_sprites_3_ADDRESS 0x7726u    /* 075726 */
-#define kind_C4_animations_1_sprites_4_ADDRESS 0x7732u    /* 075732 */
-#define kind_C4_animations_1_sprites_5_ADDRESS 0x773Eu    /* 07573E */
-#define kind_C4_animations_1_sprites_6_ADDRESS 0x7750u    /* 075750 */
-#define kind_C4_animations_1_sprites_7_ADDRESS 0x775Cu    /* 07575C */
-#define kind_C4_animations_1_sprites_8_ADDRESS 0x7768u    /* 075768 */
-#define kind_C4_animations_7_ADDRESS 0x777Au    /* 07577A */
-#define kind_C4_animations_7_sprites_ADDRESS 0x779Eu    /* 07579E */
-#define kind_C4_animations_7_sprites_2_ADDRESS 0x77B0u    /* 0757B0 */
-#define kind_C4_animations_7_sprites_3_ADDRESS 0x77C2u    /* 0757C2 */
-#define kind_C4_animations_7_sprites_4_ADDRESS 0x77D4u    /* 0757D4 */
-#define kind_C4_animations_7_sprites_5_ADDRESS 0x77E6u    /* 0757E6 */
-#define kind_C4_animations_7_sprites_6_ADDRESS 0x77F8u    /* 0757F8 */
-#define kind_C4_animations_7_sprites_7_ADDRESS 0x780Au    /* 07580A */
-#define kind_C4_animations_7_sprites_8_ADDRESS 0x781Cu    /* 07581C */
-#define kind_C4_animations_3_ADDRESS 0x782Eu    /* 07582E */
-#define kind_C4_animations_3_sprites_ADDRESS 0x7842u    /* 075842 */
-#define kind_C4_animations_3_sprites_2_ADDRESS 0x786Cu    /* 07586C */
-#define kind_C4_animations_3_sprites_3_ADDRESS 0x7896u    /* 075896 */
-#define kind_C4_animations_3_sprites_4_ADDRESS 0x78B4u    /* 0758B4 */
-#define kind_C4_animations_4_ADDRESS 0x78F0u    /* 0758F0 */
-#define kind_C4_animations_4_sprites_ADDRESS 0x78FCu    /* 0758FC */
-#define kind_C4_animations_4_sprites_2_ADDRESS 0x7926u    /* 075926 */
-#define kind_C4_animations_6_ADDRESS 0x7950u    /* 075950 */
-#define kind_C4_animations_6_sprites_ADDRESS 0x796Cu    /* 07596C */
-#define kind_C4_animations_6_sprites_2_ADDRESS 0x7984u    /* 075984 */
-#define kind_C4_animations_6_sprites_3_ADDRESS 0x79A8u    /* 0759A8 */
-#define kind_C4_animations_6_sprites_4_ADDRESS 0x79D2u    /* 0759D2 */
-#define kind_C4_animations_6_sprites_5_ADDRESS 0x79FCu    /* 0759FC */
-#define kind_C4_animations_5_ADDRESS 0x7A20u    /* 075A20 */
-#define kind_C4_animations_5_sprites_ADDRESS 0x7A2Cu    /* 075A2C */
-#define kind_C4_animations_5_sprites_2_ADDRESS 0x7A50u    /* 075A50 */
-#define kind_C3_animations_8_ADDRESS 0x7A7Au    /* 075A7A */
-#define kind_C3_animations_8_sprites_ADDRESS 0x7AAEu    /* 075AAE */
-#define kind_C3_animations_8_sprites_2_ADDRESS 0x7AE4u    /* 075AE4 */
-#define kind_C3_animations_8_sprites_3_ADDRESS 0x7B26u    /* 075B26 */
-#define kind_C3_animations_8_sprites_4_ADDRESS 0x7B62u    /* 075B62 */
-#define kind_C3_animations_8_sprites_5_ADDRESS 0x7BBCu    /* 075BBC */
-#define kind_C3_animations_8_sprites_6_ADDRESS 0x7C16u    /* 075C16 */
-#define kind_C3_animations_8_sprites_7_ADDRESS 0x7C6Au    /* 075C6A */
-#define kind_C3_animations_8_sprites_8_ADDRESS 0x7CCAu    /* 075CCA */
-#define kind_C3_animations_8_sprites_9_ADDRESS 0x7D24u    /* 075D24 */
-#define kind_C3_animations_8_sprites_10_ADDRESS 0x7D84u    /* 075D84 */
-#define kind_C3_animations_8_sprites_11_ADDRESS 0x7DD8u    /* 075DD8 */
-#define kind_C3_animations_8_sprites_12_ADDRESS 0x7E32u    /* 075E32 */
-#define kind_C4_animations_2_ADDRESS 0x7E74u    /* 075E74 */
-#define kind_C4_animations_11_ADDRESS 0x7E7Cu    /* 075E7C */
-#define kind_C4_animations_11_sprites_ADDRESS 0x7E84u    /* 075E84 */
-#define kind_C4_animations_11_sprites_fill_ADDRESS 0x7EB4u    /* 075EB4 */
-#define kind_C4_animations_11_sprites_rest_ADDRESS 0x6000u    /* 076000 */
+#define gangster_animations_ADDRESS 0x71ACu    /* 0751AC */
+#define gangster_animations_7_ADDRESS 0x71C2u    /* 0751C2 */
+#define gangster_animations_7_sprites_ADDRESS 0x71CAu    /* 0751CA */
+#define gangster_animations_10_ADDRESS 0x71D0u    /* 0751D0 */
+#define gangster_animations_10_sprites_ADDRESS 0x71E4u    /* 0751E4 */
+#define gangster_animations_10_sprites_2_ADDRESS 0x71FCu    /* 0751FC */
+#define gangster_animations_10_sprites_3_ADDRESS 0x721Au    /* 07521A */
+#define gangster_animations_0_ADDRESS 0x7238u    /* 075238 */
+#define gangster_animations_0_sprites_ADDRESS 0x724Cu    /* 07524C */
+#define gangster_animations_0_sprites_2_ADDRESS 0x7264u    /* 075264 */
+#define gangster_animations_0_sprites_3_ADDRESS 0x7282u    /* 075282 */
+#define gangster_animations_2_ADDRESS 0x72A0u    /* 0752A0 */
+#define gangster_animations_2_sprites_ADDRESS 0x72ACu    /* 0752AC */
+#define gangster_animations_2_sprites_2_ADDRESS 0x72C4u    /* 0752C4 */
+#define gangster_animations_1_ADDRESS 0x72DCu    /* 0752DC */
+#define gangster_animations_1_sprites_ADDRESS 0x7300u    /* 075300 */
+#define gangster_animations_1_sprites_2_ADDRESS 0x7312u    /* 075312 */
+#define gangster_animations_1_sprites_3_ADDRESS 0x732Au    /* 07532A */
+#define gangster_animations_1_sprites_4_ADDRESS 0x7342u    /* 075342 */
+#define gangster_animations_1_sprites_5_ADDRESS 0x735Au    /* 07535A */
+#define gangster_animations_1_sprites_6_ADDRESS 0x7372u    /* 075372 */
+#define gangster_animations_1_sprites_7_ADDRESS 0x738Au    /* 07538A */
+#define gangster_animations_1_sprites_8_ADDRESS 0x739Cu    /* 07539C */
+#define gangster_animations_3_ADDRESS 0x73B4u    /* 0753B4 */
+#define gangster_animations_3_sprites_ADDRESS 0x73C4u    /* 0753C4 */
+#define gangster_animations_3_sprites_2_ADDRESS 0x73E2u    /* 0753E2 */
+#define gangster_animations_3_sprites_3_ADDRESS 0x7400u    /* 075400 */
+#define gangster_animations_6_ADDRESS 0x741Eu    /* 07541E */
+#define gangster_animations_6_sprites_ADDRESS 0x7436u    /* 075436 */
+#define gangster_animations_6_sprites_2_ADDRESS 0x744Eu    /* 07544E */
+#define gangster_animations_6_sprites_3_ADDRESS 0x7466u    /* 075466 */
+#define gangster_animations_6_sprites_4_ADDRESS 0x7484u    /* 075484 */
+#define gangster_animations_6_sprites_5_ADDRESS 0x74A2u    /* 0754A2 */
+#define gangster_animations_5_ADDRESS 0x74BAu    /* 0754BA */
+#define gangster_animations_5_sprites_ADDRESS 0x74C6u    /* 0754C6 */
+#define gangster_animations_5_sprites_2_ADDRESS 0x74DEu    /* 0754DE */
+#define gangster_animations_4_ADDRESS 0x74F6u    /* 0754F6 */
+#define gangster_animations_9_ADDRESS 0x7506u    /* 075506 */
+#define gangster_2_animations_ADDRESS 0x751Au    /* 07551A */
+#define gangster_2_animations_9_ADDRESS 0x7532u    /* 075532 */
+#define gangster_2_animations_9_sprites_ADDRESS 0x755Au    /* 07555A */
+#define gangster_2_animations_9_sprites_2_ADDRESS 0x7584u    /* 075584 */
+#define gangster_2_animations_9_sprites_3_ADDRESS 0x75B4u    /* 0755B4 */
+#define gangster_2_animations_9_sprites_4_ADDRESS 0x75DEu    /* 0755DE */
+#define gangster_2_animations_9_sprites_5_ADDRESS 0x7614u    /* 075614 */
+#define gangster_2_animations_9_sprites_6_ADDRESS 0x763Eu    /* 07563E */
+#define gangster_2_animations_9_sprites_7_ADDRESS 0x7668u    /* 075668 */
+#define gangster_2_animations_10_ADDRESS 0x7692u    /* 075692 */
+#define gangster_2_animations_10_sprites_ADDRESS 0x76A6u    /* 0756A6 */
+#define gangster_2_animations_0_ADDRESS 0x76D0u    /* 0756D0 */
+#define gangster_2_animations_1_ADDRESS 0x76E4u    /* 0756E4 */
+#define gangster_2_animations_1_sprites_ADDRESS 0x7708u    /* 075708 */
+#define gangster_2_animations_1_sprites_2_ADDRESS 0x771Au    /* 07571A */
+#define gangster_2_animations_1_sprites_3_ADDRESS 0x7726u    /* 075726 */
+#define gangster_2_animations_1_sprites_4_ADDRESS 0x7732u    /* 075732 */
+#define gangster_2_animations_1_sprites_5_ADDRESS 0x773Eu    /* 07573E */
+#define gangster_2_animations_1_sprites_6_ADDRESS 0x7750u    /* 075750 */
+#define gangster_2_animations_1_sprites_7_ADDRESS 0x775Cu    /* 07575C */
+#define gangster_2_animations_1_sprites_8_ADDRESS 0x7768u    /* 075768 */
+#define gangster_2_animations_7_ADDRESS 0x777Au    /* 07577A */
+#define gangster_2_animations_7_sprites_ADDRESS 0x779Eu    /* 07579E */
+#define gangster_2_animations_7_sprites_2_ADDRESS 0x77B0u    /* 0757B0 */
+#define gangster_2_animations_7_sprites_3_ADDRESS 0x77C2u    /* 0757C2 */
+#define gangster_2_animations_7_sprites_4_ADDRESS 0x77D4u    /* 0757D4 */
+#define gangster_2_animations_7_sprites_5_ADDRESS 0x77E6u    /* 0757E6 */
+#define gangster_2_animations_7_sprites_6_ADDRESS 0x77F8u    /* 0757F8 */
+#define gangster_2_animations_7_sprites_7_ADDRESS 0x780Au    /* 07580A */
+#define gangster_2_animations_7_sprites_8_ADDRESS 0x781Cu    /* 07581C */
+#define gangster_2_animations_3_ADDRESS 0x782Eu    /* 07582E */
+#define gangster_2_animations_3_sprites_ADDRESS 0x7842u    /* 075842 */
+#define gangster_2_animations_3_sprites_2_ADDRESS 0x786Cu    /* 07586C */
+#define gangster_2_animations_3_sprites_3_ADDRESS 0x7896u    /* 075896 */
+#define gangster_2_animations_3_sprites_4_ADDRESS 0x78B4u    /* 0758B4 */
+#define gangster_2_animations_4_ADDRESS 0x78F0u    /* 0758F0 */
+#define gangster_2_animations_4_sprites_ADDRESS 0x78FCu    /* 0758FC */
+#define gangster_2_animations_4_sprites_2_ADDRESS 0x7926u    /* 075926 */
+#define gangster_2_animations_6_ADDRESS 0x7950u    /* 075950 */
+#define gangster_2_animations_6_sprites_ADDRESS 0x796Cu    /* 07596C */
+#define gangster_2_animations_6_sprites_2_ADDRESS 0x7984u    /* 075984 */
+#define gangster_2_animations_6_sprites_3_ADDRESS 0x79A8u    /* 0759A8 */
+#define gangster_2_animations_6_sprites_4_ADDRESS 0x79D2u    /* 0759D2 */
+#define gangster_2_animations_6_sprites_5_ADDRESS 0x79FCu    /* 0759FC */
+#define gangster_2_animations_5_ADDRESS 0x7A20u    /* 075A20 */
+#define gangster_2_animations_5_sprites_ADDRESS 0x7A2Cu    /* 075A2C */
+#define gangster_2_animations_5_sprites_2_ADDRESS 0x7A50u    /* 075A50 */
+#define gangster_animations_8_ADDRESS 0x7A7Au    /* 075A7A */
+#define gangster_animations_8_sprites_ADDRESS 0x7AAEu    /* 075AAE */
+#define gangster_animations_8_sprites_2_ADDRESS 0x7AE4u    /* 075AE4 */
+#define gangster_animations_8_sprites_3_ADDRESS 0x7B26u    /* 075B26 */
+#define gangster_animations_8_sprites_4_ADDRESS 0x7B62u    /* 075B62 */
+#define gangster_animations_8_sprites_5_ADDRESS 0x7BBCu    /* 075BBC */
+#define gangster_animations_8_sprites_6_ADDRESS 0x7C16u    /* 075C16 */
+#define gangster_animations_8_sprites_7_ADDRESS 0x7C6Au    /* 075C6A */
+#define gangster_animations_8_sprites_8_ADDRESS 0x7CCAu    /* 075CCA */
+#define gangster_animations_8_sprites_9_ADDRESS 0x7D24u    /* 075D24 */
+#define gangster_animations_8_sprites_10_ADDRESS 0x7D84u    /* 075D84 */
+#define gangster_animations_8_sprites_11_ADDRESS 0x7DD8u    /* 075DD8 */
+#define gangster_animations_8_sprites_12_ADDRESS 0x7E32u    /* 075E32 */
+#define gangster_2_animations_2_ADDRESS 0x7E74u    /* 075E74 */
+#define gangster_2_animations_11_ADDRESS 0x7E7Cu    /* 075E7C */
+#define gangster_2_animations_11_sprites_ADDRESS 0x7E84u    /* 075E84 */
+#define gangster_2_animations_11_sprites_fill_ADDRESS 0x7EB4u    /* 075EB4 */
+#define gangster_2_animations_11_sprites_rest_ADDRESS 0x6000u    /* 076000 */
 #define goon_animations_ADDRESS 0x6004u    /* 076004 */
 #define goon_animations_0_ADDRESS 0x6094u    /* 076094 */
 #define goon_animations_0_sprites_ADDRESS 0x609Cu    /* 07609C */
@@ -12829,10 +12589,10 @@ extern const void *reset_vector_data;
 #define enemy_defeated_forward_steps_ADDRESS 0xF274u    /* 07F274 */
 #define enemy_defeated_backward_steps_ADDRESS 0xF27Au    /* 07F27A */
 #define enemy_pit_steps_ADDRESS 0xF280u    /* 07F280 */
-#define kind_90_effect_setup_box_ADDRESS 0xF284u    /* 07F284 */
-#define kind_90_effect_steps_ADDRESS 0xF28Cu    /* 07F28C */
-#define kind_90_effect_setup_ADDRESS 0xF290u    /* 07F290 */
-#define kind_90_effect_child_ADDRESS 0xF296u    /* 07F296 */
+#define fireman_goon_effect_setup_box_ADDRESS 0xF284u    /* 07F284 */
+#define fireman_goon_effect_steps_ADDRESS 0xF28Cu    /* 07F28C */
+#define fireman_goon_effect_setup_ADDRESS 0xF290u    /* 07F290 */
+#define fireman_goon_effect_child_ADDRESS 0xF296u    /* 07F296 */
 #define enemy_hurt_steps_ADDRESS 0xF29Eu    /* 07F29E */
 #define enemy_type_handlers_ADDRESS 0xF2ECu    /* 07F2EC */
 #define object_list_1_type_handlers_ADDRESS 0xF40Du    /* 07F40D */
@@ -13232,7 +12992,7 @@ struct prop
 	uint8_t kind;
 };
 
-struct kind_d1_fling
+struct dream_ball_fling
 {
 	int16_t z_speed;
 	int16_t x_speed;
@@ -13348,7 +13108,7 @@ struct bystander
 	uint8_t kind;
 };
 
-struct kind_90_start
+struct fireman_goon_start
 {
 	uint8_t throws;
 	uint8_t wait;
@@ -13361,7 +13121,7 @@ struct clown_pose
 	uint8_t animation;
 };
 
-struct kind_a0_entry
+struct bluebird_entry
 {
 	uint8_t unused;
 	uint8_t frames;
@@ -13370,7 +13130,7 @@ struct kind_a0_entry
 	int16_t z_speed;
 };
 
-struct kind_a0_launch
+struct bluebird_launch
 {
 	uint16_t parent_x;
 	int16_t z_speed;
@@ -13466,7 +13226,7 @@ struct robot_piece
 	uint8_t rise;
 };
 
-struct kind_12_part
+struct channel_6_scenery_part
 {
 	uint8_t height;
 	uint8_t unused;
@@ -13786,6 +13546,11 @@ struct object
 		} attract_profile;
 		struct
 		{
+			uint8_t pad_00[0x23];
+			uint8_t pose;
+		} barney_bystander;
+		struct
+		{
 			uint8_t pad_00[0x18];
 			uint8_t attack_health;
 			uint8_t flinch_health;
@@ -13842,6 +13607,16 @@ struct object
 			uint8_t pad_00[0x22];
 			uint8_t carried;
 		} bird_item;
+		struct
+		{
+			uint8_t pad_00[0x23];
+			uint8_t hits_left;
+		} bleeding_gums_murphy;
+		struct
+		{
+			uint8_t pad_00[0x20];
+			uint16_t parent_x;
+		} bluebird;
 		struct
 		{
 			uint8_t pad_00[0x1B];
@@ -14013,6 +13788,13 @@ struct object
 		} bystander;
 		struct
 		{
+			uint8_t pad_00[0x1B];
+			uint8_t idle_frames;
+			uint8_t pad_1C[0x6];
+			uint8_t idle_number;
+		} caged_gorilla;
+		struct
+		{
 			uint8_t pad_00[0x24];
 			uint8_t timer;
 			uint8_t spawned;
@@ -14174,6 +13956,12 @@ struct object
 			uint8_t pad_00[0x2D];
 			uint8_t drop_animation;
 		} dreamland_obstacle;
+		struct
+		{
+			uint8_t pad_00[0x22];
+			uint8_t child_out;
+			uint8_t let_outs_left;
+		} drink_vendor;
 		struct
 		{
 			uint8_t pad_00[0x1A];
@@ -14353,6 +14141,15 @@ struct object
 		} fat_goon_thrower;
 		struct
 		{
+			uint8_t pad_00[0x1C];
+			uint8_t vanishes;
+			uint8_t pad_1D[0x3];
+			uint16_t start_x;
+			uint8_t pad_22[0x1];
+			uint8_t throws_left;
+		} fireman_goon;
+		struct
+		{
 			uint8_t pad_00[0x26];
 			uint16_t floor_row;
 			uint8_t part;
@@ -14362,6 +14159,23 @@ struct object
 			uint8_t pad_2D[0x7];
 			uint16_t floor_start;
 		} floor_blocker;
+		struct
+		{
+			uint8_t pad_00[0xC];
+			int16_t descent_y_speed;
+			uint16_t kept_height;
+			uint8_t pad_10[0x10];
+			uint16_t descent_slowdown;
+			uint8_t sweep_way;
+			uint8_t shots_left;
+			uint8_t pad_24[0x1];
+			uint8_t sweep_rate;
+			uint8_t pad_26[0x2];
+			uint8_t bob_phase;
+			uint8_t pad_29[0x7];
+			uint16_t heading;
+			uint16_t stay_time;
+		} flying_saxophone;
 		struct
 		{
 			uint8_t pad_00[0x20];
@@ -14401,6 +14215,19 @@ struct object
 			uint8_t pad_00[0x20];
 			uint8_t flight_frames;
 		} football_thrown;
+		struct
+		{
+			uint8_t pad_00[0x20];
+			int16_t drop_x_offset;
+			uint8_t drop_unused;
+			uint8_t pad_23[0x11];
+			uint16_t stage_x;
+		} ghost_on_rope;
+		struct
+		{
+			uint8_t pad_00[0x22];
+			uint8_t food_dropped;
+		} girl_with_food;
 		struct
 		{
 			uint8_t pad_00[0x7];
@@ -14526,191 +14353,14 @@ struct object
 		} item_carrier;
 		struct
 		{
-			uint8_t pad_00[0x26];
-			uint16_t floor_row;
-			uint8_t pad_28[0x3];
-			uint8_t floor_column;
-			uint8_t floor_cell;
-			uint8_t pad_2D[0x7];
-			uint16_t floor_start;
-		} kind_10_dropper;
-		struct
-		{
 			uint8_t pad_00[0x23];
-			uint8_t rise_steps;
-		} kind_10_riser;
-		struct
-		{
-			uint8_t pad_00[0x1E];
-			uint16_t device;
-			uint16_t home_x;
-		} kind_87;
-		struct
-		{
-			uint8_t pad_00[0x1E];
-			uint16_t keeper;
-			uint16_t home_x;
-			uint8_t pad_22[0x1];
-			uint8_t strike_frames;
-		} kind_87_device;
-		struct
-		{
-			uint8_t pad_00[0x20];
-			uint8_t radius;
-			uint8_t angle;
-			uint8_t leave_turn;
-			uint8_t pad_23[0x5];
-			uint8_t approach_side;
-			uint8_t pad_29[0x4];
-			uint8_t frame_offset;
-			uint8_t pad_2E[0x6];
-			uint16_t hub;
-		} kind_88;
-		struct
-		{
-			uint8_t pad_00[0x20];
-			uint8_t radius;
-			uint8_t angle;
-			uint8_t second_look;
-			uint8_t pad_23[0x5];
-			uint8_t approach_side;
-			uint8_t pad_29[0x4];
-			uint8_t frame_offset;
-			uint8_t pad_2E[0x6];
-			uint16_t hub;
-		} kind_88_piece;
-		struct
-		{
-			uint8_t pad_00[0x20];
-			uint8_t radius;
-			uint8_t angle;
-			uint8_t too_many_out;
-			uint8_t pad_23[0x2];
-			uint8_t arms;
-			uint8_t pad_26[0x2];
-			uint8_t approach_side;
-			uint8_t pad_29[0x4];
-			uint8_t frame_offset;
-			uint8_t riders_out;
-			uint8_t pad_2F[0x5];
-			uint16_t hub;
-		} kind_88_ride;
-		struct
-		{
-			uint8_t pad_00[0x20];
-			uint8_t radius;
-			uint8_t angle;
-			uint8_t too_many_out;
-			uint8_t turn_time;
-			uint8_t pad_24[0x1];
-			uint8_t riders;
-			uint16_t ride_hub;
-			uint8_t approach_side;
-			uint8_t pad_29[0x4];
-			uint8_t frame_offset;
-			uint8_t riders_out;
-			uint8_t riders_on;
-			uint8_t pad_30[0x4];
-			uint16_t hub;
-		} kind_88_ride_arm;
-		struct
-		{
-			uint8_t pad_00[0x1E];
-			uint16_t carried_goon;
-		} kind_8a_carrier;
-		struct
-		{
-			uint8_t pad_00[0x23];
-			uint8_t pose;
-		} kind_8c_bystander;
-		struct
-		{
-			uint8_t pad_00[0x1C];
-			uint8_t vanishes;
-			uint8_t pad_1D[0x3];
-			uint16_t start_x;
-			uint8_t pad_22[0x1];
-			uint8_t throws_left;
-		} kind_90;
+			uint8_t hits_left;
+		} kent_brockman;
 		struct
 		{
 			uint8_t pad_00[0x24];
 			uint8_t timer;
-		} kind_93;
-		struct
-		{
-			uint8_t pad_00[0x1B];
-			uint8_t setup_count;
-			uint8_t vanishes;
-		} kind_98;
-		struct
-		{
-			uint8_t pad_00[0x20];
-			int16_t drop_x_offset;
-			uint8_t drop_unused;
-			uint8_t pad_23[0x11];
-			uint16_t stage_x;
-		} kind_9a_dropper;
-		struct
-		{
-			uint8_t pad_00[0x22];
-			uint8_t stopped;
-		} kind_9e;
-		struct
-		{
-			uint8_t pad_00[0x20];
-			uint16_t parent_x;
-		} kind_a0;
-		struct
-		{
-			uint8_t pad_00[0x22];
-			uint8_t food_dropped;
-		} kind_a5;
-		struct
-		{
-			uint8_t pad_00[0x22];
-			uint8_t food_dropped;
-		} kind_a9;
-		struct
-		{
-			uint8_t pad_00[0x22];
-			uint8_t child_out;
-			uint8_t let_outs_left;
-		} kind_ab;
-		struct
-		{
-			uint8_t pad_00[0x1B];
-			uint8_t idle_frames;
-			uint8_t pad_1C[0x6];
-			uint8_t idle_number;
-		} kind_b2;
-		struct
-		{
-			uint8_t pad_00[0x23];
-			uint8_t hits_left;
-		} kind_b3;
-		struct
-		{
-			uint8_t pad_00[0xC];
-			int16_t descent_y_speed;
-			uint16_t kept_height;
-			uint8_t pad_10[0x10];
-			uint16_t descent_slowdown;
-			uint8_t sweep_way;
-			uint8_t shots_left;
-			uint8_t pad_24[0x1];
-			uint8_t sweep_rate;
-			uint8_t pad_26[0x2];
-			uint8_t bob_phase;
-			uint8_t pad_29[0x7];
-			uint16_t heading;
-			uint16_t stay_time;
-		} kind_b8_flyer;
-		struct
-		{
-			uint8_t pad_00[0x23];
-			uint8_t hits_left;
-		} kind_cb;
+		} kid_in_sunglasses;
 		struct
 		{
 			uint8_t pad_00[0xF];
@@ -14782,6 +14432,35 @@ struct object
 		} lumberjack;
 		struct
 		{
+			uint8_t pad_00[0x2B];
+			uint16_t wander_x;
+			uint8_t actions;
+			uint8_t pad_2E[0x2];
+			uint8_t wait;
+			uint8_t phase;
+		} marge_cloud;
+		struct
+		{
+			uint8_t pad_00[0x22];
+			uint8_t stopped;
+		} moe;
+		struct
+		{
+			uint8_t pad_00[0x26];
+			uint16_t floor_row;
+			uint8_t pad_28[0x3];
+			uint8_t floor_column;
+			uint8_t floor_cell;
+			uint8_t pad_2D[0x7];
+			uint16_t floor_start;
+		} moes_street_scenery_dropper;
+		struct
+		{
+			uint8_t pad_00[0x23];
+			uint8_t rise_steps;
+		} moes_street_scenery_riser;
+		struct
+		{
 			uint8_t pad_00[0x25];
 			uint8_t maggie_landed;
 			uint8_t pad_26[0xE];
@@ -14800,15 +14479,6 @@ struct object
 		} ninja;
 		struct
 		{
-			uint8_t pad_00[0x2B];
-			uint16_t wander_x;
-			uint8_t actions;
-			uint8_t pad_2E[0x2];
-			uint8_t wait;
-			uint8_t phase;
-		} object_f9;
-		struct
-		{
 			uint8_t pad_00[0x18];
 			uint8_t height;
 			uint8_t pad_19[0x9];
@@ -14821,6 +14491,12 @@ struct object
 			uint8_t pad_2D[0x1];
 			uint8_t floor_raised;
 		} obstacle;
+		struct
+		{
+			uint8_t pad_00[0x1B];
+			uint8_t setup_count;
+			uint8_t vanishes;
+		} one_eared_rabbit;
 		struct
 		{
 			uint8_t pad_00[0x22];
@@ -15036,6 +14712,11 @@ struct object
 		} shovel_goon;
 		struct
 		{
+			uint8_t pad_00[0x22];
+			uint8_t food_dropped;
+		} sideshow_bob;
+		struct
+		{
 			uint8_t pad_00[0x35];
 			uint16_t speaker;
 			uint8_t time;
@@ -15151,6 +14832,12 @@ struct object
 		} stage_8_end;
 		struct
 		{
+			uint8_t pad_00[0x30];
+			uint8_t wait;
+			uint8_t phase;
+		} stage_boss;
+		struct
+		{
 			uint8_t pad_00[0x2C];
 			uint8_t legs_flown;
 			uint8_t jumper_player;
@@ -15187,6 +14874,66 @@ struct object
 		} story_actor;
 		struct
 		{
+			uint8_t pad_00[0x20];
+			uint8_t radius;
+			uint8_t angle;
+			uint8_t leave_turn;
+			uint8_t pad_23[0x5];
+			uint8_t approach_side;
+			uint8_t pad_29[0x4];
+			uint8_t frame_offset;
+			uint8_t pad_2E[0x6];
+			uint16_t hub;
+		} teacup_goon;
+		struct
+		{
+			uint8_t pad_00[0x20];
+			uint8_t radius;
+			uint8_t angle;
+			uint8_t second_look;
+			uint8_t pad_23[0x5];
+			uint8_t approach_side;
+			uint8_t pad_29[0x4];
+			uint8_t frame_offset;
+			uint8_t pad_2E[0x6];
+			uint16_t hub;
+		} teacup_goon_piece;
+		struct
+		{
+			uint8_t pad_00[0x20];
+			uint8_t radius;
+			uint8_t angle;
+			uint8_t too_many_out;
+			uint8_t pad_23[0x2];
+			uint8_t arms;
+			uint8_t pad_26[0x2];
+			uint8_t approach_side;
+			uint8_t pad_29[0x4];
+			uint8_t frame_offset;
+			uint8_t riders_out;
+			uint8_t pad_2F[0x5];
+			uint16_t hub;
+		} teacup_goon_ride;
+		struct
+		{
+			uint8_t pad_00[0x20];
+			uint8_t radius;
+			uint8_t angle;
+			uint8_t too_many_out;
+			uint8_t turn_time;
+			uint8_t pad_24[0x1];
+			uint8_t riders;
+			uint16_t ride_hub;
+			uint8_t approach_side;
+			uint8_t pad_29[0x4];
+			uint8_t frame_offset;
+			uint8_t riders_out;
+			uint8_t riders_on;
+			uint8_t pad_30[0x4];
+			uint16_t hub;
+		} teacup_goon_ride_arm;
+		struct
+		{
 			uint8_t pad_00[0x7];
 			uint8_t carrier_kind;
 			uint8_t pad_08[0x1A];
@@ -15204,6 +14951,25 @@ struct object
 			uint8_t pad_22[0x1];
 			uint8_t wait;
 		} wandering_zombie;
+		struct
+		{
+			uint8_t pad_00[0x1E];
+			uint16_t device;
+			uint16_t home_x;
+		} woman_in_apron;
+		struct
+		{
+			uint8_t pad_00[0x1E];
+			uint16_t keeper;
+			uint16_t home_x;
+			uint8_t pad_22[0x1];
+			uint8_t strike_frames;
+		} woman_in_apron_device;
+		struct
+		{
+			uint8_t pad_00[0x1E];
+			uint16_t carried_goon;
+		} woman_in_green_carrier;
 		struct
 		{
 			uint8_t pad_00[0x2B];
@@ -15489,7 +15255,7 @@ _Static_assert(sizeof(struct timed_spawn) == 0x8, "struct timed_spawn has the si
 _Static_assert(sizeof(struct door_release) == 0x2, "struct door_release has the size of the program ROM's records");
 _Static_assert(sizeof(struct krustyland_door) == 0x4, "struct krustyland_door has the size of the program ROM's records");
 _Static_assert(sizeof(struct prop) == 0x4, "struct prop has the size of the program ROM's records");
-_Static_assert(sizeof(struct kind_d1_fling) == 0x4, "struct kind_d1_fling has the size of the program ROM's records");
+_Static_assert(sizeof(struct dream_ball_fling) == 0x4, "struct dream_ball_fling has the size of the program ROM's records");
 _Static_assert(sizeof(struct cemetery_piece) == 0x4, "struct cemetery_piece has the size of the program ROM's records");
 _Static_assert(sizeof(struct police_car_arrival) == 0x4, "struct police_car_arrival has the size of the program ROM's records");
 _Static_assert(sizeof(struct police_car_door) == 0x4, "struct police_car_door has the size of the program ROM's records");
@@ -15504,10 +15270,10 @@ _Static_assert(sizeof(struct looping_scenery_move) == 0x4, "struct looping_scene
 _Static_assert(sizeof(struct food_move) == 0x8, "struct food_move has the size of the program ROM's records");
 _Static_assert(sizeof(struct bystander_animation_set) == 0x3, "struct bystander_animation_set has the size of the program ROM's records");
 _Static_assert(sizeof(struct bystander) == 0x4, "struct bystander has the size of the program ROM's records");
-_Static_assert(sizeof(struct kind_90_start) == 0x4, "struct kind_90_start has the size of the program ROM's records");
+_Static_assert(sizeof(struct fireman_goon_start) == 0x4, "struct fireman_goon_start has the size of the program ROM's records");
 _Static_assert(sizeof(struct clown_pose) == 0x2, "struct clown_pose has the size of the program ROM's records");
-_Static_assert(sizeof(struct kind_a0_entry) == 0x8, "struct kind_a0_entry has the size of the program ROM's records");
-_Static_assert(sizeof(struct kind_a0_launch) == 0x8, "struct kind_a0_launch has the size of the program ROM's records");
+_Static_assert(sizeof(struct bluebird_entry) == 0x8, "struct bluebird_entry has the size of the program ROM's records");
+_Static_assert(sizeof(struct bluebird_launch) == 0x8, "struct bluebird_launch has the size of the program ROM's records");
 _Static_assert(sizeof(struct random_pose_figure) == 0x4, "struct random_pose_figure has the size of the program ROM's records");
 _Static_assert(sizeof(struct child_object) == 0x8, "struct child_object has the size of the program ROM's records");
 _Static_assert(sizeof(struct velocity) == 0x4, "struct velocity has the size of the program ROM's records");
@@ -15520,7 +15286,7 @@ _Static_assert(sizeof(struct knight_entrance) == 0x4, "struct knight_entrance ha
 _Static_assert(sizeof(struct knight_entrance_style) == 0x2, "struct knight_entrance_style has the size of the program ROM's records");
 _Static_assert(sizeof(struct pose) == 0x2, "struct pose has the size of the program ROM's records");
 _Static_assert(sizeof(struct robot_piece) == 0x4, "struct robot_piece has the size of the program ROM's records");
-_Static_assert(sizeof(struct kind_12_part) == 0x4, "struct kind_12_part has the size of the program ROM's records");
+_Static_assert(sizeof(struct channel_6_scenery_part) == 0x4, "struct channel_6_scenery_part has the size of the program ROM's records");
 _Static_assert(sizeof(struct timed_step) == 0x2, "struct timed_step has the size of the program ROM's records");
 _Static_assert(sizeof(struct launch) == 0x2, "struct launch has the size of the program ROM's records");
 _Static_assert(sizeof(struct chain_link) == 0x2, "struct chain_link has the size of the program ROM's records");
@@ -15636,7 +15402,7 @@ _Static_assert(sizeof(struct camera_check) == 0x3, "struct camera_check has the 
 #define DOOR_RELEASE(address) ((const struct door_release *)data_record((address), sizeof(struct door_release)))
 #define KRUSTYLAND_DOOR(address) ((const struct krustyland_door *)data_record((address), sizeof(struct krustyland_door)))
 #define PROP(address) ((const struct prop *)data_record((address), sizeof(struct prop)))
-#define KIND_D1_FLING(address) ((const struct kind_d1_fling *)data_record((address), sizeof(struct kind_d1_fling)))
+#define DREAM_BALL_FLING(address) ((const struct dream_ball_fling *)data_record((address), sizeof(struct dream_ball_fling)))
 #define CEMETERY_PIECE(address) ((const struct cemetery_piece *)data_record((address), sizeof(struct cemetery_piece)))
 #define POLICE_CAR_ARRIVAL(address) ((const struct police_car_arrival *)data_record((address), sizeof(struct police_car_arrival)))
 #define POLICE_CAR_DOOR(address) ((const struct police_car_door *)data_record((address), sizeof(struct police_car_door)))
@@ -15651,13 +15417,13 @@ _Static_assert(sizeof(struct camera_check) == 0x3, "struct camera_check has the 
 #define FOOD_MOVE(address) ((const struct food_move *)data_record((address), sizeof(struct food_move)))
 #define BYSTANDER_ANIMATION_SET(address) ((const struct bystander_animation_set *)data_record((address), sizeof(struct bystander_animation_set)))
 #define BYSTANDER(address) ((const struct bystander *)data_record((address), sizeof(struct bystander)))
-#define KIND_90_START(address) ((const struct kind_90_start *)data_record((address), sizeof(struct kind_90_start)))
-#define KIND_88_ATTRIBUTES(address) (*(const uint8_t *)data_record((address), 1))
-#define KIND_88_ATTRIBUTES_16(address) (*(const uint16_t *)data_record((address), 2))
-#define KIND_88_ATTRIBUTES_32(address) (*(const uint32_t *)data_record((address), 4))
+#define FIREMAN_GOON_START(address) ((const struct fireman_goon_start *)data_record((address), sizeof(struct fireman_goon_start)))
+#define TEACUP_GOON_ATTRIBUTES(address) (*(const uint8_t *)data_record((address), 1))
+#define TEACUP_GOON_ATTRIBUTES_16(address) (*(const uint16_t *)data_record((address), 2))
+#define TEACUP_GOON_ATTRIBUTES_32(address) (*(const uint32_t *)data_record((address), 4))
 #define CLOWN_POSE(address) ((const struct clown_pose *)data_record((address), sizeof(struct clown_pose)))
-#define KIND_A0_ENTRY(address) ((const struct kind_a0_entry *)data_record((address), sizeof(struct kind_a0_entry)))
-#define KIND_A0_LAUNCH(address) ((const struct kind_a0_launch *)data_record((address), sizeof(struct kind_a0_launch)))
+#define BLUEBIRD_ENTRY(address) ((const struct bluebird_entry *)data_record((address), sizeof(struct bluebird_entry)))
+#define BLUEBIRD_LAUNCH(address) ((const struct bluebird_launch *)data_record((address), sizeof(struct bluebird_launch)))
 #define RANDOM_POSE_FIGURE(address) ((const struct random_pose_figure *)data_record((address), sizeof(struct random_pose_figure)))
 #define CHILD_OBJECT(address) ((const struct child_object *)data_record((address), sizeof(struct child_object)))
 #define VELOCITY(address) ((const struct velocity *)data_record((address), sizeof(struct velocity)))
@@ -15673,7 +15439,7 @@ _Static_assert(sizeof(struct camera_check) == 0x3, "struct camera_check has the 
 #define KNIGHT_ENTRANCE_STYLE(address) ((const struct knight_entrance_style *)data_record((address), sizeof(struct knight_entrance_style)))
 #define POSE(address) ((const struct pose *)data_record((address), sizeof(struct pose)))
 #define ROBOT_PIECE(address) ((const struct robot_piece *)data_record((address), sizeof(struct robot_piece)))
-#define KIND_12_PART(address) ((const struct kind_12_part *)data_record((address), sizeof(struct kind_12_part)))
+#define CHANNEL_6_SCENERY_PART(address) ((const struct channel_6_scenery_part *)data_record((address), sizeof(struct channel_6_scenery_part)))
 #define TIMED_STEP(address) ((const struct timed_step *)data_record((address), sizeof(struct timed_step)))
 #define OBJECT_1A_LEVEL(address) (*(const uint8_t *)data_record((address), 1))
 #define OBJECT_1A_LEVEL_16(address) (*(const uint16_t *)data_record((address), 2))
@@ -15883,9 +15649,9 @@ extern const void *krustyland_doors_data;
 #define props_ADDRESS 0x7E23u    /* 02BE23 */
 extern const void *props_data;
 #define props ((const struct prop *)(props_data))
-#define kind_d1_flings_ADDRESS 0x7E89u    /* 02BE89 */
-extern const void *kind_d1_flings_data;
-#define kind_d1_flings ((const struct kind_d1_fling *)(kind_d1_flings_data))
+#define dream_ball_flings_ADDRESS 0x7E89u    /* 02BE89 */
+extern const void *dream_ball_flings_data;
+#define dream_ball_flings ((const struct dream_ball_fling *)(dream_ball_flings_data))
 #define cemetery_pieces_ADDRESS 0x7EA5u    /* 02BEA5 */
 extern const void *cemetery_pieces_data;
 #define cemetery_pieces ((const struct cemetery_piece *)(cemetery_pieces_data))
@@ -15898,12 +15664,12 @@ extern const void *scenery_jump_table_spare_slots_data;
 #define scenery_jump_table_spare_slot_ADDRESS 0x6057u    /* 02C057 */
 extern const void *scenery_jump_table_spare_slot_data;
 #define scenery_jump_table_spare_slot ((const struct vector *)(scenery_jump_table_spare_slot_data))
-#define kind_10_edge_floor_cells_ADDRESS 0x7C12u    /* 02DC12 */
-extern const void *kind_10_edge_floor_cells_data;
-#define kind_10_edge_floor_cells ((const struct floor_column *)(kind_10_edge_floor_cells_data))
-#define kind_10_floor_cells_ADDRESS 0x7C18u    /* 02DC18 */
-extern const void *kind_10_floor_cells_data;
-#define kind_10_floor_cells ((const struct floor_column *)(kind_10_floor_cells_data))
+#define moes_street_scenery_edge_floor_cells_ADDRESS 0x7C12u    /* 02DC12 */
+extern const void *moes_street_scenery_edge_floor_cells_data;
+#define moes_street_scenery_edge_floor_cells ((const struct floor_column *)(moes_street_scenery_edge_floor_cells_data))
+#define moes_street_scenery_floor_cells_ADDRESS 0x7C18u    /* 02DC18 */
+extern const void *moes_street_scenery_floor_cells_data;
+#define moes_street_scenery_floor_cells ((const struct floor_column *)(moes_street_scenery_floor_cells_data))
 #define police_car_doors_ADDRESS 0x7C2Eu    /* 02DC2E */
 extern const void *police_car_doors_data;
 #define police_car_doors ((const struct police_car_door *)(police_car_doors_data))
@@ -15937,18 +15703,18 @@ extern const void *bystanders_data;
 #define bystander_animation_sets_ADDRESS 0x7BD3u    /* 02FBD3 */
 extern const void *bystander_animation_sets_data;
 #define bystander_animation_sets ((const struct bystander_animation_set *)(bystander_animation_sets_data))
-#define kind_90_starts_ADDRESS 0x7C59u    /* 02FC59 */
-extern const void *kind_90_starts_data;
-#define kind_90_starts ((const struct kind_90_start *)(kind_90_starts_data))
+#define fireman_goon_starts_ADDRESS 0x7C59u    /* 02FC59 */
+extern const void *fireman_goon_starts_data;
+#define fireman_goon_starts ((const struct fireman_goon_start *)(fireman_goon_starts_data))
 #define clown_on_ball_poses_ADDRESS 0x7E6Bu    /* 02FE6B */
 extern const void *clown_on_ball_poses_data;
 #define clown_on_ball_poses ((const struct clown_pose *)(clown_on_ball_poses_data))
-#define kind_a0_entries_ADDRESS 0x7F6Bu    /* 02FF6B */
-extern const void *kind_a0_entries_data;
-#define kind_a0_entries ((const struct kind_a0_entry *)(kind_a0_entries_data))
-#define kind_a0_launches_ADDRESS 0x7F8Bu    /* 02FF8B */
-extern const void *kind_a0_launches_data;
-#define kind_a0_launches ((const struct kind_a0_launch *)(kind_a0_launches_data))
+#define bluebird_entries_ADDRESS 0x7F6Bu    /* 02FF6B */
+extern const void *bluebird_entries_data;
+#define bluebird_entries ((const struct bluebird_entry *)(bluebird_entries_data))
+#define bluebird_launches_ADDRESS 0x7F8Bu    /* 02FF8B */
+extern const void *bluebird_launches_data;
+#define bluebird_launches ((const struct bluebird_launch *)(bluebird_launches_data))
 #define random_pose_figures_ADDRESS 0x7FADu    /* 02FFAD */
 extern const void *random_pose_figures_data;
 #define random_pose_figures ((const struct random_pose_figure *)(random_pose_figures_data))
@@ -15958,9 +15724,9 @@ extern const void *kind_97_timed_moves_data;
 #define object_18_behaviours_ADDRESS 0x79DAu    /* 0319DA */
 extern const void *object_18_behaviours_data;
 #define object_18_behaviours ((const struct behaviour_choice *)(object_18_behaviours_data))
-#define kind_9a_drop_starts_ADDRESS 0x7A30u    /* 031A30 */
-extern const void *kind_9a_drop_starts_data;
-#define kind_9a_drop_starts ((const struct drop_start *)(kind_9a_drop_starts_data))
+#define ghost_on_rope_drop_starts_ADDRESS 0x7A30u    /* 031A30 */
+extern const void *ghost_on_rope_drop_starts_data;
+#define ghost_on_rope_drop_starts ((const struct drop_start *)(ghost_on_rope_drop_starts_data))
 #define kind_91_appearances_ADDRESS 0x7A56u    /* 031A56 */
 extern const void *kind_91_appearances_data;
 #define kind_91_appearances ((const struct appearance *)(kind_91_appearances_data))
@@ -15985,9 +15751,9 @@ extern const void *kind_c7_fast_velocities_data;
 #define unused_figure_hit_box_ADDRESS 0x7ED8u    /* 031ED8 */
 extern const void *unused_figure_hit_box_data;
 #define unused_figure_hit_box ((const struct hit_box *)(unused_figure_hit_box_data))
-#define kind_8e_poses_ADDRESS 0x7F52u    /* 031F52 */
-extern const void *kind_8e_poses_data;
-#define kind_8e_poses ((const struct pose *)(kind_8e_poses_data))
+#define belly_dancer_poses_ADDRESS 0x7F52u    /* 031F52 */
+extern const void *belly_dancer_poses_data;
+#define belly_dancer_poses ((const struct pose *)(belly_dancer_poses_data))
 #define stage_7_objects_jump_table_spare_slot_ADDRESS 0x6024u    /* 032024 */
 extern const void *stage_7_objects_jump_table_spare_slot_data;
 #define stage_7_objects_jump_table_spare_slot ((const struct vector *)(stage_7_objects_jump_table_spare_slot_data))
@@ -15997,15 +15763,15 @@ extern const void *robot_pieces_data;
 #define robot_piece_children_ADDRESS 0x7CC8u    /* 033CC8 */
 extern const void *robot_piece_children_data;
 #define robot_piece_children ((const struct child_object *)(robot_piece_children_data))
-#define kind_12_parts_ADDRESS 0x7D96u    /* 033D96 */
-extern const void *kind_12_parts_data;
-#define kind_12_parts ((const struct kind_12_part *)(kind_12_parts_data))
+#define channel_6_scenery_parts_ADDRESS 0x7D96u    /* 033D96 */
+extern const void *channel_6_scenery_parts_data;
+#define channel_6_scenery_parts ((const struct channel_6_scenery_part *)(channel_6_scenery_parts_data))
 #define kind_b7_entrances_ADDRESS 0x7E32u    /* 033E32 */
 extern const void *kind_b7_entrances_data;
 #define kind_b7_entrances ((const struct timed_step *)(kind_b7_entrances_data))
-#define kind_b8_velocities_ADDRESS 0x7F55u    /* 033F55 */
-extern const void *kind_b8_velocities_data;
-#define kind_b8_velocities ((const struct velocity *)(kind_b8_velocities_data))
+#define flying_saxophone_velocities_ADDRESS 0x7F55u    /* 033F55 */
+extern const void *flying_saxophone_velocities_data;
+#define flying_saxophone_velocities ((const struct velocity *)(flying_saxophone_velocities_data))
 #define dreamland_jump_table_spare_slots_ADDRESS 0x6000u    /* 034000 */
 extern const void *dreamland_jump_table_spare_slots_data;
 #define dreamland_jump_table_spare_slots ((const struct vector *)(dreamland_jump_table_spare_slots_data))
@@ -16024,12 +15790,12 @@ extern const void *object_1a_path_starts_data;
 #define door_spawns_ADDRESS 0x6458u    /* 036458 */
 extern const void *door_spawns_data;
 #define door_spawns ((const struct door_spawn *)(door_spawns_data))
-#define kind_12_door_openings_ADDRESS 0x6488u    /* 036488 */
-extern const void *kind_12_door_openings_data;
-#define kind_12_door_openings ((const struct door_opening *)(kind_12_door_openings_data))
-#define kind_10_door_openings_ADDRESS 0x64FEu    /* 0364FE */
-extern const void *kind_10_door_openings_data;
-#define kind_10_door_openings ((const struct door_opening *)(kind_10_door_openings_data))
+#define channel_6_scenery_door_openings_ADDRESS 0x6488u    /* 036488 */
+extern const void *channel_6_scenery_door_openings_data;
+#define channel_6_scenery_door_openings ((const struct door_opening *)(channel_6_scenery_door_openings_data))
+#define moes_street_scenery_door_openings_ADDRESS 0x64FEu    /* 0364FE */
+extern const void *moes_street_scenery_door_openings_data;
+#define moes_street_scenery_door_openings ((const struct door_opening *)(moes_street_scenery_door_openings_data))
 #define kind_0f_door_openings_ADDRESS 0x654Du    /* 03654D */
 extern const void *kind_0f_door_openings_data;
 #define kind_0f_door_openings ((const struct door_opening *)(kind_0f_door_openings_data))
@@ -16063,9 +15829,9 @@ extern const void *object_1e_part_offsets_data;
 #define bear_part_flights_ADDRESS 0x7E9Cu    /* 03DE9C */
 extern const void *bear_part_flights_data;
 #define bear_part_flights ((const struct part_flight *)(bear_part_flights_data))
-#define object_f9_state_starts_ADDRESS 0x7F7Cu    /* 03DF7C */
-extern const void *object_f9_state_starts_data;
-#define object_f9_state_starts ((const struct state_start *)(object_f9_state_starts_data))
+#define marge_cloud_state_starts_ADDRESS 0x7F7Cu    /* 03DF7C */
+extern const void *marge_cloud_state_starts_data;
+#define marge_cloud_state_starts ((const struct state_start *)(marge_cloud_state_starts_data))
 #define profile_move_records_ADDRESS 0x70EDu    /* 0410ED */
 extern const void *profile_move_records_data;
 #define profile_move_records ((const struct profile_move *)(profile_move_records_data))
