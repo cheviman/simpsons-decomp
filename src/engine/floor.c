@@ -3,7 +3,7 @@
  *    Description: the floor map (work RAM 4000): the cell under an object or where its speeds take it
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    10-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -17,13 +17,13 @@ void floor_at_offset(uint16_t object, uint16_t *p_offsets, uint32_t *p_negative)
 {
 	uint16_t offsets = (uint16_t)*p_offsets;
 	uint32_t negative = *p_negative;
-	uint16_t d = 0, ignored16 = 0;
+	uint16_t cell = 0, ignored16 = 0;
 
 	floor_offset_x_pixels = offsets >> 8;
 	floor_offset_x_fraction = 0u;
 	floor_offset_y_pixels = (uint8_t)offsets;
 	floor_offset_y_fraction = 0u;
-	*p_offsets = d;
+	*p_offsets = cell;
 	floor_cell_at(object, &ignored16, p_offsets, &negative);
 	*p_negative = negative;
 }
@@ -81,67 +81,67 @@ void floor_cell_at(uint16_t object, uint16_t *p_cell_address, uint16_t *p_cell, 
 {
 	uint32_t negative = *p_negative;
 	uint32_t carry = 0;
-	uint8_t a = 0, b = 0;
+	uint8_t offset_high = 0, offset_low = 0;
 	uint16_t cell = 0, cell_address = 0;
-	uint8_t t4 = 0, t10 = 0, t13 = 0;
-	uint16_t t1 = 0, t2 = 0, t3 = 0, t5 = 0, t6 = 0, t7 = 0, t8 = 0, t9 = 0, t11 = 0, t12 = 0;
+	uint8_t x_high = 0, y_high = 0, cell_byte = 0;
+	uint16_t x_offset_read = 0, x_low_and_fraction = 0, x_offset_added = 0, map_x = 0, map_column_x = 0, y_offset_read = 0, y_low_and_fraction = 0, y_offset_added = 0, row_offset = 0, cell_offset = 0;
 
 	floor_offset_x_sign = 0u;
-	t1 = floor_offset_x;
-	a = (uint8_t)(t1 >> 8);
-	b = (uint8_t)t1;
-	if ((int16_t)t1 < 0)
+	x_offset_read = floor_offset_x;
+	offset_high = (uint8_t)(x_offset_read >> 8);
+	offset_low = (uint8_t)x_offset_read;
+	if ((int16_t)x_offset_read < 0)
 		floor_offset_x_sign = ~floor_offset_x_sign;
-	t2 = (((uint32_t)(OBJECT(object)->x & 0xFFu) << 8u) | OBJECT(object)->x_fraction);
-	t3 = ((uint32_t)a << 8) | b;
-	carry = (uint16_t)(t3 + t2) < t3;
-	t4 = (uint8_t)(OBJECT(object)->x >> 8u);
-	t5 = (((uint32_t)(uint8_t)(t4 + floor_offset_x_sign + carry) << 8) | ((uint16_t)(t3 + t2) >> 8)) + camera_x;
-	t6 = t5 - 0x40u;
-	carry = (t6 >> 8) & 1u;
+	x_low_and_fraction = (((uint32_t)(OBJECT(object)->x & 0xFFu) << 8u) | OBJECT(object)->x_fraction);
+	x_offset_added = ((uint32_t)offset_high << 8) | offset_low;
+	carry = (uint16_t)(x_offset_added + x_low_and_fraction) < x_offset_added;
+	x_high = (uint8_t)(OBJECT(object)->x >> 8u);
+	map_x = (((uint32_t)(uint8_t)(x_high + floor_offset_x_sign + carry) << 8) | ((uint16_t)(x_offset_added + x_low_and_fraction) >> 8)) + camera_x;
+	map_column_x = map_x - 0x40u;
+	carry = (map_column_x >> 8) & 1u;
 	floor_offset_x_sign = 0u;
-	floor_cell_column_low = ((uint8_t)(((uint8_t)t6 >> 1) | (carry << 7)) >> 1) >> 1;
+	floor_cell_column_low = ((uint8_t)(((uint8_t)map_column_x >> 1) | (carry << 7)) >> 1) >> 1;
 	floor_offset_y_sign = 0u;
-	t7 = floor_offset_y;
-	a = (uint8_t)(t7 >> 8);
-	b = (uint8_t)t7;
-	if ((int16_t)t7 < 0)
+	y_offset_read = floor_offset_y;
+	offset_high = (uint8_t)(y_offset_read >> 8);
+	offset_low = (uint8_t)y_offset_read;
+	if ((int16_t)y_offset_read < 0)
 		floor_offset_y_sign = ~floor_offset_y_sign;
-	t8 = (((uint32_t)(OBJECT(object)->y & 0xFFu) << 8u) | OBJECT(object)->y_fraction);
-	t9 = ((uint32_t)a << 8) | b;
-	carry = (uint16_t)(t9 + t8) < t9;
-	t10 = (uint8_t)(OBJECT(object)->y >> 8u);
-	a = t10 + floor_offset_y_sign + carry;
-	floor_place_y = ((uint32_t)a << 8) | ((uint16_t)(t9 + t8) >> 8);
-	t11 = 0x40u * ((((uint8_t)((((uint32_t)a << 8) | (uint8_t)((((uint32_t)a << 8) | 0x70u) - floor_place_y)) + camera_y) >> 1) >> 1) >> 1);
-	t12 = t11 + floor_cell_column;
-	b = (uint8_t)t12;
-	cell_address = floor_map_ADDRESS + (((uint32_t)(t12 >> 8) << 8) | b);
-	t13 = mem_read8(cell_address);
-	negative = t13 >> 7;
-	cell = ((uint32_t)t13 << 8) | b;
+	y_low_and_fraction = (((uint32_t)(OBJECT(object)->y & 0xFFu) << 8u) | OBJECT(object)->y_fraction);
+	y_offset_added = ((uint32_t)offset_high << 8) | offset_low;
+	carry = (uint16_t)(y_offset_added + y_low_and_fraction) < y_offset_added;
+	y_high = (uint8_t)(OBJECT(object)->y >> 8u);
+	offset_high = y_high + floor_offset_y_sign + carry;
+	floor_place_y = ((uint32_t)offset_high << 8) | ((uint16_t)(y_offset_added + y_low_and_fraction) >> 8);
+	row_offset = 0x40u * ((((uint8_t)((((uint32_t)offset_high << 8) | (uint8_t)((((uint32_t)offset_high << 8) | 0x70u) - floor_place_y)) + camera_y) >> 1) >> 1) >> 1);
+	cell_offset = row_offset + floor_cell_column;
+	offset_low = (uint8_t)cell_offset;
+	cell_address = floor_map_ADDRESS + (((uint32_t)(cell_offset >> 8) << 8) | offset_low);
+	cell_byte = mem_read8(cell_address);
+	negative = cell_byte >> 7;
+	cell = ((uint32_t)cell_byte << 8) | offset_low;
 	*p_cell_address = cell_address;
 	*p_cell = cell;
 	*p_negative = negative;
 }
 
 /* Unused: on a floor, takes the floor cell's sprite priority under the object and marks it active. */
-void unused_take_floor_priority(uint16_t x)
+void unused_take_floor_priority(uint16_t object)
 {
 	uint32_t negative = 0;
 	uint8_t floor_cell = 0;
-	uint16_t d = 0;
-	uint8_t t1 = 0;
+	uint16_t cell = 0;
+	uint8_t old_attributes = 0;
 
-	d = 0u;
-	floor_at_offset(x, &d, &negative);
-	floor_cell = (uint8_t)(d >> 8);
+	cell = 0u;
+	floor_at_offset(object, &cell, &negative);
+	floor_cell = (uint8_t)(cell >> 8);
 	if ((int8_t)floor_cell >= 0)
 	{
 		floor_priority_bits = floor_cell & 0x30u;
-		t1 = mem_read8(x + 9u);
-		mem_write8(x + 9u, (t1 & 0xCFu) | floor_priority_bits);
-		mem_write8(x, 0xC0u);
+		old_attributes = OBJECT(object)->attributes;
+		OBJECT(object)->attributes = (old_attributes & 0xCFu) | floor_priority_bits;
+		OBJECT(object)->flags = 0xC0u;
 	}
 }
 
@@ -149,17 +149,17 @@ void unused_take_floor_priority(uint16_t x)
    steps it is above the one it is on (climb_speeds). */
 uint16_t set_climb_speed(uint16_t object, uint16_t target_level)
 {
-	uint16_t u = 0;
+	uint16_t climb_speed_table = 0;
 	uint8_t stack = 0;
-	uint8_t t1 = 0;
-	uint16_t t2 = 0;
+	uint8_t floor_height = 0;
+	uint16_t climb_z_speed = 0;
 
-	u = climb_speeds_ADDRESS;
-	t1 = (uint8_t)OBJECT(object)->floor_z;
-	stack = ((t1 >> 1) >> 1) >> 1;
-	t2 = (uint32_t)climb_speeds[(int8_t)((uint8_t)((target_level >> 8) - stack))] << 4;
-	OBJECT(object)->z_speed = t2;
-	return u;
+	climb_speed_table = climb_speeds_ADDRESS;
+	floor_height = (uint8_t)OBJECT(object)->floor_z;
+	stack = ((floor_height >> 1) >> 1) >> 1;
+	climb_z_speed = (uint32_t)climb_speeds[(int8_t)((uint8_t)((target_level >> 8) - stack))] << 4;
+	OBJECT(object)->z_speed = climb_z_speed;
+	return climb_speed_table;
 }
 
 /* Reads the floor map under the object (its cell, its floor's height, its priority) and, while it moves,
@@ -168,7 +168,7 @@ uint16_t check_floor(uint16_t object, uint16_t object_2)
 {
 	uint32_t negative = 0;
 	uint8_t floor_cell = 0;
-	uint16_t cell = 0, d = 0;
+	uint16_t cell = 0, cell_here = 0;
 	uint8_t blocked = 0, blocked_2 = 0, attributes = 0, blocked_3 = 0, next_floor_cell = 0;
 	uint16_t z = 0, floor_z = 0, x_speed = 0, y_speed = 0;
 
@@ -182,9 +182,9 @@ uint16_t check_floor(uint16_t object, uint16_t object_2)
 		OBJECT(object)->blocked = blocked_2 | 0x40u;
 		OBJECT(object)->flags |= 8u;
 	}
-	d = 0u;
-	floor_at_offset(object, &d, &negative);
-	floor_cell = (uint8_t)(d >> 8);
+	cell_here = 0u;
+	floor_at_offset(object, &cell_here, &negative);
+	floor_cell = (uint8_t)(cell_here >> 8);
 	floor_cell_here = floor_cell;
 	OBJECT(object)->floor_cell = floor_cell;
 	OBJECT(object)->floor_z = (OBJECT(object)->floor_z & 0xFF00u) | ((((floor_cell & 0xFu) << 1) << 1) << 1 & 0xFFu);
@@ -231,7 +231,7 @@ uint16_t check_floor_ahead(uint16_t object, uint16_t object_2)
 	uint8_t blocked = 0, floor_cell = 0;
 	uint16_t cell = 0;
 	uint8_t x_speed = 0, enemy_class = 0, state = 0, action = 0, y_speed_2 = 0, blocked_2 = 0, blocked_3 = 0, blocked_4 = 0, blocked_5 = 0, step_level = 0;
-	uint16_t x_speed_2 = 0, y_speed = 0, target = 0, floor_z = 0, floor_z_2 = 0, t1 = 0, z = 0;
+	uint16_t x_speed_2 = 0, y_speed = 0, target = 0, floor_z = 0, floor_z_2 = 0, step_height = 0, z = 0;
 
 	if ((int8_t)floor_cell_ahead >= 0)
 	{
@@ -416,9 +416,9 @@ uint16_t check_floor_ahead(uint16_t object, uint16_t object_2)
 	}
 	OBJECT(object)->blocked = blocked & 0xEFu;
 	step_level = OBJECT(object)->enemy.step_level;
-	t1 = (uint32_t)step_level << 3;
+	step_height = (uint32_t)step_level << 3;
 	z = OBJECT(object)->z;
-	if (z <= t1)
+	if (z <= step_height)
 	{
 		OBJECT(object)->x_speed = 0;
 		OBJECT(object)->y_speed = 0;
@@ -448,7 +448,7 @@ void enemy_start_climbing(uint16_t object)
 {
 	uint8_t blocked_bits = 0;
 	uint8_t blocked = 0, blocked_2 = 0, step_level = 0, blocked_3 = 0, blocked_4 = 0;
-	uint16_t t1 = 0, floor_z = 0;
+	uint16_t step_height = 0, floor_z = 0;
 
 	blocked = OBJECT(object)->blocked;
 	if ((blocked & 0x40u) == 0u)
@@ -458,9 +458,9 @@ void enemy_start_climbing(uint16_t object)
 		if ((int8_t)blocked_2 < 0 && (blocked_bits & 8u) == 0u && (blocked_bits & 0x20u) != 0u)
 		{
 			step_level = OBJECT(object)->enemy.step_level;
-			t1 = (uint32_t)step_level << 3;
+			step_height = (uint32_t)step_level << 3;
 			floor_z = OBJECT(object)->floor_z;
-			if (t1 <= floor_z)
+			if (step_height <= floor_z)
 			{
 				blocked_3 = OBJECT(object)->blocked;
 				OBJECT(object)->blocked = blocked_3 | 4u;

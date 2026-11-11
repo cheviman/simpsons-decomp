@@ -3,7 +3,7 @@
  *    Description: bank 15's scenery: Krustyland's doors and booths, props, the cemetery's pieces
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    10-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -12,20 +12,19 @@
 #include "game.h"
 
 /* Sets up the kind 9E object. */
-void kind_9e_spawner_start(uint16_t object, uint16_t *p_box, uint16_t *p_setup)
+uint16_t kind_9e_spawner_start(uint16_t object)
 {
-	uint16_t box = 0, setup = 0;
+	uint16_t setup = 0;
 	uint8_t state = 0;
 
 	setup = kind_9e_spawner_setup_ADDRESS;
-	box = vector_object_setup(object, setup);
+	vector_object_setup(object, setup);
 	OBJECT(object)->flags = 0x80u;
 	OBJECT(object)->attributes = 0x50u;
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
 	kind_9e_spawner_wait();
-	*p_box = box;
-	*p_setup = setup;
+	return setup;
 }
 
 /* Does nothing once the object has been put in. */
@@ -34,37 +33,33 @@ void kind_9e_spawner_wait(void)
 }
 
 /* Once the camera reaches 0190, puts in bank 18's list 1 type 22 object beside it. */
-void kind_9e_spawner_put_in_object(uint16_t object, uint16_t *p_child_record, uint16_t *p_child)
+uint16_t kind_9e_spawner_put_in_object(uint16_t object, uint16_t child)
 {
-	uint16_t child_record = (uint16_t)*p_child_record;
-	uint16_t child = (uint16_t)*p_child;
 	uint32_t carry = 0;
-	uint16_t ignored16 = 0;
+	uint16_t ignored16 = 0, ignored16_2 = 0;
 	uint8_t state = 0;
 
 	if (camera_x < 0x190u)
-		return;
-	child_record = kind_9e_spawner_object_child_ADDRESS;
-	vector_spawn_child(object, child_record, &child, &ignored16, &carry);
+		return child;
+	leftover_y = kind_9e_spawner_object_child_ADDRESS;
+	vector_spawn_child(object, &ignored16, &child, &ignored16_2, &carry);
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
-	*p_child_record = child_record;
-	*p_child = child;
+	return child;
 }
 
 /* Sets up the kind AC object. */
-void kind_ac_start(uint16_t object, uint16_t *p_box, uint16_t *p_setup)
+uint16_t kind_ac_start(uint16_t object)
 {
-	uint16_t box = 0, setup = 0;
+	uint16_t setup = 0;
 	uint8_t state = 0;
 
 	setup = kind_ac_setup_ADDRESS;
-	box = vector_object_setup(object, setup);
+	vector_object_setup(object, setup);
 	OBJECT(object)->attributes = 0x10u;
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
-	*p_box = box;
-	*p_setup = setup;
+	return setup;
 }
 
 /* Does nothing until something moves the object to its next step. */
@@ -73,26 +68,25 @@ void kind_ac_wait(void)
 }
 
 /* Drops a piece of food and shows its next animation. */
-void kind_ac_drop_food(uint16_t object, uint16_t *p_child_record, uint16_t *p_food)
+uint16_t kind_ac_drop_food(uint16_t object)
 {
 	uint32_t carry = 0;
-	uint16_t child_record = 0, food = 0, ignored16 = 0;
+	uint16_t food = 0, ignored16 = 0, ignored16_2 = 0;
 	uint8_t state = 0;
 
 	OBJECT(object)->flags = 0x80u;
-	child_record = kind_ac_drop_food_child_ADDRESS;
-	vector_spawn_child(object, child_record, &food, &ignored16, &carry);
+	leftover_y = kind_ac_drop_food_child_ADDRESS;
+	vector_spawn_child(object, &ignored16, &food, &ignored16_2, &carry);
 	if (carry == 0u)
-		kind_ac_done();
-	else
 	{
-		OBJECT(object)->animation = 0x82u;
-		state = OBJECT(object)->state;
-		OBJECT(object)->state = state + 1u;
 		kind_ac_done();
+		return food;
 	}
-	*p_child_record = child_record;
-	*p_food = food;
+	OBJECT(object)->animation = 0x82u;
+	state = OBJECT(object)->state;
+	OBJECT(object)->state = state + 1u;
+	kind_ac_done();
+	return food;
 }
 
 /* Does nothing after the food is dropped. */
@@ -101,19 +95,18 @@ void kind_ac_done(void)
 }
 
 /* Sets up the kind AB object, good for three hits. */
-void kind_ab_start(uint16_t object, uint16_t *p_box, uint16_t *p_setup)
+uint16_t kind_ab_start(uint16_t object)
 {
-	uint16_t box = 0, setup = 0;
+	uint16_t setup = 0;
 	uint8_t state = 0;
 
 	setup = kind_ab_setup_ADDRESS;
-	box = vector_object_setup(object, setup);
+	vector_object_setup(object, setup);
 	OBJECT(object)->attributes = 0x10u;
 	OBJECT(object)->kind_ab.let_outs_left = 3u;
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
-	*p_box = box;
-	*p_setup = setup;
+	return setup;
 }
 
 /* Waits until a player hits it, then shows its hit animation. */
@@ -131,43 +124,37 @@ void kind_ab_wait_hit(uint16_t object)
 }
 
 /* When the hit animation ends, lets out bank 16's list 1 type 01 object; after the third it stays still. */
-void kind_ab_let_out(uint16_t object, uint16_t *p_child_record, uint16_t *p_child)
+uint16_t kind_ab_let_out(uint16_t object, uint16_t child)
 {
-	uint16_t child_record = (uint16_t)*p_child_record;
-	uint16_t child = (uint16_t)*p_child;
 	uint32_t carry = 0;
-	uint16_t ignored16 = 0;
+	uint16_t ignored16 = 0, ignored16_2 = 0;
 	uint8_t animation_flags = 0, child_out = 0, let_outs_left = 0, state = 0;
 
 	animation_flags = OBJECT(object)->animation_flags;
-	if (animation_flags & 1u)
+	if ((animation_flags & 1u) == 0u)
+		return child;
+	OBJECT(object)->kind_ab.child_out = 0u;
+	leftover_y = kind_ab_let_out_child_ADDRESS;
+	vector_spawn_child(object, &ignored16, &child, &ignored16_2, &carry);
+	if (carry)
 	{
-		OBJECT(object)->kind_ab.child_out = 0u;
-		child_record = kind_ab_let_out_child_ADDRESS;
-		vector_spawn_child(object, child_record, &child, &ignored16, &carry);
-		if (carry)
-		{
-			OBJECT(object)->parent = child;
-			child_out = OBJECT(object)->kind_ab.child_out;
-			OBJECT(object)->kind_ab.child_out = child_out + 1u;
-		}
-		OBJECT(object)->timer = 0x40u;
-		OBJECT(object)->animation = 0x81u;
-		let_outs_left = OBJECT(object)->kind_ab.let_outs_left;
-		OBJECT(object)->kind_ab.let_outs_left = let_outs_left - 1u;
-		if (let_outs_left != 1u)
-		{
-			state = OBJECT(object)->state;
-			OBJECT(object)->state = state + 1u;
-		}
-		else
-		{
-			OBJECT(object)->animation = 0x80u;
-			OBJECT(object)->state = 5u;
-		}
+		OBJECT(object)->parent = child;
+		child_out = OBJECT(object)->kind_ab.child_out;
+		OBJECT(object)->kind_ab.child_out = child_out + 1u;
 	}
-	*p_child_record = child_record;
-	*p_child = child;
+	OBJECT(object)->timer = 0x40u;
+	OBJECT(object)->animation = 0x81u;
+	let_outs_left = OBJECT(object)->kind_ab.let_outs_left;
+	OBJECT(object)->kind_ab.let_outs_left = let_outs_left - 1u;
+	if (let_outs_left != 1u)
+	{
+		state = OBJECT(object)->state;
+		OBJECT(object)->state = state + 1u;
+		return child;
+	}
+	OBJECT(object)->animation = 0x80u;
+	OBJECT(object)->state = 5u;
+	return child;
 }
 
 /* Waits until the object it let out reaches its second step. */
@@ -219,11 +206,11 @@ void kind_ab_done(void)
 }
 
 /* Sets up a Krustyland door: its wait, its list of releases and the object it lets out. */
-void krustyland_door_start(uint16_t object, uint16_t *p_door_release, uint16_t *p_krustyland_door)
+uint16_t krustyland_door_start(uint16_t object)
 {
 	uint16_t door_release = 0, krustyland_door = 0, setup = 0;
 	uint8_t parameter = 0, state = 0;
-	uint16_t wait = 0, t1 = 0, releases = 0, players = 0;
+	uint16_t wait = 0, trigger_at_x = 0, releases = 0, players = 0;
 
 	setup = krustyland_door_setup_ADDRESS;
 	vector_object_setup(object, setup);
@@ -233,8 +220,8 @@ void krustyland_door_start(uint16_t object, uint16_t *p_door_release, uint16_t *
 	krustyland_door = krustyland_doors_ADDRESS + (int8_t)(((uint32_t)parameter << 1) << 1);
 	wait = (((uint32_t)KRUSTYLAND_DOOR(krustyland_door)->wait << 8u) | KRUSTYLAND_DOOR(krustyland_door)->trigger_x);
 	OBJECT(object)->timer = wait >> 8;
-	t1 = (wait & 0xFFu) << 4;
-	OBJECT(object)->krustyland_door.trigger_x = t1;
+	trigger_at_x = (wait & 0xFFu) << 4;
+	OBJECT(object)->krustyland_door.trigger_x = trigger_at_x;
 	releases = KRUSTYLAND_DOOR(krustyland_door)->releases;
 	door_release = releases;
 	OBJECT(object)->krustyland_door.release = door_release;
@@ -243,8 +230,8 @@ void krustyland_door_start(uint16_t object, uint16_t *p_door_release, uint16_t *
 	OBJECT(object)->krustyland_door.list_ended = 0u;
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
-	*p_door_release = door_release;
-	*p_krustyland_door = krustyland_door;
+	leftover_y = door_release;
+	return krustyland_door;
 }
 
 /* Waits until the camera reaches 04E0. */
@@ -261,58 +248,54 @@ void krustyland_door_wait_camera(uint16_t object)
 
 /* After its wait, with at most 4 enemies about, opens (sound 1400) and lets out its object if enough
    players play. */
-void krustyland_door_open(uint16_t object, uint16_t *p_door_release, uint16_t *p_released_child)
+uint16_t krustyland_door_open(uint16_t object, uint16_t released_child)
 {
-	uint16_t door_release = (uint16_t)*p_door_release;
-	uint16_t released_child = (uint16_t)*p_released_child;
 	uint32_t carry = 0;
 	uint8_t players_needed = 0, timer = 0;
-	uint16_t command = 0, ignored16 = 0;
-	uint8_t timer_2 = 0, t1 = 0, list_ended = 0, state = 0, state_2 = 0;
-	uint16_t release = 0, players = 0, released_object = 0;
+	uint16_t command = 0, ignored16 = 0, release = 0;
+	uint8_t timer_2 = 0, enemies = 0, list_ended = 0, state = 0, state_2 = 0;
+	uint16_t release_2 = 0, players = 0, released_object = 0;
 
 	timer_2 = OBJECT(object)->timer;
 	OBJECT(object)->timer = timer_2 - 1u;
-	if (timer_2 == 1u)
+	if (timer_2 != 1u)
+		return released_child;
+	enemies = io_read8(0x1876u);
+	if (enemies > 4u)
 	{
-		t1 = io_read8(0x1876u);
-		if (t1 <= 4u)
-		{
-			command = 0x1400u;
-			carry = vector_queue_sound(command);
-			OBJECT(object)->animation = 0xA3u;
-			release = OBJECT(object)->krustyland_door.release;
-			door_release = release;
-			players = (((uint32_t)DOOR_RELEASE(door_release)->players << 8u) | DOOR_RELEASE(door_release)->wait);
-			timer = (uint8_t)players;
-			players_needed = (uint8_t)(players >> 8);
-			if ((int16_t)players < 0)
-			{
-				list_ended = OBJECT(object)->krustyland_door.list_ended;
-				OBJECT(object)->krustyland_door.list_ended = list_ended + 1u;
-				state = OBJECT(object)->state;
-				OBJECT(object)->state = state + 1u;
-			}
-			else
-			{
-				OBJECT(object)->timer = timer;
-				door_release += 2u;
-				OBJECT(object)->krustyland_door.release = door_release;
-				if (players_needed < player_count)
-				{
-					released_object = OBJECT(object)->krustyland_door.released_object;
-					door_release = released_object;
-					vector_spawn_child(object, door_release, &released_child, &ignored16, &carry);
-				}
-				state_2 = OBJECT(object)->state;
-				OBJECT(object)->state = state_2 + 1u;
-			}
-		}
-		else
-			OBJECT(object)->timer = 1u;
+		OBJECT(object)->timer = 1u;
+		return released_child;
 	}
-	*p_door_release = door_release;
-	*p_released_child = released_child;
+	command = 0x1400u;
+	carry = vector_queue_sound(command);
+	OBJECT(object)->animation = 0xA3u;
+	release_2 = OBJECT(object)->krustyland_door.release;
+	release = release_2;
+	leftover_y = release;
+	players = (((uint32_t)DOOR_RELEASE(release)->players << 8u) | DOOR_RELEASE(release)->wait);
+	timer = (uint8_t)players;
+	players_needed = (uint8_t)(players >> 8);
+	if ((int16_t)players < 0)
+	{
+		list_ended = OBJECT(object)->krustyland_door.list_ended;
+		OBJECT(object)->krustyland_door.list_ended = list_ended + 1u;
+		state = OBJECT(object)->state;
+		OBJECT(object)->state = state + 1u;
+		return released_child;
+	}
+	OBJECT(object)->timer = timer;
+	release += 2u;
+	OBJECT(object)->krustyland_door.release = release;
+	if (players_needed < player_count)
+	{
+		released_object = OBJECT(object)->krustyland_door.released_object;
+		leftover_y = released_object;
+		vector_spawn_child(object, &release, &released_child, &ignored16, &carry);
+	}
+	state_2 = OBJECT(object)->state;
+	OBJECT(object)->state = state_2 + 1u;
+	leftover_y = release;
+	return released_child;
 }
 
 /* When the door has opened, waits 96 frames; after its last release it goes away. */
@@ -358,10 +341,10 @@ void krustyland_door_closed(uint16_t object)
 }
 
 /* Sets up the kind B2 object with the bear (bank 17's kind A2) beside it. */
-void kind_b2_leaper_start(uint16_t object, uint16_t *p_child_record, uint16_t *p_u)
+uint16_t kind_b2_leaper_start(uint16_t object)
 {
 	uint32_t carry = 0;
-	uint16_t child_record = 0, ignored16 = 0, parent = 0, setup = 0;
+	uint16_t ignored16 = 0, ignored16_2 = 0, parent = 0, setup = 0;
 	uint8_t state = 0;
 
 	setup = kind_b2_leaper_setup_ADDRESS;
@@ -369,21 +352,18 @@ void kind_b2_leaper_start(uint16_t object, uint16_t *p_child_record, uint16_t *p
 	OBJECT(object)->flags = 0x80u;
 	OBJECT(object)->shadow_player = 0x40u;
 	OBJECT(object)->attributes = 0x10u;
-	child_record = kind_b2_leaper_child_ADDRESS;
-	vector_spawn_child(object, child_record, &parent, &ignored16, &carry);
+	leftover_y = kind_b2_leaper_child_ADDRESS;
+	vector_spawn_child(object, &ignored16, &parent, &ignored16_2, &carry);
 	if (carry == 0u)
 	{
 		OBJECT(object)->state = 6u;
 		kind_b2_leaper_idle();
+		return parent;
 	}
-	else
-	{
-		OBJECT(object)->parent = parent;
-		state = OBJECT(object)->state;
-		OBJECT(object)->state = state + 1u;
-	}
-	*p_child_record = child_record;
-	*p_u = parent;
+	OBJECT(object)->parent = parent;
+	state = OBJECT(object)->state;
+	OBJECT(object)->state = state + 1u;
+	return parent;
 }
 
 /* Does nothing (when there was no slot for its bear). */
@@ -482,14 +462,14 @@ void kind_b2_leaper_vanish(uint16_t object)
 }
 
 /* Sets a prop up by its spawn's state: its kind, animation, attributes and the x it goes away at. */
-void prop_start(uint16_t object, uint16_t *p_box, uint16_t *p_prop)
+uint16_t prop_start(uint16_t object)
 {
-	uint16_t box = 0, prop = 0, setup = 0;
+	uint16_t prop = 0, setup = 0;
 	uint8_t parameter = 0, state = 0;
-	uint16_t kind = 0, attributes = 0, t1 = 0;
+	uint16_t kind = 0, attributes = 0, leave_at_x = 0;
 
 	setup = prop_setup_ADDRESS;
-	box = vector_object_setup(object, setup);
+	vector_object_setup(object, setup);
 	OBJECT(object)->flags = 0x80u;
 	parameter = OBJECT(object)->parameter;
 	prop = props_ADDRESS + (int8_t)(((uint32_t)parameter << 1) << 1);
@@ -498,40 +478,38 @@ void prop_start(uint16_t object, uint16_t *p_box, uint16_t *p_prop)
 	OBJECT(object)->animation = (uint8_t)kind;
 	attributes = (((uint32_t)PROP(prop)->attributes << 8u) | PROP(prop)->leave_x);
 	OBJECT(object)->attributes = attributes >> 8;
-	t1 = (attributes & 0xFFu) << 4;
-	OBJECT(object)->prop.leave_x = t1;
+	leave_at_x = (attributes & 0xFFu) << 4;
+	OBJECT(object)->prop.leave_x = leave_at_x;
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
-	*p_box = box;
-	*p_prop = prop;
+	return prop;
 }
 
 /* Takes the prop away once the scroll brings it left of its x. */
 void prop_leave(uint16_t object)
 {
-	uint16_t t1 = 0, leave_x = 0;
+	uint16_t screen_x = 0, leave_x = 0;
 
-	t1 = OBJECT(object)->x;
+	screen_x = OBJECT(object)->x;
 	leave_x = OBJECT(object)->prop.leave_x;
-	if (t1 < leave_x)
+	if (screen_x < leave_x)
 		OBJECT(object)->flags = 0u;
 }
 
 /* Sets up the kind AA object of stage 8. */
-void kind_aa_start(uint16_t object, uint16_t *p_box, uint16_t *p_setup)
+uint16_t kind_aa_start(uint16_t object)
 {
-	uint16_t box = 0, setup = 0;
+	uint16_t setup = 0;
 	uint8_t state = 0;
 
 	setup = kind_aa_setup_ADDRESS;
-	box = vector_object_setup(object, setup);
+	vector_object_setup(object, setup);
 	OBJECT(object)->flags = 0x80u;
 	OBJECT(object)->attributes = 0x10u;
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
 	kind_aa_idle();
-	*p_box = box;
-	*p_setup = setup;
+	return setup;
 }
 
 /* Does nothing. */
@@ -540,14 +518,14 @@ void kind_aa_idle(void)
 }
 
 /* Sets up the kind AA object of stage 7; the first puts in its pair ahead of it. */
-void kind_aa_pair_start(uint16_t object, uint16_t *p_record, uint16_t *p_u)
+uint16_t kind_aa_pair_start(uint16_t object)
 {
 	uint32_t carry = 0;
-	uint16_t ignored16 = 0, record = 0, u = 0;
+	uint16_t ignored16 = 0, ignored16_2 = 0, u = 0;
 	uint8_t state = 0, parameter = 0;
 
 	u = kind_aa_pair_setup_ADDRESS;
-	record = vector_object_setup(object, u);
+	vector_object_setup(object, u);
 	OBJECT(object)->flags = 0x80u;
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
@@ -557,42 +535,38 @@ void kind_aa_pair_start(uint16_t object, uint16_t *p_record, uint16_t *p_u)
 		OBJECT(object)->attributes = 0x10u;
 		OBJECT(object)->animation = 0x84u;
 		OBJECT(object)->z = 0u;
+		return u;
 	}
-	else
-	{
-		OBJECT(object)->attributes = 0x20u;
-		record = kind_aa_pair_child_ADDRESS;
-		vector_spawn_child(object, record, &u, &ignored16, &carry);
-	}
-	*p_record = record;
-	*p_u = u;
+	OBJECT(object)->attributes = 0x20u;
+	leftover_y = kind_aa_pair_child_ADDRESS;
+	vector_spawn_child(object, &ignored16, &u, &ignored16_2, &carry);
+	return u;
 }
 
 /* Takes the object away near the screen's left edge. */
 void kind_aa_pair_leave(uint16_t object)
 {
-	uint16_t t1 = 0;
+	uint16_t screen_x = 0;
 
-	t1 = OBJECT(object)->x;
-	if (t1 < 0x20u)
+	screen_x = OBJECT(object)->x;
+	if (screen_x < 0x20u)
 		OBJECT(object)->flags = 0u;
 }
 
 /* Sets up the kind CB object, good for three hits. */
-void kind_cb_start(uint16_t object, uint16_t *p_box, uint16_t *p_setup)
+uint16_t kind_cb_start(uint16_t object)
 {
-	uint16_t box = 0, setup = 0;
+	uint16_t setup = 0;
 	uint8_t state = 0;
 
 	setup = kind_cb_setup_ADDRESS;
-	box = vector_object_setup(object, setup);
+	vector_object_setup(object, setup);
 	OBJECT(object)->attributes = 0x60u;
 	OBJECT(object)->kind_cb.hits_left = 3u;
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
 	kind_cb_done();
-	*p_box = box;
-	*p_setup = setup;
+	return setup;
 }
 
 /* Does nothing after its third hit. */
@@ -700,14 +674,14 @@ void kind_d1_fling_shrink(uint16_t object)
 }
 
 /* Sets a cemetery piece up at x 009A, with the height and animation its spawn's state picks. */
-void cemetery_piece_start(uint16_t object, uint16_t *p_box, uint16_t *p_cemetery_piece)
+uint16_t cemetery_piece_start(uint16_t object)
 {
-	uint16_t box = 0, cemetery_piece = 0, setup = 0;
+	uint16_t cemetery_piece = 0, setup = 0;
 	uint8_t parameter = 0, animation = 0, state = 0;
 	uint16_t z = 0;
 
 	setup = cemetery_piece_setup_ADDRESS;
-	box = vector_object_setup(object, setup);
+	vector_object_setup(object, setup);
 	OBJECT(object)->x = 0x9Au;
 	parameter = OBJECT(object)->parameter;
 	cemetery_piece = cemetery_pieces_ADDRESS + (int8_t)(((uint32_t)parameter << 1) << 1);
@@ -719,8 +693,7 @@ void cemetery_piece_start(uint16_t object, uint16_t *p_box, uint16_t *p_cemetery
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
 	cemetery_piece_bob(object);
-	*p_box = box;
-	*p_cemetery_piece = cemetery_piece;
+	return cemetery_piece;
 }
 
 /* Moves the piece up and down with the stage's vertical speed (48E2). */

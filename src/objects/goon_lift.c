@@ -3,7 +3,7 @@
  *    Description: stage 7's lift that brings goons down (5280 types 39 and 3A)
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    10-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -12,10 +12,10 @@
 #include "game.h"
 
 /* Sets the lift up hidden and puts in its two parts (type 3A). */
-void goon_lift_setup(uint16_t object, uint16_t *p_y, uint16_t *p_u)
+uint16_t goon_lift_setup(uint16_t object)
 {
 	uint32_t carry = 0;
-	uint16_t ignored16 = 0, ignored16_3 = 0, part = 0, record = 0, setup = 0;
+	uint16_t ignored16 = 0, ignored16_2 = 0, ignored16_3 = 0, part = 0, setup = 0;
 	uint8_t state = 0;
 
 	setup = goon_lift_object_setup_ADDRESS;
@@ -24,38 +24,34 @@ void goon_lift_setup(uint16_t object, uint16_t *p_y, uint16_t *p_u)
 	OBJECT(object)->attributes = 0x20u;
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
-	record = goon_lift_part_child_1_ADDRESS;
-	vector_spawn_child(object, record, &ignored16, &ignored16_3, &carry);
-	record = goon_lift_part_child_2_ADDRESS;
-	*p_u = part;
-	vector_spawn_child(object, record, p_u, &ignored16_3, &carry);
-	*p_y = record;
+	leftover_y = goon_lift_part_child_1_ADDRESS;
+	vector_spawn_child(object, &ignored16, &ignored16_2, &ignored16_3, &carry);
+	leftover_y = goon_lift_part_child_2_ADDRESS;
+	vector_spawn_child(object, &ignored16, &part, &ignored16_3, &carry);
+	return part;
 }
 
 /* When the scroll brings it on, shows the lift coming down with its two goons (4F80 type 13). */
-void goon_lift_arrive(uint16_t object, uint16_t *p_y, uint16_t *p_u)
+uint16_t goon_lift_arrive(uint16_t object, uint16_t states)
 {
-	uint16_t y = (uint16_t)*p_y;
-	uint16_t u = (uint16_t)*p_u;
 	uint32_t carry = 0;
-	uint16_t goon = 0, ignored16 = 0, ignored16_2 = 0, record = 0;
+	uint16_t goon = 0, ignored16 = 0, ignored16_2 = 0, ignored16_3 = 0;
 	uint8_t state = 0;
-	uint16_t t1 = 0;
+	uint16_t lift_x = 0;
 
-	t1 = OBJECT(object)->x;
-	if (t1 >= 0x140u)
-		return;
+	lift_x = OBJECT(object)->x;
+	if (lift_x >= 0x140u)
+		return states;
 	OBJECT(object)->flags = 0x80u;
 	OBJECT(object)->z_speed = -0x100;
 	OBJECT(object)->timer = 0x60u;
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
-	record = goon_lift_goon_1_ADDRESS;
-	vector_spawn_child(object, record, &ignored16, &ignored16_2, &carry);
-	record = goon_lift_goon_2_ADDRESS;
-	*p_u = goon;
-	vector_spawn_child(object, record, p_u, &ignored16_2, &carry);
-	*p_y = record;
+	leftover_y = goon_lift_goon_1_ADDRESS;
+	vector_spawn_child(object, &ignored16, &ignored16_2, &ignored16_3, &carry);
+	leftover_y = goon_lift_goon_2_ADDRESS;
+	vector_spawn_child(object, &ignored16, &goon, &ignored16_3, &carry);
+	return goon;
 }
 
 /* Counts the descent down, then stops the lift for 128 frames. */
@@ -150,14 +146,14 @@ void goon_lift_remove(uint16_t object)
 
 /* Sets the lift's part up with the lift's step it changes at, its wait and its height from
    kind_12_parts. */
-void goon_lift_part_setup(uint16_t object, uint16_t *p_box, uint16_t *p_part)
+uint16_t goon_lift_part_setup(uint16_t object)
 {
-	uint16_t box = 0, part = 0, setup = 0;
+	uint16_t part = 0, setup = 0;
 	uint8_t parameter = 0, height = 0, state = 0;
 	uint16_t parent_step = 0;
 
 	setup = goon_lift_part_object_setup_ADDRESS;
-	box = vector_object_setup(object, setup);
+	vector_object_setup(object, setup);
 	OBJECT(object)->flags = 0x80u;
 	OBJECT(object)->attributes = 0x20u;
 	parameter = OBJECT(object)->parameter;
@@ -169,8 +165,7 @@ void goon_lift_part_setup(uint16_t object, uint16_t *p_box, uint16_t *p_part)
 	OBJECT(object)->z = height;
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
-	*p_box = box;
-	*p_part = part;
+	return part;
 }
 
 /* Waits for the lift (field 40) to reach its step, then plays animation 82. */

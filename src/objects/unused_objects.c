@@ -3,7 +3,7 @@
  *    Description: objects nothing puts in
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    10-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -12,13 +12,13 @@
 #include "game.h"
 
 /* Unused: sets the kind B7 object moving left; state 0 only slides. */
-uint16_t unused_kind_b7_start(uint16_t object)
+void unused_kind_b7_start(uint16_t object)
 {
-	uint16_t box = 0, setup = 0;
+	uint16_t setup = 0;
 	uint8_t parameter = 0, state = 0;
 
 	setup = unused_kind_b7_setup_ADDRESS;
-	box = vector_object_setup(object, setup);
+	vector_object_setup(object, setup);
 	OBJECT(object)->flags = 0xC8u;
 	OBJECT(object)->floor_z = 0u;
 	OBJECT(object)->x_speed = -0x200;
@@ -27,10 +27,9 @@ uint16_t unused_kind_b7_start(uint16_t object)
 	{
 		state = OBJECT(object)->state;
 		OBJECT(object)->state = state + 1u;
-		return box;
+		return;
 	}
 	OBJECT(object)->state = 3u;
-	return box;
 }
 
 /* Unused: falls and bounces high with sound 2000. */

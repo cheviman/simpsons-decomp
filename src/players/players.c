@@ -3,7 +3,7 @@
  *    Description: bank 1C: the four players run each frame with their controls, and how a player joins the stage
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    10-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -15,15 +15,15 @@
    stage's end, once all four stand idle, says so in 184E and removes the objects they carry. */
 void player_run_all(void)
 {
-	uint8_t a = 0;
+	uint8_t idle_players = 0, players_left = 0;
 	uint16_t bit_and_number = 0, controls = 0, held_object = 0, player = 0, player_2 = 0, record = 0;
 	uint8_t stack = 0, stack_10002 = 0;
-	uint8_t t1 = 0, t2 = 0, t3 = 0, t4 = 0, t5 = 0, t6 = 0, t7 = 0;
+	uint8_t last_idle_players = 0, last_heavy_workers = 0, last_all_idle = 0, stage_is_over = 0, t1 = 0, held_high = 0, players_before = 0;
 	uint16_t held = 0;
 
-	t1 = io_read8(0x184Cu);
+	last_idle_players = io_read8(0x184Cu);
 	io_write8(0x184Cu, 0u);
-	t2 = io_read8(0x184Du);
+	last_heavy_workers = io_read8(0x184Du);
 	io_write8(0x184Du, 0u);
 	players_push_y = 0;
 	stack = player_controls(0);
@@ -58,18 +58,18 @@ void player_run_all(void)
 	io_write16(0x1848u, lisa_lives_ADDRESS);
 	bit_and_number = 0x803u;
 	player_run(record, controls, player, bit_and_number);
-	t3 = io_read8(0x184Eu);
+	last_all_idle = io_read8(0x184Eu);
 	io_write8(0x184Eu, 0u);
-	t4 = io_read8(0x184Bu);
-	if (t4 != 0u)
+	stage_is_over = io_read8(0x184Bu);
+	if (stage_is_over != 0u)
 	{
-		t5 = io_read8(0x184Cu);
-		a = t5;
-		if (a != 4u)
+		t1 = io_read8(0x184Cu);
+		idle_players = t1;
+		if (idle_players != 4u)
 			return;
-		io_write8(0x184Eu, a);
+		io_write8(0x184Eu, idle_players);
 		player_2 = OBJECT_ADDRESS(0);
-		a = 4u;
+		players_left = 4u;
 		do
 		{
 			if (OBJECT(player_2)->flags != 0u)
@@ -78,15 +78,15 @@ void player_run_all(void)
 				held_object = held;
 				if (held != 0u)
 				{
-					t6 = (uint8_t)(OBJECT(player_2)->player.held >> 8u);
-					if (t6 != 0u)
+					held_high = (uint8_t)(OBJECT(player_2)->player.held >> 8u);
+					if (held_high != 0u)
 						OBJECT(held_object)->flags = 0u;
 				}
 			}
 			player_2 += 0xC0u;
-			t7 = a;
-			a = t7 - 1u;
-		} while (t7 != 1u);
+			players_before = players_left;
+			players_left = players_before - 1u;
+		} while (players_before != 1u);
 	}
 }
 
@@ -98,42 +98,42 @@ void player_run(uint16_t record, uint16_t controls, uint16_t player, uint16_t bi
 {
 	bool L_038159 = false;
 	uint32_t negative = 0, carry = 0;
-	uint8_t a = 0, b = 0, shadow_player = 0, status = 0;
+	uint8_t clear_value = 0, drop_x_high = 0, drop_x_low = 0, floor_value = 0, player_number = 0, scene_number = 0, shadow_player = 0, status = 0;
 	uint16_t bytes_left = 0, command = 0, cursor = 0, floor_cell = 0, state_handlers = 0;
 	uint8_t stack_10004 = 0;
 	uint16_t stack = 0, stack_6 = 0;
-	uint8_t t1 = 0, t2 = 0, t3 = 0, status_2 = 0, shadow_player_2 = 0, t4 = 0, status_3 = 0, status_4 = 0, t6 = 0, kind = 0, t11 = 0, kind_2 = 0, t16 = 0, state_frames = 0, t20 = 0, blink_frames = 0, animation_flags = 0, teamed = 0, frames_since_press = 0, frames_since_press_2 = 0, player_state = 0;
-	uint16_t t5 = 0, t7 = 0, t8 = 0, t9 = 0, t10 = 0, t12 = 0, t13 = 0, t14 = 0, t15 = 0, t17 = 0, t18 = 0, t19 = 0, partner = 0;
+	uint8_t idle_players = 0, entry_status = 0, all_idle = 0, status_2 = 0, shadow_player_2 = 0, kept_life = 0, status_3 = 0, status_4 = 0, tries_before = 0, kind = 0, t2 = 0, kind_2 = 0, t4 = 0, state_frames = 0, stage_is_over = 0, blink_frames = 0, animation_flags = 0, teamed = 0, frames_since_press = 0, frames_since_press_2 = 0, player_state = 0;
+	uint16_t player_y = 0, entry_z = 0, kind_offset = 0, entry_x = 0, t1 = 0, t3 = 0, drop_x = 0, player_x = 0, moved_x = 0, first_drop_x = 0, t5 = 0, t6 = 0, partner = 0;
 
-	b = (uint8_t)bit_and_number;
+	player_number = (uint8_t)bit_and_number;
 	if (((bit_and_number >> 8) & players_playing) == 0u)
 	{
-		t1 = io_read8(0x184Cu);
-		io_write8(0x184Cu, t1 + 1u);
+		idle_players = io_read8(0x184Cu);
+		io_write8(0x184Cu, idle_players + 1u);
 		return;
 	}
-	t2 = mem_read8(record + 3u);
-	if (t2 == 0u)
+	entry_status = PLAYER_VALUES(record)->entry_status;
+	if (entry_status == 0u)
 	{
-		t3 = io_read8(0x184Eu);
-		if (t3 != 0u)
+		all_idle = io_read8(0x184Eu);
+		if (all_idle != 0u)
 		{
-			t1 = io_read8(0x184Cu);
-			io_write8(0x184Cu, t1 + 1u);
+			idle_players = io_read8(0x184Cu);
+			io_write8(0x184Cu, idle_players + 1u);
 			return;
 		}
 		stack = record;
-		stack_10004 = b;
+		stack_10004 = player_number;
 		status_2 = OBJECT(player)->player.status;
 		status = status_2;
 		OBJECT(player)->animation = 0x80u;
 		stack_6 = player;
 		cursor = player + 0x1Cu;
 		bytes_left = 0x3Du;
-		a = 0u;
+		clear_value = 0u;
 		while (bytes_left != 0u)
 		{
-			mem_write8(cursor, a);
+			mem_write8(cursor, clear_value);
 			cursor++;
 			bytes_left--;
 		}
@@ -150,9 +150,9 @@ void player_run(uint16_t record, uint16_t controls, uint16_t player, uint16_t bi
 		shadow_player = (((((uint32_t)stack_10004 << 1) << 1) << 1) << 1) | shadow_player_2;
 		OBJECT(player)->shadow_player = shadow_player;
 		OBJECT(player + 0x60u)->shadow_player = shadow_player;
-		t4 = mem_read8(record + 2u);
-		OBJECT(player)->vitality = t4;
-		mem_write8(record + 3u, 1u);
+		kept_life = PLAYER_VALUES(record)->kept_life;
+		OBJECT(player)->vitality = kept_life;
+		PLAYER_VALUES(record)->entry_status = 1u;
 		status_3 = OBJECT(player)->player.status;
 		if ((status_3 & 2u) != 0u)
 		{
@@ -164,8 +164,8 @@ void player_run(uint16_t record, uint16_t controls, uint16_t player, uint16_t bi
 		}
 		else
 		{
-			a = scene;
-			if (a == 4u || a == 0xBu)
+			scene_number = scene;
+			if (scene_number == 4u || scene_number == 0xBu)
 				L_038159 = true;
 			else
 			{
@@ -176,11 +176,11 @@ void player_run(uint16_t record, uint16_t controls, uint16_t player, uint16_t bi
 				{
 					if (carry)
 					{
-						t5 = OBJECT(player)->y;
-						OBJECT(player)->y = t5 - 8u;
-						t6 = entry_tries_left;
-						entry_tries_left = t6 - 1u;
-						if (t6 != 1u)
+						player_y = OBJECT(player)->y;
+						OBJECT(player)->y = player_y - 8u;
+						tries_before = entry_tries_left;
+						entry_tries_left = tries_before - 1u;
+						if (tries_before != 1u)
 						{
 							carry = player_find_entry_floor(player);
 							continue;
@@ -192,13 +192,13 @@ void player_run(uint16_t record, uint16_t controls, uint16_t player, uint16_t bi
 						{
 							if (carry == 0u)
 							{
-								t7 = (uint8_t)entry_floor_height + 0x20u;
-								OBJECT(player)->z = t7;
+								entry_z = (uint8_t)entry_floor_height + 0x20u;
+								OBJECT(player)->z = entry_z;
 								OBJECT(player)->z_speed = 0x100;
 								kind = OBJECT(player)->kind;
-								t8 = (int8_t)((((((uint32_t)kind << 1) << 1) << 1) << 1) << 1);
-								t9 = t8 - 0x10u;
-								OBJECT(player)->x = t9;
+								kind_offset = (int8_t)((((((uint32_t)kind << 1) << 1) << 1) << 1) << 1);
+								entry_x = kind_offset - 0x10u;
+								OBJECT(player)->x = entry_x;
 								record = 0xE00u;
 								OBJECT(player)->x_speed = 0xE00;
 								OBJECT(player)->player.player_state = 0x26u;
@@ -207,11 +207,11 @@ void player_run(uint16_t record, uint16_t controls, uint16_t player, uint16_t bi
 								carry = vector_queue_sound(command);
 								break;
 							}
-							t10 = OBJECT(player)->y;
-							OBJECT(player)->y = t10 + 8u;
-							t11 = entry_tries_left;
-							entry_tries_left = t11 - 1u;
-							if (t11 != 1u)
+							t1 = OBJECT(player)->y;
+							OBJECT(player)->y = t1 + 8u;
+							t2 = entry_tries_left;
+							entry_tries_left = t2 - 1u;
+							if (t2 != 1u)
 							{
 								carry = player_find_entry_floor(player);
 								continue;
@@ -224,13 +224,13 @@ void player_run(uint16_t record, uint16_t controls, uint16_t player, uint16_t bi
 					}
 					if (L_038159)
 						break;
-					t7 = (uint8_t)entry_floor_height + 0x20u;
-					OBJECT(player)->z = t7;
+					entry_z = (uint8_t)entry_floor_height + 0x20u;
+					OBJECT(player)->z = entry_z;
 					OBJECT(player)->z_speed = 0x100;
 					kind = OBJECT(player)->kind;
-					t8 = (int8_t)((((((uint32_t)kind << 1) << 1) << 1) << 1) << 1);
-					t9 = t8 - 0x10u;
-					OBJECT(player)->x = t9;
+					kind_offset = (int8_t)((((((uint32_t)kind << 1) << 1) << 1) << 1) << 1);
+					entry_x = kind_offset - 0x10u;
+					OBJECT(player)->x = entry_x;
 					record = 0xE00u;
 					OBJECT(player)->x_speed = 0xE00;
 					OBJECT(player)->player.player_state = 0x26u;
@@ -243,21 +243,21 @@ void player_run(uint16_t record, uint16_t controls, uint16_t player, uint16_t bi
 			if (L_038159)
 			{
 				kind_2 = OBJECT(player)->kind;
-				t12 = (int8_t)((((((uint32_t)kind_2 << 1) << 1) << 1) << 1) << 1);
-				t13 = t12 + 0xD0u;
-				a = (uint8_t)(t13 >> 8);
-				b = (uint8_t)t13;
-				OBJECT(player)->x = ((uint32_t)a << 8) | b;
-				io_write16(0x1858u, ((uint32_t)a << 8) | b);
+				t3 = (int8_t)((((((uint32_t)kind_2 << 1) << 1) << 1) << 1) << 1);
+				drop_x = t3 + 0xD0u;
+				drop_x_high = (uint8_t)(drop_x >> 8);
+				drop_x_low = (uint8_t)drop_x;
+				OBJECT(player)->x = ((uint32_t)drop_x_high << 8) | drop_x_low;
+				io_write16(0x1858u, ((uint32_t)drop_x_high << 8) | drop_x_low);
 				OBJECT(player)->y = 0xC0u;
 				OBJECT(player)->z = 0xD0u;
 				entry_tries_left = 8u;
 				record = player;
 				vector_floor_ahead(record, &floor_cell, &negative);
-				a = (uint8_t)(floor_cell >> 8);
+				floor_value = (uint8_t)(floor_cell >> 8);
 				for (;;)
 				{
-					if ((uint8_t)(a + 1u) != 0u)
+					if ((uint8_t)(floor_value + 1u) != 0u)
 					{
 						OBJECT(player)->z_speed = -0x400;
 						OBJECT(player)->attributes = 0x40u;
@@ -265,29 +265,29 @@ void player_run(uint16_t record, uint16_t controls, uint16_t player, uint16_t bi
 						OBJECT(player)->animation = 0xBBu;
 						break;
 					}
-					t14 = OBJECT(player)->x;
-					t15 = t14 - 0x10u;
-					OBJECT(player)->x = t15;
-					t16 = entry_tries_left;
-					entry_tries_left = t16 - 1u;
-					if (t16 != 1u)
+					player_x = OBJECT(player)->x;
+					moved_x = player_x - 0x10u;
+					OBJECT(player)->x = moved_x;
+					t4 = entry_tries_left;
+					entry_tries_left = t4 - 1u;
+					if (t4 != 1u)
 					{
 						record = player;
 						vector_floor_ahead(record, &floor_cell, &negative);
-						a = (uint8_t)(floor_cell >> 8);
+						floor_value = (uint8_t)(floor_cell >> 8);
 						continue;
 					}
-					t17 = io_read16(0x1858u);
-					OBJECT(player)->x = t17;
+					first_drop_x = io_read16(0x1858u);
+					OBJECT(player)->x = first_drop_x;
 					do
 					{
-						t18 = OBJECT(player)->x;
-						t19 = t18 + 0x10u;
-						OBJECT(player)->x = t19;
+						t5 = OBJECT(player)->x;
+						t6 = t5 + 0x10u;
+						OBJECT(player)->x = t6;
 						record = player;
 						vector_floor_ahead(record, &floor_cell, &negative);
-						a = (uint8_t)(floor_cell >> 8);
-					} while ((uint8_t)(a + 1u) == 0u);
+						floor_value = (uint8_t)(floor_cell >> 8);
+					} while ((uint8_t)(floor_value + 1u) == 0u);
 					OBJECT(player)->z_speed = -0x400;
 					OBJECT(player)->attributes = 0x40u;
 					OBJECT(player)->player.player_state = 0x27u;
@@ -311,8 +311,8 @@ void player_run(uint16_t record, uint16_t controls, uint16_t player, uint16_t bi
 	}
 	else
 	{
-		t20 = io_read8(0x184Bu);
-		if (t20 == 0u)
+		stage_is_over = io_read8(0x184Bu);
+		if (stage_is_over == 0u)
 			OBJECT(player)->target_dy = controls;
 		else
 		{
@@ -334,7 +334,7 @@ void player_run(uint16_t record, uint16_t controls, uint16_t player, uint16_t bi
 				record = partner;
 				player_team_split(record, player);
 				OBJECT(player)->player.state_frames = 0u;
-				mem_write8(record + 0x38u, 0u);
+				OBJECT(record)->player.state_frames = 0u;
 			}
 		}
 	}
@@ -521,8 +521,8 @@ uint32_t player_find_entry_floor(uint16_t player)
 {
 	uint32_t carry = 0;
 	uint16_t floor_height = 0;
-	uint8_t t2 = 0;
-	uint16_t t1 = 0;
+	uint8_t places_before = 0;
+	uint16_t player_x = 0;
 
 	OBJECT(player)->x = 0x40u;
 	entry_floor_height = 0;
@@ -534,11 +534,11 @@ uint32_t player_find_entry_floor(uint16_t player)
 			return carry;
 		if (entry_floor_height < (int8_t)floor_height)
 			entry_floor_height = (uint8_t)floor_height;
-		t1 = OBJECT(player)->x;
-		OBJECT(player)->x = t1 + 8u;
-		t2 = entry_places_left;
-		entry_places_left = t2 - 1u;
-	} while (t2 != 1u);
+		player_x = OBJECT(player)->x;
+		OBJECT(player)->x = player_x + 8u;
+		places_before = entry_places_left;
+		entry_places_left = places_before - 1u;
+	} while (places_before != 1u);
 	carry = 0u;
 	return carry;
 }
@@ -576,12 +576,12 @@ void player_land_at_animation_end(uint16_t kind, uint16_t object)
 }
 
 /* Runs each player's state: out, joining, playing, the continue's countdown, game over */
-void update_players(uint16_t *p_player, uint16_t *p_status_handlers, uint16_t *p_slot, uint16_t *p_d, uint32_t *p_carry)
+void update_players(uint16_t *p_player, uint16_t *p_slot, uint16_t *p_d, uint32_t *p_carry)
 {
 	uint16_t d = (uint16_t)*p_d;
 	uint32_t carry = *p_carry;
-	uint8_t a = 0;
-	uint16_t d_2 = 0, player = 0, slot = 0, status_handlers = 0;
+	uint8_t players_done = 0;
+	uint16_t d_2 = 0, player = 0, slot = 0;
 	uint8_t stack = 0;
 	uint16_t state = 0;
 
@@ -590,7 +590,7 @@ void update_players(uint16_t *p_player, uint16_t *p_status_handlers, uint16_t *p
 	do
 	{
 		player = player_records[(int8_t)((uint8_t)((uint32_t)stack << 1)) / 2];
-		status_handlers = player_status_handlers_ADDRESS;
+		leftover_y = player_status_handlers_ADDRESS;
 		state = PLAYER(player)->state;
 		switch ((int8_t)(uint8_t)((uint32_t)mem_read8(state) << 1))
 		{
@@ -599,13 +599,13 @@ void update_players(uint16_t *p_player, uint16_t *p_status_handlers, uint16_t *p
 			break;
 		case 2:
 		case 10:
-			player_join(player, slot, &status_handlers, &d);
+			d = player_join(player, slot, (uint8_t)d);
 			break;
 		case 4:
-			player_playing(player, slot, &status_handlers, &d);
+			d = player_playing(player, slot, (uint8_t)d);
 			break;
 		case 6:
-			player_continue_countdown(player, slot, &status_handlers, &d);
+			d = player_continue_countdown(player, slot);
 			break;
 		case 8:
 			d = player_game_over(player, slot);
@@ -619,17 +619,16 @@ void update_players(uint16_t *p_player, uint16_t *p_status_handlers, uint16_t *p
 			d = check_players_out((uint8_t)d);
 			break;
 		case 16:
-			continue_screen(&player, &status_handlers, &slot, &d);
+			continue_screen(&player, &slot, &d);
 			break;
 		}
 		slot += 8u;
 		stack = stack + 1u;
-		a = stack;
-		carry = a < 4u;
-	} while (a != 4u);
+		players_done = stack;
+		carry = players_done < 4u;
+	} while (players_done != 4u);
 	d_2 = (d & 0xFFu) | ((uint32_t)stack << 8);
 	*p_player = player;
-	*p_status_handlers = status_handlers;
 	*p_slot = slot;
 	*p_d = d_2;
 	*p_carry = carry;
@@ -638,107 +637,103 @@ void update_players(uint16_t *p_player, uint16_t *p_status_handlers, uint16_t *p
 /* A player out of the game: not playing; a credit (its slot's own with separate coin slots) lets it join */
 uint16_t player_out(uint16_t player, uint16_t slot)
 {
-	uint8_t a = 0, d = 0;
-	uint16_t d_2 = 0;
-	uint16_t play_status = 0, t1 = 0, state = 0, t2 = 0, state_2 = 0;
+	uint8_t credits_high = 0, credits_low = 0;
+	uint16_t credits_word = 0;
+	uint16_t play_status = 0, own_credits = 0, state = 0, shared_credits = 0, state_2 = 0;
 
 	play_status = PLAYER(player)->play_status;
 	mem_write8(play_status, 0u);
 	if (separate_coin_slots != 0u)
 	{
-		t1 = mem_read16(slot);
-		d = (uint8_t)t1;
-		a = (uint8_t)(t1 >> 8);
-		if (t1 != 0u)
+		own_credits = COIN_SLOT(slot)->own_credits;
+		credits_low = (uint8_t)own_credits;
+		credits_high = (uint8_t)(own_credits >> 8);
+		if (own_credits != 0u)
 		{
-			a = 1u;
+			credits_high = 1u;
 			state = PLAYER(player)->state;
 			mem_write8(state, 1u);
 		}
-		d_2 = (d & 0xFFu) | ((uint32_t)a << 8);
-		return d_2;
+		credits_word = (credits_low & 0xFFu) | ((uint32_t)credits_high << 8);
+		return credits_word;
 	}
-	t2 = credits;
-	d = (uint8_t)t2;
-	a = (uint8_t)(t2 >> 8);
-	if (t2 != 0u)
+	shared_credits = credits;
+	credits_low = (uint8_t)shared_credits;
+	credits_high = (uint8_t)(shared_credits >> 8);
+	if (shared_credits != 0u)
 	{
-		a = 1u;
+		credits_high = 1u;
 		state_2 = PLAYER(player)->state;
 		mem_write8(state_2, 1u);
 	}
-	d_2 = (d & 0xFFu) | ((uint32_t)a << 8);
-	return d_2;
+	credits_word = (credits_low & 0xFFu) | ((uint32_t)credits_high << 8);
+	return credits_word;
 }
 
 /* A player who may join: start or a button with a credit gives it its lives, its place in
    players_in_game and a full life; a new player's last score goes into the high scores first; then it
    plays */
-void player_join(uint16_t player, uint16_t slot, uint16_t *p_coins, uint16_t *p_d)
+uint16_t player_join(uint16_t player, uint16_t slot, uint8_t d)
 {
-	uint16_t coins = (uint16_t)*p_coins;
-	uint8_t d = (uint8_t)*p_d;
 	uint32_t carry = 0;
-	uint8_t a = 0, b = 0;
-	uint16_t d_2 = 0;
+	uint8_t a = 0, b = 0, new_lives = 0;
+	uint16_t coins = 0, d_2 = 0;
 	uint8_t stack = 0;
-	uint8_t t1 = 0, t2 = 0, t3 = 0, t6 = 0, bit = 0, initial_3 = 0, number = 0;
-	uint16_t play_status = 0, lives = 0, t4 = 0, lives_2 = 0, t5 = 0, state = 0, t7 = 0, t8 = 0, lives_3 = 0, lives_4 = 0, life = 0, object_life = 0, countdown = 0, state_2 = 0, play_status_2 = 0, state_3 = 0, score = 0, t9 = 0, score_2 = 0, initial = 0;
+	uint8_t start_pressed = 0, lives_added = 0, lives_before = 0, t1 = 0, bit = 0, initial_3 = 0, number = 0;
+	uint16_t play_status = 0, lives = 0, coins_left = 0, lives_2 = 0, shared_credits = 0, state = 0, t2 = 0, credits_left = 0, lives_3 = 0, lives_4 = 0, life = 0, object_life = 0, countdown = 0, state_2 = 0, play_status_2 = 0, state_3 = 0, score = 0, last_score = 0, score_2 = 0, initial = 0;
 
 	b = (uint8_t)d;
 	play_status = PLAYER(player)->play_status;
 	mem_write8(play_status, 0u);
 	if (separate_coin_slots != 0u)
 	{
+		start_pressed = mem_read8(PLAYER(player)->pressed) & 0xB0u;
+		a = start_pressed;
+		if (start_pressed == 0u)
+		{
+			d_2 = ((uint32_t)a << 8) | b;
+			return d_2;
+		}
+		lives = PLAYER(player)->lives;
+		new_lives = mem_read8(lives);
+		coins = COIN_SLOT(slot)->own_credits;
+		do
+		{
+			lives_added = lives_per_credit;
+			lives_before = new_lives;
+			new_lives = lives_before + lives_added;
+			if ((uint8_t)(lives_before + lives_added) < lives_before)
+				new_lives = 0xFFu;
+			coins_left = coins - 1u;
+			coins = coins_left;
+			leftover_y = coins;
+		} while (coins_left != 0u);
+		lives_2 = PLAYER(player)->lives;
+		mem_write8(lives_2, new_lives);
+		COIN_SLOT(slot)->own_credits = 0u;
+	}
+	else
+	{
+		shared_credits = credits;
+		a = (uint8_t)(shared_credits >> 8);
+		b = (uint8_t)shared_credits;
+		if (shared_credits == 0u)
+		{
+			state = PLAYER(player)->state;
+			mem_write8(state, 0u);
+			d_2 = ((uint32_t)a << 8) | b;
+			return d_2;
+		}
 		t1 = mem_read8(PLAYER(player)->pressed) & 0xB0u;
 		a = t1;
 		if (t1 == 0u)
 		{
 			d_2 = ((uint32_t)a << 8) | b;
-			*p_d = d_2;
-			return;
+			return d_2;
 		}
-		lives = PLAYER(player)->lives;
-		b = mem_read8(lives);
-		coins = mem_read16(slot);
-		do
-		{
-			t2 = lives_per_credit;
-			t3 = b;
-			b = t3 + t2;
-			if ((uint8_t)(t3 + t2) < t3)
-				b = 0xFFu;
-			t4 = coins - 1u;
-			coins = t4;
-		} while (t4 != 0u);
-		lives_2 = PLAYER(player)->lives;
-		mem_write8(lives_2, b);
-		mem_write16(slot, 0u);
-	}
-	else
-	{
-		t5 = credits;
-		a = (uint8_t)(t5 >> 8);
-		b = (uint8_t)t5;
-		if (t5 == 0u)
-		{
-			state = PLAYER(player)->state;
-			mem_write8(state, 0u);
-			d_2 = ((uint32_t)a << 8) | b;
-			*p_d = d_2;
-			return;
-		}
-		t6 = mem_read8(PLAYER(player)->pressed) & 0xB0u;
-		a = t6;
-		if (t6 == 0u)
-		{
-			d_2 = ((uint32_t)a << 8) | b;
-			*p_d = d_2;
-			return;
-		}
-		t7 = credits;
-		t8 = t7 - 1u;
-		credits = t8;
+		t2 = credits;
+		credits_left = t2 - 1u;
+		credits = credits_left;
 		lives_3 = PLAYER(player)->lives;
 		lives_4 = PLAYER(player)->lives;
 		mem_write8(lives_4, mem_read8(lives_3) + lives_per_credit);
@@ -761,14 +756,12 @@ void player_join(uint16_t player, uint16_t slot, uint16_t *p_coins, uint16_t *p_
 		state_3 = PLAYER(player)->state;
 		mem_write8(state_3, 2u);
 		d_2 = ((uint32_t)a << 8) | b;
-		*p_coins = coins;
-		*p_d = d_2;
-		return;
+		return d_2;
 	}
 	score = PLAYER(player)->score;
-	t9 = mem_read16(score);
-	a = (uint8_t)(t9 >> 8);
-	b = (uint8_t)t9;
+	last_score = mem_read16(score);
+	a = (uint8_t)(last_score >> 8);
+	b = (uint8_t)last_score;
 	new_high_score_points = ((uint32_t)a << 8) | b;
 	score_2 = PLAYER(player)->score;
 	mem_write16(score_2, 0u);
@@ -784,9 +777,7 @@ void player_join(uint16_t player, uint16_t slot, uint16_t *p_coins, uint16_t *p_
 		state_3 = PLAYER(player)->state;
 		mem_write8(state_3, 2u);
 		d_2 = ((uint32_t)a << 8) | b;
-		*p_coins = coins;
-		*p_d = d_2;
-		return;
+		return d_2;
 	}
 	stack = a;
 	initial = (((uint32_t)PLAYER(player)->initial_1 << 8u) | PLAYER(player)->initial_2);
@@ -805,20 +796,17 @@ void player_join(uint16_t player, uint16_t slot, uint16_t *p_coins, uint16_t *p_
 	state_3 = PLAYER(player)->state;
 	mem_write8(state_3, 2u);
 	d_2 = ((uint32_t)a << 8) | b;
-	*p_coins = coins;
-	*p_d = d_2;
+	return d_2;
 }
 
 /* A player playing: when its lives run out it leaves players_in_game and its continue's countdown starts
    at 20 seconds, which the continue screen shows; with separate coin slots its slot's coins add lives */
-void player_playing(uint16_t player, uint16_t slot, uint16_t *p_coins, uint16_t *p_d)
+uint16_t player_playing(uint16_t player, uint16_t slot, uint8_t d)
 {
-	uint16_t coins = (uint16_t)*p_coins;
-	uint8_t d = (uint8_t)*p_d;
-	uint8_t a = 0, b = 0;
-	uint16_t d_2 = 0;
-	uint8_t bit = 0, number = 0, t1 = 0, t3 = 0, t4 = 0;
-	uint16_t play_status = 0, lives = 0, countdown = 0, countdown_2 = 0, play_status_2 = 0, state = 0, t2 = 0, lives_2 = 0, t5 = 0, lives_3 = 0;
+	uint8_t a = 0, b = 0, new_lives = 0;
+	uint16_t coins = 0, d_2 = 0;
+	uint8_t bit = 0, number = 0, own_slots = 0, lives_added = 0, lives_before = 0;
+	uint16_t play_status = 0, lives = 0, countdown = 0, countdown_2 = 0, play_status_2 = 0, state = 0, own_credits = 0, lives_2 = 0, coins_left = 0, lives_3 = 0;
 
 	b = (uint8_t)d;
 	play_status = PLAYER(player)->play_status;
@@ -841,157 +829,120 @@ void player_playing(uint16_t player, uint16_t slot, uint16_t *p_coins, uint16_t 
 		state = PLAYER(player)->state;
 		mem_write8(state, 3u);
 		d_2 = 0x300u;
+		return d_2;
 	}
-	else
+	own_slots = separate_coin_slots;
+	a = own_slots;
+	if (own_slots != 0u)
 	{
-		t1 = separate_coin_slots;
-		a = t1;
-		if (t1 != 0u)
+		own_credits = COIN_SLOT(slot)->own_credits;
+		a = (uint8_t)(own_credits >> 8);
+		b = (uint8_t)own_credits;
+		if (own_credits == 0u)
 		{
-			t2 = mem_read16(slot);
-			a = (uint8_t)(t2 >> 8);
-			b = (uint8_t)t2;
-			if (t2 != 0u)
-			{
-				lives_2 = PLAYER(player)->lives;
-				b = mem_read8(lives_2);
-				coins = mem_read16(slot);
-				do
-				{
-					t3 = lives_per_credit;
-					t4 = b;
-					b = t4 + t3;
-					if ((uint8_t)(t4 + t3) < t4)
-						b = 0xFFu;
-					t5 = coins - 1u;
-					coins = t5;
-				} while (t5 != 0u);
-				lives_3 = PLAYER(player)->lives;
-				mem_write8(lives_3, b);
-				a = 0u;
-				b = 0u;
-				mem_write16(slot, 0u);
-			}
+			d_2 = ((uint32_t)a << 8) | b;
+			return d_2;
 		}
-		d_2 = ((uint32_t)a << 8) | b;
+		lives_2 = PLAYER(player)->lives;
+		new_lives = mem_read8(lives_2);
+		coins = COIN_SLOT(slot)->own_credits;
+		do
+		{
+			lives_added = lives_per_credit;
+			lives_before = new_lives;
+			new_lives = lives_before + lives_added;
+			if ((uint8_t)(lives_before + lives_added) < lives_before)
+				new_lives = 0xFFu;
+			coins_left = coins - 1u;
+			coins = coins_left;
+			leftover_y = coins;
+		} while (coins_left != 0u);
+		lives_3 = PLAYER(player)->lives;
+		mem_write8(lives_3, new_lives);
+		a = 0u;
+		b = 0u;
+		COIN_SLOT(slot)->own_credits = 0u;
 	}
-	*p_coins = coins;
-	*p_d = d_2;
+	d_2 = ((uint32_t)a << 8) | b;
+	return d_2;
 }
 
 /* A player whose lives ran out: a credit lets it join again; else its countdown loses a second each 60
    frames while the gauges are shown, and at 0 it is game over */
-void player_continue_countdown(uint16_t player, uint16_t slot, uint16_t *p_countdown_digits, uint16_t *p_d)
+uint16_t player_continue_countdown(uint16_t player, uint16_t slot)
 {
-	uint16_t countdown_digits = (uint16_t)*p_countdown_digits;
 	uint32_t carry = 0, half_carry = 0;
-	uint8_t a = 0, d = 0;
-	uint16_t d_2 = 0;
-	uint8_t t2 = 0, t3 = 0, t4 = 0, t5 = 0, t6 = 0;
-	uint16_t play_status = 0, t1 = 0, countdown = 0, credit_given = 0, play_status_2 = 0, state = 0, play_status_3 = 0, state_2 = 0, t7 = 0, play_status_4 = 0, state_3 = 0;
+	uint8_t d = 0, seconds_left = 0;
+	uint16_t countdown_digits = 0, d_2 = 0;
+	uint8_t gauges_on = 0, frames_before = 0, frames_now = 0, seconds_now = 0, seconds_sum = 0;
+	uint16_t play_status = 0, own_credits = 0, play_status_2 = 0, state = 0, shared_credits = 0, play_status_3 = 0, state_2 = 0, countdown = 0, credit_given = 0, play_status_4 = 0, state_3 = 0;
 
 	play_status = PLAYER(player)->play_status;
 	mem_write8(play_status, 1u);
 	if (separate_coin_slots != 0u)
 	{
-		t1 = mem_read16(slot);
-		d = (uint8_t)t1;
-		if (t1 == 0u)
+		own_credits = COIN_SLOT(slot)->own_credits;
+		d = (uint8_t)own_credits;
+		if (own_credits != 0u)
 		{
-			t2 = gauges_shown;
-			a = t2;
-			if (t2 != 0u)
-			{
-				countdown = PLAYER(player)->countdown;
-				countdown_digits = countdown;
-				t3 = mem_read8(countdown_digits + 1u);
-				mem_write8(countdown_digits + 1u, t3 + 1u);
-				t4 = mem_read8(countdown_digits + 1u);
-				a = t4;
-				if (a == 0x3Cu)
-				{
-					mem_write8(countdown_digits + 1u, 0u);
-					t5 = mem_read8(countdown_digits);
-					t6 = 0x99u + t5;
-					half_carry = ((0x99u ^ t5 ^ t6) >> 4) & 1u;
-					carry = (uint8_t)(0x99u + t5) < 0x99u;
-					a = konami_daa(t6, half_carry, carry);
-					mem_write8(countdown_digits, a);
-					if (a == 0x99u)
-					{
-						mem_write16(countdown_digits, 0u);
-						credit_given = PLAYER(player)->credit_given;
-						mem_write8(credit_given, 0u);
-						play_status_2 = PLAYER(player)->play_status;
-						mem_write8(play_status_2, 0u);
-						a = 4u;
-						state = PLAYER(player)->state;
-						mem_write8(state, 4u);
-					}
-				}
-			}
-			d_2 = (d & 0xFFu) | ((uint32_t)a << 8);
+			play_status_2 = PLAYER(player)->play_status;
+			mem_write8(play_status_2, 0u);
+			state = PLAYER(player)->state;
+			mem_write8(state, 5u);
+			d_2 = (d & 0xFFu) | 0x500u;
+			return d_2;
 		}
-		else
+	}
+	else
+	{
+		shared_credits = credits;
+		d = (uint8_t)shared_credits;
+		if (shared_credits != 0u)
 		{
 			play_status_3 = PLAYER(player)->play_status;
 			mem_write8(play_status_3, 0u);
 			state_2 = PLAYER(player)->state;
 			mem_write8(state_2, 5u);
 			d_2 = (d & 0xFFu) | 0x500u;
+			return d_2;
 		}
 	}
-	else
+	gauges_on = gauges_shown;
+	seconds_left = gauges_on;
+	if (gauges_on != 0u)
 	{
-		t7 = credits;
-		d = (uint8_t)t7;
-		if (t7 == 0u)
+		countdown = PLAYER(player)->countdown;
+		countdown_digits = countdown;
+		leftover_y = countdown_digits;
+		frames_before = PLAYER_COUNTERS(countdown_digits)->frames;
+		PLAYER_COUNTERS(countdown_digits)->frames = frames_before + 1u;
+		frames_now = PLAYER_COUNTERS(countdown_digits)->frames;
+		seconds_left = frames_now;
+		if (seconds_left == 0x3Cu)
 		{
-			t2 = gauges_shown;
-			a = t2;
-			if (t2 != 0u)
+			PLAYER_COUNTERS(countdown_digits)->frames = 0u;
+			seconds_now = PLAYER_COUNTERS(countdown_digits)->seconds;
+			seconds_sum = 0x99u + seconds_now;
+			half_carry = ((0x99u ^ seconds_now ^ seconds_sum) >> 4) & 1u;
+			carry = (uint8_t)(0x99u + seconds_now) < 0x99u;
+			seconds_left = konami_daa(seconds_sum, half_carry, carry);
+			PLAYER_COUNTERS(countdown_digits)->seconds = seconds_left;
+			if (seconds_left == 0x99u)
 			{
-				countdown = PLAYER(player)->countdown;
-				countdown_digits = countdown;
-				t3 = mem_read8(countdown_digits + 1u);
-				mem_write8(countdown_digits + 1u, t3 + 1u);
-				t4 = mem_read8(countdown_digits + 1u);
-				a = t4;
-				if (a == 0x3Cu)
-				{
-					mem_write8(countdown_digits + 1u, 0u);
-					t5 = mem_read8(countdown_digits);
-					t6 = 0x99u + t5;
-					half_carry = ((0x99u ^ t5 ^ t6) >> 4) & 1u;
-					carry = (uint8_t)(0x99u + t5) < 0x99u;
-					a = konami_daa(t6, half_carry, carry);
-					mem_write8(countdown_digits, a);
-					if (a == 0x99u)
-					{
-						mem_write16(countdown_digits, 0u);
-						credit_given = PLAYER(player)->credit_given;
-						mem_write8(credit_given, 0u);
-						play_status_2 = PLAYER(player)->play_status;
-						mem_write8(play_status_2, 0u);
-						a = 4u;
-						state = PLAYER(player)->state;
-						mem_write8(state, 4u);
-					}
-				}
+				PLAYER_COUNTERS(countdown_digits)->seconds = 0u;
+				PLAYER_COUNTERS(countdown_digits)->frames = 0u;
+				credit_given = PLAYER(player)->credit_given;
+				mem_write8(credit_given, 0u);
+				play_status_4 = PLAYER(player)->play_status;
+				mem_write8(play_status_4, 0u);
+				seconds_left = 4u;
+				state_3 = PLAYER(player)->state;
+				mem_write8(state_3, 4u);
 			}
-			d_2 = (d & 0xFFu) | ((uint32_t)a << 8);
-		}
-		else
-		{
-			play_status_4 = PLAYER(player)->play_status;
-			mem_write8(play_status_4, 0u);
-			state_3 = PLAYER(player)->state;
-			mem_write8(state_3, 5u);
-			d_2 = (d & 0xFFu) | 0x500u;
 		}
 	}
-	*p_countdown_digits = countdown_digits;
-	*p_d = d_2;
+	d_2 = (d & 0xFFu) | ((uint32_t)seconds_left << 8);
+	return d_2;
 }
 
 /* A player's game over: C0 frames during which a credit still lets it in, then out of the game */
@@ -1002,7 +953,7 @@ uint16_t player_game_over(uint16_t player, uint16_t slot)
 
 	play_status = PLAYER(player)->play_status;
 	mem_write8(play_status, 0u);
-	mem_write8(slot + 7u, 0u);
+	COIN_SLOT(slot)->credit_given = 0u;
 	countdown = PLAYER(player)->countdown;
 	mem_write8(countdown, mem_read8(countdown) + 1u);
 	countdown_2 = PLAYER(player)->countdown;
@@ -1020,7 +971,7 @@ uint16_t player_game_over(uint16_t player, uint16_t slot)
 void count_players_in_game(void)
 {
 	uint8_t players_left = 0, playing_bits = 0;
-	uint8_t t1 = 0;
+	uint8_t players_before = 0;
 
 	player_count = 0u;
 	playing_bits = players_playing;
@@ -1030,9 +981,9 @@ void count_players_in_game(void)
 		if ((playing_bits & 1u) != 0u)
 			player_count++;
 		playing_bits = playing_bits >> 1;
-		t1 = players_left;
-		players_left = t1 - 1u;
-	} while (t1 != 1u);
+		players_before = players_left;
+		players_left = players_before - 1u;
+	} while (players_before != 1u);
 	if (player_count == 0u)
 		player_count++;
 }
@@ -1043,7 +994,7 @@ void award_enemy_points(void)
 {
 	uint8_t points_code = 0;
 	uint16_t job = 0, object = 0;
-	uint8_t points = 0, t1 = 0;
+	uint8_t points = 0, objects_before = 0;
 
 	if (in_attract != 0u)
 		return;
@@ -1061,7 +1012,7 @@ void award_enemy_points(void)
 			OBJECT(object)->points = 0u;
 		}
 		object += 0x60u;
-		t1 = points_objects_left;
-		points_objects_left = t1 - 1u;
-	} while (t1 != 1u);
+		objects_before = points_objects_left;
+		points_objects_left = objects_before - 1u;
+	} while (objects_before != 1u);
 }

@@ -3,7 +3,7 @@
  *    Description: (the unused floor blocker of list 1 type 07)
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    10-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -12,19 +12,19 @@
 #include "game.h"
 
 /* Sets up the kind 0F scenery at x 0180 and takes the floor map's row and column under it. */
-void floor_blocker_start(uint16_t object, uint16_t *p_box, uint16_t *p_u)
+uint16_t floor_blocker_start(uint16_t object)
 {
-	uint16_t box = 0, cell_value = 0, floor_start = 0, setup = 0;
+	uint16_t cell_value = 0, floor_start = 0, setup = 0;
 	uint16_t stack = 0;
 	uint8_t blocked = 0, state = 0;
-	uint16_t t1 = 0;
+	uint16_t blocker_y = 0;
 
 	setup = floor_blocker_setup_ADDRESS;
-	box = vector_object_setup(object, setup);
+	vector_object_setup(object, setup);
 	OBJECT(object)->flags = 0x80u;
 	OBJECT(object)->x = 0x180u;
-	t1 = OBJECT(object)->y;
-	OBJECT(object)->y = t1 - 2u;
+	blocker_y = OBJECT(object)->y;
+	OBJECT(object)->y = blocker_y - 2u;
 	blocked = OBJECT(object)->blocked;
 	OBJECT(object)->blocked = blocked + 1u;
 	floor_cell_under(object, &floor_start, &cell_value);
@@ -37,8 +37,7 @@ void floor_blocker_start(uint16_t object, uint16_t *p_box, uint16_t *p_u)
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
 	floor_blocker_wait();
-	*p_box = box;
-	*p_u = floor_start;
+	return floor_start;
 }
 
 /* Does nothing once all its floor cells are written. */
@@ -47,9 +46,8 @@ void floor_blocker_wait(void)
 }
 
 /* Writes the next part of its floor shape as the scroll brings it in, by field 37. */
-void floor_blocker_steps(uint16_t object, uint16_t *p_y, uint16_t *p_steps)
+uint16_t floor_blocker_steps(uint16_t object)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint16_t steps = 0;
 	uint8_t part = 0;
 
@@ -58,81 +56,69 @@ void floor_blocker_steps(uint16_t object, uint16_t *p_y, uint16_t *p_steps)
 	switch ((int8_t)(uint8_t)((uint32_t)part << 1))
 	{
 	case 0:
-		floor_blocker_first_part(object, &y, &steps);
-		break;
+		return floor_blocker_first_part(object, steps);
 	case 2:
-		floor_blocker_second_part(object, &y, &steps);
-		break;
+		return floor_blocker_second_part(object, steps);
 	case 4:
-		floor_blocker_last_part(object, &y, &steps);
-		break;
+		return floor_blocker_last_part(object, steps);
 	case 6:
 		floor_blocker_part_wait();
-		break;
+		return steps;
 	}
-	*p_y = y;
-	*p_steps = steps;
+	unreachable();
 }
 
 /* Writes the first part of its shape into the floor map once the scroll brings it left of 0180. */
-void floor_blocker_first_part(uint16_t object, uint16_t *p_cells, uint16_t *p_place)
+uint16_t floor_blocker_first_part(uint16_t object, uint16_t steps)
 {
-	uint16_t cells = (uint16_t)*p_cells;
-	uint16_t place = (uint16_t)*p_place;
 	uint8_t part = 0;
-	uint16_t t1 = 0;
+	uint16_t blocker_x = 0;
 
-	t1 = OBJECT(object)->x;
-	if (t1 >= 0x180u)
-		return;
-	cells = floor_blocker_shape_1_ADDRESS;
-	floor_blocker_write_cells(object, &cells, &place);
+	blocker_x = OBJECT(object)->x;
+	if (blocker_x >= 0x180u)
+		return steps;
+	leftover_y = floor_blocker_shape_1_ADDRESS;
+	steps = floor_blocker_write_cells(object);
 	part = OBJECT(object)->floor_blocker.part;
 	OBJECT(object)->floor_blocker.part = part + 1u;
-	*p_cells = cells;
-	*p_place = place;
+	return steps;
 }
 
 /* Writes the second part once left of 0160. */
-void floor_blocker_second_part(uint16_t object, uint16_t *p_cells, uint16_t *p_place)
+uint16_t floor_blocker_second_part(uint16_t object, uint16_t steps)
 {
-	uint16_t cells = (uint16_t)*p_cells;
-	uint16_t place = (uint16_t)*p_place;
 	uint8_t part = 0;
-	uint16_t t1 = 0;
+	uint16_t blocker_x = 0;
 
-	t1 = OBJECT(object)->x;
-	if (t1 >= 0x160u)
-		return;
-	cells = floor_blocker_shape_2_ADDRESS;
-	floor_blocker_write_cells(object, &cells, &place);
+	blocker_x = OBJECT(object)->x;
+	if (blocker_x >= 0x160u)
+		return steps;
+	leftover_y = floor_blocker_shape_2_ADDRESS;
+	steps = floor_blocker_write_cells(object);
 	part = OBJECT(object)->floor_blocker.part;
 	OBJECT(object)->floor_blocker.part = part + 1u;
-	*p_cells = cells;
-	*p_place = place;
+	return steps;
 }
 
 /* Writes the last part once left of 0140. */
-void floor_blocker_last_part(uint16_t object, uint16_t *p_cells, uint16_t *p_u)
+uint16_t floor_blocker_last_part(uint16_t object, uint16_t steps)
 {
-	uint16_t cells = (uint16_t)*p_cells;
-	uint16_t u = (uint16_t)*p_u;
+	uint16_t u = 0;
 	uint8_t state = 0;
-	uint16_t t1 = 0;
+	uint16_t blocker_x = 0;
 
-	t1 = OBJECT(object)->x;
-	if (t1 >= 0x140u)
-		floor_blocker_part_wait();
-	else
+	blocker_x = OBJECT(object)->x;
+	if (blocker_x >= 0x140u)
 	{
-		cells = floor_blocker_shape_3_ADDRESS;
-		floor_blocker_write_cells(object, &cells, &u);
-		state = OBJECT(object)->state;
-		OBJECT(object)->state = state + 1u;
 		floor_blocker_part_wait();
+		return steps;
 	}
-	*p_cells = cells;
-	*p_u = u;
+	leftover_y = floor_blocker_shape_3_ADDRESS;
+	u = floor_blocker_write_cells(object);
+	state = OBJECT(object)->state;
+	OBJECT(object)->state = state + 1u;
+	floor_blocker_part_wait();
+	return u;
 }
 
 /* Does nothing until the scroll brings the next part in. */
@@ -141,13 +127,12 @@ void floor_blocker_part_wait(void)
 }
 
 /* Writes 4 columns of 3 floor cells from the table in Y into the floor map at the object's column. */
-void floor_blocker_write_cells(uint16_t object, uint16_t *p_y, uint16_t *p_place)
+uint16_t floor_blocker_write_cells(uint16_t object)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint8_t control = 0, floor_column = 0;
 	uint16_t place = 0;
 	uint8_t stack = 0;
-	uint8_t part = 0, t1 = 0, t2 = 0, t3 = 0;
+	uint8_t part = 0, cell_in_middle = 0, cell_at_bottom = 0, columns_left = 0;
 	uint16_t floor_start = 0, floor_row = 0;
 
 	control = board_control | 2u;
@@ -165,116 +150,103 @@ void floor_blocker_write_cells(uint16_t object, uint16_t *p_y, uint16_t *p_place
 		floor_row = OBJECT(object)->floor_blocker.floor_row;
 		floor_column &= 0x3Fu;
 		place = floor_row + floor_column;
-		mem_write8(place - 0x40u, mem_read8(y));
-		t1 = mem_read8(y + 4u);
-		mem_write8(place, t1);
-		t2 = mem_read8(y + 8u);
-		mem_write8(place + 0x40u, t2);
+		mem_write8(place - 0x40u, mem_read8(leftover_y));
+		cell_in_middle = mem_read8(leftover_y + 4u);
+		mem_write8(place, cell_in_middle);
+		cell_at_bottom = mem_read8(leftover_y + 8u);
+		mem_write8(place + 0x40u, cell_at_bottom);
 		floor_column++;
-		y++;
-		t3 = floor_columns_left;
-		floor_columns_left = t3 - 1u;
-	} while (t3 != 1u);
+		leftover_y = leftover_y + 1u;
+		columns_left = floor_columns_left;
+		floor_columns_left = columns_left - 1u;
+	} while (columns_left != 1u);
 	control = board_control & ~3u;
 	board_control = control;
 	io_write8(0x1FC2u, control);
-	*p_y = y;
-	*p_place = place;
+	return place;
 }
 
 /* Writes the first part of its shape into the floor map. */
-void platform_scenery_first_part(uint16_t object, uint16_t *p_cells, uint16_t *p_place)
+uint16_t platform_scenery_first_part(uint16_t object)
 {
-	uint16_t cells = 0, place = 0;
+	uint16_t u = 0;
 	uint8_t part = 0;
 
-	cells = platform_scenery_shape_1_ADDRESS;
-	platform_scenery_write_cells(object, &cells, &place);
+	leftover_y = platform_scenery_shape_1_ADDRESS;
+	u = platform_scenery_write_cells(object);
 	part = OBJECT(object)->platform_scenery.part;
 	OBJECT(object)->platform_scenery.part = part + 1u;
-	*p_cells = cells;
-	*p_place = place;
+	return u;
 }
 
 /* Writes the second part once the scroll brings it left of 01B0. */
-void platform_scenery_second_part(uint16_t object, uint16_t *p_cells, uint16_t *p_place)
+uint16_t platform_scenery_second_part(uint16_t object, uint16_t u)
 {
-	uint16_t cells = (uint16_t)*p_cells;
-	uint16_t place = (uint16_t)*p_place;
 	uint8_t part = 0;
-	uint16_t t1 = 0;
+	uint16_t scenery_x = 0;
 
-	t1 = OBJECT(object)->x;
-	if (t1 >= 0x1B0u)
-		return;
-	cells = platform_scenery_shape_2_ADDRESS;
-	platform_scenery_write_cells(object, &cells, &place);
+	scenery_x = OBJECT(object)->x;
+	if (scenery_x >= 0x1B0u)
+		return u;
+	leftover_y = platform_scenery_shape_2_ADDRESS;
+	u = platform_scenery_write_cells(object);
 	part = OBJECT(object)->platform_scenery.part;
 	OBJECT(object)->platform_scenery.part = part + 1u;
-	*p_cells = cells;
-	*p_place = place;
+	return u;
 }
 
 /* Writes the third part once left of 0190. */
-void platform_scenery_third_part(uint16_t object, uint16_t *p_cells, uint16_t *p_place)
+uint16_t platform_scenery_third_part(uint16_t object, uint16_t u)
 {
-	uint16_t cells = (uint16_t)*p_cells;
-	uint16_t place = (uint16_t)*p_place;
 	uint8_t part = 0;
-	uint16_t t1 = 0;
+	uint16_t scenery_x = 0;
 
-	t1 = OBJECT(object)->x;
-	if (t1 >= 0x190u)
-		return;
-	cells = platform_scenery_shape_3_ADDRESS;
-	platform_scenery_write_cells(object, &cells, &place);
+	scenery_x = OBJECT(object)->x;
+	if (scenery_x >= 0x190u)
+		return u;
+	leftover_y = platform_scenery_shape_3_ADDRESS;
+	u = platform_scenery_write_cells(object);
 	part = OBJECT(object)->platform_scenery.part;
 	OBJECT(object)->platform_scenery.part = part + 1u;
-	*p_cells = cells;
-	*p_place = place;
+	return u;
 }
 
 /* Writes the fourth part once left of 0170. */
-void platform_scenery_fourth_part(uint16_t object, uint16_t *p_cells, uint16_t *p_place)
+uint16_t platform_scenery_fourth_part(uint16_t object, uint16_t u)
 {
-	uint16_t cells = (uint16_t)*p_cells;
-	uint16_t place = (uint16_t)*p_place;
 	uint8_t part = 0;
-	uint16_t t1 = 0;
+	uint16_t scenery_x = 0;
 
-	t1 = OBJECT(object)->x;
-	if (t1 >= 0x170u)
-		return;
-	cells = platform_scenery_shape_4_ADDRESS;
-	platform_scenery_write_cells(object, &cells, &place);
+	scenery_x = OBJECT(object)->x;
+	if (scenery_x >= 0x170u)
+		return u;
+	leftover_y = platform_scenery_shape_4_ADDRESS;
+	u = platform_scenery_write_cells(object);
 	part = OBJECT(object)->platform_scenery.part;
 	OBJECT(object)->platform_scenery.part = part + 1u;
-	*p_cells = cells;
-	*p_place = place;
+	return u;
 }
 
 /* Writes the last part once left of 0150, and settles. */
-void platform_scenery_last_part(uint16_t object, uint16_t *p_cells, uint16_t *p_u)
+uint16_t platform_scenery_last_part(uint16_t object, uint16_t u)
 {
-	uint16_t cells = (uint16_t)*p_cells;
-	uint16_t u = (uint16_t)*p_u;
+	uint16_t u_2 = 0;
 	uint8_t part = 0;
-	uint16_t t1 = 0;
+	uint16_t scenery_x = 0;
 
-	t1 = OBJECT(object)->x;
-	if (t1 >= 0x150u)
-		platform_scenery_part_wait();
-	else
+	scenery_x = OBJECT(object)->x;
+	if (scenery_x >= 0x150u)
 	{
-		cells = platform_scenery_shape_5_ADDRESS;
-		platform_scenery_write_cells(object, &cells, &u);
-		part = OBJECT(object)->platform_scenery.part;
-		OBJECT(object)->platform_scenery.part = part + 1u;
-		OBJECT(object)->state = 2u;
 		platform_scenery_part_wait();
+		return u;
 	}
-	*p_cells = cells;
-	*p_u = u;
+	leftover_y = platform_scenery_shape_5_ADDRESS;
+	u_2 = platform_scenery_write_cells(object);
+	part = OBJECT(object)->platform_scenery.part;
+	OBJECT(object)->platform_scenery.part = part + 1u;
+	OBJECT(object)->state = 2u;
+	platform_scenery_part_wait();
+	return u_2;
 }
 
 /* Does nothing until the scroll brings the next part in. */
@@ -283,13 +255,12 @@ void platform_scenery_part_wait(void)
 }
 
 /* Writes 4 columns of 3 floor cells from the table in Y into the floor map at the object's column. */
-void platform_scenery_write_cells(uint16_t object, uint16_t *p_y, uint16_t *p_place)
+uint16_t platform_scenery_write_cells(uint16_t object)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint8_t control = 0, floor_column = 0;
 	uint16_t place = 0;
 	uint8_t stack = 0;
-	uint8_t part = 0, t1 = 0, t2 = 0, t3 = 0;
+	uint8_t part = 0, cell_in_middle = 0, cell_at_bottom = 0, columns_left = 0;
 	uint16_t floor_start = 0, floor_row = 0;
 
 	control = board_control | 2u;
@@ -307,48 +278,47 @@ void platform_scenery_write_cells(uint16_t object, uint16_t *p_y, uint16_t *p_pl
 		floor_row = OBJECT(object)->platform_scenery.floor_row;
 		floor_column &= 0x3Fu;
 		place = floor_row + floor_column;
-		mem_write8(place - 0x40u, mem_read8(y));
-		t1 = mem_read8(y + 4u);
-		mem_write8(place, t1);
-		t2 = mem_read8(y + 8u);
-		mem_write8(place + 0x40u, t2);
+		mem_write8(place - 0x40u, mem_read8(leftover_y));
+		cell_in_middle = mem_read8(leftover_y + 4u);
+		mem_write8(place, cell_in_middle);
+		cell_at_bottom = mem_read8(leftover_y + 8u);
+		mem_write8(place + 0x40u, cell_at_bottom);
 		floor_column++;
-		y++;
-		t3 = floor_columns_left;
-		floor_columns_left = t3 - 1u;
-	} while (t3 != 1u);
+		leftover_y = leftover_y + 1u;
+		columns_left = floor_columns_left;
+		floor_columns_left = columns_left - 1u;
+	} while (columns_left != 1u);
 	control = board_control & ~3u;
 	board_control = control;
 	io_write8(0x1FC2u, control);
-	*p_y = y;
-	*p_place = place;
+	return place;
 }
 
 /* Sets up the platform scenery at the screen's right edge, taking the floor map's row and column there. */
-void platform_scenery_start(uint16_t object, uint16_t *p_box, uint16_t *p_u)
+uint16_t platform_scenery_start(uint16_t object)
 {
-	uint8_t b = 0, floor_cell = 0;
-	uint16_t box = 0, cell_place = 0, cell_value = 0, floor_start = 0, setup = 0;
+	uint8_t cell_low = 0, floor_cell = 0;
+	uint16_t cell_place = 0, cell_value = 0, floor_start = 0, setup = 0;
 	uint8_t stack_10001 = 0, stack_10002 = 0;
 	uint16_t stack = 0;
 	uint8_t state = 0;
-	uint16_t t1 = 0, t2 = 0, floor_row = 0;
+	uint16_t scenery_y = 0, raised_y = 0, floor_row = 0;
 
 	setup = platform_scenery_setup_ADDRESS;
-	box = vector_object_setup(object, setup);
+	vector_object_setup(object, setup);
 	OBJECT(object)->shadow_player = 0x40u;
 	OBJECT(object)->platform_scenery.held_up = 0x40u;
 	OBJECT(object)->x = 0x1BFu;
-	t1 = OBJECT(object)->y;
-	t2 = t1 - 2u;
-	OBJECT(object)->y = t2;
+	scenery_y = OBJECT(object)->y;
+	raised_y = scenery_y - 2u;
+	OBJECT(object)->y = raised_y;
 	floor_cell_under(object, &cell_place, &cell_value);
 	floor_cell = (uint8_t)(cell_value >> 8);
 	OBJECT(object)->platform_scenery.floor_cell = floor_cell;
 	stack = cell_place;
-	b = (uint8_t)stack;
-	scenery_floor_column = b;
-	OBJECT(object)->platform_scenery.floor_row = ((uint32_t)(stack >> 8) << 8) | (b & 0xC0u);
+	cell_low = (uint8_t)stack;
+	scenery_floor_column = cell_low;
+	OBJECT(object)->platform_scenery.floor_row = ((uint32_t)(stack >> 8) << 8) | (cell_low & 0xC0u);
 	scenery_floor_column = (scenery_floor_column - 2u) & 0x3Fu;
 	floor_row = OBJECT(object)->platform_scenery.floor_row;
 	stack_10001 = floor_row >> 8;
@@ -358,29 +328,23 @@ void platform_scenery_start(uint16_t object, uint16_t *p_box, uint16_t *p_u)
 	OBJECT(object)->platform_scenery.part = 0xFFu;
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
-	*p_box = box;
-	*p_u = floor_start;
+	return floor_start;
 }
 
 /* Gives its 20 columns of floor back to the cell it stood on (or, not held, crashes down). */
-void platform_scenery_clear_floor(uint16_t object, uint16_t *p_y, uint16_t *p_piece)
+uint16_t platform_scenery_clear_floor(uint16_t object, uint16_t piece)
 {
-	uint16_t y = (uint16_t)*p_y;
-	uint16_t piece = (uint16_t)*p_piece;
-	uint8_t a = 0, floor_column = 0;
-	uint16_t place = 0, u = 0;
+	uint8_t floor_column = 0, stood_cell = 0;
+	uint16_t place = 0;
 	uint16_t stack = 0;
-	uint8_t held_up = 0, state = 0, floor_cell = 0, t1 = 0;
+	uint8_t held_up = 0, state = 0, floor_cell = 0, columns_left = 0;
 	uint16_t floor_start = 0, floor_row = 0;
 
 	held_up = OBJECT(object)->platform_scenery.held_up;
 	if (held_up == 0u)
 	{
 		OBJECT(object)->state = 5u;
-		*p_y = y;
-		*p_piece = piece;
-		platform_scenery_crash(object, p_y, p_piece);
-		return;
+		return platform_scenery_crash(object, piece);
 	}
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state - 1u;
@@ -393,22 +357,20 @@ void platform_scenery_clear_floor(uint16_t object, uint16_t *p_y, uint16_t *p_pi
 	floor_column -= 7u;
 	floor_columns_left = 0x14u;
 	floor_cell = OBJECT(object)->platform_scenery.floor_cell;
-	a = floor_cell;
+	stood_cell = floor_cell;
 	do
 	{
 		floor_row = OBJECT(object)->platform_scenery.floor_row;
 		floor_column &= 0x3Fu;
 		place = floor_row + floor_column;
-		mem_write8(place - 0x40u, a);
-		mem_write8(place, a);
-		mem_write8(place + 0x40u, a);
+		mem_write8(place - 0x40u, stood_cell);
+		mem_write8(place, stood_cell);
+		mem_write8(place + 0x40u, stood_cell);
 		floor_column++;
-		t1 = floor_columns_left;
-		floor_columns_left = t1 - 1u;
-	} while (t1 != 1u);
-	u = platform_scenery_react(object);
-	*p_y = y;
-	*p_piece = u;
+		columns_left = floor_columns_left;
+		floor_columns_left = columns_left - 1u;
+	} while (columns_left != 1u);
+	return platform_scenery_react(object);
 }
 
 /* Runs the platform's reaction by field 28. */
@@ -466,51 +428,45 @@ void platform_scenery_idle(void)
 /* Moves the platform by twice the players present and starts its animation again. */
 void platform_scenery_press(uint16_t object)
 {
-	uint8_t t1 = 0, action = 0;
-	uint16_t z = 0, t2 = 0;
+	uint8_t players_counted = 0, action = 0;
+	uint16_t z = 0, pressed_z = 0;
 
-	t1 = io_read8(0x1874u);
+	players_counted = io_read8(0x1874u);
 	z = OBJECT(object)->z;
-	t2 = (uint8_t)((uint32_t)t1 << 1) + z;
-	OBJECT(object)->z = t2;
+	pressed_z = (uint8_t)((uint32_t)players_counted << 1) + z;
+	OBJECT(object)->z = pressed_z;
 	OBJECT(object)->animation_flags = 0x80u;
 	action = OBJECT(object)->action;
 	OBJECT(object)->action = action - 1u;
 }
 
 /* Sends the platform flying with its hit box. */
-uint16_t platform_scenery_launch(uint16_t object)
+void platform_scenery_launch(uint16_t object)
 {
-	uint16_t box = 0;
 	uint8_t state = 0;
 
 	OBJECT(object)->platform_scenery.held_up = 0u;
 	OBJECT(object)->x_speed = 0x400;
 	OBJECT(object)->z_speed = 0x400;
 	OBJECT(object)->flags = 0x80u;
-	box = platform_scenery_launch_box_ADDRESS;
-	vector_set_hit_box(object, box);
+	leftover_y = platform_scenery_launch_box_ADDRESS;
+	vector_set_hit_box(object);
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
-	return box;
 }
 
 /* Lands with a crash (sound 6E00), throwing off two pieces, hurting the enemies it touches. */
-void platform_scenery_crash(uint16_t object, uint16_t *p_record, uint16_t *p_piece)
+uint16_t platform_scenery_crash(uint16_t object, uint16_t piece)
 {
-	uint16_t record = (uint16_t)*p_record;
-	uint16_t piece = (uint16_t)*p_piece;
 	uint32_t carry = 0;
-	uint16_t command = 0, ignored16 = 0, ignored16_2 = 0;
+	uint16_t child_object = 0, command = 0, ignored16 = 0, ignored16_2 = 0, record = 0;
 	uint8_t state = 0;
 
 	vector_apply_gravity(object, &ignored16, &carry);
 	if (carry == 0u)
 	{
 		check_hits_with_enemies(object);
-		*p_record = record;
-		*p_piece = piece;
-		return;
+		return piece;
 	}
 	command = 0x6E00u;
 	carry = vector_queue_sound(command);
@@ -518,13 +474,13 @@ void platform_scenery_crash(uint16_t object, uint16_t *p_record, uint16_t *p_pie
 	OBJECT(object)->timer = 4u;
 	record = platform_scenery_crash_debris_1_ADDRESS;
 	spawn_list_2_child(object, record, &ignored16_2, &carry);
-	record = platform_scenery_crash_debris_2_ADDRESS;
-	spawn_list_2_child(object, record, &piece, &carry);
+	leftover_y = platform_scenery_crash_debris_2_ADDRESS;
+	child_object = platform_scenery_crash_debris_2_ADDRESS;
+	spawn_list_2_child(object, child_object, &piece, &carry);
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
 	check_hits_with_enemies(object);
-	*p_record = record;
-	*p_piece = piece;
+	return piece;
 }
 
 /* Waits 4 frames after the crash, then stops. */
@@ -615,78 +571,71 @@ void scenery_debris_idle(void)
 /* Writes its three floor parts back to plain floor as it leaves. */
 void charging_scenery_clear_floor(uint16_t object)
 {
-	uint16_t cells = 0, ignored16 = 0;
 	uint8_t part = 0, part_2 = 0, part_3 = 0;
 
 	OBJECT(object)->charging_scenery.part = 0u;
-	cells = plain_floor_shape_ADDRESS;
-	platform_scenery_write_cells(object, &cells, &ignored16);
+	leftover_y = plain_floor_shape_ADDRESS;
+	platform_scenery_write_cells(object);
 	part = OBJECT(object)->charging_scenery.part;
 	OBJECT(object)->charging_scenery.part = part + 1u;
-	cells = plain_floor_shape_ADDRESS;
-	platform_scenery_write_cells(object, &cells, &ignored16);
+	leftover_y = plain_floor_shape_ADDRESS;
+	platform_scenery_write_cells(object);
 	part_2 = OBJECT(object)->charging_scenery.part;
 	OBJECT(object)->charging_scenery.part = part_2 + 1u;
-	cells = plain_floor_shape_ADDRESS;
-	platform_scenery_write_cells(object, &cells, &ignored16);
+	leftover_y = plain_floor_shape_ADDRESS;
+	platform_scenery_write_cells(object);
 	part_3 = OBJECT(object)->charging_scenery.part;
 	OBJECT(object)->charging_scenery.part = part_3 + 1u;
 }
 
 /* Writes the first part of its shape into the floor map. */
-void charging_scenery_first_part(uint16_t object, uint16_t *p_cells, uint16_t *p_place)
+uint16_t charging_scenery_first_part(uint16_t object)
 {
-	uint16_t cells = 0, place = 0;
+	uint16_t u = 0;
 	uint8_t part = 0;
 
-	cells = charging_scenery_shape_1_ADDRESS;
-	platform_scenery_write_cells(object, &cells, &place);
+	leftover_y = charging_scenery_shape_1_ADDRESS;
+	u = platform_scenery_write_cells(object);
 	part = OBJECT(object)->charging_scenery.part;
 	OBJECT(object)->charging_scenery.part = part + 1u;
-	*p_cells = cells;
-	*p_place = place;
+	return u;
 }
 
 /* Writes the second part once the scroll brings it left of 0180. */
-void charging_scenery_second_part(uint16_t object, uint16_t *p_cells, uint16_t *p_place)
+uint16_t charging_scenery_second_part(uint16_t object, uint16_t u)
 {
-	uint16_t cells = (uint16_t)*p_cells;
-	uint16_t place = (uint16_t)*p_place;
 	uint8_t part = 0;
-	uint16_t t1 = 0;
+	uint16_t scenery_x = 0;
 
-	t1 = OBJECT(object)->x;
-	if (t1 >= 0x180u)
-		return;
-	cells = charging_scenery_shape_2_ADDRESS;
-	platform_scenery_write_cells(object, &cells, &place);
+	scenery_x = OBJECT(object)->x;
+	if (scenery_x >= 0x180u)
+		return u;
+	leftover_y = charging_scenery_shape_2_ADDRESS;
+	u = platform_scenery_write_cells(object);
 	part = OBJECT(object)->charging_scenery.part;
 	OBJECT(object)->charging_scenery.part = part + 1u;
-	*p_cells = cells;
-	*p_place = place;
+	return u;
 }
 
 /* Writes the last part once left of 01A0. */
-void charging_scenery_last_part(uint16_t object, uint16_t *p_cells, uint16_t *p_u)
+uint16_t charging_scenery_last_part(uint16_t object, uint16_t u)
 {
-	uint16_t cells = (uint16_t)*p_cells;
-	uint16_t u = (uint16_t)*p_u;
+	uint16_t u_2 = 0;
 	uint8_t part = 0;
-	uint16_t t1 = 0;
+	uint16_t scenery_x = 0;
 
-	t1 = OBJECT(object)->x;
-	if (t1 >= 0x1A0u)
-		charging_scenery_part_wait();
-	else
+	scenery_x = OBJECT(object)->x;
+	if (scenery_x >= 0x1A0u)
 	{
-		cells = charging_scenery_shape_3_ADDRESS;
-		platform_scenery_write_cells(object, &cells, &u);
-		part = OBJECT(object)->charging_scenery.part;
-		OBJECT(object)->charging_scenery.part = part + 1u;
 		charging_scenery_part_wait();
+		return u;
 	}
-	*p_cells = cells;
-	*p_u = u;
+	leftover_y = charging_scenery_shape_3_ADDRESS;
+	u_2 = platform_scenery_write_cells(object);
+	part = OBJECT(object)->charging_scenery.part;
+	OBJECT(object)->charging_scenery.part = part + 1u;
+	charging_scenery_part_wait();
+	return u_2;
 }
 
 /* Does nothing until the scroll brings the next part in. */
@@ -695,31 +644,31 @@ void charging_scenery_part_wait(void)
 }
 
 /* Sets up the charging scenery behind the players, taking the floor map's row and column under it. */
-void charging_scenery_start(uint16_t object, uint16_t *p_box, uint16_t *p_u)
+uint16_t charging_scenery_start(uint16_t object)
 {
-	uint8_t b = 0, floor_cell = 0;
-	uint16_t box = 0, cell_place = 0, cell_value = 0, floor_start = 0, setup = 0;
+	uint8_t cell_low = 0, floor_cell = 0;
+	uint16_t cell_place = 0, cell_value = 0, floor_start = 0, setup = 0;
 	uint8_t stack_10001 = 0, stack_10002 = 0;
 	uint16_t stack = 0;
 	uint8_t attributes = 0, state = 0;
-	uint16_t t1 = 0, t2 = 0, floor_row = 0;
+	uint16_t scenery_y = 0, raised_y = 0, floor_row = 0;
 
 	setup = charging_scenery_setup_ADDRESS;
-	box = vector_object_setup(object, setup);
+	vector_object_setup(object, setup);
 	OBJECT(object)->flags = 0x80u;
 	OBJECT(object)->shadow_player = 0x40u;
-	t1 = OBJECT(object)->y;
-	t2 = t1 - 2u;
-	OBJECT(object)->y = t2;
+	scenery_y = OBJECT(object)->y;
+	raised_y = scenery_y - 2u;
+	OBJECT(object)->y = raised_y;
 	attributes = OBJECT(object)->attributes;
 	OBJECT(object)->attributes = (attributes & 0xCFu) | 0x10u;
 	floor_cell_under(object, &cell_place, &cell_value);
 	floor_cell = (uint8_t)(cell_value >> 8);
 	OBJECT(object)->charging_scenery.floor_cell = floor_cell;
 	stack = cell_place;
-	b = (uint8_t)stack;
-	scenery_floor_column = b;
-	OBJECT(object)->charging_scenery.floor_row = ((uint32_t)(stack >> 8) << 8) | (b & 0xC0u);
+	cell_low = (uint8_t)stack;
+	scenery_floor_column = cell_low;
+	OBJECT(object)->charging_scenery.floor_row = ((uint32_t)(stack >> 8) << 8) | (cell_low & 0xC0u);
 	scenery_floor_column = (scenery_floor_column - 2u) & 0x3Fu;
 	floor_row = OBJECT(object)->charging_scenery.floor_row;
 	stack_10001 = floor_row >> 8;
@@ -729,8 +678,7 @@ void charging_scenery_start(uint16_t object, uint16_t *p_box, uint16_t *p_u)
 	OBJECT(object)->charging_scenery.part = 0u;
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
-	*p_box = box;
-	*p_u = floor_start;
+	return floor_start;
 }
 
 /* Waits until its three floor parts are written. */
@@ -751,7 +699,7 @@ uint16_t pick_random_player(void)
 {
 	uint8_t slot = 0, tries = 0;
 	uint16_t player = 0;
-	uint8_t flags = 0, t1 = 0;
+	uint8_t flags = 0, tries_before = 0;
 
 	tries = 4u;
 	slot = (uint8_t)frame_count;
@@ -763,58 +711,52 @@ uint16_t pick_random_player(void)
 		if (flags != 0u)
 			break;
 		slot++;
-		t1 = tries;
-		tries = t1 - 1u;
-	} while (t1 != 1u);
+		tries_before = tries;
+		tries = tries_before - 1u;
+	} while (tries_before != 1u);
 	return player;
 }
 
 /* Once on screen with a player at the right angle, charges up and left, letting out one or two goons
    with hats. */
-void charging_scenery_wait_target(uint16_t object, uint16_t *p_y, uint16_t *p_u)
+uint16_t charging_scenery_wait_target(uint16_t object, uint16_t u)
 {
-	uint16_t y = (uint16_t)*p_y;
-	uint16_t u = (uint16_t)*p_u;
 	uint32_t carry = 0;
-	uint16_t ignored16 = 0;
+	uint16_t ignored16 = 0, ignored16_2 = 0, u_2 = 0;
 	uint8_t target_direction = 0, state = 0;
-	uint16_t t1 = 0;
+	uint16_t scenery_x = 0;
 
-	t1 = OBJECT(object)->x;
-	if (t1 < 0x128u)
-	{
-		u = pick_random_player();
-		vector_measure_target(object, u);
-		target_direction = OBJECT(object)->target_direction;
-		if (target_direction == 0xA0u)
-		{
-			OBJECT(object)->flags = 0xC0u;
-			OBJECT(object)->x_speed = -0x200;
-			OBJECT(object)->y_speed = -0x400;
-			state = OBJECT(object)->state;
-			OBJECT(object)->state = state + 1u;
-			charging_scenery_clear_floor(object);
-			y = charging_scenery_goon_left_ADDRESS;
-			vector_spawn_child(object, y, &u, &ignored16, &carry);
-			if (player_count > 2u)
-			{
-				y = charging_scenery_goon_right_ADDRESS;
-				vector_spawn_child(object, y, &u, &ignored16, &carry);
-			}
-		}
-	}
-	*p_y = y;
-	*p_u = u;
+	scenery_x = OBJECT(object)->x;
+	if (scenery_x >= 0x128u)
+		return u;
+	u = pick_random_player();
+	vector_measure_target(object, u);
+	target_direction = OBJECT(object)->target_direction;
+	if (target_direction != 0xA0u)
+		return u;
+	OBJECT(object)->flags = 0xC0u;
+	OBJECT(object)->x_speed = -0x200;
+	OBJECT(object)->y_speed = -0x400;
+	state = OBJECT(object)->state;
+	OBJECT(object)->state = state + 1u;
+	charging_scenery_clear_floor(object);
+	leftover_y = charging_scenery_goon_left_ADDRESS;
+	vector_spawn_child(object, &ignored16, &u_2, &ignored16_2, &carry);
+	if (player_count <= 2u)
+		return u_2;
+	leftover_y = charging_scenery_goon_right_ADDRESS;
+	vector_spawn_child(object, &ignored16, &u_2, &ignored16_2, &carry);
+	return u_2;
 }
 
 /* Charges, hurting the players and the enemies in turn, until it leaves at the top. */
 void charging_scenery_charge(uint16_t object)
 {
 	uint8_t flags = 0;
-	uint16_t t1 = 0;
+	uint16_t scenery_y = 0;
 
-	t1 = OBJECT(object)->y;
-	if (t1 < 0x40u)
+	scenery_y = OBJECT(object)->y;
+	if (scenery_y < 0x40u)
 	{
 		OBJECT(object)->flags = 0u;
 		return;
@@ -831,26 +773,25 @@ void charging_scenery_charge(uint16_t object)
 }
 
 /* Sets up the solid scenery raised off the floor and blocks the floor cells under it. */
-void solid_scenery_start(uint16_t object, uint16_t *p_box, uint16_t *p_u)
+uint16_t solid_scenery_start(uint16_t object)
 {
-	uint16_t box = 0, setup = 0, u = 0;
+	uint16_t setup = 0, u = 0;
 	uint8_t attributes = 0, state = 0;
-	uint16_t z = 0, t1 = 0;
+	uint16_t z = 0, raised_z = 0;
 
 	setup = solid_scenery_setup_ADDRESS;
-	box = vector_object_setup(object, setup);
+	vector_object_setup(object, setup);
 	OBJECT(object)->flags = 0x80u;
 	attributes = OBJECT(object)->attributes;
 	OBJECT(object)->attributes = (attributes & 0xCFu) | 0x10u;
 	z = OBJECT(object)->z;
-	t1 = z + 0x4Cu;
-	OBJECT(object)->z = t1;
+	raised_z = z + 0x4Cu;
+	OBJECT(object)->z = raised_z;
 	u = scenery_block_floor(object);
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
 	solid_scenery_idle();
-	*p_box = box;
-	*p_u = u;
+	return u;
 }
 
 /* Does nothing. */
@@ -859,39 +800,38 @@ void solid_scenery_idle(void)
 }
 
 /* Sets the rising scenery up (kind 10 for the second) and the camera x it waits for. */
-void rising_scenery_start(uint16_t object, uint16_t *p_box, uint16_t *p_camera_xs)
+uint16_t rising_scenery_start(uint16_t object)
 {
-	uint16_t box = 0, camera_xs = 0, setup = 0;
-	uint8_t attributes = 0, parameter = 0, t1 = 0, parameter_2 = 0, state = 0;
-	uint16_t t2 = 0, t3 = 0, t4 = 0, t5 = 0, t6 = 0;
+	uint16_t camera_xs = 0, setup = 0;
+	uint8_t attributes = 0, parameter = 0, old_rise_cue = 0, parameter_2 = 0, state = 0;
+	uint16_t scenery_x = 0, moved_x = 0, scenery_y = 0, raised_y = 0, camera_trigger = 0;
 
 	setup = rising_scenery_setup_ADDRESS;
-	box = vector_object_setup(object, setup);
+	vector_object_setup(object, setup);
 	OBJECT(object)->flags = 0x80u;
 	attributes = OBJECT(object)->attributes;
 	OBJECT(object)->attributes = (attributes & 0xCFu) | 0x20u;
 	parameter = OBJECT(object)->parameter;
 	if (parameter != 0u)
 	{
-		t1 = io_read8(0x187Fu);
+		old_rise_cue = io_read8(0x187Fu);
 		io_write8(0x187Fu, 0u);
 		OBJECT(object)->kind = 0x10u;
 		OBJECT(object)->animation = 7u;
-		t2 = OBJECT(object)->x;
-		t3 = t2 + 8u;
-		OBJECT(object)->x = t3;
-		t4 = OBJECT(object)->y;
-		t5 = t4 - 2u;
-		OBJECT(object)->y = t5;
+		scenery_x = OBJECT(object)->x;
+		moved_x = scenery_x + 8u;
+		OBJECT(object)->x = moved_x;
+		scenery_y = OBJECT(object)->y;
+		raised_y = scenery_y - 2u;
+		OBJECT(object)->y = raised_y;
 	}
 	camera_xs = rising_scenery_camera_xs_ADDRESS;
 	parameter_2 = OBJECT(object)->parameter;
-	t6 = rising_scenery_camera_xs[(int8_t)((uint8_t)((uint32_t)parameter_2 << 1)) / 2];
-	OBJECT(object)->rising_scenery.trigger_x = t6;
+	camera_trigger = rising_scenery_camera_xs[(int8_t)((uint8_t)((uint32_t)parameter_2 << 1)) / 2];
+	OBJECT(object)->rising_scenery.trigger_x = camera_trigger;
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
-	*p_box = box;
-	*p_camera_xs = camera_xs;
+	return camera_xs;
 }
 
 /* Waits for the camera, then starts rising (sound 4600 for the first). */
@@ -900,11 +840,11 @@ void rising_scenery_wait_camera(uint16_t object)
 	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t parameter = 0, state = 0;
-	uint16_t t1 = 0, trigger_x = 0;
+	uint16_t camera_x_now = 0, trigger_x = 0;
 
-	t1 = camera_x;
+	camera_x_now = camera_x;
 	trigger_x = OBJECT(object)->rising_scenery.trigger_x;
-	if (t1 < trigger_x)
+	if (camera_x_now < trigger_x)
 		return;
 	parameter = OBJECT(object)->parameter;
 	if (parameter == 0u)
@@ -921,7 +861,7 @@ void rising_scenery_wait_camera(uint16_t object)
 /* Rises out of the stage for 64 frames holding the scroll, then goes away. */
 void rising_scenery_rise(uint16_t object)
 {
-	uint8_t a = 0;
+	uint8_t timer_left = 0;
 	uint8_t timer = 0, timer_2 = 0;
 
 	camera_x_held--;
@@ -930,20 +870,20 @@ void rising_scenery_rise(uint16_t object)
 	if (timer == 1u)
 		OBJECT(object)->flags = 0u;
 	timer_2 = OBJECT(object)->timer;
-	a = timer_2;
-	if (a == 0x20u)
-		io_write8(0x187Fu, a);
+	timer_left = timer_2;
+	if (timer_left == 0x20u)
+		io_write8(0x187Fu, timer_left);
 }
 
 /* Sets the scenery up at x 01A0 with the speed, animation and attributes its spawn's state picks. */
-void looping_scenery_start(uint16_t object, uint16_t *p_box, uint16_t *p_looping_scenery_move)
+uint16_t looping_scenery_start(uint16_t object)
 {
-	uint16_t box = 0, looping_scenery_move = 0, setup = 0;
+	uint16_t looping_scenery_move = 0, setup = 0;
 	uint8_t parameter = 0, state = 0;
 	uint16_t x_speed = 0, animation = 0;
 
 	setup = looping_scenery_setup_ADDRESS;
-	box = vector_object_setup(object, setup);
+	vector_object_setup(object, setup);
 	OBJECT(object)->flags = 0x80u;
 	OBJECT(object)->x = 0x1A0u;
 	parameter = OBJECT(object)->parameter;
@@ -955,29 +895,28 @@ void looping_scenery_start(uint16_t object, uint16_t *p_box, uint16_t *p_looping
 	OBJECT(object)->attributes = animation;
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
-	*p_box = box;
-	*p_looping_scenery_move = looping_scenery_move;
+	return looping_scenery_move;
 }
 
 /* Keeps the scenery's x within 0000-01FF so it comes round again. */
 void looping_scenery_wrap(uint16_t object)
 {
-	uint8_t t1 = 0;
+	uint8_t x_high = 0;
 
-	t1 = (uint8_t)(OBJECT(object)->x >> 8u);
-	OBJECT(object)->x = (OBJECT(object)->x & 0xFFu) | ((t1 & 1u & 0xFFu) << 8u);
+	x_high = (uint8_t)(OBJECT(object)->x >> 8u);
+	OBJECT(object)->x = (OBJECT(object)->x & 0xFFu) | ((x_high & 1u & 0xFFu) << 8u);
 }
 
 /* Keeps the scenery coming round until the camera passes 06B0. */
 void looping_scenery_wrap_until_camera(uint16_t object)
 {
-	uint8_t t1 = 0, state = 0;
-	uint16_t t2 = 0;
+	uint8_t x_high = 0, state = 0;
+	uint16_t camera_x_now = 0;
 
-	t1 = (uint8_t)(OBJECT(object)->x >> 8u);
-	OBJECT(object)->x = (OBJECT(object)->x & 0xFFu) | ((t1 & 1u & 0xFFu) << 8u);
-	t2 = camera_x;
-	if (t2 >= 0x6B0u)
+	x_high = (uint8_t)(OBJECT(object)->x >> 8u);
+	OBJECT(object)->x = (OBJECT(object)->x & 0xFFu) | ((x_high & 1u & 0xFFu) << 8u);
+	camera_x_now = camera_x;
+	if (camera_x_now >= 0x6B0u)
 	{
 		state = OBJECT(object)->state;
 		OBJECT(object)->state = state + 1u;
@@ -987,12 +926,12 @@ void looping_scenery_wrap_until_camera(uint16_t object)
 /* Lets the scenery move off, gone past x 01C0. */
 void looping_scenery_leave(uint16_t object)
 {
-	uint8_t t1 = 0;
-	uint16_t t2 = 0;
+	uint8_t x_high = 0;
+	uint16_t scenery_x = 0;
 
-	t1 = (uint8_t)(OBJECT(object)->x >> 8u);
-	OBJECT(object)->x = (OBJECT(object)->x & 0xFFu) | ((t1 & 1u & 0xFFu) << 8u);
-	t2 = OBJECT(object)->x;
-	if (t2 >= 0x1C0u)
+	x_high = (uint8_t)(OBJECT(object)->x >> 8u);
+	OBJECT(object)->x = (OBJECT(object)->x & 0xFFu) | ((x_high & 1u & 0xFFu) << 8u);
+	scenery_x = OBJECT(object)->x;
+	if (scenery_x >= 0x1C0u)
 		OBJECT(object)->flags = 0u;
 }

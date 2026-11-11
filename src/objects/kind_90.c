@@ -3,7 +3,7 @@
  *    Description: stage 1's kind 90 enemy that throws, and what it throws
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    10-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -13,18 +13,18 @@
 
 /* Sets up the hidden kind 90 enemy, out of play: its x and facing, its wait and its throws by its
    spawn's state. */
-uint16_t kind_90_setup(uint16_t object)
+void kind_90_setup(uint16_t object)
 {
 	uint8_t attributes = 0, start_x_high = 0, start_x_low = 0;
-	uint16_t box = 0, kind_90_start = 0, setup = 0;
+	uint16_t kind_90_start = 0, setup = 0;
 	uint8_t attributes_2 = 0, parameter = 0, attributes_3 = 0, attributes_4 = 0, state = 0;
-	uint16_t t1 = 0, t2 = 0, t3 = 0, wait = 0;
+	uint16_t old_y = 0, new_y = 0, entry_x = 0, wait = 0;
 
 	setup = kind_90_object_setup_ADDRESS;
-	box = vector_object_setup(object, setup);
-	t1 = OBJECT(object)->y;
-	t2 = t1 + 2u;
-	OBJECT(object)->y = t2;
+	vector_object_setup(object, setup);
+	old_y = OBJECT(object)->y;
+	new_y = old_y + 2u;
+	OBJECT(object)->y = new_y;
 	OBJECT(object)->floor_z = 0u;
 	attributes_2 = OBJECT(object)->attributes;
 	OBJECT(object)->attributes = (attributes_2 & 0xCFu) | 0x20u;
@@ -36,9 +36,9 @@ uint16_t kind_90_setup(uint16_t object)
 	OBJECT(object)->retarget_time = 0x10u;
 	parameter = OBJECT(object)->parameter;
 	kind_90_start = kind_90_starts_ADDRESS + (int8_t)(((uint32_t)parameter << 1) << 1);
-	t3 = KIND_90_START(kind_90_start)->x;
-	start_x_low = (uint8_t)t3;
-	start_x_high = (uint8_t)(t3 >> 8);
+	entry_x = KIND_90_START(kind_90_start)->x;
+	start_x_low = (uint8_t)entry_x;
+	start_x_high = (uint8_t)(entry_x >> 8);
 	OBJECT(object)->kind_90.start_x = ((uint32_t)start_x_high << 8) | (start_x_low & 0xFFu);
 	if ((uint16_t)(((uint32_t)start_x_high << 8) | (start_x_low & 0xFFu)) >= 0x100u)
 	{
@@ -57,13 +57,11 @@ uint16_t kind_90_setup(uint16_t object)
 	OBJECT(object)->parameter = 0u;
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
-	return box;
 }
 
 /* Runs the kind 90 enemy's entrance by its substep. */
-uint16_t kind_90_entrance_steps(uint16_t object, uint16_t y)
+void kind_90_entrance_steps(uint16_t object)
 {
-	uint16_t ignored16 = 0;
 	uint8_t action_step = 0;
 
 	action_step = OBJECT(object)->action_step;
@@ -71,37 +69,36 @@ uint16_t kind_90_entrance_steps(uint16_t object, uint16_t y)
 	{
 	case 0:
 		kind_90_wait_camera(object, 0u);
-		return y;
+		return;
 	case 2:
 		kind_90_walk_out(object);
-		return y;
+		return;
 	case 4:
 		kind_90_find_floor(object);
-		return y;
+		return;
 	case 6:
 		kind_90_land(object);
-		return y;
+		return;
 	case 8:
 		kind_90_throw_wind_up(object);
-		return y;
+		return;
 	case 10:
-		kind_90_throw(object, &y, &ignored16);
-		return y;
+		kind_90_throw(object, 0u);
+		return;
 	case 12:
 		kind_90_throw_end(object);
-		return y;
+		return;
 	}
-	unreachable();
 }
 
 /* Waits for the camera to reach 03D0, then shows the enemy in play facing the nearest player. */
 uint16_t kind_90_wait_camera(uint16_t object, uint16_t target)
 {
 	uint8_t action_step = 0;
-	uint16_t t1 = 0;
+	uint16_t camera_position = 0;
 
-	t1 = camera_x;
-	if (t1 < 0x3D0u)
+	camera_position = camera_x;
+	if (camera_position < 0x3D0u)
 		return target;
 	OBJECT(object)->flags = 0x80u;
 	OBJECT(object)->entrance_pending = 0u;
@@ -176,54 +173,48 @@ void kind_90_throw_wind_up(uint16_t object)
 }
 
 /* When the animation ends, throws (sound 6100): always from difficulty 3, else three times out of four. */
-void kind_90_throw(uint16_t object, uint16_t *p_y, uint16_t *p_u)
+uint16_t kind_90_throw(uint16_t object, uint16_t u)
 {
-	uint16_t y = (uint16_t)*p_y;
-	uint16_t u = (uint16_t)*p_u;
 	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t animation_flags = 0, action_step = 0, throws_left = 0, throws_left_2 = 0;
 
 	animation_flags = OBJECT(object)->animation_flags;
-	if (animation_flags & 1u)
+	if ((animation_flags & 1u) == 0u)
+		return u;
+	if (difficulty >= 3u)
 	{
-		if (difficulty >= 3u)
+		kind_90_put_in_missile(object, &u, &carry);
+		if (carry == 0u)
 		{
-			kind_90_put_in_missile(object, &y, &u, &carry);
-			if (carry == 0u)
-				kind_90_throw_end(object);
-			else
-			{
-				action_step = OBJECT(object)->action_step;
-				OBJECT(object)->action_step = action_step + 1u;
-				command = 0x6100u;
-				carry = vector_queue_sound(command);
-			}
+			kind_90_throw_end(object);
+			return u;
 		}
-		else
-		{
-			throws_left = OBJECT(object)->kind_90.throws_left;
-			OBJECT(object)->kind_90.throws_left = throws_left - 1u;
-			throws_left_2 = OBJECT(object)->kind_90.throws_left;
-			if ((throws_left_2 & 3u) == 0u)
-				kind_90_throw_end(object);
-			else
-			{
-				kind_90_put_in_missile(object, &y, &u, &carry);
-				if (carry == 0u)
-					kind_90_throw_end(object);
-				else
-				{
-					action_step = OBJECT(object)->action_step;
-					OBJECT(object)->action_step = action_step + 1u;
-					command = 0x6100u;
-					carry = vector_queue_sound(command);
-				}
-			}
-		}
+		action_step = OBJECT(object)->action_step;
+		OBJECT(object)->action_step = action_step + 1u;
+		command = 0x6100u;
+		carry = vector_queue_sound(command);
+		return u;
 	}
-	*p_y = y;
-	*p_u = u;
+	throws_left = OBJECT(object)->kind_90.throws_left;
+	OBJECT(object)->kind_90.throws_left = throws_left - 1u;
+	throws_left_2 = OBJECT(object)->kind_90.throws_left;
+	if ((throws_left_2 & 3u) == 0u)
+	{
+		kind_90_throw_end(object);
+		return u;
+	}
+	kind_90_put_in_missile(object, &u, &carry);
+	if (carry == 0u)
+	{
+		kind_90_throw_end(object);
+		return u;
+	}
+	action_step = OBJECT(object)->action_step;
+	OBJECT(object)->action_step = action_step + 1u;
+	command = 0x6100u;
+	carry = vector_queue_sound(command);
+	return u;
 }
 
 /* Ends the throw and goes back to the fight. */
@@ -235,22 +226,22 @@ void kind_90_throw_end(uint16_t object)
 }
 
 /* Puts in what the kind 90 enemy throws. */
-void kind_90_put_in_missile(uint16_t object, uint16_t *p_missile_record, uint16_t *p_object_2, uint32_t *p_carry)
+void kind_90_put_in_missile(uint16_t object, uint16_t *p_object_2, uint32_t *p_carry)
 {
 	uint32_t carry = *p_carry;
-	uint16_t ignored16 = 0, missile_record = 0, object_3 = 0;
+	uint16_t child_object = 0, ignored16 = 0, object_3 = 0;
 	uint8_t attributes = 0, attributes_2 = 0;
 	uint16_t parent = 0;
 
-	missile_record = kind_90_put_in_missile_child_ADDRESS;
-	spawn_list_2_child(object, missile_record, &ignored16, &carry);
+	leftover_y = kind_90_put_in_missile_child_ADDRESS;
+	child_object = kind_90_put_in_missile_child_ADDRESS;
+	spawn_list_2_child(object, child_object, &ignored16, &carry);
 	parent = OBJECT(object)->parent;
 	object_3 = parent;
 	attributes = OBJECT(object_3)->attributes;
 	priority_bits = attributes & 0x30u;
 	attributes_2 = OBJECT(object)->attributes;
 	OBJECT(object)->attributes = (attributes_2 & 0xCFu) | priority_bits;
-	*p_missile_record = missile_record;
 	*p_object_2 = object_3;
 	*p_carry = carry;
 }

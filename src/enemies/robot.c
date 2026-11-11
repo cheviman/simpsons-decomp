@@ -3,7 +3,7 @@
  *    Description: stage 7's robot (type 30), its actions, its pieces, sparks and launched part
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    10-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -12,14 +12,14 @@
 #include "game.h"
 
 /* Sets a robot piece up, hidden, with its rise, wait, animation and direction from robot_pieces. */
-void robot_piece_setup(uint16_t object, uint16_t *p_y, uint16_t *p_piece)
+uint16_t robot_piece_setup(uint16_t object)
 {
-	uint16_t heading = 0, piece = 0, setup = 0, y = 0;
+	uint16_t heading = 0, piece = 0, setup = 0;
 	uint8_t parameter = 0, animation = 0, direction = 0, state = 0;
 	uint16_t rise = 0;
 
 	setup = robot_piece_object_setup_ADDRESS;
-	y = vector_object_setup(object, setup);
+	vector_object_setup(object, setup);
 	OBJECT(object)->flags = 4u;
 	OBJECT(object)->kind = 0x8Fu;
 	parameter = OBJECT(object)->parameter;
@@ -34,8 +34,7 @@ void robot_piece_setup(uint16_t object, uint16_t *p_y, uint16_t *p_piece)
 	vector_set_speed_by_direction(object, heading);
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
-	*p_y = y;
-	*p_piece = piece;
+	return piece;
 }
 
 /* Counts the piece's wait down, then shows it. */
@@ -77,11 +76,11 @@ void robot_piece_bounce(uint16_t object)
 {
 	uint32_t carry = 0;
 	uint8_t state = 0;
-	uint16_t z_speed = 0, t1 = 0;
+	uint16_t z_speed = 0, falling_z_speed = 0;
 
 	z_speed = OBJECT(object)->z_speed;
-	t1 = z_speed - 0x30u;
-	OBJECT(object)->z_speed = t1;
+	falling_z_speed = z_speed - 0x30u;
+	OBJECT(object)->z_speed = falling_z_speed;
 	carry = vector_check_landing(object);
 	if (carry == 0u)
 	{
@@ -140,21 +139,20 @@ void robot_piece_burst(uint16_t object)
 }
 
 /* Sets the spark up with the time it lasts from hit_spark_times. */
-void robot_spark_setup(uint16_t object, uint16_t *p_y, uint16_t *p_spark_times)
+uint16_t robot_spark_setup(uint16_t object)
 {
-	uint16_t setup = 0, spark_times = 0, y = 0;
+	uint16_t setup = 0, spark_times = 0;
 	uint8_t parameter = 0, state = 0;
 
 	setup = robot_spark_object_setup_ADDRESS;
-	y = vector_object_setup(object, setup);
+	vector_object_setup(object, setup);
 	OBJECT(object)->flags = 0x40u;
 	spark_times = hit_spark_times_ADDRESS;
 	parameter = OBJECT(object)->parameter;
 	OBJECT(object)->timer = hit_spark_times[(int8_t)parameter];
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
-	*p_y = y;
-	*p_spark_times = spark_times;
+	return spark_times;
 }
 
 /* Counts the spark's time down and frees its slot. */
@@ -170,18 +168,18 @@ void robot_spark_fade(uint16_t object)
 
 /* Sets the robot up with its behaviour robot_behaviour (less vitality with 1 or 3 players), turned to
    its player, fighting at once; sets direct page 80 and starts its music. */
-uint16_t robot_setup(uint16_t object)
+void robot_setup(uint16_t object)
 {
 	uint32_t carry = 0;
-	uint16_t command = 0, setup = 0, u = 0, y = 0;
+	uint16_t command = 0, nearest_player = 0, setup = 0;
 	uint8_t attributes = 0;
 
 	setup = robot_object_setup_ADDRESS;
-	y = vector_object_setup(object, setup);
+	vector_object_setup(object, setup);
 	if (player_count & 1u)
 		OBJECT(object)->vitality = 0x30u;
-	u = vector_choose_nearest_player(object);
-	vector_measure_target(object, u);
+	nearest_player = vector_choose_nearest_player(object);
+	vector_measure_target(object, nearest_player);
 	OBJECT(object)->robot.spare_count = 4u;
 	OBJECT(object)->robot.flashing = 1u;
 	OBJECT(object)->behaviour = 0x7B70u;
@@ -193,7 +191,6 @@ uint16_t robot_setup(uint16_t object)
 	stage_part = 1u;
 	command = 0x9B00u;
 	carry = vector_queue_sound_unless_attract(command);
-	return y;
 }
 
 /* Plays the robot's wind-up for 64 frames, with a sound. */
@@ -282,62 +279,55 @@ void robot_punch_start(uint16_t object)
 }
 
 /* On the first marked frame, gives the robot its first attacking hit box. */
-uint16_t robot_punch_first_hit(uint16_t object, uint16_t y)
+void robot_punch_first_hit(uint16_t object)
 {
-	uint16_t box = 0;
 	uint8_t animation_flags = 0, action_step = 0;
 
 	animation_flags = OBJECT(object)->animation_flags;
 	if ((animation_flags & 2u) == 0u)
-		return y;
+		return;
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step + 1u;
-	box = robot_punch_first_hit_box_ADDRESS;
-	vector_set_hit_box(object, box);
-	return box;
+	leftover_y = robot_punch_first_hit_box_ADDRESS;
+	vector_set_hit_box(object);
 }
 
 /* Gives the robot back its plain hit box. */
-uint16_t robot_punch_recover(uint16_t object)
+void robot_punch_recover(uint16_t object)
 {
-	uint16_t box = 0;
 	uint8_t action_step = 0;
 
-	box = robot_body_box_ADDRESS;
-	vector_set_hit_box(object, box);
+	leftover_y = robot_body_box_ADDRESS;
+	vector_set_hit_box(object);
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step + 1u;
-	return robot_punch_second_hit(object, box);
+	robot_punch_second_hit(object);
 }
 
 /* On the next marked frame, gives the robot its second attacking hit box. */
-uint16_t robot_punch_second_hit(uint16_t object, uint16_t y)
+void robot_punch_second_hit(uint16_t object)
 {
-	uint16_t box = 0;
 	uint8_t animation_flags = 0, action_step = 0;
 
 	animation_flags = OBJECT(object)->animation_flags;
 	if ((animation_flags & 2u) == 0u)
-		return y;
+		return;
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step + 1u;
-	box = robot_punch_second_hit_box_ADDRESS;
-	vector_set_hit_box(object, box);
-	return box;
+	leftover_y = robot_punch_second_hit_box_ADDRESS;
+	vector_set_hit_box(object);
 }
 
 /* Gives the robot back its plain hit box again. */
-uint16_t robot_punch_recover_again(uint16_t object)
+void robot_punch_recover_again(uint16_t object)
 {
-	uint16_t box = 0;
 	uint8_t action_step = 0;
 
-	box = robot_body_box_ADDRESS;
-	vector_set_hit_box(object, box);
+	leftover_y = robot_body_box_ADDRESS;
+	vector_set_hit_box(object);
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step + 1u;
 	robot_attack_end_with_animation(object);
-	return box;
 }
 
 /* Ends the robot's action when its animation ends. */
@@ -399,40 +389,53 @@ void robot_advance_shock_start(uint16_t object)
 
 /* On the shock's marked frames puts in its sparks by robot_sparks_by_frame_9d, with the sound at frames
    6 and 0E. */
-void robot_advance_shock_sparks(uint16_t object, uint16_t *p_child_record, uint16_t *p_u)
+uint16_t robot_advance_shock_sparks(uint16_t object, uint16_t steps)
 {
-	uint16_t child_record = (uint16_t)*p_child_record;
-	uint16_t u = (uint16_t)*p_u;
 	uint32_t carry = 0;
 	uint8_t animation_frame = 0;
-	uint16_t command = 0, ignored16 = 0;
-	uint8_t animation_flags = 0, frame = 0, frame_2 = 0, animation_flags_2 = 0, action_step = 0;
-	uint16_t t1 = 0;
+	uint16_t command = 0, ignored16 = 0, ignored16_2 = 0;
+	uint8_t animation_flags = 0, animation_flags_2 = 0, action_step = 0, frame = 0, frame_2 = 0;
+	uint16_t spark_record = 0;
 
 	animation_flags = OBJECT(object)->animation_flags;
-	if ((animation_flags & 2u) != 0u)
+	if ((animation_flags & 2u) == 0u)
 	{
-		frame = OBJECT(object)->frame;
-		animation_frame = frame;
-		if (animation_frame == 6u || animation_frame == 0xEu)
+		animation_flags_2 = OBJECT(object)->animation_flags;
+		if (animation_flags_2 & 1u)
 		{
-			command = 0x2300u;
-			carry = vector_queue_sound(command);
+			action_step = OBJECT(object)->action_step;
+			OBJECT(object)->action_step = action_step + 1u;
 		}
-		frame_2 = OBJECT(object)->frame;
-		t1 = robot_sparks_by_frame_9d[(int8_t)((uint8_t)((uint32_t)frame_2 << 1)) / 2];
-		child_record = t1;
-		if ((int16_t)t1 >= 0)
-			vector_spawn_child(object, child_record, &u, &ignored16, &carry);
+		return steps;
 	}
+	frame = OBJECT(object)->frame;
+	animation_frame = frame;
+	if (animation_frame == 6u || animation_frame == 0xEu)
+	{
+		command = 0x2300u;
+		carry = vector_queue_sound(command);
+	}
+	frame_2 = OBJECT(object)->frame;
+	spark_record = robot_sparks_by_frame_9d[(int8_t)((uint8_t)((uint32_t)frame_2 << 1)) / 2];
+	leftover_y = spark_record;
+	if ((int16_t)spark_record < 0)
+	{
+		animation_flags_2 = OBJECT(object)->animation_flags;
+		if (animation_flags_2 & 1u)
+		{
+			action_step = OBJECT(object)->action_step;
+			OBJECT(object)->action_step = action_step + 1u;
+		}
+		return steps;
+	}
+	vector_spawn_child(object, &ignored16, &steps, &ignored16_2, &carry);
 	animation_flags_2 = OBJECT(object)->animation_flags;
 	if (animation_flags_2 & 1u)
 	{
 		action_step = OBJECT(object)->action_step;
 		OBJECT(object)->action_step = action_step + 1u;
 	}
-	*p_child_record = child_record;
-	*p_u = u;
+	return steps;
 }
 
 /* Turns the robot to its player and starts the shock. */
@@ -453,38 +456,51 @@ void robot_shock_92_begin(uint16_t object)
 }
 
 /* On the shock's marked frames puts in its sparks by robot_sparks_by_frame_92. */
-void robot_shock_92_sparks(uint16_t object, uint16_t *p_child_record, uint16_t *p_u)
+uint16_t robot_shock_92_sparks(uint16_t object, uint16_t steps)
 {
-	uint16_t child_record = (uint16_t)*p_child_record;
-	uint16_t u = (uint16_t)*p_u;
 	uint32_t carry = 0;
-	uint16_t command = 0, ignored16 = 0;
-	uint8_t animation_flags = 0, frame = 0, frame_2 = 0, animation_flags_2 = 0, action_step = 0;
-	uint16_t t1 = 0;
+	uint16_t command = 0, ignored16 = 0, ignored16_2 = 0;
+	uint8_t animation_flags = 0, animation_flags_2 = 0, action_step = 0, frame = 0, frame_2 = 0;
+	uint16_t spark_record = 0;
 
 	animation_flags = OBJECT(object)->animation_flags;
-	if ((animation_flags & 2u) != 0u)
+	if ((animation_flags & 2u) == 0u)
 	{
-		frame = OBJECT(object)->frame;
-		if (frame == 6u)
+		animation_flags_2 = OBJECT(object)->animation_flags;
+		if (animation_flags_2 & 1u)
 		{
-			command = 0x2300u;
-			carry = vector_queue_sound(command);
+			action_step = OBJECT(object)->action_step;
+			OBJECT(object)->action_step = action_step + 1u;
 		}
-		frame_2 = OBJECT(object)->frame;
-		t1 = robot_sparks_by_frame_92[(int8_t)((uint8_t)((uint32_t)frame_2 << 1)) / 2];
-		child_record = t1;
-		if ((int16_t)t1 >= 0)
-			vector_spawn_child(object, child_record, &u, &ignored16, &carry);
+		return steps;
 	}
+	frame = OBJECT(object)->frame;
+	if (frame == 6u)
+	{
+		command = 0x2300u;
+		carry = vector_queue_sound(command);
+	}
+	frame_2 = OBJECT(object)->frame;
+	spark_record = robot_sparks_by_frame_92[(int8_t)((uint8_t)((uint32_t)frame_2 << 1)) / 2];
+	leftover_y = spark_record;
+	if ((int16_t)spark_record < 0)
+	{
+		animation_flags_2 = OBJECT(object)->animation_flags;
+		if (animation_flags_2 & 1u)
+		{
+			action_step = OBJECT(object)->action_step;
+			OBJECT(object)->action_step = action_step + 1u;
+		}
+		return steps;
+	}
+	vector_spawn_child(object, &ignored16, &steps, &ignored16_2, &carry);
 	animation_flags_2 = OBJECT(object)->animation_flags;
 	if (animation_flags_2 & 1u)
 	{
 		action_step = OBJECT(object)->action_step;
 		OBJECT(object)->action_step = action_step + 1u;
 	}
-	*p_child_record = child_record;
-	*p_u = u;
+	return steps;
 }
 
 /* Turns the robot to its player and starts the shock. */
@@ -505,14 +521,12 @@ void robot_shock_91_begin(uint16_t object)
 }
 
 /* On the shock's marked frames puts in its sparks by robot_sparks_by_frame_91. */
-void robot_shock_91_sparks(uint16_t object, uint16_t *p_child_record, uint16_t *p_u)
+uint16_t robot_shock_91_sparks(uint16_t object, uint16_t steps)
 {
-	uint16_t child_record = (uint16_t)*p_child_record;
-	uint16_t u = (uint16_t)*p_u;
 	uint32_t carry = 0;
-	uint16_t command = 0, ignored16 = 0;
+	uint16_t command = 0, ignored16 = 0, ignored16_2 = 0;
 	uint8_t animation_flags = 0, animation_flags_2 = 0, action_step = 0, frame = 0, frame_2 = 0, animation_flags_3 = 0, action_step_2 = 0;
-	uint16_t t1 = 0;
+	uint16_t spark_record = 0;
 
 	animation_flags = OBJECT(object)->animation_flags;
 	if ((animation_flags & 2u) == 0u)
@@ -523,33 +537,30 @@ void robot_shock_91_sparks(uint16_t object, uint16_t *p_child_record, uint16_t *
 			action_step = OBJECT(object)->action_step;
 			OBJECT(object)->action_step = action_step + 1u;
 		}
+		return steps;
 	}
-	else
+	frame = OBJECT(object)->frame;
+	if (frame == 6u)
 	{
-		frame = OBJECT(object)->frame;
-		if (frame == 6u)
-		{
-			command = 0x2300u;
-			carry = vector_queue_sound(command);
-		}
-		frame_2 = OBJECT(object)->frame;
-		t1 = robot_sparks_by_frame_91[(int8_t)((uint8_t)((uint32_t)frame_2 << 1)) / 2];
-		child_record = t1;
-		if ((int16_t)t1 >= 0)
-			vector_spawn_child(object, child_record, &u, &ignored16, &carry);
-		animation_flags_3 = OBJECT(object)->animation_flags;
-		if (animation_flags_3 & 1u)
-		{
-			action_step_2 = OBJECT(object)->action_step;
-			OBJECT(object)->action_step = action_step_2 + 1u;
-		}
+		command = 0x2300u;
+		carry = vector_queue_sound(command);
 	}
-	*p_child_record = child_record;
-	*p_u = u;
+	frame_2 = OBJECT(object)->frame;
+	spark_record = robot_sparks_by_frame_91[(int8_t)((uint8_t)((uint32_t)frame_2 << 1)) / 2];
+	leftover_y = spark_record;
+	if ((int16_t)spark_record >= 0)
+		vector_spawn_child(object, &ignored16, &steps, &ignored16_2, &carry);
+	animation_flags_3 = OBJECT(object)->animation_flags;
+	if (animation_flags_3 & 1u)
+	{
+		action_step_2 = OBJECT(object)->action_step;
+		OBJECT(object)->action_step = action_step_2 + 1u;
+	}
+	return steps;
 }
 
 /* The robot's own hit reaction (step 4), by field 29. */
-uint16_t robot_hit_reaction(uint16_t object, uint16_t y)
+void robot_hit_reaction(uint16_t object)
 {
 	uint8_t action_step = 0;
 
@@ -557,50 +568,49 @@ uint16_t robot_hit_reaction(uint16_t object, uint16_t y)
 	switch ((int8_t)(uint8_t)((uint32_t)action_step << 1))
 	{
 	case 0:
-		y = robot_hit_land(object);
+		robot_hit_land(object);
 		break;
 	case 2:
-		y = robot_hit_strike_back(object, y);
+		robot_hit_strike_back(object);
 		break;
 	case 4:
-		y = robot_hit_strike_back_recover(object);
+		robot_hit_strike_back_recover(object);
 		break;
 	case 6:
-		y = robot_hit_strike_back_second(object, y);
+		robot_hit_strike_back_second(object);
 		break;
 	case 8:
-		y = robot_hit_choose_action(object);
+		robot_hit_choose_action(object);
 		break;
 	case 10:
 		robot_break_down(object);
 		break;
 	case 12:
-		y = robot_explode(object, y);
+		robot_explode(object);
 		break;
 	}
 	vector_stop_at_screen_edges(object);
 	check_floor(object, 0u);
-	return y;
 }
 
 /* Flashes the hit robot with the hit sound until it lands; beaten, it plays its breaking down, otherwise
    it strikes back. */
-uint16_t robot_hit_land(uint16_t object)
+void robot_hit_land(uint16_t object)
 {
 	uint32_t carry = 0;
-	uint16_t box = 0, command = 0, ignored16 = 0;
+	uint16_t command = 0, ignored16 = 0;
 	uint8_t vitality = 0, action_step = 0;
 	uint16_t hit_box = 0;
 
 	robot_flash(object);
 	hit_box = OBJECT(object)->hit_box;
-	box = hit_box;
-	vector_set_hit_box(object, box);
+	leftover_y = hit_box;
+	vector_set_hit_box(object);
 	command = 0x6300u;
 	carry = vector_queue_sound(command);
 	vector_apply_gravity(object, &ignored16, &carry);
 	if (carry == 0u)
-		return box;
+		return;
 	OBJECT(object)->x_speed = 0;
 	OBJECT(object)->y_speed = 0;
 	vitality = OBJECT(object)->vitality;
@@ -609,44 +619,42 @@ uint16_t robot_hit_land(uint16_t object)
 		OBJECT(object)->animation = 0x90u;
 		action_step = OBJECT(object)->action_step;
 		OBJECT(object)->action_step = action_step + 1u;
-		return box;
+		return;
 	}
 	OBJECT(object)->animation = 0x88u;
 	OBJECT(object)->action_step = 5u;
-	return box;
 }
 
 /* Flashes the robot while its strike back reaches the first blow. */
-uint16_t robot_hit_strike_back(uint16_t object, uint16_t y)
+void robot_hit_strike_back(uint16_t object)
 {
 	robot_flash(object);
-	return robot_punch_first_hit(object, y);
+	robot_punch_first_hit(object);
 }
 
 /* The robot's strike back: back to its plain hit box. */
-uint16_t robot_hit_strike_back_recover(uint16_t object)
+void robot_hit_strike_back_recover(uint16_t object)
 {
-	return robot_punch_recover(object);
+	robot_punch_recover(object);
 }
 
 /* The robot's strike back: the second blow. */
-uint16_t robot_hit_strike_back_second(uint16_t object, uint16_t y)
+void robot_hit_strike_back_second(uint16_t object)
 {
-	return robot_punch_second_hit(object, y);
+	robot_punch_second_hit(object);
 }
 
 /* When the strike back ends, takes the robot's next action and status from robot_actions_after_hit and
    robot_status_after_hit, flashing until it acts. */
-uint16_t robot_hit_choose_action(uint16_t object)
+void robot_hit_choose_action(uint16_t object)
 {
 	uint8_t hit_index = 0;
-	uint16_t box = 0;
 	uint8_t animation_flags = 0, attributes = 0, animation_flags_2 = 0, hit_round = 0, hit_round_2 = 0;
 	uint16_t hit_box = 0;
 
 	hit_box = OBJECT(object)->hit_box;
-	box = hit_box;
-	vector_set_hit_box(object, box);
+	leftover_y = hit_box;
+	vector_set_hit_box(object);
 	animation_flags = OBJECT(object)->animation_flags;
 	if (animation_flags & 1u)
 	{
@@ -665,7 +673,6 @@ uint16_t robot_hit_choose_action(uint16_t object)
 		OBJECT(object)->flags = (uint8_t)(CHILD_OBJECT(robot_piece_children_ADDRESS + hit_index - 0x8u)->dx >> 8u);
 		OBJECT(object)->state = 3u;
 	}
-	return box;
 }
 
 /* Flashes the beaten robot until its breaking down ends, then waits 64 frames. */
@@ -688,28 +695,26 @@ void robot_break_down(uint16_t object)
 }
 
 /* Flashes the beaten robot for its wait, then bursts it into pieces and counts it beaten. */
-uint16_t robot_explode(uint16_t object, uint16_t y)
+void robot_explode(uint16_t object)
 {
-	uint16_t y_2 = 0;
 	uint8_t timer = 0;
 
 	robot_flash(object);
 	timer = OBJECT(object)->timer;
 	OBJECT(object)->timer = timer - 1u;
 	if (timer != 1u)
-		return y;
-	y_2 = robot_put_in_pieces(object);
+		return;
+	robot_put_in_pieces(object);
 	OBJECT(object)->flags = 0u;
 	vector_enemy_score_and_release(object, 0u);
-	return y_2;
 }
 
 /* Puts in the robot's 8 pieces (5280 type 33, states 0-7) with the explosion's sound. */
-uint16_t robot_put_in_pieces(uint16_t object)
+void robot_put_in_pieces(uint16_t object)
 {
 	uint32_t carry = 0;
 	uint16_t child_record = 0, command = 0, ignored16 = 0, ignored16_2 = 0;
-	uint8_t t1 = 0;
+	uint8_t pieces_before = 0;
 
 	command = 0x6E00u;
 	carry = vector_queue_sound(command);
@@ -717,14 +722,15 @@ uint16_t robot_put_in_pieces(uint16_t object)
 	child_record = robot_piece_children_ADDRESS;
 	do
 	{
-		vector_spawn_child(object, child_record, &ignored16, &ignored16_2, &carry);
+		leftover_y = child_record;
+		vector_spawn_child(object, &child_record, &ignored16, &ignored16_2, &carry);
 		if (carry == 0u)
 			break;
 		child_record += 8u;
-		t1 = robot_pieces_left;
-		robot_pieces_left = t1 - 1u;
-	} while (t1 != 1u);
-	return child_record;
+		pieces_before = robot_pieces_left;
+		robot_pieces_left = pieces_before - 1u;
+	} while (pieces_before != 1u);
+	leftover_y = child_record;
 }
 
 /* Starts the robot's launch with a sound. */
@@ -743,25 +749,23 @@ void robot_launch_part_start(uint16_t object)
 
 /* When that animation ends, makes the robot hittable and sends off its part (4D40 type 17), then waits
    128 frames. */
-void robot_launch_part_release(uint16_t object, uint16_t *p_child_record, uint16_t *p_u)
+uint16_t robot_launch_part_release(uint16_t object, uint16_t steps)
 {
-	uint16_t child_record = (uint16_t)*p_child_record;
-	uint16_t u = (uint16_t)*p_u;
 	uint32_t carry = 0;
-	uint16_t u_2 = 0;
+	uint16_t child_object = 0, part = 0;
 	uint8_t animation_flags = 0, action_step = 0;
 
 	animation_flags = OBJECT(object)->animation_flags;
 	if ((animation_flags & 1u) == 0u)
-		return;
+		return steps;
 	OBJECT(object)->flags = 0xC0u;
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step + 1u;
 	OBJECT(object)->timer = 0x80u;
-	child_record = robot_launch_part_release_child_ADDRESS;
-	*p_u = u_2;
-	spawn_list_2_child(object, child_record, p_u, &carry);
-	*p_child_record = child_record;
+	leftover_y = robot_launch_part_release_child_ADDRESS;
+	child_object = robot_launch_part_release_child_ADDRESS;
+	spawn_list_2_child(object, child_object, &part, &carry);
+	return part;
 }
 
 /* Counts the wait down and goes on with a sound. */

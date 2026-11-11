@@ -3,7 +3,7 @@
  *    Description: stage 6's flying kind B8 thrower (type FC) and its shots (5280 type F3)
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    10-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -17,15 +17,15 @@ void kind_b8_flyer_face_player(uint16_t object)
 	uint8_t attributes = 0;
 	uint16_t target_player = 0;
 	uint8_t attributes_2 = 0, attributes_3 = 0;
-	uint16_t target = 0, t1 = 0, t2 = 0;
+	uint16_t target = 0, flyer_x = 0, player_x = 0;
 
 	if (OBJECT(object)->flags == 0u)
 		return;
 	target = OBJECT(object)->target;
 	target_player = target;
-	t1 = OBJECT(object)->x;
-	t2 = OBJECT(target_player)->x;
-	if (t2 <= t1)
+	flyer_x = OBJECT(object)->x;
+	player_x = OBJECT(target_player)->x;
+	if (player_x <= flyer_x)
 	{
 		attributes_2 = OBJECT(object)->attributes;
 		attributes = attributes_2 | 0x40u;
@@ -40,16 +40,16 @@ void kind_b8_flyer_face_player(uint16_t object)
 
 /* Sets the flyer up leaping in big from the front with a sound, with its heading, sweep and descent from
    the kind_b8 tables and 1200 frames to stay. */
-uint16_t kind_b8_flyer_setup(uint16_t object)
+void kind_b8_flyer_setup(uint16_t object)
 {
 	uint32_t carry = 0;
 	uint8_t variant = 0;
-	uint16_t command = 0, setup = 0, y = 0;
+	uint16_t command = 0, setup = 0;
 	uint8_t parameter = 0, parameter_2 = 0, state = 0;
-	uint16_t t1 = 0, t2 = 0;
+	uint16_t descent_slowdown_value = 0, descent_speed = 0;
 
 	setup = kind_b8_flyer_object_setup_ADDRESS;
-	y = vector_object_setup(object, setup);
+	vector_object_setup(object, setup);
 	OBJECT(object)->zoom_x = 0x80u;
 	OBJECT(object)->zoom_y = 0x80u;
 	OBJECT(object)->flags = 0x98u;
@@ -59,11 +59,11 @@ uint16_t kind_b8_flyer_setup(uint16_t object)
 	OBJECT(object)->kind_b8_flyer.sweep_way = kind_b8_sweep_ways[(int8_t)variant];
 	OBJECT(object)->kind_b8_flyer.heading = (OBJECT(object)->kind_b8_flyer.heading & 0xFFu) | ((kind_b8_headings[(int8_t)variant] & 0xFFu) << 8u);
 	OBJECT(object)->kind_b8_flyer.sweep_rate = kind_b8_sweep_rates[(int8_t)variant];
-	t1 = kind_b8_descent_slowdowns[(int8_t)((uint8_t)((uint32_t)variant << 1)) / 2];
-	OBJECT(object)->kind_b8_flyer.descent_slowdown = t1;
+	descent_slowdown_value = kind_b8_descent_slowdowns[(int8_t)((uint8_t)((uint32_t)variant << 1)) / 2];
+	OBJECT(object)->kind_b8_flyer.descent_slowdown = descent_slowdown_value;
 	parameter_2 = OBJECT(object)->parameter;
-	t2 = kind_b8_descent_y_speeds[(int8_t)((uint8_t)((uint32_t)parameter_2 << 1)) / 2];
-	OBJECT(object)->kind_b8_flyer.descent_y_speed = t2;
+	descent_speed = kind_b8_descent_y_speeds[(int8_t)((uint8_t)((uint32_t)parameter_2 << 1)) / 2];
+	OBJECT(object)->kind_b8_flyer.descent_y_speed = descent_speed;
 	OBJECT(object)->attributes = 0x20u;
 	OBJECT(object)->x = 0xE0u;
 	command = 0x301u;
@@ -75,7 +75,6 @@ uint16_t kind_b8_flyer_setup(uint16_t object)
 	vector_choose_nearest_player(object);
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
-	return y;
 }
 
 /* The flyer's way in, by field 29. */
@@ -264,10 +263,10 @@ void kind_b8_flyer_fly(uint16_t object)
 }
 
 /* Throws three shots in a row, 7 frames apart, with a sound at the first, still flying. */
-uint16_t kind_b8_flyer_volley(uint16_t object, uint16_t y)
+void kind_b8_flyer_volley(uint16_t object)
 {
 	uint32_t carry = 0;
-	uint16_t child_record = 0, command = 0, ignored16 = 0, ignored16_2 = 0;
+	uint16_t command = 0, ignored16 = 0, ignored16_2 = 0, ignored16_3 = 0;
 	uint8_t timer = 0, shots_left = 0, shots_left_2 = 0, shots_left_3 = 0;
 
 	kind_b8_flyer_bob(object);
@@ -277,7 +276,7 @@ uint16_t kind_b8_flyer_volley(uint16_t object, uint16_t y)
 	if (timer != 1u)
 	{
 		kind_b8_flyer_face_player(object);
-		return y;
+		return;
 	}
 	shots_left = OBJECT(object)->kind_b8_flyer.shots_left;
 	if (shots_left == 4u)
@@ -292,14 +291,13 @@ uint16_t kind_b8_flyer_volley(uint16_t object, uint16_t y)
 		OBJECT(object)->state = 2u;
 		OBJECT(object)->animation = 0x80u;
 		kind_b8_flyer_choose_throw_wait(object);
-		return y;
+		return;
 	}
 	OBJECT(object)->animation = 0x95u;
 	shots_left_3 = OBJECT(object)->kind_b8_flyer.shots_left;
-	child_record = kind_b8_volley_shots[shots_left_3 & 3u];
-	vector_spawn_child(object, child_record, &ignored16, &ignored16_2, &carry);
+	leftover_y = kind_b8_volley_shots[shots_left_3 & 3u];
+	vector_spawn_child(object, &ignored16, &ignored16_2, &ignored16_3, &carry);
 	kind_b8_flyer_next_throw_wait(object);
-	return child_record;
 }
 
 /* Waits 7 frames before the next shot and turns the flyer to its player. */
@@ -310,10 +308,10 @@ void kind_b8_flyer_next_throw_wait(uint16_t object)
 }
 
 /* Throws its single shots one after the other, still flying, then sends it flying again with a new wait. */
-uint16_t kind_b8_flyer_single_throw(uint16_t object, uint16_t y)
+void kind_b8_flyer_single_throw(uint16_t object)
 {
 	uint32_t carry = 0;
-	uint16_t child_record = 0, ignored16 = 0, ignored16_2 = 0;
+	uint16_t ignored16 = 0, ignored16_2 = 0, ignored16_3 = 0;
 	uint8_t timer = 0, shots_left = 0, shots_left_2 = 0;
 
 	kind_b8_flyer_bob(object);
@@ -323,7 +321,7 @@ uint16_t kind_b8_flyer_single_throw(uint16_t object, uint16_t y)
 	if (timer != 1u)
 	{
 		kind_b8_flyer_face_player(object);
-		return y;
+		return;
 	}
 	shots_left = OBJECT(object)->kind_b8_flyer.shots_left;
 	OBJECT(object)->kind_b8_flyer.shots_left = shots_left - 1u;
@@ -332,14 +330,13 @@ uint16_t kind_b8_flyer_single_throw(uint16_t object, uint16_t y)
 		OBJECT(object)->state = 2u;
 		OBJECT(object)->animation = 0x80u;
 		kind_b8_flyer_choose_throw_wait(object);
-		return y;
+		return;
 	}
 	OBJECT(object)->animation = 0x90u;
 	shots_left_2 = OBJECT(object)->kind_b8_flyer.shots_left;
-	child_record = kind_b8_single_shots[shots_left_2 & 1u];
-	vector_spawn_child(object, child_record, &ignored16, &ignored16_2, &carry);
+	leftover_y = kind_b8_single_shots[shots_left_2 & 1u];
+	vector_spawn_child(object, &ignored16, &ignored16_2, &ignored16_3, &carry);
 	kind_b8_flyer_next_throw_wait(object);
-	return child_record;
 }
 
 /* The flyer's hit (step FF), by field 29. */
@@ -519,29 +516,29 @@ void kind_b8_flyer_shake_height(uint16_t object)
    depth and keeps it on the screen. */
 void kind_b8_flyer_steer(uint16_t object)
 {
-	uint8_t a = 0, b = 0;
+	uint8_t dy_high = 0, goal_x_high = 0, goal_x_low = 0, goal_y_high = 0, goal_y_low = 0, heading_whole = 0;
 	uint16_t target_player = 0;
 	uint8_t sweep_way = 0, sweep_rate = 0, sweep_way_2 = 0, sweep_rate_2 = 0, sweep_way_3 = 0, sweep_way_4 = 0, sweep_rate_3 = 0, sweep_way_5 = 0, sweep_rate_4 = 0, sweep_way_6 = 0;
-	uint16_t target = 0, t1 = 0, t2 = 0, t3 = 0, heading = 0, t4 = 0, heading_2 = 0, t5 = 0, t6 = 0, heading_3 = 0, t7 = 0, heading_4 = 0, t8 = 0, target_2 = 0, t9 = 0, t10 = 0, t11 = 0, t12 = 0, t13 = 0, y_speed = 0, t14 = 0, t15 = 0, t16 = 0, t17 = 0;
+	uint16_t target = 0, flyer_x = 0, player_x = 0, turn = 0, heading = 0, new_heading = 0, heading_2 = 0, t1 = 0, t2 = 0, heading_3 = 0, t3 = 0, heading_4 = 0, t4 = 0, target_2 = 0, flyer_y = 0, player_y = 0, dy = 0, t5 = 0, depth_distance = 0, y_speed = 0, t6 = 0, t7 = 0, t8 = 0, t9 = 0;
 
 	target = OBJECT(object)->target;
 	target_player = target;
 	if ((frame_count & 0x7F00u) == 0u)
 		target_player = vector_choose_nearest_player(object);
-	t1 = OBJECT(object)->x;
-	t2 = mem_read16(target_player + 0xCu);
-	if (t1 < t2)
+	flyer_x = OBJECT(object)->x;
+	player_x = OBJECT(target_player)->x;
+	if (flyer_x < player_x)
 	{
 		sweep_way = OBJECT(object)->kind_b8_flyer.sweep_way;
 		if (sweep_way != 0u)
 		{
 			sweep_rate = OBJECT(object)->kind_b8_flyer.sweep_rate;
-			t3 = 0u - sweep_rate;
+			turn = 0u - sweep_rate;
 			heading = OBJECT(object)->kind_b8_flyer.heading;
-			t4 = t3 + heading;
-			a = (t4 >> 8) & 0xFu;
-			OBJECT(object)->kind_b8_flyer.heading = ((uint32_t)a << 8) | (uint8_t)t4;
-			if (a == 0xCu)
+			new_heading = turn + heading;
+			heading_whole = (new_heading >> 8) & 0xFu;
+			OBJECT(object)->kind_b8_flyer.heading = ((uint32_t)heading_whole << 8) | (uint8_t)new_heading;
+			if (heading_whole == 0xCu)
 			{
 				sweep_way_2 = OBJECT(object)->kind_b8_flyer.sweep_way;
 				OBJECT(object)->kind_b8_flyer.sweep_way = ~sweep_way_2;
@@ -551,10 +548,10 @@ void kind_b8_flyer_steer(uint16_t object)
 		{
 			sweep_rate_2 = OBJECT(object)->kind_b8_flyer.sweep_rate;
 			heading_2 = OBJECT(object)->kind_b8_flyer.heading;
-			t5 = sweep_rate_2 + heading_2;
-			a = (t5 >> 8) & 0xFu;
-			OBJECT(object)->kind_b8_flyer.heading = ((uint32_t)a << 8) | (uint8_t)t5;
-			if (a == 4u)
+			t1 = sweep_rate_2 + heading_2;
+			heading_whole = (t1 >> 8) & 0xFu;
+			OBJECT(object)->kind_b8_flyer.heading = ((uint32_t)heading_whole << 8) | (uint8_t)t1;
+			if (heading_whole == 4u)
 			{
 				sweep_way_3 = OBJECT(object)->kind_b8_flyer.sweep_way;
 				OBJECT(object)->kind_b8_flyer.sweep_way = ~sweep_way_3;
@@ -567,12 +564,12 @@ void kind_b8_flyer_steer(uint16_t object)
 		if (sweep_way_4 != 0u)
 		{
 			sweep_rate_3 = OBJECT(object)->kind_b8_flyer.sweep_rate;
-			t6 = 0u - sweep_rate_3;
+			t2 = 0u - sweep_rate_3;
 			heading_3 = OBJECT(object)->kind_b8_flyer.heading;
-			t7 = t6 + heading_3;
-			a = (t7 >> 8) & 0xFu;
-			OBJECT(object)->kind_b8_flyer.heading = ((uint32_t)a << 8) | (uint8_t)t7;
-			if (a == 4u)
+			t3 = t2 + heading_3;
+			heading_whole = (t3 >> 8) & 0xFu;
+			OBJECT(object)->kind_b8_flyer.heading = ((uint32_t)heading_whole << 8) | (uint8_t)t3;
+			if (heading_whole == 4u)
 			{
 				sweep_way_5 = OBJECT(object)->kind_b8_flyer.sweep_way;
 				OBJECT(object)->kind_b8_flyer.sweep_way = ~sweep_way_5;
@@ -582,10 +579,10 @@ void kind_b8_flyer_steer(uint16_t object)
 		{
 			sweep_rate_4 = OBJECT(object)->kind_b8_flyer.sweep_rate;
 			heading_4 = OBJECT(object)->kind_b8_flyer.heading;
-			t8 = sweep_rate_4 + heading_4;
-			a = (t8 >> 8) & 0xFu;
-			OBJECT(object)->kind_b8_flyer.heading = ((uint32_t)a << 8) | (uint8_t)t8;
-			if (a == 0xCu)
+			t4 = sweep_rate_4 + heading_4;
+			heading_whole = (t4 >> 8) & 0xFu;
+			OBJECT(object)->kind_b8_flyer.heading = ((uint32_t)heading_whole << 8) | (uint8_t)t4;
+			if (heading_whole == 0xCu)
 			{
 				sweep_way_6 = OBJECT(object)->kind_b8_flyer.sweep_way;
 				OBJECT(object)->kind_b8_flyer.sweep_way = ~sweep_way_6;
@@ -595,14 +592,14 @@ void kind_b8_flyer_steer(uint16_t object)
 	kind_b8_flyer_set_speeds(object);
 	target_2 = OBJECT(object)->target;
 	target_player = target_2;
-	t9 = OBJECT(object)->y;
-	t10 = OBJECT(target_player)->y;
-	t11 = t9 - t10;
-	a = (uint8_t)(t11 >> 8);
-	steer_dy_high = a;
-	t12 = ((uint32_t)a << 8) | (uint8_t)t11;
-	t13 = t12 >> 15 ? 0u - t12 : t12;
-	if (t13 >= 4u)
+	flyer_y = OBJECT(object)->y;
+	player_y = OBJECT(target_player)->y;
+	dy = flyer_y - player_y;
+	dy_high = (uint8_t)(dy >> 8);
+	steer_dy_high = dy_high;
+	t5 = ((uint32_t)dy_high << 8) | (uint8_t)dy;
+	depth_distance = t5 >> 15 ? 0u - t5 : t5;
+	if (depth_distance >= 4u)
 	{
 		OBJECT(object)->y_speed = 0x100;
 		if (steer_dy_high >= 0)
@@ -611,53 +608,53 @@ void kind_b8_flyer_steer(uint16_t object)
 			OBJECT(object)->y_speed = 0u - y_speed;
 		}
 	}
-	t14 = OBJECT(object)->x;
-	a = (uint8_t)(t14 >> 8);
-	b = (uint8_t)t14;
-	if ((uint16_t)(((uint32_t)a << 8) | b) < 0x40u)
+	t6 = OBJECT(object)->x;
+	goal_x_high = (uint8_t)(t6 >> 8);
+	goal_x_low = (uint8_t)t6;
+	if ((uint16_t)(((uint32_t)goal_x_high << 8) | goal_x_low) < 0x40u)
 	{
-		b = 0x40u;
-		t15 = OBJECT(object)->x;
-		OBJECT(object)->x_speed = (uint32_t)(uint8_t)((((uint32_t)a << 8) | b) - t15) << 8;
-		t16 = OBJECT(object)->y;
-		a = (uint8_t)(t16 >> 8);
-		b = (uint8_t)t16;
-		if ((uint16_t)(((uint32_t)a << 8) | b) < 0x90u)
+		goal_x_low = 0x40u;
+		t7 = OBJECT(object)->x;
+		OBJECT(object)->x_speed = (uint32_t)(uint8_t)((((uint32_t)goal_x_high << 8) | goal_x_low) - t7) << 8;
+		t8 = OBJECT(object)->y;
+		goal_y_high = (uint8_t)(t8 >> 8);
+		goal_y_low = (uint8_t)t8;
+		if ((uint16_t)(((uint32_t)goal_y_high << 8) | goal_y_low) < 0x90u)
 		{
-			b = 0x90u;
-			t17 = OBJECT(object)->y;
-			OBJECT(object)->y_speed = (uint32_t)(uint8_t)((((uint32_t)a << 8) | b) - t17) << 8;
+			goal_y_low = 0x90u;
+			t9 = OBJECT(object)->y;
+			OBJECT(object)->y_speed = (uint32_t)(uint8_t)((((uint32_t)goal_y_high << 8) | goal_y_low) - t9) << 8;
 			return;
 		}
-		if ((uint16_t)(((uint32_t)a << 8) | b) >= 0x100u)
+		if ((uint16_t)(((uint32_t)goal_y_high << 8) | goal_y_low) >= 0x100u)
 		{
-			b = 0xFFu;
-			t17 = OBJECT(object)->y;
-			OBJECT(object)->y_speed = (uint32_t)(uint8_t)((((uint32_t)a << 8) | b) - t17) << 8;
+			goal_y_low = 0xFFu;
+			t9 = OBJECT(object)->y;
+			OBJECT(object)->y_speed = (uint32_t)(uint8_t)((((uint32_t)goal_y_high << 8) | goal_y_low) - t9) << 8;
 		}
 		return;
 	}
-	if ((uint16_t)(((uint32_t)a << 8) | b) >= 0x180u)
+	if ((uint16_t)(((uint32_t)goal_x_high << 8) | goal_x_low) >= 0x180u)
 	{
-		b = 0x7Fu;
-		t15 = OBJECT(object)->x;
-		OBJECT(object)->x_speed = (uint32_t)(uint8_t)((((uint32_t)a << 8) | b) - t15) << 8;
+		goal_x_low = 0x7Fu;
+		t7 = OBJECT(object)->x;
+		OBJECT(object)->x_speed = (uint32_t)(uint8_t)((((uint32_t)goal_x_high << 8) | goal_x_low) - t7) << 8;
 	}
-	t16 = OBJECT(object)->y;
-	a = (uint8_t)(t16 >> 8);
-	b = (uint8_t)t16;
-	if ((uint16_t)(((uint32_t)a << 8) | b) < 0x90u)
+	t8 = OBJECT(object)->y;
+	goal_y_high = (uint8_t)(t8 >> 8);
+	goal_y_low = (uint8_t)t8;
+	if ((uint16_t)(((uint32_t)goal_y_high << 8) | goal_y_low) < 0x90u)
 	{
-		b = 0x90u;
-		t17 = OBJECT(object)->y;
-		OBJECT(object)->y_speed = (uint32_t)(uint8_t)((((uint32_t)a << 8) | b) - t17) << 8;
+		goal_y_low = 0x90u;
+		t9 = OBJECT(object)->y;
+		OBJECT(object)->y_speed = (uint32_t)(uint8_t)((((uint32_t)goal_y_high << 8) | goal_y_low) - t9) << 8;
 		return;
 	}
-	if ((uint16_t)(((uint32_t)a << 8) | b) >= 0x100u)
+	if ((uint16_t)(((uint32_t)goal_y_high << 8) | goal_y_low) >= 0x100u)
 	{
-		b = 0xFFu;
-		t17 = OBJECT(object)->y;
-		OBJECT(object)->y_speed = (uint32_t)(uint8_t)((((uint32_t)a << 8) | b) - t17) << 8;
+		goal_y_low = 0xFFu;
+		t9 = OBJECT(object)->y;
+		OBJECT(object)->y_speed = (uint32_t)(uint8_t)((((uint32_t)goal_y_high << 8) | goal_y_low) - t9) << 8;
 	}
 }
 
@@ -699,11 +696,11 @@ void kind_b8_flyer_bob(uint16_t object)
 void kind_b8_flyer_set_speeds(uint16_t object)
 {
 	uint16_t speeds = 0;
-	uint8_t t1 = 0;
+	uint8_t heading_whole = 0;
 	uint16_t x_speed = 0, y_speed = 0;
 
-	t1 = (uint8_t)(OBJECT(object)->kind_b8_flyer.heading >> 8u);
-	speeds = kind_b8_velocities_ADDRESS + (int8_t)(((uint32_t)t1 << 1) << 1);
+	heading_whole = (uint8_t)(OBJECT(object)->kind_b8_flyer.heading >> 8u);
+	speeds = kind_b8_velocities_ADDRESS + (int8_t)(((uint32_t)heading_whole << 1) << 1);
 	x_speed = VELOCITY(speeds)->x_speed;
 	OBJECT(object)->x_speed = x_speed;
 	y_speed = VELOCITY(speeds)->y_speed;
@@ -722,21 +719,21 @@ void kind_b8_flyer_choose_throw_wait(uint16_t object)
 }
 
 /* Sets the shot up with its animation by its state, thrown up with one of four x speeds at random. */
-void kind_b8_shot_setup(uint16_t object, uint16_t *p_y, uint16_t *p_shot_speeds)
+uint16_t kind_b8_shot_setup(uint16_t object)
 {
-	uint16_t setup = 0, shot_speeds = 0, y = 0;
+	uint16_t setup = 0, shot_speeds = 0;
 	uint8_t parameter = 0, attributes = 0, attributes_2 = 0, state = 0;
-	uint16_t t1 = 0, x_speed = 0;
+	uint16_t shot_x_speed = 0, x_speed = 0;
 
 	setup = kind_b8_shot_object_setup_ADDRESS;
-	y = vector_object_setup(object, setup);
+	vector_object_setup(object, setup);
 	OBJECT(object)->flags = 0x80u;
 	parameter = OBJECT(object)->parameter;
 	OBJECT(object)->animation = kind_b8_shot_animations[(int8_t)parameter];
 	OBJECT(object)->z_speed = 0x400;
 	shot_speeds = kind_b8_shot_speeds_ADDRESS;
-	t1 = kind_b8_shot_speeds[random_number & 3u];
-	OBJECT(object)->x_speed = t1;
+	shot_x_speed = kind_b8_shot_speeds[random_number & 3u];
+	OBJECT(object)->x_speed = shot_x_speed;
 	attributes = OBJECT(object)->attributes;
 	if ((attributes & 0x40u) != 0u)
 	{
@@ -748,8 +745,7 @@ void kind_b8_shot_setup(uint16_t object, uint16_t *p_y, uint16_t *p_shot_speeds)
 	OBJECT(object)->floor_z = 0u;
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
-	*p_y = y;
-	*p_shot_speeds = shot_speeds;
+	return shot_speeds;
 }
 
 /* Pulls the shot down; where it lands it bursts (hit sparks), able to hurt for 2 frames. */

@@ -3,7 +3,7 @@
  *    Description: the fixed program's entry points for the banks (an LBRA each, 078593-0786CB) and the routines the decompiler folded into them
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    10-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -122,9 +122,9 @@ void unused_vector_print_hex_byte(uint16_t place, uint16_t value)
 
 /* Jumps to the object setup: kind and animation, hit box, vitality and points from the record at U, and
    its priority from the floor under it. */
-uint16_t vector_object_setup(uint16_t object, uint16_t setup)
+void vector_object_setup(uint16_t object, uint16_t setup)
 {
-	return start_object_from_setup(object, setup);
+	start_object_from_setup(object, setup);
 }
 
 /* Unused: does nothing. */
@@ -145,8 +145,11 @@ void vector_apply_gravity(uint16_t object, uint16_t *p_d, uint32_t *p_carry)
 }
 
 /* Jumps to the routine that copies the hit box record at Y into the object's attack and box fields. */
-void vector_set_hit_box(uint16_t object, uint16_t box)
+void vector_set_hit_box(uint16_t object)
 {
+	uint16_t box = 0;
+
+	box = (uint16_t)leftover_y;
 	set_hit_box(object, box);
 }
 
@@ -222,86 +225,72 @@ void unused_vector_enemy_pick_walk_animation(uint16_t object)
 
 /* Jumps to the plain goon's start: its setup, its vitality 1 when its parameter is set, then its state
    2. */
-void vector_goon_start(uint16_t object, uint16_t *p_y, uint16_t *p_u)
+uint16_t vector_goon_start(uint16_t object)
 {
-	uint16_t u = 0, y = 0;
-
-	*p_y = y;
-	*p_u = u;
-	enemy_goon_enter(object, p_y, p_u);
+	return enemy_goon_enter(object);
 }
 
 /* Jumps to the enemies' state 2: they go after a player, take a place by it and pick an action by their
    behaviour. */
-void vector_enemy_think(uint16_t object, uint16_t *p_y, uint16_t *p_u, uint32_t *p_left_caller)
+void vector_enemy_think(uint16_t object, uint16_t *p_u, uint32_t *p_left_caller)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint16_t u = 0;
 
-	*p_y = y;
 	*p_u = u;
-	enemy_think(object, p_y, p_u, p_left_caller);
+	enemy_think(object, p_u, p_left_caller);
 }
 
 /* Jumps to the enemies' state 3: they run the action in field action. */
-void vector_enemy_act(uint16_t object, uint16_t *p_y, uint16_t *p_u, uint32_t *p_left_caller)
+void vector_enemy_act(uint16_t object, uint16_t *p_u, uint32_t *p_left_caller)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint16_t u = 0;
 
-	*p_y = y;
 	*p_u = u;
-	enemy_attack(object, p_y, p_u, p_left_caller);
+	enemy_attack(object, p_u, p_left_caller);
 }
 
 /* Jumps to the enemies' state 4: they run the shared hit reaction in field action. */
-void vector_enemy_react(uint16_t object, uint16_t *p_y, uint16_t *p_u, uint32_t *p_left_caller)
+void vector_enemy_react(uint16_t object, uint16_t *p_u, uint32_t *p_left_caller)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint16_t u = 0;
 
-	*p_y = y;
 	*p_u = u;
-	enemy_hit_reaction(object, p_y, p_u, p_left_caller);
+	enemy_hit_reaction(object, p_u, p_left_caller);
 }
 
 /* Jumps to the enemies' state 5: they climb or jump to the floor field blocked found. */
-void vector_enemy_climb(uint16_t object, uint16_t *p_y, uint16_t *p_u, uint32_t *p_left_caller)
+void vector_enemy_climb(uint16_t object, uint16_t *p_u, uint32_t *p_left_caller)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint16_t u = 0;
 
-	*p_y = y;
 	*p_u = u;
-	enemy_climb(object, p_y, p_u, p_left_caller);
+	enemy_climb(object, p_u, p_left_caller);
 }
 
 /* Unused: jumps to enemy_become_goon. */
 void unused_vector_enemy_become_goon(uint16_t object)
 {
-	uint16_t ignored16 = 0, ignored16_2 = 0;
-
-	enemy_become_goon(object, &ignored16, &ignored16_2);
+	enemy_become_goon(object);
 }
 
 /* Prints the BCD byte in A as two digits at the tile RAM's X in colour B, a blank for a leading 0. */
 void print_bcd_byte(uint16_t place, uint16_t value)
 {
-	uint8_t a = 0, high_digit = 0;
+	uint8_t bcd_byte = 0, high_digit = 0;
 	uint8_t stack = 0;
-	uint8_t t1 = 0;
-	uint16_t t2 = 0;
+	uint8_t high_nibble = 0;
+	uint16_t tile_place = 0;
 
-	a = (uint8_t)(value >> 8);
-	stack = a;
-	t1 = (((a >> 1) >> 1) >> 1) >> 1;
-	high_digit = t1;
-	if (t1 == 0u)
+	bcd_byte = (uint8_t)(value >> 8);
+	stack = bcd_byte;
+	high_nibble = (((bcd_byte >> 1) >> 1) >> 1) >> 1;
+	high_digit = high_nibble;
+	if (high_nibble == 0u)
 		high_digit = 0x10u;
 	io_write8(place - 0x2000u, (uint8_t)value);
-	t2 = place;
-	place = t2 + 1u;
-	io_write8(t2, high_digit);
+	tile_place = place;
+	place = tile_place + 1u;
+	io_write8(tile_place, high_digit);
 	mem_write8(place - 0x2000u, (uint8_t)value);
 	mem_write8(place, stack & 0xFu);
 }
@@ -309,129 +298,118 @@ void print_bcd_byte(uint16_t place, uint16_t value)
 /* Unused: jumps to kind_90_effect. */
 void unused_vector_kind_90_effect(uint16_t object, uint8_t d)
 {
-	uint16_t ignored16 = 0, ignored16_2 = 0;
-
-	kind_90_effect(object, d, &ignored16, &ignored16_2);
+	kind_90_effect(object, d);
 }
 
 /* Puts in a kind_90_effect object at the object's place. */
-uint16_t spawn_kind_90_effect(uint16_t object)
+void spawn_kind_90_effect(uint16_t object)
 {
 	uint32_t carry = 0;
 	uint16_t ignored16 = 0, ignored16_2 = 0, record = 0;
 
+	leftover_y = kind_90_effect_child_ADDRESS;
 	record = kind_90_effect_child_ADDRESS;
 	spawn_child_object(object, record, &ignored16, &ignored16_2, &carry);
-	return record;
 }
 
 /* Jumps to enemy_hurt_become_goon. */
-void vector_enemy_hurt_become_goon(uint16_t object, uint16_t *p_y, uint16_t *p_u)
+uint16_t vector_enemy_hurt_become_goon(uint16_t object)
 {
-	uint16_t u = 0, y = 0;
-
-	*p_y = y;
-	*p_u = u;
-	enemy_hurt_become_goon(object, p_y, p_u);
+	return enemy_hurt_become_goon(object);
 }
 
 /* Jumps to the plain goon's setup (object_setup_07F1A8, kind 80): facing left, after the nearest player,
    the goon's behaviour and its retarget time. */
-void vector_goon_setup(uint16_t object, uint16_t *p_y, uint16_t *p_u)
+uint16_t vector_goon_setup(uint16_t object)
 {
-	uint16_t u = 0, y = 0;
-
-	*p_y = y;
-	*p_u = u;
-	enemy_goon_set_up(object, p_y, p_u);
+	return enemy_goon_set_up(object);
 }
 
 /* Runs the enemy's shared hit reaction by field action; then, while work RAM 48B8 is under 0500, sends
    it into the pit reaction when there is no floor under it, else stops it at the walls. */
-uint16_t enemy_react_with_pits(uint16_t object, uint16_t y)
+void enemy_react_with_pits(uint16_t object)
 {
 	uint32_t negative = 0;
 	uint8_t action_step = 0, floor_cell = 0;
-	uint16_t d = 0, ignored16 = 0;
+	uint16_t floor_probe = 0, ignored16 = 0;
 	uint32_t left_caller = 0;
 	uint8_t action_2 = 0;
-	uint16_t action = 0, t1 = 0;
+	uint16_t action = 0, cemetery_position = 0;
 
 	action = (((uint32_t)OBJECT(object)->action << 8u) | OBJECT(object)->action_step);
 	action_step = (uint8_t)action;
 	switch ((int8_t)(uint8_t)((uint32_t)(action >> 8) << 1))
 	{
 	case 0:
-		enemy_flinch_from_behind(object, action_step, &y, &ignored16, &left_caller);
+		enemy_flinch_from_behind(object, action_step, &ignored16, &left_caller);
 		break;
 	case 2:
-		enemy_flinch_kind_12(object, action_step, &y, &ignored16, &left_caller);
+		enemy_flinch_kind_12(object, action_step, &ignored16, &left_caller);
 		break;
 	case 4:
-		enemy_knocked_forward(object, action_step, &y, &ignored16, &left_caller);
+		enemy_knocked_forward(object, action_step, &ignored16, &left_caller);
 		break;
 	case 6:
-		enemy_knocked_back(object, action_step, &y, &ignored16, &left_caller);
+		enemy_knocked_back(object, action_step, &ignored16, &left_caller);
 		break;
 	case 8:
-		enemy_get_up(object, action_step, &y, &ignored16, &left_caller);
+		enemy_get_up(object, action_step, &ignored16, &left_caller);
 		break;
 	case 10:
-		enemy_die(object, action_step, &y, &ignored16, &left_caller);
+		enemy_die(object, action_step, &ignored16, &left_caller);
 		break;
 	case 12:
-		enemy_drop(object, action_step, &y, &ignored16, &left_caller);
+		enemy_drop(object, action_step, &ignored16, &left_caller);
 		break;
 	case 14:
-		enemy_sent_flying(object, action_step, &y, &ignored16, &left_caller);
+		enemy_sent_flying(object, action_step, &ignored16, &left_caller);
 		break;
 	case 16:
-		enemy_spin_backward(object, action_step, &y, &ignored16, &left_caller);
+		enemy_spin_backward(object, action_step, &ignored16, &left_caller);
 		break;
 	case 18:
-		enemy_flinch_kind_11(object, action_step, &y, &ignored16, &left_caller);
+		enemy_flinch_kind_11(object, action_step, &ignored16, &left_caller);
 		break;
 	case 20:
-		enemy_defeated_forward(object, action_step, &y, &ignored16, &left_caller);
+		enemy_defeated_forward(object, action_step, &ignored16, &left_caller);
 		break;
 	case 22:
-		enemy_defeated_backward(object, action_step, &y, &ignored16, &left_caller);
+		enemy_defeated_backward(object, action_step, &ignored16, &left_caller);
 		break;
 	case 24:
-		enemy_pit(object, action_step, &y, &ignored16, &left_caller);
+		enemy_pit(object, action_step, &ignored16, &left_caller);
 		break;
 	}
 	if (left_caller != 0u)
-		return y;
-	t1 = cemetery_scroll;
-	if (t1 >= 0x500u)
+		return;
+	cemetery_position = cemetery_scroll;
+	if (cemetery_position >= 0x500u)
 	{
 		check_floor(object, ignored16);
-		return y;
+		return;
 	}
 	action_2 = OBJECT(object)->action;
 	if (action_2 == 0xCu)
-		return y;
-	d = 0u;
-	floor_at_offset(object, &d, &negative);
-	floor_cell = (uint8_t)(d >> 8);
+		return;
+	floor_probe = 0u;
+	floor_at_offset(object, &floor_probe, &negative);
+	floor_cell = (uint8_t)(floor_probe >> 8);
 	if ((int8_t)floor_cell < 0)
 	{
 		OBJECT(object)->action = 0xCu;
 		OBJECT(object)->action_step = 0u;
 	}
-	return y;
 }
 
 /* Clears the 6 objects of list 2 (4D40), all but the ones lending their sprites (flags 1), keeping their
    sprite slots. */
 uint16_t clear_child_objects(void)
 {
-	uint8_t a = 0, d = 0;
+	uint8_t clear_value = 0, clear_value_high = 0;
 	uint16_t object_place = 0;
 	uint8_t stack = 0, stack_10002 = 0;
-	uint8_t t3 = 0, t4 = 0;
-	uint16_t t1 = 0, t2 = 0;
+	uint8_t object_words_left_was = 0, objects_left_was = 0;
+	uint16_t kept_sprites = 0, cleared_word_place = 0;
 
 	object_place = OBJECT_ADDRESS(8);
 	cleared_objects_left = 6u;
@@ -440,32 +418,32 @@ uint16_t clear_child_objects(void)
 		if (mem_read8(object_place) != 1u)
 		{
 			cleared_object_words_left = 0x30u;
-			t1 = mem_read16(object_place + 0x59u);
-			stack = t1 >> 8;
-			stack_10002 = t1;
-			d = 0u;
-			a = 0u;
+			kept_sprites = mem_read16(object_place + 0x59u);
+			stack = kept_sprites >> 8;
+			stack_10002 = kept_sprites;
+			clear_value = 0u;
+			clear_value_high = 0u;
 			do
 			{
-				t2 = object_place;
-				object_place = t2 + 2u;
-				mem_write16(t2, (uint32_t)a << 8);
-				t3 = cleared_object_words_left;
-				cleared_object_words_left = t3 - 1u;
-			} while (t3 != 1u);
+				cleared_word_place = object_place;
+				object_place = cleared_word_place + 2u;
+				mem_write16(cleared_word_place, (uint32_t)clear_value_high << 8);
+				object_words_left_was = cleared_object_words_left;
+				cleared_object_words_left = object_words_left_was - 1u;
+			} while (object_words_left_was != 1u);
 			mem_write16(object_place - 7u, ((uint32_t)stack << 8) | stack_10002);
 		}
 		else
 			object_place += 0x60u;
-		t4 = cleared_objects_left;
-		cleared_objects_left = t4 - 1u;
-	} while (t4 != 1u);
+		objects_left_was = cleared_objects_left;
+		cleared_objects_left = objects_left_was - 1u;
+	} while (objects_left_was != 1u);
 	return object_place;
 }
 
 /* Runs the enemy's shared hit reaction by field action; then, for the actions under 0A, stops it at the
    walls. */
-uint16_t enemy_react_with_walls(uint16_t object, uint16_t y)
+void enemy_react_with_walls(uint16_t object)
 {
 	uint8_t action_step = 0;
 	uint16_t ignored16 = 0;
@@ -478,54 +456,53 @@ uint16_t enemy_react_with_walls(uint16_t object, uint16_t y)
 	switch ((int8_t)(uint8_t)((uint32_t)(action >> 8) << 1))
 	{
 	case 0:
-		enemy_flinch_from_behind(object, action_step, &y, &ignored16, &left_caller);
+		enemy_flinch_from_behind(object, action_step, &ignored16, &left_caller);
 		break;
 	case 2:
-		enemy_flinch_kind_12(object, action_step, &y, &ignored16, &left_caller);
+		enemy_flinch_kind_12(object, action_step, &ignored16, &left_caller);
 		break;
 	case 4:
-		enemy_knocked_forward(object, action_step, &y, &ignored16, &left_caller);
+		enemy_knocked_forward(object, action_step, &ignored16, &left_caller);
 		break;
 	case 6:
-		enemy_knocked_back(object, action_step, &y, &ignored16, &left_caller);
+		enemy_knocked_back(object, action_step, &ignored16, &left_caller);
 		break;
 	case 8:
-		enemy_get_up(object, action_step, &y, &ignored16, &left_caller);
+		enemy_get_up(object, action_step, &ignored16, &left_caller);
 		break;
 	case 10:
-		enemy_die(object, action_step, &y, &ignored16, &left_caller);
+		enemy_die(object, action_step, &ignored16, &left_caller);
 		break;
 	case 12:
-		enemy_drop(object, action_step, &y, &ignored16, &left_caller);
+		enemy_drop(object, action_step, &ignored16, &left_caller);
 		break;
 	case 14:
-		enemy_sent_flying(object, action_step, &y, &ignored16, &left_caller);
+		enemy_sent_flying(object, action_step, &ignored16, &left_caller);
 		break;
 	case 16:
-		enemy_spin_backward(object, action_step, &y, &ignored16, &left_caller);
+		enemy_spin_backward(object, action_step, &ignored16, &left_caller);
 		break;
 	case 18:
-		enemy_flinch_kind_11(object, action_step, &y, &ignored16, &left_caller);
+		enemy_flinch_kind_11(object, action_step, &ignored16, &left_caller);
 		break;
 	case 20:
-		enemy_defeated_forward(object, action_step, &y, &ignored16, &left_caller);
+		enemy_defeated_forward(object, action_step, &ignored16, &left_caller);
 		break;
 	case 22:
-		enemy_defeated_backward(object, action_step, &y, &ignored16, &left_caller);
+		enemy_defeated_backward(object, action_step, &ignored16, &left_caller);
 		break;
 	case 24:
-		enemy_pit(object, action_step, &y, &ignored16, &left_caller);
+		enemy_pit(object, action_step, &ignored16, &left_caller);
 		break;
 	}
 	if (left_caller != 0u)
-		return y;
+		return;
 	action_2 = OBJECT(object)->action;
 	if (action_2 < 0xAu)
 	{
 		check_floor(object, ignored16);
-		return y;
+		return;
 	}
-	return y;
 }
 
 /* Jumps to ask_sound_cpu_check. */
@@ -573,16 +550,16 @@ void check_sample_rom_1d(void)
 }
 
 /* Sets Z when the Z80 has answered start_sample_rom_check (88 in 1FC7). */
-void sample_rom_check_answered(uint16_t *p_d, uint32_t *p_zero)
+void sample_rom_check_answered(uint16_t *p_sample_check_command, uint32_t *p_zero)
 {
 	uint32_t zero = *p_zero;
-	uint16_t d = 0;
-	uint8_t t1 = 0;
+	uint16_t sample_check_command = 0;
+	uint8_t sound_echo = 0;
 
-	t1 = io_read8(0x1FC7u);
-	zero = (uint8_t)(0x88u - t1) == 0u;
-	d = 0x88u;
-	*p_d = (*p_d & 0xFF00u) | d;
+	sound_echo = io_read8(0x1FC7u);
+	zero = (uint8_t)(0x88u - sound_echo) == 0u;
+	sample_check_command = 0x88u;
+	*p_sample_check_command = (*p_sample_check_command & 0xFF00u) | sample_check_command;
 	*p_zero = zero;
 }
 
@@ -642,14 +619,16 @@ void unused_vector_enemy_find_attack_range(uint16_t object, uint16_t range)
 
 /* Jumps to the routine that puts in a child object by the record at Y, at an offset from the object at
    X. */
-void vector_spawn_child(uint16_t object, uint16_t record, uint16_t *p_u, uint16_t *p_d, uint32_t *p_carry)
+void vector_spawn_child(uint16_t object, uint16_t *p_y, uint16_t *p_u, uint16_t *p_d, uint32_t *p_carry)
 {
 	uint32_t carry = *p_carry;
-	uint16_t d = 0, u = 0;
+	uint16_t d = 0, record = 0, u = 0;
 
+	record = (uint16_t)leftover_y;
 	*p_u = u;
 	*p_d = d;
 	spawn_child_object(object, record, p_u, p_d, &carry);
+	*p_y = record;
 	*p_carry = carry;
 }
 
@@ -678,12 +657,12 @@ void spawn_list_2_child(uint16_t object, uint16_t child_object, uint16_t *p_chil
 uint16_t floor_at_scratch_offset(uint16_t object)
 {
 	uint32_t negative = 0;
-	uint16_t d = 0, ignored16 = 0;
+	uint16_t cell = 0, ignored16 = 0;
 
 	floor_offset_x = floor_probe_dx;
 	floor_offset_y = floor_probe_dy;
-	floor_cell_at(object, &ignored16, &d, &negative);
-	return d;
+	floor_cell_at(object, &ignored16, &cell, &negative);
+	return cell;
 }
 
 /* Jumps to floor_at_offset. */
@@ -743,23 +722,23 @@ void blink(uint16_t object)
 }
 
 /* Unused: on a floor, takes the floor cell's height and sprite priority under the object. */
-void unused_take_floor_height_and_priority(uint16_t x)
+void unused_take_floor_height_and_priority(uint16_t object)
 {
 	uint32_t negative = 0;
 	uint8_t floor_cell = 0;
-	uint16_t d = 0;
-	uint8_t t1 = 0;
+	uint16_t floor_probe = 0;
+	uint8_t attributes = 0;
 
-	d = 0u;
-	floor_at_offset(x, &d, &negative);
-	floor_cell = (uint8_t)(d >> 8);
+	floor_probe = 0u;
+	floor_at_offset(object, &floor_probe, &negative);
+	floor_cell = (uint8_t)(floor_probe >> 8);
 	if ((int8_t)floor_cell >= 0)
 	{
 		floor_priority_bits = floor_cell;
-		mem_write8(x + 0x5Du, (((floor_cell & 0xFu) << 1) << 1) << 1);
+		OBJECT(object)->floor_z = (OBJECT(object)->floor_z & 0xFF00u) | ((((floor_cell & 0xFu) << 1) << 1) << 1 & 0xFFu);
 		floor_priority_bits &= 0x30u;
-		t1 = mem_read8(x + 9u);
-		mem_write8(x + 9u, (t1 & 0xCFu) | floor_priority_bits);
+		attributes = OBJECT(object)->attributes;
+		OBJECT(object)->attributes = (attributes & 0xCFu) | floor_priority_bits;
 	}
 }
 
@@ -777,13 +756,13 @@ void floor_cell_under(uint16_t object, uint16_t *p_u, uint16_t *p_d)
 }
 
 /* Jumps to check_skip. */
-void vector_check_skip(uint16_t wait, uint16_t *p_x, uint32_t *p_carry)
+void vector_check_skip(uint16_t wait, uint16_t *p_presses_addresses, uint32_t *p_carry)
 {
-	uint16_t x = (uint16_t)*p_x;
+	uint16_t presses_addresses = (uint16_t)*p_presses_addresses;
 	uint32_t carry = *p_carry;
 
-	*p_x = x;
-	check_skip(wait, p_x, &carry);
+	*p_presses_addresses = presses_addresses;
+	check_skip(wait, p_presses_addresses, &carry);
 	*p_carry = carry;
 }
 
@@ -802,45 +781,41 @@ void vector_reset_sound(void)
 /* The hit reaction of the enemies with their own hit animations, by its step: a flinch or a knock-down
    by field action and getting up, or when defeated lying down and then becoming a plain goon or blinking
    out; it keeps them inside the screen and stops them at the walls. */
-void enemy_hurt(uint16_t object, uint16_t *p_y, uint16_t *p_u)
+uint16_t enemy_hurt(uint16_t object)
 {
-	uint16_t y = (uint16_t)*p_y;
-	uint16_t u = 0;
+	uint16_t hurt_step_table = 0;
 	uint8_t action_step = 0;
 
-	u = enemy_hurt_steps_ADDRESS;
+	hurt_step_table = enemy_hurt_steps_ADDRESS;
 	action_step = OBJECT(object)->action_step;
 	switch ((int8_t)(uint8_t)((uint32_t)action_step << 1))
 	{
 	case 0:
-		u = enemy_hurt_start(object, u);
+		hurt_step_table = enemy_hurt_start(object, hurt_step_table);
 		break;
 	case 2:
-		y = enemy_hurt_recover(object, y);
+		enemy_hurt_recover(object);
 		break;
 	case 4:
 		enemy_hurt_fall_defeated(object);
 		break;
 	case 6:
-		enemy_hurt_lie_defeated(object, &y, &u);
+		hurt_step_table = enemy_hurt_lie_defeated(object, hurt_step_table);
 		break;
 	case 8:
-		u = enemy_hurt_vanish(object, u);
+		hurt_step_table = enemy_hurt_vanish(object, hurt_step_table);
 		break;
 	case 10:
 		enemy_hurt_fall(object);
 		break;
 	case 12:
-		y = enemy_hurt_get_up(object, y);
+		enemy_hurt_get_up(object);
 		break;
 	}
-	if (OBJECT(object)->flags != 0u)
-	{
-		stop_beyond_screen_edge(object);
-		u = check_floor(object, u);
-	}
-	*p_y = y;
-	*p_u = u;
+	if (OBJECT(object)->flags == 0u)
+		return hurt_step_table;
+	stop_beyond_screen_edge(object);
+	return check_floor(object, hurt_step_table);
 }
 
 /* Jumps to the routine that, while the object falls, lands it on the floor under it (carry when it
@@ -851,9 +826,9 @@ uint32_t vector_check_landing(uint16_t object)
 }
 
 /* Unused: jumps to unused_take_floor_priority. */
-void unused_vector_take_floor_priority(uint16_t x)
+void unused_vector_take_floor_priority(uint16_t object)
 {
-	unused_take_floor_priority(x);
+	unused_take_floor_priority(object);
 }
 
 /* Jumps to the routine that sets the object's x and y speeds from a direction (A) at the walk's speed
@@ -881,7 +856,7 @@ void check_hits_with_enemies(uint16_t object)
 {
 	uint32_t carry = 0;
 	uint16_t ignored16 = 0, object_2 = 0;
-	uint8_t t1 = 0;
+	uint8_t enemies_left_was = 0;
 
 	OBJECT(object)->flags &= 0xDFu;
 	OBJECT(object)->hit = 0u;
@@ -896,26 +871,21 @@ void check_hits_with_enemies(uint16_t object)
 				trade_hits(object, object_2);
 		}
 		object_2 += 0x60u;
-		t1 = hit_check_enemies_left;
-		hit_check_enemies_left = t1 - 1u;
-	} while (t1 != 1u);
+		enemies_left_was = hit_check_enemies_left;
+		hit_check_enemies_left = enemies_left_was - 1u;
+	} while (enemies_left_was != 1u);
 }
 
 /* Jumps to the routine that starts the palette job work RAM 487E asks for, with D. */
-void vector_palette_request(uint16_t request, uint16_t *p_y, uint16_t *p_palette_job)
+uint16_t vector_palette_request(uint16_t palette_job, uint16_t request)
 {
-	uint16_t y = (uint16_t)*p_y;
-	uint16_t palette_job = (uint16_t)*p_palette_job;
-
-	*p_y = y;
-	*p_palette_job = palette_job;
-	palette_request(request, p_y, p_palette_job);
+	return palette_request(palette_job, request);
 }
 
 /* Unused: jumps to unused_collide_with_list_1_objects. */
-void unused_vector_collide_with_list_1_objects(uint16_t x)
+void unused_vector_collide_with_list_1_objects(uint16_t object)
 {
-	unused_collide_with_list_1_objects(x);
+	unused_collide_with_list_1_objects(object);
 }
 
 /* Jumps to the routine that finds and clears a free object of the list in B (carry and U when found). */
@@ -939,12 +909,12 @@ uint32_t vector_queue_sound(uint16_t command)
 uint32_t remove_off_screen(uint16_t object, uint32_t carry)
 {
 	uint16_t window_x = 0;
-	uint16_t t1 = 0;
+	uint16_t object_x = 0;
 
 	if (OBJECT(object)->flags != 0u)
 	{
-		t1 = OBJECT(object)->x;
-		window_x = t1 - 0x40u;
+		object_x = OBJECT(object)->x;
+		window_x = object_x - 0x40u;
 		carry = window_x < 0x180u;
 		if (window_x >= 0x180u)
 		{
@@ -957,19 +927,19 @@ uint32_t remove_off_screen(uint16_t object, uint32_t carry)
 
 /* Finds the nearest player in play to the object (U, and A the distance's high byte; carry when one was
    found). */
-void find_nearest_player(uint16_t object, uint16_t *p_nearest, uint16_t *p_d, uint32_t *p_carry)
+void find_nearest_player(uint16_t object, uint16_t *p_nearest, uint16_t *p_nearest_result, uint32_t *p_carry)
 {
 	uint16_t nearest = (uint16_t)*p_nearest;
-	uint16_t d = (uint16_t)*p_d;
+	uint16_t nearest_result = (uint16_t)*p_nearest_result;
 	uint32_t carry = *p_carry;
 	uint16_t distance = 0, object_2 = 0, x_distance = 0;
 	uint8_t stack = 0;
 	uint16_t stack_3 = 0;
-	uint8_t t1 = 0, state = 0, t8 = 0;
-	uint16_t t2 = 0, t3 = 0, t4 = 0, t5 = 0, t6 = 0, t7 = 0, t9 = 0;
+	uint8_t present_count = 0, state = 0, players_left_was = 0;
+	uint16_t own_x = 0, player_x = 0, x_difference = 0, own_y = 0, player_y = 0, y_difference = 0, nearest_found = 0;
 
-	t1 = io_read8(0x1874u);
-	if (t1 != 0u)
+	present_count = io_read8(0x1874u);
+	if (present_count != 0u)
 	{
 		stack = 4u;
 		object_2 = OBJECT_ADDRESS(0);
@@ -982,18 +952,18 @@ void find_nearest_player(uint16_t object, uint16_t *p_nearest, uint16_t *p_d, ui
 				state = OBJECT(object_2)->state;
 				if ((int8_t)state >= 0)
 				{
-					t2 = OBJECT(object)->x;
-					t3 = OBJECT(object_2)->x;
-					t4 = t2 - t3;
-					x_distance = t4;
-					if ((int16_t)t4 < 0)
+					own_x = OBJECT(object)->x;
+					player_x = OBJECT(object_2)->x;
+					x_difference = own_x - player_x;
+					x_distance = x_difference;
+					if ((int16_t)x_difference < 0)
 						x_distance = 0u - x_distance;
 					stack_3 = x_distance;
-					t5 = OBJECT(object)->y;
-					t6 = OBJECT(object_2)->y;
-					t7 = t5 - t6;
-					distance = t7;
-					if ((int16_t)t7 < 0)
+					own_y = OBJECT(object)->y;
+					player_y = OBJECT(object_2)->y;
+					y_difference = own_y - player_y;
+					distance = y_difference;
+					if ((int16_t)y_difference < 0)
 						distance = 0u - distance;
 					distance += stack_3;
 					if (distance < nearest_player_distance)
@@ -1004,21 +974,21 @@ void find_nearest_player(uint16_t object, uint16_t *p_nearest, uint16_t *p_d, ui
 				}
 			}
 			object_2 += 0xC0u;
-			t8 = stack;
-			stack = t8 - 1u;
-		} while (t8 != 1u);
-		t9 = io_read16(0x1872u);
-		nearest = t9;
-		d = (distance & 0xFFu) | ((uint32_t)nearest_player_distance_high << 8);
-		carry = d >> 8 < 0x7Fu;
+			players_left_was = stack;
+			stack = players_left_was - 1u;
+		} while (players_left_was != 1u);
+		nearest_found = io_read16(0x1872u);
+		nearest = nearest_found;
+		nearest_result = (distance & 0xFFu) | ((uint32_t)nearest_player_distance_high << 8);
+		carry = nearest_result >> 8 < 0x7Fu;
 	}
 	else
 	{
 		carry = 0u;
-		d &= 0xFFu;
+		nearest_result &= 0xFFu;
 	}
 	*p_nearest = nearest;
-	*p_d = d;
+	*p_nearest_result = nearest_result;
 	*p_carry = carry;
 }
 
@@ -1039,13 +1009,9 @@ void vector_clear_objects(uint16_t *p_x, uint16_t *p_u)
 }
 
 /* Jumps to clear_sprites. */
-void vector_clear_sprites(uint16_t *p_x, uint16_t *p_y)
+uint16_t vector_clear_sprites(void)
 {
-	uint16_t x = 0, y = 0;
-
-	*p_x = x;
-	*p_y = y;
-	clear_sprites(p_x, p_y);
+	return clear_sprites();
 }
 
 /* Jumps to print_hex_word. */
@@ -1055,15 +1021,15 @@ uint16_t vector_print_hex_word(uint16_t place, uint16_t value)
 }
 
 /* Jumps to clear_layer_a. */
-uint16_t vector_clear_layer_a(void)
+void vector_clear_layer_a(void)
 {
-	return clear_layer_a();
+	clear_layer_a();
 }
 
 /* Jumps to clear_layer_b. */
-uint16_t vector_clear_layer_b(void)
+void vector_clear_layer_b(void)
 {
-	return clear_layer_b();
+	clear_layer_b();
 }
 
 /* Jumps to clear_text_layer. */
@@ -1104,37 +1070,37 @@ void print_bcd_word(uint16_t place, uint16_t value)
 {
 	uint8_t digit = 0, digit_2 = 0, digit_3 = 0, high_byte = 0, low_byte = 0;
 	uint8_t stack = 0, stack_2 = 0;
-	uint8_t t1 = 0, t3 = 0, t5 = 0;
-	uint16_t t2 = 0, t4 = 0, t6 = 0;
+	uint8_t nibble = 0, nibble_2 = 0, nibble_3 = 0;
+	uint16_t tile_place = 0, tile_place_2 = 0, tile_place_3 = 0;
 
 	high_byte = (uint8_t)(value >> 8);
 	stack = high_byte;
-	t1 = (((high_byte >> 1) >> 1) >> 1) >> 1;
-	digit = t1;
-	if (t1 == 0u)
+	nibble = (((high_byte >> 1) >> 1) >> 1) >> 1;
+	digit = nibble;
+	if (nibble == 0u)
 		digit = 0x10u;
 	mem_write8(place - 0x2000u, 0u);
-	t2 = place;
-	place = t2 + 1u;
-	mem_write8(t2, digit);
-	t3 = stack & 0xFu;
-	digit_2 = t3;
-	if (t3 == 0u)
+	tile_place = place;
+	place = tile_place + 1u;
+	mem_write8(tile_place, digit);
+	nibble_2 = stack & 0xFu;
+	digit_2 = nibble_2;
+	if (nibble_2 == 0u)
 		digit_2 = 0x10u;
 	mem_write8(place - 0x2000u, 0u);
-	t4 = place;
-	place = t4 + 1u;
-	mem_write8(t4, digit_2);
+	tile_place_2 = place;
+	place = tile_place_2 + 1u;
+	mem_write8(tile_place_2, digit_2);
 	low_byte = (uint8_t)value;
 	stack_2 = low_byte;
-	t5 = (((low_byte >> 1) >> 1) >> 1) >> 1;
-	digit_3 = t5;
-	if (t5 == 0u && stack == 0u)
+	nibble_3 = (((low_byte >> 1) >> 1) >> 1) >> 1;
+	digit_3 = nibble_3;
+	if (nibble_3 == 0u && stack == 0u)
 		digit_3 = 0x10u;
 	mem_write8(place - 0x2000u, 0u);
-	t6 = place;
-	place = t6 + 1u;
-	mem_write8(t6, digit_3);
+	tile_place_3 = place;
+	place = tile_place_3 + 1u;
+	mem_write8(tile_place_3, digit_3);
 	mem_write8(place - 0x2000u, 0u);
 	mem_write8(place, stack_2 & 0xFu);
 }
@@ -1151,14 +1117,13 @@ void vector_find_free_slot_by_flags(uint8_t spawn_flags, uint16_t *p_u, uint32_t
 }
 
 /* Jumps to the routine that draws B strips of 8 pixels of the layer A names, from its scroll on. */
-void vector_draw_layer_strips(uint16_t layer_and_columns, uint16_t *p_x, uint16_t *p_y, uint16_t *p_u)
+void vector_draw_layer_strips(uint16_t layer_and_columns, uint16_t *p_x, uint16_t *p_u)
 {
-	uint16_t u = 0, x = 0, y = 0;
+	uint16_t u = 0, x = 0;
 
 	*p_x = x;
-	*p_y = y;
 	*p_u = u;
-	draw_layer_columns(layer_and_columns, p_x, p_y, p_u);
+	draw_layer_columns(layer_and_columns, p_x, p_u);
 }
 
 /* Jumps to the routine that sets the K052109's tile banks (1D80, 1F00) by the map's scene and area. */
@@ -1171,14 +1136,14 @@ void vector_set_layer_modes(void)
    a screen can draw with them. */
 void reserve_objects_for_sprites(uint16_t object, uint16_t object_count)
 {
-	uint8_t a = 0, control = 0, order = 0;
+	uint8_t control = 0, order = 0, reserve_count = 0;
 	uint16_t sprite_place = 0;
 	uint8_t stack = 0, stack_2 = 0;
-	uint8_t t1 = 0, t2 = 0;
+	uint8_t sprites_left_was = 0, objects_left_was = 0;
 	uint16_t sprites = 0;
 
-	a = (uint8_t)(object_count >> 8);
-	stack = a;
+	reserve_count = (uint8_t)(object_count >> 8);
+	stack = reserve_count;
 	control = board_control | 2u;
 	board_control = control;
 	io_write8(0x1FC2u, control);
@@ -1191,16 +1156,16 @@ void reserve_objects_for_sprites(uint16_t object, uint16_t object_count)
 		do
 		{
 			OBJECT(object)->flags = 1u;
-			mem_write8(sprite_place + 1u, order);
+			SPRITE_ENTRY(sprite_place)->depth = order;
 			sprite_place += 0x10u;
 			order--;
-			t1 = stack_2;
-			stack_2 = t1 - 1u;
-		} while (t1 != 1u);
+			sprites_left_was = stack_2;
+			stack_2 = sprites_left_was - 1u;
+		} while (sprites_left_was != 1u);
 		object += 0x60u;
-		t2 = stack;
-		stack = t2 - 1u;
-	} while (t2 != 1u);
+		objects_left_was = stack;
+		stack = objects_left_was - 1u;
+	} while (objects_left_was != 1u);
 	control = board_control & ~3u;
 	board_control = control;
 	io_write8(0x1FC2u, control);
@@ -1264,10 +1229,10 @@ void vector_play_scene_music(void)
 
 /* Turns the boss's colours by how much of its vitality is left, in 5 steps of A, with the palette
    effects of row B of hurt_effect_rows; the first call starts the row's normal effect and keeps its job. */
-uint16_t boss_shade_by_vitality(uint16_t object, uint16_t y, uint16_t step_and_row)
+void boss_shade_by_vitality(uint16_t object, uint16_t step_and_row)
 {
 	uint8_t effect_row = 0, shade_level = 0, threshold = 0, vitality_step = 0;
-	uint16_t palette_job = 0, request = 0, shade_job = 0;
+	uint16_t palette_job = 0, request = 0, shade_job = 0, y = 0;
 	uint8_t vitality = 0, shade_level_2 = 0, vitality_2 = 0, full_vitality = 0, vitality_3 = 0;
 	uint16_t shade_job_2 = 0, normal = 0, shade_job_3 = 0, normal_2 = 0;
 
@@ -1289,12 +1254,13 @@ uint16_t boss_shade_by_vitality(uint16_t object, uint16_t y, uint16_t step_and_r
 				OBJECT(object)->boss_shade.shade_level = shade_level;
 				palette_request_kind = 8u;
 				y = hurt_effect_rows[(int8_t)((uint8_t)((uint32_t)shade_effect_row << 1)) / 2];
+				leftover_y = y;
 				normal = HURT_EFFECT_ROW(y + (int8_t)((uint32_t)shade_new_level << 1))->normal;
 				request = normal;
-				palette_request(request, &y, &palette_job);
+				palette_request(palette_job, request);
 			}
 		}
-		return y;
+		return;
 	}
 	shade_job_3 = OBJECT(object)->boss_shade.shade_job;
 	palette_job = shade_job_3;
@@ -1307,9 +1273,9 @@ uint16_t boss_shade_by_vitality(uint16_t object, uint16_t y, uint16_t step_and_r
 		shade_job = hurt_effect_rows_ADDRESS;
 		normal_2 = HURT_EFFECT_ROW(hurt_effect_rows[(int8_t)((uint8_t)((uint32_t)shade_effect_row << 1)) / 2])->normal;
 		request = normal_2;
-		palette_request(request, &y, &shade_job);
+		shade_job = palette_request(shade_job, request);
 		OBJECT(object)->boss_shade.shade_job = shade_job;
-		return y;
+		return;
 	}
 	shade_vitality_over = vitality_step * 5u;
 	full_vitality = OBJECT(object)->boss_shade.full_vitality;
@@ -1323,7 +1289,7 @@ uint16_t boss_shade_by_vitality(uint16_t object, uint16_t y, uint16_t step_and_r
 		threshold += shade_vitality_step;
 		shade_new_level++;
 		if (shade_new_level == 5u)
-			return y;
+			return;
 	}
 	shade_level = shade_new_level;
 	shade_level_2 = OBJECT(object)->boss_shade.shade_level;
@@ -1332,11 +1298,11 @@ uint16_t boss_shade_by_vitality(uint16_t object, uint16_t y, uint16_t step_and_r
 		OBJECT(object)->boss_shade.shade_level = shade_level;
 		palette_request_kind = 8u;
 		y = hurt_effect_rows[(int8_t)((uint8_t)((uint32_t)shade_effect_row << 1)) / 2];
+		leftover_y = y;
 		normal = HURT_EFFECT_ROW(y + (int8_t)((uint32_t)shade_new_level << 1))->normal;
 		request = normal;
-		palette_request(request, &y, &palette_job);
+		palette_request(palette_job, request);
 	}
-	return y;
 }
 
 /* Jumps to the routine that puts the camera and both layers at x D. */
@@ -1356,20 +1322,20 @@ void print_big_text(uint16_t text, uint16_t colour)
 {
 	uint8_t attribute = 0, character = 0;
 	uint16_t place = 0;
-	uint16_t t1 = 0, t2 = 0;
+	uint16_t place_source = 0, character_source = 0;
 
 	attribute = (uint8_t)(colour >> 8);
 	attribute += 2u;
 	for (;;)
 	{
-		t1 = text;
-		text = t1 + 2u;
-		place = mem_read16(t1);
+		place_source = text;
+		text = place_source + 2u;
+		place = mem_read16(place_source);
 		for (;;)
 		{
-			t2 = text;
-			text = t2 + 1u;
-			character = mem_read8(t2);
+			character_source = text;
+			text = character_source + 1u;
+			character = mem_read8(character_source);
 			if (character == 0x23u)
 				return;
 			if (character == 0x2Fu)
@@ -1395,18 +1361,18 @@ void erase_big_text(uint16_t text)
 {
 	uint8_t character = 0;
 	uint16_t place = 0;
-	uint16_t t1 = 0, t2 = 0;
+	uint16_t place_source = 0, character_source = 0;
 
 	for (;;)
 	{
-		t1 = text;
-		text = t1 + 2u;
-		place = mem_read16(t1);
+		place_source = text;
+		text = place_source + 2u;
+		place = mem_read16(place_source);
 		for (;;)
 		{
-			t2 = text;
-			text = t2 + 1u;
-			character = mem_read8(t2);
+			character_source = text;
+			text = character_source + 1u;
+			character = mem_read8(character_source);
 			if (character == 0x23u)
 				return;
 			if (character == 0x2Fu)

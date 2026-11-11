@@ -3,7 +3,7 @@
  *    Description: the door stage 3's boss comes out of
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    10-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -42,7 +42,7 @@ uint16_t boss_door_stage_8(uint16_t object)
 {
 	uint16_t states = 0;
 	uint8_t state = 0;
-	uint16_t t1 = 0;
+	uint16_t camera_x_now = 0;
 
 	states = boss_door_stage_8_states_ADDRESS;
 	state = OBJECT(object)->state;
@@ -63,8 +63,8 @@ uint16_t boss_door_stage_8(uint16_t object)
 		states = boss_door_set_up(object);
 		break;
 	}
-	t1 = camera_x;
-	if ((int16_t)t1 >= 0x320)
+	camera_x_now = camera_x;
+	if ((int16_t)camera_x_now >= 0x320)
 		OBJECT(object)->flags = 0u;
 	return states;
 }
@@ -77,7 +77,7 @@ uint16_t boss_door_set_up(uint16_t object)
 	uint8_t list = 0;
 	uint16_t other_half = 0;
 	uint8_t state = 0;
-	uint16_t t1 = 0, t2 = 0, t3 = 0, t4 = 0;
+	uint16_t door_x = 0, other_half_x = 0, door_y = 0, other_half_y = 0;
 
 	io_write16(0x1852u, object);
 	list = 1u;
@@ -87,14 +87,14 @@ uint16_t boss_door_set_up(uint16_t object)
 		OBJECT(other_half)->type = -0xC;
 		OBJECT(object)->boss_door.other_half = other_half;
 		OBJECT(object)->flags = 0x80u;
-		t1 = 0x2E0u - camera_x;
-		OBJECT(object)->x = t1;
-		t2 = 0x2E8u - camera_x;
-		OBJECT(other_half)->x = t2;
-		t3 = 0x108u + camera_y;
-		OBJECT(object)->y = t3;
-		t4 = 0xC8u + camera_y;
-		OBJECT(other_half)->y = t4;
+		door_x = 0x2E0u - camera_x;
+		OBJECT(object)->x = door_x;
+		other_half_x = 0x2E8u - camera_x;
+		OBJECT(other_half)->x = other_half_x;
+		door_y = 0x108u + camera_y;
+		OBJECT(object)->y = door_y;
+		other_half_y = 0xC8u + camera_y;
+		OBJECT(other_half)->y = other_half_y;
 		OBJECT(object)->z = 0xFFE0u;
 		OBJECT(other_half)->z = 0x20u;
 		OBJECT(object)->kind = 0x13u;
@@ -121,8 +121,8 @@ uint16_t boss_door_closed(uint16_t object, uint16_t half)
 		OBJECT(object)->animation = 0x86u;
 		other_half = OBJECT(object)->boss_door.other_half;
 		half = other_half;
-		mem_write8(half, 0x80u);
-		mem_write8(half + 5u, 0x87u);
+		OBJECT(half)->flags = 0x80u;
+		OBJECT(half)->animation = 0x87u;
 		state = OBJECT(object)->state;
 		OBJECT(object)->state = state + 1u;
 	}
@@ -141,7 +141,7 @@ uint16_t boss_door_open(uint16_t object, uint16_t half)
 		OBJECT(object)->animation = 0x85u;
 		other_half = OBJECT(object)->boss_door.other_half;
 		half = other_half;
-		mem_write8(half, 4u);
+		OBJECT(half)->flags = 4u;
 		state = OBJECT(object)->state;
 		OBJECT(object)->state = state - 1u;
 	}
@@ -155,7 +155,7 @@ uint16_t boss_door_stage_8_set_up(uint16_t object)
 	uint8_t list = 0;
 	uint16_t other_half = 0;
 	uint8_t state = 0;
-	uint16_t t1 = 0, t2 = 0, t3 = 0, t4 = 0;
+	uint16_t door_x = 0, other_half_x = 0, door_y = 0, other_half_y = 0;
 
 	io_write16(0x1852u, object);
 	list = 2u;
@@ -164,14 +164,14 @@ uint16_t boss_door_stage_8_set_up(uint16_t object)
 	{
 		OBJECT(object)->boss_door.other_half = other_half;
 		OBJECT(object)->flags = 0x80u;
-		t1 = 0x330u - camera_x;
-		OBJECT(object)->x = t1;
-		t2 = 0x328u - camera_x;
-		OBJECT(other_half)->x = t2;
-		t3 = 0xD0u + camera_y;
-		OBJECT(object)->y = t3;
-		t4 = 0x90u + camera_y;
-		OBJECT(other_half)->y = t4;
+		door_x = 0x330u - camera_x;
+		OBJECT(object)->x = door_x;
+		other_half_x = 0x328u - camera_x;
+		OBJECT(other_half)->x = other_half_x;
+		door_y = 0xD0u + camera_y;
+		OBJECT(object)->y = door_y;
+		other_half_y = 0x90u + camera_y;
+		OBJECT(other_half)->y = other_half_y;
 		OBJECT(object)->z = 0xFFE0u;
 		OBJECT(other_half)->z = 0x20u;
 		OBJECT(object)->kind = 0x13u;

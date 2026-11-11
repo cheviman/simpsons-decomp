@@ -3,7 +3,7 @@
  *    Description: Krustyland's clown on a ball, its attacks, and its ball
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    10-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -12,9 +12,8 @@
 #include "game.h"
 
 /* Runs the ball's burst by field 28. */
-void clown_ball_burst_steps(uint16_t object, uint16_t *p_y, uint16_t *p_steps)
+uint16_t clown_ball_burst_steps(uint16_t object)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint16_t steps = 0;
 	uint8_t action = 0;
 
@@ -26,61 +25,59 @@ void clown_ball_burst_steps(uint16_t object, uint16_t *p_y, uint16_t *p_steps)
 		{
 		case 0:
 			clown_ball_burst(object);
-			break;
+			return steps;
 		case 2:
-			clown_ball_burst_end(object);
 			break;
 		case -34:
 			kind_98_entrance_show(object);
-			break;
+			return steps;
 		case -32:
 			kind_98_entrance_next(object);
-			break;
+			return steps;
 		case -30:
 			kind_98_entrance_wait(object);
-			break;
+			return steps;
 		case -28:
 			kind_98_entrance_walk(object);
-			break;
+			return steps;
 		case -26:
 			kind_98_entrance_reach_floor(object);
-			break;
+			return steps;
 		case -24:
 			kind_98_step_back(object);
-			break;
+			return steps;
 		case -22:
 			kind_98_step_back_end(object);
-			break;
+			return steps;
 		case -20:
 			kind_98_strike_swing(object);
-			break;
+			return steps;
 		case -18:
-			y = kind_98_strike_hit(object, y);
-			break;
+			kind_98_strike_hit(object);
+			return steps;
 		case -16:
-			y = kind_98_strike_recover(object);
-			break;
+			kind_98_strike_recover(object);
+			return steps;
 		case -14:
 			kind_98_strike_end(object);
-			break;
+			return steps;
 		case -12:
 		case -10:
 			continue;
 		case -8:
-			clown_ball_start(object, &y, &steps);
-			break;
+			return clown_ball_start(object);
 		case -6:
 		case -4:
 			clown_ball_fall(object);
-			break;
+			return steps;
 		case -2:
 			clown_ball_vanish(object);
-			break;
+			return steps;
 		}
 		break;
 	}
-	*p_y = y;
-	*p_steps = steps;
+	clown_ball_burst_end(object);
+	return steps;
 }
 
 /* Turns the ball into a burst. */
@@ -105,13 +102,13 @@ void clown_ball_burst_end(uint16_t object)
 }
 
 /* Sends the ball flying up the screen. */
-void clown_ball_start(uint16_t object, uint16_t *p_box, uint16_t *p_setup)
+uint16_t clown_ball_start(uint16_t object)
 {
-	uint16_t box = 0, setup = 0;
+	uint16_t setup = 0;
 	uint8_t parameter = 0;
 
 	setup = clown_ball_setup_ADDRESS;
-	box = vector_object_setup(object, setup);
+	vector_object_setup(object, setup);
 	parameter = OBJECT(object)->parameter;
 	if ((parameter & 1u) == 0u)
 	{
@@ -122,8 +119,7 @@ void clown_ball_start(uint16_t object, uint16_t *p_box, uint16_t *p_setup)
 	OBJECT(object)->z_speed = 0x400;
 	OBJECT(object)->state = 2u;
 	OBJECT(object)->flags = 0x88u;
-	*p_box = box;
-	*p_setup = setup;
+	return setup;
 }
 
 /* Falls and bursts on landing. */
@@ -154,14 +150,14 @@ void clown_ball_vanish(uint16_t object)
 }
 
 /* Sets up the clown on a ball: fighting at once, or posing out of play by its spawn's state. */
-uint16_t clown_on_ball_start(uint16_t object)
+void clown_on_ball_start(uint16_t object)
 {
 	uint8_t pose_number = 0;
-	uint16_t box = 0, clown_pose = 0, setup = 0;
+	uint16_t clown_pose = 0, setup = 0;
 	uint8_t setup_count = 0, parameter = 0, attributes = 0, attributes_2 = 0, state = 0;
 
 	setup = clown_on_ball_setup_ADDRESS;
-	box = vector_object_setup(object, setup);
+	vector_object_setup(object, setup);
 	OBJECT(object)->clown_on_ball.vanishes = 1u;
 	setup_count = OBJECT(object)->clown_on_ball.setup_count;
 	OBJECT(object)->clown_on_ball.setup_count = setup_count + 1u;
@@ -174,7 +170,7 @@ uint16_t clown_on_ball_start(uint16_t object)
 	{
 		OBJECT(object)->parameter = 0u;
 		OBJECT(object)->state = 2u;
-		return box;
+		return;
 	}
 	clown_pose += (int8_t)((uint32_t)pose_number << 1);
 	OBJECT(object)->animation = CLOWN_POSE(clown_pose)->animation;
@@ -186,17 +182,16 @@ uint16_t clown_on_ball_start(uint16_t object)
 	OBJECT(object)->enemy_class = -1;
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
-	return box;
 }
 
 /* Poses until it comes left of x 00E0, then fights. */
 void clown_on_ball_pose(uint16_t object)
 {
 	uint8_t state = 0;
-	uint16_t t1 = 0;
+	uint16_t clown_x = 0;
 
-	t1 = OBJECT(object)->x;
-	if (t1 < 0xE0u)
+	clown_x = OBJECT(object)->x;
+	if (clown_x < 0xE0u)
 	{
 		OBJECT(object)->enemy_class = 0;
 		OBJECT(object)->entrance_pending = 0u;
@@ -216,9 +211,8 @@ void clown_on_ball_strike_swing(uint16_t object)
 }
 
 /* Puts out the strike's hit box at its mark and goes back to the fight when the animation ends. */
-uint16_t clown_on_ball_strike(uint16_t object)
+void clown_on_ball_strike(uint16_t object)
 {
-	uint16_t box = 0;
 	uint8_t animation_flags = 0, animation_flags_2 = 0;
 
 	animation_flags = OBJECT(object)->animation_flags;
@@ -227,19 +221,18 @@ uint16_t clown_on_ball_strike(uint16_t object)
 		animation_flags_2 = OBJECT(object)->animation_flags;
 		if ((animation_flags_2 & 2u) == 0u)
 		{
-			box = clown_on_ball_body_box_ADDRESS;
-			vector_set_hit_box(object, box);
-			return box;
+			leftover_y = clown_on_ball_body_box_ADDRESS;
+			vector_set_hit_box(object);
+			return;
 		}
-		box = clown_on_ball_strike_box_ADDRESS;
-		vector_set_hit_box(object, box);
-		return box;
+		leftover_y = clown_on_ball_strike_box_ADDRESS;
+		vector_set_hit_box(object);
+		return;
 	}
-	box = clown_on_ball_body_box_ADDRESS;
-	vector_set_hit_box(object, box);
+	leftover_y = clown_on_ball_body_box_ADDRESS;
+	vector_set_hit_box(object);
 	OBJECT(object)->state = 2u;
 	OBJECT(object)->timer = 0u;
-	return box;
 }
 
 /* Jumps: straight up when near its target, towards it when far. */
@@ -267,41 +260,38 @@ void clown_on_ball_jump(uint16_t object)
 }
 
 /* Falls with its hit box and goes back to the fight on landing. */
-uint16_t clown_on_ball_jump_fall(uint16_t object)
+void clown_on_ball_jump_fall(uint16_t object)
 {
 	uint32_t carry = 0;
-	uint16_t box = 0;
 	uint8_t animation_flags = 0;
-	uint16_t z_speed = 0, t1 = 0;
+	uint16_t z_speed = 0, next_z_speed = 0;
 
 	z_speed = OBJECT(object)->z_speed;
-	t1 = z_speed - 0x20u;
-	OBJECT(object)->z_speed = t1;
+	next_z_speed = z_speed - 0x20u;
+	OBJECT(object)->z_speed = next_z_speed;
 	carry = vector_check_landing(object);
 	if (carry == 0u)
 	{
 		animation_flags = OBJECT(object)->animation_flags;
 		if ((animation_flags & 2u) == 0u)
 		{
-			box = clown_on_ball_body_box_ADDRESS;
-			vector_set_hit_box(object, box);
-			return box;
+			leftover_y = clown_on_ball_body_box_ADDRESS;
+			vector_set_hit_box(object);
+			return;
 		}
-		box = clown_on_ball_strike_box_ADDRESS;
-		vector_set_hit_box(object, box);
-		return box;
+		leftover_y = clown_on_ball_strike_box_ADDRESS;
+		vector_set_hit_box(object);
+		return;
 	}
-	box = clown_on_ball_body_box_ADDRESS;
-	vector_set_hit_box(object, box);
+	leftover_y = clown_on_ball_body_box_ADDRESS;
+	vector_set_hit_box(object);
 	OBJECT(object)->state = 2u;
 	OBJECT(object)->timer = 0u;
-	return box;
 }
 
 /* Winds up for 32 frames. */
-uint16_t clown_on_ball_charge_wind_up(uint16_t object)
+void clown_on_ball_charge_wind_up(uint16_t object)
 {
-	uint16_t box = 0;
 	uint8_t action_step = 0, animation_flags = 0;
 
 	OBJECT(object)->animation = 0x90u;
@@ -311,19 +301,17 @@ uint16_t clown_on_ball_charge_wind_up(uint16_t object)
 	animation_flags = OBJECT(object)->animation_flags;
 	if ((animation_flags & 2u) == 0u)
 	{
-		box = clown_on_ball_body_box_ADDRESS;
-		vector_set_hit_box(object, box);
-		return box;
+		leftover_y = clown_on_ball_body_box_ADDRESS;
+		vector_set_hit_box(object);
+		return;
 	}
-	box = clown_on_ball_strike_box_ADDRESS;
-	vector_set_hit_box(object, box);
-	return box;
+	leftover_y = clown_on_ball_strike_box_ADDRESS;
+	vector_set_hit_box(object);
 }
 
 /* Rolls at its target for 32 frames. */
-uint16_t clown_on_ball_charge(uint16_t object)
+void clown_on_ball_charge(uint16_t object)
 {
-	uint16_t box = 0;
 	uint8_t timer = 0, animation_flags = 0, target_direction = 0, action_step = 0;
 	uint16_t x_speed = 0;
 
@@ -334,13 +322,13 @@ uint16_t clown_on_ball_charge(uint16_t object)
 		animation_flags = OBJECT(object)->animation_flags;
 		if ((animation_flags & 2u) == 0u)
 		{
-			box = clown_on_ball_body_box_ADDRESS;
-			vector_set_hit_box(object, box);
-			return box;
+			leftover_y = clown_on_ball_body_box_ADDRESS;
+			vector_set_hit_box(object);
+			return;
 		}
-		box = clown_on_ball_strike_box_ADDRESS;
-		vector_set_hit_box(object, box);
-		return box;
+		leftover_y = clown_on_ball_strike_box_ADDRESS;
+		vector_set_hit_box(object);
+		return;
 	}
 	OBJECT(object)->timer = 0x20u;
 	OBJECT(object)->x_speed = 0x200;
@@ -355,19 +343,17 @@ uint16_t clown_on_ball_charge(uint16_t object)
 	animation_flags = OBJECT(object)->animation_flags;
 	if ((animation_flags & 2u) == 0u)
 	{
-		box = clown_on_ball_body_box_ADDRESS;
-		vector_set_hit_box(object, box);
-		return box;
+		leftover_y = clown_on_ball_body_box_ADDRESS;
+		vector_set_hit_box(object);
+		return;
 	}
-	box = clown_on_ball_strike_box_ADDRESS;
-	vector_set_hit_box(object, box);
-	return box;
+	leftover_y = clown_on_ball_strike_box_ADDRESS;
+	vector_set_hit_box(object);
 }
 
 /* Turns round half the time and rolls on for 40 frames. */
-uint16_t clown_on_ball_charge_turn(uint16_t object)
+void clown_on_ball_charge_turn(uint16_t object)
 {
-	uint16_t box = 0;
 	uint8_t timer = 0, animation_flags = 0, action_step = 0;
 	uint16_t x_speed = 0;
 
@@ -378,13 +364,13 @@ uint16_t clown_on_ball_charge_turn(uint16_t object)
 		animation_flags = OBJECT(object)->animation_flags;
 		if ((animation_flags & 2u) == 0u)
 		{
-			box = clown_on_ball_body_box_ADDRESS;
-			vector_set_hit_box(object, box);
-			return box;
+			leftover_y = clown_on_ball_body_box_ADDRESS;
+			vector_set_hit_box(object);
+			return;
 		}
-		box = clown_on_ball_strike_box_ADDRESS;
-		vector_set_hit_box(object, box);
-		return box;
+		leftover_y = clown_on_ball_strike_box_ADDRESS;
+		vector_set_hit_box(object);
+		return;
 	}
 	if (random_number & 1u)
 	{
@@ -397,31 +383,28 @@ uint16_t clown_on_ball_charge_turn(uint16_t object)
 	animation_flags = OBJECT(object)->animation_flags;
 	if ((animation_flags & 2u) == 0u)
 	{
-		box = clown_on_ball_body_box_ADDRESS;
-		vector_set_hit_box(object, box);
-		return box;
+		leftover_y = clown_on_ball_body_box_ADDRESS;
+		vector_set_hit_box(object);
+		return;
 	}
-	box = clown_on_ball_strike_box_ADDRESS;
-	vector_set_hit_box(object, box);
-	return box;
+	leftover_y = clown_on_ball_strike_box_ADDRESS;
+	vector_set_hit_box(object);
 }
 
 /* Stops and goes back to the fight. */
-uint16_t clown_on_ball_charge_end(uint16_t object, uint16_t y)
+void clown_on_ball_charge_end(uint16_t object)
 {
-	uint16_t box = 0;
 	uint8_t timer = 0;
 
 	timer = OBJECT(object)->timer;
 	OBJECT(object)->timer = timer - 1u;
 	if (timer != 1u)
-		return y;
+		return;
 	OBJECT(object)->x_speed = 0;
-	box = clown_on_ball_body_box_ADDRESS;
-	vector_set_hit_box(object, box);
+	leftover_y = clown_on_ball_body_box_ADDRESS;
+	vector_set_hit_box(object);
 	OBJECT(object)->state = 2u;
 	OBJECT(object)->timer = 0u;
-	return box;
 }
 
 /* Pauses (one of two animations) for a time by the game's rank. */
@@ -484,13 +467,13 @@ void clown_on_ball_hop(uint16_t object)
 	uint32_t carry = 0;
 	uint16_t ignored16 = 0;
 	uint8_t hops_left = 0;
-	uint16_t t1 = 0;
+	uint16_t clown_x = 0;
 
 	vector_apply_gravity(object, &ignored16, &carry);
 	if (carry == 0u)
 	{
-		t1 = OBJECT(object)->x;
-		if (t1 < 0x40 || t1 > 0x17F)
+		clown_x = OBJECT(object)->x;
+		if (clown_x < 0x40 || clown_x > 0x17F)
 			OBJECT(object)->x_speed = 0;
 		return;
 	}
@@ -503,8 +486,8 @@ void clown_on_ball_hop(uint16_t object)
 		return;
 	}
 	OBJECT(object)->z_speed = 0x400;
-	t1 = OBJECT(object)->x;
-	if (t1 < 0x40 || t1 > 0x17F)
+	clown_x = OBJECT(object)->x;
+	if (clown_x < 0x40 || clown_x > 0x17F)
 		OBJECT(object)->x_speed = 0;
 }
 
@@ -513,7 +496,7 @@ void clown_on_ball_hop(uint16_t object)
 void orbit_offset(uint16_t angle_and_radius)
 {
 	uint8_t angle = 0, quarter = 0, radius = 0, swap = 0;
-	uint8_t t1 = 0;
+	uint8_t quadrant_bits = 0;
 
 	angle = (uint8_t)(angle_and_radius >> 8);
 	radius = (uint8_t)angle_and_radius;
@@ -532,8 +515,8 @@ void orbit_offset(uint16_t angle_and_radius)
 	}
 	if ((int8_t)orbit_angle < 0)
 		orbit_y_offset = 0u - orbit_y_offset;
-	t1 = orbit_angle & 0xC0u;
-	quarter = t1;
-	if (t1 != 0u && quarter != 0xC0u)
+	quadrant_bits = orbit_angle & 0xC0u;
+	quarter = quadrant_bits;
+	if (quadrant_bits != 0u && quarter != 0xC0u)
 		orbit_x_offset = 0u - orbit_x_offset;
 }

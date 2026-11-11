@@ -3,7 +3,7 @@
  *    Description: the story steps
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    10-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -12,7 +12,7 @@
 #include "game.h"
 
 /* Step 1, the first story (Smithers takes the diamond and Maggie), by step_phase, the gauges hidden */
-uint32_t step_story_1(uint16_t y, uint16_t u)
+uint32_t step_story_1(uint16_t u)
 {
 	uint32_t left_caller = 0;
 
@@ -50,7 +50,7 @@ uint32_t step_story_1(uint16_t y, uint16_t u)
 			return left_caller;
 		case 14:
 			left_caller = 0u;
-			return stage_1_play(y, left_caller);
+			return stage_1_play(left_caller);
 		case 16:
 			left_caller = 0u;
 			stage_1_over();
@@ -71,11 +71,11 @@ uint32_t step_story_1(uint16_t y, uint16_t u)
 			return left_caller;
 		case 26:
 			left_caller = 0u;
-			bonus_1_intro_phase(y);
+			bonus_1_intro_phase();
 			return left_caller;
 		case 28:
 			left_caller = 0u;
-			bonus_1_run(y);
+			bonus_1_run();
 			return left_caller;
 		case 30:
 			left_caller = 0u;
@@ -98,7 +98,7 @@ uint32_t step_story_1(uint16_t y, uint16_t u)
 			return left_caller;
 		case 40:
 			left_caller = 0u;
-			return stage_2_play(y, left_caller);
+			return stage_2_play(left_caller);
 		case 42:
 			left_caller = 0u;
 			stage_2_after_boss();
@@ -128,10 +128,10 @@ uint32_t step_story_1(uint16_t y, uint16_t u)
 			return left_caller;
 		case 56:
 			left_caller = 0u;
-			return stage_3_forest_play(y, left_caller);
+			return stage_3_forest_play(left_caller);
 		case 58:
 			left_caller = 0u;
-			return stage_3_forest_cleared(y, left_caller);
+			return stage_3_forest_cleared(left_caller);
 		case 60:
 			left_caller = 0u;
 			stage_3_forest_over();
@@ -154,7 +154,7 @@ uint32_t step_story_1(uint16_t y, uint16_t u)
 			return left_caller;
 		case 72:
 			left_caller = 0u;
-			return stage_3_cemetery_play(y, left_caller);
+			return stage_3_cemetery_play(left_caller);
 		case 74:
 			left_caller = 0u;
 			stage_3_cemetery_over();
@@ -182,7 +182,7 @@ uint32_t step_story_1(uint16_t y, uint16_t u)
 			return left_caller;
 		case 88:
 			left_caller = 0u;
-			return stage_4_play(y, left_caller);
+			return stage_4_play(left_caller);
 		case 90:
 			left_caller = 0u;
 			stage_4_over();
@@ -210,7 +210,7 @@ uint32_t step_story_1(uint16_t y, uint16_t u)
 			return left_caller;
 		case 104:
 			left_caller = 0u;
-			return stage_5_play(y, left_caller);
+			return stage_5_play(left_caller);
 		case 106:
 			left_caller = 0u;
 			stage_5_over();
@@ -243,7 +243,7 @@ uint32_t step_story_1(uint16_t y, uint16_t u)
 			return left_caller;
 		case 122:
 			left_caller = 0u;
-			return stage_6_play(y, left_caller);
+			return stage_6_play(left_caller);
 		case 124:
 			left_caller = 0u;
 			stage_6_over();
@@ -251,19 +251,19 @@ uint32_t step_story_1(uint16_t y, uint16_t u)
 		case 126:
 			break;
 		case -54:
-			return game_start_phase(y, u);
+			return game_start_phase(u);
 		case -52:
-			return game_run_step(y, u);
+			return game_run_step(u);
 		case -50:
 			left_caller = 0u;
 			game_continue_phase();
 			return left_caller;
 		case -48:
 			left_caller = 0u;
-			return game_over_phase(y, u, left_caller);
+			return game_over_phase(u, left_caller);
 		case -46:
 			left_caller = 0u;
-			return name_entry_phase(y, u, left_caller);
+			return name_entry_phase(u, left_caller);
 		case -44:
 			left_caller = 0u;
 			game_start_clear();
@@ -273,45 +273,45 @@ uint32_t step_story_1(uint16_t y, uint16_t u)
 			game_start_palettes(u);
 			return left_caller;
 		case -40:
-			return step_portraits(y, u);
+			return step_portraits(u);
 		case -38:
 			continue;
 		case -36:
-			return step_stage_1(y, u);
+			return step_stage_1(u);
 		case -34:
-			return step_bonus_1(y, u);
+			return step_bonus_1(u);
 		case -32:
-			return step_stage_2(y, u);
+			return step_stage_2(u);
 		case -30:
 			left_caller = 0u;
 			step_story_2();
 			return left_caller;
 		case -28:
-			return step_stage_3_forest(y, u);
+			return step_stage_3_forest(u);
 		case -26:
-			return step_stage_3_cemetery(y, u);
+			return step_stage_3_cemetery(u);
 		case -24:
-			return step_stage_4(y, u);
+			return step_stage_4(u);
 		case -22:
-			return step_stage_5(y, u);
+			return step_stage_5(u);
 		case -20:
 			left_caller = 0u;
 			step_story_3();
 			return left_caller;
 		case -18:
-			return step_stage_6(y, u);
+			return step_stage_6(u);
 		case -16:
-			return step_bonus_2(y, u);
+			return step_bonus_2(u);
 		case -14:
-			return step_stage_7(y, u);
+			return step_stage_7(u);
 		case -12:
 			left_caller = 0u;
 			step_story_4();
 			return left_caller;
 		case -10:
-			return step_stage_8(y, u);
+			return step_stage_8(u);
 		case -8:
-			return step_ending(y, u);
+			return step_ending(u);
 		case -6:
 			left_caller = 0u;
 			portraits_start(u);
@@ -334,9 +334,9 @@ uint32_t step_story_1(uint16_t y, uint16_t u)
 /* Clears the sprites and the scene's variables and queues the tile layers' clear for the first story */
 void story_1_start(void)
 {
-	uint16_t ignored16 = 0, ignored16_2 = 0, job = 0;
+	uint16_t job = 0;
 
-	clear_sprites(&ignored16, &ignored16_2);
+	clear_sprites();
 	reset_for_stage();
 	job = 0u;
 	queue_job(job);
@@ -355,7 +355,7 @@ void story_1_wait_layers(void)
 void story_1_run(uint16_t u)
 {
 	uint32_t carry = 0;
-	uint16_t ignored16 = 0, ignored16_2 = 0, ignored16_3 = 0, ignored16_4 = 0;
+	uint16_t ignored16 = 0, ignored16_2 = 0, ignored16_3 = 0;
 
 	scene_running = 1u;
 	window_bank = 0x13u;
@@ -371,7 +371,7 @@ void story_1_run(uint16_t u)
 		step_subphase = 0u;
 		step_countdown = 0u;
 	}
-	update_players(&ignored16, &ignored16_2, &ignored16_3, &ignored16_4, &carry);
+	update_players(&ignored16, &ignored16_2, &ignored16_3, &carry);
 }
 
 /* Step 5, the second story: only sets the step's scene and moves on; the story plays in the next stage's
@@ -386,9 +386,9 @@ void step_story_2(void)
 /* Step 10, the third story: only sets the step's scene and moves on */
 void step_story_3(void)
 {
-	uint8_t t1 = 0;
+	uint8_t discarded_read = 0;
 
-	t1 = io_read8(0x1C80u);
+	discarded_read = io_read8(0x1C80u);
 	io_write8(0x1C80u, 0u);
 	gauges_shown = 0u;
 	set_step_scene();

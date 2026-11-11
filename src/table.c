@@ -3,13 +3,21 @@
  *    Description: the code the board runs by itself (the reset's, the interrupts' handlers) and the tables the game loads by name
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    10-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
  *    tools/decompile.py, with the names of symbols.txt.
  */
 #include "game.h"
+
+/* what the code carries in its registers (game.h) */
+uint16_t leftover_y = 0u;
+
+/* the same, for the runtime to put back what an interrupt's handler found there when it returns, as the
+   CPU does */
+uint16_t *const game_context[] = { &leftover_y };
+const size_t game_context_count = 1;
 
 /* the code at the reset vector */
 void game_entry(void)

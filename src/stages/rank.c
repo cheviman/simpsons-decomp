@@ -3,7 +3,7 @@
  *    Description: the game's rank (direct page 61) and the HURRY UP's timer
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    10-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -60,10 +60,10 @@ void rank_add_players(void)
 void rank_add_time_step(void)
 {
 	uint8_t time_step = 0;
-	uint16_t t1 = 0;
+	uint16_t scene_frames = 0;
 
-	t1 = rank_frames;
-	if (t1 < rank_step_times[(int8_t)((uint8_t)((uint32_t)scene << 1)) / 2])
+	scene_frames = rank_frames;
+	if (scene_frames < rank_step_times[(int8_t)((uint8_t)((uint32_t)scene << 1)) / 2])
 	{
 		rank += rank_time_step;
 		return;
@@ -85,9 +85,9 @@ void rank_add_scene(void)
 /* Compares a count with the scene's limit; the result is not used */
 void rank_check_frame_limit(void)
 {
-	uint16_t t1 = 0;
+	uint16_t waited_frames = 0;
 
-	t1 = camera_wait_frames;
+	waited_frames = camera_wait_frames;
 }
 
 /* Counts idle frames; after 256 puts in the HURRY UP */
@@ -96,16 +96,16 @@ void hurry_up_timer(void)
 	uint32_t carry = 0;
 	uint8_t list_number = 0;
 	uint16_t hurry_object = 0;
-	uint8_t t3 = 0;
-	uint16_t t1 = 0, t2 = 0, t4 = 0;
+	uint8_t enemies_in_play = 0;
+	uint16_t old_hurry_frames = 0, new_hurry_frames = 0, hurry_frames = 0;
 
-	t1 = hurry_up_frames;
-	t2 = t1 + 1u;
-	hurry_up_frames = t2;
+	old_hurry_frames = hurry_up_frames;
+	new_hurry_frames = old_hurry_frames + 1u;
+	hurry_up_frames = new_hurry_frames;
 	if (hurry_up_out != 0u)
 		hurry_up_frames = 0u;
-	t3 = io_read8(0x1883u);
-	if (t3 != 0u)
+	enemies_in_play = io_read8(0x1883u);
+	if (enemies_in_play != 0u)
 		hurry_up_frames = 0u;
 	if (stage_scrolls_on == 0u)
 		hurry_up_frames = 0u;
@@ -115,8 +115,8 @@ void hurry_up_timer(void)
 		hurry_up_frames = 0u;
 	if ((uint16_t)camera_x_speed != 0u)
 		hurry_up_frames = 0u;
-	t4 = hurry_up_frames;
-	if (t4 < 0x100u)
+	hurry_frames = hurry_up_frames;
+	if (hurry_frames < 0x100u)
 		return;
 	list_number = 2u;
 	vector_find_free_slot(list_number, &hurry_object, &carry);

@@ -3,7 +3,7 @@
  *    Description: what touches a player each frame: pickups, weapons, blows by their strength, another player's team-up
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    10-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -18,10 +18,10 @@ void player_take_touches(uint16_t kind, uint16_t player)
 {
 	uint32_t carry = 0;
 	uint8_t box_width = 0, hit_kind = 0, move = 0;
-	uint16_t d = 0, effect_state = 0, facing = 0, other = 0, partner = 0, team_member = 0, team_move = 0;
+	uint16_t balloon_value = 0, effect_state = 0, facing = 0, other = 0, partner = 0, player_vars = 0, team_member = 0, team_move = 0, team_sound = 0;
 	uint16_t stack = 0;
 	uint8_t blink_frames = 0, blink_frames_2 = 0, hit = 0, blink_frames_3 = 0, teamed = 0, teamed_2 = 0, hit_2 = 0, kind_2 = 0, team_move_number = 0, kind_3 = 0, kind_4 = 0, team_move_number_2 = 0, attributes = 0;
-	uint16_t t1 = 0, hit_by = 0, t2 = 0, sound = 0, t3 = 0, t4 = 0, t5 = 0, t6 = 0, t7 = 0, t8 = 0, t9 = 0, partner_2 = 0, t10 = 0;
+	uint16_t t1 = 0, hit_by = 0, team_move_record = 0, sound = 0, first_object_address = 0, first_object_offset = 0, first_direction_address = 0, second_object_offset = 0, second_direction_address = 0, second_x = 0, first_x = 0, partner_2 = 0, hit_offset = 0;
 
 	blink_frames = OBJECT(player)->player.blink_frames;
 	if (blink_frames != 0u)
@@ -32,7 +32,8 @@ void player_take_touches(uint16_t kind, uint16_t player)
 		{
 			OBJECT(player)->flags = 0xC0u;
 			t1 = io_read16(0x1848u);
-			mem_write8(t1 + 3u, 2u);
+			player_vars = t1;
+			PLAYER_VALUES(player_vars)->entry_status = 2u;
 			effect_state = 0xD00u;
 			carry = player_start_effect(kind, player, effect_state);
 			player_check_motion(player);
@@ -105,9 +106,9 @@ void player_take_touches(uint16_t kind, uint16_t player)
 		OBJECT(other)->player.partner = player;
 		kind_3 = OBJECT(player)->kind;
 		kind_4 = OBJECT(other)->kind;
-		t2 = team_moves_by_characters_ADDRESS + (uint8_t)(((((((uint32_t)kind_3 << 1) << 1) + kind_4) << 1) << 1) << 1);
-		team_move = t2 + 1u;
-		move = TEAM_MOVE(t2)->move;
+		team_move_record = team_moves_by_characters_ADDRESS + (uint8_t)(((((((uint32_t)kind_3 << 1) << 1) + kind_4) << 1) << 1) << 1);
+		team_move = team_move_record + 1u;
+		move = TEAM_MOVE(team_move_record)->move;
 		OBJECT(player)->player.team_move_number = move;
 		OBJECT(other)->player.team_move_number = move;
 		OBJECT(player)->player.teamed = 0xFFu;
@@ -115,32 +116,32 @@ void player_take_touches(uint16_t kind, uint16_t player)
 		OBJECT(player)->player.hold_presses = 0xFFu;
 		OBJECT(other)->player.hold_presses = 0xFFu;
 		sound = TEAM_MOVE(team_move - 0x1u)->sound;
-		d = sound;
-		carry = vector_queue_sound(d);
-		t3 = team_move;
-		t4 = (uint32_t)TEAM_MOVE(t3 - 0x1u)->first_object << 2;
-		team_member = OBJECT_ADDRESS(0) + t4;
-		t5 = t3 + 1u;
-		team_move = t5 + 1u;
-		OBJECT(team_member)->target_direction = TEAM_MOVE(t5 - 0x2u)->direction;
+		team_sound = sound;
+		carry = vector_queue_sound(team_sound);
+		first_object_address = team_move;
+		first_object_offset = (uint32_t)TEAM_MOVE(first_object_address - 0x1u)->first_object << 2;
+		team_member = OBJECT_ADDRESS(0) + first_object_offset;
+		first_direction_address = first_object_address + 1u;
+		team_move = first_direction_address + 1u;
+		OBJECT(team_member)->target_direction = TEAM_MOVE(first_direction_address - 0x2u)->direction;
 		team_move_number_2 = OBJECT(player)->player.team_move_number;
 		OBJECT(team_member)->animation = team_move_number_2 - 0x20u;
 		OBJECT(team_member)->parameter = 0x30u;
 		stack = team_member;
-		t6 = (uint32_t)TEAM_MOVE(team_move - 0x3u)->second_object << 2;
-		team_member = OBJECT_ADDRESS(0) + t6;
-		t7 = team_move - 1u;
-		facing = t7;
-		OBJECT(team_member)->target_direction = TEAM_MOVE(t7 - 0x2u)->direction - 1u;
+		second_object_offset = (uint32_t)TEAM_MOVE(team_move - 0x3u)->second_object << 2;
+		team_member = OBJECT_ADDRESS(0) + second_object_offset;
+		second_direction_address = team_move - 1u;
+		facing = second_direction_address;
+		OBJECT(team_member)->target_direction = TEAM_MOVE(second_direction_address - 0x2u)->direction - 1u;
 		OBJECT(team_member)->flags = 4u;
 		OBJECT(team_member)->parameter = 0x39u;
-		d = (d & 0xFFu) | 0x300u;
-		player_show_balloon(facing, player, d);
-		t8 = OBJECT(team_member)->x;
+		balloon_value = (team_sound & 0xFFu) | 0x300u;
+		player_show_balloon(facing, player, balloon_value);
+		second_x = OBJECT(team_member)->x;
 		team_member = stack;
 		facing += 4u;
-		t9 = OBJECT(team_member)->x;
-		if ((int16_t)t8 < (int16_t)t9)
+		first_x = OBJECT(team_member)->x;
+		if ((int16_t)second_x < (int16_t)first_x)
 			facing++;
 		attributes = OBJECT(team_member)->attributes;
 		OBJECT(team_member)->attributes = (attributes & 0xBFu) | SECOND_OBJECT_FACING(facing);
@@ -155,8 +156,8 @@ void player_take_touches(uint16_t kind, uint16_t player)
 		player_check_motion(player);
 		return;
 	}
-	t10 = (int8_t)((uint32_t)hit_kind << 1);
-	switch ((int16_t)t10)
+	hit_offset = (int8_t)((uint32_t)hit_kind << 1);
+	switch ((int16_t)hit_offset)
 	{
 	case 0:
 	case 22:
@@ -263,7 +264,7 @@ void player_pick_up_item(uint16_t player)
 {
 	uint16_t held_object = 0, picked_up = 0;
 	uint16_t stack = 0;
-	uint8_t controls_pressed = 0, teamed = 0, state = 0, status = 0, teamed_2 = 0, t1 = 0;
+	uint8_t controls_pressed = 0, teamed = 0, state = 0, status = 0, teamed_2 = 0, held_high = 0;
 	uint16_t held = 0, hit_by = 0, held_2 = 0;
 
 	controls_pressed = OBJECT(player)->player.controls_pressed;
@@ -302,8 +303,8 @@ void player_pick_up_item(uint16_t player)
 				held_object = held_2;
 				if (held_2 != 0u)
 				{
-					t1 = (uint8_t)(OBJECT(player)->player.held >> 8u);
-					if (t1 != 0u)
+					held_high = (uint8_t)(OBJECT(player)->player.held >> 8u);
+					if (held_high != 0u)
 					{
 						OBJECT(held_object)->x_speed = 0;
 						OBJECT(held_object)->y_speed = 0;
@@ -323,7 +324,7 @@ void player_pick_up_weapon(uint16_t player)
 {
 	uint16_t held_object = 0, picked_up = 0;
 	uint16_t stack = 0;
-	uint8_t controls_pressed = 0, teamed = 0, state = 0, hit = 0, status = 0, teamed_2 = 0, t1 = 0;
+	uint8_t controls_pressed = 0, teamed = 0, state = 0, hit = 0, status = 0, teamed_2 = 0, held_high = 0;
 	uint16_t held = 0, hit_by = 0, held_2 = 0;
 
 	controls_pressed = OBJECT(player)->player.controls_pressed;
@@ -365,8 +366,8 @@ void player_pick_up_weapon(uint16_t player)
 				held_object = held_2;
 				if (held_2 != 0u)
 				{
-					t1 = (uint8_t)(OBJECT(player)->player.held >> 8u);
-					if (t1 != 0u)
+					held_high = (uint8_t)(OBJECT(player)->player.held >> 8u);
+					if (held_high != 0u)
 					{
 						OBJECT(held_object)->x_speed = 0;
 						OBJECT(held_object)->y_speed = 0;
@@ -387,10 +388,10 @@ void player_eat_food(uint16_t player)
 {
 	uint32_t zero = 0, carry = 0;
 	uint8_t vitality = 0, vitality_2 = 0;
-	uint16_t command = 0, d = 0, held_object = 0, partner = 0, picked_up = 0;
+	uint16_t balloon_value = 0, command = 0, held_object = 0, partner = 0, picked_up = 0;
 	uint8_t stack_3 = 0;
 	uint16_t stack = 0;
-	uint8_t state = 0, hit = 0, teamed = 0, vitality_3 = 0, vitality_4 = 0, vitality_5 = 0, status = 0, teamed_2 = 0, t1 = 0;
+	uint8_t state = 0, hit = 0, teamed = 0, vitality_3 = 0, vitality_4 = 0, vitality_5 = 0, status = 0, teamed_2 = 0, held_high = 0;
 	uint16_t hit_by = 0, partner_2 = 0, held = 0;
 
 	hit_by = OBJECT(player)->hit_by;
@@ -422,8 +423,8 @@ void player_eat_food(uint16_t player)
 	}
 	command = 0x3F0Cu;
 	player_play_voice(player, command);
-	d = 0x10Cu;
-	player_show_balloon(picked_up, player, d);
+	balloon_value = 0x10Cu;
+	player_show_balloon(picked_up, player, balloon_value);
 	vitality_5 = OBJECT(player)->vitality;
 	vitality_2 = vitality_5 + pickup_vitality[(int8_t)((uint8_t)(stack_3 + 7u))];
 	if (vitality_2 > 0x28u)
@@ -447,8 +448,8 @@ void player_eat_food(uint16_t player)
 	held_object = held;
 	if (held != 0u)
 	{
-		t1 = (uint8_t)(OBJECT(player)->player.held >> 8u);
-		if (t1 != 0u)
+		held_high = (uint8_t)(OBJECT(player)->player.held >> 8u);
+		if (held_high != 0u)
 		{
 			OBJECT(held_object)->x_speed = 0;
 			OBJECT(held_object)->y_speed = 0;
@@ -479,8 +480,8 @@ void player_take_blow(uint16_t player)
 	uint8_t animation = 0;
 	uint16_t floor_z = 0, object = 0, state_and_time = 0;
 	uint16_t stack = 0;
-	uint8_t vitality = 0, blows_taken = 0, blows_taken_2 = 0, attributes = 0, attributes_2 = 0, blows_taken_3 = 0, blows_taken_4 = 0, t2 = 0;
-	uint16_t z = 0, floor_z_2 = 0, hit_by = 0, t1 = 0, z_2 = 0, z_speed = 0, floor_z_3 = 0;
+	uint8_t vitality = 0, blows_taken = 0, blows_taken_2 = 0, attributes = 0, attributes_2 = 0, blows_taken_3 = 0, blows_taken_4 = 0, x_low = 0;
+	uint16_t z = 0, floor_z_2 = 0, hit_by = 0, z_above = 0, z_2 = 0, z_speed = 0, floor_z_3 = 0;
 
 	z = OBJECT(player)->z;
 	floor_z = z;
@@ -502,9 +503,9 @@ void player_take_blow(uint16_t player)
 	blows_taken = OBJECT(player)->player.blows_taken;
 	OBJECT(player)->player.blows_taken = blows_taken + 1u;
 	stack = floor_z;
-	t1 = stack + 0x10u;
+	z_above = stack + 0x10u;
 	z_2 = OBJECT(object)->z;
-	if ((int16_t)t1 < (int16_t)z_2)
+	if ((int16_t)z_above < (int16_t)z_2)
 	{
 		z_speed = OBJECT(object)->z_speed;
 		if ((int16_t)z_speed < 0)
@@ -548,8 +549,8 @@ void player_take_blow(uint16_t player)
 		player_take_knockdown_blow(player);
 		return;
 	}
-	t2 = (uint8_t)OBJECT(player)->x;
-	if ((t2 & 2u) != 0u)
+	x_low = (uint8_t)OBJECT(player)->x;
+	if ((x_low & 2u) != 0u)
 	{
 		state_and_time = 0x1E00u;
 		animation = 0xD2u;
@@ -667,7 +668,7 @@ void player_knock_flying(uint16_t state_and_time, uint16_t player)
 /* A blow of strength 01: in the air knocked up; on the floor knocked flying or bounced away, by chance. */
 void player_take_heavy_blow(uint16_t player)
 {
-	uint8_t t1 = 0;
+	uint8_t x_low = 0;
 	uint16_t z = 0, floor_z = 0;
 
 	z = OBJECT(player)->z;
@@ -678,8 +679,8 @@ void player_take_heavy_blow(uint16_t player)
 		return;
 	}
 	OBJECT(player)->z_speed = 0;
-	t1 = (uint8_t)OBJECT(player)->x;
-	if ((t1 & 2u) != 0u)
+	x_low = (uint8_t)OBJECT(player)->x;
+	if ((x_low & 2u) != 0u)
 	{
 		player_take_knockaway_blow(player);
 		return;
@@ -690,7 +691,7 @@ void player_take_heavy_blow(uint16_t player)
 /* Bounced away up and back the way its hitter faces (state 19, animation D2), to turn round after. */
 void player_bounce_away(uint16_t player)
 {
-	uint8_t a = 0, animation = 0, b = 0;
+	uint8_t animation = 0, speed_high = 0, speed_low = 0;
 	uint16_t state_and_time = 0;
 	uint8_t attributes = 0, status = 0;
 	uint16_t hit_by = 0;
@@ -701,18 +702,18 @@ void player_bounce_away(uint16_t player)
 	if ((attributes & 0x40u) != 0u)
 	{
 		OBJECT(player)->attributes = 0x40u;
-		b = 0u;
+		speed_low = 0u;
 		OBJECT(player)->x_speed = (OBJECT(player)->x_speed & 0xFFu) | 0xFC00u;
-		a = 4u;
+		speed_high = 4u;
 	}
 	else
 	{
 		OBJECT(player)->attributes = 0u;
-		a = 4u;
-		b = 0u;
+		speed_high = 4u;
+		speed_low = 0u;
 		OBJECT(player)->x_speed = 0x400;
 	}
-	OBJECT(player)->z_speed = ((uint32_t)a << 8) | b;
+	OBJECT(player)->z_speed = ((uint32_t)speed_high << 8) | speed_low;
 	OBJECT(player)->y_speed = 0;
 	state_and_time = 0x1900u;
 	status = OBJECT(player)->player.status;
@@ -727,21 +728,22 @@ void player_get_grabbed(uint16_t player)
 {
 	uint32_t carry = 0;
 	uint8_t animation = 0, grab_animation = 0;
-	uint16_t effect_state = 0, state_and_time = 0, y = 0;
-	uint8_t t2 = 0, t3 = 0, vitality = 0;
-	uint16_t holder = 0, t1 = 0;
+	uint16_t effect_state = 0, holder = 0, player_vars = 0, state_and_time = 0;
+	uint8_t hints_shown = 0, hints_before = 0, vitality = 0;
+	uint16_t holder_2 = 0, t1 = 0;
 
-	holder = OBJECT(player)->player.holder;
-	mem_write8(holder + 0x58u, 1u);
+	holder_2 = OBJECT(player)->player.holder;
+	holder = holder_2;
+	OBJECT(holder)->unk_58 = 1u;
 	t1 = io_read16(0x1848u);
-	y = t1;
-	t2 = mem_read8(y + 6u);
-	if ((int8_t)t2 < 5)
+	player_vars = t1;
+	hints_shown = PLAYER_VALUES(player_vars)->grab_hints;
+	if ((int8_t)hints_shown < 5)
 	{
-		t3 = mem_read8(y + 6u);
-		mem_write8(y + 6u, t3 + 1u);
+		hints_before = PLAYER_VALUES(player_vars)->grab_hints;
+		PLAYER_VALUES(player_vars)->grab_hints = hints_before + 1u;
 		effect_state = 0x500u;
-		carry = player_start_effect(y, player, effect_state);
+		carry = player_start_effect(player_vars, player, effect_state);
 	}
 	grab_animation = 0xBFu;
 	state_and_time = 0x1C01u;
@@ -778,12 +780,12 @@ void player_take_stun_blow_2(uint16_t kind, uint16_t player)
 {
 	uint32_t carry = 0;
 	uint8_t animation = 0;
-	uint16_t command = 0, d = 0, state_and_time = 0;
+	uint16_t balloon_value = 0, command = 0, state_and_time = 0;
 
 	command = 0x5E00u;
 	carry = vector_queue_sound(command);
-	d = 0u;
-	player_show_balloon(kind, player, d);
+	balloon_value = 0u;
+	player_show_balloon(kind, player, balloon_value);
 	command = 0x3F04u;
 	player_play_voice(player, command);
 	state_and_time = 0x1A3Cu;
@@ -838,7 +840,7 @@ void player_hurt(uint16_t state_and_time, uint16_t player, uint8_t animation)
 /* Flashes the player's palette, then 03962F. */
 void player_hurt_flash(uint16_t player)
 {
-	player_flash_palette(player);
+	player_flash_palette(0u, player);
 	player_hurt_end(player);
 }
 
@@ -866,10 +868,10 @@ void player_hurt_end(uint16_t player)
    box back to its body. */
 void player_drop_held(uint16_t held, uint16_t player)
 {
-	uint8_t t1 = 0, attack = 0;
+	uint8_t held_high = 0, attack = 0;
 
-	t1 = (uint8_t)(OBJECT(player)->player.held >> 8u);
-	if (t1 == 0u)
+	held_high = (uint8_t)(OBJECT(player)->player.held >> 8u);
+	if (held_high == 0u)
 	{
 		player_break_team(player);
 		return;
@@ -891,11 +893,11 @@ void player_drop_held(uint16_t held, uint16_t player)
 void player_break_team(uint16_t player)
 {
 	uint32_t zero = 0, carry = 0;
-	uint8_t a = 0, d = 0, vitality = 0;
+	uint8_t life_lost = 0, state_value = 0, timer_value = 0, vitality = 0;
 	uint16_t object = 0, partner = 0;
 	uint16_t stack = 0, stack_4 = 0;
-	uint8_t teamed = 0, animation = 0, vitality_2 = 0, last_life = 0, t2 = 0, vitality_3 = 0, t3 = 0;
-	uint16_t partner_2 = 0, t1 = 0;
+	uint8_t teamed = 0, animation = 0, vitality_2 = 0, last_life = 0, life_now = 0, vitality_3 = 0, lost_life = 0;
+	uint16_t partner_2 = 0, state_and_timer = 0;
 	uint32_t player_state_halfword = 0, player_state_halfword_2 = 0;
 
 	teamed = OBJECT(player)->player.teamed;
@@ -908,12 +910,12 @@ void player_break_team(uint16_t player)
 	partner_2 = OBJECT(player)->player.partner;
 	partner = partner_2;
 	player_team_release(partner, player);
-	t1 = (((uint32_t)OBJECT(player)->player.player_state << 8u) | OBJECT(player)->player.state_timer);
-	d = (uint8_t)t1;
-	a = (uint8_t)(t1 >> 8);
-	if (a != 0x1Cu)
+	state_and_timer = (((uint32_t)OBJECT(player)->player.player_state << 8u) | OBJECT(player)->player.state_timer);
+	timer_value = (uint8_t)state_and_timer;
+	state_value = (uint8_t)(state_and_timer >> 8);
+	if (state_value != 0x1Cu)
 	{
-		player_state_halfword = ((uint32_t)a << 8) | (d & 0xFFu);
+		player_state_halfword = ((uint32_t)state_value << 8) | (timer_value & 0xFFu);
 		OBJECT(partner)->player.player_state = (uint8_t)(player_state_halfword >> 8u);
 		OBJECT(partner)->player.state_timer = (uint8_t)player_state_halfword;
 		animation = OBJECT(player)->animation;
@@ -922,7 +924,7 @@ void player_break_team(uint16_t player)
 	else
 	{
 		OBJECT(partner)->animation = 0x80u;
-		player_state_halfword_2 = d & 0xFFu;
+		player_state_halfword_2 = timer_value & 0xFFu;
 		OBJECT(partner)->player.player_state = (uint8_t)(player_state_halfword_2 >> 8u);
 		OBJECT(partner)->player.state_timer = (uint8_t)player_state_halfword_2;
 	}
@@ -936,17 +938,17 @@ void player_break_team(uint16_t player)
 	player = stack;
 	vitality_2 = OBJECT(player)->vitality;
 	last_life = OBJECT(player)->player.last_life;
-	t2 = vitality_2;
-	a = t2 - last_life;
-	if (t2 == last_life)
+	life_now = vitality_2;
+	life_lost = life_now - last_life;
+	if (life_now == last_life)
 	{
 		player_check_motion(player);
 		return;
 	}
 	vitality_3 = OBJECT(object)->vitality;
-	t3 = a;
-	vitality = t3 + vitality_3;
-	if (t3 <= (uint8_t)(t3 + vitality_3))
+	lost_life = life_lost;
+	vitality = lost_life + vitality_3;
+	if (lost_life <= (uint8_t)(lost_life + vitality_3))
 		vitality = 0u;
 	OBJECT(object)->vitality = vitality;
 	player_check_motion(player);

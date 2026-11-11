@@ -3,7 +3,7 @@
  *    Description: a player's motion against walls, floors, the screen's edges and the scroll, and helpers on its speeds and partner
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    10-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -17,11 +17,11 @@
 void player_check_motion(uint16_t player)
 {
 	uint32_t zero = 0, negative = 0, overflow = 0, carry = 0;
-	uint8_t a = 0, b = 0;
-	uint16_t floor_cell = 0, mover = 0, object = 0, right_limit = 0;
+	uint8_t floor_high = 0, floor_low = 0, floor_value = 0, next_x_high = 0, next_x_low = 0;
+	uint16_t floor_cell = 0, mover = 0, object = 0, player_vars = 0, right_limit = 0;
 	uint8_t stack = 0;
-	uint8_t teamed = 0, y_speed_2 = 0, t3 = 0, x_speed_2 = 0, t6 = 0, vitality = 0, vitality_2 = 0, t7 = 0, attributes = 0, vitality_3 = 0;
-	uint16_t partner = 0, t1 = 0, y_speed = 0, t2 = 0, t4 = 0, x_speed = 0, t5 = 0, x_speed_3 = 0, t8 = 0;
+	uint8_t teamed = 0, y_speed_2 = 0, y_high = 0, x_speed_2 = 0, x_high = 0, vitality = 0, vitality_2 = 0, scene_number = 0, attributes = 0, vitality_3 = 0;
+	uint16_t partner = 0, y_and_fraction = 0, y_speed = 0, t1 = 0, x_and_fraction = 0, x_speed = 0, t2 = 0, x_speed_3 = 0, t3 = 0;
 
 	teamed = OBJECT(player)->player.teamed;
 	if ((int8_t)teamed >= 0)
@@ -31,143 +31,147 @@ void player_check_motion(uint16_t player)
 		partner = OBJECT(player)->player.partner;
 		mover = partner;
 	}
-	t1 = (((uint32_t)(OBJECT(player)->y & 0xFFu) << 8u) | OBJECT(player)->y_fraction);
+	y_and_fraction = (((uint32_t)(OBJECT(player)->y & 0xFFu) << 8u) | OBJECT(player)->y_fraction);
 	y_speed = OBJECT(player)->y_speed;
-	t2 = t1;
-	carry = (uint16_t)(t2 + y_speed) < t2;
-	stack = (uint16_t)(t2 + y_speed) >> 8;
+	t1 = y_and_fraction;
+	carry = (uint16_t)(t1 + y_speed) < t1;
+	stack = (uint16_t)(t1 + y_speed) >> 8;
 	y_speed_2 = (uint8_t)(OBJECT(player)->y_speed >> 8u);
-	t3 = (uint8_t)(OBJECT(player)->y >> 8u);
-	if ((int16_t)(((uint32_t)(uint8_t)(((uint16_t)(int8_t)y_speed_2 >> 8) + t3 + carry) << 8) | stack) < 0x98)
+	y_high = (uint8_t)(OBJECT(player)->y >> 8u);
+	if ((int16_t)(((uint32_t)(uint8_t)(((uint16_t)(int8_t)y_speed_2 >> 8) + y_high + carry) << 8) | stack) < 0x98)
 	{
 		OBJECT(player)->y_speed = 0;
 		OBJECT(mover)->y_speed = 0;
 	}
-	t4 = (((uint32_t)(OBJECT(player)->x & 0xFFu) << 8u) | OBJECT(player)->x_fraction);
+	x_and_fraction = (((uint32_t)(OBJECT(player)->x & 0xFFu) << 8u) | OBJECT(player)->x_fraction);
 	x_speed = OBJECT(player)->x_speed;
-	t5 = t4;
-	carry = (uint16_t)(t5 + x_speed) < t5;
-	stack = (uint16_t)(t5 + x_speed) >> 8;
+	t2 = x_and_fraction;
+	carry = (uint16_t)(t2 + x_speed) < t2;
+	stack = (uint16_t)(t2 + x_speed) >> 8;
 	x_speed_2 = (uint8_t)(OBJECT(player)->x_speed >> 8u);
-	t6 = (uint8_t)(OBJECT(player)->x >> 8u);
-	a = ((uint16_t)(int8_t)x_speed_2 >> 8) + t6 + carry;
-	b = stack;
+	x_high = (uint8_t)(OBJECT(player)->x >> 8u);
+	next_x_high = ((uint16_t)(int8_t)x_speed_2 >> 8) + x_high + carry;
+	next_x_low = stack;
 	vitality = OBJECT(player)->vitality;
 	if (vitality == 0u)
 	{
-		if ((int16_t)(((uint32_t)a << 8) | b) >= 0x5A)
+		if ((int16_t)(((uint32_t)next_x_high << 8) | next_x_low) >= 0x5A)
 		{
 			right_limit = 0x140u;
 			vitality_2 = OBJECT(player)->vitality;
 			if (vitality_2 != 0u)
 			{
-				stack = a;
-				t7 = scene;
-				a = stack;
-				if (t7 == 4u)
+				stack = next_x_high;
+				scene_number = scene;
+				next_x_high = stack;
+				if (scene_number == 4u)
 					right_limit = 0x150u;
 			}
 			else
 				right_limit += 0x26u;
 			player_x_limit = right_limit;
-			if ((int16_t)player_x_limit < (int16_t)(((uint32_t)a << 8) | b))
+			if ((int16_t)player_x_limit < (int16_t)(((uint32_t)next_x_high << 8) | next_x_low))
 				OBJECT(player)->x_speed = 0;
 		}
 		else
 			OBJECT(player)->x_speed = 0;
 	}
-	else if ((int16_t)(((uint32_t)a << 8) | b) >= 0x70)
+	else if ((int16_t)(((uint32_t)next_x_high << 8) | next_x_low) >= 0x70)
 	{
 		right_limit = 0x140u;
 		vitality_2 = OBJECT(player)->vitality;
 		if (vitality_2 != 0u)
 		{
-			stack = a;
-			t7 = scene;
-			a = stack;
-			if (t7 == 4u)
+			stack = next_x_high;
+			scene_number = scene;
+			next_x_high = stack;
+			if (scene_number == 4u)
 				right_limit = 0x150u;
 		}
 		else
 			right_limit += 0x26u;
 		player_x_limit = right_limit;
-		if ((int16_t)player_x_limit < (int16_t)(((uint32_t)a << 8) | b))
+		if ((int16_t)player_x_limit < (int16_t)(((uint32_t)next_x_high << 8) | next_x_low))
 			OBJECT(player)->x_speed = 0;
 	}
 	else
 		OBJECT(player)->x_speed = 0;
 	object = player;
 	vector_floor_ahead(object, &floor_cell, &negative);
-	a = (uint8_t)(floor_cell >> 8);
-	if ((int8_t)a >= 0)
+	floor_value = (uint8_t)(floor_cell >> 8);
+	if ((int8_t)floor_value >= 0)
 	{
 		player_floor_against_height(player, &floor_cell, &zero, &negative, &overflow);
-		a = (uint8_t)(floor_cell >> 8);
-		b = (uint8_t)floor_cell;
+		floor_high = (uint8_t)(floor_cell >> 8);
+		floor_low = (uint8_t)floor_cell;
 		if ((negative ^ overflow) | zero)
 		{
-			OBJECT(player)->floor_z = ((uint32_t)a << 8) | b;
+			OBJECT(player)->floor_z = ((uint32_t)floor_high << 8) | floor_low;
 			attributes = OBJECT(player)->attributes;
 			OBJECT(player)->attributes = (attributes & 0xCFu) | player_floor_priority;
 			x_speed_3 = OBJECT(player)->x_speed;
 			OBJECT(mover)->x_speed = x_speed_3;
 			vitality_3 = OBJECT(player)->vitality;
-			t8 = io_read16(0x1848u);
-			mem_write8(t8 + 2u, vitality_3);
+			t3 = io_read16(0x1848u);
+			player_vars = t3;
+			PLAYER_VALUES(player_vars)->kept_life = vitality_3;
 			return;
 		}
 	}
 	object = player;
 	vector_floor_ahead_x(object, &floor_cell, &negative);
-	a = (uint8_t)(floor_cell >> 8);
-	if ((int8_t)a >= 0)
+	floor_value = (uint8_t)(floor_cell >> 8);
+	if ((int8_t)floor_value >= 0)
 	{
 		player_floor_against_height(player, &floor_cell, &zero, &negative, &overflow);
-		a = (uint8_t)(floor_cell >> 8);
-		b = (uint8_t)floor_cell;
+		floor_high = (uint8_t)(floor_cell >> 8);
+		floor_low = (uint8_t)floor_cell;
 		if ((negative ^ overflow) | zero)
 		{
 			OBJECT(player)->y_speed = 0;
 			OBJECT(mover)->y_speed = 0;
-			OBJECT(player)->floor_z = ((uint32_t)a << 8) | b;
+			OBJECT(player)->floor_z = ((uint32_t)floor_high << 8) | floor_low;
 			attributes = OBJECT(player)->attributes;
 			OBJECT(player)->attributes = (attributes & 0xCFu) | player_floor_priority;
 			x_speed_3 = OBJECT(player)->x_speed;
 			OBJECT(mover)->x_speed = x_speed_3;
 			vitality_3 = OBJECT(player)->vitality;
-			t8 = io_read16(0x1848u);
-			mem_write8(t8 + 2u, vitality_3);
+			t3 = io_read16(0x1848u);
+			player_vars = t3;
+			PLAYER_VALUES(player_vars)->kept_life = vitality_3;
 			return;
 		}
 	}
 	OBJECT(player)->x_speed = 0;
 	object = player;
 	vector_floor_ahead_y(object, &floor_cell, &negative);
-	a = (uint8_t)(floor_cell >> 8);
-	if ((int8_t)a < 0)
+	floor_value = (uint8_t)(floor_cell >> 8);
+	if ((int8_t)floor_value < 0)
 	{
 		OBJECT(player)->y_speed = 0;
 		OBJECT(mover)->y_speed = 0;
 		x_speed_3 = OBJECT(player)->x_speed;
 		OBJECT(mover)->x_speed = x_speed_3;
 		vitality_3 = OBJECT(player)->vitality;
-		t8 = io_read16(0x1848u);
-		mem_write8(t8 + 2u, vitality_3);
+		t3 = io_read16(0x1848u);
+		player_vars = t3;
+		PLAYER_VALUES(player_vars)->kept_life = vitality_3;
 		return;
 	}
 	player_floor_against_height(player, &floor_cell, &zero, &negative, &overflow);
-	a = (uint8_t)(floor_cell >> 8);
-	b = (uint8_t)floor_cell;
+	floor_high = (uint8_t)(floor_cell >> 8);
+	floor_low = (uint8_t)floor_cell;
 	if ((negative ^ overflow) | zero)
 	{
-		OBJECT(player)->floor_z = ((uint32_t)a << 8) | b;
+		OBJECT(player)->floor_z = ((uint32_t)floor_high << 8) | floor_low;
 		attributes = OBJECT(player)->attributes;
 		OBJECT(player)->attributes = (attributes & 0xCFu) | player_floor_priority;
 		x_speed_3 = OBJECT(player)->x_speed;
 		OBJECT(mover)->x_speed = x_speed_3;
 		vitality_3 = OBJECT(player)->vitality;
-		t8 = io_read16(0x1848u);
-		mem_write8(t8 + 2u, vitality_3);
+		t3 = io_read16(0x1848u);
+		player_vars = t3;
+		PLAYER_VALUES(player_vars)->kept_life = vitality_3;
 		return;
 	}
 	OBJECT(player)->y_speed = 0;
@@ -175,8 +179,9 @@ void player_check_motion(uint16_t player)
 	x_speed_3 = OBJECT(player)->x_speed;
 	OBJECT(mover)->x_speed = x_speed_3;
 	vitality_3 = OBJECT(player)->vitality;
-	t8 = io_read16(0x1848u);
-	mem_write8(t8 + 2u, vitality_3);
+	t3 = io_read16(0x1848u);
+	player_vars = t3;
+	PLAYER_VALUES(player_vars)->kept_life = vitality_3;
 }
 
 /* The floor height (8 a step) of the block flags in A against the player's height; their priority bits
@@ -187,22 +192,22 @@ void player_floor_against_height(uint16_t player, uint16_t *p_floor_cell, uint32
 	uint32_t zero = *p_zero;
 	uint32_t negative = *p_negative;
 	uint32_t overflow = *p_overflow;
-	uint8_t a = 0, b = 0;
+	uint8_t block_flags = 0, height_high = 0, height_low = 0;
 	uint16_t floor_height = 0;
-	uint16_t t1 = 0, z = 0, t2 = 0, t3 = 0;
+	uint16_t floor_height_byte = 0, z = 0, floor_height_word = 0, height_difference = 0;
 
-	a = (uint8_t)(floor_cell >> 8);
-	player_floor_priority = a & 0x30u;
-	t1 = (uint8_t)((((a & 0xFu) << 1) << 1) << 1);
-	a = (uint8_t)(t1 >> 8);
-	b = (uint8_t)t1;
+	block_flags = (uint8_t)(floor_cell >> 8);
+	player_floor_priority = block_flags & 0x30u;
+	floor_height_byte = (uint8_t)((((block_flags & 0xFu) << 1) << 1) << 1);
+	height_high = (uint8_t)(floor_height_byte >> 8);
+	height_low = (uint8_t)floor_height_byte;
 	z = OBJECT(player)->z;
-	t2 = ((uint32_t)a << 8) | b;
-	t3 = t2 - z;
-	negative = t3 >> 15;
-	zero = t3 == 0u;
-	overflow = (uint32_t)t2 - (int16_t)z != (uint32_t)(int16_t)(t2 - z);
-	floor_height = ((uint32_t)a << 8) | b;
+	floor_height_word = ((uint32_t)height_high << 8) | height_low;
+	height_difference = floor_height_word - z;
+	negative = height_difference >> 15;
+	zero = height_difference == 0u;
+	overflow = (uint32_t)floor_height_word - (int16_t)z != (uint32_t)(int16_t)(floor_height_word - z);
+	floor_height = ((uint32_t)height_high << 8) | height_low;
 	*p_floor_cell = floor_height;
 	*p_zero = zero;
 	*p_negative = negative;
@@ -212,12 +217,14 @@ void player_floor_against_height(uint16_t player, uint16_t *p_floor_cell, uint32
 /* Keeps the player's life in its record (the state of states 01, 2E, 39 and 3F, which do nothing else). */
 void player_keep_life(uint16_t player)
 {
+	uint16_t player_vars = 0;
 	uint8_t vitality = 0;
 	uint16_t t1 = 0;
 
 	vitality = OBJECT(player)->vitality;
 	t1 = io_read16(0x1848u);
-	mem_write8(t1 + 2u, vitality);
+	player_vars = t1;
+	PLAYER_VALUES(player_vars)->kept_life = vitality;
 }
 
 /* The floor's height at the player's next place (carry when it is a wall). */
@@ -225,17 +232,17 @@ void player_floor_at_next_place(uint16_t player, uint16_t *p_floor_cell, uint32_
 {
 	uint32_t carry = *p_carry;
 	uint32_t negative = 0;
-	uint8_t b = 0, floor_value = 0;
+	uint8_t floor_low = 0, floor_value = 0;
 	uint16_t floor_cell = 0, object = 0;
 
 	object = player;
 	vector_floor_ahead(object, &floor_cell, &negative);
 	floor_value = (uint8_t)(floor_cell >> 8);
-	b = (uint8_t)floor_cell;
+	floor_low = (uint8_t)floor_cell;
 	if (floor_value == 0xFFu)
 	{
 		carry = 1u;
-		floor_cell = ((uint32_t)(uint8_t)~floor_value << 8) | b;
+		floor_cell = ((uint32_t)(uint8_t)~floor_value << 8) | floor_low;
 	}
 	else
 	{
@@ -262,11 +269,11 @@ uint16_t player_steer(uint16_t player, uint16_t joystick)
 	uint16_t velocity = 0;
 	uint8_t stack = 0;
 	uint8_t attributes = 0;
-	uint16_t t1 = 0, x_speed = 0;
+	uint16_t velocity_record = 0, x_speed = 0;
 
-	t1 = player_walk_velocities_ADDRESS + (uint8_t)((((joystick >> 8) & 0xFu) << 1) << 1);
-	velocity = t1 + 2u;
-	x_speed = VELOCITY(t1)->x_speed;
+	velocity_record = player_walk_velocities_ADDRESS + (uint8_t)((((joystick >> 8) & 0xFu) << 1) << 1);
+	velocity = velocity_record + 2u;
+	x_speed = VELOCITY(velocity_record)->x_speed;
 	x_speed_low = (uint8_t)x_speed;
 	x_speed_high = (uint8_t)(x_speed >> 8);
 	if (x_speed == 0u)
@@ -286,71 +293,71 @@ uint16_t player_steer(uint16_t player, uint16_t joystick)
    scroll line with no player behind, y likewise past 1840/1842. */
 void player_request_scroll(uint16_t velocity, uint16_t player)
 {
-	uint8_t a = 0, b = 0;
-	uint16_t x = 0;
+	uint8_t y_speed_high = 0, y_speed_low = 0;
+	uint16_t others_line_y = 0, place_x = 0, place_y = 0, scroll_line_x = 0;
 	uint8_t attributes = 0;
-	uint16_t t1 = 0, x_speed = 0, t2 = 0, y_speed = 0, t3 = 0, t4 = 0, t5 = 0, y_speed_2 = 0, t6 = 0, t7 = 0, t8 = 0;
+	uint16_t t1 = 0, x_speed = 0, t2 = 0, y_speed = 0, new_y_speed = 0, upper_scroll_line = 0, upper_others_line = 0, y_speed_2 = 0, push_sum = 0, lower_scroll_line = 0, lower_others_line = 0;
 
 	t1 = OBJECT(player)->x;
-	x = t1;
+	place_x = t1;
 	attributes = OBJECT(player)->attributes;
 	if ((attributes & 0x40u) != 0u)
 	{
-		if ((int16_t)x < 0xC0)
+		if ((int16_t)place_x < 0xC0)
 		{
-			x = 0x118u;
-			if ((OBJECT(OBJECT_ADDRESS(0))->flags == 0u || (int16_t)OBJECT(OBJECT_ADDRESS(0))->x < (int16_t)x) && (OBJECT(OBJECT_ADDRESS(2))->flags == 0u || (int16_t)OBJECT(OBJECT_ADDRESS(2))->x < (int16_t)x) && (OBJECT(OBJECT_ADDRESS(4))->flags == 0u || (int16_t)OBJECT(OBJECT_ADDRESS(4))->x < (int16_t)x) && (OBJECT(OBJECT_ADDRESS(6))->flags == 0u || (int16_t)OBJECT(OBJECT_ADDRESS(6))->x < (int16_t)x))
+			scroll_line_x = 0x118u;
+			if ((OBJECT(OBJECT_ADDRESS(0))->flags == 0u || (int16_t)OBJECT(OBJECT_ADDRESS(0))->x < (int16_t)scroll_line_x) && (OBJECT(OBJECT_ADDRESS(2))->flags == 0u || (int16_t)OBJECT(OBJECT_ADDRESS(2))->x < (int16_t)scroll_line_x) && (OBJECT(OBJECT_ADDRESS(4))->flags == 0u || (int16_t)OBJECT(OBJECT_ADDRESS(4))->x < (int16_t)scroll_line_x) && (OBJECT(OBJECT_ADDRESS(6))->flags == 0u || (int16_t)OBJECT(OBJECT_ADDRESS(6))->x < (int16_t)scroll_line_x))
 			{
 				x_speed = OBJECT(player)->x_speed;
 				players_push_x = x_speed;
 			}
 		}
 	}
-	else if ((int16_t)x > 0x100)
+	else if ((int16_t)place_x > 0x100)
 	{
-		x = 0x98u;
-		if ((OBJECT(OBJECT_ADDRESS(0))->flags == 0u || (int16_t)x < (int16_t)OBJECT(OBJECT_ADDRESS(0))->x) && (OBJECT(OBJECT_ADDRESS(2))->flags == 0u || (int16_t)x < (int16_t)OBJECT(OBJECT_ADDRESS(2))->x) && (OBJECT(OBJECT_ADDRESS(4))->flags == 0u || (int16_t)x < (int16_t)OBJECT(OBJECT_ADDRESS(4))->x) && (OBJECT(OBJECT_ADDRESS(6))->flags == 0u || (int16_t)x < (int16_t)OBJECT(OBJECT_ADDRESS(6))->x))
+		scroll_line_x = 0x98u;
+		if ((OBJECT(OBJECT_ADDRESS(0))->flags == 0u || (int16_t)scroll_line_x < (int16_t)OBJECT(OBJECT_ADDRESS(0))->x) && (OBJECT(OBJECT_ADDRESS(2))->flags == 0u || (int16_t)scroll_line_x < (int16_t)OBJECT(OBJECT_ADDRESS(2))->x) && (OBJECT(OBJECT_ADDRESS(4))->flags == 0u || (int16_t)scroll_line_x < (int16_t)OBJECT(OBJECT_ADDRESS(4))->x) && (OBJECT(OBJECT_ADDRESS(6))->flags == 0u || (int16_t)scroll_line_x < (int16_t)OBJECT(OBJECT_ADDRESS(6))->x))
 		{
 			x_speed = OBJECT(player)->x_speed;
 			players_push_x = x_speed;
 		}
 	}
 	t2 = OBJECT(player)->y;
-	x = t2;
+	place_y = t2;
 	y_speed = VELOCITY(velocity - 0x2u)->y_speed;
-	a = (uint8_t)(y_speed >> 8);
-	b = (uint8_t)y_speed;
-	t3 = ((uint32_t)a << 8) | b;
-	OBJECT(player)->y_speed = t3;
-	if (t3 == 0u)
+	y_speed_high = (uint8_t)(y_speed >> 8);
+	y_speed_low = (uint8_t)y_speed;
+	new_y_speed = ((uint32_t)y_speed_high << 8) | y_speed_low;
+	OBJECT(player)->y_speed = new_y_speed;
+	if (new_y_speed == 0u)
 		return;
-	if ((int16_t)(((uint32_t)a << 8) | b) < 0)
+	if ((int16_t)(((uint32_t)y_speed_high << 8) | y_speed_low) < 0)
 	{
-		t4 = io_read16(0x1842u);
-		if ((int16_t)x < (int16_t)t4)
+		upper_scroll_line = io_read16(0x1842u);
+		if ((int16_t)place_y < (int16_t)upper_scroll_line)
 		{
-			t5 = io_read16(0x1844u);
-			x = t5;
-			if ((OBJECT(OBJECT_ADDRESS(0))->flags == 0u || (int16_t)OBJECT(OBJECT_ADDRESS(0))->y < (int16_t)x) && (OBJECT(OBJECT_ADDRESS(2))->flags == 0u || (int16_t)OBJECT(OBJECT_ADDRESS(2))->y < (int16_t)x) && (OBJECT(OBJECT_ADDRESS(4))->flags == 0u || (int16_t)OBJECT(OBJECT_ADDRESS(4))->y < (int16_t)x) && (OBJECT(OBJECT_ADDRESS(6))->flags == 0u || (int16_t)OBJECT(OBJECT_ADDRESS(6))->y < (int16_t)x))
+			upper_others_line = io_read16(0x1844u);
+			others_line_y = upper_others_line;
+			if ((OBJECT(OBJECT_ADDRESS(0))->flags == 0u || (int16_t)OBJECT(OBJECT_ADDRESS(0))->y < (int16_t)others_line_y) && (OBJECT(OBJECT_ADDRESS(2))->flags == 0u || (int16_t)OBJECT(OBJECT_ADDRESS(2))->y < (int16_t)others_line_y) && (OBJECT(OBJECT_ADDRESS(4))->flags == 0u || (int16_t)OBJECT(OBJECT_ADDRESS(4))->y < (int16_t)others_line_y) && (OBJECT(OBJECT_ADDRESS(6))->flags == 0u || (int16_t)OBJECT(OBJECT_ADDRESS(6))->y < (int16_t)others_line_y))
 			{
 				y_speed_2 = OBJECT(player)->y_speed;
-				t6 = y_speed_2 + players_push_y;
-				players_push_y = t6;
+				push_sum = y_speed_2 + players_push_y;
+				players_push_y = push_sum;
 			}
 		}
 	}
 	else
 	{
-		t7 = io_read16(0x1840u);
-		if ((int16_t)t7 < (int16_t)x)
+		lower_scroll_line = io_read16(0x1840u);
+		if ((int16_t)lower_scroll_line < (int16_t)place_y)
 		{
-			t8 = io_read16(0x1846u);
-			x = t8;
-			if ((OBJECT(OBJECT_ADDRESS(0))->flags == 0u || (int16_t)x < (int16_t)OBJECT(OBJECT_ADDRESS(0))->y) && (OBJECT(OBJECT_ADDRESS(2))->flags == 0u || (int16_t)x < (int16_t)OBJECT(OBJECT_ADDRESS(2))->y) && (OBJECT(OBJECT_ADDRESS(4))->flags == 0u || (int16_t)x < (int16_t)OBJECT(OBJECT_ADDRESS(4))->y) && (OBJECT(OBJECT_ADDRESS(6))->flags == 0u || (int16_t)x < (int16_t)OBJECT(OBJECT_ADDRESS(6))->y))
+			lower_others_line = io_read16(0x1846u);
+			others_line_y = lower_others_line;
+			if ((OBJECT(OBJECT_ADDRESS(0))->flags == 0u || (int16_t)others_line_y < (int16_t)OBJECT(OBJECT_ADDRESS(0))->y) && (OBJECT(OBJECT_ADDRESS(2))->flags == 0u || (int16_t)others_line_y < (int16_t)OBJECT(OBJECT_ADDRESS(2))->y) && (OBJECT(OBJECT_ADDRESS(4))->flags == 0u || (int16_t)others_line_y < (int16_t)OBJECT(OBJECT_ADDRESS(4))->y) && (OBJECT(OBJECT_ADDRESS(6))->flags == 0u || (int16_t)others_line_y < (int16_t)OBJECT(OBJECT_ADDRESS(6))->y))
 			{
 				y_speed_2 = OBJECT(player)->y_speed;
-				t6 = y_speed_2 + players_push_y;
-				players_push_y = t6;
+				push_sum = y_speed_2 + players_push_y;
+				players_push_y = push_sum;
 				return;
 			}
 		}
@@ -361,40 +368,40 @@ void player_request_scroll(uint16_t velocity, uint16_t player)
    its height). */
 uint16_t player_place_carried(uint16_t carried, uint16_t offsets, uint16_t player)
 {
-	uint8_t b = 0, height = 0;
-	uint16_t y = 0;
+	uint8_t height = 0, x_offset = 0;
+	uint16_t height_address = 0;
 	uint8_t kind = 0, attributes = 0;
-	uint16_t t1 = 0, t2 = 0, t3 = 0, t4 = 0;
+	uint16_t kind_offsets = 0, x_offset_word = 0, player_x = 0, carried_x = 0;
 
 	kind = OBJECT(player)->kind;
-	t1 = offsets + (int8_t)((uint32_t)kind << 1);
-	y = t1 + 1u;
-	b = mem_read8(t1);
+	kind_offsets = offsets + (int8_t)((uint32_t)kind << 1);
+	height_address = kind_offsets + 1u;
+	x_offset = mem_read8(kind_offsets);
 	attributes = OBJECT(player)->attributes;
 	if ((attributes & 0x40u) != 0u)
-		b = 0u - b;
-	t2 = (int8_t)b;
-	t3 = OBJECT(player)->x;
-	t4 = t2 + t3;
-	OBJECT(carried)->x = t4;
-	height = mem_read8(y);
+		x_offset = 0u - x_offset;
+	x_offset_word = (int8_t)x_offset;
+	player_x = OBJECT(player)->x;
+	carried_x = x_offset_word + player_x;
+	OBJECT(carried)->x = carried_x;
+	height = mem_read8(height_address);
 	player_place_carried_above(carried, player, height);
-	return y;
+	return height_address;
 }
 
 /* Puts the carried object B above the player's height, just in front of it, with the player's speeds. */
 void player_place_carried_above(uint16_t carried, uint16_t player, uint8_t height)
 {
 	uint8_t x_fraction = 0, y_fraction = 0, z_fraction = 0, animation_flags = 0;
-	uint16_t t1 = 0, z = 0, t2 = 0, t3 = 0, t4 = 0, y_speed = 0, z_speed = 0;
+	uint16_t height_word = 0, z = 0, carried_z = 0, player_y = 0, carried_y = 0, y_speed = 0, z_speed = 0;
 
-	t1 = (int8_t)height;
+	height_word = (int8_t)height;
 	z = OBJECT(player)->z;
-	t2 = t1 + z;
-	OBJECT(carried)->z = t2;
-	t3 = OBJECT(player)->y;
-	t4 = t3 - 2u;
-	OBJECT(carried)->y = t4;
+	carried_z = height_word + z;
+	OBJECT(carried)->z = carried_z;
+	player_y = OBJECT(player)->y;
+	carried_y = player_y - 2u;
+	OBJECT(carried)->y = carried_y;
 	x_fraction = OBJECT(player)->x_fraction;
 	OBJECT(carried)->x_fraction = x_fraction;
 	y_fraction = OBJECT(player)->y_fraction;
@@ -451,7 +458,7 @@ void player_team_release(uint16_t partner, uint16_t player)
 /* The partner takes the player's speeds and place. */
 void player_team_follow(uint16_t partner, uint16_t player)
 {
-	uint16_t x_speed = 0, y_speed = 0, z_speed = 0, t1 = 0, t2 = 0, z = 0;
+	uint16_t x_speed = 0, y_speed = 0, z_speed = 0, player_x = 0, player_y = 0, z = 0;
 
 	x_speed = OBJECT(player)->x_speed;
 	OBJECT(partner)->x_speed = x_speed;
@@ -459,10 +466,10 @@ void player_team_follow(uint16_t partner, uint16_t player)
 	OBJECT(partner)->y_speed = y_speed;
 	z_speed = OBJECT(player)->z_speed;
 	OBJECT(partner)->z_speed = z_speed;
-	t1 = OBJECT(player)->x;
-	OBJECT(partner)->x = t1;
-	t2 = OBJECT(player)->y;
-	OBJECT(partner)->y = t2;
+	player_x = OBJECT(player)->x;
+	OBJECT(partner)->x = player_x;
+	player_y = OBJECT(player)->y;
+	OBJECT(partner)->y = player_y;
 	z = OBJECT(player)->z;
 	OBJECT(partner)->z = z;
 }
@@ -474,11 +481,11 @@ void player_check_screen_edges(uint16_t player, uint32_t *p_zero, uint32_t *p_ca
 	uint32_t zero = *p_zero;
 	uint32_t carry = *p_carry;
 	uint32_t negative = 0;
-	uint8_t a = 0, b = 0;
+	uint8_t floor_value = 0, height_high = 0, height_low = 0, next_x_high = 0, next_x_low = 0, stopped_flag = 0;
 	uint16_t floor_cell = 0, floor_z = 0, left_limit = 0, object = 0, right_limit = 0;
 	uint8_t stack = 0, stack_2 = 0;
-	uint8_t vitality = 0, vitality_2 = 0, attributes = 0, x_speed_2 = 0, t4 = 0;
-	uint16_t z = 0, t1 = 0, z_2 = 0, x_speed = 0, t2 = 0, t3 = 0;
+	uint8_t vitality = 0, vitality_2 = 0, attributes = 0, x_speed_2 = 0, x_high = 0;
+	uint16_t z = 0, floor_height_byte = 0, z_2 = 0, x_speed = 0, x_and_fraction = 0, speed_word = 0;
 
 	left_limit = 0x70u;
 	right_limit = 0x140u;
@@ -496,55 +503,55 @@ void player_check_screen_edges(uint16_t player, uint32_t *p_zero, uint32_t *p_ca
 	screen_right_edge = right_limit;
 	object = player;
 	vector_floor_ahead_x(object, &floor_cell, &negative);
-	a = (uint8_t)(floor_cell >> 8);
-	if ((int8_t)a < 0)
+	floor_value = (uint8_t)(floor_cell >> 8);
+	if ((int8_t)floor_value < 0)
 	{
 		OBJECT(player)->x_speed = 0;
 		OBJECT(player)->y_speed = 0;
 		vitality_2 = OBJECT(player)->vitality;
 		if (vitality_2 != 0u)
-			a = 0xFFu;
+			stopped_flag = 0xFFu;
 		else
-			a = 0u;
+			stopped_flag = 0u;
 		carry = 1u;
-		zero = (uint8_t)~a == 0u;
+		zero = (uint8_t)~stopped_flag == 0u;
 	}
 	else
 	{
-		edge_floor_priority = a & 0x30u;
+		edge_floor_priority = floor_value & 0x30u;
 		attributes = OBJECT(player)->attributes;
 		OBJECT(player)->attributes = (attributes & 0xCFu) | edge_floor_priority;
-		t1 = (uint8_t)((((a & 0xFu) << 1) << 1) << 1);
-		a = (uint8_t)(t1 >> 8);
-		b = (uint8_t)t1;
+		floor_height_byte = (uint8_t)((((floor_value & 0xFu) << 1) << 1) << 1);
+		height_high = (uint8_t)(floor_height_byte >> 8);
+		height_low = (uint8_t)floor_height_byte;
 		z_2 = OBJECT(player)->z;
-		if ((int16_t)z_2 < (int16_t)(((uint32_t)a << 8) | b))
+		if ((int16_t)z_2 < (int16_t)(((uint32_t)height_high << 8) | height_low))
 		{
 			OBJECT(player)->x_speed = 0;
 			OBJECT(player)->y_speed = 0;
 			vitality_2 = OBJECT(player)->vitality;
 			if (vitality_2 != 0u)
-				a = 0xFFu;
+				stopped_flag = 0xFFu;
 			else
-				a = 0u;
+				stopped_flag = 0u;
 			carry = 1u;
-			zero = (uint8_t)~a == 0u;
+			zero = (uint8_t)~stopped_flag == 0u;
 		}
 		else
 		{
-			stack = b;
-			stack_2 = a;
+			stack = height_low;
+			stack_2 = height_high;
 			floor_z = ((uint32_t)stack_2 << 8) | stack;
 			x_speed = OBJECT(player)->x_speed;
-			t2 = (((uint32_t)(OBJECT(player)->x & 0xFFu) << 8u) | OBJECT(player)->x_fraction);
-			t3 = x_speed;
-			carry = (uint16_t)(t3 + t2) < t3;
-			stack = (uint16_t)(t3 + t2) >> 8;
+			x_and_fraction = (((uint32_t)(OBJECT(player)->x & 0xFFu) << 8u) | OBJECT(player)->x_fraction);
+			speed_word = x_speed;
+			carry = (uint16_t)(speed_word + x_and_fraction) < speed_word;
+			stack = (uint16_t)(speed_word + x_and_fraction) >> 8;
 			x_speed_2 = (uint8_t)(OBJECT(player)->x_speed >> 8u);
-			t4 = (uint8_t)(OBJECT(player)->x >> 8u);
-			a = ((uint16_t)(int8_t)x_speed_2 >> 8) + t4 + carry;
-			b = stack;
-			if ((int16_t)screen_left_edge <= (int16_t)(((uint32_t)a << 8) | b) && (int16_t)(((uint32_t)a << 8) | b) <= (int16_t)screen_right_edge)
+			x_high = (uint8_t)(OBJECT(player)->x >> 8u);
+			next_x_high = ((uint16_t)(int8_t)x_speed_2 >> 8) + x_high + carry;
+			next_x_low = stack;
+			if ((int16_t)screen_left_edge <= (int16_t)(((uint32_t)next_x_high << 8) | next_x_low) && (int16_t)(((uint32_t)next_x_high << 8) | next_x_low) <= (int16_t)screen_right_edge)
 			{
 				OBJECT(player)->floor_z = floor_z;
 				zero = 1u;
@@ -556,11 +563,11 @@ void player_check_screen_edges(uint16_t player, uint32_t *p_zero, uint32_t *p_ca
 				OBJECT(player)->y_speed = 0;
 				vitality_2 = OBJECT(player)->vitality;
 				if (vitality_2 != 0u)
-					a = 0xFFu;
+					stopped_flag = 0xFFu;
 				else
-					a = 0u;
+					stopped_flag = 0u;
 				carry = 1u;
-				zero = (uint8_t)~a == 0u;
+				zero = (uint8_t)~stopped_flag == 0u;
 			}
 		}
 	}

@@ -3,7 +3,7 @@
  *    Description: the attract's demo: the recorded inputs played through the game
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    10-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -12,7 +12,7 @@
 #include "game.h"
 
 /* The attract's demo step: its start, then its frames, by mode_phase */
-void attract_demo(uint16_t y, uint16_t u)
+void attract_demo(uint16_t u)
 {
 	for (;;)
 	{
@@ -57,21 +57,21 @@ void attract_demo(uint16_t y, uint16_t u)
 		case 24:
 			break;
 		case -28:
-			attract_opening_scene(y, u);
+			attract_opening_scene(u);
 			return;
 		case -26:
 			continue;
 		case -24:
-			attract_title(y, u);
+			attract_title(u);
 			return;
 		case -22:
-			attract_high_scores(y, u);
+			attract_high_scores(u);
 			return;
 		case -20:
-			attract_warning(y, u);
+			attract_warning(u);
 			return;
 		case -18:
-			attract_coin_title(y, u);
+			attract_coin_title(u);
 			return;
 		case -16:
 			attract_clear_screen();
@@ -80,7 +80,7 @@ void attract_demo(uint16_t y, uint16_t u)
 			attract_wait_clear();
 			return;
 		case -12:
-			attract_opening_run(y, u);
+			attract_opening_run(u);
 			return;
 		case -10:
 			attract_next_scene();
@@ -108,17 +108,17 @@ void attract_demo(uint16_t y, uint16_t u)
    inputs */
 void demo_start(void)
 {
-	uint16_t clear_from = 0, clear_to = 0, count = 0, demo_cursor = 0, ignored16 = 0, ignored16_3 = 0, inputs = 0, playback = 0, player = 0, record = 0, request = 0, u = 0;
+	uint16_t clear_from = 0, clear_to = 0, count = 0, demo_cursor = 0, ignored16 = 0, inputs = 0, playback = 0, player = 0, record = 0, request = 0, u = 0;
 	uint8_t stack = 0, stack_2 = 0;
 	uint8_t frames_2 = 0;
-	uint16_t t1 = 0, t2 = 0, frames = 0, t3 = 0, state = 0, object_kind = 0, t4 = 0, lives = 0, lives_2 = 0, state_2 = 0;
+	uint16_t demo_record = 0, frames_at = 0, frames = 0, step_at = 0, state = 0, object_kind = 0, inputs_at = 0, lives = 0, lives_2 = 0, state_2 = 0;
 
 	clear_tile_layers();
 	reset_for_play();
 	clear_objects(&ignored16, &u);
 	palette_request_kind = 1u;
 	request = 0x880u;
-	palette_request(request, &ignored16_3, &u);
+	palette_request(u, request);
 	AT16(random_number, -1) = 0u;
 	frame_count = 0u;
 	clear_from = demo_frames_ADDRESS;
@@ -132,14 +132,14 @@ void demo_start(void)
 		clear_to++;
 		count--;
 	}
-	t1 = demos[(int8_t)((uint8_t)((uint32_t)demo_number << 1)) / 2];
-	players_playing = DEMO(t1)->players;
-	t2 = t1 + 1u;
-	frames = DEMO(t2 - 0x1u)->frames;
+	demo_record = demos[(int8_t)((uint8_t)((uint32_t)demo_number << 1)) / 2];
+	players_playing = DEMO(demo_record)->players;
+	frames_at = demo_record + 1u;
+	frames = DEMO(frames_at - 0x1u)->frames;
 	demo_frames = frames;
-	t3 = t2 + 2u;
-	demo_cursor = t3 + 1u;
-	game_step = DEMO(t3 - 0x3u)->step;
+	step_at = frames_at + 2u;
+	demo_cursor = step_at + 1u;
+	game_step = DEMO(step_at - 0x3u)->step;
 	step_phase = 0u;
 	step_subphase = 0u;
 	step_countdown = 0u;
@@ -157,13 +157,13 @@ void demo_start(void)
 		stack = (uint8_t)player;
 		object_kind = PLAYER(player)->object_kind;
 		mem_write8(object_kind, demo_player);
-		t4 = demo_cursor;
-		demo_cursor = t4 + 2u;
-		inputs = mem_read16(t4);
-		mem_write16(playback, inputs);
+		inputs_at = demo_cursor;
+		demo_cursor = inputs_at + 2u;
+		inputs = mem_read16(inputs_at);
+		DEMO_PLAYBACK(playback)->input = inputs;
 		frames_2 = DEMO_INPUT(inputs)->frames;
-		mem_write8(playback + 2u, frames_2);
-		mem_write8(playback + 3u, DEMO_INPUT(inputs)->controls);
+		DEMO_PLAYBACK(playback)->frames = frames_2;
+		DEMO_PLAYBACK(playback)->controls = DEMO_INPUT(inputs)->controls;
 		record = ((uint32_t)stack_2 << 8) | stack;
 		lives = PLAYER(record)->lives;
 		mem_write8(lives, 0u);
@@ -187,9 +187,9 @@ void demo_start(void)
 void demo_play(uint16_t palette_job)
 {
 	uint8_t controls = 0;
-	uint16_t controls_2 = 0, ignored16 = 0, input_step = 0, playback = 0, port = 0, request = 0;
-	uint8_t t2 = 0, frames = 0;
-	uint16_t t1 = 0, object_kind = 0;
+	uint16_t controls_2 = 0, input_step = 0, playback = 0, port = 0, request = 0;
+	uint8_t step_frames_left = 0, frames = 0;
+	uint16_t demo_frames_left = 0, object_kind = 0;
 
 	if (step_phase == 2u)
 	{
@@ -198,11 +198,11 @@ void demo_play(uint16_t palette_job)
 		game_over_draw();
 		palette_request_kind = 2u;
 		request = 0xBu;
-		palette_request(request, &ignored16, &palette_job);
+		palette_request(palette_job, request);
 	}
-	t1 = demo_frames;
-	demo_frames = t1 - 1u;
-	if (t1 == 1u)
+	demo_frames_left = demo_frames;
+	demo_frames = demo_frames_left - 1u;
+	if (demo_frames_left == 1u)
 	{
 		demo_number++;
 		if (demo_number >= 3u)
@@ -225,19 +225,19 @@ void demo_play(uint16_t palette_job)
 	{
 		object_kind = PLAYER(player_records[(int8_t)((uint8_t)((uint32_t)demo_player << 1)) / 2])->object_kind;
 		mem_write8(object_kind, demo_player);
-		input_step = mem_read16(playback);
-		mem_write8(playback + 3u, DEMO_INPUT(input_step)->controls);
-		t2 = mem_read8(playback + 2u);
-		mem_write8(playback + 2u, t2 - 1u);
-		if (t2 == 1u)
+		input_step = DEMO_PLAYBACK(playback)->input;
+		DEMO_PLAYBACK(playback)->controls = DEMO_INPUT(input_step)->controls;
+		step_frames_left = DEMO_PLAYBACK(playback)->frames;
+		DEMO_PLAYBACK(playback)->frames = step_frames_left - 1u;
+		if (step_frames_left == 1u)
 		{
 			input_step += 2u;
 			controls = DEMO_INPUT(input_step)->controls;
-			mem_write8(playback + 3u, controls);
-			mem_write8(playback + 4u, ~controls);
+			DEMO_PLAYBACK(playback)->controls = controls;
+			DEMO_PLAYBACK(playback)->controls_inverted = ~controls;
 			frames = DEMO_INPUT(input_step)->frames;
-			mem_write8(playback + 2u, frames);
-			mem_write16(playback, input_step);
+			DEMO_PLAYBACK(playback)->frames = frames;
+			DEMO_PLAYBACK(playback)->input = input_step;
 		}
 		playback += 0x10u;
 		demo_player_bits = demo_player_bits >> 1;

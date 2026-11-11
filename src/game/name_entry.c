@@ -3,7 +3,7 @@
  *    Description: the name entry for a high score
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    10-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -12,7 +12,7 @@
 #include "game.h"
 
 /* The name entry phase, by game_step, the gauges hidden */
-uint32_t name_entry_phase(uint16_t y, uint16_t u, uint32_t left_caller)
+uint32_t name_entry_phase(uint16_t u, uint32_t left_caller)
 {
 	gauges_shown = 0u;
 	switch ((int8_t)(uint8_t)((uint32_t)game_step << 1))
@@ -42,7 +42,7 @@ uint32_t name_entry_phase(uint16_t y, uint16_t u, uint32_t left_caller)
 		stage_4_opening();
 		return left_caller;
 	case -116:
-		return stage_4_play(y, left_caller);
+		return stage_4_play(left_caller);
 	case -114:
 		stage_4_over();
 		return left_caller;
@@ -62,7 +62,7 @@ uint32_t name_entry_phase(uint16_t y, uint16_t u, uint32_t left_caller)
 		stage_5_opening();
 		return left_caller;
 	case -100:
-		return stage_5_play(y, left_caller);
+		return stage_5_play(left_caller);
 	case -98:
 		stage_5_over();
 		return left_caller;
@@ -86,7 +86,7 @@ uint32_t name_entry_phase(uint16_t y, uint16_t u, uint32_t left_caller)
 		stage_6_opening();
 		return left_caller;
 	case -82:
-		return stage_6_play(y, left_caller);
+		return stage_6_play(left_caller);
 	case -80:
 		stage_6_over();
 		return left_caller;
@@ -105,10 +105,10 @@ uint32_t name_entry_phase(uint16_t y, uint16_t u, uint32_t left_caller)
 		bonus_2_draw();
 		return left_caller;
 	case -68:
-		bonus_2_intro_phase(y);
+		bonus_2_intro_phase();
 		return left_caller;
 	case -66:
-		bonus_2_run(y);
+		bonus_2_run();
 		return left_caller;
 	case -64:
 		bonus_2_wait();
@@ -128,7 +128,7 @@ uint32_t name_entry_phase(uint16_t y, uint16_t u, uint32_t left_caller)
 		stage_7_opening();
 		return left_caller;
 	case -52:
-		return stage_7_play(y, left_caller);
+		return stage_7_play(left_caller);
 	case -50:
 		stage_7_over();
 		return left_caller;
@@ -153,15 +153,15 @@ uint32_t name_entry_phase(uint16_t y, uint16_t u, uint32_t left_caller)
 		stage_8_opening();
 		return left_caller;
 	case -32:
-		return stage_8_play(y, left_caller);
+		return stage_8_play(left_caller);
 	case -30:
 		return stage_8_first_part_exit(left_caller);
 	case -28:
 		return stage_8_story(u, left_caller);
 	case -26:
-		return stage_8_robot_entrance(y, left_caller);
+		return stage_8_robot_entrance(left_caller);
 	case -24:
-		return stage_8_final_fight(y, left_caller);
+		return stage_8_final_fight(left_caller);
 	case -22:
 		stage_8_over();
 		return left_caller;
@@ -200,7 +200,7 @@ uint32_t name_entry_phase(uint16_t y, uint16_t u, uint32_t left_caller)
 void name_entry_start(uint16_t palette_job)
 {
 	uint32_t carry = 0;
-	uint16_t command = 0, ignored16 = 0, ignored16_2 = 0, ignored16_3 = 0, layer_and_columns = 0, request = 0, scroll_x = 0, scroll_y = 0;
+	uint16_t command = 0, ignored16 = 0, ignored16_2 = 0, layer_and_columns = 0, request = 0, scroll_x = 0, scroll_y = 0;
 
 	command = 0x9000u;
 	carry = queue_sound_always(command);
@@ -211,23 +211,23 @@ void name_entry_start(uint16_t palette_job)
 	set_scroll_y(scroll_y);
 	palette_request_kind = 1u;
 	request = 0x70Du;
-	palette_request(request, &ignored16, &palette_job);
+	palette_job = palette_request(palette_job, request);
 	palette_request_kind = 1u;
 	request = 0x880u;
-	palette_request(request, &ignored16, &palette_job);
+	palette_job = palette_request(palette_job, request);
 	palette_request_kind = 1u;
 	request = 0x886u;
-	palette_request(request, &ignored16, &palette_job);
+	palette_job = palette_request(palette_job, request);
 	palette_request_kind = 3u;
 	request = 0x3E36u;
-	palette_request(request, &ignored16, &palette_job);
+	palette_request(palette_job, request);
 	map_scene = 3u;
 	map_area = 0u;
 	set_area_tile_banks();
 	io_write8(0x1FB9u, 0x3Fu);
 	io_write8(0x1FBAu, 0x36u);
 	layer_and_columns = 0x2Cu;
-	draw_layer_columns(layer_and_columns, &ignored16_2, &ignored16, &ignored16_3);
+	draw_layer_columns(layer_and_columns, &ignored16, &ignored16_2);
 	io_write8(0x1FB9u, 0x13u);
 	io_write8(0x1FBAu, 0x2Cu);
 	game_step++;
@@ -250,14 +250,14 @@ void name_entry_run(void)
 void name_entry_end(void)
 {
 	uint32_t carry = 0;
-	uint16_t command = 0, ignored16 = 0, ignored16_2 = 0, request = 0, u = 0;
+	uint16_t command = 0, request = 0, u = 0;
 
-	clear_sprites(&ignored16, &ignored16_2);
+	clear_sprites();
 	command = 0u;
 	carry = queue_sound_always(command);
 	u = end_game();
 	palette_request_kind = 3u;
 	request = 0u;
-	palette_request(request, &ignored16_2, &u);
+	palette_request(u, request);
 	mode_step = 3u;
 }

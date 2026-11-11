@@ -3,7 +3,7 @@
  *    Description: stage 1's bystanders
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    10-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -12,12 +12,12 @@
 #include "game.h"
 
 /* Sets a bystander up by its spawn's state: its kind, facing, place and animations, waiting. */
-void bystander_start(uint16_t object, uint16_t *p_bystander_animation_set, uint16_t *p_bystander)
+uint16_t bystander_start(uint16_t object)
 {
 	uint8_t place = 0;
 	uint16_t bystander = 0, bystander_animation_set = 0, setup = 0;
 	uint8_t parameter = 0, state = 0;
-	uint16_t kind = 0, t1 = 0, animations = 0;
+	uint16_t kind = 0, trigger_place = 0, animations = 0;
 
 	setup = bystander_setup_ADDRESS;
 	vector_object_setup(object, setup);
@@ -32,8 +32,8 @@ void bystander_start(uint16_t object, uint16_t *p_bystander_animation_set, uint1
 		OBJECT(object)->attributes = 0x40u;
 		place &= 0x7Fu;
 	}
-	t1 = (uint32_t)place << 4;
-	OBJECT(object)->bystander.trigger_x = t1;
+	trigger_place = (uint32_t)place << 4;
+	OBJECT(object)->bystander.trigger_x = trigger_place;
 	animations = BYSTANDER(bystander)->animations;
 	bystander_animation_set = animations;
 	OBJECT(object)->bystander.animations = bystander_animation_set;
@@ -41,18 +41,18 @@ void bystander_start(uint16_t object, uint16_t *p_bystander_animation_set, uint1
 	OBJECT(object)->timer = 0x40u;
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
-	*p_bystander_animation_set = bystander_animation_set;
-	*p_bystander = bystander;
+	leftover_y = bystander_animation_set;
+	return bystander;
 }
 
 /* Waits until the police car stops, then is startled. */
 uint16_t bystander_wait_car(uint16_t object, uint16_t animations)
 {
-	uint8_t t1 = 0, startled = 0, state = 0;
+	uint8_t car_stopped = 0, startled = 0, state = 0;
 	uint16_t animations_2 = 0;
 
-	t1 = io_read8(0x1884u);
-	if (t1 != 0u)
+	car_stopped = io_read8(0x1884u);
+	if (car_stopped != 0u)
 	{
 		animations_2 = OBJECT(object)->bystander.animations;
 		animations = animations_2;

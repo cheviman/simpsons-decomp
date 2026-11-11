@@ -3,7 +3,7 @@
  *    Description: bank 17's scenery: the posing figure and the unused Homer object
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    10-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -12,14 +12,14 @@
 #include "game.h"
 
 /* Sets a figure up by its spawn's state: its kind, attributes and four poses. */
-void random_pose_figure_start(uint16_t object, uint16_t *p_box, uint16_t *p_random_pose_figure)
+uint16_t random_pose_figure_start(uint16_t object)
 {
-	uint16_t box = 0, random_pose_figure = 0, setup = 0;
+	uint16_t random_pose_figure = 0, setup = 0;
 	uint8_t parameter = 0, state = 0;
 	uint16_t kind = 0, poses = 0;
 
 	setup = random_pose_figure_setup_ADDRESS;
-	box = vector_object_setup(object, setup);
+	vector_object_setup(object, setup);
 	OBJECT(object)->flags = 0x80u;
 	parameter = OBJECT(object)->parameter;
 	random_pose_figure = random_pose_figures_ADDRESS + (int8_t)(((uint32_t)parameter << 1) << 1);
@@ -31,15 +31,13 @@ void random_pose_figure_start(uint16_t object, uint16_t *p_box, uint16_t *p_rand
 	OBJECT(object)->timer = 1u;
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
-	random_pose_figure = random_pose_figure_pose(object, random_pose_figure);
-	*p_box = box;
-	*p_random_pose_figure = random_pose_figure;
+	return random_pose_figure_pose(object, random_pose_figure);
 }
 
 /* Strikes one of its four poses at random. */
-uint16_t random_pose_figure_pose(uint16_t object, uint16_t u)
+uint16_t random_pose_figure_pose(uint16_t object, uint16_t figure_poses)
 {
-	uint8_t timer = 0, t1 = 0;
+	uint8_t timer = 0, x_low = 0;
 	uint16_t behaviour = 0;
 
 	timer = OBJECT(object)->timer;
@@ -47,11 +45,11 @@ uint16_t random_pose_figure_pose(uint16_t object, uint16_t u)
 	if (timer == 1u)
 	{
 		behaviour = OBJECT(object)->behaviour;
-		u = behaviour;
-		t1 = (uint8_t)OBJECT(object)->x;
-		OBJECT(object)->animation = mem_read8(u + ((random_number + t1) & 3u)) | 0x80u;
+		figure_poses = behaviour;
+		x_low = (uint8_t)OBJECT(object)->x;
+		OBJECT(object)->animation = FIGURE_POSE(figure_poses + ((random_number + x_low) & 3u)) | 0x80u;
 	}
-	return u;
+	return figure_poses;
 }
 
 /* Unused: lets go and stays. */
@@ -68,18 +66,17 @@ void unused_homer_object_idle(void)
 }
 
 /* Unused: sets up the object with Homer's sprites. */
-void unused_homer_object_start(uint16_t object, uint16_t *p_box, uint16_t *p_setup)
+uint16_t unused_homer_object_start(uint16_t object)
 {
-	uint16_t box = 0, setup = 0;
+	uint16_t setup = 0;
 	uint8_t state = 0;
 
 	setup = unused_homer_object_setup_ADDRESS;
-	box = vector_object_setup(object, setup);
+	vector_object_setup(object, setup);
 	OBJECT(object)->timer = 1u;
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
-	*p_box = box;
-	*p_setup = setup;
+	return setup;
 }
 
 /* Unused: waits until the nearest player is close, then gets ready. */
@@ -87,7 +84,7 @@ uint16_t unused_homer_object_wait_near(uint16_t object)
 {
 	uint16_t target = 0;
 	uint8_t timer = 0, state = 0;
-	uint16_t target_2 = 0, target_dy = 0, target_dx = 0, t1 = 0;
+	uint16_t target_2 = 0, target_dy = 0, target_dx = 0, target_distance = 0;
 
 	timer = OBJECT(object)->timer;
 	OBJECT(object)->timer = timer - 1u;
@@ -101,8 +98,8 @@ uint16_t unused_homer_object_wait_near(uint16_t object)
 	vector_measure_target(object, target);
 	target_dy = OBJECT(object)->target_dy;
 	target_dx = OBJECT(object)->target_dx;
-	t1 = target_dy + target_dx;
-	if (t1 < 0x40u)
+	target_distance = target_dy + target_dx;
+	if (target_distance < 0x40u)
 	{
 		OBJECT(object)->flags = 0xC0u;
 		OBJECT(object)->animation = 0xAFu;

@@ -3,7 +3,7 @@
  *    Description: the dream's wave over layer A's line scroll (stage 6's start and end)
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    10-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -33,18 +33,18 @@ void dream_wave_straighten(uint16_t *p_line_scroll, uint16_t *p_count)
 void dream_wave_start(uint16_t *p_line_scroll, uint16_t *p_count)
 {
 	uint16_t count = 0, line_scroll = 0;
-	uint8_t t1 = 0, t2 = 0, t3 = 0;
+	uint8_t previous_wave_size = 0, previous_wave_phase = 0, wave_step = 0;
 
 	dream_wave_straighten(&line_scroll, &count);
 	io_write16(0x18F1u, 0u);
 	io_write16(0x18EFu, 0u);
-	t1 = io_read8(0x18EDu);
+	previous_wave_size = io_read8(0x18EDu);
 	io_write8(0x18EDu, 0u);
-	t2 = io_read8(0x18EBu);
+	previous_wave_phase = io_read8(0x18EBu);
 	io_write8(0x18EBu, 0u);
 	io_write8(0x1C80u, 3u);
-	t3 = io_read8(0x18ECu);
-	io_write8(0x18ECu, t3 + 1u);
+	wave_step = io_read8(0x18ECu);
+	io_write8(0x18ECu, wave_step + 1u);
 	*p_line_scroll = line_scroll;
 	*p_count = count;
 }
@@ -54,18 +54,18 @@ uint16_t dream_wave_grow(void)
 {
 	uint8_t size = 0;
 	uint16_t x = 0;
-	uint8_t t1 = 0, t2 = 0, t3 = 0, t4 = 0;
+	uint8_t wave_size = 0, wave_size_before = 0, grown_size = 0, wave_step = 0;
 
-	t1 = io_read8(0x18EDu);
-	size = t1;
+	wave_size = io_read8(0x18EDu);
+	size = wave_size;
 	x = dream_wave_draw_lines(size);
-	t2 = io_read8(0x18EDu);
-	io_write8(0x18EDu, t2 + 8u);
-	t3 = io_read8(0x18EDu);
-	if (t3 >= 0xC0u)
+	wave_size_before = io_read8(0x18EDu);
+	io_write8(0x18EDu, wave_size_before + 8u);
+	grown_size = io_read8(0x18EDu);
+	if (grown_size >= 0xC0u)
 	{
-		t4 = io_read8(0x18ECu);
-		io_write8(0x18ECu, t4 + 1u);
+		wave_step = io_read8(0x18ECu);
+		io_write8(0x18ECu, wave_step + 1u);
 	}
 	return x;
 }
@@ -75,10 +75,10 @@ uint16_t dream_wave_keep(void)
 {
 	uint8_t size = 0;
 	uint16_t x = 0;
-	uint8_t t1 = 0;
+	uint8_t wave_size = 0;
 
-	t1 = io_read8(0x18EDu);
-	size = t1;
+	wave_size = io_read8(0x18EDu);
+	size = wave_size;
 	x = dream_wave_draw_lines(size);
 	return x;
 }
@@ -86,34 +86,34 @@ uint16_t dream_wave_keep(void)
 /* The dream's wave going away, by its step: full, held, shrinking, done. */
 uint16_t dream_wave_fade_out(void)
 {
-	uint16_t ignored16 = 0, u = 0;
-	uint8_t t1 = 0;
+	uint16_t fade_out_step_table = 0, ignored16 = 0;
+	uint8_t wave_step = 0;
 
-	u = dream_wave_fade_out_steps_ADDRESS;
-	t1 = io_read8(0x18ECu);
-	switch ((int8_t)(uint8_t)((uint32_t)t1 << 1))
+	fade_out_step_table = dream_wave_fade_out_steps_ADDRESS;
+	wave_step = io_read8(0x18ECu);
+	switch ((int8_t)(uint8_t)((uint32_t)wave_step << 1))
 	{
 	case 0:
 		dream_wave_start_full();
-		return u;
+		return fade_out_step_table;
 	case 2:
 		dream_wave_hold();
-		return u;
+		return fade_out_step_table;
 	case 4:
 		dream_wave_shrink();
-		return u;
+		return fade_out_step_table;
 	case 6:
 		dream_wave_done();
-		return u;
+		return fade_out_step_table;
 	case -6:
-		dream_wave_start(&ignored16, &u);
-		return u;
+		dream_wave_start(&ignored16, &fade_out_step_table);
+		return fade_out_step_table;
 	case -4:
 		dream_wave_grow();
-		return u;
+		return fade_out_step_table;
 	case -2:
 		dream_wave_keep();
-		return u;
+		return fade_out_step_table;
 	}
 	unreachable();
 }
@@ -121,15 +121,15 @@ uint16_t dream_wave_fade_out(void)
 /* The dream's wave: starts it at full size, line scroll on. */
 void dream_wave_start_full(void)
 {
-	uint8_t t1 = 0, t2 = 0;
+	uint8_t previous_wave_phase = 0, wave_step = 0;
 
-	t1 = io_read8(0x18EBu);
+	previous_wave_phase = io_read8(0x18EBu);
 	io_write8(0x18EBu, 0u);
 	io_write8(0x18EDu, 0xC0u);
 	io_write8(0x1C80u, 3u);
 	io_write8(0x18F3u, 0x40u);
-	t2 = io_read8(0x18ECu);
-	io_write8(0x18ECu, t2 + 1u);
+	wave_step = io_read8(0x18ECu);
+	io_write8(0x18ECu, wave_step + 1u);
 }
 
 /* The dream's wave: draws it at full size for 64 frames. */
@@ -137,17 +137,17 @@ uint16_t dream_wave_hold(void)
 {
 	uint8_t size = 0;
 	uint16_t x = 0;
-	uint8_t t1 = 0, t2 = 0, t3 = 0;
+	uint8_t wave_size = 0, hold_frames_left = 0, wave_step = 0;
 
-	t1 = io_read8(0x18EDu);
-	size = t1;
+	wave_size = io_read8(0x18EDu);
+	size = wave_size;
 	x = dream_wave_draw_lines(size);
-	t2 = io_read8(0x18F3u);
-	io_write8(0x18F3u, t2 - 1u);
-	if (t2 == 1u)
+	hold_frames_left = io_read8(0x18F3u);
+	io_write8(0x18F3u, hold_frames_left - 1u);
+	if (hold_frames_left == 1u)
 	{
-		t3 = io_read8(0x18ECu);
-		io_write8(0x18ECu, t3 + 1u);
+		wave_step = io_read8(0x18ECu);
+		io_write8(0x18ECu, wave_step + 1u);
 	}
 	return x;
 }
@@ -157,23 +157,23 @@ uint16_t dream_wave_shrink(void)
 {
 	uint8_t size = 0, size_2 = 0;
 	uint16_t x = 0;
-	uint8_t t1 = 0, t2 = 0, t3 = 0, t4 = 0;
+	uint8_t wave_size = 0, wave_size_before = 0, previous_line_scroll_mode = 0, wave_step = 0;
 
-	t1 = io_read8(0x18EDu);
-	size = t1;
+	wave_size = io_read8(0x18EDu);
+	size = wave_size;
 	x = dream_wave_draw_lines(size);
-	t2 = io_read8(0x18EDu);
-	size_2 = t2 - 2u;
+	wave_size_before = io_read8(0x18EDu);
+	size_2 = wave_size_before - 2u;
 	io_write8(0x18EDu, size_2);
 	if (size_2 != 0u)
 	{
 		dream_wave_done();
 		return x;
 	}
-	t3 = io_read8(0x1C80u);
+	previous_line_scroll_mode = io_read8(0x1C80u);
 	io_write8(0x1C80u, 0u);
-	t4 = io_read8(0x18ECu);
-	io_write8(0x18ECu, t4 + 1u);
+	wave_step = io_read8(0x18ECu);
+	io_write8(0x18ECu, wave_step + 1u);
 	dream_wave_done();
 	return x;
 }
@@ -187,35 +187,35 @@ void dream_wave_done(void)
    the given size; the wave moves 2 a frame. */
 uint16_t dream_wave_draw_lines(uint8_t size)
 {
-	uint8_t a = 0, b = 0, scroll_high = 0;
-	uint16_t d = 0, line_scroll = 0;
-	uint8_t t1 = 0, t2 = 0, t3 = 0, t4 = 0, t8 = 0, t9 = 0;
-	uint16_t t5 = 0, t6 = 0, t7 = 0;
+	uint8_t line_offset_high = 0, line_offset_low = 0, scroll_high = 0;
+	uint16_t line_scroll = 0, line_wave_offset = 0;
+	uint8_t previous_line_count = 0, wave_line = 0, wave_phase = 0, line_wave_size = 0, lines_left_before = 0, wave_phase_before = 0;
+	uint16_t line_x_scroll = 0, swapped_scroll = 0, written_place = 0;
 
 	io_write8(0x18EEu, size);
-	t1 = io_read8(0x18EAu);
+	previous_line_count = io_read8(0x18EAu);
 	io_write8(0x18EAu, 0u);
 	line_scroll = 0x1A00u;
 	do
 	{
-		t2 = io_read8(0x18EAu);
-		t3 = io_read8(0x18EBu);
-		t4 = io_read8(0x18EEu);
-		d = ((uint32_t)(uint8_t)((uint32_t)(t2 + t3) << 1) << 8) | t4;
-		d = wave_sine(d);
-		a = (uint8_t)(d >> 8);
-		b = (uint8_t)d;
-		t5 = (((uint32_t)a << 8) | b) + 0x196u;
-		scroll_high = (t5 >> 8) & 1u;
-		t6 = scroll_high | 0x1000u;
-		t7 = line_scroll;
-		line_scroll = t7 + 2u;
-		mem_write16(t7, ((uint32_t)(uint8_t)t5 << 8) | (uint8_t)t6);
-		t8 = io_read8(0x18EAu);
-		io_write8(0x18EAu, t8 - 1u);
-	} while (t8 != 1u);
-	t9 = io_read8(0x18EBu);
-	io_write8(0x18EBu, t9 - 2u);
+		wave_line = io_read8(0x18EAu);
+		wave_phase = io_read8(0x18EBu);
+		line_wave_size = io_read8(0x18EEu);
+		line_wave_offset = ((uint32_t)(uint8_t)((uint32_t)(wave_line + wave_phase) << 1) << 8) | line_wave_size;
+		line_wave_offset = wave_sine(line_wave_offset);
+		line_offset_high = (uint8_t)(line_wave_offset >> 8);
+		line_offset_low = (uint8_t)line_wave_offset;
+		line_x_scroll = (((uint32_t)line_offset_high << 8) | line_offset_low) + 0x196u;
+		scroll_high = (line_x_scroll >> 8) & 1u;
+		swapped_scroll = scroll_high | 0x1000u;
+		written_place = line_scroll;
+		line_scroll = written_place + 2u;
+		mem_write16(written_place, ((uint32_t)(uint8_t)line_x_scroll << 8) | (uint8_t)swapped_scroll);
+		lines_left_before = io_read8(0x18EAu);
+		io_write8(0x18EAu, lines_left_before - 1u);
+	} while (lines_left_before != 1u);
+	wave_phase_before = io_read8(0x18EBu);
+	io_write8(0x18EBu, wave_phase_before - 2u);
 	return line_scroll;
 }
 
@@ -224,7 +224,7 @@ uint16_t wave_sine(uint16_t angle_and_size)
 {
 	uint8_t angle = 0, offset = 0, wave_size = 0;
 	uint16_t cosines = 0, wave_offset = 0;
-	uint16_t t1 = 0;
+	uint16_t signed_offset = 0;
 
 	angle = (uint8_t)(angle_and_size >> 8);
 	wave_size = (uint8_t)angle_and_size;
@@ -240,7 +240,7 @@ uint16_t wave_sine(uint16_t angle_and_size)
 	wave_sine_high = 0u;
 	if ((wave_sine_angle & 0x80u) != 0u)
 		wave_sine_value = 0u - wave_sine_value;
-	t1 = wave_sine_value;
-	wave_offset = t1;
+	signed_offset = wave_sine_value;
+	wave_offset = signed_offset;
 	return wave_offset;
 }

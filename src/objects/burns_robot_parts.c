@@ -3,7 +3,7 @@
  *    Description: the robot's objects: the wall it breaks out of, the part it tosses, its debris, shots, bombs and held part, Mr. Burns and Maggie at the end
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    10-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -14,7 +14,7 @@
 /* The robot's shape in stage 8's wall (4D40 type 21, kind CC): runs its step. */
 uint16_t burns_breakout_run(uint16_t shape, uint8_t state)
 {
-	uint16_t ignored16 = 0, states = 0;
+	uint16_t states = 0;
 	uint8_t state_2 = 0;
 
 	states = burns_breakout_states_ADDRESS;
@@ -25,8 +25,7 @@ uint16_t burns_breakout_run(uint16_t shape, uint8_t state)
 		burns_breakout_start(shape);
 		return states;
 	case 2:
-		burns_breakout_wait(shape, &ignored16, &states);
-		return states;
+		return burns_breakout_wait(shape, states);
 	case 4:
 		return burns_breakout_break_wall(shape);
 	case 6:
@@ -85,8 +84,7 @@ uint16_t burns_breakout_run(uint16_t shape, uint8_t state)
 		burns_bomb_fall(shape);
 		return states;
 	case 56:
-		burns_bomb_fuse(shape, &ignored16, &states);
-		return states;
+		return burns_bomb_fuse(shape, states);
 	case 58:
 		return burns_bomb_blast(shape);
 	case 60:
@@ -120,9 +118,8 @@ uint16_t burns_breakout_run(uint16_t shape, uint8_t state)
 }
 
 /* The part the robot tosses away before its fight (5280 type E4, kind CC animation 82): runs its step. */
-void burns_tossed_part_run(uint16_t part, uint8_t state, uint16_t *p_y, uint16_t *p_states)
+uint16_t burns_tossed_part_run(uint16_t part, uint8_t state)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint16_t states = 0;
 	uint8_t state_2 = 0;
 
@@ -133,117 +130,103 @@ void burns_tossed_part_run(uint16_t part, uint8_t state, uint16_t *p_y, uint16_t
 	{
 	case 0:
 		burns_tossed_part_launch(part);
-		break;
+		return states;
 	case 2:
 		burns_tossed_part_fly(part);
-		break;
+		return states;
 	case 4:
 	case 6:
 	case 8:
 		burns_debris_bounce(part);
-		break;
+		return states;
 	case 10:
 		burns_debris_blink(part);
-		break;
+		return states;
 	case 12:
 		rescued_maggie_wait();
-		break;
+		return states;
 	case 14:
-		states = rescued_maggie_drop(part);
-		break;
+		return rescued_maggie_drop(part);
 	case 16:
-		states = rescued_maggie_fall(part, states);
-		break;
+		return rescued_maggie_fall(part, states);
 	case 18:
 	case 20:
 	case 22:
 	case 24:
 		rescued_maggie_bounce(part);
-		break;
+		return states;
 	case 26:
 		rescued_maggie_stop(part);
-		break;
+		return states;
 	case 28:
 	case 36:
 		rescued_maggie_pose(part);
-		break;
+		return states;
 	case 30:
 	case 38:
 		rescued_maggie_pose_2(part);
-		break;
+		return states;
 	case 32:
 	case 40:
 		rescued_maggie_crawl(part);
-		break;
+		return states;
 	case 34:
 		rescued_maggie_sound_then_stop(part);
-		break;
+		return states;
 	case 42:
-		states = rescued_maggie_crawl_to_burns(part);
-		break;
+		return rescued_maggie_crawl_to_burns(part);
 	case 44:
 		rescued_maggie_finish(part, state);
-		break;
+		return states;
 	case 46:
 		burns_bomb_fall(part);
-		break;
+		return states;
 	case 48:
-		burns_bomb_fuse(part, &y, &states);
-		break;
+		return burns_bomb_fuse(part, states);
 	case 50:
-		states = burns_bomb_blast(part);
-		break;
+		return burns_bomb_blast(part);
 	case 52:
 		burns_part_vanish(part);
-		break;
+		return states;
 	case 54:
 		burns_shot_arm(part);
-		break;
+		return states;
 	case 56:
 		burns_shot_fly(part);
-		break;
+		return states;
 	case 58:
-		states = mr_burns_appear(part);
-		break;
+		return mr_burns_appear(part);
 	case 60:
-		states = mr_burns_wait_for_blow(part, states);
-		break;
+		return mr_burns_wait_for_blow(part, states);
 	case 62:
 		mr_burns_beaten(part, state);
-		break;
+		return states;
 	case 64:
-		states = mr_burns_release_maggie(part, states);
-		break;
+		return mr_burns_release_maggie(part, states);
 	case 66:
 		mr_burns_see_maggie(part);
-		break;
+		return states;
 	case 68:
 		mr_burns_done();
-		break;
+		return states;
 	case -12:
-		states = check_floor_ahead(part, states);
-		break;
+		return check_floor_ahead(part, states);
 	case -8:
 		burns_breakout_start(part);
-		break;
+		return states;
 	case -6:
-		burns_breakout_wait(part, &y, &states);
-		break;
+		return burns_breakout_wait(part, states);
 	case -4:
-		states = burns_breakout_break_wall(part);
-		break;
+		return burns_breakout_break_wall(part);
 	case -2:
-		states = burns_breakout_end(part);
-		break;
+		return burns_breakout_end(part);
 	}
-	*p_y = y;
-	*p_states = states;
+	unreachable();
 }
 
 /* A piece of the robot breaking off (5280 type E5): runs its step (bouncing, then blinking out). */
-void burns_debris_run(uint16_t debris, uint8_t state, uint16_t *p_y, uint16_t *p_states)
+uint16_t burns_debris_run(uint16_t debris, uint8_t state)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint16_t states = 0;
 	uint8_t state_2 = 0;
 
@@ -255,115 +238,101 @@ void burns_debris_run(uint16_t debris, uint8_t state, uint16_t *p_y, uint16_t *p
 	case 2:
 	case 4:
 		burns_debris_bounce(debris);
-		break;
+		return states;
 	case 6:
 		burns_debris_blink(debris);
-		break;
+		return states;
 	case 8:
 		rescued_maggie_wait();
-		break;
+		return states;
 	case 10:
-		states = rescued_maggie_drop(debris);
-		break;
+		return rescued_maggie_drop(debris);
 	case 12:
-		states = rescued_maggie_fall(debris, states);
-		break;
+		return rescued_maggie_fall(debris, states);
 	case 14:
 	case 16:
 	case 18:
 	case 20:
 		rescued_maggie_bounce(debris);
-		break;
+		return states;
 	case 22:
 		rescued_maggie_stop(debris);
-		break;
+		return states;
 	case 24:
 	case 32:
 		rescued_maggie_pose(debris);
-		break;
+		return states;
 	case 26:
 	case 34:
 		rescued_maggie_pose_2(debris);
-		break;
+		return states;
 	case 28:
 	case 36:
 		rescued_maggie_crawl(debris);
-		break;
+		return states;
 	case 30:
 		rescued_maggie_sound_then_stop(debris);
-		break;
+		return states;
 	case 38:
-		states = rescued_maggie_crawl_to_burns(debris);
-		break;
+		return rescued_maggie_crawl_to_burns(debris);
 	case 40:
 		rescued_maggie_finish(debris, state);
-		break;
+		return states;
 	case 42:
 		burns_bomb_fall(debris);
-		break;
+		return states;
 	case 44:
-		burns_bomb_fuse(debris, &y, &states);
-		break;
+		return burns_bomb_fuse(debris, states);
 	case 46:
-		states = burns_bomb_blast(debris);
-		break;
+		return burns_bomb_blast(debris);
 	case 48:
 		burns_part_vanish(debris);
-		break;
+		return states;
 	case 50:
 		burns_shot_arm(debris);
-		break;
+		return states;
 	case 52:
 		burns_shot_fly(debris);
-		break;
+		return states;
 	case 54:
-		states = mr_burns_appear(debris);
-		break;
+		return mr_burns_appear(debris);
 	case 56:
-		states = mr_burns_wait_for_blow(debris, states);
-		break;
+		return mr_burns_wait_for_blow(debris, states);
 	case 58:
 		mr_burns_beaten(debris, state);
-		break;
+		return states;
 	case 60:
-		states = mr_burns_release_maggie(debris, states);
-		break;
+		return mr_burns_release_maggie(debris, states);
 	case 62:
 		mr_burns_see_maggie(debris);
-		break;
+		return states;
 	case 64:
 		mr_burns_done();
-		break;
+		return states;
 	case -16:
-		states = check_floor_ahead(debris, states);
-		break;
+		return check_floor_ahead(debris, states);
 	case -12:
 		burns_breakout_start(debris);
-		break;
+		return states;
 	case -10:
-		burns_breakout_wait(debris, &y, &states);
-		break;
+		return burns_breakout_wait(debris, states);
 	case -8:
-		states = burns_breakout_break_wall(debris);
-		break;
+		return burns_breakout_break_wall(debris);
 	case -6:
-		states = burns_breakout_end(debris);
-		break;
+		return burns_breakout_end(debris);
 	case -4:
 		burns_tossed_part_launch(debris);
-		break;
+		return states;
 	case -2:
 		burns_tossed_part_fly(debris);
-		break;
+		return states;
 	}
-	*p_y = y;
-	*p_states = states;
+	unreachable();
 }
 
 /* The same for 5280 type E6. */
-void burns_debris_run_e6(uint16_t debris, uint8_t state, uint16_t *p_y, uint16_t *p_states)
+uint16_t burns_debris_run_e6(uint16_t debris, uint8_t state)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint16_t states = 0;
 	uint8_t state_2 = 0;
 
@@ -375,115 +344,101 @@ void burns_debris_run_e6(uint16_t debris, uint8_t state, uint16_t *p_y, uint16_t
 	case 2:
 	case 4:
 		burns_debris_bounce(debris);
-		break;
+		return states;
 	case 6:
 		burns_debris_blink(debris);
-		break;
+		return states;
 	case 8:
 		rescued_maggie_wait();
-		break;
+		return states;
 	case 10:
-		states = rescued_maggie_drop(debris);
-		break;
+		return rescued_maggie_drop(debris);
 	case 12:
-		states = rescued_maggie_fall(debris, states);
-		break;
+		return rescued_maggie_fall(debris, states);
 	case 14:
 	case 16:
 	case 18:
 	case 20:
 		rescued_maggie_bounce(debris);
-		break;
+		return states;
 	case 22:
 		rescued_maggie_stop(debris);
-		break;
+		return states;
 	case 24:
 	case 32:
 		rescued_maggie_pose(debris);
-		break;
+		return states;
 	case 26:
 	case 34:
 		rescued_maggie_pose_2(debris);
-		break;
+		return states;
 	case 28:
 	case 36:
 		rescued_maggie_crawl(debris);
-		break;
+		return states;
 	case 30:
 		rescued_maggie_sound_then_stop(debris);
-		break;
+		return states;
 	case 38:
-		states = rescued_maggie_crawl_to_burns(debris);
-		break;
+		return rescued_maggie_crawl_to_burns(debris);
 	case 40:
 		rescued_maggie_finish(debris, state);
-		break;
+		return states;
 	case 42:
 		burns_bomb_fall(debris);
-		break;
+		return states;
 	case 44:
-		burns_bomb_fuse(debris, &y, &states);
-		break;
+		return burns_bomb_fuse(debris, states);
 	case 46:
-		states = burns_bomb_blast(debris);
-		break;
+		return burns_bomb_blast(debris);
 	case 48:
 		burns_part_vanish(debris);
-		break;
+		return states;
 	case 50:
 		burns_shot_arm(debris);
-		break;
+		return states;
 	case 52:
 		burns_shot_fly(debris);
-		break;
+		return states;
 	case 54:
-		states = mr_burns_appear(debris);
-		break;
+		return mr_burns_appear(debris);
 	case 56:
-		states = mr_burns_wait_for_blow(debris, states);
-		break;
+		return mr_burns_wait_for_blow(debris, states);
 	case 58:
 		mr_burns_beaten(debris, state);
-		break;
+		return states;
 	case 60:
-		states = mr_burns_release_maggie(debris, states);
-		break;
+		return mr_burns_release_maggie(debris, states);
 	case 62:
 		mr_burns_see_maggie(debris);
-		break;
+		return states;
 	case 64:
 		mr_burns_done();
-		break;
+		return states;
 	case -16:
-		states = check_floor_ahead(debris, states);
-		break;
+		return check_floor_ahead(debris, states);
 	case -12:
 		burns_breakout_start(debris);
-		break;
+		return states;
 	case -10:
-		burns_breakout_wait(debris, &y, &states);
-		break;
+		return burns_breakout_wait(debris, states);
 	case -8:
-		states = burns_breakout_break_wall(debris);
-		break;
+		return burns_breakout_break_wall(debris);
 	case -6:
-		states = burns_breakout_end(debris);
-		break;
+		return burns_breakout_end(debris);
 	case -4:
 		burns_tossed_part_launch(debris);
-		break;
+		return states;
 	case -2:
 		burns_tossed_part_fly(debris);
-		break;
+		return states;
 	}
-	*p_y = y;
-	*p_states = states;
+	unreachable();
 }
 
 /* What falls from the beaten robot and turns into Maggie (5280 type E7): runs its step. */
-void rescued_maggie_run(uint16_t maggie, uint8_t state, uint16_t *p_y, uint16_t *p_states)
+uint16_t rescued_maggie_run(uint16_t maggie, uint8_t state)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint16_t states = 0;
 	uint8_t state_2 = 0;
 
@@ -493,111 +448,98 @@ void rescued_maggie_run(uint16_t maggie, uint8_t state, uint16_t *p_y, uint16_t 
 	{
 	case 0:
 		rescued_maggie_wait();
-		break;
+		return states;
 	case 2:
-		states = rescued_maggie_drop(maggie);
-		break;
+		return rescued_maggie_drop(maggie);
 	case 4:
-		states = rescued_maggie_fall(maggie, states);
-		break;
+		return rescued_maggie_fall(maggie, states);
 	case 6:
 	case 8:
 	case 10:
 	case 12:
 		rescued_maggie_bounce(maggie);
-		break;
+		return states;
 	case 14:
 		rescued_maggie_stop(maggie);
-		break;
+		return states;
 	case 16:
 	case 24:
 		rescued_maggie_pose(maggie);
-		break;
+		return states;
 	case 18:
 	case 26:
 		rescued_maggie_pose_2(maggie);
-		break;
+		return states;
 	case 20:
 	case 28:
 		rescued_maggie_crawl(maggie);
-		break;
+		return states;
 	case 22:
 		rescued_maggie_sound_then_stop(maggie);
-		break;
+		return states;
 	case 30:
-		states = rescued_maggie_crawl_to_burns(maggie);
-		break;
+		return rescued_maggie_crawl_to_burns(maggie);
 	case 32:
 		rescued_maggie_finish(maggie, state);
-		break;
+		return states;
 	case 34:
 		burns_bomb_fall(maggie);
-		break;
+		return states;
 	case 36:
-		burns_bomb_fuse(maggie, &y, &states);
-		break;
+		return burns_bomb_fuse(maggie, states);
 	case 38:
-		states = burns_bomb_blast(maggie);
-		break;
+		return burns_bomb_blast(maggie);
 	case 40:
 		burns_part_vanish(maggie);
-		break;
+		return states;
 	case 42:
 		burns_shot_arm(maggie);
-		break;
+		return states;
 	case 44:
 		burns_shot_fly(maggie);
-		break;
+		return states;
 	case 46:
-		states = mr_burns_appear(maggie);
-		break;
+		return mr_burns_appear(maggie);
 	case 48:
-		states = mr_burns_wait_for_blow(maggie, states);
-		break;
+		return mr_burns_wait_for_blow(maggie, states);
 	case 50:
 		mr_burns_beaten(maggie, state);
-		break;
+		return states;
 	case 52:
-		states = mr_burns_release_maggie(maggie, states);
-		break;
+		return mr_burns_release_maggie(maggie, states);
 	case 54:
 		mr_burns_see_maggie(maggie);
-		break;
+		return states;
 	case 56:
 		mr_burns_done();
-		break;
+		return states;
 	case -24:
-		states = check_floor_ahead(maggie, states);
-		break;
+		return check_floor_ahead(maggie, states);
 	case -20:
 		burns_breakout_start(maggie);
-		break;
+		return states;
 	case -18:
-		burns_breakout_wait(maggie, &y, &states);
-		break;
+		return burns_breakout_wait(maggie, states);
 	case -16:
-		states = burns_breakout_break_wall(maggie);
-		break;
+		return burns_breakout_break_wall(maggie);
 	case -14:
-		states = burns_breakout_end(maggie);
-		break;
+		return burns_breakout_end(maggie);
 	case -12:
 		burns_tossed_part_launch(maggie);
-		break;
+		return states;
 	case -10:
 		burns_tossed_part_fly(maggie);
-		break;
+		return states;
 	case -8:
 	case -6:
 	case -4:
 		burns_debris_bounce(maggie);
-		break;
+		return states;
 	case -2:
 		burns_debris_blink(maggie);
-		break;
+		return states;
 	}
-	*p_y = y;
-	*p_states = states;
+	unreachable();
 }
 
 /* A bomb the robot throws (4D40 type 26): turned back by walls, runs its step. */
@@ -605,7 +547,7 @@ uint16_t burns_bomb_run(uint16_t bomb)
 {
 	uint32_t negative = 0;
 	uint8_t cell = 0;
-	uint16_t floor_cell = 0, ignored16 = 0, states = 0;
+	uint16_t floor_cell = 0, states = 0;
 	uint8_t state = 0;
 	uint16_t x_speed = 0, y_speed = 0;
 
@@ -631,8 +573,7 @@ uint16_t burns_bomb_run(uint16_t bomb)
 		burns_bomb_fall(bomb);
 		return states;
 	case 2:
-		burns_bomb_fuse(bomb, &ignored16, &states);
-		return states;
+		return burns_bomb_fuse(bomb, states);
 	case 4:
 		return burns_bomb_blast(bomb);
 	case 6:
@@ -665,8 +606,7 @@ uint16_t burns_bomb_run(uint16_t bomb)
 		burns_breakout_start(bomb);
 		return states;
 	case -52:
-		burns_breakout_wait(bomb, &ignored16, &states);
-		return states;
+		return burns_breakout_wait(bomb, states);
 	case -50:
 		return burns_breakout_break_wall(bomb);
 	case -48:
@@ -730,7 +670,7 @@ uint16_t burns_shot_run(uint16_t shot, uint8_t state)
 {
 	uint32_t negative = 0;
 	uint8_t cell = 0;
-	uint16_t floor_cell = 0, ignored16 = 0, states = 0;
+	uint16_t floor_cell = 0, states = 0;
 	uint8_t state_2 = 0;
 
 	states = burns_shot_states_ADDRESS;
@@ -768,7 +708,7 @@ uint16_t burns_shot_run(uint16_t shot, uint8_t state)
 		burns_breakout_start(shot);
 		break;
 	case -60:
-		burns_breakout_wait(shot, &ignored16, &states);
+		states = burns_breakout_wait(shot, states);
 		break;
 	case -58:
 		states = burns_breakout_break_wall(shot);
@@ -833,7 +773,7 @@ uint16_t burns_shot_run(uint16_t shot, uint8_t state)
 		burns_bomb_fall(shot);
 		break;
 	case -6:
-		burns_bomb_fuse(shot, &ignored16, &states);
+		states = burns_bomb_fuse(shot, states);
 		break;
 	case -4:
 		states = burns_bomb_blast(shot);
@@ -859,7 +799,7 @@ void burns_held_part_run(uint16_t part)
 	uint8_t attributes = 0;
 	uint16_t holder = 0;
 	uint8_t holding_part = 0, attributes_2 = 0, animation_flags = 0;
-	uint16_t robot = 0, t1 = 0, t2 = 0, t3 = 0, x_speed = 0, y_speed = 0;
+	uint16_t robot = 0, holder_x = 0, part_x = 0, holder_y = 0, x_speed = 0, y_speed = 0;
 
 	robot = OBJECT(part)->burns_held_part.robot;
 	holder = robot;
@@ -875,11 +815,11 @@ void burns_held_part_run(uint16_t part)
 	OBJECT(part)->attributes = attributes;
 	if (attributes != 0u)
 		held_part_dx = 0u - held_part_dx;
-	t1 = OBJECT(holder)->x;
-	t2 = t1 + held_part_dx;
-	OBJECT(part)->x = t2;
-	t3 = OBJECT(holder)->y;
-	OBJECT(part)->y = t3;
+	holder_x = OBJECT(holder)->x;
+	part_x = holder_x + held_part_dx;
+	OBJECT(part)->x = part_x;
+	holder_y = OBJECT(holder)->y;
+	OBJECT(part)->y = holder_y;
 	x_speed = OBJECT(holder)->x_speed;
 	OBJECT(part)->x_speed = x_speed;
 	y_speed = OBJECT(holder)->y_speed;
@@ -889,9 +829,8 @@ void burns_held_part_run(uint16_t part)
 }
 
 /* Mr. Burns out of his beaten robot (5280 type E2, kind D3): runs his step. */
-void mr_burns_run(uint16_t burns, uint8_t state, uint16_t *p_y, uint16_t *p_states)
+uint16_t mr_burns_run(uint16_t burns, uint8_t state)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint16_t states = 0;
 	uint8_t state_2 = 0;
 
@@ -900,112 +839,99 @@ void mr_burns_run(uint16_t burns, uint8_t state, uint16_t *p_y, uint16_t *p_stat
 	switch ((int8_t)(uint8_t)((uint32_t)state_2 << 1))
 	{
 	case 0:
-		states = mr_burns_appear(burns);
-		break;
+		return mr_burns_appear(burns);
 	case 2:
-		states = mr_burns_wait_for_blow(burns, states);
-		break;
+		return mr_burns_wait_for_blow(burns, states);
 	case 4:
 		mr_burns_beaten(burns, state);
-		break;
+		return states;
 	case 6:
-		states = mr_burns_release_maggie(burns, states);
-		break;
+		return mr_burns_release_maggie(burns, states);
 	case 8:
 		mr_burns_see_maggie(burns);
-		break;
+		return states;
 	case 10:
 		mr_burns_done();
-		break;
+		return states;
 	case -70:
-		states = check_floor_ahead(burns, states);
-		break;
+		return check_floor_ahead(burns, states);
 	case -66:
 		burns_breakout_start(burns);
-		break;
+		return states;
 	case -64:
-		burns_breakout_wait(burns, &y, &states);
-		break;
+		return burns_breakout_wait(burns, states);
 	case -62:
-		states = burns_breakout_break_wall(burns);
-		break;
+		return burns_breakout_break_wall(burns);
 	case -60:
-		states = burns_breakout_end(burns);
-		break;
+		return burns_breakout_end(burns);
 	case -58:
 		burns_tossed_part_launch(burns);
-		break;
+		return states;
 	case -56:
 		burns_tossed_part_fly(burns);
-		break;
+		return states;
 	case -54:
 	case -52:
 	case -50:
 		burns_debris_bounce(burns);
-		break;
+		return states;
 	case -48:
 		burns_debris_blink(burns);
-		break;
+		return states;
 	case -46:
 		rescued_maggie_wait();
-		break;
+		return states;
 	case -44:
-		states = rescued_maggie_drop(burns);
-		break;
+		return rescued_maggie_drop(burns);
 	case -42:
-		states = rescued_maggie_fall(burns, states);
-		break;
+		return rescued_maggie_fall(burns, states);
 	case -40:
 	case -38:
 	case -36:
 	case -34:
 		rescued_maggie_bounce(burns);
-		break;
+		return states;
 	case -32:
 		rescued_maggie_stop(burns);
-		break;
+		return states;
 	case -30:
 	case -22:
 		rescued_maggie_pose(burns);
-		break;
+		return states;
 	case -28:
 	case -20:
 		rescued_maggie_pose_2(burns);
-		break;
+		return states;
 	case -26:
 	case -18:
 		rescued_maggie_crawl(burns);
-		break;
+		return states;
 	case -24:
 		rescued_maggie_sound_then_stop(burns);
-		break;
+		return states;
 	case -16:
-		states = rescued_maggie_crawl_to_burns(burns);
-		break;
+		return rescued_maggie_crawl_to_burns(burns);
 	case -14:
 		rescued_maggie_finish(burns, state);
-		break;
+		return states;
 	case -12:
 		burns_bomb_fall(burns);
-		break;
+		return states;
 	case -10:
-		burns_bomb_fuse(burns, &y, &states);
-		break;
+		return burns_bomb_fuse(burns, states);
 	case -8:
-		states = burns_bomb_blast(burns);
-		break;
+		return burns_bomb_blast(burns);
 	case -6:
 		burns_part_vanish(burns);
-		break;
+		return states;
 	case -4:
 		burns_shot_arm(burns);
-		break;
+		return states;
 	case -2:
 		burns_shot_fly(burns);
-		break;
+		return states;
 	}
-	*p_y = y;
-	*p_states = states;
+	unreachable();
 }
 
 /* Shows the robot's shape in the wall (kind CC, animation 91). */
@@ -1022,39 +948,41 @@ void burns_breakout_start(uint16_t shape)
 
 /* Flickers between two animations until the story after the first boss is over, then puts in the
    breaking piece (kind 13). */
-void burns_breakout_wait(uint16_t shape, uint16_t *p_y, uint16_t *p_piece)
+uint16_t burns_breakout_wait(uint16_t shape, uint16_t piece)
 {
-	uint16_t y = (uint16_t)*p_y;
-	uint16_t piece = (uint16_t)*p_piece;
 	uint32_t carry = 0;
 	uint8_t frame = 0, list = 0;
 	uint16_t part_code = 0;
-	uint8_t t1 = 0, state = 0;
+	uint8_t state = 0, frame_now = 0;
 
-	if (stage_cue == 0u)
-	{
-		t1 = (uint8_t)frame_count;
-		frame = t1;
-		if (t1 == 0u)
-			OBJECT(shape)->animation = 0x91u;
-		else if (frame == 0x80u)
-			OBJECT(shape)->animation = 0x93u;
-	}
-	else
+	if (stage_cue != 0u)
 	{
 		list = 2u;
 		vector_find_free_slot(list, &piece, &carry);
 		part_code = 0x602u;
-		y = burns_robot_place_part(shape, piece, part_code);
-		mem_write8(piece, 0x80u);
-		mem_write8(piece, 0x80u);
-		mem_write16(piece + 4u, 0x1389u);
+		burns_robot_place_part(shape, piece, part_code);
+		OBJECT(piece)->flags = 0x80u;
+		OBJECT(piece)->flags = 0x80u;
+		OBJECT(piece)->kind = 0x13u;
+		OBJECT(piece)->animation = 0x89u;
 		OBJECT(shape)->burns_breakout.piece = piece;
 		state = OBJECT(shape)->state;
 		OBJECT(shape)->state = state + 1u;
+		return piece;
 	}
-	*p_y = y;
-	*p_piece = piece;
+	frame_now = (uint8_t)frame_count;
+	frame = frame_now;
+	if (frame_now == 0u)
+	{
+		OBJECT(shape)->animation = 0x91u;
+		return piece;
+	}
+	if (frame == 0x80u)
+	{
+		OBJECT(shape)->animation = 0x93u;
+		return piece;
+	}
+	return piece;
 }
 
 /* At the piece's frame knocks a hole in the wall's tiles (16 rows of 32), hides the shape, sound 4F. */
@@ -1064,17 +992,17 @@ uint16_t burns_breakout_break_wall(uint16_t shape)
 	uint8_t fill = 0;
 	uint16_t command = 0, piece = 0;
 	uint16_t stack = 0;
-	uint8_t animation_flags = 0, t4 = 0, t5 = 0, state = 0;
-	uint16_t piece_2 = 0, t1 = 0, t2 = 0, t3 = 0;
+	uint8_t animation_flags = 0, tiles_left = 0, rows_left = 0, state = 0;
+	uint16_t piece_2 = 0, piece_y = 0, raised_y = 0, tile_at = 0;
 
 	piece_2 = OBJECT(shape)->burns_breakout.piece;
 	piece = piece_2;
 	animation_flags = OBJECT(piece)->animation_flags;
 	if ((animation_flags & 2u) == 0u)
 		return piece;
-	t1 = OBJECT(piece)->y;
-	t2 = t1 - 0x10u;
-	OBJECT(piece)->y = t2;
+	piece_y = OBJECT(piece)->y;
+	raised_y = piece_y - 0x10u;
+	OBJECT(piece)->y = raised_y;
 	piece = 0x30ACu;
 	wall_rows_left = 0x10u;
 	do
@@ -1085,16 +1013,16 @@ uint16_t burns_breakout_break_wall(uint16_t shape)
 		do
 		{
 			mem_write8(piece - 0x2000u, 0u);
-			t3 = piece;
-			piece = t3 + 1u;
-			mem_write8(t3, fill);
-			t4 = wall_tiles_left;
-			wall_tiles_left = t4 - 1u;
-		} while (t4 != 1u);
+			tile_at = piece;
+			piece = tile_at + 1u;
+			mem_write8(tile_at, fill);
+			tiles_left = wall_tiles_left;
+			wall_tiles_left = tiles_left - 1u;
+		} while (tiles_left != 1u);
 		piece = stack + 0x40u;
-		t5 = wall_rows_left;
-		wall_rows_left = t5 - 1u;
-	} while (t5 != 1u);
+		rows_left = wall_rows_left;
+		wall_rows_left = rows_left - 1u;
+	} while (rows_left != 1u);
 	OBJECT(shape)->flags = 4u;
 	command = 0x4F00u;
 	carry = vector_queue_sound(command);
@@ -1210,21 +1138,21 @@ void burns_debris_bounce(uint16_t debris)
 uint32_t burns_part_fall(uint16_t part)
 {
 	uint32_t negative = 0, carry = 0;
-	uint8_t a = 0, b = 0;
+	uint8_t z_speed_high = 0, z_speed_low = 0;
 	uint8_t z_speed_2 = 0, z = 0;
-	uint16_t z_speed = 0, t1 = 0, t2 = 0, t3 = 0, t4 = 0, z_2 = 0;
+	uint16_t z_speed = 0, next_z_speed = 0, z_low_and_fraction = 0, z_speed_now = 0, new_z_low_and_fraction = 0, z_2 = 0;
 
 	z_speed = OBJECT(part)->z_speed;
-	t1 = z_speed - 0x60u;
-	a = (uint8_t)(t1 >> 8);
-	b = (uint8_t)t1;
-	OBJECT(part)->z_speed = ((uint32_t)a << 8) | b;
-	t2 = (((uint32_t)(OBJECT(part)->z & 0xFFu) << 8u) | OBJECT(part)->z_fraction);
-	t3 = ((uint32_t)a << 8) | b;
-	t4 = t3 + t2;
-	carry = (uint16_t)(t3 + t2) < t3;
-	OBJECT(part)->z = (OBJECT(part)->z & 0xFF00u) | ((t4 >> 8u) & 0xFFu);
-	OBJECT(part)->z_fraction = (uint8_t)t4;
+	next_z_speed = z_speed - 0x60u;
+	z_speed_high = (uint8_t)(next_z_speed >> 8);
+	z_speed_low = (uint8_t)next_z_speed;
+	OBJECT(part)->z_speed = ((uint32_t)z_speed_high << 8) | z_speed_low;
+	z_low_and_fraction = (((uint32_t)(OBJECT(part)->z & 0xFFu) << 8u) | OBJECT(part)->z_fraction);
+	z_speed_now = ((uint32_t)z_speed_high << 8) | z_speed_low;
+	new_z_low_and_fraction = z_speed_now + z_low_and_fraction;
+	carry = (uint16_t)(z_speed_now + z_low_and_fraction) < z_speed_now;
+	OBJECT(part)->z = (OBJECT(part)->z & 0xFF00u) | ((new_z_low_and_fraction >> 8u) & 0xFFu);
+	OBJECT(part)->z_fraction = (uint8_t)new_z_low_and_fraction;
 	z_speed_2 = (uint8_t)(OBJECT(part)->z_speed >> 8u);
 	z = (uint8_t)(OBJECT(part)->z >> 8u);
 	OBJECT(part)->z = (OBJECT(part)->z & 0xFFu) | ((((uint16_t)(int8_t)z_speed_2 >> 8) + z + carry & 0xFFu) << 8u);
@@ -1251,15 +1179,15 @@ uint16_t rescued_maggie_drop(uint16_t maggie)
 {
 	uint16_t mr_burns = 0;
 	uint8_t state = 0;
-	uint16_t burns = 0, t1 = 0, t2 = 0;
+	uint16_t burns = 0, burns_x = 0, burns_y = 0;
 
 	burns = OBJECT(maggie)->rescued_maggie.burns;
 	mr_burns = burns;
 	OBJECT(maggie)->flags = 0x80u;
-	t1 = OBJECT(mr_burns)->x;
-	OBJECT(maggie)->x = t1 + 0x20u;
-	t2 = OBJECT(mr_burns)->y;
-	OBJECT(maggie)->y = t2;
+	burns_x = OBJECT(mr_burns)->x;
+	OBJECT(maggie)->x = burns_x + 0x20u;
+	burns_y = OBJECT(mr_burns)->y;
+	OBJECT(maggie)->y = burns_y;
 	OBJECT(maggie)->z = 0x100u;
 	OBJECT(maggie)->kind = 0xCCu;
 	OBJECT(maggie)->animation = 0x82u;
@@ -1273,7 +1201,7 @@ uint16_t rescued_maggie_fall(uint16_t maggie, uint16_t mr_burns)
 {
 	uint32_t carry = 0;
 	uint16_t bounce_speed = 0;
-	uint8_t t1 = 0, t2 = 0, state = 0;
+	uint8_t landed_count = 0, bounce_high = 0, state = 0;
 	uint16_t z = 0, burns = 0, z_speed = 0;
 
 	carry = burns_part_fall(maggie);
@@ -1282,13 +1210,13 @@ uint16_t rescued_maggie_fall(uint16_t maggie, uint16_t mr_burns)
 	{
 		burns = OBJECT(maggie)->rescued_maggie.burns;
 		mr_burns = burns;
-		t1 = mem_read8(mr_burns + 0x3Au);
-		mem_write8(mr_burns + 0x3Au, t1 + 1u);
+		landed_count = OBJECT(mr_burns)->mr_burns.maggie_landed;
+		OBJECT(mr_burns)->mr_burns.maggie_landed = landed_count + 1u;
 		z_speed = OBJECT(maggie)->z_speed;
 		bounce_speed = 0u - z_speed;
-		t2 = bounce_speed >> 8;
-		carry = t2 & 1u;
-		bounce_speed = (bounce_speed & 0xFFu) | ((uint32_t)(uint8_t)((int8_t)t2 >> 1) << 8);
+		bounce_high = bounce_speed >> 8;
+		carry = bounce_high & 1u;
+		bounce_speed = (bounce_speed & 0xFFu) | ((uint32_t)(uint8_t)((int8_t)bounce_high >> 1) << 8);
 		OBJECT(maggie)->z_speed = (bounce_speed & ~0xFFu) | (uint8_t)(((uint8_t)bounce_speed >> 1) | (carry << 7));
 		OBJECT(maggie)->x_speed = 0x300;
 		OBJECT(maggie)->y_speed = -0x80;
@@ -1303,7 +1231,7 @@ void rescued_maggie_bounce(uint16_t maggie)
 {
 	uint32_t carry = 0;
 	uint16_t bounce_speed = 0;
-	uint8_t t1 = 0, state = 0;
+	uint8_t bounce_high = 0, state = 0;
 	uint16_t z_speed = 0;
 
 	carry = burns_part_fall(maggie);
@@ -1311,9 +1239,9 @@ void rescued_maggie_bounce(uint16_t maggie)
 	{
 		z_speed = OBJECT(maggie)->z_speed;
 		bounce_speed = 0u - z_speed;
-		t1 = bounce_speed >> 8;
-		carry = t1 & 1u;
-		bounce_speed = (bounce_speed & 0xFFu) | ((uint32_t)(uint8_t)((int8_t)t1 >> 1) << 8);
+		bounce_high = bounce_speed >> 8;
+		carry = bounce_high & 1u;
+		bounce_speed = (bounce_speed & 0xFFu) | ((uint32_t)(uint8_t)((int8_t)bounce_high >> 1) << 8);
 		OBJECT(maggie)->z_speed = (bounce_speed & ~0xFFu) | (uint8_t)(((uint8_t)bounce_speed >> 1) | (carry << 7));
 		state = OBJECT(maggie)->state;
 		OBJECT(maggie)->state = state + 1u;
@@ -1409,15 +1337,15 @@ uint16_t rescued_maggie_crawl_to_burns(uint16_t maggie)
 {
 	uint16_t mr_burns = 0;
 	uint8_t state = 0;
-	uint16_t burns = 0, t1 = 0, t2 = 0, t3 = 0;
+	uint16_t burns = 0, maggie_x = 0, burns_x = 0, difference_x = 0;
 
 	rescued_maggie_sound(0u);
 	burns = OBJECT(maggie)->rescued_maggie.burns;
 	mr_burns = burns;
-	t1 = OBJECT(maggie)->x;
-	t2 = OBJECT(mr_burns)->x;
-	t3 = t1 - t2;
-	if ((int16_t)t3 <= 0x60)
+	maggie_x = OBJECT(maggie)->x;
+	burns_x = OBJECT(mr_burns)->x;
+	difference_x = maggie_x - burns_x;
+	if ((int16_t)difference_x <= 0x60)
 	{
 		OBJECT(maggie)->animation = 0x86u;
 		OBJECT(maggie)->x_speed = 0;
@@ -1448,19 +1376,19 @@ void rescued_maggie_finish(uint16_t maggie, uint16_t d)
 uint16_t rescued_maggie_sound(uint16_t d)
 {
 	uint32_t carry = 0;
-	uint8_t a = 0;
+	uint8_t phase_then_sound = 0;
 	uint16_t d_2 = 0;
-	uint8_t t1 = 0;
+	uint8_t frame_phase = 0;
 
-	t1 = (uint8_t)frame_count & 0xFu;
-	a = t1;
-	if (t1 == 0u)
+	frame_phase = (uint8_t)frame_count & 0xFu;
+	phase_then_sound = frame_phase;
+	if (frame_phase == 0u)
 	{
 		d = 0x4500u;
-		a = 0x45u;
+		phase_then_sound = 0x45u;
 		carry = vector_queue_sound(d);
 	}
-	d_2 = (d & 0xFFu) | ((uint32_t)a << 8);
+	d_2 = (d & 0xFFu) | ((uint32_t)phase_then_sound << 8);
 	return d_2;
 }
 
@@ -1484,10 +1412,8 @@ void burns_bomb_fall(uint16_t bomb)
 
 /* Burns its fuse; touched or out of time it blows up: the screen shakes, sound 4C, a flash, its blast
    (animation 89). */
-void burns_bomb_fuse(uint16_t bomb, uint16_t *p_y, uint16_t *p_palette_job)
+uint16_t burns_bomb_fuse(uint16_t bomb, uint16_t palette_job)
 {
-	uint16_t y = (uint16_t)*p_y;
-	uint16_t palette_job = (uint16_t)*p_palette_job;
 	uint32_t carry = 0;
 	uint16_t command = 0, request = 0;
 	uint8_t state = 0, fuse = 0;
@@ -1500,7 +1426,7 @@ void burns_bomb_fuse(uint16_t bomb, uint16_t *p_y, uint16_t *p_palette_job)
 		carry = vector_queue_sound(command);
 		palette_request_kind = 6u;
 		request = 0xE20u;
-		vector_palette_request(request, &y, &palette_job);
+		palette_job = vector_palette_request(palette_job, request);
 		OBJECT(bomb)->animation = 0x89u;
 		OBJECT(bomb)->x_speed = 0;
 		OBJECT(bomb)->y_speed = 0;
@@ -1519,16 +1445,16 @@ void burns_bomb_fuse(uint16_t bomb, uint16_t *p_y, uint16_t *p_palette_job)
 			carry = vector_queue_sound(command);
 			palette_request_kind = 6u;
 			request = 0xE20u;
-			vector_palette_request(request, &y, &palette_job);
+			palette_job = vector_palette_request(palette_job, request);
 			OBJECT(bomb)->animation = 0x89u;
 			OBJECT(bomb)->x_speed = 0;
 			OBJECT(bomb)->y_speed = 0;
 			state = OBJECT(bomb)->state;
 			OBJECT(bomb)->state = state + 1u;
+			return palette_job;
 		}
 	}
-	*p_y = y;
-	*p_palette_job = palette_job;
+	return palette_job;
 }
 
 /* The blast hits with box 0E at its frames; gone when it ends. */
@@ -1616,10 +1542,10 @@ uint16_t mr_burns_wait_for_blow(uint16_t burns, uint16_t object)
 {
 	uint32_t carry = 0;
 	uint16_t command = 0;
-	uint8_t t1 = 0, wait_frames = 0, state = 0, hit = 0, shadow_player = 0;
+	uint8_t old_blow_player = 0, wait_frames = 0, state = 0, hit = 0, shadow_player = 0;
 	uint16_t hit_by = 0;
 
-	t1 = io_read8(0x18FCu);
+	old_blow_player = io_read8(0x18FCu);
 	io_write8(0x18FCu, 0u);
 	wait_frames = OBJECT(burns)->mr_burns.wait_frames;
 	OBJECT(burns)->mr_burns.wait_frames = wait_frames - 1u;
@@ -1683,7 +1609,7 @@ void mr_burns_beaten(uint16_t burns, uint8_t d)
 /* When his animation ends, Maggie's object starts falling. */
 uint16_t mr_burns_release_maggie(uint16_t burns, uint16_t rescued)
 {
-	uint8_t animation_flags = 0, t1 = 0, state = 0;
+	uint8_t animation_flags = 0, maggie_state = 0, state = 0;
 	uint16_t maggie = 0;
 
 	animation_flags = OBJECT(burns)->animation_flags;
@@ -1691,8 +1617,8 @@ uint16_t mr_burns_release_maggie(uint16_t burns, uint16_t rescued)
 	{
 		maggie = OBJECT(burns)->mr_burns.maggie;
 		rescued = maggie;
-		t1 = mem_read8(rescued + 2u);
-		mem_write8(rescued + 2u, t1 + 1u);
+		maggie_state = OBJECT(rescued)->state;
+		OBJECT(rescued)->state = maggie_state + 1u;
 		state = OBJECT(burns)->state;
 		OBJECT(burns)->state = state + 1u;
 	}
@@ -1705,17 +1631,17 @@ void mr_burns_see_maggie(uint16_t burns)
 	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t maggie_landed = 0, state = 0;
-	uint16_t t1 = 0, t2 = 0;
+	uint16_t burns_x = 0, burns_y = 0;
 
 	maggie_landed = OBJECT(burns)->mr_burns.maggie_landed;
 	if (maggie_landed == 0u)
 		return;
 	command = 0x3F2Cu;
 	carry = vector_queue_sound(command);
-	t1 = OBJECT(burns)->x;
-	io_write16(0x18F4u, t1);
-	t2 = OBJECT(burns)->y;
-	io_write16(0x18F6u, t2);
+	burns_x = OBJECT(burns)->x;
+	io_write16(0x18F4u, burns_x);
+	burns_y = OBJECT(burns)->y;
+	io_write16(0x18F6u, burns_y);
 	io_write16(0x18F8u, camera_x);
 	io_write16(0x18FAu, camera_y);
 	OBJECT(burns)->animation = 0x82u;

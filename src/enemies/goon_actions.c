@@ -3,7 +3,7 @@
  *    Description: the enemy actions bank 14 holds: the goons' strikes, jumps, grabs and throws
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    10-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -13,9 +13,8 @@
 
 /* Action 00: waits facing its target (longer with fewer players), then strikes (animation A4, hit box
    7BEE). */
-void goon_wait_then_strike(uint16_t object, uint8_t step, uint16_t *p_y, uint16_t *p_step_handlers)
+uint16_t goon_wait_then_strike(uint16_t object, uint8_t step)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint8_t step_2 = 0;
 	uint16_t step_handlers = 0;
 
@@ -24,70 +23,67 @@ void goon_wait_then_strike(uint16_t object, uint8_t step, uint16_t *p_y, uint16_
 	switch ((int8_t)(uint8_t)((uint32_t)step_2 << 1))
 	{
 	case 0:
-		step_handlers = goon_wait_for_target_on_floor(object);
-		break;
+		return goon_wait_for_target_on_floor(object);
 	case 2:
 		goon_wait_then_strike_swing(object);
-		break;
+		return step_handlers;
 	case 4:
-		y = goon_strike_hit(object, y);
-		break;
+		goon_strike_hit(object);
+		return step_handlers;
 	case -26:
 	case -12:
 	case 6:
-		y = goon_strike_recover(object);
-		break;
+		goon_strike_recover(object);
+		return step_handlers;
 	case -24:
 	case -10:
 	case 8:
 		goon_action_end(object);
-		break;
+		return step_handlers;
 	case -34:
 	case -18:
 		goon_dash_start(object);
-		break;
+		return step_handlers;
 	case -32:
 		goon_approach_until_close(object);
-		break;
+		return step_handlers;
 	case -30:
-		y = goon_approach_strike_hit(object, y);
-		break;
+		goon_approach_strike_hit(object);
+		return step_handlers;
 	case -28:
 		goon_approach_strike_recover(object);
-		break;
+		return step_handlers;
 	case -22:
 		goon_back_off_start(object);
-		break;
+		return step_handlers;
 	case -20:
 		goon_back_off_walk(object);
-		break;
+		return step_handlers;
 	case -16:
 		goon_dash_until_close(object);
-		break;
+		return step_handlers;
 	case -14:
-		y = goon_dash_strike_hit(object, y);
-		break;
+		goon_dash_strike_hit(object);
+		return step_handlers;
 	case -8:
 		goon_keep_distance_start(object);
-		break;
+		return step_handlers;
 	case -6:
 		goon_keep_distance_check(object);
-		break;
+		return step_handlers;
 	case -4:
 		goon_keep_distance_closing(object);
-		break;
+		return step_handlers;
 	case -2:
 		goon_keep_distance_backing(object);
-		break;
+		return step_handlers;
 	}
-	*p_y = y;
-	*p_step_handlers = step_handlers;
+	unreachable();
 }
 
 /* Action 01: waits facing its target, then strikes the other way (animation B2, hit box 7BEE). */
-void goon_wait_then_strike_2(uint16_t object, uint8_t step, uint16_t *p_y, uint16_t *p_step_handlers)
+uint16_t goon_wait_then_strike_2(uint16_t object, uint8_t step)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint8_t step_2 = 0;
 	uint16_t step_handlers = 0;
 
@@ -96,63 +92,59 @@ void goon_wait_then_strike_2(uint16_t object, uint8_t step, uint16_t *p_y, uint1
 	switch ((int8_t)(uint8_t)((uint32_t)step_2 << 1))
 	{
 	case 0:
-		step_handlers = goon_wait_for_target_on_floor(object);
-		break;
+		return goon_wait_for_target_on_floor(object);
 	case 2:
 		goon_wait_then_strike_2_swing(object);
-		break;
+		return step_handlers;
 	case 4:
-		y = goon_strike_hit(object, y);
-		break;
+		goon_strike_hit(object);
+		return step_handlers;
 	case 6:
 	case 14:
 	case 22:
-		y = goon_strike_recover(object);
-		break;
+		goon_strike_recover(object);
+		return step_handlers;
 	case 8:
 	case 16:
 	case 24:
 		goon_action_end(object);
-		break;
+		return step_handlers;
 	case 10:
 		goon_quick_strike_swing(object);
-		break;
+		return step_handlers;
 	case 12:
-		y = goon_quick_strike_hit(object, y);
-		break;
+		goon_quick_strike_hit(object);
+		return step_handlers;
 	case 18:
 		goon_quick_strike_2_swing(object);
-		break;
+		return step_handlers;
 	case 20:
-		y = goon_quick_strike_2_hit(object, y);
-		break;
+		goon_quick_strike_2_hit(object);
+		return step_handlers;
 	case 26:
 	case 68:
-		step_handlers = goon_jump_or_run(object);
-		break;
+		return goon_jump_or_run(object);
 	case 28:
 		goon_jump_attack_leap(object);
-		break;
+		return step_handlers;
 	case 30:
 	case 72:
-		y = goon_jump_attack_fall(object, y);
-		break;
+		goon_jump_attack_fall(object);
+		return step_handlers;
 	case 32:
 	case 74:
 		goon_jump_attack_land(object);
-		break;
+		return step_handlers;
 	case 34:
 		goon_jump_attack_run_end(object);
-		break;
+		return step_handlers;
 	}
-	*p_y = y;
-	*p_step_handlers = step_handlers;
+	unreachable();
 }
 
 /* Action 02: strikes at once (animation A5, hit box 7BFE). */
-void goon_quick_strike(uint16_t object, uint8_t step, uint16_t *p_y, uint16_t *p_step_handlers)
+uint16_t goon_quick_strike(uint16_t object, uint8_t step)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint8_t step_2 = 0;
 	uint16_t step_handlers = 0;
 
@@ -162,62 +154,58 @@ void goon_quick_strike(uint16_t object, uint8_t step, uint16_t *p_y, uint16_t *p
 	{
 	case 0:
 		goon_quick_strike_swing(object);
-		break;
+		return step_handlers;
 	case 2:
-		y = goon_quick_strike_hit(object, y);
-		break;
+		goon_quick_strike_hit(object);
+		return step_handlers;
 	case -4:
 	case 4:
 	case 12:
-		y = goon_strike_recover(object);
-		break;
+		goon_strike_recover(object);
+		return step_handlers;
 	case -2:
 	case 6:
 	case 14:
 		goon_action_end(object);
-		break;
+		return step_handlers;
 	case 8:
 		goon_quick_strike_2_swing(object);
-		break;
+		return step_handlers;
 	case 10:
-		y = goon_quick_strike_2_hit(object, y);
-		break;
+		goon_quick_strike_2_hit(object);
+		return step_handlers;
 	case 16:
 	case 58:
-		step_handlers = goon_jump_or_run(object);
-		break;
+		return goon_jump_or_run(object);
 	case 18:
 		goon_jump_attack_leap(object);
-		break;
+		return step_handlers;
 	case 20:
 	case 62:
-		y = goon_jump_attack_fall(object, y);
-		break;
+		goon_jump_attack_fall(object);
+		return step_handlers;
 	case 22:
 	case 64:
 		goon_jump_attack_land(object);
-		break;
+		return step_handlers;
 	case 24:
 		goon_jump_attack_run_end(object);
-		break;
+		return step_handlers;
 	case -10:
-		step_handlers = goon_wait_for_target_on_floor(object);
-		break;
+		return goon_wait_for_target_on_floor(object);
 	case -8:
 		goon_wait_then_strike_2_swing(object);
-		break;
+		return step_handlers;
 	case -6:
-		y = goon_strike_hit(object, y);
-		break;
+		goon_strike_hit(object);
+		return step_handlers;
 	}
-	*p_y = y;
-	*p_step_handlers = step_handlers;
+	unreachable();
 }
 
 /* Action 03: strikes at once the other way (animation A3, hit box 7C06). */
-void goon_quick_strike_2(uint16_t object, uint8_t step, uint16_t *p_y, uint16_t *p_step_handlers)
+uint16_t goon_quick_strike_2(uint16_t object, uint8_t step)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint8_t step_2 = 0;
 	uint16_t step_handlers = 0;
 
@@ -227,63 +215,59 @@ void goon_quick_strike_2(uint16_t object, uint8_t step, uint16_t *p_y, uint16_t 
 	{
 	case 0:
 		goon_quick_strike_2_swing(object);
-		break;
+		return step_handlers;
 	case 2:
-		y = goon_quick_strike_2_hit(object, y);
-		break;
+		goon_quick_strike_2_hit(object);
+		return step_handlers;
 	case -12:
 	case -4:
 	case 4:
-		y = goon_strike_recover(object);
-		break;
+		goon_strike_recover(object);
+		return step_handlers;
 	case -10:
 	case -2:
 	case 6:
 		goon_action_end(object);
-		break;
+		return step_handlers;
 	case 8:
 	case 50:
-		step_handlers = goon_jump_or_run(object);
-		break;
+		return goon_jump_or_run(object);
 	case 10:
 		goon_jump_attack_leap(object);
-		break;
+		return step_handlers;
 	case 12:
 	case 54:
-		y = goon_jump_attack_fall(object, y);
-		break;
+		goon_jump_attack_fall(object);
+		return step_handlers;
 	case 14:
 	case 56:
 		goon_jump_attack_land(object);
-		break;
+		return step_handlers;
 	case 16:
 		goon_jump_attack_run_end(object);
-		break;
+		return step_handlers;
 	case -18:
-		step_handlers = goon_wait_for_target_on_floor(object);
-		break;
+		return goon_wait_for_target_on_floor(object);
 	case -16:
 		goon_wait_then_strike_2_swing(object);
-		break;
+		return step_handlers;
 	case -14:
-		y = goon_strike_hit(object, y);
-		break;
+		goon_strike_hit(object);
+		return step_handlers;
 	case -8:
 		goon_quick_strike_swing(object);
-		break;
+		return step_handlers;
 	case -6:
-		y = goon_quick_strike_hit(object, y);
-		break;
+		goon_quick_strike_hit(object);
+		return step_handlers;
 	}
-	*p_y = y;
-	*p_step_handlers = step_handlers;
+	unreachable();
 }
 
 /* Action 04: by a chance the game's rank gives, jumps at its target and comes down striking; else runs a
    little. */
-void goon_jump_attack(uint16_t object, uint8_t step, uint16_t *p_y, uint16_t *p_step_handlers)
+uint16_t goon_jump_attack(uint16_t object, uint8_t step)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint8_t step_2 = 0;
 	uint16_t step_handlers = 0;
 
@@ -293,63 +277,59 @@ void goon_jump_attack(uint16_t object, uint8_t step, uint16_t *p_y, uint16_t *p_
 	{
 	case 0:
 	case 42:
-		step_handlers = goon_jump_or_run(object);
-		break;
+		return goon_jump_or_run(object);
 	case 2:
 		goon_jump_attack_leap(object);
-		break;
+		return step_handlers;
 	case 4:
 	case 46:
-		y = goon_jump_attack_fall(object, y);
-		break;
+		goon_jump_attack_fall(object);
+		return step_handlers;
 	case 6:
 	case 48:
 		goon_jump_attack_land(object);
-		break;
+		return step_handlers;
 	case 8:
 		goon_jump_attack_run_end(object);
-		break;
+		return step_handlers;
 	case -26:
-		step_handlers = goon_wait_for_target_on_floor(object);
-		break;
+		return goon_wait_for_target_on_floor(object);
 	case -24:
 		goon_wait_then_strike_2_swing(object);
-		break;
+		return step_handlers;
 	case -22:
-		y = goon_strike_hit(object, y);
-		break;
+		goon_strike_hit(object);
+		return step_handlers;
 	case -20:
 	case -12:
 	case -4:
-		y = goon_strike_recover(object);
-		break;
+		goon_strike_recover(object);
+		return step_handlers;
 	case -18:
 	case -10:
 	case -2:
 		goon_action_end(object);
-		break;
+		return step_handlers;
 	case -16:
 		goon_quick_strike_swing(object);
-		break;
+		return step_handlers;
 	case -14:
-		y = goon_quick_strike_hit(object, y);
-		break;
+		goon_quick_strike_hit(object);
+		return step_handlers;
 	case -8:
 		goon_quick_strike_2_swing(object);
-		break;
+		return step_handlers;
 	case -6:
-		y = goon_quick_strike_2_hit(object, y);
-		break;
+		goon_quick_strike_2_hit(object);
+		return step_handlers;
 	}
-	*p_y = y;
-	*p_step_handlers = step_handlers;
+	unreachable();
 }
 
 /* Action 05: by the rank's chance jumps straight up and comes down striking; else goes for a grab (no
    behaviour picks it). */
-void goon_jump_up_or_grab(uint16_t object, uint8_t step, uint16_t *p_y, uint16_t *p_step_handlers, uint32_t *p_left_caller)
+void goon_jump_up_or_grab(uint16_t object, uint8_t step, uint16_t *p_step_handlers, uint32_t *p_left_caller)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint8_t step_2 = 0;
 	uint16_t step_handlers = 0;
 
@@ -366,7 +346,7 @@ void goon_jump_up_or_grab(uint16_t object, uint8_t step, uint16_t *p_y, uint16_t
 		break;
 	case -38:
 	case 4:
-		y = goon_jump_attack_fall(object, y);
+		goon_jump_attack_fall(object);
 		break;
 	case -36:
 	case 6:
@@ -376,23 +356,21 @@ void goon_jump_up_or_grab(uint16_t object, uint8_t step, uint16_t *p_y, uint16_t
 		step_handlers = goon_grab_approach(object, step_handlers);
 		break;
 	case 10:
-		goon_grab_try(object, &y, &step_handlers);
+		step_handlers = goon_grab_try(object);
 		break;
 	case 12:
-		goon_grab_hold(object, &y, &step_handlers, p_left_caller);
+		goon_grab_hold(object, &step_handlers, p_left_caller);
 		break;
 	case 14:
-		goon_grab_squeeze(object, &y, &step_handlers, p_left_caller);
+		goon_grab_squeeze(object, &step_handlers, p_left_caller);
 		break;
 	}
-	*p_y = y;
 	*p_step_handlers = step_handlers;
 }
 
 /* Action 1B: throws a bomb (animation 91). */
-void bomb_goon_throw(uint16_t object, uint8_t step, uint16_t *p_y, uint16_t *p_step_handlers)
+uint16_t bomb_goon_throw(uint16_t object, uint8_t step)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint8_t step_2 = 0;
 	uint16_t step_handlers = 0;
 
@@ -402,27 +380,24 @@ void bomb_goon_throw(uint16_t object, uint8_t step, uint16_t *p_y, uint16_t *p_s
 	{
 	case 0:
 		bomb_goon_throw_start(object);
-		break;
+		return step_handlers;
 	case 2:
-		bomb_goon_throw_release(object, &y, &step_handlers);
-		break;
+		return bomb_goon_throw_release(object, step_handlers);
 	case 4:
 	case 20:
 	case 50:
 	case 58:
 	case 74:
 		armed_goon_action_end(object);
-		break;
+		return step_handlers;
 	}
-	*p_y = y;
-	*p_step_handlers = step_handlers;
+	unreachable();
 }
 
 /* Action 33: waits facing its target (shovel_goon_close_strike_waits_by_players), then strikes with the
    shovel (animation 92, hit box 7E8F). */
-void shovel_goon_close_strike(uint16_t object, uint8_t step, uint16_t *p_y, uint16_t *p_step_handlers)
+uint16_t shovel_goon_close_strike(uint16_t object, uint8_t step)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint8_t step_2 = 0;
 	uint16_t step_handlers = 0;
 
@@ -432,37 +407,34 @@ void shovel_goon_close_strike(uint16_t object, uint8_t step, uint16_t *p_y, uint
 	{
 	case 0:
 	case 30:
-		step_handlers = shovel_goon_wait_for_target(object);
-		break;
+		return shovel_goon_wait_for_target(object);
 	case 2:
 		shovel_goon_close_swing(object);
-		break;
+		return step_handlers;
 	case 4:
-		y = shovel_goon_close_hit(object, y);
-		break;
+		shovel_goon_close_hit(object);
+		return step_handlers;
 	case 6:
 	case 36:
 	case 44:
 	case 60:
-		y = armed_goon_strike_recover(object);
-		break;
+		armed_goon_strike_recover(object);
+		return step_handlers;
 	case -8:
 	case 8:
 	case 38:
 	case 46:
 	case 62:
 		armed_goon_action_end(object);
-		break;
+		return step_handlers;
 	}
-	*p_y = y;
-	*p_step_handlers = step_handlers;
+	unreachable();
 }
 
 /* Action 0F: walks up to its target and grabs it, holding and squeezing the player until it breaks free
    or is beaten. */
-void goon_grab(uint16_t object, uint8_t step, uint16_t *p_y, uint16_t *p_step_handlers, uint32_t *p_left_caller)
+void goon_grab(uint16_t object, uint8_t step, uint16_t *p_step_handlers, uint32_t *p_left_caller)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint8_t step_2 = 0;
 	uint16_t step_handlers = 0;
 
@@ -474,13 +446,13 @@ void goon_grab(uint16_t object, uint8_t step, uint16_t *p_y, uint16_t *p_step_ha
 		step_handlers = goon_grab_approach(object, step_handlers);
 		break;
 	case 2:
-		goon_grab_try(object, &y, &step_handlers);
+		step_handlers = goon_grab_try(object);
 		break;
 	case 4:
-		goon_grab_hold(object, &y, &step_handlers, p_left_caller);
+		goon_grab_hold(object, &step_handlers, p_left_caller);
 		break;
 	case 6:
-		goon_grab_squeeze(object, &y, &step_handlers, p_left_caller);
+		goon_grab_squeeze(object, &step_handlers, p_left_caller);
 		break;
 	case -50:
 	case -8:
@@ -488,7 +460,7 @@ void goon_grab(uint16_t object, uint8_t step, uint16_t *p_y, uint16_t *p_step_ha
 		break;
 	case -46:
 	case -4:
-		y = goon_jump_attack_fall(object, y);
+		goon_jump_attack_fall(object);
 		break;
 	case -44:
 	case -2:
@@ -498,15 +470,13 @@ void goon_grab(uint16_t object, uint8_t step, uint16_t *p_y, uint16_t *p_step_ha
 		goon_jump_up_leap(object);
 		break;
 	}
-	*p_y = y;
 	*p_step_handlers = step_handlers;
 }
 
 /* Action 18: with fewer than 3 players present keeps 30 to 50 away from its target for 40 frames, facing
    the way it moves. */
-void goon_keep_distance(uint16_t object, uint8_t step, uint16_t *p_y, uint16_t *p_step_handlers)
+uint16_t goon_keep_distance(uint16_t object, uint8_t step)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint8_t step_2 = 0;
 	uint16_t step_handlers = 0;
 
@@ -533,12 +503,12 @@ void goon_keep_distance(uint16_t object, uint8_t step, uint16_t *p_y, uint16_t *
 		goon_wait_then_strike_swing(object);
 		break;
 	case 12:
-		y = goon_strike_hit(object, y);
+		goon_strike_hit(object);
 		break;
 	case -18:
 	case -4:
 	case 14:
-		y = goon_strike_recover(object);
+		goon_strike_recover(object);
 		break;
 	case -16:
 	case -2:
@@ -553,7 +523,7 @@ void goon_keep_distance(uint16_t object, uint8_t step, uint16_t *p_y, uint16_t *
 		goon_approach_until_close(object);
 		break;
 	case -22:
-		y = goon_approach_strike_hit(object, y);
+		goon_approach_strike_hit(object);
 		break;
 	case -20:
 		goon_approach_strike_recover(object);
@@ -568,18 +538,16 @@ void goon_keep_distance(uint16_t object, uint8_t step, uint16_t *p_y, uint16_t *
 		goon_dash_until_close(object);
 		break;
 	case -6:
-		y = goon_dash_strike_hit(object, y);
+		goon_dash_strike_hit(object);
 		break;
 	}
 	vector_face_direction(object);
-	*p_y = y;
-	*p_step_handlers = step_handlers;
+	return step_handlers;
 }
 
 /* Action 06: throws its hat (animation AB), waits while it flies and catches it (animation AC). */
-void hat_goon_throw_hat(uint16_t object, uint8_t step, uint16_t *p_y, uint16_t *p_step_handlers)
+uint16_t hat_goon_throw_hat(uint16_t object, uint8_t step)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint8_t step_2 = 0;
 	uint16_t step_handlers = 0;
 
@@ -589,88 +557,83 @@ void hat_goon_throw_hat(uint16_t object, uint8_t step, uint16_t *p_y, uint16_t *
 	{
 	case 0:
 		hat_goon_throw_start(object);
-		break;
+		return step_handlers;
 	case 2:
-		hat_goon_throw_release(object, &y, &step_handlers);
-		break;
+		return hat_goon_throw_release(object, step_handlers);
 	case 4:
-		step_handlers = hat_goon_throw_wait(object);
-		break;
+		return hat_goon_throw_wait(object);
 	case 6:
 		hat_goon_throw_end(object);
-		break;
+		return step_handlers;
 	case -84:
 	case -68:
 	case -38:
 	case -30:
 	case -14:
 		armed_goon_action_end(object);
-		break;
+		return step_handlers;
 	case -76:
 	case -46:
-		step_handlers = shovel_goon_wait_for_target(object);
-		break;
+		return shovel_goon_wait_for_target(object);
 	case -70:
 	case -40:
 	case -32:
 	case -16:
-		y = armed_goon_strike_recover(object);
-		break;
+		armed_goon_strike_recover(object);
+		return step_handlers;
 	case -44:
 		shovel_goon_swing(object);
-		break;
+		return step_handlers;
 	case -42:
-		y = shovel_goon_hit(object, y);
-		break;
+		shovel_goon_hit(object);
+		return step_handlers;
 	case -36:
 		umbrella_goon_quick_swing(object);
-		break;
+		return step_handlers;
 	case -34:
-		y = umbrella_goon_quick_hit(object, y);
-		break;
+		umbrella_goon_quick_hit(object);
+		return step_handlers;
 	case -28:
 		umbrella_goon_long_swing(object);
-		break;
+		return step_handlers;
 	case -26:
-		y = umbrella_goon_long_hit(object, y);
-		break;
+		umbrella_goon_long_hit(object);
+		return step_handlers;
 	case -24:
-		y = umbrella_goon_long_recover(object, y);
-		break;
+		umbrella_goon_long_recover(object);
+		return step_handlers;
 	case -22:
 		umbrella_goon_long_end(object);
-		break;
+		return step_handlers;
 	case -20:
 		umbrella_goon_swing(object);
-		break;
+		return step_handlers;
 	case -18:
-		y = umbrella_goon_hit(object, y);
-		break;
+		umbrella_goon_hit(object);
+		return step_handlers;
 	case -12:
 		umbrella_goon_charge_start(object);
-		break;
+		return step_handlers;
 	case -10:
-		y = umbrella_goon_charge_hit(object, y);
-		break;
+		umbrella_goon_charge_hit(object);
+		return step_handlers;
 	case -8:
 	case -2:
-		y = goon_run_through_end(object, y);
-		break;
+		goon_run_through_end(object);
+		return step_handlers;
 	case -6:
 		goon_strike_and_run_swing(object);
-		break;
+		return step_handlers;
 	case -4:
-		y = goon_strike_and_run_hit(object, y);
-		break;
+		goon_strike_and_run_hit(object);
+		return step_handlers;
 	}
-	*p_y = y;
-	*p_step_handlers = step_handlers;
+	unreachable();
 }
 
 /* Action 11: strikes with the umbrella (animation A0, hit box 7EAF). */
-void umbrella_goon_strike(uint16_t object, uint8_t step, uint16_t *p_y, uint16_t *p_step_handlers)
+uint16_t umbrella_goon_strike(uint16_t object, uint8_t step)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint8_t step_2 = 0;
 	uint16_t step_handlers = 0;
 
@@ -680,88 +643,83 @@ void umbrella_goon_strike(uint16_t object, uint8_t step, uint16_t *p_y, uint16_t
 	{
 	case 0:
 		umbrella_goon_swing(object);
-		break;
+		return step_handlers;
 	case 2:
-		y = umbrella_goon_hit(object, y);
-		break;
+		umbrella_goon_hit(object);
+		return step_handlers;
 	case -50:
 	case -20:
 	case -12:
 	case 4:
-		y = armed_goon_strike_recover(object);
-		break;
+		armed_goon_strike_recover(object);
+		return step_handlers;
 	case -64:
 	case -48:
 	case -18:
 	case -10:
 	case 6:
 		armed_goon_action_end(object);
-		break;
+		return step_handlers;
 	case 8:
 		umbrella_goon_charge_start(object);
-		break;
+		return step_handlers;
 	case 10:
-		y = umbrella_goon_charge_hit(object, y);
-		break;
+		umbrella_goon_charge_hit(object);
+		return step_handlers;
 	case 12:
 	case 18:
-		y = goon_run_through_end(object, y);
-		break;
+		goon_run_through_end(object);
+		return step_handlers;
 	case 14:
 		goon_strike_and_run_swing(object);
-		break;
+		return step_handlers;
 	case 16:
-		y = goon_strike_and_run_hit(object, y);
-		break;
+		goon_strike_and_run_hit(object);
+		return step_handlers;
 	case 20:
 		hat_goon_throw_start(object);
-		break;
+		return step_handlers;
 	case 22:
-		hat_goon_throw_release(object, &y, &step_handlers);
-		break;
+		return hat_goon_throw_release(object, step_handlers);
 	case 24:
-		step_handlers = hat_goon_throw_wait(object);
-		break;
+		return hat_goon_throw_wait(object);
 	case 26:
 		hat_goon_throw_end(object);
-		break;
+		return step_handlers;
 	case -56:
 	case -26:
-		step_handlers = shovel_goon_wait_for_target(object);
-		break;
+		return shovel_goon_wait_for_target(object);
 	case -24:
 		shovel_goon_swing(object);
-		break;
+		return step_handlers;
 	case -22:
-		y = shovel_goon_hit(object, y);
-		break;
+		shovel_goon_hit(object);
+		return step_handlers;
 	case -16:
 		umbrella_goon_quick_swing(object);
-		break;
+		return step_handlers;
 	case -14:
-		y = umbrella_goon_quick_hit(object, y);
-		break;
+		umbrella_goon_quick_hit(object);
+		return step_handlers;
 	case -8:
 		umbrella_goon_long_swing(object);
-		break;
+		return step_handlers;
 	case -6:
-		y = umbrella_goon_long_hit(object, y);
-		break;
+		umbrella_goon_long_hit(object);
+		return step_handlers;
 	case -4:
-		y = umbrella_goon_long_recover(object, y);
-		break;
+		umbrella_goon_long_recover(object);
+		return step_handlers;
 	case -2:
 		umbrella_goon_long_end(object);
-		break;
+		return step_handlers;
 	}
-	*p_y = y;
-	*p_step_handlers = step_handlers;
+	unreachable();
 }
 
 /* Action 12: runs at its target with the umbrella out (hit box 7EB7) for a time by the distance. */
-void umbrella_goon_charge(uint16_t object, uint8_t step, uint16_t *p_y, uint16_t *p_step_handlers)
+uint16_t umbrella_goon_charge(uint16_t object, uint8_t step)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint8_t step_2 = 0;
 	uint16_t step_handlers = 0;
 
@@ -771,89 +729,84 @@ void umbrella_goon_charge(uint16_t object, uint8_t step, uint16_t *p_y, uint16_t
 	{
 	case 0:
 		umbrella_goon_charge_start(object);
-		break;
+		return step_handlers;
 	case 2:
-		y = umbrella_goon_charge_hit(object, y);
-		break;
+		umbrella_goon_charge_hit(object);
+		return step_handlers;
 	case 4:
 	case 10:
-		y = goon_run_through_end(object, y);
-		break;
+		goon_run_through_end(object);
+		return step_handlers;
 	case 6:
 		goon_strike_and_run_swing(object);
-		break;
+		return step_handlers;
 	case 8:
-		y = goon_strike_and_run_hit(object, y);
-		break;
+		goon_strike_and_run_hit(object);
+		return step_handlers;
 	case 12:
 		hat_goon_throw_start(object);
-		break;
+		return step_handlers;
 	case 14:
-		hat_goon_throw_release(object, &y, &step_handlers);
-		break;
+		return hat_goon_throw_release(object, step_handlers);
 	case 16:
-		step_handlers = hat_goon_throw_wait(object);
-		break;
+		return hat_goon_throw_wait(object);
 	case 18:
 		hat_goon_throw_end(object);
-		break;
+		return step_handlers;
 	case -72:
 	case -56:
 	case -26:
 	case -18:
 	case -2:
 		armed_goon_action_end(object);
-		break;
+		return step_handlers;
 	case -64:
 	case -34:
-		step_handlers = shovel_goon_wait_for_target(object);
-		break;
+		return shovel_goon_wait_for_target(object);
 	case -58:
 	case -28:
 	case -20:
 	case -4:
-		y = armed_goon_strike_recover(object);
-		break;
+		armed_goon_strike_recover(object);
+		return step_handlers;
 	case -32:
 		shovel_goon_swing(object);
-		break;
+		return step_handlers;
 	case -30:
-		y = shovel_goon_hit(object, y);
-		break;
+		shovel_goon_hit(object);
+		return step_handlers;
 	case -24:
 		umbrella_goon_quick_swing(object);
-		break;
+		return step_handlers;
 	case -22:
-		y = umbrella_goon_quick_hit(object, y);
-		break;
+		umbrella_goon_quick_hit(object);
+		return step_handlers;
 	case -16:
 		umbrella_goon_long_swing(object);
-		break;
+		return step_handlers;
 	case -14:
-		y = umbrella_goon_long_hit(object, y);
-		break;
+		umbrella_goon_long_hit(object);
+		return step_handlers;
 	case -12:
-		y = umbrella_goon_long_recover(object, y);
-		break;
+		umbrella_goon_long_recover(object);
+		return step_handlers;
 	case -10:
 		umbrella_goon_long_end(object);
-		break;
+		return step_handlers;
 	case -8:
 		umbrella_goon_swing(object);
-		break;
+		return step_handlers;
 	case -6:
-		y = umbrella_goon_hit(object, y);
-		break;
+		umbrella_goon_hit(object);
+		return step_handlers;
 	}
-	*p_y = y;
-	*p_step_handlers = step_handlers;
+	unreachable();
 }
 
 /* Action 13: a long strike with the umbrella (animation 92, hit box 7EC7, held 10 frames), then
    animation A5. */
-void umbrella_goon_long_strike(uint16_t object, uint8_t step, uint16_t *p_y, uint16_t *p_step_handlers)
+uint16_t umbrella_goon_long_strike(uint16_t object, uint8_t step)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint8_t step_2 = 0;
 	uint16_t step_handlers = 0;
 
@@ -863,88 +816,83 @@ void umbrella_goon_long_strike(uint16_t object, uint8_t step, uint16_t *p_y, uin
 	{
 	case 0:
 		umbrella_goon_long_swing(object);
-		break;
+		return step_handlers;
 	case 2:
-		y = umbrella_goon_long_hit(object, y);
-		break;
+		umbrella_goon_long_hit(object);
+		return step_handlers;
 	case 4:
-		y = umbrella_goon_long_recover(object, y);
-		break;
+		umbrella_goon_long_recover(object);
+		return step_handlers;
 	case 6:
 		umbrella_goon_long_end(object);
-		break;
+		return step_handlers;
 	case 8:
 		umbrella_goon_swing(object);
-		break;
+		return step_handlers;
 	case 10:
-		y = umbrella_goon_hit(object, y);
-		break;
+		umbrella_goon_hit(object);
+		return step_handlers;
 	case -42:
 	case -12:
 	case -4:
 	case 12:
-		y = armed_goon_strike_recover(object);
-		break;
+		armed_goon_strike_recover(object);
+		return step_handlers;
 	case -56:
 	case -40:
 	case -10:
 	case -2:
 	case 14:
 		armed_goon_action_end(object);
-		break;
+		return step_handlers;
 	case 16:
 		umbrella_goon_charge_start(object);
-		break;
+		return step_handlers;
 	case 18:
-		y = umbrella_goon_charge_hit(object, y);
-		break;
+		umbrella_goon_charge_hit(object);
+		return step_handlers;
 	case 20:
 	case 26:
-		y = goon_run_through_end(object, y);
-		break;
+		goon_run_through_end(object);
+		return step_handlers;
 	case 22:
 		goon_strike_and_run_swing(object);
-		break;
+		return step_handlers;
 	case 24:
-		y = goon_strike_and_run_hit(object, y);
-		break;
+		goon_strike_and_run_hit(object);
+		return step_handlers;
 	case 28:
 		hat_goon_throw_start(object);
-		break;
+		return step_handlers;
 	case 30:
-		hat_goon_throw_release(object, &y, &step_handlers);
-		break;
+		return hat_goon_throw_release(object, step_handlers);
 	case 32:
-		step_handlers = hat_goon_throw_wait(object);
-		break;
+		return hat_goon_throw_wait(object);
 	case 34:
 		hat_goon_throw_end(object);
-		break;
+		return step_handlers;
 	case -48:
 	case -18:
-		step_handlers = shovel_goon_wait_for_target(object);
-		break;
+		return shovel_goon_wait_for_target(object);
 	case -16:
 		shovel_goon_swing(object);
-		break;
+		return step_handlers;
 	case -14:
-		y = shovel_goon_hit(object, y);
-		break;
+		shovel_goon_hit(object);
+		return step_handlers;
 	case -8:
 		umbrella_goon_quick_swing(object);
-		break;
+		return step_handlers;
 	case -6:
-		y = umbrella_goon_quick_hit(object, y);
-		break;
+		umbrella_goon_quick_hit(object);
+		return step_handlers;
 	}
-	*p_y = y;
-	*p_step_handlers = step_handlers;
+	unreachable();
 }
 
 /* Action 14: waits facing its target, then strikes with the shovel (animation A0, hit box 7E97). */
-void shovel_goon_strike(uint16_t object, uint8_t step, uint16_t *p_y, uint16_t *p_step_handlers)
+uint16_t shovel_goon_strike(uint16_t object, uint8_t step)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint8_t step_2 = 0;
 	uint16_t step_handlers = 0;
 
@@ -954,89 +902,84 @@ void shovel_goon_strike(uint16_t object, uint8_t step, uint16_t *p_y, uint16_t *
 	{
 	case -30:
 	case 0:
-		step_handlers = shovel_goon_wait_for_target(object);
-		break;
+		return shovel_goon_wait_for_target(object);
 	case 2:
 		shovel_goon_swing(object);
-		break;
+		return step_handlers;
 	case 4:
-		y = shovel_goon_hit(object, y);
-		break;
+		shovel_goon_hit(object);
+		return step_handlers;
 	case -24:
 	case 6:
 	case 14:
 	case 30:
-		y = armed_goon_strike_recover(object);
-		break;
+		armed_goon_strike_recover(object);
+		return step_handlers;
 	case -38:
 	case -22:
 	case 8:
 	case 16:
 	case 32:
 		armed_goon_action_end(object);
-		break;
+		return step_handlers;
 	case 10:
 		umbrella_goon_quick_swing(object);
-		break;
+		return step_handlers;
 	case 12:
-		y = umbrella_goon_quick_hit(object, y);
-		break;
+		umbrella_goon_quick_hit(object);
+		return step_handlers;
 	case 18:
 		umbrella_goon_long_swing(object);
-		break;
+		return step_handlers;
 	case 20:
-		y = umbrella_goon_long_hit(object, y);
-		break;
+		umbrella_goon_long_hit(object);
+		return step_handlers;
 	case 22:
-		y = umbrella_goon_long_recover(object, y);
-		break;
+		umbrella_goon_long_recover(object);
+		return step_handlers;
 	case 24:
 		umbrella_goon_long_end(object);
-		break;
+		return step_handlers;
 	case 26:
 		umbrella_goon_swing(object);
-		break;
+		return step_handlers;
 	case 28:
-		y = umbrella_goon_hit(object, y);
-		break;
+		umbrella_goon_hit(object);
+		return step_handlers;
 	case 34:
 		umbrella_goon_charge_start(object);
-		break;
+		return step_handlers;
 	case 36:
-		y = umbrella_goon_charge_hit(object, y);
-		break;
+		umbrella_goon_charge_hit(object);
+		return step_handlers;
 	case 38:
 	case 44:
-		y = goon_run_through_end(object, y);
-		break;
+		goon_run_through_end(object);
+		return step_handlers;
 	case 40:
 		goon_strike_and_run_swing(object);
-		break;
+		return step_handlers;
 	case 42:
-		y = goon_strike_and_run_hit(object, y);
-		break;
+		goon_strike_and_run_hit(object);
+		return step_handlers;
 	case 46:
 		hat_goon_throw_start(object);
-		break;
+		return step_handlers;
 	case 48:
-		hat_goon_throw_release(object, &y, &step_handlers);
-		break;
+		return hat_goon_throw_release(object, step_handlers);
 	case 50:
-		step_handlers = hat_goon_throw_wait(object);
-		break;
+		return hat_goon_throw_wait(object);
 	case 52:
 		hat_goon_throw_end(object);
-		break;
+		return step_handlers;
 	}
-	*p_y = y;
-	*p_step_handlers = step_handlers;
+	unreachable();
 }
 
 /* Action 15: waits facing its target (shovel_goon_far_strike_waits_by_players), then the long shovel
    strike (animation 91, hit box 7E9F). */
-void shovel_goon_far_strike(uint16_t object, uint8_t step, uint16_t *p_y, uint16_t *p_step_handlers)
+uint16_t shovel_goon_far_strike(uint16_t object, uint8_t step)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint8_t step_2 = 0;
 	uint16_t step_handlers = 0;
 
@@ -1045,29 +988,26 @@ void shovel_goon_far_strike(uint16_t object, uint8_t step, uint16_t *p_y, uint16
 	switch ((int8_t)(uint8_t)((uint32_t)step_2 << 1))
 	{
 	case 0:
-		step_handlers = shovel_goon_far_wait(object);
-		break;
+		return shovel_goon_far_wait(object);
 	case 2:
 		shovel_goon_far_swing(object);
-		break;
+		return step_handlers;
 	case 4:
-		y = shovel_goon_far_hit(object, y);
-		break;
+		shovel_goon_far_hit(object);
+		return step_handlers;
 	case 6:
-		y = armed_goon_strike_recover(object);
-		break;
+		armed_goon_strike_recover(object);
+		return step_handlers;
 	case 8:
 		armed_goon_action_end(object);
-		break;
+		return step_handlers;
 	}
-	*p_y = y;
-	*p_step_handlers = step_handlers;
+	unreachable();
 }
 
 /* Action 3D: walks away from its target for 20 frames. */
-void goon_back_off(uint16_t object, uint8_t step, uint16_t *p_y, uint16_t *p_step_handlers)
+uint16_t goon_back_off(uint16_t object, uint8_t step)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint8_t step_2 = 0;
 	uint16_t step_handlers = 0;
 
@@ -1077,69 +1017,66 @@ void goon_back_off(uint16_t object, uint8_t step, uint16_t *p_y, uint16_t *p_ste
 	{
 	case 0:
 		goon_back_off_start(object);
-		break;
+		return step_handlers;
 	case 2:
 		goon_back_off_walk(object);
-		break;
+		return step_handlers;
 	case -12:
 	case 4:
 		goon_dash_start(object);
-		break;
+		return step_handlers;
 	case 6:
 		goon_dash_until_close(object);
-		break;
+		return step_handlers;
 	case 8:
-		y = goon_dash_strike_hit(object, y);
-		break;
+		goon_dash_strike_hit(object);
+		return step_handlers;
 	case -4:
 	case 10:
 	case 28:
-		y = goon_strike_recover(object);
-		break;
+		goon_strike_recover(object);
+		return step_handlers;
 	case -2:
 	case 12:
 	case 30:
 		goon_action_end(object);
-		break;
+		return step_handlers;
 	case 14:
 		goon_keep_distance_start(object);
-		break;
+		return step_handlers;
 	case 16:
 		goon_keep_distance_check(object);
-		break;
+		return step_handlers;
 	case 18:
 		goon_keep_distance_closing(object);
-		break;
+		return step_handlers;
 	case 20:
 		goon_keep_distance_backing(object);
-		break;
+		return step_handlers;
 	case 22:
-		step_handlers = goon_wait_for_target_on_floor(object);
-		break;
+		return goon_wait_for_target_on_floor(object);
 	case 24:
 		goon_wait_then_strike_swing(object);
-		break;
+		return step_handlers;
 	case 26:
-		y = goon_strike_hit(object, y);
-		break;
+		goon_strike_hit(object);
+		return step_handlers;
 	case -10:
 		goon_approach_until_close(object);
-		break;
+		return step_handlers;
 	case -8:
-		y = goon_approach_strike_hit(object, y);
-		break;
+		goon_approach_strike_hit(object);
+		return step_handlers;
 	case -6:
 		goon_approach_strike_recover(object);
-		break;
+		return step_handlers;
 	}
-	*p_y = y;
-	*p_step_handlers = step_handlers;
+	unreachable();
 }
 
 /* Action 07: strikes (animation A4, hit box 7EA7) and runs on through (no behaviour picks it). */
-void goon_strike_and_run(uint16_t object, uint8_t step, uint16_t *p_y, uint16_t *p_step_handlers)
+uint16_t goon_strike_and_run(uint16_t object, uint8_t step)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint8_t step_2 = 0;
 	uint16_t step_handlers = 0;
 
@@ -1149,88 +1086,83 @@ void goon_strike_and_run(uint16_t object, uint8_t step, uint16_t *p_y, uint16_t 
 	{
 	case 0:
 		goon_strike_and_run_swing(object);
-		break;
+		return step_handlers;
 	case 2:
-		y = goon_strike_and_run_hit(object, y);
-		break;
+		goon_strike_and_run_hit(object);
+		return step_handlers;
 	case -2:
 	case 4:
-		y = goon_run_through_end(object, y);
-		break;
+		goon_run_through_end(object);
+		return step_handlers;
 	case 6:
 		hat_goon_throw_start(object);
-		break;
+		return step_handlers;
 	case 8:
-		hat_goon_throw_release(object, &y, &step_handlers);
-		break;
+		return hat_goon_throw_release(object, step_handlers);
 	case 10:
-		step_handlers = hat_goon_throw_wait(object);
-		break;
+		return hat_goon_throw_wait(object);
 	case 12:
 		hat_goon_throw_end(object);
-		break;
+		return step_handlers;
 	case -78:
 	case -62:
 	case -32:
 	case -24:
 	case -8:
 		armed_goon_action_end(object);
-		break;
+		return step_handlers;
 	case -70:
 	case -40:
-		step_handlers = shovel_goon_wait_for_target(object);
-		break;
+		return shovel_goon_wait_for_target(object);
 	case -64:
 	case -34:
 	case -26:
 	case -10:
-		y = armed_goon_strike_recover(object);
-		break;
+		armed_goon_strike_recover(object);
+		return step_handlers;
 	case -38:
 		shovel_goon_swing(object);
-		break;
+		return step_handlers;
 	case -36:
-		y = shovel_goon_hit(object, y);
-		break;
+		shovel_goon_hit(object);
+		return step_handlers;
 	case -30:
 		umbrella_goon_quick_swing(object);
-		break;
+		return step_handlers;
 	case -28:
-		y = umbrella_goon_quick_hit(object, y);
-		break;
+		umbrella_goon_quick_hit(object);
+		return step_handlers;
 	case -22:
 		umbrella_goon_long_swing(object);
-		break;
+		return step_handlers;
 	case -20:
-		y = umbrella_goon_long_hit(object, y);
-		break;
+		umbrella_goon_long_hit(object);
+		return step_handlers;
 	case -18:
-		y = umbrella_goon_long_recover(object, y);
-		break;
+		umbrella_goon_long_recover(object);
+		return step_handlers;
 	case -16:
 		umbrella_goon_long_end(object);
-		break;
+		return step_handlers;
 	case -14:
 		umbrella_goon_swing(object);
-		break;
+		return step_handlers;
 	case -12:
-		y = umbrella_goon_hit(object, y);
-		break;
+		umbrella_goon_hit(object);
+		return step_handlers;
 	case -6:
 		umbrella_goon_charge_start(object);
-		break;
+		return step_handlers;
 	case -4:
-		y = umbrella_goon_charge_hit(object, y);
-		break;
+		umbrella_goon_charge_hit(object);
+		return step_handlers;
 	}
-	*p_y = y;
-	*p_step_handlers = step_handlers;
+	unreachable();
 }
 
 /* Action 16: strikes at once with the umbrella (animation 91, hit box 7EBF). */
-void umbrella_goon_quick_strike(uint16_t object, uint8_t step, uint16_t *p_y, uint16_t *p_step_handlers)
+uint16_t umbrella_goon_quick_strike(uint16_t object, uint8_t step)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint8_t step_2 = 0;
 	uint16_t step_handlers = 0;
 
@@ -1240,88 +1172,83 @@ void umbrella_goon_quick_strike(uint16_t object, uint8_t step, uint16_t *p_y, ui
 	{
 	case 0:
 		umbrella_goon_quick_swing(object);
-		break;
+		return step_handlers;
 	case 2:
-		y = umbrella_goon_quick_hit(object, y);
-		break;
+		umbrella_goon_quick_hit(object);
+		return step_handlers;
 	case -34:
 	case -4:
 	case 4:
 	case 20:
-		y = armed_goon_strike_recover(object);
-		break;
+		armed_goon_strike_recover(object);
+		return step_handlers;
 	case -48:
 	case -32:
 	case -2:
 	case 6:
 	case 22:
 		armed_goon_action_end(object);
-		break;
+		return step_handlers;
 	case 8:
 		umbrella_goon_long_swing(object);
-		break;
+		return step_handlers;
 	case 10:
-		y = umbrella_goon_long_hit(object, y);
-		break;
+		umbrella_goon_long_hit(object);
+		return step_handlers;
 	case 12:
-		y = umbrella_goon_long_recover(object, y);
-		break;
+		umbrella_goon_long_recover(object);
+		return step_handlers;
 	case 14:
 		umbrella_goon_long_end(object);
-		break;
+		return step_handlers;
 	case 16:
 		umbrella_goon_swing(object);
-		break;
+		return step_handlers;
 	case 18:
-		y = umbrella_goon_hit(object, y);
-		break;
+		umbrella_goon_hit(object);
+		return step_handlers;
 	case 24:
 		umbrella_goon_charge_start(object);
-		break;
+		return step_handlers;
 	case 26:
-		y = umbrella_goon_charge_hit(object, y);
-		break;
+		umbrella_goon_charge_hit(object);
+		return step_handlers;
 	case 28:
 	case 34:
-		y = goon_run_through_end(object, y);
-		break;
+		goon_run_through_end(object);
+		return step_handlers;
 	case 30:
 		goon_strike_and_run_swing(object);
-		break;
+		return step_handlers;
 	case 32:
-		y = goon_strike_and_run_hit(object, y);
-		break;
+		goon_strike_and_run_hit(object);
+		return step_handlers;
 	case 36:
 		hat_goon_throw_start(object);
-		break;
+		return step_handlers;
 	case 38:
-		hat_goon_throw_release(object, &y, &step_handlers);
-		break;
+		return hat_goon_throw_release(object, step_handlers);
 	case 40:
-		step_handlers = hat_goon_throw_wait(object);
-		break;
+		return hat_goon_throw_wait(object);
 	case 42:
 		hat_goon_throw_end(object);
-		break;
+		return step_handlers;
 	case -40:
 	case -10:
-		step_handlers = shovel_goon_wait_for_target(object);
-		break;
+		return shovel_goon_wait_for_target(object);
 	case -8:
 		shovel_goon_swing(object);
-		break;
+		return step_handlers;
 	case -6:
-		y = shovel_goon_hit(object, y);
-		break;
+		shovel_goon_hit(object);
+		return step_handlers;
 	}
-	*p_y = y;
-	*p_step_handlers = step_handlers;
+	unreachable();
 }
 
 /* Action 17: dashes at its target and, when close in line with it, strikes (animation B8, hit box 7C16). */
-void goon_dash_strike(uint16_t object, uint8_t step, uint16_t *p_y, uint16_t *p_step_handlers)
+uint16_t goon_dash_strike(uint16_t object, uint8_t step)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint8_t step_2 = 0;
 	uint16_t step_handlers = 0;
 
@@ -1332,69 +1259,66 @@ void goon_dash_strike(uint16_t object, uint8_t step, uint16_t *p_y, uint16_t *p_
 	case -16:
 	case 0:
 		goon_dash_start(object);
-		break;
+		return step_handlers;
 	case 2:
 		goon_dash_until_close(object);
-		break;
+		return step_handlers;
 	case 4:
-		y = goon_dash_strike_hit(object, y);
-		break;
+		goon_dash_strike_hit(object);
+		return step_handlers;
 	case -8:
 	case 6:
 	case 24:
-		y = goon_strike_recover(object);
-		break;
+		goon_strike_recover(object);
+		return step_handlers;
 	case -6:
 	case 8:
 	case 26:
 		goon_action_end(object);
-		break;
+		return step_handlers;
 	case 10:
 		goon_keep_distance_start(object);
-		break;
+		return step_handlers;
 	case 12:
 		goon_keep_distance_check(object);
-		break;
+		return step_handlers;
 	case 14:
 		goon_keep_distance_closing(object);
-		break;
+		return step_handlers;
 	case 16:
 		goon_keep_distance_backing(object);
-		break;
+		return step_handlers;
 	case 18:
-		step_handlers = goon_wait_for_target_on_floor(object);
-		break;
+		return goon_wait_for_target_on_floor(object);
 	case 20:
 		goon_wait_then_strike_swing(object);
-		break;
+		return step_handlers;
 	case 22:
-		y = goon_strike_hit(object, y);
-		break;
+		goon_strike_hit(object);
+		return step_handlers;
 	case -14:
 		goon_approach_until_close(object);
-		break;
+		return step_handlers;
 	case -12:
-		y = goon_approach_strike_hit(object, y);
-		break;
+		goon_approach_strike_hit(object);
+		return step_handlers;
 	case -10:
 		goon_approach_strike_recover(object);
-		break;
+		return step_handlers;
 	case -4:
 		goon_back_off_start(object);
-		break;
+		return step_handlers;
 	case -2:
 		goon_back_off_walk(object);
-		break;
+		return step_handlers;
 	}
-	*p_y = y;
-	*p_step_handlers = step_handlers;
+	unreachable();
 }
 
 /* Action 27: runs up to its target and, when close in line with it, strikes (animation B9, sound 4800,
    hit box 7C1E), then recovers (animation BA). */
-void goon_approach_strike(uint16_t object, uint8_t step, uint16_t *p_y, uint16_t *p_step_handlers)
+uint16_t goon_approach_strike(uint16_t object, uint8_t step)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint8_t step_2 = 0;
 	uint16_t step_handlers = 0;
 
@@ -1405,62 +1329,60 @@ void goon_approach_strike(uint16_t object, uint8_t step, uint16_t *p_y, uint16_t
 	case 0:
 	case 16:
 		goon_dash_start(object);
-		break;
+		return step_handlers;
 	case 2:
 		goon_approach_until_close(object);
-		break;
+		return step_handlers;
 	case 4:
-		y = goon_approach_strike_hit(object, y);
-		break;
+		goon_approach_strike_hit(object);
+		return step_handlers;
 	case 6:
 		goon_approach_strike_recover(object);
-		break;
+		return step_handlers;
 	case 8:
 	case 22:
 	case 40:
-		y = goon_strike_recover(object);
-		break;
+		goon_strike_recover(object);
+		return step_handlers;
 	case 10:
 	case 24:
 	case 42:
 		goon_action_end(object);
-		break;
+		return step_handlers;
 	case 12:
 		goon_back_off_start(object);
-		break;
+		return step_handlers;
 	case 14:
 		goon_back_off_walk(object);
-		break;
+		return step_handlers;
 	case 18:
 		goon_dash_until_close(object);
-		break;
+		return step_handlers;
 	case 20:
-		y = goon_dash_strike_hit(object, y);
-		break;
+		goon_dash_strike_hit(object);
+		return step_handlers;
 	case 26:
 		goon_keep_distance_start(object);
-		break;
+		return step_handlers;
 	case 28:
 		goon_keep_distance_check(object);
-		break;
+		return step_handlers;
 	case 30:
 		goon_keep_distance_closing(object);
-		break;
+		return step_handlers;
 	case 32:
 		goon_keep_distance_backing(object);
-		break;
+		return step_handlers;
 	case 34:
-		step_handlers = goon_wait_for_target_on_floor(object);
-		break;
+		return goon_wait_for_target_on_floor(object);
 	case 36:
 		goon_wait_then_strike_swing(object);
-		break;
+		return step_handlers;
 	case 38:
-		y = goon_strike_hit(object, y);
-		break;
+		goon_strike_hit(object);
+		return step_handlers;
 	}
-	*p_y = y;
-	*p_step_handlers = step_handlers;
+	unreachable();
 }
 
 /* Unused: a goon's action step that waits by the rank (unused_goon_waits_by_rank) with animation 86,
@@ -1509,18 +1431,17 @@ void goon_approach_until_close(uint16_t object)
 }
 
 /* Action 27, step 2: at the animation's event its strike's hit box. */
-uint16_t goon_approach_strike_hit(uint16_t object, uint16_t box)
+void goon_approach_strike_hit(uint16_t object)
 {
 	uint8_t animation_flags = 0, action_step = 0;
 
 	animation_flags = OBJECT(object)->animation_flags;
 	if ((animation_flags & 2u) == 0u)
-		return box;
-	box = goon_approach_strike_hit_box_ADDRESS;
-	vector_set_hit_box(object, box);
+		return;
+	leftover_y = goon_approach_strike_hit_box_ADDRESS;
+	vector_set_hit_box(object);
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step + 1u;
-	return box;
 }
 
 /* Action 27, step 3: after its time stops (animation BA). */
@@ -1640,28 +1561,27 @@ void goon_dash_until_close(uint16_t object)
 }
 
 /* Action 17, step 2: at the animation's event its strike's hit box. */
-uint16_t goon_dash_strike_hit(uint16_t object, uint16_t box)
+void goon_dash_strike_hit(uint16_t object)
 {
 	uint8_t animation_flags = 0, action_step = 0;
 
 	animation_flags = OBJECT(object)->animation_flags;
 	if ((animation_flags & 2u) == 0u)
-		return box;
-	box = goon_dash_strike_hit_box_ADDRESS;
-	vector_set_hit_box(object, box);
+		return;
+	leftover_y = goon_dash_strike_hit_box_ADDRESS;
+	vector_set_hit_box(object);
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step + 1u;
-	return box;
 }
 
 /* Action 18, step 0: with 3 players or more present done at once; else faces its target, standing, for
    up to 40 frames. */
 void goon_keep_distance_start(uint16_t object)
 {
-	uint8_t t1 = 0, action_step = 0;
+	uint8_t players_counted = 0, action_step = 0;
 
-	t1 = io_read8(0x1874u);
-	if (t1 >= 3u)
+	players_counted = io_read8(0x1874u);
+	if (players_counted >= 3u)
 	{
 		OBJECT(object)->state = 2u;
 		OBJECT(object)->timer = 0u;
@@ -1677,7 +1597,7 @@ void goon_keep_distance_start(uint16_t object)
 /* Action 18, step 1: within 30 of its target steps away, beyond 50 steps closer, between them stands. */
 void goon_keep_distance_check(uint16_t object)
 {
-	uint8_t a = 0, d = 0;
+	uint8_t speed = 0, speed_sign = 0;
 	uint8_t timer = 0, action_step = 0, target_direction = 0, action_step_2 = 0, target_direction_2 = 0;
 	uint16_t target_dx = 0, target_dx_2 = 0;
 
@@ -1697,15 +1617,15 @@ void goon_keep_distance_check(uint16_t object)
 		target_direction = OBJECT(object)->target_direction;
 		if (target_direction >= 0x40u)
 		{
-			d = 0x80u;
-			a = 0u;
+			speed = 0x80u;
+			speed_sign = 0u;
 		}
 		else
 		{
-			d = 0x80u;
-			a = 0xFFu;
+			speed = 0x80u;
+			speed_sign = 0xFFu;
 		}
-		OBJECT(object)->x_speed = ((uint32_t)a << 8) | (d & 0xFFu);
+		OBJECT(object)->x_speed = ((uint32_t)speed_sign << 8) | (speed & 0xFFu);
 		action_step_2 = OBJECT(object)->action_step;
 		OBJECT(object)->action_step = action_step_2 + 1u;
 		return;
@@ -1720,16 +1640,16 @@ void goon_keep_distance_check(uint16_t object)
 	target_direction_2 = OBJECT(object)->target_direction;
 	if (target_direction_2 >= 0x40u)
 	{
-		d = 0x80u;
-		a = 0xFFu;
-		OBJECT(object)->x_speed = ((uint32_t)a << 8) | (d & 0xFFu);
+		speed = 0x80u;
+		speed_sign = 0xFFu;
+		OBJECT(object)->x_speed = ((uint32_t)speed_sign << 8) | (speed & 0xFFu);
 		action_step_2 = OBJECT(object)->action_step;
 		OBJECT(object)->action_step = action_step_2 + 1u;
 		return;
 	}
-	d = 0x80u;
-	a = 0u;
-	OBJECT(object)->x_speed = ((uint32_t)a << 8) | (d & 0xFFu);
+	speed = 0x80u;
+	speed_sign = 0u;
+	OBJECT(object)->x_speed = ((uint32_t)speed_sign << 8) | (speed & 0xFFu);
 	action_step_2 = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step_2 + 1u;
 }
@@ -1817,32 +1737,29 @@ void goon_wait_then_strike_swing(uint16_t object)
 }
 
 /* Actions 00 and 01, step 2: at the animation's event its strike's hit box (7BEE). */
-uint16_t goon_strike_hit(uint16_t object, uint16_t box)
+void goon_strike_hit(uint16_t object)
 {
 	uint8_t animation_flags = 0, action_step = 0;
 
 	animation_flags = OBJECT(object)->animation_flags;
 	if ((animation_flags & 2u) == 0u)
-		return box;
-	box = goon_strike_hit_box_ADDRESS;
-	vector_set_hit_box(object, box);
+		return;
+	leftover_y = goon_strike_hit_box_ADDRESS;
+	vector_set_hit_box(object);
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step + 1u;
-	return box;
 }
 
 /* A strike's end: back to its body's hit box (7BF6), done at the animation's end. */
-uint16_t goon_strike_recover(uint16_t object)
+void goon_strike_recover(uint16_t object)
 {
-	uint16_t box = 0;
 	uint8_t action_step = 0;
 
-	box = goon_action_body_box_ADDRESS;
-	vector_set_hit_box(object, box);
+	leftover_y = goon_action_body_box_ADDRESS;
+	vector_set_hit_box(object);
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step + 1u;
 	goon_action_end(object);
-	return box;
 }
 
 /* Done at the animation's end. */
@@ -1896,18 +1813,17 @@ void goon_quick_strike_swing(uint16_t object)
 }
 
 /* Action 02, step 1: at the animation's event its strike's hit box (7BFE). */
-uint16_t goon_quick_strike_hit(uint16_t object, uint16_t box)
+void goon_quick_strike_hit(uint16_t object)
 {
 	uint8_t animation_flags = 0, action_step = 0;
 
 	animation_flags = OBJECT(object)->animation_flags;
 	if ((animation_flags & 2u) == 0u)
-		return box;
-	box = goon_quick_strike_hit_box_ADDRESS;
-	vector_set_hit_box(object, box);
+		return;
+	leftover_y = goon_quick_strike_hit_box_ADDRESS;
+	vector_set_hit_box(object);
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step + 1u;
-	return box;
 }
 
 /* Action 03, step 0: strikes (animation A3) facing its target. */
@@ -1922,18 +1838,17 @@ void goon_quick_strike_2_swing(uint16_t object)
 }
 
 /* Action 03, step 1: at the animation's event its strike's hit box (7C06). */
-uint16_t goon_quick_strike_2_hit(uint16_t object, uint16_t box)
+void goon_quick_strike_2_hit(uint16_t object)
 {
 	uint8_t animation_flags = 0, action_step = 0;
 
 	animation_flags = OBJECT(object)->animation_flags;
 	if ((animation_flags & 2u) == 0u)
-		return box;
-	box = goon_quick_strike_2_hit_box_ADDRESS;
-	vector_set_hit_box(object, box);
+		return;
+	leftover_y = goon_quick_strike_2_hit_box_ADDRESS;
+	vector_set_hit_box(object);
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step + 1u;
-	return box;
 }
 
 /* Action 04, step 4: its short run done after its time. */
@@ -2004,7 +1919,7 @@ void goon_jump_attack_leap(uint16_t object)
 
 /* Actions 04 and 05, step 2: falls (gravity 40) with its strike's hit box (7C0E) from the animation's
    event; near the floor lands (animation A8) with its body's. */
-uint16_t goon_jump_attack_fall(uint16_t object, uint16_t box)
+void goon_jump_attack_fall(uint16_t object)
 {
 	uint16_t z_speed = 0;
 	uint8_t animation_flags = 0, action_step = 0;
@@ -2017,22 +1932,21 @@ uint16_t goon_jump_attack_fall(uint16_t object, uint16_t box)
 		animation_flags = OBJECT(object)->animation_flags;
 		if ((((uint16_t)((uint32_t)animation_flags << 8) >> 8) & 2u) != 0u)
 		{
-			box = goon_jump_attack_fall_box_ADDRESS;
-			vector_set_hit_box(object, box);
+			leftover_y = goon_jump_attack_fall_box_ADDRESS;
+			vector_set_hit_box(object);
 		}
 	}
 	else
 	{
 		OBJECT(object)->animation = 0xA8u;
-		box = goon_action_body_box_ADDRESS;
-		vector_set_hit_box(object, box);
+		leftover_y = goon_action_body_box_ADDRESS;
+		vector_set_hit_box(object);
 		action_step = OBJECT(object)->action_step;
 		OBJECT(object)->action_step = action_step + 1u;
 	}
 	z_speed_2 = OBJECT(object)->z_speed;
 	z_speed = z_speed_2 - 0x40u;
 	goon_jump_attack_settle(object, z_speed);
-	return box;
 }
 
 /* Actions 04 and 05, step 3: comes down the rest of the way (gravity 10). */
@@ -2123,14 +2037,13 @@ uint16_t goon_grab_approach(uint16_t object, uint16_t step_handlers)
 /* Action 0F, step 1: touching its target, close and both on the floor: grabs the player (its fields 4B,
    3D, 1E and the hit flag), takes its place and shows the animation of holding that player's character
    (goon_hold_animations); else keeps walking at it until its time is up. */
-void goon_grab_try(uint16_t object, uint16_t *p_hold_animations, uint16_t *p_target_player)
+uint16_t goon_grab_try(uint16_t object)
 {
-	uint16_t hold_animations = (uint16_t)*p_hold_animations;
-	uint8_t a = 0, step = 0;
+	uint8_t angle = 0, floor_high = 0, floor_low = 0;
 	uint16_t direction = 0, heading = 0, target_player = 0;
 	uint8_t stack = 0;
 	uint8_t state = 0, timer = 0, blink_frames = 0, hold_presses = 0, attributes = 0, attributes_2 = 0, shadow_player = 0, points = 0, shadow_player_2 = 0, action_step = 0;
-	uint16_t target = 0, hit_by = 0, target_dx = 0, target_dy = 0, floor_z = 0, z = 0, floor_z_2 = 0, t1 = 0, t2 = 0;
+	uint16_t target = 0, hit_by = 0, target_dx = 0, target_dy = 0, floor_z = 0, z = 0, floor_z_2 = 0, player_x = 0, player_y = 0;
 
 	target = OBJECT(object)->target;
 	target_player = target;
@@ -2141,242 +2054,200 @@ void goon_grab_try(uint16_t object, uint16_t *p_hold_animations, uint16_t *p_tar
 		{
 			OBJECT(object)->state = 2u;
 			OBJECT(object)->timer = 0u;
+			return target_player;
 		}
-		else
+		timer = OBJECT(object)->timer;
+		OBJECT(object)->timer = timer - 1u;
+		if (timer == 1u)
 		{
-			timer = OBJECT(object)->timer;
-			OBJECT(object)->timer = timer - 1u;
-			if (timer != 1u)
-			{
-				direction = vector_direction_to(object, target_player);
-				a = (uint8_t)(direction >> 8);
-				heading = ((uint32_t)a << 8) | 0x30u;
-				vector_set_speed_by_direction(object, heading);
-				vector_choose_walk_animation(object);
-			}
-			else
-			{
-				OBJECT(object)->state = 2u;
-				OBJECT(object)->timer = 0u;
-			}
+			OBJECT(object)->state = 2u;
+			OBJECT(object)->timer = 0u;
+			return target_player;
 		}
+		direction = vector_direction_to(object, target_player);
+		angle = (uint8_t)(direction >> 8);
+		heading = ((uint32_t)angle << 8) | 0x30u;
+		vector_set_speed_by_direction(object, heading);
+		vector_choose_walk_animation(object);
+		return target_player;
 	}
-	else
+	blink_frames = OBJECT(target_player)->player.blink_frames;
+	if (blink_frames != 0u)
 	{
-		blink_frames = OBJECT(target_player)->player.blink_frames;
-		if (blink_frames != 0u)
-		{
-			OBJECT(object)->x_speed = 0;
-			OBJECT(object)->y_speed = 0;
-			OBJECT(object)->action = 2u;
-			OBJECT(object)->action_step = 0u;
-		}
-		else
-		{
-			hold_presses = OBJECT(target_player)->player.hold_presses;
-			if (hold_presses != 0u)
-			{
-				OBJECT(object)->x_speed = 0;
-				OBJECT(object)->y_speed = 0;
-				OBJECT(object)->action = 2u;
-				OBJECT(object)->action_step = 0u;
-			}
-			else
-			{
-				hit_by = OBJECT(object)->hit_by;
-				if (target_player != hit_by)
-				{
-					state = OBJECT(target_player)->state;
-					if ((int8_t)state < 0)
-					{
-						OBJECT(object)->state = 2u;
-						OBJECT(object)->timer = 0u;
-					}
-					else
-					{
-						timer = OBJECT(object)->timer;
-						OBJECT(object)->timer = timer - 1u;
-						if (timer != 1u)
-						{
-							direction = vector_direction_to(object, target_player);
-							a = (uint8_t)(direction >> 8);
-							heading = ((uint32_t)a << 8) | 0x30u;
-							vector_set_speed_by_direction(object, heading);
-							vector_choose_walk_animation(object);
-						}
-						else
-						{
-							OBJECT(object)->state = 2u;
-							OBJECT(object)->timer = 0u;
-						}
-					}
-				}
-				else
-				{
-					target_dx = OBJECT(object)->target_dx;
-					if (target_dx >= 8u)
-					{
-						state = OBJECT(target_player)->state;
-						if ((int8_t)state < 0)
-						{
-							OBJECT(object)->state = 2u;
-							OBJECT(object)->timer = 0u;
-						}
-						else
-						{
-							timer = OBJECT(object)->timer;
-							OBJECT(object)->timer = timer - 1u;
-							if (timer != 1u)
-							{
-								direction = vector_direction_to(object, target_player);
-								a = (uint8_t)(direction >> 8);
-								heading = ((uint32_t)a << 8) | 0x30u;
-								vector_set_speed_by_direction(object, heading);
-								vector_choose_walk_animation(object);
-							}
-							else
-							{
-								OBJECT(object)->state = 2u;
-								OBJECT(object)->timer = 0u;
-							}
-						}
-					}
-					else
-					{
-						target_dy = OBJECT(object)->target_dy;
-						if (target_dy >= 4u)
-						{
-							state = OBJECT(target_player)->state;
-							if ((int8_t)state < 0)
-							{
-								OBJECT(object)->state = 2u;
-								OBJECT(object)->timer = 0u;
-							}
-							else
-							{
-								timer = OBJECT(object)->timer;
-								OBJECT(object)->timer = timer - 1u;
-								if (timer != 1u)
-								{
-									direction = vector_direction_to(object, target_player);
-									a = (uint8_t)(direction >> 8);
-									heading = ((uint32_t)a << 8) | 0x30u;
-									vector_set_speed_by_direction(object, heading);
-									vector_choose_walk_animation(object);
-								}
-								else
-								{
-									OBJECT(object)->state = 2u;
-									OBJECT(object)->timer = 0u;
-								}
-							}
-						}
-						else
-						{
-							floor_z = OBJECT(target_player)->floor_z;
-							a = (uint8_t)(floor_z >> 8);
-							step = (uint8_t)floor_z;
-							z = OBJECT(target_player)->z;
-							if ((uint16_t)(((uint32_t)a << 8) | step) != z)
-							{
-								state = OBJECT(target_player)->state;
-								if ((int8_t)state < 0)
-								{
-									OBJECT(object)->state = 2u;
-									OBJECT(object)->timer = 0u;
-								}
-								else
-								{
-									timer = OBJECT(object)->timer;
-									OBJECT(object)->timer = timer - 1u;
-									if (timer != 1u)
-									{
-										direction = vector_direction_to(object, target_player);
-										a = (uint8_t)(direction >> 8);
-										heading = ((uint32_t)a << 8) | 0x30u;
-										vector_set_speed_by_direction(object, heading);
-										vector_choose_walk_animation(object);
-									}
-									else
-									{
-										OBJECT(object)->state = 2u;
-										OBJECT(object)->timer = 0u;
-									}
-								}
-							}
-							else
-							{
-								floor_z_2 = OBJECT(object)->floor_z;
-								if ((uint16_t)(((uint32_t)a << 8) | step) != floor_z_2)
-								{
-									state = OBJECT(target_player)->state;
-									if ((int8_t)state < 0)
-									{
-										OBJECT(object)->state = 2u;
-										OBJECT(object)->timer = 0u;
-									}
-									else
-									{
-										timer = OBJECT(object)->timer;
-										OBJECT(object)->timer = timer - 1u;
-										if (timer != 1u)
-										{
-											direction = vector_direction_to(object, target_player);
-											a = (uint8_t)(direction >> 8);
-											heading = ((uint32_t)a << 8) | 0x30u;
-											vector_set_speed_by_direction(object, heading);
-											vector_choose_walk_animation(object);
-										}
-										else
-										{
-											OBJECT(object)->state = 2u;
-											OBJECT(object)->timer = 0u;
-										}
-									}
-								}
-								else
-								{
-									vector_enemy_leave_side(object, target_player);
-									OBJECT(target_player)->player.holder = object;
-									OBJECT(target_player)->player.hold_presses = 0xCu;
-									OBJECT(target_player)->flags |= 0x20u;
-									OBJECT(target_player)->hit = 3u;
-									OBJECT(object)->x_speed = 0;
-									OBJECT(object)->y_speed = 0;
-									t1 = OBJECT(target_player)->x;
-									OBJECT(object)->x = t1;
-									t2 = OBJECT(target_player)->y;
-									OBJECT(object)->y = t2;
-									attributes = OBJECT(target_player)->attributes;
-									grab_facing = attributes & 0x40u;
-									attributes_2 = OBJECT(object)->attributes;
-									OBJECT(object)->attributes = (attributes_2 & 0xBFu) | grab_facing;
-									shadow_player = OBJECT(target_player)->shadow_player;
-									stack = shadow_player & 0x70u;
-									points = OBJECT(object)->points;
-									OBJECT(object)->points = (points & 0x8Fu) | stack;
-									hold_animations = goon_hold_animations_ADDRESS;
-									shadow_player_2 = OBJECT(target_player)->shadow_player;
-									OBJECT(object)->animation = goon_hold_animations[(((shadow_player_2 >> 1) >> 1) >> 1) >> 1] | 0x80u;
-									action_step = OBJECT(object)->action_step;
-									OBJECT(object)->action_step = action_step + 1u;
-								}
-							}
-						}
-					}
-				}
-			}
-		}
+		OBJECT(object)->x_speed = 0;
+		OBJECT(object)->y_speed = 0;
+		OBJECT(object)->action = 2u;
+		OBJECT(object)->action_step = 0u;
+		return target_player;
 	}
-	*p_hold_animations = hold_animations;
-	*p_target_player = target_player;
+	hold_presses = OBJECT(target_player)->player.hold_presses;
+	if (hold_presses != 0u)
+	{
+		OBJECT(object)->x_speed = 0;
+		OBJECT(object)->y_speed = 0;
+		OBJECT(object)->action = 2u;
+		OBJECT(object)->action_step = 0u;
+		return target_player;
+	}
+	hit_by = OBJECT(object)->hit_by;
+	if (target_player != hit_by)
+	{
+		state = OBJECT(target_player)->state;
+		if ((int8_t)state < 0)
+		{
+			OBJECT(object)->state = 2u;
+			OBJECT(object)->timer = 0u;
+			return target_player;
+		}
+		timer = OBJECT(object)->timer;
+		OBJECT(object)->timer = timer - 1u;
+		if (timer == 1u)
+		{
+			OBJECT(object)->state = 2u;
+			OBJECT(object)->timer = 0u;
+			return target_player;
+		}
+		direction = vector_direction_to(object, target_player);
+		angle = (uint8_t)(direction >> 8);
+		heading = ((uint32_t)angle << 8) | 0x30u;
+		vector_set_speed_by_direction(object, heading);
+		vector_choose_walk_animation(object);
+		return target_player;
+	}
+	target_dx = OBJECT(object)->target_dx;
+	if (target_dx >= 8u)
+	{
+		state = OBJECT(target_player)->state;
+		if ((int8_t)state < 0)
+		{
+			OBJECT(object)->state = 2u;
+			OBJECT(object)->timer = 0u;
+			return target_player;
+		}
+		timer = OBJECT(object)->timer;
+		OBJECT(object)->timer = timer - 1u;
+		if (timer == 1u)
+		{
+			OBJECT(object)->state = 2u;
+			OBJECT(object)->timer = 0u;
+			return target_player;
+		}
+		direction = vector_direction_to(object, target_player);
+		angle = (uint8_t)(direction >> 8);
+		heading = ((uint32_t)angle << 8) | 0x30u;
+		vector_set_speed_by_direction(object, heading);
+		vector_choose_walk_animation(object);
+		return target_player;
+	}
+	target_dy = OBJECT(object)->target_dy;
+	if (target_dy >= 4u)
+	{
+		state = OBJECT(target_player)->state;
+		if ((int8_t)state < 0)
+		{
+			OBJECT(object)->state = 2u;
+			OBJECT(object)->timer = 0u;
+			return target_player;
+		}
+		timer = OBJECT(object)->timer;
+		OBJECT(object)->timer = timer - 1u;
+		if (timer == 1u)
+		{
+			OBJECT(object)->state = 2u;
+			OBJECT(object)->timer = 0u;
+			return target_player;
+		}
+		direction = vector_direction_to(object, target_player);
+		angle = (uint8_t)(direction >> 8);
+		heading = ((uint32_t)angle << 8) | 0x30u;
+		vector_set_speed_by_direction(object, heading);
+		vector_choose_walk_animation(object);
+		return target_player;
+	}
+	floor_z = OBJECT(target_player)->floor_z;
+	floor_high = (uint8_t)(floor_z >> 8);
+	floor_low = (uint8_t)floor_z;
+	z = OBJECT(target_player)->z;
+	if ((uint16_t)(((uint32_t)floor_high << 8) | floor_low) != z)
+	{
+		state = OBJECT(target_player)->state;
+		if ((int8_t)state < 0)
+		{
+			OBJECT(object)->state = 2u;
+			OBJECT(object)->timer = 0u;
+			return target_player;
+		}
+		timer = OBJECT(object)->timer;
+		OBJECT(object)->timer = timer - 1u;
+		if (timer == 1u)
+		{
+			OBJECT(object)->state = 2u;
+			OBJECT(object)->timer = 0u;
+			return target_player;
+		}
+		direction = vector_direction_to(object, target_player);
+		angle = (uint8_t)(direction >> 8);
+		heading = ((uint32_t)angle << 8) | 0x30u;
+		vector_set_speed_by_direction(object, heading);
+		vector_choose_walk_animation(object);
+		return target_player;
+	}
+	floor_z_2 = OBJECT(object)->floor_z;
+	if ((uint16_t)(((uint32_t)floor_high << 8) | floor_low) != floor_z_2)
+	{
+		state = OBJECT(target_player)->state;
+		if ((int8_t)state < 0)
+		{
+			OBJECT(object)->state = 2u;
+			OBJECT(object)->timer = 0u;
+			return target_player;
+		}
+		timer = OBJECT(object)->timer;
+		OBJECT(object)->timer = timer - 1u;
+		if (timer == 1u)
+		{
+			OBJECT(object)->state = 2u;
+			OBJECT(object)->timer = 0u;
+			return target_player;
+		}
+		direction = vector_direction_to(object, target_player);
+		angle = (uint8_t)(direction >> 8);
+		heading = ((uint32_t)angle << 8) | 0x30u;
+		vector_set_speed_by_direction(object, heading);
+		vector_choose_walk_animation(object);
+		return target_player;
+	}
+	vector_enemy_leave_side(object, target_player);
+	OBJECT(target_player)->player.holder = object;
+	OBJECT(target_player)->player.hold_presses = 0xCu;
+	OBJECT(target_player)->flags |= 0x20u;
+	OBJECT(target_player)->hit = 3u;
+	OBJECT(object)->x_speed = 0;
+	OBJECT(object)->y_speed = 0;
+	player_x = OBJECT(target_player)->x;
+	OBJECT(object)->x = player_x;
+	player_y = OBJECT(target_player)->y;
+	OBJECT(object)->y = player_y;
+	attributes = OBJECT(target_player)->attributes;
+	grab_facing = attributes & 0x40u;
+	attributes_2 = OBJECT(object)->attributes;
+	OBJECT(object)->attributes = (attributes_2 & 0xBFu) | grab_facing;
+	shadow_player = OBJECT(target_player)->shadow_player;
+	stack = shadow_player & 0x70u;
+	points = OBJECT(object)->points;
+	OBJECT(object)->points = (points & 0x8Fu) | stack;
+	shadow_player_2 = OBJECT(target_player)->shadow_player;
+	OBJECT(object)->animation = goon_hold_animations[(((shadow_player_2 >> 1) >> 1) >> 1) >> 1] | 0x80u;
+	action_step = OBJECT(object)->action_step;
+	OBJECT(object)->action_step = action_step + 1u;
+	leftover_y = goon_hold_animations_ADDRESS;
+	return target_player;
 }
 
 /* Action 0F, step 2: holds the player; the player breaking free leaves the goon 2 health less and hurt
    (reaction 2 or 3 by chance); the player beaten, done; on its turn squeezes (the next animation). */
-void goon_grab_hold(uint16_t object, uint16_t *p_hold_animations, uint16_t *p_target_player, uint32_t *p_left_caller)
+void goon_grab_hold(uint16_t object, uint16_t *p_target_player, uint32_t *p_left_caller)
 {
-	uint16_t hold_animations = (uint16_t)*p_hold_animations;
 	uint8_t vitality = 0;
 	uint16_t target_player = 0, u = 0;
 	uint8_t hold_presses = 0, vitality_2 = 0, vitality_3 = 0, squeeze_step = 0, squeeze_step_2 = 0, shadow_player = 0;
@@ -2398,9 +2269,8 @@ void goon_grab_hold(uint16_t object, uint16_t *p_hold_animations, uint16_t *p_ta
 		OBJECT(object)->state = 4u;
 		OBJECT(object)->action = (random_number & 1u) + 2u;
 		OBJECT(object)->action_step = 0u;
-		*p_hold_animations = hold_animations;
 		*p_target_player = u;
-		vector_enemy_react(object, p_hold_animations, p_target_player, p_left_caller);
+		vector_enemy_react(object, p_target_player, p_left_caller);
 		return;
 	}
 	vitality_3 = OBJECT(target_player)->vitality;
@@ -2416,20 +2286,18 @@ void goon_grab_hold(uint16_t object, uint16_t *p_hold_animations, uint16_t *p_ta
 		{
 			squeeze_step_2 = OBJECT(object)->goon.squeeze_step;
 			OBJECT(object)->goon.squeeze_step = squeeze_step_2 + 1u;
-			hold_animations = goon_hold_animations_ADDRESS;
+			leftover_y = goon_hold_animations_ADDRESS;
 			shadow_player = OBJECT(target_player)->shadow_player;
 			OBJECT(object)->animation = (goon_hold_animations[(((shadow_player >> 1) >> 1) >> 1) >> 1] + 1u) | 0x80u;
 			OBJECT(object)->action_step = 3u;
 		}
 	}
-	*p_hold_animations = hold_animations;
 	*p_target_player = target_player;
 }
 
 /* Action 0F, step 3: at the squeeze's end goes back to holding. */
-void goon_grab_squeeze(uint16_t object, uint16_t *p_hold_animations, uint16_t *p_u, uint32_t *p_left_caller)
+void goon_grab_squeeze(uint16_t object, uint16_t *p_u, uint32_t *p_left_caller)
 {
-	uint16_t hold_animations = (uint16_t)*p_hold_animations;
 	uint16_t u = 0;
 	uint8_t animation_flags = 0, action_step = 0;
 
@@ -2440,9 +2308,8 @@ void goon_grab_squeeze(uint16_t object, uint16_t *p_hold_animations, uint16_t *p
 		action_step = OBJECT(object)->action_step;
 		OBJECT(object)->action_step = action_step - 1u;
 	}
-	*p_hold_animations = hold_animations;
 	*p_u = u;
-	goon_grab_hold(object, p_hold_animations, p_u, p_left_caller);
+	goon_grab_hold(object, p_u, p_left_caller);
 }
 
 /* Action 1B, step 0: winds up (animation 91) facing its target. */
@@ -2457,34 +2324,32 @@ void bomb_goon_throw_start(uint16_t object)
 }
 
 /* Action 1B, step 1: at the animation's event throws a bomb forward. */
-void bomb_goon_throw_release(uint16_t object, uint16_t *p_child_record, uint16_t *p_bomb)
+uint16_t bomb_goon_throw_release(uint16_t object, uint16_t bomb)
 {
-	uint16_t child_record = (uint16_t)*p_child_record;
-	uint16_t bomb = (uint16_t)*p_bomb;
 	uint32_t carry = 0;
+	uint16_t child_object = 0;
 	uint8_t animation_flags = 0, action_step = 0, attributes = 0;
 	uint16_t x_speed = 0;
 
 	animation_flags = OBJECT(object)->animation_flags;
-	if ((animation_flags & 2u) != 0u)
+	if ((animation_flags & 2u) == 0u)
+		return bomb;
+	action_step = OBJECT(object)->action_step;
+	OBJECT(object)->action_step = action_step + 1u;
+	leftover_y = bomb_goon_throw_release_child_ADDRESS;
+	child_object = bomb_goon_throw_release_child_ADDRESS;
+	spawn_list_2_child(object, child_object, &bomb, &carry);
+	if (carry)
 	{
-		action_step = OBJECT(object)->action_step;
-		OBJECT(object)->action_step = action_step + 1u;
-		child_record = bomb_goon_throw_release_child_ADDRESS;
-		spawn_list_2_child(object, child_record, &bomb, &carry);
-		if (carry)
+		OBJECT(bomb)->x_speed = 0x300;
+		attributes = OBJECT(object)->attributes;
+		if ((attributes & 0x40u) != 0u)
 		{
-			OBJECT(bomb)->x_speed = 0x300;
-			attributes = OBJECT(object)->attributes;
-			if ((attributes & 0x40u) != 0u)
-			{
-				x_speed = OBJECT(bomb)->x_speed;
-				OBJECT(bomb)->x_speed = 0u - x_speed;
-			}
+			x_speed = OBJECT(bomb)->x_speed;
+			OBJECT(bomb)->x_speed = 0u - x_speed;
 		}
 	}
-	*p_child_record = child_record;
-	*p_bomb = bomb;
+	return bomb;
 }
 
 /* Actions 14 and 33, step 0: facing its target; with the target on the floor stands (animation 80) for
@@ -2532,18 +2397,17 @@ void shovel_goon_close_swing(uint16_t object)
 }
 
 /* Action 33, step 2: at the animation's event the shovel's hit box (7E8F). */
-uint16_t shovel_goon_close_hit(uint16_t object, uint16_t box)
+void shovel_goon_close_hit(uint16_t object)
 {
 	uint8_t animation_flags = 0, action_step = 0;
 
 	animation_flags = OBJECT(object)->animation_flags;
 	if ((animation_flags & 2u) == 0u)
-		return box;
-	box = shovel_goon_close_hit_box_ADDRESS;
-	vector_set_hit_box(object, box);
+		return;
+	leftover_y = shovel_goon_close_hit_box_ADDRESS;
+	vector_set_hit_box(object);
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step + 1u;
-	return box;
 }
 
 /* Action 15, step 0: stands (animation 80) facing its target for
@@ -2578,32 +2442,29 @@ void shovel_goon_far_swing(uint16_t object)
 }
 
 /* Action 15, step 2: at the animation's event the long shovel's hit box (7E9F). */
-uint16_t shovel_goon_far_hit(uint16_t object, uint16_t box)
+void shovel_goon_far_hit(uint16_t object)
 {
 	uint8_t animation_flags = 0, action_step = 0;
 
 	animation_flags = OBJECT(object)->animation_flags;
 	if ((animation_flags & 2u) == 0u)
-		return box;
-	box = shovel_goon_far_hit_box_ADDRESS;
-	vector_set_hit_box(object, box);
+		return;
+	leftover_y = shovel_goon_far_hit_box_ADDRESS;
+	vector_set_hit_box(object);
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step + 1u;
-	return box;
 }
 
 /* An armed goon's strike's end: back to its body's hit box (7E87), done at the animation's end. */
-uint16_t armed_goon_strike_recover(uint16_t object)
+void armed_goon_strike_recover(uint16_t object)
 {
-	uint16_t box = 0;
 	uint8_t action_step = 0;
 
-	box = armed_goon_body_box_ADDRESS;
-	vector_set_hit_box(object, box);
+	leftover_y = armed_goon_body_box_ADDRESS;
+	vector_set_hit_box(object);
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step + 1u;
 	armed_goon_action_end(object);
-	return box;
 }
 
 /* Done at the animation's end. */
@@ -2634,18 +2495,17 @@ void shovel_goon_swing(uint16_t object)
 }
 
 /* Action 14, step 2: at the animation's event the shovel's hit box (7E97). */
-uint16_t shovel_goon_hit(uint16_t object, uint16_t box)
+void shovel_goon_hit(uint16_t object)
 {
 	uint8_t animation_flags = 0, action_step = 0;
 
 	animation_flags = OBJECT(object)->animation_flags;
 	if ((animation_flags & 2u) == 0u)
-		return box;
-	box = shovel_goon_hit_box_ADDRESS;
-	vector_set_hit_box(object, box);
+		return;
+	leftover_y = shovel_goon_hit_box_ADDRESS;
+	vector_set_hit_box(object);
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step + 1u;
-	return box;
 }
 
 /* Action 16, step 0: strikes (animation 91) facing its target. */
@@ -2660,18 +2520,17 @@ void umbrella_goon_quick_swing(uint16_t object)
 }
 
 /* Action 16, step 1: at the animation's event the umbrella's hit box (7EBF). */
-uint16_t umbrella_goon_quick_hit(uint16_t object, uint16_t box)
+void umbrella_goon_quick_hit(uint16_t object)
 {
 	uint8_t animation_flags = 0, action_step = 0;
 
 	animation_flags = OBJECT(object)->animation_flags;
 	if ((animation_flags & 2u) == 0u)
-		return box;
-	box = umbrella_goon_quick_hit_box_ADDRESS;
-	vector_set_hit_box(object, box);
+		return;
+	leftover_y = umbrella_goon_quick_hit_box_ADDRESS;
+	vector_set_hit_box(object);
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step + 1u;
-	return box;
 }
 
 /* Action 13, step 0: strikes (animation 92) facing its target. */
@@ -2686,36 +2545,34 @@ void umbrella_goon_long_swing(uint16_t object)
 }
 
 /* Action 13, step 1: at the animation's event the umbrella's hit box (7EC7), held for 10 frames. */
-uint16_t umbrella_goon_long_hit(uint16_t object, uint16_t box)
+void umbrella_goon_long_hit(uint16_t object)
 {
 	uint8_t animation_flags = 0, action_step = 0;
 
 	animation_flags = OBJECT(object)->animation_flags;
 	if ((animation_flags & 2u) == 0u)
-		return box;
-	box = umbrella_goon_long_hit_box_ADDRESS;
-	vector_set_hit_box(object, box);
+		return;
+	leftover_y = umbrella_goon_long_hit_box_ADDRESS;
+	vector_set_hit_box(object);
 	OBJECT(object)->timer = 0x10u;
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step + 1u;
-	return box;
 }
 
 /* Action 13, step 2: after its time back to its body's hit box, animation A5. */
-uint16_t umbrella_goon_long_recover(uint16_t object, uint16_t box)
+void umbrella_goon_long_recover(uint16_t object)
 {
 	uint8_t timer = 0, action_step = 0;
 
 	timer = OBJECT(object)->timer;
 	OBJECT(object)->timer = timer - 1u;
 	if (timer != 1u)
-		return box;
-	box = armed_goon_body_box_ADDRESS;
-	vector_set_hit_box(object, box);
+		return;
+	leftover_y = armed_goon_body_box_ADDRESS;
+	vector_set_hit_box(object);
 	OBJECT(object)->animation = 0xA5u;
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step + 1u;
-	return box;
 }
 
 /* Action 13, step 3: done. */
@@ -2737,18 +2594,17 @@ void umbrella_goon_swing(uint16_t object)
 }
 
 /* Action 11, step 1: at the animation's event the umbrella's hit box (7EAF). */
-uint16_t umbrella_goon_hit(uint16_t object, uint16_t box)
+void umbrella_goon_hit(uint16_t object)
 {
 	uint8_t animation_flags = 0, action_step = 0;
 
 	animation_flags = OBJECT(object)->animation_flags;
 	if ((animation_flags & 2u) == 0u)
-		return box;
-	box = umbrella_goon_hit_box_ADDRESS;
-	vector_set_hit_box(object, box);
+		return;
+	leftover_y = umbrella_goon_hit_box_ADDRESS;
+	vector_set_hit_box(object);
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step + 1u;
-	return box;
 }
 
 /* Action 12, step 0: faces its target and starts running (animation 90) for 8 frames. */
@@ -2764,29 +2620,27 @@ void umbrella_goon_charge_start(uint16_t object)
 }
 
 /* Action 12, step 1: after 8 frames puts the umbrella's hit box (7EB7) out and runs through. */
-uint16_t umbrella_goon_charge_hit(uint16_t object, uint16_t y)
+void umbrella_goon_charge_hit(uint16_t object)
 {
-	uint16_t box = 0;
 	uint8_t timer = 0;
 
 	timer = OBJECT(object)->timer;
 	OBJECT(object)->timer = timer - 1u;
 	if (timer != 1u)
-		return y;
-	box = umbrella_goon_charge_hit_box_ADDRESS;
-	vector_set_hit_box(object, box);
+		return;
+	leftover_y = umbrella_goon_charge_hit_box_ADDRESS;
+	vector_set_hit_box(object);
 	goon_run_through(object);
-	return box;
 }
 
 /* Runs on the way it faces for 8 frames plus an eighth of the x distance to its target. */
 void goon_run_through(uint16_t object)
 {
-	uint8_t t1 = 0, attributes = 0, action_step = 0;
+	uint8_t dx_low = 0, attributes = 0, action_step = 0;
 	uint16_t x_speed = 0;
 
-	t1 = (uint8_t)OBJECT(object)->target_dx;
-	OBJECT(object)->timer = (((t1 >> 1) >> 1) >> 1) + 8u;
+	dx_low = (uint8_t)OBJECT(object)->target_dx;
+	OBJECT(object)->timer = (((dx_low >> 1) >> 1) >> 1) + 8u;
 	OBJECT(object)->y_speed = 0;
 	OBJECT(object)->x_speed = 0x200;
 	attributes = OBJECT(object)->attributes;
@@ -2800,20 +2654,18 @@ void goon_run_through(uint16_t object)
 }
 
 /* After its run back to its body's hit box, done. */
-uint16_t goon_run_through_end(uint16_t object, uint16_t y)
+void goon_run_through_end(uint16_t object)
 {
-	uint16_t box = 0;
 	uint8_t timer = 0;
 
 	timer = OBJECT(object)->timer;
 	OBJECT(object)->timer = timer - 1u;
 	if (timer != 1u)
-		return y;
-	box = armed_goon_body_box_ADDRESS;
-	vector_set_hit_box(object, box);
+		return;
+	leftover_y = armed_goon_body_box_ADDRESS;
+	vector_set_hit_box(object);
 	OBJECT(object)->state = 2u;
 	OBJECT(object)->timer = 0u;
-	return box;
 }
 
 /* Action 07, step 0: strikes (animation A4) facing its target. */
@@ -2829,19 +2681,17 @@ void goon_strike_and_run_swing(uint16_t object)
 }
 
 /* Action 07, step 1: after 8 frames its strike's hit box (7EA7), and runs through. */
-uint16_t goon_strike_and_run_hit(uint16_t object, uint16_t y)
+void goon_strike_and_run_hit(uint16_t object)
 {
-	uint16_t box = 0;
 	uint8_t timer = 0;
 
 	timer = OBJECT(object)->timer;
 	OBJECT(object)->timer = timer - 1u;
 	if (timer != 1u)
-		return y;
-	box = goon_strike_and_run_hit_box_ADDRESS;
-	vector_set_hit_box(object, box);
+		return;
+	leftover_y = goon_strike_and_run_hit_box_ADDRESS;
+	vector_set_hit_box(object);
 	goon_run_through(object);
-	return box;
 }
 
 /* Action 06, step 0: winds up (animation AB) facing its target. */
@@ -2857,33 +2707,29 @@ void hat_goon_throw_start(uint16_t object)
 
 /* Action 06, step 1: at the animation's event throws its hat (list 2 type 02) and keeps it in field 40;
    no room, done. */
-void hat_goon_throw_release(uint16_t object, uint16_t *p_child_record, uint16_t *p_hat)
+uint16_t hat_goon_throw_release(uint16_t object, uint16_t hat)
 {
-	uint16_t child_record = (uint16_t)*p_child_record;
-	uint16_t hat = (uint16_t)*p_hat;
 	uint32_t carry = 0;
+	uint16_t child_object = 0;
 	uint8_t animation_flags = 0, action_step = 0;
 
 	animation_flags = OBJECT(object)->animation_flags;
-	if ((animation_flags & 2u) != 0u)
+	if ((animation_flags & 2u) == 0u)
+		return hat;
+	leftover_y = hat_goon_throw_release_child_ADDRESS;
+	child_object = hat_goon_throw_release_child_ADDRESS;
+	spawn_list_2_child(object, child_object, &hat, &carry);
+	if (carry == 0u)
 	{
-		child_record = hat_goon_throw_release_child_ADDRESS;
-		spawn_list_2_child(object, child_record, &hat, &carry);
-		if (carry == 0u)
-		{
-			OBJECT(object)->state = 2u;
-			OBJECT(object)->timer = 0u;
-		}
-		else
-		{
-			OBJECT(object)->hat_goon_throw.hat = hat;
-			OBJECT(object)->timer = 0x30u;
-			action_step = OBJECT(object)->action_step;
-			OBJECT(object)->action_step = action_step + 1u;
-		}
+		OBJECT(object)->state = 2u;
+		OBJECT(object)->timer = 0u;
+		return hat;
 	}
-	*p_child_record = child_record;
-	*p_hat = hat;
+	OBJECT(object)->hat_goon_throw.hat = hat;
+	OBJECT(object)->timer = 0x30u;
+	action_step = OBJECT(object)->action_step;
+	OBJECT(object)->action_step = action_step + 1u;
+	return hat;
 }
 
 /* Action 06, step 2: done once the hat is gone; after 30 frames catches it (animation AC). */

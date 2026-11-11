@@ -3,7 +3,7 @@
  *    Description: the game start's four portraits
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    10-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -15,12 +15,12 @@
 void game_start_portraits(uint16_t u)
 {
 	uint8_t wait = 0;
-	uint16_t controls = 0, x = 0;
-	uint8_t t1 = 0, t2 = 0;
+	uint16_t controls = 0, subphase_steps = 0;
+	uint8_t old_skip_wait = 0, players_left = 0;
 
 	scene_running = 0u;
 	game_start_join_players();
-	x = game_start_portraits_steps_ADDRESS;
+	subphase_steps = game_start_portraits_steps_ADDRESS;
 	switch ((int8_t)(uint8_t)((uint32_t)step_subphase << 1))
 	{
 	case 0:
@@ -30,27 +30,27 @@ void game_start_portraits(uint16_t u)
 		game_start_run_portraits();
 		break;
 	case 4:
-		portrait_start(x, u);
+		portrait_start(subphase_steps, u);
 		break;
 	case 6:
-		portrait_wait_join(x, u);
+		portrait_wait_join(subphase_steps, u);
 		break;
 	case 8:
-		portrait_wait(x);
+		portrait_wait(subphase_steps);
 		break;
 	case 10:
-		portrait_come_alive(x, u);
+		portrait_come_alive(subphase_steps, u);
 		break;
 	case 12:
-		portrait_blink_now_and_then(x);
+		portrait_blink_now_and_then(subphase_steps);
 		break;
 	case 14:
-		portrait_wait_animation(x);
+		portrait_wait_animation(subphase_steps);
 		break;
 	}
-	t1 = skip_wait;
-	wait = t1 + 1u;
-	if ((uint8_t)(t1 + 1u) < t1)
+	old_skip_wait = skip_wait;
+	wait = old_skip_wait + 1u;
+	if ((uint8_t)(old_skip_wait + 1u) < old_skip_wait)
 		wait = 0xFFu;
 	skip_wait = wait;
 	if (wait < 0x20u)
@@ -78,9 +78,9 @@ void game_start_portraits(uint16_t u)
 		}
 		controls += 4u;
 		portrait_player_bit = (uint32_t)portrait_player_bit << 1;
-		t2 = portrait_players_left;
-		portrait_players_left = t2 - 1u;
-	} while (t2 != 1u);
+		players_left = portrait_players_left;
+		portrait_players_left = players_left - 1u;
+	} while (players_left != 1u);
 }
 
 /* Marks in 485B the players who join (pressing, or with free play set up) */
@@ -88,7 +88,7 @@ void game_start_join_players(void)
 {
 	uint8_t count = 0;
 	uint16_t controls = 0, slot_credit = 0;
-	uint8_t t1 = 0, t2 = 0;
+	uint8_t slots_left = 0, players_left = 0;
 
 	if (separate_coin_slots != 0u)
 	{
@@ -101,9 +101,9 @@ void game_start_join_players(void)
 				players_joined |= join_slot_bit;
 			slot_credit += 8u;
 			join_slot_bit = (uint32_t)join_slot_bit << 1;
-			t1 = join_player_bit;
-			join_player_bit = t1 - 1u;
-		} while (t1 != 1u);
+			slots_left = join_player_bit;
+			join_player_bit = slots_left - 1u;
+		} while (slots_left != 1u);
 		return;
 	}
 	if (credits == 0u)
@@ -117,40 +117,40 @@ void game_start_join_players(void)
 			players_joined |= join_player_bit;
 		controls += 4u;
 		join_player_bit = (uint32_t)join_player_bit << 1;
-		t2 = count;
-		count = t2 - 1u;
-	} while (t2 != 1u);
+		players_left = count;
+		count = players_left - 1u;
+	} while (players_left != 1u);
 }
 
 /* Draws the portraits' screen: palettes, scene 80 and each portrait's colours */
 void game_start_draw_portraits(uint16_t palette_job)
 {
-	uint16_t ignored16 = 0, ignored16_2 = 0, ignored16_3 = 0, layer_and_columns = 0, portrait_area = 0, request = 0, tile = 0;
+	uint16_t ignored16 = 0, ignored16_2 = 0, layer_and_columns = 0, portrait_area = 0, request = 0, tile = 0;
 	uint8_t stack = 0, stack_2 = 0;
-	uint8_t t2 = 0, t3 = 0;
-	uint16_t t1 = 0;
+	uint8_t columns_left = 0, rows_left = 0;
+	uint16_t area_record = 0;
 
 	io_write8(0x1FB9u, 0x3Fu);
 	io_write8(0x1FBAu, 0x36u);
 	palette_request_kind = 1u;
 	request = 0x408u;
-	vector_palette_request(request, &ignored16, &palette_job);
+	palette_job = vector_palette_request(palette_job, request);
 	palette_request_kind = 2u;
 	request = 0x1Bu;
-	vector_palette_request(request, &ignored16, &palette_job);
+	vector_palette_request(palette_job, request);
 	map_scene = 0x80u;
 	map_area = 0u;
 	vector_set_layer_modes();
 	layer_and_columns = 0x2Cu;
-	vector_draw_layer_strips(layer_and_columns, &ignored16_2, &ignored16, &ignored16_3);
+	vector_draw_layer_strips(layer_and_columns, &ignored16, &ignored16_2);
 	layer_and_columns = 0x12Cu;
-	vector_draw_layer_strips(layer_and_columns, &ignored16_2, &ignored16, &ignored16_3);
+	vector_draw_layer_strips(layer_and_columns, &ignored16, &ignored16_2);
 	portrait_number = 0u;
 	do
 	{
-		t1 = portrait_areas_ADDRESS + (int8_t)(((uint32_t)portrait_number << 1) << 1);
-		portrait_area = t1 + 2u;
-		tile = PORTRAIT_AREA(t1)->tiles;
+		area_record = portrait_areas_ADDRESS + (int8_t)(((uint32_t)portrait_number << 1) << 1);
+		portrait_area = area_record + 2u;
+		tile = PORTRAIT_AREA(area_record)->tiles;
 		portrait_rows_left = 0x14u;
 		do
 		{
@@ -163,17 +163,17 @@ void game_start_draw_portraits(uint16_t palette_job)
 				stack = (uint8_t)tile;
 				stack_2 = (stack_2 & 7u) | 0x28u;
 				tile = ((uint32_t)stack_2 << 8) | stack;
-				t2 = portrait_columns_left;
-				portrait_columns_left = t2 - 1u;
-			} while (t2 != 1u);
+				columns_left = portrait_columns_left;
+				portrait_columns_left = columns_left - 1u;
+			} while (columns_left != 1u);
 			tile += 0x37u;
 			stack_2 = tile >> 8;
 			stack = (uint8_t)tile;
 			stack_2 = (stack_2 & 7u) | 0x28u;
 			tile = ((uint32_t)stack_2 << 8) | stack;
-			t3 = portrait_rows_left;
-			portrait_rows_left = t3 - 1u;
-		} while (t3 != 1u);
+			rows_left = portrait_rows_left;
+			portrait_rows_left = rows_left - 1u;
+		} while (rows_left != 1u);
 		portrait_number++;
 	} while (portrait_number != 4u);
 	io_write8(0x1FB9u, 0x13u);
@@ -234,15 +234,15 @@ void portrait_start(uint16_t object, uint16_t test_player)
 {
 	uint16_t kind = 0, kind_and_animation = 0;
 	uint8_t step = 0;
-	uint16_t kind_2 = 0, t1 = 0, z = 0, shadow_kind = 0, shadow_x = 0;
+	uint16_t kind_2 = 0, portrait_x = 0, z = 0, shadow_kind = 0, shadow_x = 0;
 
 	OBJECT(object)->flags = 0x80u;
 	kind_2 = (((uint32_t)TEST_PLAYER(test_player)->kind << 8u) | TEST_PLAYER(test_player)->animation);
 	kind_and_animation = kind_2;
 	OBJECT(object)->kind = kind_and_animation >> 8;
 	OBJECT(object)->animation = kind_and_animation | 0x80u;
-	t1 = TEST_PLAYER(test_player)->x;
-	OBJECT(object)->x = t1;
+	portrait_x = TEST_PLAYER(test_player)->x;
+	OBJECT(object)->x = portrait_x;
 	OBJECT(object)->y = 0x80u;
 	z = TEST_PLAYER(test_player)->z;
 	OBJECT(object)->z = z;
@@ -292,15 +292,15 @@ void portrait_wait(uint16_t object)
 void portrait_come_alive(uint16_t object, uint16_t test_player)
 {
 	uint8_t frame = 0;
-	uint16_t command = 0, ignored16 = 0, request = 0;
+	uint16_t command = 0, request = 0, test_player_again = 0;
 	uint8_t stack = 0;
-	uint16_t stack_3 = 0;
-	uint8_t t1 = 0, portrait_frame = 0, portrait_frame_2 = 0, palette_set = 0, step = 0;
-	uint16_t palette_effect = 0, t2 = 0;
+	uint16_t saved_test_player = 0;
+	uint8_t wait_left = 0, portrait_frame = 0, portrait_frame_2 = 0, palette_set = 0, step = 0;
+	uint16_t palette_effect = 0, start_sound = 0;
 
-	t1 = OBJECT(object)->portrait.frame_wait;
-	OBJECT(object)->portrait.frame_wait = t1 - 1u;
-	if (t1 != 1u)
+	wait_left = OBJECT(object)->portrait.frame_wait;
+	OBJECT(object)->portrait.frame_wait = wait_left - 1u;
+	if (wait_left != 1u)
 		return;
 	OBJECT(object)->portrait.frame_wait = 3u;
 	portrait_frame = OBJECT(object)->portrait.portrait_frame;
@@ -314,18 +314,19 @@ void portrait_come_alive(uint16_t object, uint16_t test_player)
 	}
 	OBJECT(object + 0x60u)->flags = 0x80u;
 	stack = frame;
-	stack_3 = test_player;
+	saved_test_player = test_player;
 	palette_request_kind = 1u;
 	palette_set = TEST_PLAYER(test_player)->palette_set;
 	request = 0x600u | palette_set;
-	vector_palette_request(request, &ignored16, &test_player);
-	test_player = stack_3;
+	vector_palette_request(test_player, request);
+	test_player = saved_test_player;
 	palette_request_kind = 2u;
 	palette_effect = TEST_PLAYER(test_player)->palette_effect;
 	request = palette_effect;
-	vector_palette_request(request, &ignored16, &test_player);
-	t2 = mem_read16(stack_3 + 0xFu);
-	command = t2;
+	vector_palette_request(test_player, request);
+	test_player_again = saved_test_player;
+	start_sound = TEST_PLAYER(test_player_again)->sound;
+	command = start_sound;
 	vector_queue_sound_always(command);
 	frame = stack;
 	step = OBJECT(object)->portrait.step;

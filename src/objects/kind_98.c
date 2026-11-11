@@ -3,7 +3,7 @@
  *    Description: Krustyland's kind 98 enemy, let out by the doors
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    10-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -12,13 +12,13 @@
 #include "game.h"
 
 /* Sets up the kind 98 enemy: state 0 fights at once, the others walk out of a door first. */
-void kind_98_start(uint16_t object, uint16_t *p_box, uint16_t *p_behaviour)
+uint16_t kind_98_start(uint16_t object)
 {
-	uint16_t behaviour = 0, box = 0, setup = 0;
+	uint16_t behaviour = 0, setup = 0;
 	uint8_t setup_count = 0, parameter = 0, state = 0;
 
 	setup = kind_98_setup_ADDRESS;
-	box = vector_object_setup(object, setup);
+	vector_object_setup(object, setup);
 	OBJECT(object)->kind_98.vanishes = 1u;
 	setup_count = OBJECT(object)->kind_98.setup_count;
 	OBJECT(object)->kind_98.setup_count = setup_count + 1u;
@@ -30,22 +30,18 @@ void kind_98_start(uint16_t object, uint16_t *p_box, uint16_t *p_behaviour)
 	{
 		OBJECT(object)->parameter = 0u;
 		OBJECT(object)->state = 2u;
+		return behaviour;
 	}
-	else
-	{
-		OBJECT(object)->flags = 0x80u;
-		OBJECT(object)->attributes = 0x20u;
-		state = OBJECT(object)->state;
-		OBJECT(object)->state = state + 1u;
-	}
-	*p_box = box;
-	*p_behaviour = behaviour;
+	OBJECT(object)->flags = 0x80u;
+	OBJECT(object)->attributes = 0x20u;
+	state = OBJECT(object)->state;
+	OBJECT(object)->state = state + 1u;
+	return behaviour;
 }
 
 /* Runs the kind 98 enemy's walk out of the door by its substep. */
-void kind_98_entrance_steps(uint16_t object, uint16_t *p_y, uint16_t *p_step_handlers)
+uint16_t kind_98_entrance_steps(uint16_t object)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint16_t step_handlers = 0;
 	uint8_t action_step = 0;
 
@@ -55,60 +51,57 @@ void kind_98_entrance_steps(uint16_t object, uint16_t *p_y, uint16_t *p_step_han
 	{
 	case 0:
 		kind_98_entrance_show(object);
-		break;
+		return step_handlers;
 	case 2:
 		kind_98_entrance_next(object);
-		break;
+		return step_handlers;
 	case 4:
 		kind_98_entrance_wait(object);
-		break;
+		return step_handlers;
 	case 6:
 		kind_98_entrance_walk(object);
-		break;
+		return step_handlers;
 	case 8:
 		kind_98_entrance_reach_floor(object);
-		break;
+		return step_handlers;
 	case 10:
 		kind_98_step_back(object);
-		break;
+		return step_handlers;
 	case 12:
 		kind_98_step_back_end(object);
-		break;
+		return step_handlers;
 	case 14:
 		kind_98_strike_swing(object);
-		break;
+		return step_handlers;
 	case 16:
-		y = kind_98_strike_hit(object, y);
-		break;
+		kind_98_strike_hit(object);
+		return step_handlers;
 	case 18:
-		y = kind_98_strike_recover(object);
-		break;
+		kind_98_strike_recover(object);
+		return step_handlers;
 	case 20:
 		kind_98_strike_end(object);
-		break;
+		return step_handlers;
 	case 22:
 	case 24:
-		clown_ball_burst_steps(object, &y, &step_handlers);
-		break;
+		return clown_ball_burst_steps(object);
 	case 26:
-		clown_ball_start(object, &y, &step_handlers);
-		break;
+		return clown_ball_start(object);
 	case 28:
 	case 30:
 		clown_ball_fall(object);
-		break;
+		return step_handlers;
 	case 32:
 		clown_ball_vanish(object);
-		break;
+		return step_handlers;
 	case 34:
 		clown_ball_burst(object);
-		break;
+		return step_handlers;
 	case 36:
 		clown_ball_burst_end(object);
-		break;
+		return step_handlers;
 	}
-	*p_y = y;
-	*p_step_handlers = step_handlers;
+	unreachable();
 }
 
 /* Shows the enemy in the doorway. */
@@ -227,32 +220,29 @@ void kind_98_strike_swing(uint16_t object)
 }
 
 /* At the strike's mark, puts out its hit box. */
-uint16_t kind_98_strike_hit(uint16_t object, uint16_t y)
+void kind_98_strike_hit(uint16_t object)
 {
 	uint8_t animation_flags = 0, action_step = 0;
 
 	animation_flags = OBJECT(object)->animation_flags;
 	if ((animation_flags & 2u) == 0u)
-		return y;
-	y = kind_98_strike_hit_box_ADDRESS;
-	vector_set_hit_box(object, y);
+		return;
+	leftover_y = kind_98_strike_hit_box_ADDRESS;
+	vector_set_hit_box(object);
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step + 1u;
-	return y;
 }
 
 /* Takes its body's hit box back and waits for the animation's end. */
-uint16_t kind_98_strike_recover(uint16_t object)
+void kind_98_strike_recover(uint16_t object)
 {
-	uint16_t box = 0;
 	uint8_t action_step = 0;
 
-	box = kind_98_body_box_ADDRESS;
-	vector_set_hit_box(object, box);
+	leftover_y = kind_98_body_box_ADDRESS;
+	vector_set_hit_box(object);
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step + 1u;
 	kind_98_strike_end(object);
-	return box;
 }
 
 /* When the animation ends, goes back to the fight. */

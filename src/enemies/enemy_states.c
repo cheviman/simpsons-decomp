@@ -3,7 +3,7 @@
  *    Description: an enemy's states: thinking, attacking, the hit reactions, climbing
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    10-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -40,16 +40,15 @@ void unused_enemy_run_action_jump(uint16_t u, uint16_t action_offset)
    the fewest go after when the nearest has its share), takes or gives back a side of it, and, on the
    screen with the target in one of its behaviour's ranges, may start an attack by the range's chance;
    otherwise runs a move its behaviour picks by chance, then checks the floor and any step to climb. */
-void enemy_think(uint16_t object, uint16_t *p_y, uint16_t *p_target_player, uint32_t *p_left_caller)
+void enemy_think(uint16_t object, uint16_t *p_object_2, uint32_t *p_left_caller)
 {
-	uint16_t y = (uint16_t)*p_y;
 	bool L_07D53B = false, L_07D59B = false;
 	uint32_t carry = 0;
-	uint8_t a = 0, choice = 0, step = 0;
-	uint16_t d = 0, target = 0, target_player = 0, u = 0;
+	uint8_t action_offset = 0, attack_chance = 0, choice = 0, roll = 0, sides = 0, step = 0;
+	uint16_t action_handlers = 0, d = 0, range = 0, state_record = 0, target = 0, target_player = 0;
 	uint8_t stack = 0;
-	uint8_t retarget_time = 0, attackers = 0, t1 = 0, t2 = 0, t3 = 0, t5 = 0, parameter = 0, parameter_2 = 0, parameter_3 = 0, t6 = 0, t7 = 0, target_direction = 0, t8 = 0, t9 = 0, side = 0, side_2 = 0, t10 = 0, parameter_4 = 0, timer = 0, timer_2 = 0, t11 = 0, t16 = 0, t17 = 0, t18 = 0, parameter_5 = 0, t19 = 0, t20 = 0, t21 = 0;
-	uint16_t target_2 = 0, t4 = 0, target_3 = 0, z = 0, floor_z = 0, target_dx = 0, target_dy = 0, target_dx_2 = 0, target_dy_2 = 0, action = 0, t12 = 0, floor_z_2 = 0, t13 = 0, t14 = 0, t15 = 0, z_2 = 0, floor_z_3 = 0, behaviour = 0, behaviour_2 = 0;
+	uint8_t retarget_time = 0, attackers = 0, attackers_left = 0, nearest_attackers = 0, attackers_limit = 0, old_attackers = 0, parameter = 0, parameter_2 = 0, parameter_3 = 0, taken_sides = 0, sides_taken = 0, target_direction = 0, sides_taken_2 = 0, sides_taken_3 = 0, side = 0, side_2 = 0, target_state = 0, parameter_4 = 0, timer = 0, timer_2 = 0, state = 0, action_chance = 0, remaining_roll = 0, choices_left = 0, parameter_5 = 0, t2 = 0, t3 = 0, t4 = 0;
+	uint16_t target_2 = 0, least_attacked = 0, target_3 = 0, z = 0, floor_z = 0, target_dx = 0, target_dy = 0, target_dx_2 = 0, target_dy_2 = 0, action = 0, target_floor = 0, floor_z_2 = 0, floor_difference = 0, t1 = 0, floor_distance = 0, z_2 = 0, floor_z_3 = 0, behaviour = 0, behaviour_2 = 0;
 
 	target_2 = OBJECT(object)->target;
 	target_player = target_2;
@@ -61,22 +60,22 @@ void enemy_think(uint16_t object, uint16_t *p_y, uint16_t *p_target_player, uint
 		OBJECT(object)->retarget_time = 0x10u;
 		previous_target = target_player;
 		attackers = OBJECT(target_player)->player.attackers;
-		t1 = attackers - 1u;
-		OBJECT(target_player)->player.attackers = t1;
-		if ((int8_t)t1 < 0)
+		attackers_left = attackers - 1u;
+		OBJECT(target_player)->player.attackers = attackers_left;
+		if ((int8_t)attackers_left < 0)
 			OBJECT(target_player)->player.attackers = 0u;
 		target_player = enemy_target_nearest_player(object);
-		t2 = mem_read8(target_player + 0x45u);
-		t3 = io_read8(0x1877u);
-		if (t3 <= t2)
+		nearest_attackers = OBJECT(target_player)->player.attackers;
+		attackers_limit = io_read8(0x1877u);
+		if (attackers_limit <= nearest_attackers)
 		{
 			find_least_attacked_player();
-			t4 = io_read16(0x1870u);
-			target_player = t4;
+			least_attacked = io_read16(0x1870u);
+			target_player = least_attacked;
 			OBJECT(object)->target = target_player;
 		}
-		t5 = mem_read8(target_player + 0x45u);
-		mem_write8(target_player + 0x45u, t5 + 1u);
+		old_attackers = OBJECT(target_player)->player.attackers;
+		OBJECT(target_player)->player.attackers = old_attackers + 1u;
 		if (target_player != previous_target)
 		{
 			target = previous_target;
@@ -88,7 +87,7 @@ void enemy_think(uint16_t object, uint16_t *p_y, uint16_t *p_target_player, uint
 	if (boss_beaten != 0u)
 	{
 		OBJECT(object)->flags = 0u;
-		*p_target_player = target_player;
+		*p_object_2 = target_player;
 		return;
 	}
 	z = OBJECT(object)->z;
@@ -104,8 +103,8 @@ void enemy_think(uint16_t object, uint16_t *p_y, uint16_t *p_target_player, uint
 			parameter_3 = OBJECT(object)->parameter;
 			if (parameter_3 == 2u)
 			{
-				t6 = mem_read8(target_player + 0x46u);
-				if (t6 < 0xC0u)
+				taken_sides = OBJECT(target_player)->player.sides_taken;
+				if (taken_sides < 0xC0u)
 				{
 					OBJECT(object)->parameter = 0u;
 					OBJECT(object)->timer = 0u;
@@ -127,8 +126,8 @@ void enemy_think(uint16_t object, uint16_t *p_y, uint16_t *p_target_player, uint
 	}
 	else
 	{
-		t7 = mem_read8(target_player + 0x46u);
-		if (t7 < 0xC0u)
+		sides_taken = OBJECT(target_player)->player.sides_taken;
+		if (sides_taken < 0xC0u)
 		{
 			target_dx_2 = OBJECT(object)->target_dx;
 			if (target_dx_2 < 0x40u)
@@ -146,20 +145,20 @@ void enemy_think(uint16_t object, uint16_t *p_y, uint16_t *p_target_player, uint
 							for (;;)
 							{
 								L_07D53B = false;
-								t8 = mem_read8(target_player + 0x46u);
-								a = t8;
-								if ((a & 0x40u) != 0u)
+								sides_taken_2 = OBJECT(target_player)->player.sides_taken;
+								sides = sides_taken_2;
+								if ((sides & 0x40u) != 0u)
 								{
-									t9 = mem_read8(target_player + 0x46u);
-									a = t9;
-									if ((int8_t)t9 < 0)
+									sides_taken_3 = OBJECT(target_player)->player.sides_taken;
+									sides = sides_taken_3;
+									if ((int8_t)sides_taken_3 < 0)
 										continue;
-									mem_write8(target_player + 0x46u, a | 0x80u);
+									OBJECT(target_player)->player.sides_taken = sides | 0x80u;
 									side = OBJECT(object)->enemy.side;
 									OBJECT(object)->enemy.side = side & 0x7Fu;
 									break;
 								}
-								mem_write8(target_player + 0x46u, a | 0x40u);
+								OBJECT(target_player)->player.sides_taken = sides | 0x40u;
 								side_2 = OBJECT(object)->enemy.side;
 								OBJECT(object)->enemy.side = side_2 | 0x80u;
 								break;
@@ -167,12 +166,12 @@ void enemy_think(uint16_t object, uint16_t *p_y, uint16_t *p_target_player, uint
 						}
 						else
 						{
-							t9 = mem_read8(target_player + 0x46u);
-							a = t9;
-							L_07D53B = (int8_t)t9 < 0;
+							sides_taken_3 = OBJECT(target_player)->player.sides_taken;
+							sides = sides_taken_3;
+							L_07D53B = (int8_t)sides_taken_3 < 0;
 							if (!L_07D53B)
 							{
-								mem_write8(target_player + 0x46u, a | 0x80u);
+								OBJECT(target_player)->player.sides_taken = sides | 0x80u;
 								side = OBJECT(object)->enemy.side;
 								OBJECT(object)->enemy.side = side & 0x7Fu;
 							}
@@ -187,8 +186,8 @@ void enemy_think(uint16_t object, uint16_t *p_y, uint16_t *p_target_player, uint
 			OBJECT(object)->timer = 0u;
 		}
 	}
-	t10 = mem_read8(target_player + 2u);
-	L_07D59B = (int8_t)t10 >= 0;
+	target_state = OBJECT(target_player)->state;
+	L_07D59B = (int8_t)target_state >= 0;
 	if (!L_07D59B)
 	{
 		parameter_4 = OBJECT(object)->parameter;
@@ -202,58 +201,57 @@ void enemy_think(uint16_t object, uint16_t *p_y, uint16_t *p_target_player, uint
 			if (timer != 0u)
 			{
 				action = (((uint32_t)OBJECT(object)->action << 8u) | OBJECT(object)->action_step);
-				u = enemy_think_actions_ADDRESS;
-				a = (uint32_t)(action >> 8) << 1;
+				action_handlers = enemy_think_actions_ADDRESS;
+				action_offset = (uint32_t)(action >> 8) << 1;
 				step = (uint8_t)action;
-				switch ((int8_t)a)
+				switch ((int8_t)action_offset)
 				{
 				case 0:
-					enemy_walk_to_target(object, step, &y, &u, p_left_caller);
+					enemy_walk_to_target(object, step, &action_handlers, p_left_caller);
 					break;
 				case 2:
-					enemy_line_up_with_target(object, step, &y, &u, p_left_caller);
+					enemy_line_up_with_target(object, step, &action_handlers, p_left_caller);
 					break;
 				case 4:
-					enemy_keep_distance(object, step, &y, &u, p_left_caller);
+					enemy_keep_distance(object, step, &action_handlers, p_left_caller);
 					break;
 				case 6:
-					enemy_back_off(object, step, &y, &u, p_left_caller);
+					enemy_back_off(object, step, &action_handlers, p_left_caller);
 					break;
 				case 8:
 					enemy_stand_still();
 					break;
 				case 10:
-					enemy_step_toward_target(object, step, &y, &u, p_left_caller);
+					enemy_step_toward_target(object, step, &action_handlers, p_left_caller);
 					break;
 				case 12:
-					enemy_circle_target(object, step, &y, &u, p_left_caller);
+					enemy_circle_target(object, step, &action_handlers, p_left_caller);
 					break;
 				case 14:
-					enemy_rush_at_target(object, step, &y, &u, p_left_caller);
+					enemy_rush_at_target(object, step, &action_handlers, p_left_caller);
 					break;
 				case 16:
-					enemy_line_up_and_pace(object, step, &y, &u, p_left_caller);
+					enemy_line_up_and_pace(object, step, &action_handlers, p_left_caller);
 					break;
 				case 18:
-					enemy_wait_while_target_down(object, step, &y, &u, p_left_caller);
+					enemy_wait_while_target_down(object, step, &action_handlers, p_left_caller);
 					break;
 				case 20:
-					enemy_line_up_near_target(object, step, &y, &u, p_left_caller);
+					enemy_line_up_near_target(object, step, &action_handlers, p_left_caller);
 					break;
 				case 22:
-					enemy_wander(object, step, &y, &u, p_left_caller);
+					enemy_wander(object, step, &action_handlers, p_left_caller);
 					break;
 				case 24:
-					enemy_walk_to_target_side(object, step, &y, &u, p_left_caller);
+					enemy_walk_to_target_side(object, step, &action_handlers, p_left_caller);
 					break;
 				case 26:
-					enemy_get_around(object, step, &y, &u, p_left_caller);
+					enemy_get_around(object, step, &action_handlers, p_left_caller);
 					break;
 				}
-				u = check_floor(object, u);
+				action_handlers = check_floor(object, action_handlers);
 				enemy_start_climbing(object);
-				*p_y = y;
-				*p_target_player = u;
+				*p_object_2 = action_handlers;
 				return;
 			}
 		}
@@ -266,55 +264,55 @@ void enemy_think(uint16_t object, uint16_t *p_y, uint16_t *p_target_player, uint
 			carry = enemy_on_screen(object);
 			if (carry)
 			{
-				t11 = mem_read8(target_player + 2u);
-				if ((int8_t)t11 >= 0)
+				state = OBJECT(target_player)->state;
+				if ((int8_t)state >= 0)
 				{
-					t12 = mem_read16(target_player + 0x5Cu);
+					target_floor = OBJECT(target_player)->floor_z;
 					floor_z_2 = OBJECT(object)->floor_z;
-					t13 = t12 - floor_z_2;
-					t14 = t13;
-					t15 = t14 >> 15 ? 0u - t14 : t14;
-					if (t15 <= 0x20u)
+					floor_difference = target_floor - floor_z_2;
+					t1 = floor_difference;
+					floor_distance = t1 >> 15 ? 0u - t1 : t1;
+					if (floor_distance <= 0x20u)
 					{
 						z_2 = OBJECT(object)->z;
 						floor_z_3 = OBJECT(object)->floor_z;
 						if (z_2 == floor_z_3)
 						{
 							behaviour = OBJECT(object)->behaviour;
-							target_player = behaviour + 0x28u;
-							enemy_find_attack_range(object, &target_player, &d, &carry);
-							a = (uint8_t)(d >> 8);
+							range = behaviour + 0x28u;
+							enemy_find_attack_range(object, &range, &d, &carry);
+							attack_chance = (uint8_t)(d >> 8);
 							if (carry)
 							{
-								stack = a;
+								stack = attack_chance;
 								d = enemy_random((uint8_t)d);
-								a = (uint8_t)(d >> 8);
-								if (a < stack)
+								roll = (uint8_t)(d >> 8);
+								if (roll < stack)
 								{
 									d = enemy_random((uint8_t)d);
-									a = (uint8_t)(d >> 8);
+									roll = (uint8_t)(d >> 8);
 									choice = 4u;
-									target_player += 7u;
+									range += 7u;
 									do
 									{
-										t16 = mem_read8(target_player + (int8_t)choice);
-										t17 = a;
-										a = t17 - t16;
-										if (t17 < t16)
+										action_chance = ATTACK_RANGE(range + (int8_t)choice - 0x7u)->unk_07;
+										remaining_roll = roll;
+										roll = remaining_roll - action_chance;
+										if (remaining_roll < action_chance)
 										{
-											target_player -= 4u;
-											OBJECT(object)->action = mem_read8(target_player + (int8_t)choice);
+											range -= 4u;
+											OBJECT(object)->action = ATTACK_RANGE(range + (int8_t)choice - 0x3u)->chance;
 											OBJECT(object)->state = 3u;
 											OBJECT(object)->action_step = 0u;
 											OBJECT(object)->x_speed = 0;
 											OBJECT(object)->y_speed = 0;
 											OBJECT(object)->z_speed = 0;
-											*p_target_player = target_player;
+											*p_object_2 = range;
 											return;
 										}
-										t18 = choice;
-										choice = t18 - 1u;
-									} while (t18 != 1u);
+										choices_left = choice;
+										choice = choices_left - 1u;
+									} while (choices_left != 1u);
 								}
 							}
 						}
@@ -325,144 +323,141 @@ void enemy_think(uint16_t object, uint16_t *p_y, uint16_t *p_target_player, uint
 			if (timer != 0u)
 			{
 				action = (((uint32_t)OBJECT(object)->action << 8u) | OBJECT(object)->action_step);
-				u = enemy_think_actions_ADDRESS;
-				a = (uint32_t)(action >> 8) << 1;
+				action_handlers = enemy_think_actions_ADDRESS;
+				action_offset = (uint32_t)(action >> 8) << 1;
 				step = (uint8_t)action;
-				switch ((int8_t)a)
+				switch ((int8_t)action_offset)
 				{
 				case 0:
-					enemy_walk_to_target(object, step, &y, &u, p_left_caller);
+					enemy_walk_to_target(object, step, &action_handlers, p_left_caller);
 					break;
 				case 2:
-					enemy_line_up_with_target(object, step, &y, &u, p_left_caller);
+					enemy_line_up_with_target(object, step, &action_handlers, p_left_caller);
 					break;
 				case 4:
-					enemy_keep_distance(object, step, &y, &u, p_left_caller);
+					enemy_keep_distance(object, step, &action_handlers, p_left_caller);
 					break;
 				case 6:
-					enemy_back_off(object, step, &y, &u, p_left_caller);
+					enemy_back_off(object, step, &action_handlers, p_left_caller);
 					break;
 				case 8:
 					enemy_stand_still();
 					break;
 				case 10:
-					enemy_step_toward_target(object, step, &y, &u, p_left_caller);
+					enemy_step_toward_target(object, step, &action_handlers, p_left_caller);
 					break;
 				case 12:
-					enemy_circle_target(object, step, &y, &u, p_left_caller);
+					enemy_circle_target(object, step, &action_handlers, p_left_caller);
 					break;
 				case 14:
-					enemy_rush_at_target(object, step, &y, &u, p_left_caller);
+					enemy_rush_at_target(object, step, &action_handlers, p_left_caller);
 					break;
 				case 16:
-					enemy_line_up_and_pace(object, step, &y, &u, p_left_caller);
+					enemy_line_up_and_pace(object, step, &action_handlers, p_left_caller);
 					break;
 				case 18:
-					enemy_wait_while_target_down(object, step, &y, &u, p_left_caller);
+					enemy_wait_while_target_down(object, step, &action_handlers, p_left_caller);
 					break;
 				case 20:
-					enemy_line_up_near_target(object, step, &y, &u, p_left_caller);
+					enemy_line_up_near_target(object, step, &action_handlers, p_left_caller);
 					break;
 				case 22:
-					enemy_wander(object, step, &y, &u, p_left_caller);
+					enemy_wander(object, step, &action_handlers, p_left_caller);
 					break;
 				case 24:
-					enemy_walk_to_target_side(object, step, &y, &u, p_left_caller);
+					enemy_walk_to_target_side(object, step, &action_handlers, p_left_caller);
 					break;
 				case 26:
-					enemy_get_around(object, step, &y, &u, p_left_caller);
+					enemy_get_around(object, step, &action_handlers, p_left_caller);
 					break;
 				}
-				u = check_floor(object, u);
+				action_handlers = check_floor(object, action_handlers);
 				enemy_start_climbing(object);
-				*p_y = y;
-				*p_target_player = u;
+				*p_object_2 = action_handlers;
 				return;
 			}
 		}
 	}
 	behaviour_2 = OBJECT(object)->behaviour;
 	parameter_5 = OBJECT(object)->parameter;
-	u = behaviour_2 + (int8_t)((((uint32_t)parameter_5 << 1) << 1) << 1);
+	state_record = behaviour_2 + (int8_t)((((uint32_t)parameter_5 << 1) << 1) << 1);
 	d = enemy_random((uint8_t)d);
-	a = (uint8_t)(d >> 8);
+	roll = (uint8_t)(d >> 8);
 	choice = 4u;
-	u += 3u;
+	state_record += 3u;
 	do
 	{
-		t19 = mem_read8(u + (int8_t)choice);
-		t20 = a;
-		a = t20 - t19;
-		if (t20 < t19)
+		t2 = mem_read8(state_record + (int8_t)choice);
+		t3 = roll;
+		roll = t3 - t2;
+		if (t3 < t2)
 		{
 			choice--;
 			break;
 		}
-		t21 = choice;
-		choice = t21 - 1u;
-	} while (t21 != 1u);
-	OBJECT(object)->action = mem_read8(u - 3u + (int8_t)choice);
+		t4 = choice;
+		choice = t4 - 1u;
+	} while (t4 != 1u);
+	OBJECT(object)->action = mem_read8(state_record - 3u + (int8_t)choice);
 	OBJECT(object)->action_step = 0u;
 	action = (((uint32_t)OBJECT(object)->action << 8u) | OBJECT(object)->action_step);
-	u = enemy_think_actions_ADDRESS;
-	a = (uint32_t)(action >> 8) << 1;
+	action_handlers = enemy_think_actions_ADDRESS;
+	action_offset = (uint32_t)(action >> 8) << 1;
 	step = (uint8_t)action;
-	switch ((int8_t)a)
+	switch ((int8_t)action_offset)
 	{
 	case 0:
-		enemy_walk_to_target(object, step, &y, &u, p_left_caller);
+		enemy_walk_to_target(object, step, &action_handlers, p_left_caller);
 		break;
 	case 2:
-		enemy_line_up_with_target(object, step, &y, &u, p_left_caller);
+		enemy_line_up_with_target(object, step, &action_handlers, p_left_caller);
 		break;
 	case 4:
-		enemy_keep_distance(object, step, &y, &u, p_left_caller);
+		enemy_keep_distance(object, step, &action_handlers, p_left_caller);
 		break;
 	case 6:
-		enemy_back_off(object, step, &y, &u, p_left_caller);
+		enemy_back_off(object, step, &action_handlers, p_left_caller);
 		break;
 	case 8:
 		enemy_stand_still();
 		break;
 	case 10:
-		enemy_step_toward_target(object, step, &y, &u, p_left_caller);
+		enemy_step_toward_target(object, step, &action_handlers, p_left_caller);
 		break;
 	case 12:
-		enemy_circle_target(object, step, &y, &u, p_left_caller);
+		enemy_circle_target(object, step, &action_handlers, p_left_caller);
 		break;
 	case 14:
-		enemy_rush_at_target(object, step, &y, &u, p_left_caller);
+		enemy_rush_at_target(object, step, &action_handlers, p_left_caller);
 		break;
 	case 16:
-		enemy_line_up_and_pace(object, step, &y, &u, p_left_caller);
+		enemy_line_up_and_pace(object, step, &action_handlers, p_left_caller);
 		break;
 	case 18:
-		enemy_wait_while_target_down(object, step, &y, &u, p_left_caller);
+		enemy_wait_while_target_down(object, step, &action_handlers, p_left_caller);
 		break;
 	case 20:
-		enemy_line_up_near_target(object, step, &y, &u, p_left_caller);
+		enemy_line_up_near_target(object, step, &action_handlers, p_left_caller);
 		break;
 	case 22:
-		enemy_wander(object, step, &y, &u, p_left_caller);
+		enemy_wander(object, step, &action_handlers, p_left_caller);
 		break;
 	case 24:
-		enemy_walk_to_target_side(object, step, &y, &u, p_left_caller);
+		enemy_walk_to_target_side(object, step, &action_handlers, p_left_caller);
 		break;
 	case 26:
-		enemy_get_around(object, step, &y, &u, p_left_caller);
+		enemy_get_around(object, step, &action_handlers, p_left_caller);
 		break;
 	}
-	u = check_floor(object, u);
+	action_handlers = check_floor(object, action_handlers);
 	enemy_start_climbing(object);
-	*p_y = y;
-	*p_target_player = u;
+	*p_object_2 = action_handlers;
 }
 
 /* An enemy's attacking state: lands it if it falls, looks at its target, runs the attack in its bank
    (action_banks and the handlers after them) and checks the floor. */
-void enemy_attack(uint16_t object, uint16_t *p_y, uint16_t *p_attack_handlers, uint32_t *p_left_caller)
+void enemy_attack(uint16_t object, uint16_t *p_attack_handlers, uint32_t *p_left_caller)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint32_t carry = 0;
 	uint8_t attack = 0, step = 0;
 	uint16_t attack_handlers = 0, target = 0;
@@ -487,160 +482,160 @@ void enemy_attack(uint16_t object, uint16_t *p_y, uint16_t *p_attack_handlers, u
 	switch ((int8_t)attack)
 	{
 	case 0:
-		goon_wait_then_strike(object, step, &y, &attack_handlers);
+		attack_handlers = goon_wait_then_strike(object, step);
 		break;
 	case 2:
-		goon_wait_then_strike_2(object, step, &y, &attack_handlers);
+		attack_handlers = goon_wait_then_strike_2(object, step);
 		break;
 	case 4:
-		goon_quick_strike(object, step, &y, &attack_handlers);
+		attack_handlers = goon_quick_strike(object, step);
 		break;
 	case 6:
-		goon_quick_strike_2(object, step, &y, &attack_handlers);
+		attack_handlers = goon_quick_strike_2(object, step);
 		break;
 	case 8:
-		goon_jump_attack(object, step, &y, &attack_handlers);
+		attack_handlers = goon_jump_attack(object, step);
 		break;
 	case 10:
-		goon_jump_up_or_grab(object, step, &y, &attack_handlers, p_left_caller);
+		goon_jump_up_or_grab(object, step, &attack_handlers, p_left_caller);
 		break;
 	case 12:
-		hat_goon_throw_hat(object, step, &y, &attack_handlers);
+		attack_handlers = hat_goon_throw_hat(object, step);
 		break;
 	case 14:
-		goon_strike_and_run(object, step, &y, &attack_handlers);
+		attack_handlers = goon_strike_and_run(object, step);
 		break;
 	case 16:
-		kind_90_throw_update(object, step, &y, &attack_handlers);
+		attack_handlers = kind_90_throw_update(object, step);
 		break;
 	case 18:
-		fat_goon_walk_up_strike_update(object, step, &y, &attack_handlers);
+		attack_handlers = fat_goon_walk_up_strike_update(object, step);
 		break;
 	case 20:
-		fat_goon_body_slam_update(object, step, &y, &attack_handlers);
+		attack_handlers = fat_goon_body_slam_update(object, step);
 		break;
 	case 22:
-		fat_goon_strike_update(object, step, &y, &attack_handlers);
+		attack_handlers = fat_goon_strike_update(object, step);
 		break;
 	case 24:
-		fat_goon_reach_strike_update(object, step, &y, &attack_handlers);
+		attack_handlers = fat_goon_reach_strike_update(object, step);
 		break;
 	case 26:
-		fat_goon_idle_action_update(object, step, &y, &attack_handlers);
+		attack_handlers = fat_goon_idle_action_update(object, step);
 		break;
 	case 28:
-		fat_goon_heavy_strike_update(object, step, &y, &attack_handlers);
+		attack_handlers = fat_goon_heavy_strike_update(object, step);
 		break;
 	case 30:
-		goon_grab(object, step, &y, &attack_handlers, p_left_caller);
+		goon_grab(object, step, &attack_handlers, p_left_caller);
 		break;
 	case 32:
-		kind_98_strike_update(object, step, &y, &attack_handlers);
+		attack_handlers = kind_98_strike_update(object, step);
 		break;
 	case 34:
-		umbrella_goon_strike(object, step, &y, &attack_handlers);
+		attack_handlers = umbrella_goon_strike(object, step);
 		break;
 	case 36:
-		umbrella_goon_charge(object, step, &y, &attack_handlers);
+		attack_handlers = umbrella_goon_charge(object, step);
 		break;
 	case 38:
-		umbrella_goon_long_strike(object, step, &y, &attack_handlers);
+		attack_handlers = umbrella_goon_long_strike(object, step);
 		break;
 	case 40:
-		shovel_goon_strike(object, step, &y, &attack_handlers);
+		attack_handlers = shovel_goon_strike(object, step);
 		break;
 	case 42:
-		shovel_goon_far_strike(object, step, &y, &attack_handlers);
+		attack_handlers = shovel_goon_far_strike(object, step);
 		break;
 	case 44:
-		umbrella_goon_quick_strike(object, step, &y, &attack_handlers);
+		attack_handlers = umbrella_goon_quick_strike(object, step);
 		break;
 	case 46:
-		goon_dash_strike(object, step, &y, &attack_handlers);
+		attack_handlers = goon_dash_strike(object, step);
 		break;
 	case 48:
-		goon_keep_distance(object, step, &y, &attack_handlers);
+		attack_handlers = goon_keep_distance(object, step);
 		break;
 	case 50:
 		empty_action_19();
 		break;
 	case 52:
-		zombie_swipe_action(object, step, &y, &attack_handlers);
+		attack_handlers = zombie_swipe_action(object, step);
 		break;
 	case 54:
-		bomb_goon_throw(object, step, &y, &attack_handlers);
+		attack_handlers = bomb_goon_throw(object, step);
 		break;
 	case 56:
-		clown_on_ball_strike_update(object, step, &y, &attack_handlers);
+		attack_handlers = clown_on_ball_strike_update(object, step);
 		break;
 	case 58:
-		zombie_burrow_action(object, step, &y, &attack_handlers);
+		attack_handlers = zombie_burrow_action(object, step);
 		break;
 	case 60:
-		clown_on_ball_jump_update(object, step, &y, &attack_handlers);
+		attack_handlers = clown_on_ball_jump_update(object, step);
 		break;
 	case 62:
-		clown_on_ball_charge_update(object, step, &y, &attack_handlers);
+		attack_handlers = clown_on_ball_charge_update(object, step);
 		break;
 	case 64:
-		clown_on_ball_pause_update(object, step, &y, &attack_handlers);
+		attack_handlers = clown_on_ball_pause_update(object, step);
 		break;
 	case 66:
-		zombie_leap_action(object, step, &y, &attack_handlers);
+		attack_handlers = zombie_leap_action(object, step);
 		break;
 	case 68:
-		lumberjack_axe_action(object, step, &y, &attack_handlers);
+		attack_handlers = lumberjack_axe_action(object, step);
 		break;
 	case 70:
-		robot_shock_92_action(object, step, &y, &attack_handlers);
+		attack_handlers = robot_shock_92_action(object, step);
 		break;
 	case 72:
-		robot_shock_91_action(object, step, &y, &attack_handlers);
+		attack_handlers = robot_shock_91_action(object, step);
 		break;
 	case 74:
-		robot_punch_action(object, step, &y, &attack_handlers);
+		attack_handlers = robot_punch_action(object, step);
 		break;
 	case 76:
-		gorilla_punch_action(object, step, &y, &attack_handlers);
+		attack_handlers = gorilla_punch_action(object, step);
 		break;
 	case 78:
-		goon_approach_strike(object, step, &y, &attack_handlers);
+		attack_handlers = goon_approach_strike(object, step);
 		break;
 	case 80:
-		robot_combo_action(object, step, &y, &attack_handlers);
+		attack_handlers = robot_combo_action(object, step);
 		break;
 	case 82:
-		fat_goon_bump_update(object, step, &y, &attack_handlers);
+		attack_handlers = fat_goon_bump_update(object, step);
 		break;
 	case 84:
-		robot_launch_part_action(object, step, &y, &attack_handlers);
+		attack_handlers = robot_launch_part_action(object, step);
 		break;
 	case 86:
-		ninja_slash_action(object, step, &y, &attack_handlers);
+		attack_handlers = ninja_slash_action(object, step);
 		break;
 	case 88:
-		gorilla_leap_action(object, step, &y, &attack_handlers);
+		attack_handlers = gorilla_leap_action(object, step);
 		break;
 	case 90:
-		ninja_throw_action(object, step, &y, &attack_handlers);
+		attack_handlers = ninja_throw_action(object, step);
 		break;
 	case 92:
-		ninja_jump_attack_action(object, step, &y, &attack_handlers);
+		attack_handlers = ninja_jump_attack_action(object, step);
 		break;
 	case 94:
-		ninja_rush_action(object, step, &y, &attack_handlers);
+		attack_handlers = ninja_rush_action(object, step);
 		break;
 	case 96:
-		ninja_hop_strike_action(object, step, &y, &attack_handlers);
+		attack_handlers = ninja_hop_strike_action(object, step);
 		break;
 	case 98:
-		zombie_grab_action(object, step, &y, &attack_handlers);
+		attack_handlers = zombie_grab_action(object, step);
 		break;
 	case 100:
-		ninja_vanish_action(object, step, &y, &attack_handlers);
+		attack_handlers = ninja_vanish_action(object, step);
 		break;
 	case 102:
-		shovel_goon_close_strike(object, step, &y, &attack_handlers);
+		attack_handlers = shovel_goon_close_strike(object, step);
 		break;
 	case 104:
 		attack_handlers = clown_on_ball_hop_update(object, step);
@@ -649,87 +644,85 @@ void enemy_attack(uint16_t object, uint16_t *p_y, uint16_t *p_attack_handlers, u
 		attack_handlers = gorilla_back_off_action(object, step);
 		break;
 	case 108:
-		kind_98_step_back_update(object, step, &y, &attack_handlers);
+		attack_handlers = kind_98_step_back_update(object, step);
 		break;
 	case 110:
-		ninja_crouch_strike_action(object, step, &y, &attack_handlers);
+		attack_handlers = ninja_crouch_strike_action(object, step);
 		break;
 	case 112:
-		fat_goon_grab_update(object, step, &y, &attack_handlers);
+		attack_handlers = fat_goon_grab_update(object, step);
 		break;
 	case 114:
-		robot_advance_shock_action(object, step, &y, &attack_handlers);
+		attack_handlers = robot_advance_shock_action(object, step);
 		break;
 	case 116:
-		donut_roll_action(object, step, &y, &attack_handlers);
+		attack_handlers = donut_roll_action(object, step);
 		break;
 	case 118:
-		donut_throw_action(object, step, &y, &attack_handlers);
+		attack_handlers = donut_throw_action(object, step);
 		break;
 	case 120:
-		knight_strike_action(object, step, &y, &attack_handlers);
+		attack_handlers = knight_strike_action(object, step);
 		break;
 	case 122:
-		goon_back_off(object, step, &y, &attack_handlers);
+		attack_handlers = goon_back_off(object, step);
 		break;
 	case 124:
-		fat_goon_back_off_update(object, step, &y, &attack_handlers);
+		attack_handlers = fat_goon_back_off_update(object, step);
 		break;
 	case -28:
-		enemy_walk_to_target(object, step, &y, &attack_handlers, p_left_caller);
+		enemy_walk_to_target(object, step, &attack_handlers, p_left_caller);
 		break;
 	case -26:
-		enemy_line_up_with_target(object, step, &y, &attack_handlers, p_left_caller);
+		enemy_line_up_with_target(object, step, &attack_handlers, p_left_caller);
 		break;
 	case -24:
-		enemy_keep_distance(object, step, &y, &attack_handlers, p_left_caller);
+		enemy_keep_distance(object, step, &attack_handlers, p_left_caller);
 		break;
 	case -22:
-		enemy_back_off(object, step, &y, &attack_handlers, p_left_caller);
+		enemy_back_off(object, step, &attack_handlers, p_left_caller);
 		break;
 	case -20:
 		enemy_stand_still();
 		break;
 	case -18:
-		enemy_step_toward_target(object, step, &y, &attack_handlers, p_left_caller);
+		enemy_step_toward_target(object, step, &attack_handlers, p_left_caller);
 		break;
 	case -16:
-		enemy_circle_target(object, step, &y, &attack_handlers, p_left_caller);
+		enemy_circle_target(object, step, &attack_handlers, p_left_caller);
 		break;
 	case -14:
-		enemy_rush_at_target(object, step, &y, &attack_handlers, p_left_caller);
+		enemy_rush_at_target(object, step, &attack_handlers, p_left_caller);
 		break;
 	case -12:
-		enemy_line_up_and_pace(object, step, &y, &attack_handlers, p_left_caller);
+		enemy_line_up_and_pace(object, step, &attack_handlers, p_left_caller);
 		break;
 	case -10:
-		enemy_wait_while_target_down(object, step, &y, &attack_handlers, p_left_caller);
+		enemy_wait_while_target_down(object, step, &attack_handlers, p_left_caller);
 		break;
 	case -8:
-		enemy_line_up_near_target(object, step, &y, &attack_handlers, p_left_caller);
+		enemy_line_up_near_target(object, step, &attack_handlers, p_left_caller);
 		break;
 	case -6:
-		enemy_wander(object, step, &y, &attack_handlers, p_left_caller);
+		enemy_wander(object, step, &attack_handlers, p_left_caller);
 		break;
 	case -4:
-		enemy_walk_to_target_side(object, step, &y, &attack_handlers, p_left_caller);
+		enemy_walk_to_target_side(object, step, &attack_handlers, p_left_caller);
 		break;
 	case -2:
-		enemy_get_around(object, step, &y, &attack_handlers, p_left_caller);
+		enemy_get_around(object, step, &attack_handlers, p_left_caller);
 		break;
 	}
 	attack_handlers = check_floor(object, attack_handlers);
-	*p_y = y;
 	*p_attack_handlers = attack_handlers;
 }
 
 /* An enemy's hit reaction state: runs the reaction it is in (flinching, knocked down, getting up,
    dying...) and, unless it is gone, checks the floor. */
-void enemy_hit_reaction(uint16_t object, uint16_t *p_y, uint16_t *p_u, uint32_t *p_left_caller)
+void enemy_hit_reaction(uint16_t object, uint16_t *p_step_handlers, uint32_t *p_left_caller)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint8_t step = 0;
-	uint16_t u = 0;
+	uint16_t step_handlers = 0;
 	uint16_t action = 0;
 
 	action = (((uint32_t)OBJECT(object)->action << 8u) | OBJECT(object)->action_step);
@@ -737,58 +730,56 @@ void enemy_hit_reaction(uint16_t object, uint16_t *p_y, uint16_t *p_u, uint32_t 
 	switch ((int8_t)(uint8_t)((uint32_t)(action >> 8) << 1))
 	{
 	case 0:
-		enemy_flinch_from_behind(object, step, &y, &u, p_left_caller);
+		enemy_flinch_from_behind(object, step, &step_handlers, p_left_caller);
 		break;
 	case 2:
-		enemy_flinch_kind_12(object, step, &y, &u, p_left_caller);
+		enemy_flinch_kind_12(object, step, &step_handlers, p_left_caller);
 		break;
 	case 4:
-		enemy_knocked_forward(object, step, &y, &u, p_left_caller);
+		enemy_knocked_forward(object, step, &step_handlers, p_left_caller);
 		break;
 	case 6:
-		enemy_knocked_back(object, step, &y, &u, p_left_caller);
+		enemy_knocked_back(object, step, &step_handlers, p_left_caller);
 		break;
 	case 8:
-		enemy_get_up(object, step, &y, &u, p_left_caller);
+		enemy_get_up(object, step, &step_handlers, p_left_caller);
 		break;
 	case 10:
-		enemy_die(object, step, &y, &u, p_left_caller);
+		enemy_die(object, step, &step_handlers, p_left_caller);
 		break;
 	case 12:
-		enemy_drop(object, step, &y, &u, p_left_caller);
+		enemy_drop(object, step, &step_handlers, p_left_caller);
 		break;
 	case 14:
-		enemy_sent_flying(object, step, &y, &u, p_left_caller);
+		enemy_sent_flying(object, step, &step_handlers, p_left_caller);
 		break;
 	case 16:
-		enemy_spin_backward(object, step, &y, &u, p_left_caller);
+		enemy_spin_backward(object, step, &step_handlers, p_left_caller);
 		break;
 	case 18:
-		enemy_flinch_kind_11(object, step, &y, &u, p_left_caller);
+		enemy_flinch_kind_11(object, step, &step_handlers, p_left_caller);
 		break;
 	case 20:
-		enemy_defeated_forward(object, step, &y, &u, p_left_caller);
+		enemy_defeated_forward(object, step, &step_handlers, p_left_caller);
 		break;
 	case 22:
-		enemy_defeated_backward(object, step, &y, &u, p_left_caller);
+		enemy_defeated_backward(object, step, &step_handlers, p_left_caller);
 		break;
 	case 24:
-		enemy_pit(object, step, &y, &u, p_left_caller);
+		enemy_pit(object, step, &step_handlers, p_left_caller);
 		break;
 	}
 	if (*p_left_caller != 0u)
 		*p_left_caller = 0u;
 	else if (OBJECT(object)->flags != 0u)
-		u = check_floor(object, u);
-	*p_y = y;
-	*p_u = u;
+		step_handlers = check_floor(object, step_handlers);
+	*p_step_handlers = step_handlers;
 }
 
 /* An enemy's climbing state: runs the climb up or the hop down a step the floor check started, the way
    it met the step, and checks the floor. */
-void enemy_climb(uint16_t object, uint16_t *p_y, uint16_t *p_step_handlers, uint32_t *p_left_caller)
+void enemy_climb(uint16_t object, uint16_t *p_step_handlers, uint32_t *p_left_caller)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint8_t step = 0;
 	uint16_t step_handlers = 0;
 	uint16_t action = 0;
@@ -799,28 +790,28 @@ void enemy_climb(uint16_t object, uint16_t *p_y, uint16_t *p_step_handlers, uint
 	switch ((int8_t)(uint8_t)((uint32_t)(action >> 8) << 1))
 	{
 	case 0:
-		enemy_climb_up_front(object, step, &y, &step_handlers, p_left_caller);
+		enemy_climb_up_front(object, step, &step_handlers, p_left_caller);
 		break;
 	case 2:
-		enemy_climb_up_back(object, step, &y, &step_handlers, p_left_caller);
+		enemy_climb_up_back(object, step, &step_handlers, p_left_caller);
 		break;
 	case 4:
-		enemy_climb_up_left(object, step, &y, &step_handlers, p_left_caller);
+		enemy_climb_up_left(object, step, &step_handlers, p_left_caller);
 		break;
 	case 6:
-		enemy_climb_up_right(object, step, &y, &step_handlers, p_left_caller);
+		enemy_climb_up_right(object, step, &step_handlers, p_left_caller);
 		break;
 	case 8:
-		enemy_hop_down_front(object, step, &y, &step_handlers, p_left_caller);
+		enemy_hop_down_front(object, step, &step_handlers, p_left_caller);
 		break;
 	case 10:
-		enemy_hop_down_back(object, step, &y, &step_handlers, p_left_caller);
+		enemy_hop_down_back(object, step, &step_handlers, p_left_caller);
 		break;
 	case 12:
-		enemy_hop_down_left(object, step, &y, &step_handlers, p_left_caller);
+		enemy_hop_down_left(object, step, &step_handlers, p_left_caller);
 		break;
 	case 14:
-		enemy_hop_down_right(object, step, &y, &step_handlers, p_left_caller);
+		enemy_hop_down_right(object, step, &step_handlers, p_left_caller);
 		break;
 	case 16:
 		step_handlers = enemy_climb_up_front_start(object);
@@ -962,6 +953,5 @@ void enemy_climb(uint16_t object, uint16_t *p_y, uint16_t *p_step_handlers, uint
 		break;
 	}
 	step_handlers = check_floor(object, step_handlers);
-	*p_y = y;
 	*p_step_handlers = step_handlers;
 }

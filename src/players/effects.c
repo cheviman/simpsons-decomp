@@ -3,7 +3,7 @@
  *    Description: a player's blinking, hit sparks, balloons and voices: the second sprite at +60 and the sounds by character
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    10-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -37,21 +37,21 @@ void player_next_height_against_floor(uint16_t player, uint32_t *p_zero, uint32_
 	uint32_t overflow = *p_overflow;
 	uint32_t carry = 0;
 	uint8_t z_speed = 0, z = 0;
-	uint16_t t1 = 0, z_speed_2 = 0, t2 = 0, floor_z = 0, t3 = 0, t4 = 0;
+	uint16_t z_and_fraction = 0, z_speed_2 = 0, t1 = 0, floor_z = 0, next_z = 0, next_height_above_floor = 0;
 
 	z_speed = (uint8_t)(OBJECT(player)->z_speed >> 8u);
 	z_speed_sign = (uint16_t)(int8_t)z_speed >> 8;
-	t1 = (((uint32_t)(OBJECT(player)->z & 0xFFu) << 8u) | OBJECT(player)->z_fraction);
+	z_and_fraction = (((uint32_t)(OBJECT(player)->z & 0xFFu) << 8u) | OBJECT(player)->z_fraction);
 	z_speed_2 = OBJECT(player)->z_speed;
-	t2 = t1;
-	carry = (uint16_t)(t2 + z_speed_2) < t2;
+	t1 = z_and_fraction;
+	carry = (uint16_t)(t1 + z_speed_2) < t1;
 	z = (uint8_t)(OBJECT(player)->z >> 8u);
 	floor_z = OBJECT(player)->floor_z;
-	t3 = ((uint32_t)(uint8_t)(z + z_speed_sign + carry) << 8) | ((uint16_t)(t2 + z_speed_2) >> 8);
-	t4 = t3 - floor_z;
-	negative = t4 >> 15;
-	zero = t4 == 0u;
-	overflow = (uint32_t)(int16_t)t3 - (int16_t)floor_z != (uint32_t)(int16_t)(t3 - floor_z);
+	next_z = ((uint32_t)(uint8_t)(z + z_speed_sign + carry) << 8) | ((uint16_t)(t1 + z_speed_2) >> 8);
+	next_height_above_floor = next_z - floor_z;
+	negative = next_height_above_floor >> 15;
+	zero = next_height_above_floor == 0u;
+	overflow = (uint32_t)(int16_t)next_z - (int16_t)floor_z != (uint32_t)(int16_t)(next_z - floor_z);
 	*p_zero = zero;
 	*p_negative = negative;
 	*p_overflow = overflow;
@@ -68,21 +68,22 @@ void player_blink(uint16_t player)
 uint16_t player_face_heavy_object(uint16_t player, uint8_t first_animation)
 {
 	uint8_t animation = 0;
-	uint16_t left_of_held = 0;
+	uint16_t held = 0, left_of_held = 0;
 	uint8_t attributes = 0;
-	uint16_t held = 0, t1 = 0, t2 = 0, t3 = 0;
+	uint16_t held_2 = 0, held_x = 0, player_x = 0, t1 = 0;
 
 	animation = (uint8_t)first_animation;
-	held = OBJECT(player)->player.held;
-	t1 = mem_read16(held + 0xCu);
-	left_of_held = t1 - 0x18u;
-	t2 = OBJECT(player)->x;
-	if ((int16_t)t2 <= (int16_t)left_of_held)
+	held_2 = OBJECT(player)->player.held;
+	held = held_2;
+	held_x = OBJECT(held)->x;
+	left_of_held = held_x - 0x18u;
+	player_x = OBJECT(player)->x;
+	if ((int16_t)player_x <= (int16_t)left_of_held)
 		animation++;
 	else
 	{
-		t3 = OBJECT(player)->x;
-		if ((int16_t)left_of_held <= (int16_t)t3)
+		t1 = OBJECT(player)->x;
+		if ((int16_t)left_of_held <= (int16_t)t1)
 		{
 			attributes = OBJECT(player)->attributes;
 			OBJECT(player)->attributes = attributes | 0x40u;
@@ -106,15 +107,19 @@ void player_hurt_voice(uint16_t player)
 }
 
 /* Flashes the player's palette (palette effect 22 plus its character). */
-void player_flash_palette(uint16_t player)
+uint16_t player_flash_palette(uint16_t y, uint16_t player)
 {
-	uint16_t ignored16 = 0, palette = 0;
+	uint16_t palette = 0, y_2 = 0;
+	uint16_t stack = 0;
 	uint8_t kind = 0;
 
+	stack = y;
 	palette_request_kind = 2u;
 	kind = OBJECT(player)->kind;
 	palette = (uint8_t)(0x22u + kind);
-	vector_palette_request(palette, &ignored16, &player);
+	vector_palette_request(player, palette);
+	y_2 = stack;
+	return y_2;
 }
 
 /* Marks the player in the air. */
@@ -148,9 +153,9 @@ void player_show_hurt_spark(uint16_t player, uint16_t *p_object, uint16_t *p_eff
 {
 	uint16_t object = (uint16_t)*p_object;
 	uint32_t carry = 0;
-	uint16_t d = 0, effect = 0, effect_state = 0;
+	uint16_t effect = 0, effect_state = 0, spark_x = 0;
 	uint8_t player_state = 0, box_dz = 0;
-	uint16_t hit_by = 0, t1 = 0, t2 = 0, t3 = 0, z = 0;
+	uint16_t hit_by = 0, player_x = 0, hitter_x = 0, player_y = 0, z = 0;
 
 	effect_state = 0x600u;
 	effect = 0xEBFu;
@@ -162,17 +167,17 @@ void player_show_hurt_spark(uint16_t player, uint16_t *p_object, uint16_t *p_eff
 		{
 			hit_by = OBJECT(player)->hit_by;
 			object = hit_by;
-			t1 = OBJECT(player)->x;
-			d = t1;
-			t2 = OBJECT(object)->x;
-			if ((int16_t)t2 <= (int16_t)d)
-				d -= 0x10u;
+			player_x = OBJECT(player)->x;
+			spark_x = player_x;
+			hitter_x = OBJECT(object)->x;
+			if ((int16_t)hitter_x <= (int16_t)spark_x)
+				spark_x -= 0x10u;
 			else
-				d += 0x10u;
-			OBJECT(player + 0x60u)->x = d;
+				spark_x += 0x10u;
+			OBJECT(player + 0x60u)->x = spark_x;
 			box_dz = OBJECT(player)->box_dz;
-			t3 = OBJECT(player)->y;
-			OBJECT(player + 0x60u)->y = (int8_t)box_dz + t3 - 0x40u;
+			player_y = OBJECT(player)->y;
+			OBJECT(player + 0x60u)->y = (int8_t)box_dz + player_y - 0x40u;
 			z = OBJECT(player)->z;
 			OBJECT(player + 0x60u)->z = z + 0x40u;
 		}
@@ -183,40 +188,40 @@ void player_show_hurt_spark(uint16_t player, uint16_t *p_object, uint16_t *p_eff
 
 /* A spark where the player's blow landed: at the x of the object it hit, at its height plus the byte Y
    points at. */
-uint16_t player_show_hit_spark(uint16_t y, uint16_t player)
+uint16_t player_show_hit_spark(uint16_t spark_height, uint16_t player)
 {
 	uint32_t carry = 0;
-	uint16_t effect_state = 0, kind = 0, y_2 = 0;
+	uint16_t effect_state = 0, hit_object = 0, kind = 0;
 	uint16_t stack = 0;
-	uint16_t t1 = 0, z = 0, object_hit = 0, t2 = 0;
+	uint16_t player_y = 0, z = 0, object_hit = 0, hit_x = 0;
 
 	OBJECT(player)->player.blow_landed = 0u;
-	stack = y;
+	stack = spark_height;
 	effect_state = 0x600u;
 	kind = 0xEBFu;
 	carry = player_start_effect(kind, player, effect_state);
-	y_2 = stack;
+	spark_height = stack;
 	if (carry)
-		return y_2;
-	t1 = OBJECT(player)->y;
-	OBJECT(player + 0x60u)->y = t1 - 0x20u;
+		return spark_height;
+	player_y = OBJECT(player)->y;
+	OBJECT(player + 0x60u)->y = player_y - 0x20u;
 	z = OBJECT(player)->z;
-	OBJECT(player + 0x60u)->z = mem_read8(y_2) + z + 0x20u;
+	OBJECT(player + 0x60u)->z = mem_read8(spark_height) + z + 0x20u;
 	object_hit = OBJECT(player)->player.object_hit;
-	y_2 = object_hit;
-	t2 = mem_read16(y_2 + 0xCu);
-	OBJECT(player + 0x60u)->x = t2;
-	return y_2;
+	hit_object = object_hit;
+	hit_x = OBJECT(hit_object)->x;
+	OBJECT(player + 0x60u)->x = hit_x;
+	return hit_object;
 }
 
 /* Shows speech balloon A above the player. */
-void player_show_balloon(uint16_t kind, uint16_t player, uint16_t d)
+void player_show_balloon(uint16_t kind, uint16_t player, uint16_t balloon_value)
 {
 	uint32_t carry = 0;
 	uint16_t effect_state = 0;
 
-	OBJECT(player + 0x60u)->player.held = (OBJECT(player + 0x60u)->player.held & 0xFF00u) | (d >> 8 & 0xFFu);
-	effect_state = (d & 0xFFu) | 0x200u;
+	OBJECT(player + 0x60u)->player.held = (OBJECT(player + 0x60u)->player.held & 0xFF00u) | (balloon_value >> 8 & 0xFFu);
+	effect_state = (balloon_value & 0xFFu) | 0x200u;
 	carry = player_start_effect(kind, player, effect_state);
 }
 

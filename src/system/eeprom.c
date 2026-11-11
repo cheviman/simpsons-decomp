@@ -3,7 +3,7 @@
  *    Description: the EEPROM's test and reset (bank 2F's entries)
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    10-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -15,27 +15,27 @@
 uint16_t eeprom_test(void)
 {
 	uint8_t address = 0, data = 0;
-	uint16_t bad = 0, d = 0;
-	uint16_t t1 = 0;
+	uint16_t bad = 0, cell = 0;
+	uint16_t next_cell = 0;
 
 	address = 0u;
 	data = 0u;
 	do
 	{
-		d = ((uint32_t)address << 8) | data;
-		eeprom_write(d);
-		t1 = (((uint32_t)address << 8) | data) + 0x101u;
-		address = (uint8_t)(t1 >> 8);
-		data = (uint8_t)t1;
+		cell = ((uint32_t)address << 8) | data;
+		eeprom_write(cell);
+		next_cell = (((uint32_t)address << 8) | data) + 0x101u;
+		address = (uint8_t)(next_cell >> 8);
+		data = (uint8_t)next_cell;
 	} while (address < 0x80u);
 	eeprom_test_address = 0u;
 	address = 0u;
 	do
 	{
-		d = (d & 0xFFu) | ((uint32_t)address << 8);
-		d = eeprom_read(d);
-		address = (uint8_t)(d >> 8);
-		data = (uint8_t)d;
+		cell = (cell & 0xFFu) | ((uint32_t)address << 8);
+		cell = eeprom_read(cell);
+		address = (uint8_t)(cell >> 8);
+		data = (uint8_t)cell;
 		if (data != eeprom_test_address)
 		{
 			bad = 0x100u | data;
@@ -68,18 +68,18 @@ void eeprom_reset_settings(void)
 uint16_t eeprom_verify(void)
 {
 	uint8_t address = 0, d = 0, stored_high = 0, stored_high_2 = 0, stored_low = 0;
-	uint16_t bad = 0, d_2 = 0;
+	uint16_t bad = 0, cell = 0;
 	uint8_t stack = 0;
 
 	eeprom_sum();
-	d_2 = (d & 0xFFu) | 0x7E00u;
-	d_2 = eeprom_read(d_2);
-	address = (uint8_t)(d_2 >> 8);
-	stored_high_2 = (uint8_t)d_2;
+	cell = (d & 0xFFu) | 0x7E00u;
+	cell = eeprom_read(cell);
+	address = (uint8_t)(cell >> 8);
+	stored_high_2 = (uint8_t)cell;
 	stack = stored_high_2;
-	d_2 = (d_2 & 0xFFu) | ((uint32_t)(uint8_t)(address + 1u) << 8);
-	d_2 = eeprom_read(d_2);
-	stored_low = (uint8_t)d_2;
+	cell = (cell & 0xFFu) | ((uint32_t)(uint8_t)(address + 1u) << 8);
+	cell = eeprom_read(cell);
+	stored_low = (uint8_t)cell;
 	stored_high = stack;
 	if ((uint16_t)(((uint32_t)stored_high << 8) | stored_low) == eeprom_total)
 	{
@@ -94,19 +94,19 @@ uint16_t eeprom_verify(void)
 void eeprom_load_settings(void)
 {
 	uint8_t address = 0;
-	uint16_t d = 0, setting_place = 0;
-	uint16_t t1 = 0;
+	uint16_t cell = 0, setting_place = 0;
+	uint16_t setting_byte_place = 0;
 
 	setting_place = 0x59F0u;
 	address = 0x68u;
 	do
 	{
-		d = (d & 0xFFu) | ((uint32_t)address << 8);
-		d = eeprom_read(d);
-		address = (uint8_t)(d >> 8);
-		t1 = setting_place;
-		setting_place = t1 + 1u;
-		mem_write8(t1, (uint8_t)d);
+		cell = (cell & 0xFFu) | ((uint32_t)address << 8);
+		cell = eeprom_read(cell);
+		address = (uint8_t)(cell >> 8);
+		setting_byte_place = setting_place;
+		setting_place = setting_byte_place + 1u;
+		mem_write8(setting_byte_place, (uint8_t)cell);
 		address++;
 	} while (address < 0x7Eu);
 }
@@ -159,14 +159,14 @@ void eeprom_send_unlock(void)
 {
 	uint8_t signal = 0;
 	uint16_t signals = 0;
-	uint16_t t1 = 0;
+	uint16_t signal_place = 0;
 
 	signals = eeprom_unlock_bits_ADDRESS;
 	do
 	{
-		t1 = signals;
-		signals = t1 + 1u;
-		signal = mem_read8(t1);
+		signal_place = signals;
+		signals = signal_place + 1u;
+		signal = mem_read8(signal_place);
 		io_write8(0x1FC2u, signal);
 		eeprom_delay();
 	} while (signal != 0xFFu);
@@ -177,14 +177,14 @@ void eeprom_send_write(void)
 {
 	uint8_t signal = 0;
 	uint16_t signals = 0;
-	uint16_t t1 = 0;
+	uint16_t signal_place = 0;
 
 	signals = eeprom_write_bits_ADDRESS;
 	do
 	{
-		t1 = signals;
-		signals = t1 + 1u;
-		signal = mem_read8(t1);
+		signal_place = signals;
+		signals = signal_place + 1u;
+		signal = mem_read8(signal_place);
 		io_write8(0x1FC2u, signal);
 		eeprom_delay();
 	} while (signal != 0xFFu);
@@ -195,7 +195,7 @@ void eeprom_send_address(void)
 {
 	uint8_t address_bits = 0, signal = 0;
 	uint16_t signals = 0;
-	uint16_t t1 = 0, t2 = 0;
+	uint16_t clock_place = 0, signal_place = 0;
 
 	signals = 0x7CA8u;
 	signal = eeprom_address_signals[0];
@@ -206,14 +206,14 @@ void eeprom_send_address(void)
 			signal |= 0x80u;
 		io_write8(0x1FC2u, signal);
 		eeprom_delay();
-		t1 = signals;
-		signals = t1 + 1u;
-		io_write8(0x1FC2u, signal | mem_read8(t1));
+		clock_place = signals;
+		signals = clock_place + 1u;
+		io_write8(0x1FC2u, signal | mem_read8(clock_place));
 		eeprom_delay();
 		address_bits = (uint32_t)address_bits << 1;
-		t2 = signals;
-		signals = t2 + 1u;
-		signal = mem_read8(t2);
+		signal_place = signals;
+		signals = signal_place + 1u;
+		signal = mem_read8(signal_place);
 	} while (signal != 0xFFu);
 }
 
@@ -222,7 +222,7 @@ void eeprom_send_data(void)
 {
 	uint8_t data_bits = 0, signal = 0;
 	uint16_t signals = 0;
-	uint16_t t1 = 0, t2 = 0;
+	uint16_t clock_place = 0, signal_place = 0;
 
 	signals = 0x7CB7u;
 	signal = eeprom_data_signals[0];
@@ -233,14 +233,14 @@ void eeprom_send_data(void)
 			signal |= 0x80u;
 		io_write8(0x1FC2u, signal);
 		eeprom_delay();
-		t1 = signals;
-		signals = t1 + 1u;
-		io_write8(0x1FC2u, signal | mem_read8(t1));
+		clock_place = signals;
+		signals = clock_place + 1u;
+		io_write8(0x1FC2u, signal | mem_read8(clock_place));
 		eeprom_delay();
 		data_bits = (uint32_t)data_bits << 1;
-		t2 = signals;
-		signals = t2 + 1u;
-		signal = mem_read8(t2);
+		signal_place = signals;
+		signals = signal_place + 1u;
+		signal = mem_read8(signal_place);
 	} while (signal != 0xFFu);
 }
 
@@ -249,14 +249,14 @@ void eeprom_deselect(void)
 {
 	uint8_t signal = 0;
 	uint16_t signals = 0;
-	uint16_t t1 = 0;
+	uint16_t signal_place = 0;
 
 	signals = eeprom_deselect_bits_ADDRESS;
 	do
 	{
-		t1 = signals;
-		signals = t1 + 1u;
-		signal = mem_read8(t1);
+		signal_place = signals;
+		signals = signal_place + 1u;
+		signal = mem_read8(signal_place);
 		io_write8(0x1FC2u, signal);
 		eeprom_delay();
 	} while (signal != 0xFFu);
@@ -265,13 +265,13 @@ void eeprom_deselect(void)
 /* Waits for the EEPROM to finish writing */
 void eeprom_wait_ready(void)
 {
-	uint8_t t1 = 0;
+	uint8_t status_port = 0;
 
 	do
 	{
 		io_write8(0x1FC2u, eeprom_wait_signal[0]);
-		t1 = io_read8(0x1F81u);
-	} while ((t1 & 0x20u) == 0u);
+		status_port = io_read8(0x1F81u);
+	} while ((status_port & 0x20u) == 0u);
 }
 
 /* Sends the lock command */
@@ -279,14 +279,14 @@ uint16_t eeprom_send_lock(void)
 {
 	uint8_t signal = 0;
 	uint16_t signals = 0;
-	uint16_t t1 = 0;
+	uint16_t signal_place = 0;
 
 	signals = eeprom_lock_bits_ADDRESS;
 	do
 	{
-		t1 = signals;
-		signals = t1 + 1u;
-		signal = mem_read8(t1);
+		signal_place = signals;
+		signals = signal_place + 1u;
+		signal = mem_read8(signal_place);
 		io_write8(0x1FC2u, signal);
 		eeprom_delay();
 	} while (signal != 0xFFu);
@@ -298,14 +298,14 @@ void eeprom_send_read(void)
 {
 	uint8_t signal = 0;
 	uint16_t signals = 0;
-	uint16_t t1 = 0;
+	uint16_t signal_place = 0;
 
 	signals = eeprom_read_bits_ADDRESS;
 	do
 	{
-		t1 = signals;
-		signals = t1 + 1u;
-		signal = mem_read8(t1);
+		signal_place = signals;
+		signals = signal_place + 1u;
+		signal = mem_read8(signal_place);
 		io_write8(0x1FC2u, signal);
 		eeprom_delay();
 	} while (signal != 0xFFu);
@@ -317,9 +317,9 @@ void eeprom_receive_data(void)
 	uint32_t carry = 0;
 	uint8_t bits_left = 0, data_bit = 0;
 	uint16_t signals = 0;
-	uint8_t t3 = 0, t4 = 0, t5 = 0, t7 = 0;
-	uint16_t t1 = 0, t2 = 0;
-	uint32_t t6 = 0;
+	uint8_t status_port = 0, data_line = 0, read_bits = 0, bits_left_was = 0;
+	uint16_t signal_place = 0, clock_place = 0;
+	uint32_t read_bits_shifted = 0;
 
 	signals = eeprom_receive_bits_ADDRESS;
 	bits_left = 8u;
@@ -327,27 +327,27 @@ void eeprom_receive_data(void)
 	eeprom_read_data = 0u;
 	do
 	{
-		t1 = signals;
-		signals = t1 + 1u;
-		io_write8(0x1FC2u, mem_read8(t1));
+		signal_place = signals;
+		signals = signal_place + 1u;
+		io_write8(0x1FC2u, mem_read8(signal_place));
 		eeprom_delay();
-		t2 = signals;
-		signals = t2 + 1u;
-		io_write8(0x1FC2u, mem_read8(t2));
+		clock_place = signals;
+		signals = clock_place + 1u;
+		io_write8(0x1FC2u, mem_read8(clock_place));
 		eeprom_delay();
-		t3 = io_read8(0x1F81u);
-		t4 = t3 & 0x10u;
-		data_bit = t4;
-		if (t4 != 0u)
+		status_port = io_read8(0x1F81u);
+		data_line = status_port & 0x10u;
+		data_bit = data_line;
+		if (data_line != 0u)
 			data_bit = 1u;
-		t5 = eeprom_read_data;
-		t6 = ((uint32_t)t5 << 1) | carry;
-		carry = t5 >> 7;
-		eeprom_read_data = t6;
+		read_bits = eeprom_read_data;
+		read_bits_shifted = ((uint32_t)read_bits << 1) | carry;
+		carry = read_bits >> 7;
+		eeprom_read_data = read_bits_shifted;
 		eeprom_read_data |= data_bit;
-		t7 = bits_left;
-		bits_left = t7 - 1u;
-	} while (t7 != 1u);
+		bits_left_was = bits_left;
+		bits_left = bits_left_was - 1u;
+	} while (bits_left_was != 1u);
 }
 
 /* Unused: clocks eight 1 bits into the EEPROM. */
@@ -355,14 +355,14 @@ void unused_eeprom_send_ones(void)
 {
 	uint8_t signal = 0;
 	uint16_t signals = 0;
-	uint16_t t1 = 0;
+	uint16_t signal_place = 0;
 
 	signals = eeprom_ones_bits_ADDRESS;
 	do
 	{
-		t1 = signals;
-		signals = t1 + 1u;
-		signal = mem_read8(t1);
+		signal_place = signals;
+		signals = signal_place + 1u;
+		signal = mem_read8(signal_place);
 		io_write8(0x1FC2u, signal);
 		eeprom_delay();
 	} while (signal != 0xFFu);
@@ -371,9 +371,9 @@ void unused_eeprom_send_ones(void)
 /* Kicks the watchdog and waits between the EEPROM's signals */
 void eeprom_delay(void)
 {
-	uint8_t t1 = 0;
+	uint8_t watchdog_read = 0;
 
-	t1 = io_read8(0x1FCAu);
+	watchdog_read = io_read8(0x1FCAu);
 }
 
 /* Writes the factory settings from 68 on, then the sum */
@@ -381,15 +381,15 @@ void eeprom_write_defaults(uint16_t *p_x, uint16_t *p_d)
 {
 	uint8_t address = 0, data = 0;
 	uint16_t cell = 0, d = 0, defaults = 0, x = 0;
-	uint16_t t1 = 0;
+	uint16_t default_place = 0;
 
 	defaults = eeprom_factory_settings_ADDRESS;
 	address = 0x68u;
 	for (;;)
 	{
-		t1 = defaults;
-		defaults = t1 + 1u;
-		data = mem_read8(t1);
+		default_place = defaults;
+		defaults = default_place + 1u;
+		data = mem_read8(default_place);
 		if (data == 0xFFu)
 			break;
 		cell = ((uint32_t)address << 8) | data;
@@ -420,20 +420,20 @@ void eeprom_write_sum(uint16_t *p_x, uint16_t *p_d)
 /* Adds up EEPROM 00-7D into the scratch word */
 void eeprom_sum(void)
 {
-	uint8_t d = 0;
-	uint16_t d_2 = 0;
-	uint16_t t1 = 0;
+	uint8_t total_low = 0;
+	uint16_t cell = 0;
+	uint16_t new_total = 0;
 
-	d = 0u;
+	total_low = 0u;
 	eeprom_total = 0u;
 	eeprom_sum_address = 0u;
 	do
 	{
-		d_2 = (d & 0xFFu) | ((uint32_t)eeprom_sum_address << 8);
-		d_2 = eeprom_read(d_2);
-		t1 = (d_2 & 0xFFu) + eeprom_total;
-		d = (uint8_t)t1;
-		eeprom_total = ((uint32_t)(t1 >> 8) << 8) | (d & 0xFFu);
+		cell = (total_low & 0xFFu) | ((uint32_t)eeprom_sum_address << 8);
+		cell = eeprom_read(cell);
+		new_total = (cell & 0xFFu) + eeprom_total;
+		total_low = (uint8_t)new_total;
+		eeprom_total = ((uint32_t)(new_total >> 8) << 8) | (total_low & 0xFFu);
 		eeprom_sum_address++;
 	} while (eeprom_sum_address < 0x7Eu);
 }

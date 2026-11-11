@@ -3,7 +3,7 @@
  *    Description: the zombie of the list at 5280 (type 18) that rises and drifts toward an object
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    10-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -13,17 +13,17 @@
 
 /* Sets the rising zombie up, hidden, with its wait, flags and the step it starts at from
    kind_91_appearances, and the object at work RAM 1854 to drift toward. */
-void rising_zombie_setup(uint16_t object, uint16_t *p_y, uint16_t *p_start)
+uint16_t rising_zombie_setup(uint16_t object)
 {
-	uint16_t setup = 0, start = 0, y = 0;
+	uint16_t setup = 0, start = 0;
 	uint8_t parameter = 0;
-	uint16_t t1 = 0, wait = 0, step = 0;
+	uint16_t drift_object = 0, wait = 0, step = 0;
 
 	setup = rising_zombie_object_setup_ADDRESS;
-	y = vector_object_setup(object, setup);
+	vector_object_setup(object, setup);
 	OBJECT(object)->flags = 4u;
-	t1 = io_read16(0x1854u);
-	OBJECT(object)->rising_zombie.drift_target = t1;
+	drift_object = io_read16(0x1854u);
+	OBJECT(object)->rising_zombie.drift_target = drift_object;
 	parameter = OBJECT(object)->parameter;
 	start = kind_91_appearances_ADDRESS + (int8_t)(((uint32_t)parameter << 1) << 1);
 	wait = (((uint32_t)APPEARANCE(start)->wait << 8u) | APPEARANCE(start)->flags);
@@ -31,8 +31,7 @@ void rising_zombie_setup(uint16_t object, uint16_t *p_y, uint16_t *p_start)
 	OBJECT(object)->attributes = wait;
 	step = (((uint32_t)APPEARANCE(start)->step << 8u) | APPEARANCE(start)->unused);
 	OBJECT(object)->state = step >> 8;
-	*p_y = y;
-	*p_start = start;
+	return start;
 }
 
 /* Counts the zombie's wait down, then shows it rising out of the ground with its sound. */

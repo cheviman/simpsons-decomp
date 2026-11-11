@@ -3,7 +3,7 @@
  *    Description: the bomb the goons throw
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    10-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -139,7 +139,7 @@ uint16_t goon_bomb_set_up(uint16_t object)
 void goon_bomb_fly(uint16_t object)
 {
 	uint32_t carry = 0;
-	uint16_t box = 0, command = 0, ignored16 = 0;
+	uint16_t command = 0, ignored16 = 0;
 	uint8_t state = 0;
 
 	vector_apply_gravity(object, &ignored16, &carry);
@@ -149,8 +149,8 @@ void goon_bomb_fly(uint16_t object)
 	OBJECT(object)->kind = 0x9Cu;
 	OBJECT(object)->animation = 0x8Au;
 	OBJECT(object)->flags = 0xC0u;
-	box = goon_bomb_fly_box_ADDRESS;
-	vector_set_hit_box(object, box);
+	leftover_y = goon_bomb_fly_box_ADDRESS;
+	vector_set_hit_box(object);
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
 	command = 0x6F00u;

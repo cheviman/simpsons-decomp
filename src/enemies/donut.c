@@ -3,7 +3,7 @@
  *    Description: stage 6's walking donut (type FD), its actions 3A and 3B and what it throws
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    10-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -13,15 +13,15 @@
 
 /* Sets the donut up with its behaviour donut_behaviour, turned to its player: with state bit 7 it stays
    hidden for its way in, otherwise it fights at once. */
-uint16_t donut_setup(uint16_t object)
+void donut_setup(uint16_t object)
 {
-	uint16_t setup = 0, u = 0, y = 0;
+	uint16_t nearest_player = 0, setup = 0;
 	uint8_t parameter = 0, state = 0;
 
 	setup = donut_object_setup_ADDRESS;
-	y = vector_object_setup(object, setup);
-	u = vector_choose_nearest_player(object);
-	vector_measure_target(object, u);
+	vector_object_setup(object, setup);
+	nearest_player = vector_choose_nearest_player(object);
+	vector_measure_target(object, nearest_player);
 	OBJECT(object)->donut.vanishes = 1u;
 	OBJECT(object)->behaviour = 0x7DB6u;
 	OBJECT(object)->retarget_time = 0x10u;
@@ -30,12 +30,11 @@ uint16_t donut_setup(uint16_t object)
 	{
 		OBJECT(object)->parameter = 0u;
 		OBJECT(object)->state = 2u;
-		return y;
+		return;
 	}
 	OBJECT(object)->flags = 4u;
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
-	return y;
 }
 
 /* The donut's way in, by field 29 (kind_b7_entrances gives where it starts). */
@@ -159,7 +158,7 @@ void donut_fly_into_distance(uint16_t object)
 void donut_drop_down(uint16_t object)
 {
 	uint8_t timer = 0, action_step = 0;
-	uint16_t t1 = 0, x_speed = 0;
+	uint16_t donut_x = 0, x_speed = 0;
 
 	timer = OBJECT(object)->timer;
 	OBJECT(object)->timer = timer - 1u;
@@ -170,8 +169,8 @@ void donut_drop_down(uint16_t object)
 	OBJECT(object)->animation = 0x84u;
 	OBJECT(object)->z_speed = -0x600;
 	OBJECT(object)->x_speed = 0x180;
-	t1 = OBJECT(object)->x;
-	if (t1 >= 0xE0u)
+	donut_x = OBJECT(object)->x;
+	if (donut_x >= 0xE0u)
 	{
 		x_speed = OBJECT(object)->x_speed;
 		OBJECT(object)->x_speed = 0u - x_speed;
@@ -219,7 +218,7 @@ void donut_land(uint16_t object)
 void donut_walk_in(uint16_t object)
 {
 	uint8_t timer = 0, action_step = 0;
-	uint16_t t1 = 0, x_speed = 0;
+	uint16_t donut_x = 0, x_speed = 0;
 
 	timer = OBJECT(object)->timer;
 	OBJECT(object)->timer = timer - 1u;
@@ -232,8 +231,8 @@ void donut_walk_in(uint16_t object)
 	OBJECT(object)->flags = 0xC0u;
 	OBJECT(object)->animation = 0x81u;
 	OBJECT(object)->x_speed = 0x180;
-	t1 = OBJECT(object)->x;
-	if (t1 >= 0xE0u)
+	donut_x = OBJECT(object)->x;
+	if (donut_x >= 0xE0u)
 	{
 		x_speed = OBJECT(object)->x_speed;
 		OBJECT(object)->x_speed = 0u - x_speed;
@@ -267,15 +266,14 @@ void donut_roll_start(uint16_t object)
 }
 
 /* When the wind-up ends, rolls the donut fast with its attacking hit box for 32 frames. */
-uint16_t donut_roll_go(uint16_t object, uint16_t y)
+void donut_roll_go(uint16_t object)
 {
-	uint16_t box = 0;
 	uint8_t animation_flags = 0, attributes = 0, action_step = 0;
 	uint16_t x_speed = 0;
 
 	animation_flags = OBJECT(object)->animation_flags;
 	if ((animation_flags & 1u) == 0u)
-		return y;
+		return;
 	OBJECT(object)->animation = 0x94u;
 	OBJECT(object)->x_speed = 0x300;
 	attributes = OBJECT(object)->attributes;
@@ -287,27 +285,24 @@ uint16_t donut_roll_go(uint16_t object, uint16_t y)
 	OBJECT(object)->timer = 0x20u;
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step + 1u;
-	box = donut_roll_go_box_ADDRESS;
-	vector_set_hit_box(object, box);
-	return box;
+	leftover_y = donut_roll_go_box_ADDRESS;
+	vector_set_hit_box(object);
 }
 
 /* Counts the roll down, then stops the donut with its plain hit box and ends the action. */
-uint16_t donut_roll_end(uint16_t object, uint16_t y)
+void donut_roll_end(uint16_t object)
 {
-	uint16_t box = 0;
 	uint8_t timer = 0;
 
 	timer = OBJECT(object)->timer;
 	OBJECT(object)->timer = timer - 1u;
 	if (timer != 1u)
-		return y;
+		return;
 	OBJECT(object)->x_speed = 0;
-	box = donut_body_box_ADDRESS;
-	vector_set_hit_box(object, box);
+	leftover_y = donut_body_box_ADDRESS;
+	vector_set_hit_box(object);
 	OBJECT(object)->state = 2u;
 	OBJECT(object)->timer = 0u;
-	return box;
 }
 
 /* Starts the donut's throw, turned to its player. */
@@ -322,24 +317,23 @@ void donut_throw_start(uint16_t object)
 }
 
 /* On the marked frame, puts in the small donut (5280 type DE). */
-void donut_throw_release(uint16_t object, uint16_t *p_y, uint16_t *p_u)
+uint16_t donut_throw_release(uint16_t object, uint16_t steps)
 {
 	uint32_t carry = 0;
-	uint16_t ignored16 = 0, record = 0, u_2 = 0;
+	uint16_t ignored16 = 0, ignored16_2 = 0, small_donut = 0;
 	uint8_t animation_flags = 0, action_step = 0;
 
 	animation_flags = OBJECT(object)->animation_flags;
 	if ((animation_flags & 2u) == 0u)
 	{
 		donut_throw_end(object);
-		return;
+		return steps;
 	}
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step + 1u;
-	record = donut_throw_release_child_ADDRESS;
-	*p_u = u_2;
-	vector_spawn_child(object, record, p_u, &ignored16, &carry);
-	*p_y = record;
+	leftover_y = donut_throw_release_child_ADDRESS;
+	vector_spawn_child(object, &ignored16, &small_donut, &ignored16_2, &carry);
+	return small_donut;
 }
 
 /* Ends the action when the throw ends. */
@@ -355,15 +349,15 @@ void donut_throw_end(uint16_t object)
 }
 
 /* Sets the thrown small donut up flying fast the way it faces, with a sound. */
-void donut_shot_setup(uint16_t object, uint16_t *p_y, uint16_t *p_setup)
+uint16_t donut_shot_setup(uint16_t object)
 {
 	uint32_t carry = 0;
-	uint16_t command = 0, setup = 0, y = 0;
+	uint16_t command = 0, setup = 0;
 	uint8_t attributes = 0, state = 0;
 	uint16_t x_speed = 0;
 
 	setup = donut_shot_object_setup_ADDRESS;
-	y = vector_object_setup(object, setup);
+	vector_object_setup(object, setup);
 	OBJECT(object)->flags = 0xC8u;
 	OBJECT(object)->x_speed = 0x400;
 	attributes = OBJECT(object)->attributes;
@@ -377,8 +371,7 @@ void donut_shot_setup(uint16_t object, uint16_t *p_y, uint16_t *p_setup)
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
 	donut_shot_fly();
-	*p_y = y;
-	*p_setup = setup;
+	return setup;
 }
 
 /* The thrown donut's flight: nothing to do, it moves by its speed. */

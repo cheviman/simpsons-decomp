@@ -3,7 +3,7 @@
  *    Description: the zombies of stage 3 and their actions: kinds 91 and 97 (types 10, 14, 23, 5280 18)
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    10-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -12,7 +12,7 @@
 #include "game.h"
 
 /* When a wandering zombie is hit: by field 28 it starts sinking, then goes when that ends. */
-uint16_t wandering_zombie_hit(uint16_t object, uint16_t y)
+void wandering_zombie_hit(uint16_t object)
 {
 	uint8_t action = 0;
 
@@ -23,31 +23,31 @@ uint16_t wandering_zombie_hit(uint16_t object, uint16_t y)
 		{
 		case 0:
 			wandering_zombie_start_sinking(object);
-			return y;
+			return;
 		case 2:
 			break;
 		case -14:
 		case -12:
 			continue;
 		case -10:
-			return wandering_zombie_setup(object);
+			wandering_zombie_setup(object);
+			return;
 		case -8:
 			wandering_zombie_wait(object);
-			return y;
+			return;
 		case -6:
 			wandering_zombie_set_off(object);
-			return y;
+			return;
 		case -4:
 			wandering_zombie_walk(object);
-			return y;
+			return;
 		case -2:
 			wandering_zombie_remove_when_gone(object);
-			return y;
+			return;
 		}
 		break;
 	}
 	wandering_zombie_remove_when_sunk(object);
-	return y;
 }
 
 /* Starts the wandering zombie's sinking animation (its base animation in field 30, plus 2). */
@@ -73,15 +73,15 @@ void wandering_zombie_remove_when_sunk(uint16_t object)
 
 /* Sets the wandering zombie up, hidden, with its wait, how long it walks, its direction and its
    animation from kind_97_timed_moves by its state. */
-uint16_t wandering_zombie_setup(uint16_t object)
+void wandering_zombie_setup(uint16_t object)
 {
 	uint8_t start_animation = 0;
-	uint16_t move = 0, setup = 0, y = 0;
+	uint16_t move = 0, setup = 0;
 	uint8_t parameter = 0, state = 0;
 	uint16_t delay = 0, direction = 0;
 
 	setup = wandering_zombie_object_setup_ADDRESS;
-	y = vector_object_setup(object, setup);
+	vector_object_setup(object, setup);
 	OBJECT(object)->flags = 4u;
 	parameter = OBJECT(object)->parameter;
 	move = kind_97_timed_moves_ADDRESS + (int8_t)(((uint32_t)parameter << 1) << 1);
@@ -95,21 +95,20 @@ uint16_t wandering_zombie_setup(uint16_t object)
 	OBJECT(object)->animation = start_animation;
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
-	return y;
 }
 
 /* Counts the wandering zombie's wait down, then shows it rising, turned to the nearest player. */
 void wandering_zombie_wait(uint16_t object)
 {
-	uint16_t u = 0;
+	uint16_t nearest_player = 0;
 	uint8_t wait = 0, animation = 0, state = 0;
 
 	wait = OBJECT(object)->wandering_zombie.wait;
 	OBJECT(object)->wandering_zombie.wait = wait - 1u;
 	if (wait != 1u)
 		return;
-	u = vector_choose_nearest_player(object);
-	vector_measure_target(object, u);
+	nearest_player = vector_choose_nearest_player(object);
+	vector_measure_target(object, nearest_player);
 	OBJECT(object)->flags = 0x80u;
 	animation = OBJECT(object)->animation;
 	OBJECT(object)->animation = animation | 0x80u;
@@ -173,24 +172,24 @@ void wandering_zombie_remove_when_gone(uint16_t object)
 /* Sets a zombie up: with field 30 bit 7 it comes in at once with the behaviour zombie_behaviour, turned
    to its player; otherwise it stays hidden and takes its next state, flags and behaviour from
    object_18_behaviours. */
-uint16_t zombie_setup(uint16_t object)
+void zombie_setup(uint16_t object)
 {
-	uint16_t choice = 0, setup = 0, u = 0, y = 0;
+	uint16_t choice = 0, nearest_player = 0, setup = 0;
 	uint8_t parameter = 0, parameter_2 = 0, attributes = 0, state_2 = 0;
 	uint16_t state = 0, behaviour = 0;
 
 	setup = zombie_object_setup_ADDRESS;
-	y = vector_object_setup(object, setup);
+	vector_object_setup(object, setup);
 	OBJECT(object)->zombie.vanishes = 1u;
 	parameter = OBJECT(object)->parameter;
 	if ((int8_t)parameter < 0)
 	{
 		OBJECT(object)->behaviour = 0x78C0u;
-		u = vector_choose_nearest_player(object);
-		vector_measure_target(object, u);
+		nearest_player = vector_choose_nearest_player(object);
+		vector_measure_target(object, nearest_player);
 		OBJECT(object)->parameter = 0u;
 		OBJECT(object)->state = 2u;
-		return y;
+		return;
 	}
 	OBJECT(object)->flags = 4u;
 	parameter_2 = OBJECT(object)->parameter;
@@ -204,14 +203,12 @@ uint16_t zombie_setup(uint16_t object)
 	OBJECT(object)->behaviour = behaviour;
 	state_2 = OBJECT(object)->state;
 	OBJECT(object)->state = state_2 + 1u;
-	return y;
 }
 
 /* The zombie's way in, by field 28: rising out of the ground (or walking in as kind 97) until it joins
    the fight. */
-uint16_t zombie_come_out(uint16_t object, uint16_t y)
+void zombie_come_out(uint16_t object)
 {
-	uint16_t ignored16 = 0, y_2 = 0;
 	uint8_t action = 0;
 
 	action = OBJECT(object)->action;
@@ -219,91 +216,95 @@ uint16_t zombie_come_out(uint16_t object, uint16_t y)
 	{
 	case 0:
 		zombie_start_coming_out(object);
-		return y;
+		return;
 	case 2:
 		zombie_finish_rising(object);
-		return y;
+		return;
 	case 4:
 		zombie_finish_climbing(object);
-		return y;
+		return;
 	case 6:
 		zombie_remove_when_sunk(object);
-		return y;
+		return;
 	case 8:
 		zombie_walk_in(object);
-		return y;
+		return;
 	case 10:
 		zombie_burrow_start(object);
-		return y;
+		return;
 	case 12:
 		zombie_burrow_move(object);
-		return y;
+		return;
 	case 14:
 		zombie_burrow_surface(object);
-		return y;
+		return;
 	case 16:
 		zombie_burrow_end(object);
-		return y;
+		return;
 	case 18:
 		zombie_leap_start(object);
-		return y;
+		return;
 	case 20:
 		zombie_leap_take_off(object);
-		return y;
+		return;
 	case 22:
-		return zombie_leap_rise(object, y);
+		zombie_leap_rise(object);
+		return;
 	case 24:
-		return zombie_leap_fall(object, y);
+		zombie_leap_fall(object);
+		return;
 	case 26:
 		zombie_leap_turn(object);
-		return y;
+		return;
 	case 28:
 		zombie_leap_end(object);
-		return y;
+		return;
 	case 30:
 		zombie_swipe_start(object);
-		return y;
+		return;
 	case 32:
-		return zombie_swipe_hit(object, y);
+		zombie_swipe_hit(object);
+		return;
 	case 34:
-		return zombie_swipe_recover(object);
+		zombie_swipe_recover(object);
+		return;
 	case 36:
 		zombie_swipe_step_back(object);
-		return y;
+		return;
 	case 38:
 		zombie_swipe_end(object);
-		return y;
+		return;
 	case 40:
-		kind_9a_dropper_fall(object, &y, &ignored16);
-		return y;
+		kind_9a_dropper_fall(object, 0u);
+		return;
 	case 42:
-		kind_9a_dropper_hurt(object, &y, &ignored16);
-		return y;
+		kind_9a_dropper_hurt(object);
+		return;
 	case 44:
-		kind_9a_dropper_setup(object, &y_2, &ignored16);
-		return y_2;
+		kind_9a_dropper_setup(object);
+		return;
 	case 46:
 		kind_9a_dropper_wait_mode(object);
-		return y;
+		return;
 	case 48:
 		kind_9a_dropper_watch(object, 0u);
-		return y;
+		return;
 	case 50:
-		kind_9a_dropper_drop(object, &y, &ignored16);
-		return y;
+		kind_9a_dropper_drop(object, 0u);
+		return;
 	case 52:
-		return kind_9a_dropper_hang(object, y);
+		kind_9a_dropper_hang(object);
+		return;
 	case 54:
 		kind_9a_dropper_climb(object);
-		return y;
+		return;
 	case 56:
 		kind_9a_dropper_hurt_start(object);
-		return y;
+		return;
 	case 58:
 		kind_9a_dropper_hurt_flash(object);
-		return y;
+		return;
 	}
-	unreachable();
 }
 
 /* Starts the zombie's way in: either walking in from the side's edge with kind 97's walk, or rising out
@@ -312,15 +313,15 @@ uint16_t zombie_start_coming_out(uint16_t object)
 {
 	uint32_t carry = 0;
 	uint8_t start_parameter = 0;
-	uint16_t command = 0, u = 0;
+	uint16_t command = 0, nearest_player = 0;
 	uint8_t parameter = 0, parameter_2 = 0, action = 0;
-	uint16_t t1 = 0, x_speed = 0;
+	uint16_t zombie_x = 0, x_speed = 0;
 
 	parameter = OBJECT(object)->parameter;
 	if ((parameter & 3u) == 3u)
 		OBJECT(object)->vitality = 8u;
-	u = vector_choose_nearest_player(object);
-	vector_measure_target(object, u);
+	nearest_player = vector_choose_nearest_player(object);
+	vector_measure_target(object, nearest_player);
 	parameter_2 = OBJECT(object)->parameter;
 	start_parameter = parameter_2;
 	if ((int8_t)parameter_2 < 0)
@@ -329,15 +330,15 @@ uint16_t zombie_start_coming_out(uint16_t object)
 		OBJECT(object)->kind = 0x97u;
 		OBJECT(object)->animation = 0x90u;
 		OBJECT(object)->x_speed = 0x100;
-		t1 = OBJECT(object)->x;
-		if (t1 >= 0xE0u)
+		zombie_x = OBJECT(object)->x;
+		if (zombie_x >= 0xE0u)
 		{
 			x_speed = OBJECT(object)->x_speed;
 			OBJECT(object)->x_speed = 0u - x_speed;
 		}
 		OBJECT(object)->timer = 0x80u;
 		OBJECT(object)->action = 4u;
-		return u;
+		return nearest_player;
 	}
 	OBJECT(object)->parameter = start_parameter & 0x7Fu;
 	OBJECT(object)->flags = 0x80u;
@@ -346,7 +347,7 @@ uint16_t zombie_start_coming_out(uint16_t object)
 	OBJECT(object)->action = action + 1u;
 	command = 0x7B00u;
 	carry = vector_queue_sound(command);
-	return u;
+	return nearest_player;
 }
 
 /* Unused: does nothing. */
@@ -563,7 +564,7 @@ void zombie_leap_take_off(uint16_t object)
 }
 
 /* Slows the zombie's leap as it rises; once it falls, gives it its attacking hit box. */
-uint16_t zombie_leap_rise(uint16_t object, uint16_t box)
+void zombie_leap_rise(uint16_t object)
 {
 	uint8_t action_step = 0;
 	uint16_t z_speed = 0, z_speed_2 = 0;
@@ -573,28 +574,29 @@ uint16_t zombie_leap_rise(uint16_t object, uint16_t box)
 	{
 		z_speed_2 = OBJECT(object)->z_speed;
 		OBJECT(object)->z_speed = z_speed_2 - 0x10u;
-		return zombie_leap_land(object, box);
+		zombie_leap_land(object);
+		return;
 	}
-	box = zombie_leap_rise_box_ADDRESS;
-	vector_set_hit_box(object, box);
+	leftover_y = zombie_leap_rise_box_ADDRESS;
+	vector_set_hit_box(object);
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step + 1u;
-	return zombie_leap_fall(object, box);
+	zombie_leap_fall(object);
 }
 
 /* Pulls the zombie down faster as it falls, then checks its landing. */
-uint16_t zombie_leap_fall(uint16_t object, uint16_t box)
+void zombie_leap_fall(uint16_t object)
 {
 	uint16_t z_speed = 0;
 
 	z_speed = OBJECT(object)->z_speed;
 	OBJECT(object)->z_speed = z_speed - 0x40u;
-	return zombie_leap_land(object, box);
+	zombie_leap_land(object);
 }
 
 /* When the leaping zombie lands, gives it back its plain hit box and stops it with the landing sound and
    a wait. */
-uint16_t zombie_leap_land(uint16_t object, uint16_t box)
+void zombie_leap_land(uint16_t object)
 {
 	uint32_t carry = 0;
 	uint16_t command = 0;
@@ -602,16 +604,15 @@ uint16_t zombie_leap_land(uint16_t object, uint16_t box)
 
 	carry = vector_check_landing(object);
 	if (carry == 0u)
-		return box;
-	box = zombie_body_box_ADDRESS;
-	vector_set_hit_box(object, box);
+		return;
+	leftover_y = zombie_body_box_ADDRESS;
+	vector_set_hit_box(object);
 	OBJECT(object)->x_speed = 0;
 	command = 0x2000u;
 	carry = vector_queue_sound(command);
 	OBJECT(object)->timer = 0x20u;
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step + 1u;
-	return box;
 }
 
 /* Holds the zombie still after landing, then turns it round. */
@@ -660,33 +661,29 @@ void zombie_swipe_start(uint16_t object)
 }
 
 /* On the swipe's marked frame, gives the zombie its attacking hit box. */
-uint16_t zombie_swipe_hit(uint16_t object, uint16_t y)
+void zombie_swipe_hit(uint16_t object)
 {
-	uint16_t box = 0;
 	uint8_t animation_flags = 0, action_step = 0;
 
 	animation_flags = OBJECT(object)->animation_flags;
 	if ((animation_flags & 2u) == 0u)
-		return y;
+		return;
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step + 1u;
-	box = zombie_swipe_hit_box_ADDRESS;
-	vector_set_hit_box(object, box);
-	return box;
+	leftover_y = zombie_swipe_hit_box_ADDRESS;
+	vector_set_hit_box(object);
 }
 
 /* Gives the zombie back its plain hit box and goes on to its step back. */
-uint16_t zombie_swipe_recover(uint16_t object)
+void zombie_swipe_recover(uint16_t object)
 {
-	uint16_t box = 0;
 	uint8_t action_step = 0;
 
-	box = zombie_body_box_ADDRESS;
-	vector_set_hit_box(object, box);
+	leftover_y = zombie_body_box_ADDRESS;
+	vector_set_hit_box(object);
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step + 1u;
 	zombie_swipe_step_back(object);
-	return box;
 }
 
 /* When the swipe ends, walks the zombie backwards for 32 frames. */

@@ -3,7 +3,7 @@
  *    Description: what every stage shares: its opening, its frame, its end
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    10-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -16,22 +16,22 @@
 uint16_t stage_opening(void)
 {
 	uint32_t carry = 0;
-	uint16_t ignored16 = 0, ignored16_2 = 0, ignored16_3 = 0, ignored16_4 = 0, u = 0;
-	uint16_t t1 = 0;
+	uint16_t ignored16 = 0, ignored16_2 = 0, ignored16_3 = 0, u = 0;
+	uint16_t routine_record = 0;
 
 	if (in_attract != 0u)
 	{
 		step_phase++;
 		check_collisions(&ignored16, &ignored16_2);
-		update_players(&ignored16_3, &ignored16_4, &u, &ignored16_2, &carry);
+		update_players(&ignored16_3, &u, &ignored16_2, &carry);
 		return u;
 	}
 	scene_running = 1u;
 	run_child_objects(0u);
-	t1 = scene_routines_ADDRESS + (int8_t)(((uint32_t)scene << 1) << 1);
-	window_bank = SCENE_ROUTINE(t1)->bank;
+	routine_record = scene_routines_ADDRESS + (int8_t)(((uint32_t)scene << 1) << 1);
+	window_bank = SCENE_ROUTINE(routine_record)->bank;
 	set_lines(window_bank);
-	switch ((uint16_t)(t1 + 1u))
+	switch ((uint16_t)(routine_record + 1u))
 	{
 	case scene_routines_ADDRESS + 0x1u:
 		stage_1_events();
@@ -69,29 +69,29 @@ uint16_t stage_opening(void)
 	if (scene_running != 0u)
 	{
 		check_collisions(&ignored16, &ignored16_2);
-		update_players(&ignored16_3, &ignored16_4, &u, &ignored16_2, &carry);
+		update_players(&ignored16_3, &u, &ignored16_2, &carry);
 		return u;
 	}
 	step_phase++;
 	check_collisions(&ignored16, &ignored16_2);
-	update_players(&ignored16_3, &ignored16_4, &u, &ignored16_2, &carry);
+	update_players(&ignored16_3, &u, &ignored16_2, &carry);
 	return u;
 }
 
 /* A frame of a stage's play: the rank, the hits, the spawns, every object list, the players' objects,
    the players' handling and the check that someone still plays */
-void stage_play_frame(uint16_t y, uint16_t *p_u, uint32_t *p_left_caller)
+void stage_play_frame(uint16_t *p_u, uint32_t *p_left_caller)
 {
 	uint32_t carry = 0;
-	uint16_t ignored16 = 0, ignored16_2 = 0, ignored16_3 = 0, ignored16_4 = 0, u = 0;
+	uint16_t ignored16 = 0, ignored16_2 = 0, ignored16_3 = 0, u = 0;
 
 	window_bank = 0x20u;
 	set_lines(window_bank);
 	rank_update();
 	check_collisions(&ignored16, &ignored16_2);
 	spawn_stage_objects();
-	run_list_1_objects(&y, &ignored16, p_left_caller);
-	*p_left_caller = run_enemies(y, *p_left_caller);
+	run_list_1_objects(&ignored16, p_left_caller);
+	*p_left_caller = run_enemies(*p_left_caller);
 	run_child_objects(ignored16);
 	run_stage_event();
 	window_bank = 0x1Cu;
@@ -103,7 +103,7 @@ void stage_play_frame(uint16_t y, uint16_t *p_u, uint32_t *p_left_caller)
 	window_bank = 0x13u;
 	set_lines(window_bank);
 	stage_scroll(u);
-	update_players(&ignored16_3, &ignored16_4, &u, &ignored16_2, &carry);
+	update_players(&ignored16_3, &u, &ignored16_2, &carry);
 	u = game_phase_check(u);
 	*p_u = u;
 }
@@ -140,12 +140,12 @@ void set_scroll_y(uint16_t scroll_y)
 uint16_t stage_over(void)
 {
 	uint32_t carry = 0;
-	uint16_t ignored16 = 0, ignored16_2 = 0, ignored16_3 = 0, u = 0;
+	uint16_t ignored16 = 0, ignored16_2 = 0, u = 0;
 
 	io_write8(0x184Bu, 1u);
 	clear_enemy_objects();
 	step_phase++;
-	update_players(&ignored16, &ignored16_2, &u, &ignored16_3, &carry);
+	update_players(&ignored16, &u, &ignored16_2, &carry);
 	return u;
 }
 
@@ -154,18 +154,18 @@ uint16_t stage_over(void)
 void stage_players_exit(uint16_t *p_u, uint32_t *p_left_caller, uint32_t *p_carry)
 {
 	uint32_t carry = *p_carry;
-	uint16_t ignored16 = 0, ignored16_2 = 0, ignored16_3 = 0, ignored16_4 = 0, u = 0;
-	uint8_t t1 = 0;
+	uint16_t ignored16 = 0, ignored16_2 = 0, ignored16_3 = 0, u = 0;
+	uint8_t players_signal = 0;
 
 	scene_running = 1u;
-	run_list_1_objects(&ignored16, &ignored16_2, p_left_caller);
-	run_child_objects(ignored16_2);
+	run_list_1_objects(&ignored16, p_left_caller);
+	run_child_objects(ignored16);
 	window_bank = 0x1Cu;
 	set_lines(window_bank);
 	player_run_all();
-	update_players(&ignored16_3, &ignored16, &u, &ignored16_4, &carry);
-	t1 = io_read8(0x184Eu);
-	if (t1 == 0u)
+	update_players(&ignored16_2, &u, &ignored16_3, &carry);
+	players_signal = io_read8(0x184Eu);
+	if (players_signal == 0u)
 		carry = scene_routine_nothing();
 	else
 	{
@@ -217,7 +217,7 @@ void play_scene_music(uint16_t music_by_scene)
 	uint32_t carry = 0;
 	uint8_t part_offset = 0;
 	uint16_t command = 0, scene_music = 0;
-	uint16_t t1 = 0, t2 = 0, t3 = 0;
+	uint16_t music_at = 0, music_command = 0, second_command = 0;
 
 	if (boss_beaten != 0u)
 		return;
@@ -225,15 +225,15 @@ void play_scene_music(uint16_t music_by_scene)
 	part_offset = (uint32_t)stage_part << 1;
 	if (scene == 6u)
 		part_offset = (uint32_t)part_offset << 1;
-	t1 = scene_music + (int8_t)part_offset;
-	scene_music = t1 + 2u;
-	t2 = mem_read16(t1);
-	command = t2;
+	music_at = scene_music + (int8_t)part_offset;
+	scene_music = music_at + 2u;
+	music_command = mem_read16(music_at);
+	command = music_command;
 	carry = queue_sound_unless_attract(command);
 	if (scene == 6u)
 	{
-		t3 = mem_read16(scene_music);
-		command = t3;
+		second_command = mem_read16(scene_music);
+		command = second_command;
 		carry = queue_sound_unless_attract(command);
 	}
 }

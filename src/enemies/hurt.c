@@ -3,7 +3,7 @@
  *    Description: the hit reaction of the enemies with their own hit animations, and the plain goon they turn into
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    10-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -13,32 +13,31 @@
 
 /* Turns the enemy into a plain goon (kind 80, the goon's behaviour) lying on the ground, which then gets
    up and fights on. */
-void enemy_hurt_become_goon(uint16_t object, uint16_t *p_y, uint16_t *p_behaviour)
+uint16_t enemy_hurt_become_goon(uint16_t object)
 {
-	uint16_t behaviour = 0, y = 0;
+	uint16_t u = 0;
 	uint8_t attributes = 0;
 
 	attributes = OBJECT(object)->attributes;
 	OBJECT(object)->enemy_hurt.kept_attributes = attributes;
-	enemy_become_goon(object, &y, &behaviour);
+	u = enemy_become_goon(object);
 	OBJECT(object)->animation = 0x8Du;
 	OBJECT(object)->timer = 0x18u;
 	OBJECT(object)->state = 4u;
 	OBJECT(object)->action = 4u;
 	OBJECT(object)->action_step = 0u;
-	*p_y = y;
-	*p_behaviour = behaviour;
+	return u;
 }
 
 /* Starts the reaction to a hit: the hit's sound and the hit animation of its action; a flinch for
    actions 0 and 1, else knocked up and away from the hitter; with no vitality left, the defeat. */
-uint16_t enemy_hurt_start(uint16_t object, uint16_t u)
+uint16_t enemy_hurt_start(uint16_t object, uint16_t hurt_step_table)
 {
 	uint32_t zero = 0, carry = 0;
 	uint8_t reaction = 0;
 	uint16_t animations = 0, command = 0, hitter = 0;
 	uint8_t vitality = 0, action = 0, action_step = 0;
-	uint16_t hit_by = 0, x_speed = 0, t1 = 0, t2 = 0, x_speed_2 = 0;
+	uint16_t hit_by = 0, x_speed = 0, hitter_x = 0, enemy_x = 0, x_speed_2 = 0;
 
 	command = 0x6300u;
 	carry = queue_sound(command);
@@ -47,7 +46,7 @@ uint16_t enemy_hurt_start(uint16_t object, uint16_t u)
 	{
 		OBJECT(object)->action_step = 2u;
 		enemy_hurt_fall_defeated(object);
-		return u;
+		return hurt_step_table;
 	}
 	animations = hit_animations_ADDRESS;
 	action = OBJECT(object)->action;
@@ -76,9 +75,9 @@ uint16_t enemy_hurt_start(uint16_t object, uint16_t u)
 	}
 	if (zero)
 	{
-		t1 = OBJECT(hitter)->x;
-		t2 = OBJECT(object)->x;
-		if (t1 < t2)
+		hitter_x = OBJECT(hitter)->x;
+		enemy_x = OBJECT(object)->x;
+		if (hitter_x < enemy_x)
 		{
 			x_speed_2 = OBJECT(object)->x_speed;
 			OBJECT(object)->x_speed = 0u - x_speed_2;
@@ -93,7 +92,7 @@ uint16_t enemy_hurt_start(uint16_t object, uint16_t u)
 }
 
 /* Once the hit animation has run, gives the enemy its hit box back and sends it back to its state 2. */
-uint16_t enemy_hurt_recover(uint16_t object, uint16_t y)
+void enemy_hurt_recover(uint16_t object)
 {
 	uint16_t box = 0;
 	uint8_t animation_flags = 0;
@@ -101,14 +100,14 @@ uint16_t enemy_hurt_recover(uint16_t object, uint16_t y)
 
 	animation_flags = OBJECT(object)->animation_flags;
 	if ((animation_flags & 1u) == 0u)
-		return y;
+		return;
 	OBJECT(object)->flags = 0xC0u;
 	hit_box = OBJECT(object)->hit_box;
-	box = hit_box;
+	leftover_y = hit_box;
+	box = (uint16_t)leftover_y;
 	set_hit_box(object, box);
 	OBJECT(object)->state = 2u;
 	OBJECT(object)->timer = 0u;
-	return box;
 }
 
 /* Lets the defeated enemy fall; once it lands it lies down. */
@@ -131,40 +130,55 @@ void enemy_hurt_fall_defeated(uint16_t object)
 
 /* Keeps the defeated enemy lying until its animation is over, with its sound on the marked frame; then
    it gets up as a plain goon, or (field vanishes) it starts to blink out. */
-void enemy_hurt_lie_defeated(uint16_t object, uint16_t *p_y, uint16_t *p_u)
+uint16_t enemy_hurt_lie_defeated(uint16_t object, uint16_t hurt_step_table)
 {
 	uint32_t carry = 0;
-	uint8_t a = 0, d = 0;
-	uint16_t command = 0, u_2 = 0, y_2 = 0;
-	uint8_t animation_flags = 0, vanishes = 0, action_step = 0, animation_flags_2 = 0;
+	uint8_t sound_high = 0, sound_low = 0;
+	uint16_t command = 0;
+	uint8_t animation_flags = 0, animation_flags_2 = 0, vanishes = 0, action_step = 0;
 	uint16_t frame_sound = 0;
 
 	animation_flags = OBJECT(object)->animation_flags;
-	if (animation_flags & 1u)
+	if ((animation_flags & 1u) == 0u)
 	{
-		vanishes = OBJECT(object)->enemy_hurt.vanishes;
-		if (vanishes == 0u)
+		animation_flags_2 = OBJECT(object)->animation_flags;
+		if ((animation_flags_2 & 2u) != 0u)
 		{
-			OBJECT(object)->x_speed = 0;
-			*p_y = y_2;
-			*p_u = u_2;
-			enemy_hurt_become_goon(object, p_y, p_u);
-			return;
+			frame_sound = OBJECT(object)->enemy_hurt.frame_sound;
+			sound_low = (uint8_t)frame_sound;
+			sound_high = (uint8_t)(frame_sound >> 8);
+			if (frame_sound != 0u)
+			{
+				command = (sound_low & 0xFFu) | ((uint32_t)sound_high << 8);
+				carry = queue_sound(command);
+				return hurt_step_table;
+			}
 		}
-		OBJECT(object)->timer = 0x10u;
-		action_step = OBJECT(object)->action_step;
-		OBJECT(object)->action_step = action_step + 1u;
+		return hurt_step_table;
 	}
+	vanishes = OBJECT(object)->enemy_hurt.vanishes;
+	if (vanishes == 0u)
+	{
+		OBJECT(object)->x_speed = 0;
+		return enemy_hurt_become_goon(object);
+	}
+	OBJECT(object)->timer = 0x10u;
+	action_step = OBJECT(object)->action_step;
+	OBJECT(object)->action_step = action_step + 1u;
 	animation_flags_2 = OBJECT(object)->animation_flags;
-	if ((animation_flags_2 & 2u) == 0u)
-		return;
-	frame_sound = OBJECT(object)->enemy_hurt.frame_sound;
-	d = (uint8_t)frame_sound;
-	a = (uint8_t)(frame_sound >> 8);
-	if (frame_sound == 0u)
-		return;
-	command = (d & 0xFFu) | ((uint32_t)a << 8);
-	carry = queue_sound(command);
+	if ((animation_flags_2 & 2u) != 0u)
+	{
+		frame_sound = OBJECT(object)->enemy_hurt.frame_sound;
+		sound_low = (uint8_t)frame_sound;
+		sound_high = (uint8_t)(frame_sound >> 8);
+		if (frame_sound != 0u)
+		{
+			command = (sound_low & 0xFFu) | ((uint32_t)sound_high << 8);
+			carry = queue_sound(command);
+			return hurt_step_table;
+		}
+	}
+	return hurt_step_table;
 }
 
 /* Blinks the defeated enemy out; at the end it is gone and its points scored. */
@@ -201,20 +215,21 @@ void enemy_hurt_fall(uint16_t object)
 }
 
 /* After its time down, the knocked enemy gets up (animation 8F) with its hit box back. */
-uint16_t enemy_hurt_get_up(uint16_t object, uint16_t box)
+void enemy_hurt_get_up(uint16_t object)
 {
+	uint16_t box = 0;
 	uint8_t timer = 0;
 	uint16_t hit_box = 0;
 
 	timer = OBJECT(object)->timer;
 	OBJECT(object)->timer = timer - 1u;
 	if (timer != 1u)
-		return box;
+		return;
 	hit_box = OBJECT(object)->hit_box;
-	box = hit_box;
+	leftover_y = hit_box;
+	box = (uint16_t)leftover_y;
 	set_hit_box(object, box);
 	OBJECT(object)->flags = 0xC0u;
 	OBJECT(object)->animation = 0x8Fu;
 	OBJECT(object)->action_step = 1u;
-	return box;
 }

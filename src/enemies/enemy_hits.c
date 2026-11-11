@@ -3,7 +3,7 @@
  *    Description: an enemy taking a hit, the reaction it starts, letting go of its target
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    10-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -74,7 +74,7 @@ void enemy_set_knock_direction(uint16_t object, uint16_t hitter, uint32_t zero, 
 {
 	uint8_t stack = 0;
 	uint8_t shadow_player = 0, points = 0, hit_from_behind = 0;
-	uint16_t t1 = 0, t2 = 0;
+	uint16_t hitter_x = 0, enemy_x = 0;
 
 	if (negative)
 	{
@@ -86,9 +86,9 @@ void enemy_set_knock_direction(uint16_t object, uint16_t hitter, uint32_t zero, 
 	}
 	if (zero)
 	{
-		t1 = OBJECT(hitter)->x;
-		t2 = OBJECT(object)->x;
-		if (t1 < t2)
+		hitter_x = OBJECT(hitter)->x;
+		enemy_x = OBJECT(object)->x;
+		if (hitter_x < enemy_x)
 		{
 			hit_from_behind = OBJECT(object)->hit_from_behind;
 			OBJECT(object)->hit_from_behind = hit_from_behind ^ 0x40u;
@@ -143,16 +143,16 @@ void enemy_check_hit(uint16_t object, uint16_t *p_reaction_handlers, uint32_t *p
 void enemy_react_to_hit(uint16_t object)
 {
 	uint8_t action = 0;
-	uint8_t vitality = 0, t1 = 0, t2 = 0, hit_from_behind = 0, hit = 0;
+	uint8_t vitality = 0, knock_turn = 0, next_knock_turn = 0, hit_from_behind = 0, hit = 0;
 	uint16_t z_speed = 0;
 
 	vitality = OBJECT(object)->vitality;
 	if (vitality == 0u)
 	{
-		t1 = io_read8(0x187Bu);
-		io_write8(0x187Bu, t1 - 1u);
-		t2 = io_read8(0x187Bu);
-		if ((t2 & 1u) == 0u)
+		knock_turn = io_read8(0x187Bu);
+		io_write8(0x187Bu, knock_turn - 1u);
+		next_knock_turn = io_read8(0x187Bu);
+		if ((next_knock_turn & 1u) == 0u)
 		{
 			enemy_react_knocked_down(object);
 			return;
@@ -163,10 +163,10 @@ void enemy_react_to_hit(uint16_t object)
 	z_speed = OBJECT(object)->z_speed;
 	if (z_speed != 0u)
 	{
-		t1 = io_read8(0x187Bu);
-		io_write8(0x187Bu, t1 - 1u);
-		t2 = io_read8(0x187Bu);
-		if ((t2 & 1u) == 0u)
+		knock_turn = io_read8(0x187Bu);
+		io_write8(0x187Bu, knock_turn - 1u);
+		next_knock_turn = io_read8(0x187Bu);
+		if ((next_knock_turn & 1u) == 0u)
 		{
 			enemy_react_knocked_down(object);
 			return;
@@ -233,7 +233,7 @@ uint16_t enemy_mark_defeated(uint16_t object, uint16_t target)
    took given back. */
 uint16_t enemy_release_target(uint16_t object, uint16_t target)
 {
-	uint8_t enemy_class = 0, attackers = 0, t1 = 0;
+	uint8_t enemy_class = 0, attackers = 0, attackers_left = 0;
 	uint16_t target_2 = 0;
 
 	enemy_class = OBJECT(object)->enemy_class;
@@ -242,9 +242,9 @@ uint16_t enemy_release_target(uint16_t object, uint16_t target)
 	target_2 = OBJECT(object)->target;
 	target = target_2;
 	attackers = OBJECT(target)->player.attackers;
-	t1 = attackers - 1u;
-	OBJECT(target)->player.attackers = t1;
-	if ((int8_t)t1 < 0)
+	attackers_left = attackers - 1u;
+	OBJECT(target)->player.attackers = attackers_left;
+	if ((int8_t)attackers_left < 0)
 		OBJECT(target)->player.attackers = 0u;
 	enemy_leave_side(object, target);
 	return target;

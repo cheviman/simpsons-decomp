@@ -3,7 +3,7 @@
  *    Description: stage 7's ninjas (types 32, 33, 3D), their way in, their actions and their star
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    10-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -12,37 +12,35 @@
 #include "game.h"
 
 /* Sets a star-throwing ninja up with its behaviour ninja_thrower_behaviour. */
-uint16_t ninja_thrower_setup(uint16_t object)
+void ninja_thrower_setup(uint16_t object)
 {
-	uint16_t setup = 0, y = 0;
+	uint16_t setup = 0;
 	uint8_t attributes = 0;
 
 	setup = ninja_object_setup_ADDRESS;
-	y = vector_object_setup(object, setup);
+	vector_object_setup(object, setup);
 	OBJECT(object)->behaviour = 0x79B0u;
 	attributes = OBJECT(object)->attributes;
 	OBJECT(object)->attributes = (attributes & 0x30u) | 0x86u;
 	ninja_setup_common(object);
-	return y;
 }
 
 /* Sets a hand-to-hand ninja up with its behaviour ninja_fighter_behaviour. */
-uint16_t ninja_fighter_setup(uint16_t object)
+void ninja_fighter_setup(uint16_t object)
 {
-	uint16_t setup = 0, y = 0;
+	uint16_t setup = 0;
 	uint8_t attributes = 0;
 
 	setup = ninja_object_setup_ADDRESS;
-	y = vector_object_setup(object, setup);
+	vector_object_setup(object, setup);
 	OBJECT(object)->behaviour = 0x7900u;
 	attributes = OBJECT(object)->attributes;
 	OBJECT(object)->attributes = (attributes & 0x30u) | 0x86u;
 	ninja_setup_common(object);
-	return y;
 }
 
 /* The ninja called away (step 6), by field 29: it vanishes in smoke. */
-uint16_t ninja_leave(uint16_t object, uint16_t y)
+void ninja_leave(uint16_t object)
 {
 	uint16_t ignored16 = 0;
 	uint32_t ignored = 0;
@@ -55,46 +53,49 @@ uint16_t ninja_leave(uint16_t object, uint16_t y)
 		{
 		case 0:
 			ninja_leave_start(object);
-			return y;
+			return;
 		case 2:
 			break;
 		case -38:
-			return ninja_thrower_setup(object);
+			ninja_thrower_setup(object);
+			return;
 		case -36:
 		case -24:
 		case -12:
-			return ninja_come_in(object, y);
+			ninja_come_in(object);
+			return;
 		case -34:
 		case -22:
 		case -10:
-			vector_enemy_think(object, &y, &ignored16, &ignored);
-			return y;
+			vector_enemy_think(object, &ignored16, &ignored);
+			return;
 		case -32:
 		case -20:
 		case -8:
-			vector_enemy_act(object, &y, &ignored16, &ignored);
-			return y;
+			vector_enemy_act(object, &ignored16, &ignored);
+			return;
 		case -30:
 		case -18:
 		case -6:
-			enemy_hurt(object, &y, &ignored16);
-			return y;
+			enemy_hurt(object);
+			return;
 		case -28:
 		case -16:
 		case -4:
-			vector_enemy_climb(object, &y, &ignored16, &ignored);
-			return y;
+			vector_enemy_climb(object, &ignored16, &ignored);
+			return;
 		case -26:
-			return ninja_fighter_setup(object);
+			ninja_fighter_setup(object);
+			return;
 		case -14:
-			return ninja_setup(object);
+			ninja_setup(object);
+			return;
 		case -2:
 			continue;
 		}
 		break;
 	}
 	ninja_leave_end(object);
-	return y;
 }
 
 /* Plays the ninja vanishing in a puff of smoke. */
@@ -118,27 +119,26 @@ void ninja_leave_end(uint16_t object)
 }
 
 /* Sets a ninja of type 32 up with its behaviour ninja_behaviour. */
-uint16_t ninja_setup(uint16_t object)
+void ninja_setup(uint16_t object)
 {
-	uint16_t setup = 0, y = 0;
+	uint16_t setup = 0;
 
 	setup = ninja_object_setup_ADDRESS;
-	y = vector_object_setup(object, setup);
+	vector_object_setup(object, setup);
 	OBJECT(object)->behaviour = 0x7958u;
 	ninja_setup_common(object);
-	return y;
 }
 
 /* The ninjas' common setup: turned to the nearest player; state 0 fights at once, the others stay hidden
    for their way in. */
 void ninja_setup_common(uint16_t object)
 {
-	uint16_t u = 0;
+	uint16_t nearest_player = 0;
 	uint8_t parameter = 0, state = 0;
 
 	OBJECT(object)->enemy_class = 1;
-	u = vector_choose_nearest_player(object);
-	vector_measure_target(object, u);
+	nearest_player = vector_choose_nearest_player(object);
+	vector_measure_target(object, nearest_player);
 	OBJECT(object)->ninja.vanishes = 1u;
 	OBJECT(object)->retarget_time = 0x10u;
 	parameter = OBJECT(object)->parameter;
@@ -154,7 +154,7 @@ void ninja_setup_common(uint16_t object)
 }
 
 /* The ninja's way in, by field 29 (kind_a1_entrance_steps gives the step it starts at). */
-uint16_t ninja_come_in(uint16_t object, uint16_t y)
+void ninja_come_in(uint16_t object)
 {
 	uint8_t action_step = 0;
 
@@ -163,86 +163,86 @@ uint16_t ninja_come_in(uint16_t object, uint16_t y)
 	{
 	case 0:
 		ninja_choose_entrance(object);
-		return y;
+		return;
 	case 2:
 		ninja_run_in(object);
-		return y;
+		return;
 	case 4:
 		ninja_run_in_end(object);
-		return y;
+		return;
 	case 6:
 	case 34:
 		ninja_appear(object);
-		return y;
+		return;
 	case 8:
 		ninja_appear_end(object);
-		return y;
+		return;
 	case 10:
 		ninja_drop_in(object);
-		return y;
+		return;
 	case 12:
 		ninja_drop_forward(object);
-		return y;
+		return;
 	case 14:
 		ninja_drop_land(object);
-		return y;
+		return;
 	case 16:
 		ninja_leap_in(object);
-		return y;
+		return;
 	case 18:
 		ninja_leap_forward(object);
-		return y;
+		return;
 	case 20:
 	case 30:
 		ninja_leap_stop_forward(object);
-		return y;
+		return;
 	case 22:
 	case 32:
 		ninja_leap_land(object);
-		return y;
+		return;
 	case 24:
 		ninja_run_and_jump_in(object);
-		return y;
+		return;
 	case 26:
 		ninja_jump_onto_ledge(object);
-		return y;
+		return;
 	case 28:
 		ninja_jump_back(object);
-		return y;
+		return;
 	case 36:
-		return ninja_split(object, y);
+		ninja_split(object);
+		return;
 	case 38:
 		ninja_split_move(object);
-		return y;
+		return;
 	case 40:
 		ninja_split_flicker(object);
-		return y;
+		return;
 	case 42:
 		ninja_split_copy(object);
-		return y;
+		return;
 	case 44:
 		ninja_wait_to_step_out(object);
-		return y;
+		return;
 	case 46:
 		ninja_step_out(object);
-		return y;
+		return;
 	case 48:
 		ninja_step_out_end(object);
-		return y;
+		return;
 	case 50:
 		ninja_dash_in(object);
-		return y;
+		return;
 	case 52:
 		ninja_dash_in_end(object);
-		return y;
+		return;
 	case 54:
 		ninja_fall_in(object);
-		return y;
+		return;
 	case 56:
 		ninja_fall_in_land(object);
-		return y;
+		return;
 	}
-	unreachable();
 }
 
 /* Takes the step the ninja's way in starts at from kind_a1_entrance_steps by its state. */
@@ -360,11 +360,11 @@ void ninja_drop_land(uint16_t object)
 	uint8_t floor_value = 0;
 	uint16_t floor_cell = 0;
 	uint8_t state = 0;
-	uint16_t z_speed = 0, t1 = 0, y_speed = 0;
+	uint16_t z_speed = 0, falling_z_speed = 0, y_speed = 0;
 
 	z_speed = OBJECT(object)->z_speed;
-	t1 = z_speed - 0x20u;
-	OBJECT(object)->z_speed = t1;
+	falling_z_speed = z_speed - 0x20u;
+	OBJECT(object)->z_speed = falling_z_speed;
 	carry = vector_check_landing(object);
 	if (carry)
 	{
@@ -414,7 +414,7 @@ void ninja_leap_find_floor(uint16_t object)
 	uint32_t negative = 0;
 	uint8_t floor_value = 0;
 	uint16_t floor_cell = 0;
-	uint8_t t1 = 0, attributes = 0, action_step = 0;
+	uint8_t z_low = 0, attributes = 0, action_step = 0;
 
 	floor_cell = 0u;
 	vector_floor_at_offset(object, &floor_cell, &negative);
@@ -425,8 +425,8 @@ void ninja_leap_find_floor(uint16_t object)
 		return;
 	}
 	floor_value = (((floor_value & 0xFu) << 1) << 1) << 1;
-	t1 = (uint8_t)OBJECT(object)->z;
-	if (t1 <= floor_value)
+	z_low = (uint8_t)OBJECT(object)->z;
+	if (z_low <= floor_value)
 	{
 		ninja_leap_stop_forward(object);
 		return;
@@ -451,11 +451,11 @@ void ninja_leap_land(uint16_t object)
 {
 	uint32_t carry = 0;
 	uint8_t state = 0;
-	uint16_t z_speed = 0, t1 = 0;
+	uint16_t z_speed = 0, falling_z_speed = 0;
 
 	z_speed = OBJECT(object)->z_speed;
-	t1 = z_speed - 0x20u;
-	OBJECT(object)->z_speed = t1;
+	falling_z_speed = z_speed - 0x20u;
+	OBJECT(object)->z_speed = falling_z_speed;
 	carry = vector_check_landing(object);
 	if (carry)
 	{
@@ -470,7 +470,7 @@ void ninja_leap_land(uint16_t object)
 void ninja_run_and_jump_in(uint16_t object)
 {
 	uint8_t attributes = 0, action_step = 0;
-	uint16_t t1 = 0, x_speed = 0;
+	uint16_t ninja_x = 0, x_speed = 0;
 
 	OBJECT(object)->flags = 0x80u;
 	attributes = OBJECT(object)->attributes;
@@ -478,8 +478,8 @@ void ninja_run_and_jump_in(uint16_t object)
 	OBJECT(object)->timer = 0x20u;
 	OBJECT(object)->animation = 0x90u;
 	OBJECT(object)->x_speed = 0x200;
-	t1 = OBJECT(object)->x;
-	if (t1 >= 0xE0u)
+	ninja_x = OBJECT(object)->x;
+	if (ninja_x >= 0xE0u)
 	{
 		x_speed = OBJECT(object)->x_speed;
 		OBJECT(object)->x_speed = 0u - x_speed;
@@ -524,27 +524,26 @@ void ninja_jump_back(uint16_t object)
 
 /* When its animation ends, puts in another ninja (type 32, state 7) at its place; with no free slot it
    fights at once. */
-uint16_t ninja_split(uint16_t object, uint16_t child_record)
+void ninja_split(uint16_t object)
 {
 	uint32_t carry = 0;
-	uint16_t ignored16 = 0, ignored16_2 = 0;
+	uint16_t ignored16 = 0, ignored16_2 = 0, ignored16_3 = 0;
 	uint8_t animation_flags = 0, state = 0, action_step = 0;
 
 	animation_flags = OBJECT(object)->animation_flags;
 	if ((animation_flags & 1u) == 0u)
-		return child_record;
-	child_record = ninja_split_child_ADDRESS;
-	vector_spawn_child(object, child_record, &ignored16, &ignored16_2, &carry);
+		return;
+	leftover_y = ninja_split_child_ADDRESS;
+	vector_spawn_child(object, &ignored16, &ignored16_2, &ignored16_3, &carry);
 	if (carry == 0u)
 	{
 		OBJECT(object)->flags = 0xC0u;
 		state = OBJECT(object)->state;
 		OBJECT(object)->state = state + 1u;
-		return child_record;
+		return;
 	}
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step + 1u;
-	return child_record;
 }
 
 /* Moves the ninja right for 64 frames with a sound. */
@@ -682,13 +681,13 @@ void ninja_fall_in(uint16_t object)
 {
 	uint32_t negative = 0;
 	uint8_t floor_value = 0;
-	uint16_t floor_cell = 0, u = 0;
+	uint16_t floor_cell = 0, nearest_player = 0;
 	uint8_t action_step = 0;
 
 	OBJECT(object)->flags = 0xC8u;
 	OBJECT(object)->animation = 0x84u;
-	u = vector_choose_nearest_player(object);
-	vector_measure_target(object, u);
+	nearest_player = vector_choose_nearest_player(object);
+	vector_measure_target(object, nearest_player);
 	floor_cell = 0u;
 	vector_floor_at_offset(object, &floor_cell, &negative);
 	floor_value = (uint8_t)(floor_cell >> 8);
@@ -727,15 +726,14 @@ void ninja_hop_strike_start(uint16_t object)
 }
 
 /* On the marked frame, hops the ninja back with its attacking hit box. */
-uint16_t ninja_hop_strike_hit(uint16_t object, uint16_t y)
+void ninja_hop_strike_hit(uint16_t object)
 {
-	uint16_t box = 0;
 	uint8_t animation_flags = 0, action_step = 0, attributes = 0;
 	uint16_t x_speed = 0;
 
 	animation_flags = OBJECT(object)->animation_flags;
 	if ((animation_flags & 2u) == 0u)
-		return y;
+		return;
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step + 1u;
 	OBJECT(object)->x_speed = 0x200;
@@ -745,9 +743,8 @@ uint16_t ninja_hop_strike_hit(uint16_t object, uint16_t y)
 		x_speed = OBJECT(object)->x_speed;
 		OBJECT(object)->x_speed = 0u - x_speed;
 	}
-	box = ninja_hop_strike_hit_box_ADDRESS;
-	vector_set_hit_box(object, box);
-	return box;
+	leftover_y = ninja_hop_strike_hit_box_ADDRESS;
+	vector_set_hit_box(object);
 }
 
 /* Starts the ninja's throw, turned to its player. */
@@ -762,23 +759,21 @@ void ninja_throw_start(uint16_t object)
 }
 
 /* On the marked frame, puts in the star (4D40 type 19). */
-void ninja_throw_release(uint16_t object, uint16_t *p_child_record, uint16_t *p_u)
+uint16_t ninja_throw_release(uint16_t object, uint16_t steps)
 {
-	uint16_t child_record = (uint16_t)*p_child_record;
-	uint16_t u = (uint16_t)*p_u;
 	uint32_t carry = 0;
-	uint16_t u_2 = 0;
+	uint16_t child_object = 0, star = 0;
 	uint8_t animation_flags = 0, action_step = 0;
 
 	animation_flags = OBJECT(object)->animation_flags;
 	if ((animation_flags & 2u) == 0u)
-		return;
+		return steps;
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step + 1u;
-	child_record = ninja_throw_release_child_ADDRESS;
-	*p_u = u_2;
-	spawn_list_2_child(object, child_record, p_u, &carry);
-	*p_child_record = child_record;
+	leftover_y = ninja_throw_release_child_ADDRESS;
+	child_object = ninja_throw_release_child_ADDRESS;
+	spawn_list_2_child(object, child_object, &star, &carry);
+	return star;
 }
 
 /* Sets the star up on its thrower's floor, flying fast the way it faces. */
@@ -825,19 +820,17 @@ void ninja_slash_start(uint16_t object)
 }
 
 /* On the marked frame, gives the ninja its attacking hit box. */
-uint16_t ninja_slash_hit(uint16_t object, uint16_t y)
+void ninja_slash_hit(uint16_t object)
 {
-	uint16_t box = 0;
 	uint8_t animation_flags = 0, action_step = 0;
 
 	animation_flags = OBJECT(object)->animation_flags;
 	if ((animation_flags & 2u) == 0u)
-		return y;
+		return;
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step + 1u;
-	box = ninja_hop_strike_hit_box_ADDRESS;
-	vector_set_hit_box(object, box);
-	return box;
+	leftover_y = ninja_hop_strike_hit_box_ADDRESS;
+	vector_set_hit_box(object);
 }
 
 /* Shows the ninja crouching for the wait kind_a1_attack_delays_by_players gives. */
@@ -870,33 +863,29 @@ void ninja_crouch_strike_start(uint16_t object)
 }
 
 /* On the marked frame, gives the ninja its low attacking hit box. */
-uint16_t ninja_crouch_strike_hit(uint16_t object, uint16_t y)
+void ninja_crouch_strike_hit(uint16_t object)
 {
-	uint16_t box = 0;
 	uint8_t animation_flags = 0, action_step = 0;
 
 	animation_flags = OBJECT(object)->animation_flags;
 	if ((animation_flags & 2u) == 0u)
-		return y;
+		return;
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step + 1u;
-	box = ninja_crouch_strike_hit_box_ADDRESS;
-	vector_set_hit_box(object, box);
-	return box;
+	leftover_y = ninja_crouch_strike_hit_box_ADDRESS;
+	vector_set_hit_box(object);
 }
 
 /* Gives the ninja back its plain hit box and ends the action when the attack ends. */
-uint16_t ninja_attack_recover(uint16_t object)
+void ninja_attack_recover(uint16_t object)
 {
-	uint16_t box = 0;
 	uint8_t action_step = 0;
 
-	box = ninja_body_box_ADDRESS;
-	vector_set_hit_box(object, box);
+	leftover_y = ninja_body_box_ADDRESS;
+	vector_set_hit_box(object);
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step + 1u;
 	ninja_attack_end(object);
-	return box;
 }
 
 /* Ends the ninja's action when its animation ends. */
@@ -954,7 +943,7 @@ void ninja_jump_attack_take_off(uint16_t object)
 }
 
 /* Plays the jump's somersault twice, then the dive. */
-uint16_t ninja_jump_attack_spin(uint16_t object, uint16_t box)
+void ninja_jump_attack_spin(uint16_t object)
 {
 	uint8_t animation_flags = 0, loops = 0, action_step = 0;
 
@@ -968,14 +957,15 @@ uint16_t ninja_jump_attack_spin(uint16_t object, uint16_t box)
 			OBJECT(object)->animation = 0x9Cu;
 			action_step = OBJECT(object)->action_step;
 			OBJECT(object)->action_step = action_step + 1u;
-			return ninja_jump_attack_dive(object, box);
+			ninja_jump_attack_dive(object);
+			return;
 		}
 	}
-	return ninja_jump_attack_dive(object, box);
+	ninja_jump_attack_dive(object);
 }
 
 /* Pulls the diving ninja down, with its attacking hit box on the marked frame; near the floor it lands. */
-uint16_t ninja_jump_attack_dive(uint16_t object, uint16_t box)
+void ninja_jump_attack_dive(uint16_t object)
 {
 	uint16_t z_speed = 0;
 	uint8_t animation_flags = 0, action_step = 0;
@@ -988,62 +978,60 @@ uint16_t ninja_jump_attack_dive(uint16_t object, uint16_t box)
 		animation_flags = OBJECT(object)->animation_flags;
 		if ((((uint16_t)((uint32_t)animation_flags << 8) >> 8) & 2u) != 0u)
 		{
-			box = ninja_jump_attack_dive_box_ADDRESS;
-			vector_set_hit_box(object, box);
+			leftover_y = ninja_jump_attack_dive_box_ADDRESS;
+			vector_set_hit_box(object);
 		}
 	}
 	else
 	{
 		OBJECT(object)->animation = 0x9Du;
-		box = ninja_body_box_ADDRESS;
-		vector_set_hit_box(object, box);
+		leftover_y = ninja_body_box_ADDRESS;
+		vector_set_hit_box(object);
 		action_step = OBJECT(object)->action_step;
 		OBJECT(object)->action_step = action_step + 1u;
 	}
 	z_speed_2 = OBJECT(object)->z_speed;
 	z_speed = z_speed_2 - 0x20u;
-	return ninja_jump_attack_land(object, box, z_speed);
+	ninja_jump_attack_land(object, z_speed);
 }
 
 /* Pulls the ninja down slowly. */
-uint16_t ninja_jump_attack_fall(uint16_t object, uint16_t y)
+void ninja_jump_attack_fall(uint16_t object)
 {
 	uint16_t z_speed = 0;
 	uint16_t z_speed_2 = 0;
 
 	z_speed_2 = OBJECT(object)->z_speed;
 	z_speed = z_speed_2 - 0x10u;
-	return ninja_jump_attack_land(object, y, z_speed);
+	ninja_jump_attack_land(object, z_speed);
 }
 
 /* When the ninja lands, gives it back its plain hit box and ends the action. */
-uint16_t ninja_jump_attack_land(uint16_t object, uint16_t y, uint16_t z_speed)
+void ninja_jump_attack_land(uint16_t object, uint16_t z_speed)
 {
 	uint32_t carry = 0;
-	uint16_t box = 0;
 
 	OBJECT(object)->z_speed = z_speed;
 	carry = vector_check_landing(object);
 	if (carry == 0u)
-		return y;
-	box = ninja_body_box_ADDRESS;
-	vector_set_hit_box(object, box);
+		return;
+	leftover_y = ninja_body_box_ADDRESS;
+	vector_set_hit_box(object);
 	OBJECT(object)->animation = 0x9Du;
 	OBJECT(object)->state = 2u;
 	OBJECT(object)->timer = 0u;
-	return box;
 }
 
 /* Near its player leaps at him at once; otherwise starts running at him. */
 void ninja_rush_start(uint16_t object)
 {
 	uint8_t bounced = 0, action_step = 0, attributes = 0;
-	uint16_t t1 = 0, t2 = 0, target_dx = 0, x_speed = 0;
+	uint16_t ninja_x = 0, screen_offset = 0, target_dx = 0, x_speed = 0;
 
 	OBJECT(object)->ninja.bounced = 0u;
-	t1 = OBJECT(object)->x;
-	t2 = t1 - 0x40u;
-	if (t2 >= 0x140u)
+	ninja_x = OBJECT(object)->x;
+	screen_offset = ninja_x - 0x40u;
+	if (screen_offset >= 0x140u)
 	{
 		bounced = OBJECT(object)->ninja.bounced;
 		OBJECT(object)->ninja.bounced = bounced + 1u;
@@ -1098,12 +1086,11 @@ void ninja_rush_run(uint16_t object)
 
 /* Pulls the leaping ninja down; it bounces once off the screen's edge, and when it lands it goes on with
    a slash (action 2B). */
-uint16_t ninja_rush_leap(uint16_t object, uint16_t y)
+void ninja_rush_leap(uint16_t object)
 {
 	uint32_t carry = 0;
-	uint16_t box = 0;
 	uint8_t bounced = 0, bounced_2 = 0;
-	uint16_t z_speed = 0, t1 = 0, x_speed = 0;
+	uint16_t z_speed = 0, ninja_x = 0, x_speed = 0;
 
 	z_speed = OBJECT(object)->z_speed;
 	OBJECT(object)->z_speed = z_speed - 0x20u;
@@ -1113,29 +1100,28 @@ uint16_t ninja_rush_leap(uint16_t object, uint16_t y)
 		OBJECT(object)->x_speed = 0;
 		OBJECT(object)->action = 0x2Bu;
 		OBJECT(object)->action_step = 0u;
-		box = ninja_body_box_ADDRESS;
-		vector_set_hit_box(object, box);
-		return box;
+		leftover_y = ninja_body_box_ADDRESS;
+		vector_set_hit_box(object);
+		return;
 	}
 	bounced = OBJECT(object)->ninja.bounced;
 	if (bounced == 0u)
 	{
-		t1 = OBJECT(object)->x;
-		if (t1 < 0x48 || t1 > 0x177)
+		ninja_x = OBJECT(object)->x;
+		if (ninja_x < 0x48 || ninja_x > 0x177)
 		{
 			x_speed = OBJECT(object)->x_speed;
 			OBJECT(object)->x_speed = 0u - x_speed;
 			OBJECT(object)->z_speed = 0x200;
 			OBJECT(object)->animation = 0x84u;
-			box = ninja_jump_attack_dive_box_ADDRESS;
-			vector_set_hit_box(object, box);
+			leftover_y = ninja_jump_attack_dive_box_ADDRESS;
+			vector_set_hit_box(object);
 			bounced_2 = OBJECT(object)->ninja.bounced;
 			OBJECT(object)->ninja.bounced = bounced_2 + 1u;
 			face_movement(object);
-			return box;
+			return;
 		}
 	}
-	return y;
 }
 
 /* Ends the ninja's action when its animation ends. */

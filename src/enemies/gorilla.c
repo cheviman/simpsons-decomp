@@ -3,7 +3,7 @@
  *    Description: stage 5's gorilla (type 31) and its actions 26, 2C, 35
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    10-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -13,15 +13,15 @@
 
 /* Sets the gorilla up with its behaviour gorilla_behaviour, turned to its player: state 0 joins the
    fight at once, the others come in first, out of the enemy count. */
-uint16_t gorilla_setup(uint16_t object)
+void gorilla_setup(uint16_t object)
 {
-	uint16_t setup = 0, u = 0, y = 0;
+	uint16_t nearest_player = 0, setup = 0;
 	uint8_t parameter = 0, state = 0;
 
 	setup = gorilla_object_setup_ADDRESS;
-	y = vector_object_setup(object, setup);
-	u = vector_choose_nearest_player(object);
-	vector_measure_target(object, u);
+	vector_object_setup(object, setup);
+	nearest_player = vector_choose_nearest_player(object);
+	vector_measure_target(object, nearest_player);
 	OBJECT(object)->gorilla.vanishes = 1u;
 	OBJECT(object)->behaviour = 0x7B8Eu;
 	OBJECT(object)->retarget_time = 0x10u;
@@ -30,12 +30,11 @@ uint16_t gorilla_setup(uint16_t object)
 	{
 		OBJECT(object)->parameter = 0u;
 		OBJECT(object)->state = 2u;
-		return y;
+		return;
 	}
 	OBJECT(object)->enemy_class = -1;
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
-	return y;
 }
 
 /* The gorilla's way in, by field 29: the steps its entrance (gorilla_entrances) starts it at. */
@@ -84,7 +83,7 @@ void gorilla_entrance_setup(uint16_t object)
 	uint8_t action_step = 0;
 	uint16_t entrance = 0;
 	uint8_t parameter = 0, step = 0, animation = 0;
-	uint16_t flags = 0, t1 = 0;
+	uint16_t flags = 0, scaled_entrance_x = 0;
 
 	OBJECT(object)->flags = 0x80u;
 	OBJECT(object)->entrance_pending = 0x80u;
@@ -92,8 +91,8 @@ void gorilla_entrance_setup(uint16_t object)
 	entrance = gorilla_entrances_ADDRESS + (int8_t)(((uint32_t)parameter << 1) << 1);
 	flags = (((uint32_t)GORILLA_ENTRANCE(entrance)->flags << 8u) | GORILLA_ENTRANCE(entrance)->x);
 	OBJECT(object)->attributes = flags >> 8;
-	t1 = (uint32_t)(uint8_t)flags << 4;
-	OBJECT(object)->gorilla.entrance_x = t1;
+	scaled_entrance_x = (uint32_t)(uint8_t)flags << 4;
+	OBJECT(object)->gorilla.entrance_x = scaled_entrance_x;
 	step = GORILLA_ENTRANCE(entrance)->step;
 	action_step = step;
 	if ((int8_t)step < 0)
@@ -110,11 +109,11 @@ void gorilla_entrance_setup(uint16_t object)
 void gorilla_wait_for_place(uint16_t object)
 {
 	uint8_t action_step = 0;
-	uint16_t t1 = 0, entrance_x = 0;
+	uint16_t gorilla_x = 0, entrance_x = 0;
 
-	t1 = OBJECT(object)->x;
+	gorilla_x = OBJECT(object)->x;
 	entrance_x = OBJECT(object)->gorilla.entrance_x;
-	if (t1 < entrance_x)
+	if (gorilla_x < entrance_x)
 	{
 		OBJECT(object)->animation = 0x93u;
 		OBJECT(object)->timer = 0x10u;
@@ -146,13 +145,13 @@ void gorilla_reach_floor(uint16_t object)
 	uint32_t negative = 0;
 	uint8_t floor_value = 0;
 	uint16_t floor_cell = 0;
-	uint8_t t1 = 0, state = 0, timer = 0, attributes = 0;
+	uint8_t own_floor = 0, state = 0, timer = 0, attributes = 0;
 
 	floor_cell = 0u;
 	vector_floor_at_offset(object, &floor_cell, &negative);
 	floor_value = (uint8_t)(floor_cell >> 8);
-	t1 = (uint8_t)OBJECT(object)->floor_z;
-	if ((uint8_t)((((floor_value & 0xFu) << 1) << 1) << 1) == t1)
+	own_floor = (uint8_t)OBJECT(object)->floor_z;
+	if ((uint8_t)((((floor_value & 0xFu) << 1) << 1) << 1) == own_floor)
 	{
 		OBJECT(object)->parameter = 0u;
 		OBJECT(object)->flags = 0xC0u;
@@ -174,11 +173,11 @@ void gorilla_reach_floor(uint16_t object)
 void gorilla_walk_right_in(uint16_t object)
 {
 	uint8_t action_step = 0;
-	uint16_t t1 = 0, entrance_x = 0;
+	uint16_t gorilla_x = 0, entrance_x = 0;
 
-	t1 = OBJECT(object)->x;
+	gorilla_x = OBJECT(object)->x;
 	entrance_x = OBJECT(object)->gorilla.entrance_x;
-	if (entrance_x <= t1)
+	if (entrance_x <= gorilla_x)
 		return;
 	OBJECT(object)->flags = 0x80u;
 	OBJECT(object)->animation = 0x81u;
@@ -225,11 +224,11 @@ void gorilla_turn_to_front(uint16_t object)
 void gorilla_walk_left_in(uint16_t object)
 {
 	uint8_t action_step = 0;
-	uint16_t t1 = 0, entrance_x = 0;
+	uint16_t gorilla_x = 0, entrance_x = 0;
 
-	t1 = OBJECT(object)->x;
+	gorilla_x = OBJECT(object)->x;
 	entrance_x = OBJECT(object)->gorilla.entrance_x;
-	if (entrance_x <= t1)
+	if (entrance_x <= gorilla_x)
 		return;
 	OBJECT(object)->flags = 0x80u;
 	OBJECT(object)->animation = 0x81u;
@@ -252,37 +251,33 @@ void gorilla_punch_start(uint16_t object)
 }
 
 /* On the blow's marked frame, gives the gorilla its attacking hit box. */
-uint16_t gorilla_punch_hit(uint16_t object, uint16_t y)
+void gorilla_punch_hit(uint16_t object)
 {
-	uint16_t box = 0;
 	uint8_t animation_flags = 0, action_step = 0;
 
 	animation_flags = OBJECT(object)->animation_flags;
 	if ((animation_flags & 2u) == 0u)
-		return y;
+		return;
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step + 1u;
-	box = gorilla_punch_hit_box_ADDRESS;
-	vector_set_hit_box(object, box);
-	return box;
+	leftover_y = gorilla_punch_hit_box_ADDRESS;
+	vector_set_hit_box(object);
 }
 
 /* Gives the gorilla back its plain hit box and ends the action when the blow ends. */
-uint16_t gorilla_punch_end(uint16_t object)
+void gorilla_punch_end(uint16_t object)
 {
-	uint16_t box = 0;
 	uint8_t action_step = 0, animation_flags = 0;
 
-	box = gorilla_body_box_ADDRESS;
-	vector_set_hit_box(object, box);
+	leftover_y = gorilla_body_box_ADDRESS;
+	vector_set_hit_box(object);
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step + 1u;
 	animation_flags = OBJECT(object)->animation_flags;
 	if ((animation_flags & 1u) == 0u)
-		return box;
+		return;
 	OBJECT(object)->state = 2u;
 	OBJECT(object)->timer = 0u;
-	return box;
 }
 
 /* Sends the gorilla leaping at its player, as high as gorilla_leap_speeds gives for the stage's
@@ -291,14 +286,14 @@ uint16_t gorilla_leap_take_off(uint16_t object)
 {
 	uint16_t leap_speeds = 0;
 	uint8_t attributes = 0, action_step = 0;
-	uint16_t t1 = 0, x_speed = 0;
+	uint16_t leap_speed = 0, x_speed = 0;
 
 	OBJECT(object)->animation = 0x91u;
 	OBJECT(object)->timer = 8u;
 	OBJECT(object)->x_speed = 0x200;
 	leap_speeds = gorilla_leap_speeds_ADDRESS;
-	t1 = gorilla_leap_speeds[(int8_t)((uint8_t)((uint32_t)difficulty << 1)) / 2];
-	OBJECT(object)->z_speed = t1;
+	leap_speed = gorilla_leap_speeds[(int8_t)((uint8_t)((uint32_t)difficulty << 1)) / 2];
+	OBJECT(object)->z_speed = leap_speed;
 	face_target(object);
 	attributes = OBJECT(object)->attributes;
 	if ((attributes & 0x40u) != 0u)
@@ -312,10 +307,9 @@ uint16_t gorilla_leap_take_off(uint16_t object)
 }
 
 /* Pulls the gorilla down; 8 frames into the leap gives it its attacking hit box. */
-uint16_t gorilla_leap_rise(uint16_t object, uint16_t y)
+void gorilla_leap_rise(uint16_t object)
 {
 	uint32_t carry = 0;
-	uint16_t box = 0;
 	uint8_t timer = 0, action_step = 0;
 	uint16_t z_speed = 0;
 
@@ -323,20 +317,22 @@ uint16_t gorilla_leap_rise(uint16_t object, uint16_t y)
 	OBJECT(object)->z_speed = z_speed - 0x30u;
 	carry = vector_check_landing(object);
 	if (carry)
-		return gorilla_leap_land(object);
+	{
+		gorilla_leap_land(object);
+		return;
+	}
 	timer = OBJECT(object)->timer;
 	OBJECT(object)->timer = timer - 1u;
 	if (timer != 1u)
-		return y;
+		return;
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step + 1u;
-	box = gorilla_leap_rise_box_ADDRESS;
-	vector_set_hit_box(object, box);
-	return box;
+	leftover_y = gorilla_leap_rise_box_ADDRESS;
+	vector_set_hit_box(object);
 }
 
 /* Pulls the gorilla down until it lands. */
-uint16_t gorilla_leap_fall(uint16_t object, uint16_t y)
+void gorilla_leap_fall(uint16_t object)
 {
 	uint32_t carry = 0;
 	uint16_t z_speed = 0;
@@ -345,21 +341,18 @@ uint16_t gorilla_leap_fall(uint16_t object, uint16_t y)
 	OBJECT(object)->z_speed = z_speed - 0x30u;
 	carry = vector_check_landing(object);
 	if (carry == 0u)
-		return y;
-	return gorilla_leap_land(object);
+		return;
+	gorilla_leap_land(object);
 }
 
 /* Stops the landed gorilla with its plain hit box and ends the action. */
-uint16_t gorilla_leap_land(uint16_t object)
+void gorilla_leap_land(uint16_t object)
 {
-	uint16_t box = 0;
-
 	OBJECT(object)->x_speed = 0;
-	box = gorilla_body_box_ADDRESS;
-	vector_set_hit_box(object, box);
+	leftover_y = gorilla_body_box_ADDRESS;
+	vector_set_hit_box(object);
 	OBJECT(object)->state = 2u;
 	OBJECT(object)->timer = 0u;
-	return box;
 }
 
 /* Walks the gorilla away from its player for 32 frames. */

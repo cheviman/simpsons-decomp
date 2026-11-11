@@ -3,7 +3,7 @@
  *    Description: an object's setup and hit box, gravity and landing, the screen's edges
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    10-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -14,7 +14,7 @@
 /* Starts the object from a setup record: on and in the hit checks, its kind and animation (started
    again), its hit box, its life and its points, and its sprites' priority from the floor map where it
    stands. */
-uint16_t start_object_from_setup(uint16_t object, uint16_t setup)
+void start_object_from_setup(uint16_t object, uint16_t setup)
 {
 	uint32_t negative = 0;
 	uint8_t floor_value = 0;
@@ -43,7 +43,7 @@ uint16_t start_object_from_setup(uint16_t object, uint16_t setup)
 	floor_value = (uint8_t)(floor_cell >> 8);
 	OBJECT(object)->next_floor_cell = floor_value;
 	OBJECT(object)->attributes = (floor_value & 0x30u) | setup_attributes;
-	return hit_box;
+	leftover_y = hit_box;
 }
 
 /* Pulls the object's height speed down by gravity and, once it falls, caps its fall and lands it on its
@@ -77,13 +77,13 @@ void cap_fall_and_land(uint16_t object, uint16_t *p_z_speed, uint32_t *p_carry)
 	uint8_t animation_flags = 0, floor_z_low = 0;
 	uint16_t height = 0;
 	uint8_t animation_flags_2 = 0;
-	uint16_t floor_z = 0, t1 = 0, z = 0, floor_z_2 = 0;
+	uint16_t floor_z = 0, landing_z = 0, z = 0, floor_z_2 = 0;
 
 	if (z_speed >> 8 < 0xF8u)
 		OBJECT(object)->z_speed = (OBJECT(object)->z_speed & 0xFFu) | 0xF800u;
 	floor_z = OBJECT(object)->floor_z;
-	t1 = floor_z + 7u;
-	land_at_height = t1;
+	landing_z = floor_z + 7u;
+	land_at_height = landing_z;
 	z = OBJECT(object)->z;
 	height = z;
 	if (land_at_height < (uint16_t)(((uint32_t)(z >> 8) << 8) | (height & 0xFFu)))
@@ -153,12 +153,12 @@ void set_hit_box(uint16_t object, uint16_t box)
    runs 40-17F across it). */
 void stop_beyond_screen_edge(uint16_t object)
 {
-	uint16_t t1 = 0;
+	uint16_t screen_x = 0;
 
 	if (OBJECT(object)->flags != 0u)
 	{
-		t1 = OBJECT(object)->x;
-		if (t1 < 0x10 || t1 > 0x1AF)
+		screen_x = OBJECT(object)->x;
+		if (screen_x < 0x10 || screen_x > 0x1AF)
 			OBJECT(object)->x_speed = 0;
 	}
 }
@@ -168,12 +168,12 @@ void stop_beyond_screen_edge(uint16_t object)
 uint16_t enemy_remove_off_screen(uint16_t object, uint16_t target)
 {
 	uint8_t vitality = 0;
-	uint16_t t1 = 0;
+	uint16_t screen_x = 0;
 
 	if (OBJECT(object)->flags == 0u)
 		return target;
-	t1 = OBJECT(object)->x;
-	if (t1 < 0x1C0u)
+	screen_x = OBJECT(object)->x;
+	if (screen_x < 0x1C0u)
 		return target;
 	OBJECT(object)->flags = 0u;
 	if (object >= OBJECT_ADDRESS(22))
@@ -188,9 +188,9 @@ uint16_t enemy_remove_off_screen(uint16_t object, uint16_t target)
 uint32_t enemy_on_screen(uint16_t object)
 {
 	uint32_t carry = 0;
-	uint16_t t1 = 0;
+	uint16_t screen_x = 0;
 
-	t1 = OBJECT(object)->x;
-	carry = t1 >= 0x50 && t1 <= 0x16F;
+	screen_x = OBJECT(object)->x;
+	carry = screen_x >= 0x50 && screen_x <= 0x16F;
 	return carry;
 }

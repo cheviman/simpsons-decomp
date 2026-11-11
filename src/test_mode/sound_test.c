@@ -3,7 +3,7 @@
  *    Description: the music and sound checks
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    10-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -12,13 +12,13 @@
 #include "game.h"
 
 /* The 5 MUSIC CHECK page, by its step */
-void test_music_page(uint16_t setting, uint16_t d)
+void test_music_page(uint16_t d)
 {
 	uint32_t carry = 0;
-	uint16_t ignored16 = 0, x = 0;
+	uint16_t ignored16 = 0, page_steps = 0, setting = 0;
 
-	x = test_music_page_steps_ADDRESS;
-	switch ((uint16_t)(x + (int8_t)((uint32_t)test_page_step << 1)))
+	page_steps = test_music_page_steps_ADDRESS;
+	switch ((uint16_t)(page_steps + (int8_t)((uint32_t)test_page_step << 1)))
 	{
 	case test_menu_page_steps_ADDRESS:
 		test_menu_open(&ignored16, &carry);
@@ -30,7 +30,7 @@ void test_music_page(uint16_t setting, uint16_t d)
 		test_menu_update(&ignored16, &carry);
 		return;
 	case test_rom_check_page_steps_ADDRESS:
-		carry = test_rom_check_open(x);
+		carry = test_rom_check_open(page_steps);
 		return;
 	case 0x60A3u:
 		test_rom_check_run(&ignored16, &carry);
@@ -42,13 +42,13 @@ void test_music_page(uint16_t setting, uint16_t d)
 		test_color_check_draw(&ignored16, &carry);
 		return;
 	case test_io_check_page_steps_ADDRESS:
-		test_io_check_open(x, &ignored16, &carry);
+		test_io_check_open(page_steps, &ignored16, &carry);
 		return;
 	case 0x617Fu:
 		test_io_check_run(&ignored16, &carry);
 		return;
 	case test_music_page_steps_ADDRESS:
-		carry = test_music_open(x);
+		carry = test_music_open(page_steps);
 		return;
 	case 0x621Du:
 		test_music_first_choice(&ignored16, &carry);
@@ -60,7 +60,7 @@ void test_music_page(uint16_t setting, uint16_t d)
 		test_music_replay(&ignored16, &carry);
 		return;
 	case test_sound_page_steps_ADDRESS:
-		carry = test_sound_open(x);
+		carry = test_sound_open(page_steps);
 		return;
 	case 0x6279u:
 		test_sound_first_choice(&ignored16, &carry);
@@ -75,13 +75,15 @@ void test_music_page(uint16_t setting, uint16_t d)
 		test_options_open(&ignored16, &carry);
 		return;
 	case test_choose_setting_steps_ADDRESS:
-		test_choose_setting_open(x, setting, &d, &carry);
+		setting = (uint16_t)leftover_y;
+		test_choose_setting_open(page_steps, setting, &d, &carry);
 		return;
 	case 0x642Du:
+		setting = (uint16_t)leftover_y;
 		test_choose_setting_run(setting, &d, &carry);
 		return;
 	case test_factory_setting_page_steps_ADDRESS:
-		test_factory_setting_apply(x, &ignored16, &carry);
+		test_factory_setting_apply(page_steps, &ignored16, &carry);
 		return;
 	case 0x646Fu:
 		test_factory_setting_wait(&ignored16, &carry);
@@ -107,15 +109,15 @@ void test_music_choice(uint16_t *p_d, uint32_t *p_carry)
 {
 	uint16_t d = (uint16_t)*p_d;
 	uint32_t carry = *p_carry;
-	uint16_t x = 0;
+	uint16_t number_variable = 0;
 
 	test_menu_update(&d, &carry);
 	if (carry)
 	{
-		x = test_music_number_ADDRESS;
+		number_variable = test_music_number_ADDRESS;
 		d = (d & 0xFFu) | 0x3000u;
-		d = test_sound_test_next(x, d);
-		carry = test_music_open(x);
+		d = test_sound_test_next(number_variable, d);
+		carry = test_music_open(number_variable);
 	}
 	*p_d = d;
 	*p_carry = carry;
@@ -161,16 +163,16 @@ void test_music_play(uint16_t *p_d, uint32_t *p_carry)
 /* On the first line steps the number at X (wrapping past A); stops the sound and restarts the timer */
 uint16_t test_sound_test_next(uint16_t number_variable, uint16_t last_and_line)
 {
-	uint8_t a = 0, number = 0;
+	uint8_t last_number = 0, number = 0;
 	uint8_t stack = 0;
 
-	a = (uint8_t)(last_and_line >> 8);
+	last_number = (uint8_t)(last_and_line >> 8);
 	if ((uint8_t)last_and_line != 0u)
 	{
 		test_sound_timer = 0xFAu;
 		return test_silence();
 	}
-	stack = a;
+	stack = last_number;
 	number = mem_read8(number_variable) + 1u;
 	if (stack < number)
 		number = 0u;
@@ -201,13 +203,13 @@ void test_sound_test_first_press(uint16_t *p_d, uint32_t *p_carry)
 }
 
 /* The 6 SOUND CHECK page, by its step */
-void test_sound_page(uint16_t setting, uint16_t d)
+void test_sound_page(uint16_t d)
 {
 	uint32_t carry = 0;
-	uint16_t ignored16 = 0, x = 0;
+	uint16_t ignored16 = 0, page_steps = 0, setting = 0;
 
-	x = test_sound_page_steps_ADDRESS;
-	switch ((uint16_t)(x + (int8_t)((uint32_t)test_page_step << 1)))
+	page_steps = test_sound_page_steps_ADDRESS;
+	switch ((uint16_t)(page_steps + (int8_t)((uint32_t)test_page_step << 1)))
 	{
 	case test_menu_page_steps_ADDRESS:
 		test_menu_open(&ignored16, &carry);
@@ -219,7 +221,7 @@ void test_sound_page(uint16_t setting, uint16_t d)
 		test_menu_update(&ignored16, &carry);
 		return;
 	case test_rom_check_page_steps_ADDRESS:
-		carry = test_rom_check_open(x);
+		carry = test_rom_check_open(page_steps);
 		return;
 	case 0x60A3u:
 		test_rom_check_run(&ignored16, &carry);
@@ -231,13 +233,13 @@ void test_sound_page(uint16_t setting, uint16_t d)
 		test_color_check_draw(&ignored16, &carry);
 		return;
 	case test_io_check_page_steps_ADDRESS:
-		test_io_check_open(x, &ignored16, &carry);
+		test_io_check_open(page_steps, &ignored16, &carry);
 		return;
 	case 0x617Fu:
 		test_io_check_run(&ignored16, &carry);
 		return;
 	case test_music_page_steps_ADDRESS:
-		carry = test_music_open(x);
+		carry = test_music_open(page_steps);
 		return;
 	case 0x621Du:
 		test_music_first_choice(&ignored16, &carry);
@@ -249,7 +251,7 @@ void test_sound_page(uint16_t setting, uint16_t d)
 		test_music_replay(&ignored16, &carry);
 		return;
 	case test_sound_page_steps_ADDRESS:
-		carry = test_sound_open(x);
+		carry = test_sound_open(page_steps);
 		return;
 	case 0x6279u:
 		test_sound_first_choice(&ignored16, &carry);
@@ -264,13 +266,15 @@ void test_sound_page(uint16_t setting, uint16_t d)
 		test_options_open(&ignored16, &carry);
 		return;
 	case test_choose_setting_steps_ADDRESS:
-		test_choose_setting_open(x, setting, &d, &carry);
+		setting = (uint16_t)leftover_y;
+		test_choose_setting_open(page_steps, setting, &d, &carry);
 		return;
 	case 0x642Du:
+		setting = (uint16_t)leftover_y;
 		test_choose_setting_run(setting, &d, &carry);
 		return;
 	case test_factory_setting_page_steps_ADDRESS:
-		test_factory_setting_apply(x, &ignored16, &carry);
+		test_factory_setting_apply(page_steps, &ignored16, &carry);
 		return;
 	case 0x646Fu:
 		test_factory_setting_wait(&ignored16, &carry);
@@ -296,27 +300,27 @@ void test_sound_choice(uint16_t *p_d, uint32_t *p_carry)
 {
 	uint16_t d = (uint16_t)*p_d;
 	uint32_t carry = *p_carry;
-	uint16_t x = 0;
-	uint8_t t1 = 0;
+	uint16_t number_variable = 0;
+	uint8_t timer_before = 0;
 
-	t1 = test_sound_timer;
-	test_sound_timer = t1 - 1u;
-	if (t1 == 1u)
+	timer_before = test_sound_timer;
+	test_sound_timer = timer_before - 1u;
+	if (timer_before == 1u)
 	{
-		x = test_sound_number_ADDRESS;
+		number_variable = test_sound_number_ADDRESS;
 		d = (d & 0xFFu) | 0xAA00u;
-		d = test_sound_test_next(x, d);
-		carry = test_sound_open(x);
+		d = test_sound_test_next(number_variable, d);
+		carry = test_sound_open(number_variable);
 	}
 	else
 	{
 		test_menu_update(&d, &carry);
 		if (carry)
 		{
-			x = test_sound_number_ADDRESS;
+			number_variable = test_sound_number_ADDRESS;
 			d = (d & 0xFFu) | 0xAA00u;
-			d = test_sound_test_next(x, d);
-			carry = test_sound_open(x);
+			d = test_sound_test_next(number_variable, d);
+			carry = test_sound_open(number_variable);
 		}
 	}
 	*p_d = d;

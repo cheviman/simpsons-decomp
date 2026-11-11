@@ -3,7 +3,7 @@
  *    Description: the dogs and squirrels running across the stages
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    10-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -12,9 +12,8 @@
 #include "game.h"
 
 /* Runs the animal's knock-away by its substep. */
-void running_animal_hit_steps(uint16_t object, uint16_t *p_y, uint16_t *p_step_handlers)
+uint16_t running_animal_hit_steps(uint16_t object)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint16_t step_handlers = 0;
 	uint8_t action_step = 0;
 
@@ -26,58 +25,56 @@ void running_animal_hit_steps(uint16_t object, uint16_t *p_y, uint16_t *p_step_h
 		{
 		case 0:
 			running_animal_knocked(object);
-			break;
+			return step_handlers;
 		case 2:
 			running_animal_knocked_away(object);
-			break;
+			return step_handlers;
 		case 4:
 			running_animal_knocked_back(object);
-			break;
+			return step_handlers;
 		case 6:
-			running_animal_gone();
 			break;
 		case -20:
 		case -18:
 			continue;
 		case -16:
-			running_animal_start(object, &y, &step_handlers);
-			break;
+			return running_animal_start(object);
 		case -14:
 			running_animal_run(object);
-			break;
+			return step_handlers;
 		case -12:
 			running_animal_stop(object);
-			break;
+			return step_handlers;
 		case -10:
 			running_animal_picked_up(object);
-			break;
+			return step_handlers;
 		case -8:
-			y = running_animal_thrown(object);
-			break;
+			running_animal_thrown(object);
+			return step_handlers;
 		case -6:
 			running_animal_hurt_enemies(object);
-			break;
+			return step_handlers;
 		case -4:
 			running_animal_land(object);
-			break;
+			return step_handlers;
 		case -2:
 			running_animal_idle();
-			break;
+			return step_handlers;
 		}
 		break;
 	}
-	*p_y = y;
-	*p_step_handlers = step_handlers;
+	running_animal_gone();
+	return step_handlers;
 }
 
 /* Knocked away: shows its knocked look and flies up the screen. */
 void running_animal_knocked(uint16_t object)
 {
-	uint8_t t1 = 0, action_step = 0;
+	uint8_t look_animation = 0, action_step = 0;
 
 	OBJECT(object)->kind = 4u;
-	t1 = (uint8_t)OBJECT(object)->running_animal.look;
-	OBJECT(object)->animation = t1 + 1u;
+	look_animation = (uint8_t)OBJECT(object)->running_animal.look;
+	OBJECT(object)->animation = look_animation + 1u;
 	OBJECT(object)->flags = 0x88u;
 	OBJECT(object)->y_speed = -0x300;
 	OBJECT(object)->z_speed = 0x80;
@@ -95,14 +92,14 @@ void running_animal_knocked_away(uint16_t object)
 	uint8_t floor_value = 0, smaller_zoom_x = 0, smaller_zoom_y = 0, value_ahead = 0;
 	uint16_t floor_cell = 0;
 	uint8_t action_step = 0;
-	uint16_t zoom_x = 0, t1 = 0;
+	uint16_t zoom_x = 0, smaller_zoom = 0;
 	uint32_t zoom_x_halfword = 0;
 
 	OBJECT(object)->flags = 0x98u;
 	zoom_x = (((uint32_t)OBJECT(object)->zoom_x << 8u) | OBJECT(object)->zoom_y);
-	t1 = zoom_x - 0x101u;
-	smaller_zoom_y = (uint8_t)t1;
-	smaller_zoom_x = (uint8_t)(t1 >> 8);
+	smaller_zoom = zoom_x - 0x101u;
+	smaller_zoom_y = (uint8_t)smaller_zoom;
+	smaller_zoom_x = (uint8_t)(smaller_zoom >> 8);
 	if ((uint16_t)(((uint32_t)smaller_zoom_x << 8) | (smaller_zoom_y & 0xFFu)) >= 0x2020u)
 	{
 		zoom_x_halfword = ((uint32_t)smaller_zoom_x << 8) | (smaller_zoom_y & 0xFFu);
@@ -128,8 +125,8 @@ void running_animal_knocked_back(uint16_t object)
 {
 	uint32_t carry = 0;
 	uint16_t zoom_x = 0;
-	uint8_t t1 = 0, action_step = 0;
-	uint16_t zoom_x_2 = 0, z_speed = 0, zoom_x_3 = 0, t2 = 0, x_speed = 0;
+	uint8_t look_kind = 0, action_step = 0;
+	uint16_t zoom_x_2 = 0, z_speed = 0, zoom_x_3 = 0, screen_x = 0, x_speed = 0;
 
 	OBJECT(object)->flags = 0x98u;
 	zoom_x_2 = (((uint32_t)OBJECT(object)->zoom_x << 8u) | OBJECT(object)->zoom_y);
@@ -153,12 +150,12 @@ void running_animal_knocked_back(uint16_t object)
 		running_animal_gone();
 		return;
 	}
-	t1 = (uint8_t)(OBJECT(object)->running_animal.look >> 8u);
-	OBJECT(object)->kind = (uint16_t)((uint32_t)t1 << 8) >> 8;
+	look_kind = (uint8_t)(OBJECT(object)->running_animal.look >> 8u);
+	OBJECT(object)->kind = (uint16_t)((uint32_t)look_kind << 8) >> 8;
 	OBJECT(object)->animation = 0x80u;
 	OBJECT(object)->x_speed = 0x200;
-	t2 = OBJECT(object)->x;
-	if (t2 < 0xE0u)
+	screen_x = OBJECT(object)->x;
+	if (screen_x < 0xE0u)
 	{
 		x_speed = OBJECT(object)->x_speed;
 		OBJECT(object)->x_speed = 0u - x_speed;
@@ -175,15 +172,15 @@ void running_animal_gone(void)
 }
 
 /* Sets an animal up by its spawn's state: its kind, look, timings, and runs it in from its side. */
-void running_animal_start(uint16_t object, uint16_t *p_box, uint16_t *p_timing_table)
+uint16_t running_animal_start(uint16_t object)
 {
 	uint8_t kind = 0;
-	uint16_t box = 0, running_animal = 0, setup = 0, timing_table = 0;
+	uint16_t running_animal = 0, setup = 0, timing_table = 0;
 	uint8_t parameter = 0, parameter_2 = 0, state = 0;
-	uint16_t kind_2 = 0, attributes = 0, wait = 0, t1 = 0, x_speed = 0, x_speed_2 = 0;
+	uint16_t kind_2 = 0, attributes = 0, wait = 0, screen_x = 0, x_speed = 0, x_speed_2 = 0;
 
 	setup = running_animal_setup_ADDRESS;
-	box = vector_object_setup(object, setup);
+	vector_object_setup(object, setup);
 	parameter = OBJECT(object)->parameter;
 	running_animal = running_animals_ADDRESS + (int8_t)(((uint32_t)parameter << 1) << 1);
 	kind_2 = (((uint32_t)RUNNING_ANIMAL(running_animal)->kind << 8u) | RUNNING_ANIMAL(running_animal)->animation);
@@ -203,8 +200,8 @@ void running_animal_start(uint16_t object, uint16_t *p_box, uint16_t *p_timing_t
 	OBJECT(object)->timer = 0x40u;
 	OBJECT(object)->running_animal.stops_left = 2u;
 	OBJECT(object)->x_speed = 0x100;
-	t1 = OBJECT(object)->x;
-	if (t1 >= 0xE0u)
+	screen_x = OBJECT(object)->x;
+	if (screen_x >= 0xE0u)
 	{
 		x_speed = OBJECT(object)->x_speed;
 		OBJECT(object)->x_speed = 0u - x_speed;
@@ -213,8 +210,7 @@ void running_animal_start(uint16_t object, uint16_t *p_box, uint16_t *p_timing_t
 	OBJECT(object)->running_animal.run_speed = x_speed_2;
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
-	*p_box = box;
-	*p_timing_table = timing_table;
+	return timing_table;
 }
 
 /* Runs for 64 frames, then stops for its stop time. */
@@ -240,7 +236,7 @@ void running_animal_run(uint16_t object)
 /* After its stop, runs again; after its second run it runs off for good. */
 void running_animal_stop(uint16_t object)
 {
-	uint8_t carried = 0, timer = 0, t1 = 0, stops_left = 0, state = 0;
+	uint8_t carried = 0, timer = 0, look_kind = 0, stops_left = 0, state = 0;
 	uint16_t run_speed = 0;
 
 	carried = OBJECT(object)->running_animal.carried;
@@ -259,8 +255,8 @@ void running_animal_stop(uint16_t object)
 	OBJECT(object)->flags = 0x80u;
 	OBJECT(object)->timer = 0x40u;
 	OBJECT(object)->attack = 0u;
-	t1 = (uint8_t)(OBJECT(object)->running_animal.look >> 8u);
-	OBJECT(object)->kind = t1;
+	look_kind = (uint8_t)(OBJECT(object)->running_animal.look >> 8u);
+	OBJECT(object)->kind = look_kind;
 	OBJECT(object)->animation = 0x80u;
 	run_speed = OBJECT(object)->running_animal.run_speed;
 	OBJECT(object)->x_speed = run_speed;
@@ -284,23 +280,23 @@ void running_animal_idle(void)
 /* Picked up: marked carried, with its carried look. */
 void running_animal_picked_up(uint16_t object)
 {
-	uint8_t t1 = 0, state = 0;
+	uint8_t look_animation = 0, state = 0;
 
 	OBJECT(object)->running_animal.carried = 1u;
 	OBJECT(object)->flags = 0x80u;
 	OBJECT(object)->kind = 4u;
-	t1 = (uint8_t)OBJECT(object)->running_animal.look;
-	OBJECT(object)->animation = t1;
+	look_animation = (uint8_t)OBJECT(object)->running_animal.look;
+	OBJECT(object)->animation = look_animation;
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state - 1u;
 }
 
 /* Thrown: yelps (sound 5F00) unless quiet, at half speed unless fast, with its hit box. */
-uint16_t running_animal_thrown(uint16_t object)
+void running_animal_thrown(uint16_t object)
 {
 	uint32_t carry = 0;
-	uint16_t box = 0, command = 0;
-	uint8_t quiet = 0, fast = 0, t1 = 0, state = 0;
+	uint16_t command = 0;
+	uint8_t quiet = 0, fast = 0, look_animation = 0, state = 0;
 	uint16_t x_speed = 0;
 
 	quiet = OBJECT(object)->running_animal.quiet;
@@ -317,14 +313,13 @@ uint16_t running_animal_thrown(uint16_t object)
 	}
 	OBJECT(object)->flags = 0x88u;
 	OBJECT(object)->running_animal.carried = 0u;
-	t1 = (uint8_t)OBJECT(object)->running_animal.look;
-	OBJECT(object)->animation = t1 + 1u;
-	box = running_animal_thrown_box_ADDRESS;
-	vector_set_hit_box(object, box);
+	look_animation = (uint8_t)OBJECT(object)->running_animal.look;
+	OBJECT(object)->animation = look_animation + 1u;
+	leftover_y = running_animal_thrown_box_ADDRESS;
+	vector_set_hit_box(object);
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
 	running_animal_hurt_enemies(object);
-	return box;
 }
 
 /* Hurts the enemies the thrown animal touches. */
@@ -336,15 +331,15 @@ void running_animal_hurt_enemies(uint16_t object)
 /* Lands from the throw back in its own look, and is knocked away. */
 void running_animal_land(uint16_t object)
 {
-	uint8_t t1 = 0;
-	uint16_t t2 = 0, t3 = 0;
+	uint8_t look_kind = 0;
+	uint16_t old_y = 0, new_y = 0;
 
-	t1 = (uint8_t)(OBJECT(object)->running_animal.look >> 8u);
-	OBJECT(object)->kind = t1;
+	look_kind = (uint8_t)(OBJECT(object)->running_animal.look >> 8u);
+	OBJECT(object)->kind = look_kind;
 	OBJECT(object)->animation = 0x80u;
 	OBJECT(object)->state = 0xFEu;
-	t2 = OBJECT(object)->y;
-	t3 = t2 + 2u;
-	OBJECT(object)->y = t3;
+	old_y = OBJECT(object)->y;
+	new_y = old_y + 2u;
+	OBJECT(object)->y = new_y;
 	OBJECT(object)->animation_flags = 0x80u;
 }

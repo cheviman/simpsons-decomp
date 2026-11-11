@@ -3,7 +3,7 @@
  *    Description: each player's second sprite (balloons, thrown things)
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    10-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -15,7 +15,7 @@
 uint16_t players_update_second_sprites(void)
 {
 	uint16_t held_object = 0, object = 0, player = 0, push_speed = 0;
-	uint8_t t1 = 0, player_state = 0, t2 = 0;
+	uint8_t heavy_workers = 0, player_state = 0, players_before = 0;
 	uint16_t held = 0;
 
 	object = OBJECT_ADDRESS(0);
@@ -26,8 +26,8 @@ uint16_t players_update_second_sprites(void)
 	player_second_sprite_run(object);
 	player = OBJECT_ADDRESS(6);
 	player_second_sprite_run(player);
-	t1 = io_read8(0x184Du);
-	if ((int8_t)t1 >= 2)
+	heavy_workers = io_read8(0x184Du);
+	if ((int8_t)heavy_workers >= 2)
 	{
 		second_sprites_left = 4u;
 		player = OBJECT_ADDRESS(0);
@@ -47,9 +47,9 @@ uint16_t players_update_second_sprites(void)
 				OBJECT(player)->player.heavy_object_presses = 0u;
 			}
 			player += 0xC0u;
-			t2 = second_sprites_left;
-			second_sprites_left = t2 - 1u;
-		} while (t2 != 1u);
+			players_before = second_sprites_left;
+			second_sprites_left = players_before - 1u;
+		} while (players_before != 1u);
 	}
 	if ((uint16_t)players_push_y == 0u)
 		return player;
@@ -121,12 +121,12 @@ void player_second_sprite_run(uint16_t object)
 /* Puts the second sprite over the player's head */
 void player_second_sprite_follow(uint16_t object)
 {
-	uint16_t t1 = 0, t2 = 0, z = 0;
+	uint16_t player_x = 0, player_y = 0, z = 0;
 
-	t1 = OBJECT(object)->x;
-	OBJECT(object + 0x60u)->x = t1;
-	t2 = OBJECT(object)->y;
-	OBJECT(object + 0x60u)->y = t2 - 0x40u;
+	player_x = OBJECT(object)->x;
+	OBJECT(object + 0x60u)->x = player_x;
+	player_y = OBJECT(object)->y;
+	OBJECT(object + 0x60u)->y = player_y - 0x40u;
 	z = OBJECT(object)->z;
 	OBJECT(object + 0x60u)->z = z + 0x80u;
 }
@@ -148,12 +148,12 @@ void player_second_sprite_match_speeds(uint16_t object)
 void player_second_sprite_overhead(uint16_t object)
 {
 	uint8_t kind = 0;
-	uint16_t t1 = 0, t2 = 0, z = 0;
+	uint16_t player_x = 0, player_y = 0, z = 0;
 
-	t1 = OBJECT(object)->x;
-	OBJECT(object + 0x60u)->x = t1;
-	t2 = OBJECT(object)->y;
-	OBJECT(object + 0x60u)->y = t2 - 0x7Fu;
+	player_x = OBJECT(object)->x;
+	OBJECT(object + 0x60u)->x = player_x;
+	player_y = OBJECT(object)->y;
+	OBJECT(object + 0x60u)->y = player_y - 0x7Fu;
 	z = OBJECT(object)->z;
 	kind = OBJECT(object)->kind;
 	OBJECT(object + 0x60u)->z = z + (int8_t)player_overhead_heights[(int8_t)kind] + 0x7Fu;
@@ -188,16 +188,16 @@ void player_second_sprite_throw(uint16_t x_speed, uint16_t object, uint16_t dama
 {
 	uint8_t dx = 0;
 	uint8_t stack = 0, stack_2 = 0, stack_3 = 0;
-	uint8_t attributes = 0, t1 = 0, attributes_2 = 0, kind = 0, parameter = 0;
-	uint16_t t2 = 0, t3 = 0, t4 = 0, t5 = 0, z = 0;
+	uint8_t attributes = 0, facing_left = 0, attributes_2 = 0, kind = 0, parameter = 0;
+	uint16_t dx_word = 0, player_x = 0, thrown_x = 0, player_y = 0, z = 0;
 
 	OBJECT(object + 0x60u)->damage = (uint8_t)(damage >> 8u);
 	OBJECT(object + 0x60u)->attack = (uint8_t)damage;
 	dx = 4u;
 	attributes = OBJECT(object)->attributes;
-	t1 = attributes & 0x40u;
-	stack = t1;
-	if (t1 != 0u)
+	facing_left = attributes & 0x40u;
+	stack = facing_left;
+	if (facing_left != 0u)
 	{
 		stack_3 = x_speed >> 8;
 		stack_2 = (uint8_t)x_speed;
@@ -210,12 +210,12 @@ void player_second_sprite_throw(uint16_t x_speed, uint16_t object, uint16_t dama
 	OBJECT(object + 0x60u)->x_speed = x_speed;
 	OBJECT(object + 0x60u)->y_speed = 0;
 	OBJECT(object + 0x60u)->z_speed = 0;
-	t2 = (int8_t)dx;
-	t3 = OBJECT(object)->x;
-	t4 = t2 + t3;
-	OBJECT(object + 0x60u)->x = t4;
-	t5 = OBJECT(object)->y;
-	OBJECT(object + 0x60u)->y = t5;
+	dx_word = (int8_t)dx;
+	player_x = OBJECT(object)->x;
+	thrown_x = dx_word + player_x;
+	OBJECT(object + 0x60u)->x = thrown_x;
+	player_y = OBJECT(object)->y;
+	OBJECT(object + 0x60u)->y = player_y;
 	kind = OBJECT(object)->kind;
 	z = OBJECT(object)->z;
 	OBJECT(object + 0x60u)->z = z + (int8_t)player_throw_heights[(int8_t)kind];
@@ -244,13 +244,13 @@ void player_second_sprite_fly(uint16_t object)
 /* The thrown thing lands (kind 0E animation BF) and waits for its animation */
 void player_second_sprite_land(uint16_t object)
 {
-	uint16_t t1 = 0, z = 0;
+	uint16_t sprite_y = 0, z = 0;
 
 	OBJECT(object + 0x60u)->parameter = 6u;
 	OBJECT(object + 0x60u)->kind = 0xEu;
 	OBJECT(object + 0x60u)->animation = 0xBFu;
-	t1 = OBJECT(object + 0x60u)->y;
-	OBJECT(object + 0x60u)->y = t1 - 0x10u;
+	sprite_y = OBJECT(object + 0x60u)->y;
+	OBJECT(object + 0x60u)->y = sprite_y - 0x10u;
 	z = OBJECT(object + 0x60u)->z;
 	OBJECT(object + 0x60u)->z = z + 0x10u;
 	OBJECT(object + 0x60u)->x_speed = 0;
@@ -265,7 +265,7 @@ void player_second_sprite_fall(uint16_t object)
 	uint32_t negative = 0;
 	uint8_t floor_value = 0;
 	uint16_t floor_cell = 0, object_2 = 0, sprite_x = 0;
-	uint16_t t1 = 0, t2 = 0, z = 0;
+	uint16_t t1 = 0, floor_height = 0, z = 0;
 
 	t1 = OBJECT(object + 0x60u)->x;
 	sprite_x = t1;
@@ -282,9 +282,9 @@ void player_second_sprite_fall(uint16_t object)
 		player_second_sprite_land(object);
 		return;
 	}
-	t2 = (uint8_t)((((floor_value & 0xFu) << 1) << 1) << 1);
+	floor_height = (uint8_t)((((floor_value & 0xFu) << 1) << 1) << 1);
 	z = OBJECT(object + 0x60u)->z;
-	if ((int16_t)t2 <= (int16_t)z)
+	if ((int16_t)floor_height <= (int16_t)z)
 	{
 		player_update_class(object);
 		return;
@@ -322,13 +322,13 @@ void player_second_sprite_start_prompt(uint16_t object)
 void player_second_sprite_prompt(uint16_t object)
 {
 	uint8_t prompt_animation = 0, prompt_kind = 0;
-	uint8_t t1 = 0, animation_flags = 0, t2 = 0;
+	uint8_t prompt_time = 0, animation_flags = 0, prompt_time_now = 0;
 	uint32_t kind_halfword = 0, kind_halfword_2 = 0;
 
 	OBJECT(object + 0x60u)->attributes = 0u;
-	t1 = OBJECT(object + 0x60u)->unk_3D;
-	OBJECT(object + 0x60u)->unk_3D = t1 - 1u;
-	if (t1 == 1u)
+	prompt_time = OBJECT(object + 0x60u)->unk_3D;
+	OBJECT(object + 0x60u)->unk_3D = prompt_time - 1u;
+	if (prompt_time == 1u)
 	{
 		OBJECT(object + 0x60u)->unk_3D = 0x3Cu;
 		prompt_animation = 0x80u;
@@ -341,8 +341,8 @@ void player_second_sprite_prompt(uint16_t object)
 		player_update_class(object);
 		return;
 	}
-	t2 = OBJECT(object + 0x60u)->unk_3D;
-	if (t2 != 0x1Eu)
+	prompt_time_now = OBJECT(object + 0x60u)->unk_3D;
+	if (prompt_time_now != 0x1Eu)
 	{
 		player_update_class(object);
 		return;
@@ -361,21 +361,21 @@ void player_second_sprite_prompt(uint16_t object)
 void player_second_sprite_blink(uint16_t object)
 {
 	uint8_t blink_time = 0;
-	uint8_t t1 = 0, t2 = 0, t3 = 0;
+	uint8_t blink_time_before = 0, blink_time_now = 0, blink_phase = 0;
 
 	player_second_sprite_follow(object);
 	player_second_sprite_match_speeds(object);
-	t1 = OBJECT(object + 0x60u)->unk_3E;
-	OBJECT(object + 0x60u)->unk_3E = t1 - 1u;
-	if (t1 == 1u)
+	blink_time_before = OBJECT(object + 0x60u)->unk_3E;
+	OBJECT(object + 0x60u)->unk_3E = blink_time_before - 1u;
+	if (blink_time_before == 1u)
 	{
 		player_second_sprite_off(object);
 		return;
 	}
-	t2 = OBJECT(object + 0x60u)->unk_3E;
-	t3 = t2 & 0x3Fu;
-	blink_time = t3;
-	if (t3 == 0u)
+	blink_time_now = OBJECT(object + 0x60u)->unk_3E;
+	blink_phase = blink_time_now & 0x3Fu;
+	blink_time = blink_phase;
+	if (blink_phase == 0u)
 	{
 		OBJECT(object + 0x60u)->flags = 0x80u;
 		player_update_class(object);
@@ -395,18 +395,18 @@ void player_second_sprite_start_balloon(uint16_t player)
 {
 	uint8_t balloon = 0, balloon_animation = 0;
 	uint16_t partner = 0;
-	uint8_t t1 = 0, t2 = 0, kind = 0, kind_2 = 0, kind_3 = 0;
+	uint8_t balloons_off = 0, balloon_number = 0, kind = 0, kind_2 = 0, kind_3 = 0;
 	uint16_t partner_2 = 0;
 	uint32_t kind_halfword = 0;
 
-	t1 = io_read8(0x185Au);
-	if (t1 != 0u)
+	balloons_off = io_read8(0x185Au);
+	if (balloons_off != 0u)
 	{
 		player_second_sprite_off(player);
 		return;
 	}
-	t2 = (uint8_t)OBJECT(player + 0x60u)->player.held;
-	balloon = t2;
+	balloon_number = (uint8_t)OBJECT(player + 0x60u)->player.held;
+	balloon = balloon_number;
 	balloon_animation = player_balloon_animations[(int8_t)balloon];
 	if (balloon != 3u)
 	{
@@ -436,10 +436,10 @@ void player_second_sprite_start_balloon(uint16_t player)
 /* Keeps the balloon over its speaker until its time runs out */
 void player_second_sprite_balloon(uint16_t player)
 {
-	uint16_t d = 0, partner = 0;
+	uint16_t partner = 0, speaker_and_stride = 0, team_partner = 0;
 	uint16_t stack = 0;
-	uint8_t heavy_object_presses = 0, teamed = 0, team_direction = 0, t1 = 0, kind = 0;
-	uint16_t partner_2 = 0, t2 = 0, t3 = 0, z = 0, x_speed = 0, y_speed = 0, z_speed = 0;
+	uint8_t heavy_object_presses = 0, teamed = 0, team_direction = 0, partner_kind = 0, kind = 0;
+	uint16_t partner_2 = 0, speaker_x = 0, speaker_y = 0, z = 0, x_speed = 0, y_speed = 0, z_speed = 0;
 
 	heavy_object_presses = OBJECT(player + 0x60u)->player.heavy_object_presses;
 	OBJECT(player + 0x60u)->player.heavy_object_presses = heavy_object_presses - 1u;
@@ -465,15 +465,16 @@ void player_second_sprite_balloon(uint16_t player)
 		return;
 	}
 	partner_2 = OBJECT(player)->player.partner;
-	t1 = mem_read8(partner_2 + 4u);
+	team_partner = partner_2;
+	partner_kind = OBJECT(team_partner)->kind;
 	kind = OBJECT(player)->kind;
-	d = ((uint32_t)pair_balloon_players[(int8_t)((uint16_t)((uint32_t)(uint8_t)(((uint16_t)((uint32_t)(uint8_t)((uint32_t)((uint16_t)((uint32_t)(uint8_t)((uint32_t)((uint16_t)((uint32_t)t1 << 8) >> 8) << 1) << 8) >> 8) << 1) << 8) >> 8) + kind) << 8) >> 8)] << 8) | 0xC0u;
-	stack = (uint32_t)(d >> 8) * (uint8_t)d + OBJECT_ADDRESS(0);
+	speaker_and_stride = ((uint32_t)pair_balloon_players[(int8_t)((uint16_t)((uint32_t)(uint8_t)(((uint16_t)((uint32_t)(uint8_t)((uint32_t)((uint16_t)((uint32_t)(uint8_t)((uint32_t)((uint16_t)((uint32_t)partner_kind << 8) >> 8) << 1) << 8) >> 8) << 1) << 8) >> 8) + kind) << 8) >> 8)] << 8) | 0xC0u;
+	stack = (uint32_t)(speaker_and_stride >> 8) * (uint8_t)speaker_and_stride + OBJECT_ADDRESS(0);
 	partner = stack;
-	t2 = OBJECT(partner)->x;
-	OBJECT(player + 0x60u)->x = t2;
-	t3 = OBJECT(partner)->y;
-	OBJECT(player + 0x60u)->y = t3 - 0x40u;
+	speaker_x = OBJECT(partner)->x;
+	OBJECT(player + 0x60u)->x = speaker_x;
+	speaker_y = OBJECT(partner)->y;
+	OBJECT(player + 0x60u)->y = speaker_y - 0x40u;
 	z = OBJECT(partner)->z;
 	OBJECT(player + 0x60u)->z = z + 0x80u;
 	x_speed = OBJECT(partner)->x_speed;

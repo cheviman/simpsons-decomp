@@ -3,7 +3,7 @@
  *    Description: stage 6's devil on a cloud (type F2) and its lightning bolt (4D40 type 28)
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    10-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -17,15 +17,15 @@ uint16_t lightning_bolt_setup(uint16_t object)
 	uint32_t carry = 0;
 	uint16_t command = 0, setup = 0;
 	uint8_t attributes = 0, state = 0;
-	uint16_t z = 0, t1 = 0;
+	uint16_t z = 0, bolt_z = 0;
 
 	setup = lightning_bolt_object_setup_ADDRESS;
 	vector_object_setup(object, setup);
 	attributes = OBJECT(object)->attributes;
 	OBJECT(object)->attributes = (attributes & 0xCFu) | 0x10u;
 	z = OBJECT(object)->z;
-	t1 = z - 0x30u;
-	OBJECT(object)->z = t1;
+	bolt_z = z - 0x30u;
+	OBJECT(object)->z = bolt_z;
 	command = 0x4C00u;
 	carry = vector_queue_sound(command);
 	state = OBJECT(object)->state;
@@ -45,15 +45,15 @@ void lightning_bolt_end(uint16_t object)
 
 /* Sets the devil up, hidden, at its height, with its x, heading and sweep from the kind_c7 tables by its
    state and 600 frames to stay. */
-uint16_t cloud_devil_setup(uint16_t object)
+void cloud_devil_setup(uint16_t object)
 {
 	uint8_t variant = 0;
-	uint16_t setup = 0, y = 0;
+	uint16_t setup = 0;
 	uint8_t parameter = 0, parameter_2 = 0, state = 0;
-	uint16_t t1 = 0;
+	uint16_t start_x = 0;
 
 	setup = cloud_devil_object_setup_ADDRESS;
-	y = vector_object_setup(object, setup);
+	vector_object_setup(object, setup);
 	OBJECT(object)->flags = 4u;
 	parameter = OBJECT(object)->parameter;
 	variant = parameter;
@@ -61,15 +61,14 @@ uint16_t cloud_devil_setup(uint16_t object)
 	OBJECT(object)->cloud_devil.heading = (OBJECT(object)->cloud_devil.heading & 0xFFu) | ((kind_c7_headings[(int8_t)variant] & 0xFFu) << 8u);
 	OBJECT(object)->cloud_devil.sweep_rate = kind_c7_sweep_rates[(int8_t)variant];
 	parameter_2 = OBJECT(object)->parameter;
-	t1 = kind_c7_start_x[(int8_t)((uint8_t)((uint32_t)parameter_2 << 1)) / 2];
-	OBJECT(object)->x = t1;
+	start_x = kind_c7_start_x[(int8_t)((uint8_t)((uint32_t)parameter_2 << 1)) / 2];
+	OBJECT(object)->x = start_x;
 	OBJECT(object)->z = 0x40u;
 	OBJECT(object)->timer = 0x80u;
 	OBJECT(object)->cloud_devil.stay_time = 0x258u;
 	vector_choose_nearest_player(object);
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
-	return y;
 }
 
 /* The devil's way in, by field 29. */
@@ -185,7 +184,7 @@ void cloud_devil_fly(uint16_t object)
 {
 	uint8_t attributes = 0;
 	uint8_t timer = 0, state = 0, attributes_2 = 0, attributes_3 = 0;
-	uint16_t stay_time = 0, z = 0, stay_time_2 = 0, target = 0, t1 = 0, t2 = 0;
+	uint16_t stay_time = 0, z = 0, stay_time_2 = 0, target = 0, devil_x = 0, player_x = 0;
 
 	stay_time = OBJECT(object)->cloud_devil.stay_time;
 	if (stay_time == 0u)
@@ -211,9 +210,9 @@ void cloud_devil_fly(uint16_t object)
 	if (OBJECT(object)->flags == 0u)
 		return;
 	target = OBJECT(object)->target;
-	t1 = OBJECT(object)->x;
-	t2 = OBJECT(target)->x;
-	if (t2 <= t1)
+	devil_x = OBJECT(object)->x;
+	player_x = OBJECT(target)->x;
+	if (player_x <= devil_x)
 	{
 		attributes_2 = OBJECT(object)->attributes;
 		attributes = attributes_2 | 0x40u;
@@ -241,22 +240,21 @@ void cloud_devil_stop_to_shoot(uint16_t object)
 }
 
 /* Counts down, then puts in a lightning bolt under the cloud. */
-uint16_t cloud_devil_drop_bolt(uint16_t object, uint16_t child_record)
+void cloud_devil_drop_bolt(uint16_t object)
 {
 	uint32_t carry = 0;
-	uint16_t ignored16 = 0, ignored16_2 = 0;
+	uint16_t ignored16 = 0, ignored16_2 = 0, ignored16_3 = 0;
 	uint8_t timer = 0, state = 0;
 
 	timer = OBJECT(object)->timer;
 	OBJECT(object)->timer = timer - 1u;
 	if (timer != 1u)
-		return child_record;
-	child_record = cloud_devil_drop_bolt_child_ADDRESS;
-	vector_spawn_child(object, child_record, &ignored16, &ignored16_2, &carry);
+		return;
+	leftover_y = cloud_devil_drop_bolt_child_ADDRESS;
+	vector_spawn_child(object, &ignored16, &ignored16_2, &ignored16_3, &carry);
 	OBJECT(object)->timer = 0x20u;
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
-	return child_record;
 }
 
 /* Counts down, then sends the devil flying again with a new wait before its next bolt. */
@@ -465,29 +463,29 @@ void cloud_devil_shake_height(uint16_t object)
    depth and keeps it on the screen. */
 void cloud_devil_steer(uint16_t object)
 {
-	uint8_t a = 0, b = 0;
+	uint8_t dy_high = 0, goal_x_high = 0, goal_x_low = 0, goal_y_high = 0, goal_y_low = 0, heading_whole = 0;
 	uint16_t target_player = 0;
 	uint8_t sweep_way = 0, sweep_rate = 0, sweep_way_2 = 0, sweep_rate_2 = 0, sweep_way_3 = 0, sweep_way_4 = 0, sweep_rate_3 = 0, sweep_way_5 = 0, sweep_rate_4 = 0, sweep_way_6 = 0;
-	uint16_t target = 0, t1 = 0, t2 = 0, t3 = 0, heading = 0, t4 = 0, heading_2 = 0, t5 = 0, t6 = 0, heading_3 = 0, t7 = 0, heading_4 = 0, t8 = 0, target_2 = 0, t9 = 0, t10 = 0, t11 = 0, t12 = 0, t13 = 0, y_speed = 0, t14 = 0, t15 = 0, t16 = 0, t17 = 0;
+	uint16_t target = 0, devil_x = 0, player_x = 0, turn = 0, heading = 0, new_heading = 0, heading_2 = 0, t1 = 0, t2 = 0, heading_3 = 0, t3 = 0, heading_4 = 0, t4 = 0, target_2 = 0, devil_y = 0, player_y = 0, dy = 0, t5 = 0, depth_distance = 0, y_speed = 0, t6 = 0, t7 = 0, t8 = 0, t9 = 0;
 
 	target = OBJECT(object)->target;
 	target_player = target;
 	if ((frame_count & 0x7F00u) == 0u)
 		target_player = vector_choose_nearest_player(object);
-	t1 = OBJECT(object)->x;
-	t2 = mem_read16(target_player + 0xCu);
-	if (t1 < t2)
+	devil_x = OBJECT(object)->x;
+	player_x = OBJECT(target_player)->x;
+	if (devil_x < player_x)
 	{
 		sweep_way = OBJECT(object)->cloud_devil.sweep_way;
 		if (sweep_way != 0u)
 		{
 			sweep_rate = OBJECT(object)->cloud_devil.sweep_rate;
-			t3 = 0u - sweep_rate;
+			turn = 0u - sweep_rate;
 			heading = OBJECT(object)->cloud_devil.heading;
-			t4 = t3 + heading;
-			a = (t4 >> 8) & 0xFu;
-			OBJECT(object)->cloud_devil.heading = ((uint32_t)a << 8) | (uint8_t)t4;
-			if (a == 0xCu)
+			new_heading = turn + heading;
+			heading_whole = (new_heading >> 8) & 0xFu;
+			OBJECT(object)->cloud_devil.heading = ((uint32_t)heading_whole << 8) | (uint8_t)new_heading;
+			if (heading_whole == 0xCu)
 			{
 				sweep_way_2 = OBJECT(object)->cloud_devil.sweep_way;
 				OBJECT(object)->cloud_devil.sweep_way = ~sweep_way_2;
@@ -497,10 +495,10 @@ void cloud_devil_steer(uint16_t object)
 		{
 			sweep_rate_2 = OBJECT(object)->cloud_devil.sweep_rate;
 			heading_2 = OBJECT(object)->cloud_devil.heading;
-			t5 = sweep_rate_2 + heading_2;
-			a = (t5 >> 8) & 0xFu;
-			OBJECT(object)->cloud_devil.heading = ((uint32_t)a << 8) | (uint8_t)t5;
-			if (a == 4u)
+			t1 = sweep_rate_2 + heading_2;
+			heading_whole = (t1 >> 8) & 0xFu;
+			OBJECT(object)->cloud_devil.heading = ((uint32_t)heading_whole << 8) | (uint8_t)t1;
+			if (heading_whole == 4u)
 			{
 				sweep_way_3 = OBJECT(object)->cloud_devil.sweep_way;
 				OBJECT(object)->cloud_devil.sweep_way = ~sweep_way_3;
@@ -513,12 +511,12 @@ void cloud_devil_steer(uint16_t object)
 		if (sweep_way_4 != 0u)
 		{
 			sweep_rate_3 = OBJECT(object)->cloud_devil.sweep_rate;
-			t6 = 0u - sweep_rate_3;
+			t2 = 0u - sweep_rate_3;
 			heading_3 = OBJECT(object)->cloud_devil.heading;
-			t7 = t6 + heading_3;
-			a = (t7 >> 8) & 0xFu;
-			OBJECT(object)->cloud_devil.heading = ((uint32_t)a << 8) | (uint8_t)t7;
-			if (a == 4u)
+			t3 = t2 + heading_3;
+			heading_whole = (t3 >> 8) & 0xFu;
+			OBJECT(object)->cloud_devil.heading = ((uint32_t)heading_whole << 8) | (uint8_t)t3;
+			if (heading_whole == 4u)
 			{
 				sweep_way_5 = OBJECT(object)->cloud_devil.sweep_way;
 				OBJECT(object)->cloud_devil.sweep_way = ~sweep_way_5;
@@ -528,10 +526,10 @@ void cloud_devil_steer(uint16_t object)
 		{
 			sweep_rate_4 = OBJECT(object)->cloud_devil.sweep_rate;
 			heading_4 = OBJECT(object)->cloud_devil.heading;
-			t8 = sweep_rate_4 + heading_4;
-			a = (t8 >> 8) & 0xFu;
-			OBJECT(object)->cloud_devil.heading = ((uint32_t)a << 8) | (uint8_t)t8;
-			if (a == 0xCu)
+			t4 = sweep_rate_4 + heading_4;
+			heading_whole = (t4 >> 8) & 0xFu;
+			OBJECT(object)->cloud_devil.heading = ((uint32_t)heading_whole << 8) | (uint8_t)t4;
+			if (heading_whole == 0xCu)
 			{
 				sweep_way_6 = OBJECT(object)->cloud_devil.sweep_way;
 				OBJECT(object)->cloud_devil.sweep_way = ~sweep_way_6;
@@ -541,14 +539,14 @@ void cloud_devil_steer(uint16_t object)
 	cloud_devil_set_speeds(object);
 	target_2 = OBJECT(object)->target;
 	target_player = target_2;
-	t9 = OBJECT(object)->y;
-	t10 = OBJECT(target_player)->y;
-	t11 = t9 - t10;
-	a = (uint8_t)(t11 >> 8);
-	steer_dy_high = a;
-	t12 = ((uint32_t)a << 8) | (uint8_t)t11;
-	t13 = t12 >> 15 ? 0u - t12 : t12;
-	if (t13 >= 4u)
+	devil_y = OBJECT(object)->y;
+	player_y = OBJECT(target_player)->y;
+	dy = devil_y - player_y;
+	dy_high = (uint8_t)(dy >> 8);
+	steer_dy_high = dy_high;
+	t5 = ((uint32_t)dy_high << 8) | (uint8_t)dy;
+	depth_distance = t5 >> 15 ? 0u - t5 : t5;
+	if (depth_distance >= 4u)
 	{
 		OBJECT(object)->y_speed = 0x100;
 		if (steer_dy_high >= 0)
@@ -557,53 +555,53 @@ void cloud_devil_steer(uint16_t object)
 			OBJECT(object)->y_speed = 0u - y_speed;
 		}
 	}
-	t14 = OBJECT(object)->x;
-	a = (uint8_t)(t14 >> 8);
-	b = (uint8_t)t14;
-	if ((uint16_t)(((uint32_t)a << 8) | b) < 0x60u)
+	t6 = OBJECT(object)->x;
+	goal_x_high = (uint8_t)(t6 >> 8);
+	goal_x_low = (uint8_t)t6;
+	if ((uint16_t)(((uint32_t)goal_x_high << 8) | goal_x_low) < 0x60u)
 	{
-		b = 0x60u;
-		t15 = OBJECT(object)->x;
-		OBJECT(object)->x_speed = (uint32_t)(uint8_t)((((uint32_t)a << 8) | b) - t15) << 8;
-		t16 = OBJECT(object)->y;
-		a = (uint8_t)(t16 >> 8);
-		b = (uint8_t)t16;
-		if ((uint16_t)(((uint32_t)a << 8) | b) < 0x90u)
+		goal_x_low = 0x60u;
+		t7 = OBJECT(object)->x;
+		OBJECT(object)->x_speed = (uint32_t)(uint8_t)((((uint32_t)goal_x_high << 8) | goal_x_low) - t7) << 8;
+		t8 = OBJECT(object)->y;
+		goal_y_high = (uint8_t)(t8 >> 8);
+		goal_y_low = (uint8_t)t8;
+		if ((uint16_t)(((uint32_t)goal_y_high << 8) | goal_y_low) < 0x90u)
 		{
-			b = 0x90u;
-			t17 = OBJECT(object)->y;
-			OBJECT(object)->y_speed = (uint32_t)(uint8_t)((((uint32_t)a << 8) | b) - t17) << 8;
+			goal_y_low = 0x90u;
+			t9 = OBJECT(object)->y;
+			OBJECT(object)->y_speed = (uint32_t)(uint8_t)((((uint32_t)goal_y_high << 8) | goal_y_low) - t9) << 8;
 			return;
 		}
-		if ((uint16_t)(((uint32_t)a << 8) | b) >= 0x100u)
+		if ((uint16_t)(((uint32_t)goal_y_high << 8) | goal_y_low) >= 0x100u)
 		{
-			b = 0xFFu;
-			t17 = OBJECT(object)->y;
-			OBJECT(object)->y_speed = (uint32_t)(uint8_t)((((uint32_t)a << 8) | b) - t17) << 8;
+			goal_y_low = 0xFFu;
+			t9 = OBJECT(object)->y;
+			OBJECT(object)->y_speed = (uint32_t)(uint8_t)((((uint32_t)goal_y_high << 8) | goal_y_low) - t9) << 8;
 		}
 		return;
 	}
-	if ((uint16_t)(((uint32_t)a << 8) | b) >= 0x160u)
+	if ((uint16_t)(((uint32_t)goal_x_high << 8) | goal_x_low) >= 0x160u)
 	{
-		b = 0x5Fu;
-		t15 = OBJECT(object)->x;
-		OBJECT(object)->x_speed = (uint32_t)(uint8_t)((((uint32_t)a << 8) | b) - t15) << 8;
+		goal_x_low = 0x5Fu;
+		t7 = OBJECT(object)->x;
+		OBJECT(object)->x_speed = (uint32_t)(uint8_t)((((uint32_t)goal_x_high << 8) | goal_x_low) - t7) << 8;
 	}
-	t16 = OBJECT(object)->y;
-	a = (uint8_t)(t16 >> 8);
-	b = (uint8_t)t16;
-	if ((uint16_t)(((uint32_t)a << 8) | b) < 0x90u)
+	t8 = OBJECT(object)->y;
+	goal_y_high = (uint8_t)(t8 >> 8);
+	goal_y_low = (uint8_t)t8;
+	if ((uint16_t)(((uint32_t)goal_y_high << 8) | goal_y_low) < 0x90u)
 	{
-		b = 0x90u;
-		t17 = OBJECT(object)->y;
-		OBJECT(object)->y_speed = (uint32_t)(uint8_t)((((uint32_t)a << 8) | b) - t17) << 8;
+		goal_y_low = 0x90u;
+		t9 = OBJECT(object)->y;
+		OBJECT(object)->y_speed = (uint32_t)(uint8_t)((((uint32_t)goal_y_high << 8) | goal_y_low) - t9) << 8;
 		return;
 	}
-	if ((uint16_t)(((uint32_t)a << 8) | b) >= 0x100u)
+	if ((uint16_t)(((uint32_t)goal_y_high << 8) | goal_y_low) >= 0x100u)
 	{
-		b = 0xFFu;
-		t17 = OBJECT(object)->y;
-		OBJECT(object)->y_speed = (uint32_t)(uint8_t)((((uint32_t)a << 8) | b) - t17) << 8;
+		goal_y_low = 0xFFu;
+		t9 = OBJECT(object)->y;
+		OBJECT(object)->y_speed = (uint32_t)(uint8_t)((((uint32_t)goal_y_high << 8) | goal_y_low) - t9) << 8;
 	}
 }
 
@@ -645,7 +643,7 @@ void cloud_devil_bob(uint16_t object)
 void cloud_devil_set_speeds(uint16_t object)
 {
 	uint16_t speeds = 0;
-	uint8_t state = 0, t1 = 0;
+	uint8_t state = 0, heading_whole = 0;
 	uint16_t x_speed = 0, y_speed = 0;
 
 	state = OBJECT(object)->state;
@@ -653,8 +651,8 @@ void cloud_devil_set_speeds(uint16_t object)
 		speeds = kind_c7_fast_velocities_ADDRESS;
 	else
 		speeds = kind_c7_slow_velocities_ADDRESS;
-	t1 = (uint8_t)(OBJECT(object)->cloud_devil.heading >> 8u);
-	speeds += (int8_t)(((uint32_t)t1 << 1) << 1);
+	heading_whole = (uint8_t)(OBJECT(object)->cloud_devil.heading >> 8u);
+	speeds += (int8_t)(((uint32_t)heading_whole << 1) << 1);
 	x_speed = VELOCITY(speeds)->x_speed;
 	OBJECT(object)->x_speed = x_speed;
 	y_speed = VELOCITY(speeds)->y_speed;

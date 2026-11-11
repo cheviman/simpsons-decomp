@@ -3,7 +3,7 @@
  *    Description: the IRQ's handler (the K052109's, at VBLANK: the inputs, the coin counters, the jobs) and the FIRQ's (the sprite DMA's)
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    10-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -18,11 +18,11 @@
 void irq_handler(void)
 {
 	uint32_t carry = 0;
-	uint8_t b = 0, control = 0, d_2 = 0, output = 0, scroll_x_high = 0, sprite_control = 0;
-	uint16_t controls = 0, controls_port = 0, d = 0, port = 0, queue_place = 0, request = 0, slot = 0, y = 0;
+	uint8_t b = 0, control = 0, d = 0, output = 0, scroll_x_high = 0, sprite_control = 0;
+	uint16_t coin_bit = 0, controls = 0, controls_port = 0, port = 0, queue_place = 0, request = 0, slot = 0;
 	uint8_t saved_board_control = 0;
-	uint8_t t1 = 0, t2 = 0, t3 = 0, t6 = 0, t7 = 0;
-	uint16_t t4 = 0, t5 = 0, t8 = 0, t9 = 0, t10 = 0, t11 = 0, t12 = 0, t13 = 0, t14 = 0, t15 = 0, t16 = 0, t17 = 0, t18 = 0, t19 = 0, t20 = 0;
+	uint8_t coin_port = 0, mode_before_firq = 0, test_inputs = 0, sound_irq_read = 0, watchdog_read = 0;
+	uint16_t sound_slot_place = 0, sound_command = 0, layer_a_x = 0, layer_a_chip_x = 0, layer_a_x_swapped = 0, layer_b_x = 0, layer_b_chip_x = 0, layer_b_x_swapped = 0, kept_layer_a_x = 0, kept_layer_a_y = 0, kept_layer_b_x = 0, kept_layer_b_y = 0, camera_x_low = 0, camera_y_low = 0, cemetery_scroll_low = 0;
 
 	disable_irq();
 	io_write8(0x1D00u, 0xFBu);
@@ -33,12 +33,12 @@ void irq_handler(void)
 	coins_inserted = 0u;
 	coin_inputs_before = coin_inputs_last;
 	coin_inputs_last = coin_inputs;
-	t1 = io_read8(0x1F80u);
-	coin_inputs = ~t1;
-	t2 = game_mode;
+	coin_port = io_read8(0x1F80u);
+	coin_inputs = ~coin_port;
+	mode_before_firq = game_mode;
 	firq_point();
 	take_interrupts();
-	if (t2 != 0u)
+	if (mode_before_firq != 0u)
 	{
 		if (slot_1_counter_time == 0u)
 		{
@@ -85,47 +85,47 @@ void irq_handler(void)
 				}
 			}
 		}
-		d = 0x100u;
-		coin_inserted(&d, &carry);
+		coin_bit = 0x100u;
+		coin_inserted(&coin_bit, &carry);
 		if (carry)
 		{
 			slot = slot_credits_ADDRESS;
-			add_coin(slot, (uint8_t)d);
+			add_coin(slot, (uint8_t)coin_bit);
 		}
-		d = 0x200u;
-		coin_inserted(&d, &carry);
-		b = (uint8_t)d;
+		coin_bit = 0x200u;
+		coin_inserted(&coin_bit, &carry);
+		b = (uint8_t)coin_bit;
 		if (carry)
 		{
 			slot = slot_2_credits_ADDRESS;
-			d = add_coin(slot, (uint8_t)d);
-			b = (uint8_t)d;
+			coin_bit = add_coin(slot, (uint8_t)coin_bit);
+			b = (uint8_t)coin_bit;
 		}
 		if (four_coin_slots != 0u)
 		{
-			d = 0x400u;
-			coin_inserted(&d, &carry);
+			coin_bit = 0x400u;
+			coin_inserted(&coin_bit, &carry);
 			if (carry)
 			{
 				slot = slot_3_credits_ADDRESS;
-				add_coin(slot, (uint8_t)d);
+				add_coin(slot, (uint8_t)coin_bit);
 			}
-			d = 0x800u;
-			coin_inserted(&d, &carry);
-			b = (uint8_t)d;
+			coin_bit = 0x800u;
+			coin_inserted(&coin_bit, &carry);
+			b = (uint8_t)coin_bit;
 			if (carry)
 			{
 				slot = slot_4_credits_ADDRESS;
-				d = add_coin(slot, (uint8_t)d);
-				b = (uint8_t)d;
+				coin_bit = add_coin(slot, (uint8_t)coin_bit);
+				b = (uint8_t)coin_bit;
 			}
 		}
-		t3 = io_read8(0x1F81u);
-		if ((t3 & 1u) == 0u)
+		test_inputs = io_read8(0x1F81u);
+		if ((test_inputs & 1u) == 0u)
 		{
 			palette_request_kind = 3u;
 			request = 0u;
-			palette_request(request, &y, &slot);
+			palette_request(slot, request);
 			b = 0u;
 			in_attract = 0u;
 			game_mode = 0u;
@@ -137,12 +137,12 @@ void irq_handler(void)
 	queue_place = sound_queue_read;
 	if (queue_place != sound_queue_write)
 	{
-		t4 = queue_place;
-		queue_place = t4 + 2u;
-		t5 = mem_read16(t4);
-		b = (uint8_t)t5;
-		io_write16(0x1FC6u, ((uint32_t)(t5 >> 8) << 8) | b);
-		t6 = io_read8(0x1FC4u);
+		sound_slot_place = queue_place;
+		queue_place = sound_slot_place + 2u;
+		sound_command = mem_read16(sound_slot_place);
+		b = (uint8_t)sound_command;
+		io_write16(0x1FC6u, ((uint32_t)(sound_command >> 8) << 8) | b);
+		sound_irq_read = io_read8(0x1FC4u);
 		if (queue_place > sound_queue_ADDRESS + 0x3Bu)
 			queue_place = sound_queue_ADDRESS;
 		sound_queue_read = queue_place;
@@ -156,9 +156,9 @@ void irq_handler(void)
 	}
 	frame_count++;
 	irq_busy = 1u;
-	t7 = io_read8(0x1FCAu);
-	d_2 = b;
-	y = run_palette_jobs(y, d_2);
+	watchdog_read = io_read8(0x1FCAu);
+	d = b;
+	run_palette_jobs(d);
 	port = 0x1F90u;
 	controls = player_controls_ADDRESS;
 	read_controls(controls, port);
@@ -171,51 +171,51 @@ void irq_handler(void)
 	controls_port = 0x1F93u;
 	controls = player_controls_ADDRESS + 0xCu;
 	read_controls(controls, controls_port);
-	t8 = layer_a_scroll_x;
-	t9 = t8 - 0x5Au;
-	scroll_x_high = (t9 >> 8) & 1u;
-	t10 = scroll_x_high | 0x1000u;
-	io_write16(0x1A00u, ((uint32_t)(uint8_t)t9 << 8) | (uint8_t)t10);
+	layer_a_x = layer_a_scroll_x;
+	layer_a_chip_x = layer_a_x - 0x5Au;
+	scroll_x_high = (layer_a_chip_x >> 8) & 1u;
+	layer_a_x_swapped = scroll_x_high | 0x1000u;
+	io_write16(0x1A00u, ((uint32_t)(uint8_t)layer_a_chip_x << 8) | (uint8_t)layer_a_x_swapped);
 	io_write8(0x180Cu, (uint8_t)layer_a_scroll_y - 0x10u);
 	control = board_control & ~3u;
 	board_control = control;
 	io_write8(0x1FC2u, control);
-	t11 = layer_b_scroll_x;
-	t12 = t11 - 0x5Au;
-	scroll_x_high = (t12 >> 8) & 1u;
-	t13 = scroll_x_high | 0x1000u;
-	io_write16(0x3A00u, ((uint32_t)(uint8_t)t12 << 8) | (uint8_t)t13);
+	layer_b_x = layer_b_scroll_x;
+	layer_b_chip_x = layer_b_x - 0x5Au;
+	scroll_x_high = (layer_b_chip_x >> 8) & 1u;
+	layer_b_x_swapped = scroll_x_high | 0x1000u;
+	io_write16(0x3A00u, ((uint32_t)(uint8_t)layer_b_chip_x << 8) | (uint8_t)layer_b_x_swapped);
 	io_write8(0x380Cu, (uint8_t)layer_b_scroll_y - 0x10u);
-	t14 = layer_a_scroll_x;
-	layer_a_last_scroll_x = t14;
-	t15 = layer_a_scroll_y;
-	layer_a_last_scroll_y = t15;
-	t16 = layer_b_scroll_x;
-	layer_b_last_scroll_x = t16;
-	t17 = layer_b_scroll_y;
-	layer_b_last_scroll_y = t17;
+	kept_layer_a_x = layer_a_scroll_x;
+	layer_a_last_scroll_x = kept_layer_a_x;
+	kept_layer_a_y = layer_a_scroll_y;
+	layer_a_last_scroll_y = kept_layer_a_y;
+	kept_layer_b_x = layer_b_scroll_x;
+	layer_b_last_scroll_x = kept_layer_b_x;
+	kept_layer_b_y = layer_b_scroll_y;
+	layer_b_last_scroll_y = kept_layer_b_y;
 	last_stage_scroll_x = (last_stage_scroll_x & 0xFFu) | (((uint8_t)(camera_x >> 8u) & 0xFFu) << 8u);
-	t18 = (((uint32_t)(camera_x & 0xFFu) << 8u) | camera_x_fraction);
-	AT16(last_stage_scroll_x, -1) = t18;
+	camera_x_low = (((uint32_t)(camera_x & 0xFFu) << 8u) | camera_x_fraction);
+	AT16(last_stage_scroll_x, -1) = camera_x_low;
 	last_stage_scroll_y = (last_stage_scroll_y & 0xFFu) | (((uint8_t)(camera_y >> 8u) & 0xFFu) << 8u);
-	t19 = (((uint32_t)(camera_y & 0xFFu) << 8u) | camera_y_fraction);
-	AT16(last_stage_scroll_y, -1) = t19;
+	camera_y_low = (((uint32_t)(camera_y & 0xFFu) << 8u) | camera_y_fraction);
+	AT16(last_stage_scroll_y, -1) = camera_y_low;
 	last_cemetery_scroll_high = (uint8_t)(cemetery_scroll >> 8u);
-	t20 = (((uint32_t)(cemetery_scroll & 0xFFu) << 8u) | cemetery_scroll_fraction);
-	b = (uint8_t)t20;
-	last_cemetery_scroll_low = ((uint32_t)(t20 >> 8) << 8) | b;
+	cemetery_scroll_low = (((uint32_t)(cemetery_scroll & 0xFFu) << 8u) | cemetery_scroll_fraction);
+	b = (uint8_t)cemetery_scroll_low;
+	last_cemetery_scroll_low = ((uint32_t)(cemetery_scroll_low >> 8) << 8) | b;
 	do
 	{
 	} while (dma_pending != 0u);
 	dma_pending = 1u;
-	d_2 = b;
+	d = b;
 	switch ((int8_t)(uint8_t)((uint32_t)game_mode << 1))
 	{
 	case 0:
-		test_mode(y, controls_port, d_2);
+		test_mode(controls_port, d);
 		break;
 	case 2:
-		attract(y, controls_port);
+		attract(controls_port);
 		break;
 	case 4:
 		game_mode_frame(controls_port);
@@ -224,7 +224,7 @@ void irq_handler(void)
 		test_mode_start();
 		break;
 	case 8:
-		test_mode_run(y, d_2);
+		test_mode_run(d);
 		break;
 	}
 	draw_scrolled_layer_edges();
@@ -246,7 +246,7 @@ void irq_handler(void)
 }
 
 /* The test mode's routine at each frame, by game_scene: its start, then bank 2F's test mode. */
-void test_mode(uint16_t y, uint16_t u, uint8_t d)
+void test_mode(uint16_t u, uint8_t d)
 {
 	for (;;)
 	{
@@ -260,7 +260,7 @@ void test_mode(uint16_t y, uint16_t u, uint8_t d)
 		case -6:
 			continue;
 		case -4:
-			attract(y, u);
+			attract(u);
 			return;
 		case -2:
 			game_mode_frame(u);
@@ -268,7 +268,7 @@ void test_mode(uint16_t y, uint16_t u, uint8_t d)
 		}
 		break;
 	}
-	test_mode_run(y, d);
+	test_mode_run(d);
 }
 
 /* Starts the test mode: clears the tile layers, the scores and the game's variables, and the test mode's
@@ -294,7 +294,7 @@ void test_mode_start(void)
 }
 
 /* Runs a frame of bank 2F's test mode. */
-void test_mode_run(uint16_t y, uint8_t d)
+void test_mode_run(uint8_t d)
 {
 	uint8_t d_2 = 0;
 	uint8_t stack = 0;
@@ -303,7 +303,7 @@ void test_mode_run(uint16_t y, uint8_t d)
 	window_bank = 0x2Fu;
 	set_lines(window_bank);
 	d_2 = stack;
-	test_run_page(y, d_2);
+	test_run_page(d_2);
 }
 
 /* The FIRQ's routine, once the sprite DMA is over: turns the FIRQ and the K053246's interrupt off and

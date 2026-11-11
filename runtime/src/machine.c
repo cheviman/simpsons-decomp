@@ -348,54 +348,113 @@ static void program_not_given(int32_t place, uint16_t address)
 
 /* ---- a structure reached through a pointer outside the work RAM ---- */
 /* The decompiled program reads and writes a structure as C (game/support.h's ram()); where its pointer is not in the
-   work RAM the 053248 still goes there, through the bus (a null pointer: the K052109's RAM at 0000). Its bytes come
-   from the bus into a copy laid out as the work RAM's are, and what the program changed goes back through the bus
-   before the board is reached again: the next read or write, the next structure, the frame's end */
+   work RAM the 053248 still goes there, through the bus (a palette job in the RAM at 3000-3FFF, a sprite's entry; a
+   null pointer: the K052109's RAM at 0000). Its bytes come from the bus into a copy laid out as the work RAM's are,
+   and what the program changed goes back through the bus before the board is reached again (the next read or write,
+   the frame's end). A few copies stay live together, so that one statement can reach two structures, or one twice
+   (the same copy): a copy is made again from the bus each time the C names its structure, and a write through the
+   bus to a byte a live copy holds changes the copy too */
 
-#define SHADOW_MAX 0x100u
+#define SHADOW_MAX    0x100u
+#define SHADOW_COPIES 8u
 #define IO_PORTS_FIRST 0x1F80u    /* the ports, whose reads do things (1FC4 interrupts the Z80, 1FCA the watchdog) */
 #define IO_PORTS_END   0x2000u
 
-static uint8_t shadow[SHADOW_MAX], shadow_found[SHADOW_MAX];
-static uint16_t shadow_address;
-static uint32_t shadow_size;
+static struct
+{
+	uint8_t bytes[SHADOW_MAX], found[SHADOW_MAX];
+	uint16_t address;
+	uint32_t size;
+	bool live;
+} shadows[SHADOW_COPIES];
+static unsigned next_shadow;
+static bool settling;
 bool simpsons_shadow_pending;
+
+static void bus_write(uint16_t address, uint8_t data);
+static void shadow_written(uint16_t address, uint8_t data);
+
+/* What the program changed in the live copies, back through the bus; with 'retire' (the frame's end) the copies end */
+static void settle(bool retire)
+{
+	if (!simpsons_shadow_pending || settling)
+		return;
+	settling = true;
+	for (unsigned copy = 0; copy < SHADOW_COPIES; copy++)
+	{
+		if (!shadows[copy].live)
+			continue;
+		for (uint32_t at = 0; at < shadows[copy].size; at++)
+		{
+			const uint32_t index = shadows[copy].size - 1u - at;
+
+			if (shadows[copy].bytes[index] != shadows[copy].found[index])
+			{
+				const uint8_t data = shadows[copy].bytes[index];
+
+				shadows[copy].found[index] = data;
+				bus_write((uint16_t)(shadows[copy].address + at), data);
+				shadow_written((uint16_t)(shadows[copy].address + at), data);
+			}
+		}
+		if (retire)
+			shadows[copy].live = false;
+	}
+	settling = false;
+	if (retire)
+		simpsons_shadow_pending = false;
+}
 
 void simpsons_settle_shadow(void)
 {
-	if (!simpsons_shadow_pending)
-		return;
-	simpsons_shadow_pending = false;
-	for (uint32_t at = 0; at < shadow_size; at++)
-	{
-		const uint32_t index = shadow_size - 1u - at;
+	settle(true);
+}
 
-		if (shadow[index] != shadow_found[index])
-			simpsons_write((uint16_t)(shadow_address + at), shadow[index]);
+/* A byte the bus wrote: the live copies that hold it take it too */
+static void shadow_written(uint16_t address, uint8_t data)
+{
+	for (unsigned copy = 0; copy < SHADOW_COPIES; copy++)
+	{
+		const uint32_t at = (uint16_t)(address - shadows[copy].address);
+
+		if (shadows[copy].live && at < shadows[copy].size)
+			shadows[copy].bytes[shadows[copy].size - 1u - at] = shadows[copy].found[shadows[copy].size - 1u - at] = data;
 	}
 }
 
 void *simpsons_shadow_at(uint16_t address, uint32_t size)
 {
-	simpsons_settle_shadow();
+	unsigned copy;
+
 	if (size > SHADOW_MAX || (address < IO_PORTS_END && address + size > IO_PORTS_FIRST))
 	{
 		fprintf(stderr, "The program reached a structure of %u bytes at %04X in frame %llu, over the board's ports\n",
 			(unsigned)size, address, (unsigned long long)simpsons_board.frame);
 		exit(4);
 	}
+	settle(false);
+	for (copy = 0; copy < SHADOW_COPIES; copy++)
+		if (shadows[copy].live && shadows[copy].address == address && shadows[copy].size == size)
+			break;
+	if (copy == SHADOW_COPIES)
+	{
+		copy = next_shadow++ % SHADOW_COPIES;
+		shadows[copy].live = false;
+		shadows[copy].address = address;
+		shadows[copy].size = size;
+	}
 	for (uint32_t at = 0; at < size; at++)
-		shadow[size - 1u - at] = shadow_found[size - 1u - at] = simpsons_read((uint16_t)(address + at));
-	shadow_address = address;
-	shadow_size = size;
+		shadows[copy].bytes[size - 1u - at] = shadows[copy].found[size - 1u - at] =
+			simpsons_read((uint16_t)(address + at));
+	shadows[copy].live = true;
 	simpsons_shadow_pending = true;
-	return shadow;
+	return shadows[copy].bytes;
 }
 
 uint8_t simpsons_read(uint16_t address)
 {
 	if (simpsons_shadow_pending)
-		simpsons_settle_shadow();
+		settle(false);
 	if (address >= 0x6000u)
 	{
 		const int32_t place = simpsons_program_offset(address);
@@ -479,7 +538,17 @@ static void eeprom_write(uint8_t data)
 void simpsons_write(uint16_t address, uint8_t data)
 {
 	if (simpsons_shadow_pending)
-		simpsons_settle_shadow();
+	{
+		settle(false);
+		bus_write(address, data);
+		shadow_written(address, data);
+		return;
+	}
+	bus_write(address, data);
+}
+
+static void bus_write(uint16_t address, uint8_t data)
+{
 	if (simpsons_board.write_watch)
 		simpsons_board.write_watch(address, data);
 	if (address >= 0x6000u)

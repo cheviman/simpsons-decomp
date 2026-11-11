@@ -3,7 +3,7 @@
  *    Description: the queues: the main loop's jobs and the sound commands for the Z80, and the jobs themselves
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    10-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -16,13 +16,13 @@
 void queue_job(uint16_t job)
 {
 	uint16_t queue_place = 0;
-	uint16_t t1 = 0;
+	uint16_t job_slot_place = 0;
 
 	if (job >> 8 == 0u)
 		layer_clear_pending++;
-	t1 = job_queue_write;
-	queue_place = t1 + 2u;
-	mem_write16(t1, job);
+	job_slot_place = job_queue_write;
+	queue_place = job_slot_place + 2u;
+	mem_write16(job_slot_place, job);
 	if (queue_place >= high_scores_ADDRESS)
 		queue_place = job_queue_ADDRESS;
 	job_queue_write = queue_place;
@@ -55,14 +55,14 @@ uint32_t queue_sound_always(uint16_t command)
 {
 	uint32_t carry = 0;
 	uint16_t queue_place = 0;
-	uint16_t t1 = 0;
+	uint16_t sound_slot_place = 0;
 
 	carry = command < 0xFFFFu;
 	if (command == 0xFFFFu)
 		return carry;
-	t1 = sound_queue_write;
-	queue_place = t1 + 2u;
-	mem_write16(t1, command);
+	sound_slot_place = sound_queue_write;
+	queue_place = sound_slot_place + 2u;
+	mem_write16(sound_slot_place, command);
 	carry = queue_place < sound_queue_ADDRESS + 0x3Bu;
 	if (queue_place > sound_queue_ADDRESS + 0x3Bu)
 		queue_place = sound_queue_ADDRESS;

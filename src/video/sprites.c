@@ -3,7 +3,7 @@
  *    Description: the sprite engine: the objects' animations, their moves, the depth sort and their sprites
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    10-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -34,7 +34,7 @@ void update_sprites(void)
 /* Runs the animation of each object that is on and clears the sprites of those that are off. */
 void animate_objects(void)
 {
-	uint8_t a = 0;
+	uint8_t slot_flags = 0;
 	uint16_t object = 0;
 	uint8_t flags = 0;
 
@@ -42,10 +42,10 @@ void animate_objects(void)
 	do
 	{
 		flags = OBJECT(object)->flags;
-		a = flags;
+		slot_flags = flags;
 		if (flags == 0u)
 			clear_object_sprites(object);
-		else if (a != 1u)
+		else if (slot_flags != 1u)
 			object = animate_object(object);
 		object += 0x60u;
 	} while (object != OBJECT_ADDRESS(32));
@@ -54,35 +54,38 @@ void animate_objects(void)
 /* Clears the object's sprites in the sprite RAM, and those of the objects that lent it more. */
 void clear_object_sprites(uint16_t object)
 {
-	uint8_t a = 0, d = 0;
+	uint8_t blank_flags = 0, blank_word = 0;
 	uint16_t lender = 0, sprite = 0;
-	uint8_t t1 = 0;
-	uint16_t sprites = 0, t2 = 0, t3 = 0;
+	uint8_t slots_left_was = 0;
+	uint16_t sprites = 0, next_lender = 0, lender_sprites = 0;
+	uint32_t flags_halfword = 0;
 
 	sprites = OBJECT(object)->sprites;
 	sprite = sprites;
 	clear_slots_left = 8u;
-	d = 0u;
-	a = 0u;
-	while (mem_read8(sprite) != 0u)
+	blank_word = 0u;
+	blank_flags = 0u;
+	while (SPRITE_ENTRY(sprite)->flags != 0u)
 	{
-		mem_write16(sprite, (uint32_t)a << 8);
+		flags_halfword = (uint32_t)blank_flags << 8;
+		SPRITE_ENTRY(sprite)->flags = (uint8_t)(flags_halfword >> 8u);
+		SPRITE_ENTRY(sprite)->depth = (uint8_t)flags_halfword;
 		sprite += 0x10u;
-		t1 = clear_slots_left;
-		clear_slots_left = t1 - 1u;
-		if (t1 != 1u)
+		slots_left_was = clear_slots_left;
+		clear_slots_left = slots_left_was - 1u;
+		if (slots_left_was != 1u)
 			continue;
-		t2 = mem_read16(sprite - 2u);
-		lender = t2;
-		if (t2 == 0u)
+		next_lender = SPRITE_ENTRY(sprite - 0x10u)->borrowed_object;
+		lender = next_lender;
+		if (next_lender == 0u)
 			break;
 		clear_slots_left = 8u;
-		d = 0u;
-		a = 0u;
-		mem_write16(sprite - 2u, 0u);
-		mem_write8(lender, 0u);
-		t3 = mem_read16(lender + 0x59u);
-		sprite = t3;
+		blank_word = 0u;
+		blank_flags = 0u;
+		SPRITE_ENTRY(sprite - 0x10u)->borrowed_object = 0u;
+		OBJECT(lender)->flags = 0u;
+		lender_sprites = OBJECT(lender)->sprites;
+		sprite = lender_sprites;
 	}
 }
 
@@ -90,9 +93,9 @@ void clear_object_sprites(uint16_t object)
    otherwise counts its frame's time down. */
 uint16_t animate_object(uint16_t object)
 {
-	uint8_t a = 0;
+	uint8_t animation_flags_now = 0;
 	uint16_t sprites = 0;
-	uint8_t animation = 0, animation_flags = 0, frame_time = 0, t1 = 0, frame_time_2 = 0, frame_time_3 = 0;
+	uint8_t animation = 0, animation_flags = 0, frame_time = 0, frame_time_was = 0, frame_time_2 = 0, frame_time_3 = 0;
 	uint16_t sprites_2 = 0, sprites_3 = 0;
 
 	animation = OBJECT(object)->animation;
@@ -104,7 +107,7 @@ uint16_t animate_object(uint16_t object)
 		return object;
 	}
 	animation_flags = OBJECT(object)->animation_flags;
-	a = animation_flags;
+	animation_flags_now = animation_flags;
 	if ((int8_t)animation_flags < 0)
 	{
 		sprites_3 = OBJECT(object)->sprites;
@@ -113,11 +116,11 @@ uint16_t animate_object(uint16_t object)
 		if (frame_time == 0u)
 			return draw_object(object, sprites);
 		object = draw_object(object, sprites);
-		t1 = mem_read8(object + 8u);
-		mem_write8(object + 8u, t1 - 1u);
+		frame_time_was = OBJECT(object)->frame_time;
+		OBJECT(object)->frame_time = frame_time_was - 1u;
 		return object;
 	}
-	if ((a & 0x40u) != 0u)
+	if ((animation_flags_now & 0x40u) != 0u)
 	{
 		OBJECT(object)->animation_flags = 0u;
 		return object;
@@ -130,8 +133,8 @@ uint16_t animate_object(uint16_t object)
 		if (frame_time == 0u)
 			return draw_object(object, sprites);
 		object = draw_object(object, sprites);
-		t1 = mem_read8(object + 8u);
-		mem_write8(object + 8u, t1 - 1u);
+		frame_time_was = OBJECT(object)->frame_time;
+		OBJECT(object)->frame_time = frame_time_was - 1u;
 		return object;
 	}
 	frame_time_2 = OBJECT(object)->frame_time;
@@ -155,33 +158,33 @@ void move_objects(void)
 	uint32_t carry = 0;
 	uint8_t a = 0, b = 0;
 	uint16_t lender = 0, object = 0, sprite = 0;
-	uint8_t t7 = 0, t12 = 0, x_speed_3 = 0, t18 = 0, t24 = 0, t27 = 0, t32 = 0, t36 = 0, y_speed_3 = 0, t42 = 0, z_speed_3 = 0, z = 0;
-	uint16_t t1 = 0, t2 = 0, t3 = 0, t4 = 0, x_speed = 0, t5 = 0, t6 = 0, t8 = 0, sprites = 0, t9 = 0, t10 = 0, t11 = 0, t13 = 0, t14 = 0, t15 = 0, x_speed_2 = 0, t16 = 0, t17 = 0, t19 = 0, t20 = 0, t21 = 0, y_speed = 0, t22 = 0, t23 = 0, t25 = 0, z_speed = 0, t26 = 0, t28 = 0, t29 = 0, t30 = 0, sprites_2 = 0, t31 = 0, t33 = 0, t34 = 0, t35 = 0, t37 = 0, t38 = 0, t39 = 0, y_speed_2 = 0, t40 = 0, t41 = 0, t43 = 0, t44 = 0, t45 = 0, z_speed_2 = 0, t46 = 0, t47 = 0, t48 = 0;
+	uint8_t x_low = 0, x_slots_left_was = 0, x_speed_3 = 0, x_high = 0, y_low = 0, z_low = 0, sprite_priority = 0, y_slots_left_was = 0, y_speed_3 = 0, y_high = 0, z_speed_3 = 0, z = 0;
+	uint16_t shift_x_moving_left = 0, shift_x_moving_right = 0, shift_y_moving_up = 0, shift_y_moving_down = 0, x_speed = 0, screen_step_x = 0, pre_x_and_fraction = 0, sprite_shift_x = 0, sprites = 0, x_shift = 0, old_sprite_x = 0, new_sprite_x = 0, x_lender_found = 0, x_lender_sprites = 0, x_and_fraction = 0, x_speed_2 = 0, x_and_fraction_before = 0, x_and_fraction_after = 0, camera_shift_x = 0, moved_x = 0, shifted_x = 0, y_speed = 0, screen_step_y = 0, pre_y_and_fraction = 0, floor_shift_y = 0, z_speed = 0, pre_z_and_fraction = 0, height_shift = 0, sprite_shift_y = 0, y_shift = 0, sprites_2 = 0, y_shift_now = 0, floor_y_shift = 0, old_sprite_y = 0, new_sprite_y = 0, y_lender_found = 0, y_lender_sprites = 0, y_and_fraction = 0, y_speed_2 = 0, y_and_fraction_before = 0, y_and_fraction_after = 0, camera_shift_y = 0, moved_y = 0, shifted_y = 0, z_speed_2 = 0, z_and_fraction = 0, height_speed = 0, z_and_fraction_after = 0;
 
 	if (camera_x_speed < 0)
 	{
-		t1 = (int8_t)((uint8_t)last_stage_scroll_x - (uint8_t)camera_x);
-		a = (uint8_t)(t1 >> 8);
-		b = (uint8_t)t1;
+		shift_x_moving_left = (int8_t)((uint8_t)last_stage_scroll_x - (uint8_t)camera_x);
+		a = (uint8_t)(shift_x_moving_left >> 8);
+		b = (uint8_t)shift_x_moving_left;
 	}
 	else
 	{
-		t2 = (int8_t)(0u - ((uint8_t)camera_x - (uint8_t)last_stage_scroll_x));
-		a = (uint8_t)(t2 >> 8);
-		b = (uint8_t)t2;
+		shift_x_moving_right = (int8_t)(0u - ((uint8_t)camera_x - (uint8_t)last_stage_scroll_x));
+		a = (uint8_t)(shift_x_moving_right >> 8);
+		b = (uint8_t)shift_x_moving_right;
 	}
 	camera_move_x = ((uint32_t)a << 8) | b;
 	if (camera_y_speed < 0)
 	{
-		t3 = (int8_t)(0u - ((uint8_t)last_stage_scroll_y - (uint8_t)camera_y));
-		a = (uint8_t)(t3 >> 8);
-		b = (uint8_t)t3;
+		shift_y_moving_up = (int8_t)(0u - ((uint8_t)last_stage_scroll_y - (uint8_t)camera_y));
+		a = (uint8_t)(shift_y_moving_up >> 8);
+		b = (uint8_t)shift_y_moving_up;
 	}
 	else
 	{
-		t4 = (int8_t)((uint8_t)camera_y - (uint8_t)last_stage_scroll_y);
-		a = (uint8_t)(t4 >> 8);
-		b = (uint8_t)t4;
+		shift_y_moving_down = (int8_t)((uint8_t)camera_y - (uint8_t)last_stage_scroll_y);
+		a = (uint8_t)(shift_y_moving_down >> 8);
+		b = (uint8_t)shift_y_moving_down;
 	}
 	camera_move_y = ((uint32_t)a << 8) | b;
 	object = OBJECT_ADDRESS(0);
@@ -190,124 +193,124 @@ void move_objects(void)
 		if (OBJECT(object)->flags > 1u)
 		{
 			x_speed = OBJECT(object)->x_speed;
-			t5 = ((uint32_t)(uint8_t)camera_move_x << 8) + x_speed;
-			a = (uint8_t)(t5 >> 8);
-			b = (uint8_t)t5;
-			if (t5 != 0u)
+			screen_step_x = ((uint32_t)(uint8_t)camera_move_x << 8) + x_speed;
+			a = (uint8_t)(screen_step_x >> 8);
+			b = (uint8_t)screen_step_x;
+			if (screen_step_x != 0u)
 			{
-				t6 = (((uint32_t)(OBJECT(object)->x & 0xFFu) << 8u) | OBJECT(object)->x_fraction);
-				t7 = (uint8_t)OBJECT(object)->x;
-				t8 = (int8_t)(((uint16_t)((((uint32_t)a << 8) | b) + t6) >> 8) - t7);
-				sprite_move = t8;
+				pre_x_and_fraction = (((uint32_t)(OBJECT(object)->x & 0xFFu) << 8u) | OBJECT(object)->x_fraction);
+				x_low = (uint8_t)OBJECT(object)->x;
+				sprite_shift_x = (int8_t)(((uint16_t)((((uint32_t)a << 8) | b) + pre_x_and_fraction) >> 8) - x_low);
+				sprite_move = sprite_shift_x;
 				move_slots_left = 8u;
 				sprites = OBJECT(object)->sprites;
 				sprite = sprites;
-				while (mem_read8(sprite) != 0u)
+				while (SPRITE_ENTRY(sprite)->flags != 0u)
 				{
-					t9 = sprite_move;
-					t10 = mem_read16(sprite + 6u);
-					t11 = t9 + t10;
-					mem_write16(sprite + 6u, t11);
+					x_shift = sprite_move;
+					old_sprite_x = SPRITE_ENTRY(sprite)->x;
+					new_sprite_x = x_shift + old_sprite_x;
+					SPRITE_ENTRY(sprite)->x = new_sprite_x;
 					sprite += 0x10u;
-					t12 = move_slots_left;
-					move_slots_left = t12 - 1u;
-					if (t12 != 1u)
+					x_slots_left_was = move_slots_left;
+					move_slots_left = x_slots_left_was - 1u;
+					if (x_slots_left_was != 1u)
 						continue;
-					t13 = mem_read16(sprite - 2u);
-					lender = t13;
-					if (t13 == 0u)
+					x_lender_found = SPRITE_ENTRY(sprite - 0x10u)->borrowed_object;
+					lender = x_lender_found;
+					if (x_lender_found == 0u)
 						break;
-					t14 = mem_read16(lender + 0x59u);
-					sprite = t14;
+					x_lender_sprites = OBJECT(lender)->sprites;
+					sprite = x_lender_sprites;
 					move_slots_left = 8u;
 				}
 			}
-			t15 = (((uint32_t)(OBJECT(object)->x & 0xFFu) << 8u) | OBJECT(object)->x_fraction);
+			x_and_fraction = (((uint32_t)(OBJECT(object)->x & 0xFFu) << 8u) | OBJECT(object)->x_fraction);
 			x_speed_2 = OBJECT(object)->x_speed;
-			t16 = t15;
-			t17 = t16 + x_speed_2;
-			carry = (uint16_t)(t16 + x_speed_2) < t16;
-			OBJECT(object)->x = (OBJECT(object)->x & 0xFF00u) | ((t17 >> 8u) & 0xFFu);
-			OBJECT(object)->x_fraction = (uint8_t)t17;
+			x_and_fraction_before = x_and_fraction;
+			x_and_fraction_after = x_and_fraction_before + x_speed_2;
+			carry = (uint16_t)(x_and_fraction_before + x_speed_2) < x_and_fraction_before;
+			OBJECT(object)->x = (OBJECT(object)->x & 0xFF00u) | ((x_and_fraction_after >> 8u) & 0xFFu);
+			OBJECT(object)->x_fraction = (uint8_t)x_and_fraction_after;
 			x_speed_3 = (uint8_t)(OBJECT(object)->x_speed >> 8u);
-			t18 = (uint8_t)(OBJECT(object)->x >> 8u);
-			OBJECT(object)->x = (OBJECT(object)->x & 0xFFu) | ((((uint16_t)(int8_t)x_speed_3 >> 8) + t18 + carry & 0xFFu) << 8u);
-			t19 = camera_move_x;
-			t20 = OBJECT(object)->x;
-			t21 = t19 + t20;
-			OBJECT(object)->x = t21;
+			x_high = (uint8_t)(OBJECT(object)->x >> 8u);
+			OBJECT(object)->x = (OBJECT(object)->x & 0xFFu) | ((((uint16_t)(int8_t)x_speed_3 >> 8) + x_high + carry & 0xFFu) << 8u);
+			camera_shift_x = camera_move_x;
+			moved_x = OBJECT(object)->x;
+			shifted_x = camera_shift_x + moved_x;
+			OBJECT(object)->x = shifted_x;
 			y_speed = OBJECT(object)->y_speed;
-			t22 = ((uint32_t)(uint8_t)camera_move_y << 8) + y_speed;
-			t23 = (((uint32_t)(OBJECT(object)->y & 0xFFu) << 8u) | OBJECT(object)->y_fraction);
-			t24 = (uint8_t)OBJECT(object)->y;
-			t25 = (int8_t)(((uint16_t)(t22 + t23) >> 8) - t24);
-			shadow_move_y = t25;
+			screen_step_y = ((uint32_t)(uint8_t)camera_move_y << 8) + y_speed;
+			pre_y_and_fraction = (((uint32_t)(OBJECT(object)->y & 0xFFu) << 8u) | OBJECT(object)->y_fraction);
+			y_low = (uint8_t)OBJECT(object)->y;
+			floor_shift_y = (int8_t)(((uint16_t)(screen_step_y + pre_y_and_fraction) >> 8) - y_low);
+			shadow_move_y = floor_shift_y;
 			z_speed = OBJECT(object)->z_speed;
-			t26 = (((uint32_t)(OBJECT(object)->z & 0xFFu) << 8u) | OBJECT(object)->z_fraction);
-			t27 = (uint8_t)OBJECT(object)->z;
-			t28 = (int8_t)(((uint16_t)(z_speed + t26) >> 8) - t27);
-			t29 = t28 + shadow_move_y;
-			t30 = t29;
-			sprite_move = t30;
-			if (t30 != 0u || (OBJECT(object)->flags & 8u) != 0u)
+			pre_z_and_fraction = (((uint32_t)(OBJECT(object)->z & 0xFFu) << 8u) | OBJECT(object)->z_fraction);
+			z_low = (uint8_t)OBJECT(object)->z;
+			height_shift = (int8_t)(((uint16_t)(z_speed + pre_z_and_fraction) >> 8) - z_low);
+			sprite_shift_y = height_shift + shadow_move_y;
+			y_shift = sprite_shift_y;
+			sprite_move = y_shift;
+			if (y_shift != 0u || (OBJECT(object)->flags & 8u) != 0u)
 			{
 				move_slots_left = 8u;
 				sprites_2 = OBJECT(object)->sprites;
 				sprite = sprites_2;
-				while (mem_read8(sprite) != 0u)
+				while (SPRITE_ENTRY(sprite)->flags != 0u)
 				{
-					t31 = sprite_move;
-					a = (uint8_t)(t31 >> 8);
-					b = (uint8_t)t31;
-					t32 = mem_read8(sprite + 0xCu);
-					if ((int8_t)t32 < 0)
+					y_shift_now = sprite_move;
+					a = (uint8_t)(y_shift_now >> 8);
+					b = (uint8_t)y_shift_now;
+					sprite_priority = SPRITE_ENTRY(sprite)->priority;
+					if ((int8_t)sprite_priority < 0)
 					{
-						t33 = shadow_move_y;
-						a = (uint8_t)(t33 >> 8);
-						b = (uint8_t)t33;
+						floor_y_shift = shadow_move_y;
+						a = (uint8_t)(floor_y_shift >> 8);
+						b = (uint8_t)floor_y_shift;
 					}
-					t34 = mem_read16(sprite + 4u);
-					t35 = (((uint32_t)a << 8) | b) + t34;
-					mem_write16(sprite + 4u, t35);
+					old_sprite_y = SPRITE_ENTRY(sprite)->y;
+					new_sprite_y = (((uint32_t)a << 8) | b) + old_sprite_y;
+					SPRITE_ENTRY(sprite)->y = new_sprite_y;
 					sprite += 0x10u;
-					t36 = move_slots_left;
-					move_slots_left = t36 - 1u;
-					if (t36 != 1u)
+					y_slots_left_was = move_slots_left;
+					move_slots_left = y_slots_left_was - 1u;
+					if (y_slots_left_was != 1u)
 						continue;
-					t37 = mem_read16(sprite - 2u);
-					lender = t37;
-					if (t37 == 0u)
+					y_lender_found = SPRITE_ENTRY(sprite - 0x10u)->borrowed_object;
+					lender = y_lender_found;
+					if (y_lender_found == 0u)
 						break;
-					t38 = mem_read16(lender + 0x59u);
-					sprite = t38;
+					y_lender_sprites = OBJECT(lender)->sprites;
+					sprite = y_lender_sprites;
 					move_slots_left = 8u;
 				}
 			}
-			t39 = (((uint32_t)(OBJECT(object)->y & 0xFFu) << 8u) | OBJECT(object)->y_fraction);
+			y_and_fraction = (((uint32_t)(OBJECT(object)->y & 0xFFu) << 8u) | OBJECT(object)->y_fraction);
 			y_speed_2 = OBJECT(object)->y_speed;
-			t40 = t39;
-			t41 = t40 + y_speed_2;
-			carry = (uint16_t)(t40 + y_speed_2) < t40;
-			OBJECT(object)->y = (OBJECT(object)->y & 0xFF00u) | ((t41 >> 8u) & 0xFFu);
-			OBJECT(object)->y_fraction = (uint8_t)t41;
+			y_and_fraction_before = y_and_fraction;
+			y_and_fraction_after = y_and_fraction_before + y_speed_2;
+			carry = (uint16_t)(y_and_fraction_before + y_speed_2) < y_and_fraction_before;
+			OBJECT(object)->y = (OBJECT(object)->y & 0xFF00u) | ((y_and_fraction_after >> 8u) & 0xFFu);
+			OBJECT(object)->y_fraction = (uint8_t)y_and_fraction_after;
 			y_speed_3 = (uint8_t)(OBJECT(object)->y_speed >> 8u);
-			t42 = (uint8_t)(OBJECT(object)->y >> 8u);
-			OBJECT(object)->y = (OBJECT(object)->y & 0xFFu) | ((((uint16_t)(int8_t)y_speed_3 >> 8) + t42 + carry & 0xFFu) << 8u);
-			t43 = camera_move_y;
-			t44 = OBJECT(object)->y;
-			t45 = t43 + t44;
-			OBJECT(object)->y = t45;
+			y_high = (uint8_t)(OBJECT(object)->y >> 8u);
+			OBJECT(object)->y = (OBJECT(object)->y & 0xFFu) | ((((uint16_t)(int8_t)y_speed_3 >> 8) + y_high + carry & 0xFFu) << 8u);
+			camera_shift_y = camera_move_y;
+			moved_y = OBJECT(object)->y;
+			shifted_y = camera_shift_y + moved_y;
+			OBJECT(object)->y = shifted_y;
 			z_speed_2 = OBJECT(object)->z_speed;
 			a = (uint8_t)(z_speed_2 >> 8);
 			b = (uint8_t)z_speed_2;
 			if (z_speed_2 != 0u)
 			{
-				t46 = (((uint32_t)(OBJECT(object)->z & 0xFFu) << 8u) | OBJECT(object)->z_fraction);
-				t47 = ((uint32_t)a << 8) | b;
-				t48 = t47 + t46;
-				carry = (uint16_t)(t47 + t46) < t47;
-				OBJECT(object)->z = (OBJECT(object)->z & 0xFF00u) | ((t48 >> 8u) & 0xFFu);
-				OBJECT(object)->z_fraction = (uint8_t)t48;
+				z_and_fraction = (((uint32_t)(OBJECT(object)->z & 0xFFu) << 8u) | OBJECT(object)->z_fraction);
+				height_speed = ((uint32_t)a << 8) | b;
+				z_and_fraction_after = height_speed + z_and_fraction;
+				carry = (uint16_t)(height_speed + z_and_fraction) < height_speed;
+				OBJECT(object)->z = (OBJECT(object)->z & 0xFF00u) | ((z_and_fraction_after >> 8u) & 0xFFu);
+				OBJECT(object)->z_fraction = (uint8_t)z_and_fraction_after;
 				z_speed_3 = (uint8_t)(OBJECT(object)->z_speed >> 8u);
 				z = (uint8_t)(OBJECT(object)->z >> 8u);
 				OBJECT(object)->z = (OBJECT(object)->z & 0xFFu) | ((((uint16_t)(int8_t)z_speed_3 >> 8) + z + carry & 0xFFu) << 8u);
@@ -325,8 +328,8 @@ void sort_objects_by_depth(void)
 	uint16_t last_in_row = 0, next_in_row = 0, object = 0, row_object = 0, row_place = 0, rows = 0, sprite = 0;
 	uint8_t stack_10001 = 0, stack_10002 = 0;
 	uint16_t stack = 0;
-	uint8_t t8 = 0, t12 = 0;
-	uint16_t t1 = 0, t2 = 0, t3 = 0, t4 = 0, t5 = 0, t6 = 0, t7 = 0, t9 = 0, t10 = 0, t11 = 0;
+	uint8_t sort_slots_left_was = 0, rows_left_was = 0;
+	uint16_t object_y = 0, object_y_again = 0, row_head = 0, next_drawn = 0, row_at = 0, row_first = 0, row_object_sprites = 0, sort_lender = 0, sort_lender_sprites = 0, next_drawn_read = 0;
 
 	object = OBJECT_ADDRESS(0);
 	rows = 0x3000u;
@@ -334,16 +337,16 @@ void sort_objects_by_depth(void)
 	{
 		if (OBJECT(object)->flags > 1u)
 		{
-			t1 = OBJECT(object)->y;
-			a = (uint8_t)(t1 >> 8);
-			b = (uint8_t)t1;
-			if ((int16_t)t1 >= 0)
+			object_y = OBJECT(object)->y;
+			a = (uint8_t)(object_y >> 8);
+			b = (uint8_t)object_y;
+			if ((int16_t)object_y >= 0)
 			{
 				if ((int16_t)(((uint32_t)a << 8) | b) <= 0x17F)
 				{
-					t2 = OBJECT(object)->y;
-					a = (uint8_t)(t2 >> 8);
-					b = (uint8_t)t2;
+					object_y_again = OBJECT(object)->y;
+					a = (uint8_t)(object_y_again >> 8);
+					b = (uint8_t)object_y_again;
 				}
 				else
 				{
@@ -357,9 +360,9 @@ void sort_objects_by_depth(void)
 				b = 0u;
 			}
 			b &= ~1u;
-			t3 = io_read16(rows + (((uint32_t)a << 8) | b));
-			last_in_row = t3;
-			if (t3 == 0u)
+			row_head = io_read16(rows + (((uint32_t)a << 8) | b));
+			last_in_row = row_head;
+			if (row_head == 0u)
 				io_write16(rows + (((uint32_t)a << 8) | b), object);
 			else
 			{
@@ -371,11 +374,11 @@ void sort_objects_by_depth(void)
 					stack_10001 = a;
 					stack_10002 = b;
 					last_in_row = ((uint32_t)stack_10001 << 8) | stack_10002;
-					t4 = io_read16(last_in_row + 0x5Eu);
-					a = (uint8_t)(t4 >> 8);
-					b = (uint8_t)t4;
-				} while (t4 != 0u);
-				io_write16(last_in_row + 0x5Eu, object);
+					next_drawn = OBJECT(last_in_row)->draw_next;
+					a = (uint8_t)(next_drawn >> 8);
+					b = (uint8_t)next_drawn;
+				} while (next_drawn != 0u);
+				OBJECT(last_in_row)->draw_next = object;
 			}
 		}
 		object += 0x60u;
@@ -385,52 +388,52 @@ void sort_objects_by_depth(void)
 	depth_rows_left = 0xC0u;
 	do
 	{
-		t5 = row_place;
-		row_place = t5 + 2u;
-		t6 = mem_read16(t5);
-		row_object = t6;
-		if (t6 != 0u)
+		row_at = row_place;
+		row_place = row_at + 2u;
+		row_first = mem_read16(row_at);
+		row_object = row_first;
+		if (row_first != 0u)
 		{
 			mem_write16(row_place - 2u, 0u);
 			for (;;)
 			{
-				t7 = mem_read16(row_object + 0x59u);
-				sprite = t7;
+				row_object_sprites = OBJECT(row_object)->sprites;
+				sprite = row_object_sprites;
 				sort_slots_left = 8u;
-				while (mem_read8(sprite) != 0u)
+				while (SPRITE_ENTRY(sprite)->flags != 0u)
 				{
 					sprite_order = next_sprite_number;
-					if ((int8_t)mem_read8(row_object) >= 0)
+					if ((int8_t)OBJECT(row_object)->flags >= 0)
 						sprite_order = 0u;
-					mem_write8(sprite + 1u, sprite_order);
+					SPRITE_ENTRY(sprite)->depth = sprite_order;
 					next_sprite_number++;
 					sprite += 0x10u;
-					t8 = sort_slots_left;
-					sort_slots_left = t8 - 1u;
-					if (t8 != 1u)
+					sort_slots_left_was = sort_slots_left;
+					sort_slots_left = sort_slots_left_was - 1u;
+					if (sort_slots_left_was != 1u)
 						continue;
-					t9 = mem_read16(sprite - 2u);
-					a = (uint8_t)(t9 >> 8);
-					b = (uint8_t)t9;
-					if (t9 == 0u)
+					sort_lender = SPRITE_ENTRY(sprite - 0x10u)->borrowed_object;
+					a = (uint8_t)(sort_lender >> 8);
+					b = (uint8_t)sort_lender;
+					if (sort_lender == 0u)
 						break;
 					stack_10001 = a;
 					stack_10002 = b;
-					t10 = io_read16((((uint32_t)stack_10001 << 8) | stack_10002) + 0x59u);
-					sprite = t10;
+					sort_lender_sprites = io_read16((((uint32_t)stack_10001 << 8) | stack_10002) + 0x59u);
+					sprite = sort_lender_sprites;
 					sort_slots_left = 8u;
 				}
-				t11 = mem_read16(row_object + 0x5Eu);
-				next_in_row = t11;
-				if (t11 == 0u)
+				next_drawn_read = OBJECT(row_object)->draw_next;
+				next_in_row = next_drawn_read;
+				if (next_drawn_read == 0u)
 					break;
-				mem_write16(row_object + 0x5Eu, 0u);
+				OBJECT(row_object)->draw_next = 0u;
 				row_object = next_in_row;
 			}
 		}
-		t12 = depth_rows_left;
-		depth_rows_left = t12 - 1u;
-	} while (t12 != 1u);
+		rows_left_was = depth_rows_left;
+		depth_rows_left = rows_left_was - 1u;
+	} while (rows_left_was != 1u);
 }
 
 /* Sets the sprites' default priority for the story's step. */
@@ -444,11 +447,11 @@ void set_step_sprite_priority(void)
 uint16_t draw_object(uint16_t object, uint16_t sprites)
 {
 	uint32_t carry = 0;
-	uint8_t a = 0, animation = 0, frame_flags = 0, frame_time = 0, index = 0, kind_number = 0;
+	uint8_t animation = 0, frame_flags = 0, frame_time = 0, index = 0, index_high = 0, kind_number = 0;
 	uint16_t animations = 0, frame_record = 0, lender = 0, list = 0;
 	uint8_t stack = 0, stack_2 = 0;
-	uint8_t animation_flags = 0, kind = 0, frame_time_2 = 0, frame = 0, attributes = 0, animation_2 = 0, frame_2 = 0, t4 = 0, animation_flags_2 = 0, frame_time_3 = 0, animation_flags_3 = 0;
-	uint16_t t1 = 0, t2 = 0, t3 = 0, t5 = 0, t6 = 0, t7 = 0, t8 = 0, t9 = 0, t10 = 0;
+	uint8_t animation_flags = 0, kind = 0, frame_time_2 = 0, frame = 0, attributes = 0, animation_2 = 0, frame_2 = 0, frame_head = 0, animation_flags_2 = 0, frame_time_3 = 0, animation_flags_3 = 0;
+	uint16_t high_set_record = 0, set_record = 0, frame_at = 0, jump_frame_at = 0, next_animation_at = 0, new_frame_at = 0, new_frame_time_at = 0, frame_time_at = 0, lender_found = 0;
 
 	draw_shadow_sprite = 0u;
 	sprite_slot = 0u;
@@ -457,25 +460,25 @@ uint16_t draw_object(uint16_t object, uint16_t sprites)
 	animation_flags = OBJECT(object)->animation_flags;
 	drawn_animation_flags = animation_flags;
 	OBJECT(object)->animation_flags = 0u;
-	a = 0u;
+	index_high = 0u;
 	kind = OBJECT(object)->kind;
 	kind_number = kind;
 	if ((int8_t)kind < 0)
 	{
 		kind_number &= 0x7Fu;
 		carry = (int8_t)kind_number < 0;
-		t1 = animation_sets_high_ADDRESS + (((((uint32_t)a << 1) | carry) << 8) | (uint8_t)((uint32_t)kind_number << 1));
-		window_bank = ANIMATION_SET(t1)->bank;
+		high_set_record = animation_sets_high_ADDRESS + (((((uint32_t)index_high << 1) | carry) << 8) | (uint8_t)((uint32_t)kind_number << 1));
+		window_bank = ANIMATION_SET(high_set_record)->bank;
 		set_lines(window_bank);
-		index = ANIMATION_SET(t1)->index;
+		index = ANIMATION_SET(high_set_record)->index;
 	}
 	else
 	{
 		carry = (int8_t)kind_number < 0;
-		t2 = animation_sets_ADDRESS + (((((uint32_t)a << 1) | carry) << 8) | (uint8_t)((uint32_t)kind_number << 1));
-		window_bank = ANIMATION_SET(t2)->bank;
+		set_record = animation_sets_ADDRESS + (((((uint32_t)index_high << 1) | carry) << 8) | (uint8_t)((uint32_t)kind_number << 1));
+		window_bank = ANIMATION_SET(set_record)->bank;
 		set_lines(window_bank);
-		index = ANIMATION_SET(t2)->index;
+		index = ANIMATION_SET(set_record)->index;
 	}
 	frame_time_2 = OBJECT(object)->frame_time;
 	if (frame_time_2 == 0u)
@@ -488,7 +491,7 @@ uint16_t draw_object(uint16_t object, uint16_t sprites)
 	attributes = OBJECT(object)->attributes;
 	if ((attributes & 0x40u) != 0u)
 		frame_attributes |= 0x10u;
-	a = 0u;
+	index_high = 0u;
 	animation_2 = OBJECT(object)->animation;
 	animation = animation_2;
 	if ((int8_t)animation_2 < 0)
@@ -500,42 +503,42 @@ uint16_t draw_object(uint16_t object, uint16_t sprites)
 	}
 	carry = (int8_t)animation < 0;
 	frame_2 = OBJECT(object)->frame;
-	t3 = mem_read16(animations + (((((uint32_t)a << 1) | carry) << 8) | (uint8_t)((uint32_t)animation << 1))) + (int8_t)(((uint32_t)frame_2 << 1) << 1);
-	frame_record = t3 + 1u;
-	t4 = mem_read8(t3);
-	frame_flags = t4;
-	if ((int8_t)t4 < 0)
+	frame_at = mem_read16(animations + (((((uint32_t)index_high << 1) | carry) << 8) | (uint8_t)((uint32_t)animation << 1))) + (int8_t)(((uint32_t)frame_2 << 1) << 1);
+	frame_record = frame_at + 1u;
+	frame_head = mem_read8(frame_at);
+	frame_flags = frame_head;
+	if ((int8_t)frame_head < 0)
 	{
 		animation_flags_2 = OBJECT(object)->animation_flags;
 		OBJECT(object)->animation_flags = animation_flags_2 | 1u;
 		if ((frame_flags & 1u) != 0u)
 		{
-			t5 = frame_record;
-			OBJECT(object)->frame = mem_read8(t5);
-			frame_record = mem_read16(t5 + 1u);
+			jump_frame_at = frame_record;
+			OBJECT(object)->frame = mem_read8(jump_frame_at);
+			frame_record = mem_read16(jump_frame_at + 1u);
 		}
 		else
 		{
 			OBJECT(object)->frame = 0u;
-			t6 = frame_record;
-			OBJECT(object)->animation = mem_read8(t6);
-			frame_record = mem_read16(t6 + 1u);
+			next_animation_at = frame_record;
+			OBJECT(object)->animation = mem_read8(next_animation_at);
+			frame_record = mem_read16(next_animation_at + 1u);
 		}
-		t7 = frame_record;
-		frame_flags = mem_read8(t7);
+		new_frame_at = frame_record;
+		frame_flags = mem_read8(new_frame_at);
 		frame_marked = frame_flags & 0x10u;
 		frame_sprites_left = frame_flags & 0xFu;
-		t8 = t7 + 1u;
-		frame_record = t8 + 1u;
-		OBJECT(object)->frame_time = io_read8(t8);
+		new_frame_time_at = new_frame_at + 1u;
+		frame_record = new_frame_time_at + 1u;
+		OBJECT(object)->frame_time = io_read8(new_frame_time_at);
 	}
 	else
 	{
 		frame_marked = frame_flags & 0x10u;
 		frame_sprites_left = frame_flags & 0xFu;
-		t9 = frame_record;
-		frame_record = t9 + 1u;
-		frame_time = mem_read8(t9);
+		frame_time_at = frame_record;
+		frame_record = frame_time_at + 1u;
+		frame_time = mem_read8(frame_time_at);
 		frame_time_3 = OBJECT(object)->frame_time;
 		if (frame_time_3 == 0u)
 			OBJECT(object)->frame_time = frame_time;
@@ -552,18 +555,18 @@ uint16_t draw_object(uint16_t object, uint16_t sprites)
 		return write_object_sprites(object, sprites, list);
 	stack_2 = object >> 8;
 	stack = (uint8_t)object;
-	t10 = mem_read16(sprites + 0x7Eu);
-	lender = t10;
-	if (t10 != 0u)
+	lender_found = SPRITE_ENTRY(sprites + 0x70u)->borrowed_object;
+	lender = lender_found;
+	if (lender_found != 0u)
 	{
-		mem_write16(sprites + 0x7Eu, lender);
+		SPRITE_ENTRY(sprites + 0x70u)->borrowed_object = lender;
 		object = ((uint32_t)stack_2 << 8) | stack;
 		return write_object_sprites(object, sprites, list);
 	}
 	borrow_object_for_sprites(&lender, &carry);
 	if (carry)
 	{
-		mem_write16(sprites + 0x7Eu, lender);
+		SPRITE_ENTRY(sprites + 0x70u)->borrowed_object = lender;
 		object = ((uint32_t)stack_2 << 8) | stack;
 		return write_object_sprites(object, sprites, list);
 	}
@@ -584,67 +587,69 @@ void story_1_bart_steps_overrun(void)
 uint16_t write_object_sprites(uint16_t object, uint16_t sprite, uint16_t list)
 {
 	uint32_t negative = 0, carry = 0;
-	uint8_t a = 0, b = 0;
+	uint8_t a = 0, b = 0, zoom_x = 0, zoom_y = 0;
 	uint16_t lender = 0, lender_object = 0;
 	uint8_t stack = 0, stack_2 = 0, stack_3 = 0, stack_4 = 0, stack_5 = 0, stack_6 = 0;
-	uint8_t t3 = 0, t6 = 0, t8 = 0, t16 = 0, t18 = 0, t40 = 0;
-	uint16_t t1 = 0, t2 = 0, t4 = 0, t5 = 0, t7 = 0, t9 = 0, t11 = 0, t12 = 0, t13 = 0, t14 = 0, t15 = 0, t17 = 0, t19 = 0, t21 = 0, t22 = 0, t23 = 0, t24 = 0, t25 = 0, t26 = 0, t27 = 0, t28 = 0, t29 = 0, t30 = 0, t31 = 0, t32 = 0, t33 = 0, t34 = 0, t35 = 0, t36 = 0, t37 = 0, t38 = 0, t39 = 0, t41 = 0, t42 = 0;
-	uint32_t t10 = 0, t20 = 0;
+	uint8_t object_attributes = 0, object_zoom_x = 0, listed_offset_x = 0, object_zoom_y = 0, listed_offset_y = 0, sprites_left_was = 0;
+	uint16_t code_at = 0, listed_code = 0, colour_at = 0, size_at = 0, offset_x_at = 0, plain_x = 0, scaled_offset_x = 0, x_before_minus = 0, x_minus_offset = 0, x_before_plus = 0, x_plus_offset = 0, offset_y_at = 0, plain_y = 0, scaled_offset_y = 0, y_before_minus = 0, y_minus_offset = 0, y_before_plus = 0, y_plus_offset = 0, zoomed_object_z = 0, zoomed_sprite_y = 0, plain_offset_x_at = 0, offset_x = 0, object_x = 0, sprite_x = 0, plain_offset_y_at = 0, offset_y = 0, object_y = 0, ground_y = 0, plain_object_z = 0, sprite_y = 0, next_block_object = 0, next_block_sprites = 0, spare_block_object = 0, spare_block_sprites = 0;
+	uint32_t priority_halfword = 0, zoomed_product_x = 0, zoomed_product_y = 0;
 
 	do
 	{
 		sprite_flipped = 0u;
-		t1 = list;
-		list = t1 + 2u;
-		t2 = mem_read16(t1);
-		a = (uint8_t)(t2 >> 8);
-		b = (uint8_t)t2;
-		if ((int16_t)t2 >= 0)
-			mem_write16(sprite + 2u, ((uint32_t)a << 8) | b);
+		code_at = list;
+		list = code_at + 2u;
+		listed_code = mem_read16(code_at);
+		a = (uint8_t)(listed_code >> 8);
+		b = (uint8_t)listed_code;
+		if ((int16_t)listed_code >= 0)
+			SPRITE_ENTRY(sprite)->code = ((uint32_t)a << 8) | b;
 		else
 		{
-			mem_write16(sprite + 2u, ((a & 0x7Fu) << 8) | b);
+			SPRITE_ENTRY(sprite)->code = ((a & 0x7Fu) << 8) | b;
 			sprite_flipped = 0x10u;
 		}
 		a = object_sprite_priority;
-		t3 = mem_read8(object + 9u);
-		b = t3;
-		if ((int8_t)t3 < 0)
+		object_attributes = OBJECT(object)->attributes;
+		b = object_attributes;
+		if ((int8_t)object_attributes < 0)
 		{
 			list++;
 			b &= 0xFu;
 		}
 		else
 		{
-			t4 = list;
-			list = t4 + 1u;
-			b = mem_read8(t4);
+			colour_at = list;
+			list = colour_at + 1u;
+			b = mem_read8(colour_at);
 		}
-		mem_write16(sprite + 0xCu, ((uint32_t)a << 8) | b);
-		t5 = list;
-		list = t5 + 1u;
-		mem_write8(sprite, (frame_attributes ^ sprite_flipped) | mem_read8(t5));
-		if ((mem_read8(object) & 0x10u) != 0u)
+		priority_halfword = ((uint32_t)a << 8) | b;
+		SPRITE_ENTRY(sprite)->priority = (uint8_t)(priority_halfword >> 8u);
+		SPRITE_ENTRY(sprite)->colour = (uint8_t)priority_halfword;
+		size_at = list;
+		list = size_at + 1u;
+		SPRITE_ENTRY(sprite)->flags = (frame_attributes ^ sprite_flipped) | mem_read8(size_at);
+		if ((OBJECT(object)->flags & 0x10u) != 0u)
 		{
 			stack = window_bank;
-			mem_write8(sprite, mem_read8(sprite) & 0xBFu);
-			t6 = mem_read8(object + 0xAu);
-			b = t6;
-			if (b < 0x10u)
-				b = 0x10u;
-			mem_write8(sprite + 0xBu, b);
-			b -= 0x10u;
+			SPRITE_ENTRY(sprite)->flags &= 0xBFu;
+			object_zoom_x = OBJECT(object)->zoom_x;
+			zoom_x = object_zoom_x;
+			if (zoom_x < 0x10u)
+				zoom_x = 0x10u;
+			SPRITE_ENTRY(sprite)->zoom_x = zoom_x;
+			zoom_x -= 0x10u;
 			zoom_offset_negative = 0u;
-			t7 = list;
-			list = t7 + 1u;
-			t8 = mem_read8(t7);
-			negative = t8 >> 7;
-			a = t8;
-			if (t8 == 0u)
+			offset_x_at = list;
+			list = offset_x_at + 1u;
+			listed_offset_x = mem_read8(offset_x_at);
+			negative = listed_offset_x >> 7;
+			a = listed_offset_x;
+			if (listed_offset_x == 0u)
 			{
-				t9 = mem_read16(object + 0xCu);
-				a = (uint8_t)(t9 >> 8);
-				b = (uint8_t)t9;
+				plain_x = OBJECT(object)->x;
+				a = (uint8_t)(plain_x >> 8);
+				b = (uint8_t)plain_x;
 			}
 			else
 			{
@@ -657,58 +662,58 @@ uint16_t write_object_sprites(uint16_t object, uint16_t sprite, uint16_t list)
 				zoomed_object = object;
 				stack_3 = sprite >> 8;
 				stack_2 = (uint8_t)sprite;
-				stack_4 = b;
+				stack_4 = zoom_x;
 				window_bank = 0x1Du;
 				set_lines(window_bank);
 				b = stack_4;
 				carry = (int8_t)b < 0;
 				stack_4 = zoom_offset;
 				stack_5 = 0u;
-				t10 = (uint32_t)mem_read16(zoom_steps_address[0] + ((carry << 8) | (uint8_t)((uint32_t)b << 1))) * (uint16_t)(((uint32_t)stack_5 << 8) | stack_4);
-				stack_5 = (uint16_t)t10 >> 8;
-				stack_6 = t10 >> 16;
-				t11 = ((uint32_t)stack_6 << 8) | stack_5;
-				zoomed_offset = t11;
+				zoomed_product_x = (uint32_t)mem_read16(zoom_steps_address[0] + ((carry << 8) | (uint8_t)((uint32_t)b << 1))) * (uint16_t)(((uint32_t)stack_5 << 8) | stack_4);
+				stack_5 = (uint16_t)zoomed_product_x >> 8;
+				stack_6 = zoomed_product_x >> 16;
+				scaled_offset_x = ((uint32_t)stack_6 << 8) | stack_5;
+				zoomed_offset = scaled_offset_x;
 				sprite = ((uint32_t)stack_3 << 8) | stack_2;
 				object = zoomed_object;
 				if (((frame_attributes ^ zoom_offset_negative) & 0x10u) != 0u)
 				{
-					t12 = io_read16(object + 0xCu);
-					t13 = t12 - zoomed_offset;
-					a = (uint8_t)(t13 >> 8);
-					b = (uint8_t)t13;
+					x_before_minus = OBJECT(object)->x;
+					x_minus_offset = x_before_minus - zoomed_offset;
+					a = (uint8_t)(x_minus_offset >> 8);
+					b = (uint8_t)x_minus_offset;
 				}
 				else
 				{
-					t14 = io_read16(object + 0xCu);
-					t15 = t14 + zoomed_offset;
-					a = (uint8_t)(t15 >> 8);
-					b = (uint8_t)t15;
+					x_before_plus = OBJECT(object)->x;
+					x_plus_offset = x_before_plus + zoomed_offset;
+					a = (uint8_t)(x_plus_offset >> 8);
+					b = (uint8_t)x_plus_offset;
 				}
 			}
-			mem_write16(sprite + 6u, ((uint32_t)a << 8) | b);
+			SPRITE_ENTRY(sprite)->x = ((uint32_t)a << 8) | b;
 			stack_3 = list >> 8;
 			stack_2 = (uint8_t)list;
 			window_bank = stack;
 			set_lines(window_bank);
 			list = ((uint32_t)stack_3 << 8) | stack_2;
-			t16 = mem_read8(object + 0xBu);
-			b = t16;
-			if (b < 0x10u)
-				b = 0x10u;
-			mem_write8(sprite + 9u, b);
-			b -= 0x10u;
+			object_zoom_y = OBJECT(object)->zoom_y;
+			zoom_y = object_zoom_y;
+			if (zoom_y < 0x10u)
+				zoom_y = 0x10u;
+			SPRITE_ENTRY(sprite)->zoom_y = zoom_y;
+			zoom_y -= 0x10u;
 			zoom_offset_negative = 0u;
-			t17 = list;
-			list = t17 + 1u;
-			t18 = mem_read8(t17);
-			negative = t18 >> 7;
-			a = t18;
-			if (t18 == 0u)
+			offset_y_at = list;
+			list = offset_y_at + 1u;
+			listed_offset_y = mem_read8(offset_y_at);
+			negative = listed_offset_y >> 7;
+			a = listed_offset_y;
+			if (listed_offset_y == 0u)
 			{
-				t19 = mem_read16(object + 0x11u);
-				a = (uint8_t)(t19 >> 8);
-				b = (uint8_t)t19;
+				plain_y = OBJECT(object)->y;
+				a = (uint8_t)(plain_y >> 8);
+				b = (uint8_t)plain_y;
 			}
 			else
 			{
@@ -721,77 +726,77 @@ uint16_t write_object_sprites(uint16_t object, uint16_t sprite, uint16_t list)
 				zoomed_object = object;
 				stack_3 = sprite >> 8;
 				stack_2 = (uint8_t)sprite;
-				stack_4 = b;
+				stack_4 = zoom_y;
 				window_bank = 0x1Du;
 				set_lines(window_bank);
 				b = stack_4;
 				carry = (int8_t)b < 0;
 				stack_4 = zoom_offset;
 				stack_5 = 0u;
-				t20 = (uint32_t)mem_read16(zoom_steps_address[0] + ((carry << 8) | (uint8_t)((uint32_t)b << 1))) * (uint16_t)(((uint32_t)stack_5 << 8) | stack_4);
-				stack_5 = (uint16_t)t20 >> 8;
-				stack_6 = t20 >> 16;
-				t21 = ((uint32_t)stack_6 << 8) | stack_5;
-				zoomed_offset = t21;
+				zoomed_product_y = (uint32_t)mem_read16(zoom_steps_address[0] + ((carry << 8) | (uint8_t)((uint32_t)b << 1))) * (uint16_t)(((uint32_t)stack_5 << 8) | stack_4);
+				stack_5 = (uint16_t)zoomed_product_y >> 8;
+				stack_6 = zoomed_product_y >> 16;
+				scaled_offset_y = ((uint32_t)stack_6 << 8) | stack_5;
+				zoomed_offset = scaled_offset_y;
 				sprite = ((uint32_t)stack_3 << 8) | stack_2;
 				object = zoomed_object;
 				if (zoom_offset_negative != 0u)
 				{
-					t22 = io_read16(object + 0x11u);
-					t23 = t22 - zoomed_offset;
-					a = (uint8_t)(t23 >> 8);
-					b = (uint8_t)t23;
+					y_before_minus = OBJECT(object)->y;
+					y_minus_offset = y_before_minus - zoomed_offset;
+					a = (uint8_t)(y_minus_offset >> 8);
+					b = (uint8_t)y_minus_offset;
 				}
 				else
 				{
-					t24 = io_read16(object + 0x11u);
-					t25 = t24 + zoomed_offset;
-					a = (uint8_t)(t25 >> 8);
-					b = (uint8_t)t25;
+					y_before_plus = OBJECT(object)->y;
+					y_plus_offset = y_before_plus + zoomed_offset;
+					a = (uint8_t)(y_plus_offset >> 8);
+					b = (uint8_t)y_plus_offset;
 				}
 			}
-			t26 = mem_read16(object + 0x16u);
-			t27 = (((uint32_t)a << 8) | b) + t26;
-			mem_write16(sprite + 4u, t27);
+			zoomed_object_z = OBJECT(object)->z;
+			zoomed_sprite_y = (((uint32_t)a << 8) | b) + zoomed_object_z;
+			SPRITE_ENTRY(sprite)->y = zoomed_sprite_y;
 			window_bank = stack;
 			set_lines(window_bank);
 		}
 		else
 		{
-			t28 = list;
-			list = t28 + 1u;
-			b = mem_read8(t28);
+			plain_offset_x_at = list;
+			list = plain_offset_x_at + 1u;
+			b = mem_read8(plain_offset_x_at);
 			if ((frame_attributes & 0x10u) != 0u)
 				b = 0u - b;
-			t29 = (int8_t)b;
-			t30 = mem_read16(object + 0xCu);
-			t31 = t29 + t30;
-			mem_write16(sprite + 6u, t31);
-			t32 = list;
-			list = t32 + 1u;
-			t33 = (int8_t)mem_read8(t32);
-			t34 = mem_read16(object + 0x11u);
-			t35 = t33 + t34;
-			t36 = mem_read16(object + 0x16u);
-			t37 = t35 + t36;
-			mem_write16(sprite + 4u, t37);
-			mem_write8(sprite + 9u, 0x40u);
+			offset_x = (int8_t)b;
+			object_x = OBJECT(object)->x;
+			sprite_x = offset_x + object_x;
+			SPRITE_ENTRY(sprite)->x = sprite_x;
+			plain_offset_y_at = list;
+			list = plain_offset_y_at + 1u;
+			offset_y = (int8_t)mem_read8(plain_offset_y_at);
+			object_y = OBJECT(object)->y;
+			ground_y = offset_y + object_y;
+			plain_object_z = OBJECT(object)->z;
+			sprite_y = ground_y + plain_object_z;
+			SPRITE_ENTRY(sprite)->y = sprite_y;
+			SPRITE_ENTRY(sprite)->zoom_y = 0x40u;
 		}
 		sprite += 0x10u;
 		sprite_slot++;
 		if (sprite_slot == 8u)
 		{
-			t38 = mem_read16(sprite - 2u);
-			stack = t38;
-			stack_2 = t38 >> 8;
-			t39 = io_read16((((uint32_t)stack_2 << 8) | stack) + 0x59u);
-			sprite = t39;
+			next_block_object = SPRITE_ENTRY(sprite - 0x10u)->borrowed_object;
+			stack = next_block_object;
+			stack_2 = next_block_object >> 8;
+			next_block_sprites = io_read16((((uint32_t)stack_2 << 8) | stack) + 0x59u);
+			sprite = next_block_sprites;
 			sprite_slot = 0u;
 		}
-		t40 = frame_sprites_left - 1u;
-		frame_sprites_left = t40;
-	} while ((int8_t)t40 >= 0);
-	mem_write8(object, mem_read8(object) & 0xEFu);
+		sprites_left_was = frame_sprites_left - 1u;
+		frame_sprites_left = sprites_left_was;
+	} while ((int8_t)sprites_left_was >= 0);
+	OBJECT(object)->flags &= 0xEFu;
 	if (draw_shadow_sprite != 0u)
 	{
 		sprite = write_shadow_sprite(object, sprite);
@@ -801,20 +806,21 @@ uint16_t write_object_sprites(uint16_t object, uint16_t sprite, uint16_t list)
 	{
 		if (sprite_slot == 8u)
 		{
-			t41 = mem_read16(sprite - 2u);
-			lender = t41;
-			if (t41 == 0u)
+			spare_block_object = SPRITE_ENTRY(sprite - 0x10u)->borrowed_object;
+			lender = spare_block_object;
+			if (spare_block_object == 0u)
 				break;
-			mem_write16(sprite - 2u, 0u);
+			SPRITE_ENTRY(sprite - 0x10u)->borrowed_object = 0u;
 			lender_object = lender;
-			mem_write8(lender_object, 0u);
-			t42 = mem_read16(lender_object + 0x59u);
-			sprite = t42;
+			OBJECT(lender_object)->flags = 0u;
+			spare_block_sprites = OBJECT(lender_object)->sprites;
+			sprite = spare_block_sprites;
 			sprite_slot = 0u;
 		}
-		if (mem_read8(sprite) == 0u)
+		if (SPRITE_ENTRY(sprite)->flags == 0u)
 			break;
-		mem_write16(sprite, 0u);
+		SPRITE_ENTRY(sprite)->flags = 0u;
+		SPRITE_ENTRY(sprite)->depth = 0u;
 		sprite += 0x10u;
 		sprite_slot++;
 	}
@@ -853,12 +859,12 @@ void borrow_object_for_sprites(uint16_t *p_object, uint32_t *p_carry)
 void set_object_priority(uint16_t object)
 {
 	uint8_t priority = 0;
-	uint8_t attributes = 0, t1 = 0;
+	uint8_t attributes = 0, attribute_priority_bits = 0;
 
 	attributes = OBJECT(object)->attributes;
-	t1 = attributes & 0x30u;
-	priority = t1;
-	if (t1 == 0u)
+	attribute_priority_bits = attributes & 0x30u;
+	priority = attribute_priority_bits;
+	if (attribute_priority_bits == 0u)
 	{
 		object_sprite_priority = step_sprite_priority;
 		return;
@@ -874,23 +880,26 @@ uint16_t write_shadow_sprite(uint16_t object, uint16_t sprite)
 {
 	uint16_t shadow_sprite = 0;
 	uint8_t shadow_player = 0;
-	uint16_t floor_z = 0, t1 = 0, t2 = 0, t3 = 0, t4 = 0, code = 0;
+	uint16_t floor_z = 0, shadow_object_y = 0, shadow_y = 0, shadow_x = 0, shadow_record = 0, code = 0;
+	uint32_t priority_halfword = 0;
 
 	floor_z = OBJECT(object)->floor_z;
-	t1 = OBJECT(object)->y;
-	t2 = floor_z + t1;
-	mem_write16(sprite + 4u, t2);
-	t3 = OBJECT(object)->x;
-	mem_write16(sprite + 6u, t3);
+	shadow_object_y = OBJECT(object)->y;
+	shadow_y = floor_z + shadow_object_y;
+	SPRITE_ENTRY(sprite)->y = shadow_y;
+	shadow_x = OBJECT(object)->x;
+	SPRITE_ENTRY(sprite)->x = shadow_x;
 	shadow_player = OBJECT(object)->shadow_player;
-	t4 = shadow_sprites_ADDRESS + (uint8_t)(((shadow_player & 0xFu) << 1) << 1);
-	shadow_sprite = t4 + 1u;
-	mem_write8(sprite, SHADOW_SPRITE(t4)->attributes);
+	shadow_record = shadow_sprites_ADDRESS + (uint8_t)(((shadow_player & 0xFu) << 1) << 1);
+	shadow_sprite = shadow_record + 1u;
+	SPRITE_ENTRY(sprite)->flags = SHADOW_SPRITE(shadow_record)->attributes;
 	set_object_priority(object);
-	mem_write16(sprite + 0xCu, (object_sprite_priority | 0x80u) << 8);
+	priority_halfword = (object_sprite_priority | 0x80u) << 8;
+	SPRITE_ENTRY(sprite)->priority = (uint8_t)(priority_halfword >> 8u);
+	SPRITE_ENTRY(sprite)->colour = (uint8_t)priority_halfword;
 	code = SHADOW_SPRITE(shadow_sprite - 0x1u)->code;
-	mem_write16(sprite + 2u, code);
-	mem_write8(sprite + 9u, 0x40u);
+	SPRITE_ENTRY(sprite)->code = code;
+	SPRITE_ENTRY(sprite)->zoom_y = 0x40u;
 	sprite += 0x10u;
 	return sprite;
 }

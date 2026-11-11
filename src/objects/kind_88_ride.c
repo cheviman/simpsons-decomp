@@ -3,7 +3,7 @@
  *    Description: Krustyland's ride: its hub, its arms, the kind 88 enemies riding it
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    10-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -12,76 +12,73 @@
 #include "game.h"
 
 /* Sets up the ride's hub, unseen. */
-void kind_88_ride_start(uint16_t object, uint16_t *p_box, uint16_t *p_setup)
+uint16_t kind_88_ride_start(uint16_t object)
 {
-	uint16_t box = 0, setup = 0;
-	uint8_t t1 = 0, attributes = 0, state = 0;
-	uint16_t t2 = 0, t3 = 0;
+	uint16_t setup = 0;
+	uint8_t old_value = 0, attributes = 0, state = 0;
+	uint16_t old_x = 0, new_x = 0;
 
 	setup = kind_88_ride_setup_ADDRESS;
-	box = vector_object_setup(object, setup);
+	vector_object_setup(object, setup);
 	OBJECT(object)->flags = 4u;
-	t1 = io_read8(0x1881u);
+	old_value = io_read8(0x1881u);
 	io_write8(0x1881u, 0u);
 	attributes = OBJECT(object)->attributes;
 	OBJECT(object)->attributes = (attributes & 0xCFu) | 0x20u;
-	t2 = OBJECT(object)->x;
-	t3 = t2 + 0x40u;
-	OBJECT(object)->x = t3;
+	old_x = OBJECT(object)->x;
+	new_x = old_x + 0x40u;
+	OBJECT(object)->x = new_x;
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
-	*p_box = box;
-	*p_setup = setup;
+	return setup;
 }
 
 /* Holds the scroll until fewer than 2 enemies are left, then puts in its three arms a third of a turn
    apart. */
-void kind_88_ride_put_in_arms(uint16_t object, uint16_t *p_arm_record, uint16_t *p_arm)
+uint16_t kind_88_ride_put_in_arms(uint16_t object, uint16_t states)
 {
-	uint16_t arm_record = (uint16_t)*p_arm_record;
-	uint16_t arm = (uint16_t)*p_arm;
 	uint32_t carry = 0;
 	uint8_t angle = 0;
-	uint8_t t1 = 0, state = 0, arms = 0, t2 = 0;
+	uint16_t arm = 0, child_object = 0;
+	uint8_t enemies = 0, state = 0, arms = 0, arms_to_put = 0;
 
 	camera_x_held--;
-	t1 = io_read8(0x1876u);
-	if (t1 < 2u)
+	enemies = io_read8(0x1876u);
+	if (enemies >= 2u)
+		return states;
+	state = OBJECT(object)->state;
+	OBJECT(object)->state = state + 1u;
+	OBJECT(object)->kind_88_ride.arms = 0u;
+	ride_parts_left = 3u;
+	ride_part_angle = 0x40u;
+	do
 	{
-		state = OBJECT(object)->state;
-		OBJECT(object)->state = state + 1u;
-		OBJECT(object)->kind_88_ride.arms = 0u;
-		ride_parts_left = 3u;
-		ride_part_angle = 0x40u;
-		do
-		{
-			arm_record = kind_88_ride_put_in_arms_child_ADDRESS;
-			spawn_list_2_child(object, arm_record, &arm, &carry);
-			if (carry == 0u)
-				break;
-			OBJECT(arm)->kind_88_ride_arm.ride_hub = object;
-			arms = OBJECT(object)->kind_88_ride.arms;
-			OBJECT(object)->kind_88_ride.arms = arms + 1u;
-			OBJECT(arm)->kind_88_ride_arm.radius = 0x80u;
-			angle = ride_part_angle;
-			OBJECT(arm)->kind_88_ride_arm.angle = angle;
-			ride_part_angle = angle + 0x55u;
-			OBJECT(arm)->kind_88_ride_arm.frame_offset = (((uint32_t)ride_parts_left << 1) << 1) << 1;
-			t2 = ride_parts_left;
-			ride_parts_left = t2 - 1u;
-		} while (t2 != 1u);
-	}
-	*p_arm_record = arm_record;
-	*p_arm = arm;
+		leftover_y = kind_88_ride_put_in_arms_child_ADDRESS;
+		child_object = kind_88_ride_put_in_arms_child_ADDRESS;
+		spawn_list_2_child(object, child_object, &arm, &carry);
+		if (carry == 0u)
+			break;
+		OBJECT(arm)->kind_88_ride_arm.ride_hub = object;
+		arms = OBJECT(object)->kind_88_ride.arms;
+		OBJECT(object)->kind_88_ride.arms = arms + 1u;
+		OBJECT(arm)->kind_88_ride_arm.radius = 0x80u;
+		angle = ride_part_angle;
+		OBJECT(arm)->kind_88_ride_arm.angle = angle;
+		ride_part_angle = angle + 0x55u;
+		OBJECT(arm)->kind_88_ride_arm.frame_offset = (((uint32_t)ride_parts_left << 1) << 1) << 1;
+		arms_to_put = ride_parts_left;
+		ride_parts_left = arms_to_put - 1u;
+	} while (arms_to_put != 1u);
+	return arm;
 }
 
 /* Waits until 1884 is set. */
 void kind_88_ride_wait_signal(uint16_t object)
 {
-	uint8_t t1 = 0, state = 0;
+	uint8_t stop_signal = 0, state = 0;
 
-	t1 = io_read8(0x1884u);
-	if (t1 != 0u)
+	stop_signal = io_read8(0x1884u);
+	if (stop_signal != 0u)
 	{
 		OBJECT(object)->timer = 0x40u;
 		state = OBJECT(object)->state;
@@ -106,10 +103,10 @@ void kind_88_ride_wait(uint16_t object)
 /* Waits until fewer than 2 enemies are left. */
 void kind_88_ride_wait_enemies(uint16_t object)
 {
-	uint8_t t1 = 0, state = 0;
+	uint8_t enemies = 0, state = 0;
 
-	t1 = io_read8(0x1876u);
-	if (t1 < 2u)
+	enemies = io_read8(0x1876u);
+	if (enemies < 2u)
 	{
 		state = OBJECT(object)->state;
 		OBJECT(object)->state = state + 1u;
@@ -117,25 +114,25 @@ void kind_88_ride_wait_enemies(uint16_t object)
 }
 
 /* Once its arms and riders are gone, goes away, putting in a last goon. */
-void kind_88_ride_end(uint16_t object, uint16_t *p_y, uint16_t *p_u)
+uint16_t kind_88_ride_end(uint16_t object, uint16_t states)
 {
-	uint16_t y = (uint16_t)*p_y;
-	uint16_t u = (uint16_t)*p_u;
 	uint32_t carry = 0;
-	uint16_t ignored16 = 0, record = 0, u_2 = 0;
+	uint16_t ignored16 = 0, ignored16_2 = 0, u = 0;
 	uint8_t arms = 0, riders_out = 0;
 
 	arms = OBJECT(object)->kind_88_ride.arms;
-	if (arms != 0u)
-		return;
-	riders_out = OBJECT(object)->kind_88_ride.riders_out;
-	if (riders_out != 0u)
-		return;
-	OBJECT(object)->flags = 0u;
-	record = kind_88_ride_end_child_ADDRESS;
-	*p_u = u_2;
-	vector_spawn_child(object, record, p_u, &ignored16, &carry);
-	*p_y = record;
+	if (arms == 0u)
+	{
+		riders_out = OBJECT(object)->kind_88_ride.riders_out;
+		if (riders_out == 0u)
+		{
+			OBJECT(object)->flags = 0u;
+			leftover_y = kind_88_ride_end_child_ADDRESS;
+			vector_spawn_child(object, &ignored16, &u, &ignored16_2, &carry);
+			return u;
+		}
+	}
+	return states;
 }
 
 /* Sets up an arm of the ride, unseen, at its place round the hub. */
@@ -163,8 +160,8 @@ void kind_88_ride_arm_put_in_riders(uint16_t object)
 {
 	uint32_t carry = 0;
 	uint8_t angle = 0, riders_left = 0;
-	uint16_t ignored16 = 0, rider = 0, rider_record = 0;
-	uint8_t riders = 0, riders_on = 0, frame_offset = 0, t1 = 0;
+	uint16_t ignored16 = 0, ignored16_2 = 0, rider = 0;
+	uint8_t riders = 0, riders_on = 0, frame_offset = 0, riders_to_put = 0;
 
 	OBJECT(object)->kind_88_ride_arm.riders = 0u;
 	OBJECT(object)->kind_88_ride_arm.riders_on = 0u;
@@ -172,8 +169,8 @@ void kind_88_ride_arm_put_in_riders(uint16_t object)
 	ride_part_angle = 0x40u;
 	do
 	{
-		rider_record = kind_88_ride_arm_put_in_riders_child_ADDRESS;
-		vector_spawn_child(object, rider_record, &rider, &ignored16, &carry);
+		leftover_y = kind_88_ride_arm_put_in_riders_child_ADDRESS;
+		vector_spawn_child(object, &ignored16, &rider, &ignored16_2, &carry);
 		if (carry == 0u)
 			break;
 		riders = OBJECT(object)->kind_88_ride_arm.riders;
@@ -189,9 +186,9 @@ void kind_88_ride_arm_put_in_riders(uint16_t object)
 		frame_offset = OBJECT(object)->kind_88_ride_arm.frame_offset;
 		OBJECT(rider)->kind_88.frame_offset = riders_left + frame_offset;
 		OBJECT(rider)->timer = 1u;
-		t1 = ride_parts_left;
-		ride_parts_left = t1 - 1u;
-	} while (t1 != 1u);
+		riders_to_put = ride_parts_left;
+		ride_parts_left = riders_to_put - 1u;
+	} while (riders_to_put != 1u);
 }
 
 /* Puts in its riders, then waits until the hub starts the ride. */
@@ -296,21 +293,21 @@ uint16_t kind_88_ride_arm_turn_until_empty(uint16_t object, uint16_t hub)
 uint16_t kind_88_ride_arm_orbit(uint16_t object)
 {
 	uint16_t angle_and_radius = 0, hub = 0;
-	uint16_t ride_hub = 0, t1 = 0, t2 = 0, t3 = 0, t4 = 0, t5 = 0;
+	uint16_t ride_hub = 0, old_angle_and_radius = 0, hub_x = 0, own_x = 0, hub_y = 0, own_y = 0;
 
 	ride_hub = OBJECT(object)->kind_88_ride_arm.ride_hub;
 	hub = ride_hub;
-	t1 = (((uint32_t)OBJECT(object)->kind_88_ride_arm.angle << 8u) | OBJECT(object)->kind_88_ride_arm.radius);
-	angle_and_radius = (t1 & 0xFFu) | ((uint32_t)(uint8_t)((t1 >> 8) - 1u) << 8);
+	old_angle_and_radius = (((uint32_t)OBJECT(object)->kind_88_ride_arm.angle << 8u) | OBJECT(object)->kind_88_ride_arm.radius);
+	angle_and_radius = (old_angle_and_radius & 0xFFu) | ((uint32_t)(uint8_t)((old_angle_and_radius >> 8) - 1u) << 8);
 	OBJECT(object)->kind_88_ride_arm.angle = angle_and_radius >> 8;
 	orbit_offset(angle_and_radius);
-	t2 = OBJECT(hub)->x;
-	t3 = OBJECT(object)->x;
-	OBJECT(object)->x_speed = (uint32_t)(uint8_t)(t2 + orbit_x_offset - t3) << 8;
+	hub_x = OBJECT(hub)->x;
+	own_x = OBJECT(object)->x;
+	OBJECT(object)->x_speed = (uint32_t)(uint8_t)(hub_x + orbit_x_offset - own_x) << 8;
 	orbit_y_offset = (int16_t)orbit_y_offset >> 1;
-	t4 = OBJECT(hub)->y;
-	t5 = OBJECT(object)->y;
-	OBJECT(object)->y_speed = (uint32_t)(uint8_t)(t4 + orbit_y_offset - t5) << 8;
+	hub_y = OBJECT(hub)->y;
+	own_y = OBJECT(object)->y;
+	OBJECT(object)->y_speed = (uint32_t)(uint8_t)(hub_y + orbit_y_offset - own_y) << 8;
 	return hub;
 }
 
@@ -320,7 +317,7 @@ uint16_t kind_88_piece_start(uint16_t object)
 	uint8_t random = 0;
 	uint16_t rider = 0, setup = 0;
 	uint8_t attributes = 0, second_look = 0, state = 0;
-	uint16_t parent = 0, t1 = 0, x_speed = 0;
+	uint16_t parent = 0, screen_x = 0, x_speed = 0;
 
 	setup = kind_88_piece_setup_ADDRESS;
 	vector_object_setup(object, setup);
@@ -338,8 +335,8 @@ uint16_t kind_88_piece_start(uint16_t object)
 		OBJECT(object)->kind_88_piece.second_look = second_look + 1u;
 		OBJECT(object)->animation = 0xB9u;
 	}
-	t1 = OBJECT(object)->x;
-	if (t1 >= 0xE0u)
+	screen_x = OBJECT(object)->x;
+	if (screen_x >= 0xE0u)
 	{
 		x_speed = OBJECT(object)->x_speed;
 		OBJECT(object)->x_speed = 0u - x_speed;
@@ -355,11 +352,11 @@ void kind_88_piece_fall(uint16_t object)
 {
 	uint32_t carry = 0;
 	uint8_t second_look = 0, state = 0;
-	uint16_t z_speed = 0, t1 = 0;
+	uint16_t z_speed = 0, new_z_speed = 0;
 
 	z_speed = OBJECT(object)->z_speed;
-	t1 = z_speed - 0x18u;
-	OBJECT(object)->z_speed = t1;
+	new_z_speed = z_speed - 0x18u;
+	OBJECT(object)->z_speed = new_z_speed;
 	carry = vector_check_landing(object);
 	if (carry == 0u)
 		return;
@@ -387,7 +384,7 @@ void kind_88_piece_blink(uint16_t object)
 }
 
 /* Beaten: goes away with sound 6C00, counted off the hub, shedding its piece. */
-uint16_t kind_88_beaten(uint16_t object)
+void kind_88_beaten(uint16_t object)
 {
 	uint32_t carry = 0;
 	uint16_t command = 0, hub = 0, ignored16 = 0, piece_record = 0;
@@ -408,11 +405,11 @@ uint16_t kind_88_beaten(uint16_t object)
 	OBJECT(object)->points = points | 0x80u;
 	piece_record = kind_88_beaten_child_ADDRESS;
 	spawn_list_2_child(object, piece_record, &ignored16, &carry);
-	return spawn_kind_90_effect(object);
+	spawn_kind_90_effect(object);
 }
 
 /* Runs the enemy's knock-back by its substep, keeping it on screen. */
-uint16_t kind_88_hit_steps(uint16_t object, uint16_t box)
+void kind_88_hit_steps(uint16_t object)
 {
 	uint8_t action_step = 0;
 
@@ -429,7 +426,7 @@ uint16_t kind_88_hit_steps(uint16_t object, uint16_t box)
 		kind_88_knocked_wait();
 		break;
 	}
-	return kind_88_keep_on_screen(object, box);
+	kind_88_keep_on_screen(object);
 }
 
 /* Gives the enemy its weak colour once its life is under 7. */
@@ -455,7 +452,7 @@ void kind_88_knocked(uint16_t object)
 	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t attributes = 0, blocked = 0, action_step = 0;
-	uint16_t t1 = 0, x_speed = 0, x_speed_2 = 0;
+	uint16_t screen_x = 0, x_speed = 0, x_speed_2 = 0;
 
 	OBJECT(object)->animation = 0x84u;
 	attributes = OBJECT(object)->attributes;
@@ -466,8 +463,8 @@ void kind_88_knocked(uint16_t object)
 	blocked = OBJECT(object)->blocked;
 	if (blocked != 0u)
 	{
-		t1 = OBJECT(object)->x;
-		if (t1 >= 0xE0u)
+		screen_x = OBJECT(object)->x;
+		if (screen_x >= 0xE0u)
 		{
 			x_speed = OBJECT(object)->x_speed;
 			OBJECT(object)->x_speed = 0u - x_speed;
@@ -491,7 +488,7 @@ void kind_88_knocked_fall(uint16_t object)
 	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t timer = 0, timer_2 = 0, attributes = 0, animation_flags = 0, action_step = 0;
-	uint16_t z_speed = 0, t1 = 0;
+	uint16_t z_speed = 0, new_z_speed = 0;
 
 	timer = OBJECT(object)->timer;
 	OBJECT(object)->timer = timer - 1u;
@@ -506,8 +503,8 @@ void kind_88_knocked_fall(uint16_t object)
 		OBJECT(object)->animation_flags = animation_flags | 0x80u;
 	}
 	z_speed = OBJECT(object)->z_speed;
-	t1 = z_speed - 0x20u;
-	OBJECT(object)->z_speed = t1;
+	new_z_speed = z_speed - 0x20u;
+	OBJECT(object)->z_speed = new_z_speed;
 	carry = vector_check_landing(object);
 	if (carry == 0u)
 	{
@@ -528,14 +525,14 @@ void kind_88_knocked_wait(void)
 }
 
 /* Sets up a kind 88 rider, hidden, on its arm. */
-uint16_t kind_88_start(uint16_t object)
+void kind_88_start(uint16_t object)
 {
-	uint16_t arm = 0, box = 0, setup = 0;
+	uint16_t arm = 0, setup = 0;
 	uint8_t entrance_pending = 0, attributes = 0, enemy_class = 0, action = 0, state = 0;
 	uint16_t parent = 0, ride_hub = 0;
 
 	setup = kind_88_setup_ADDRESS;
-	box = vector_object_setup(object, setup);
+	vector_object_setup(object, setup);
 	parent = OBJECT(object)->parent;
 	arm = parent;
 	ride_hub = OBJECT(arm)->kind_88_ride_arm.ride_hub;
@@ -553,7 +550,6 @@ uint16_t kind_88_start(uint16_t object)
 	kind_88_follow_arm(object);
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
-	return box;
 }
 
 /* Waits on its arm until the ride starts. */
@@ -637,7 +633,7 @@ void kind_88_follow_arm(uint16_t object)
 	uint8_t angle = 0;
 	uint16_t angle_and_radius = 0, arm = 0;
 	uint8_t parameter = 0, angle_2 = 0, angle_3 = 0, radius = 0;
-	uint16_t parent = 0, t1 = 0, t2 = 0, t3 = 0, t4 = 0;
+	uint16_t parent = 0, arm_x = 0, own_x = 0, arm_y = 0, own_y = 0;
 
 	parent = OBJECT(object)->parent;
 	arm = parent;
@@ -657,23 +653,23 @@ void kind_88_follow_arm(uint16_t object)
 	OBJECT(object)->kind_88.angle = angle;
 	angle_and_radius = ((uint32_t)angle << 8) | radius;
 	orbit_offset(angle_and_radius);
-	t1 = OBJECT(arm)->x;
-	t2 = OBJECT(object)->x;
-	angle = (uint8_t)((((uint32_t)angle << 8) | (uint8_t)((((uint32_t)angle << 8) | (uint8_t)t1) + orbit_x_offset)) - t2);
+	arm_x = OBJECT(arm)->x;
+	own_x = OBJECT(object)->x;
+	angle = (uint8_t)((((uint32_t)angle << 8) | (uint8_t)((((uint32_t)angle << 8) | (uint8_t)arm_x) + orbit_x_offset)) - own_x);
 	OBJECT(object)->x_speed = (uint32_t)angle << 8;
 	orbit_y_offset = (int16_t)orbit_y_offset >> 1;
 	orbit_y_offset = (int16_t)orbit_y_offset >> 1;
-	t3 = OBJECT(arm)->y;
-	t4 = OBJECT(object)->y;
-	OBJECT(object)->y_speed = (uint32_t)(uint8_t)((((uint32_t)angle << 8) | (uint8_t)((((uint32_t)angle << 8) | (uint8_t)t3) + orbit_y_offset)) - t4) << 8;
+	arm_y = OBJECT(arm)->y;
+	own_y = OBJECT(object)->y;
+	OBJECT(object)->y_speed = (uint32_t)(uint8_t)((((uint32_t)angle << 8) | (uint8_t)((((uint32_t)angle << 8) | (uint8_t)arm_y) + orbit_y_offset)) - own_y) << 8;
 }
 
 /* Rides round until its turn comes with the arm at the front, then leaps off towards the players. */
-uint16_t kind_88_leap_off(uint16_t object, uint16_t hub)
+void kind_88_leap_off(uint16_t object)
 {
-	uint16_t arm = 0;
+	uint16_t arm = 0, hub = 0;
 	uint8_t riders = 0, leave_turn = 0, too_many_out = 0, angle = 0, angle_2 = 0, riders_on = 0, riders_out = 0, attributes = 0, state = 0;
-	uint16_t parent = 0, hub_2 = 0, t1 = 0, x_speed = 0;
+	uint16_t parent = 0, hub_2 = 0, random_x_speed = 0, x_speed = 0;
 
 	kind_88_follow_arm(object);
 	parent = OBJECT(object)->parent;
@@ -684,6 +680,7 @@ uint16_t kind_88_leap_off(uint16_t object, uint16_t hub)
 	{
 		hub_2 = OBJECT(object)->kind_88.hub;
 		hub = hub_2;
+		leftover_y = hub;
 		too_many_out = OBJECT(hub)->kind_88_ride.too_many_out;
 		if (too_many_out == 0u)
 		{
@@ -692,13 +689,13 @@ uint16_t kind_88_leap_off(uint16_t object, uint16_t hub)
 			{
 				angle_2 = OBJECT(object)->kind_88.angle;
 				if ((angle_2 & 0x7Fu) < 8u)
-					return hub;
+					return;
 				riders_on = OBJECT(arm)->kind_88_ride_arm.riders_on;
 				OBJECT(arm)->kind_88_ride_arm.riders_on = riders_on - 1u;
 				riders_out = OBJECT(hub)->kind_88_ride.riders_out;
 				OBJECT(hub)->kind_88_ride.riders_out = riders_out + 1u;
-				t1 = (uint32_t)random_number << 1;
-				OBJECT(object)->x_speed = t1;
+				random_x_speed = (uint32_t)random_number << 1;
+				OBJECT(object)->x_speed = random_x_speed;
 				if (random_number & 1u)
 				{
 					x_speed = OBJECT(object)->x_speed;
@@ -712,13 +709,12 @@ uint16_t kind_88_leap_off(uint16_t object, uint16_t hub)
 				OBJECT(object)->attributes = (attributes & 0xCFu) | 0x10u;
 				state = OBJECT(object)->state;
 				OBJECT(object)->state = state + 1u;
-				hub = kind_88_leap_off_box_ADDRESS;
-				vector_set_hit_box(object, hub);
+				leftover_y = kind_88_leap_off_box_ADDRESS;
+				vector_set_hit_box(object);
 				OBJECT(object)->box_dz = 0x30u;
 			}
 		}
 	}
-	return hub;
 }
 
 /* Lands with sound 6B00, counted off its arm, and is in play. */
@@ -727,11 +723,11 @@ void kind_88_leap_land(uint16_t object)
 	uint32_t carry = 0;
 	uint16_t arm = 0, command = 0;
 	uint8_t riders = 0, state = 0;
-	uint16_t z_speed = 0, t1 = 0, parent = 0;
+	uint16_t z_speed = 0, new_z_speed = 0, parent = 0;
 
 	z_speed = OBJECT(object)->z_speed;
-	t1 = z_speed - 0x20u;
-	OBJECT(object)->z_speed = t1;
+	new_z_speed = z_speed - 0x20u;
+	OBJECT(object)->z_speed = new_z_speed;
 	carry = vector_check_landing(object);
 	if (carry == 0u)
 		return;
@@ -753,20 +749,19 @@ void kind_88_leap_land(uint16_t object)
 }
 
 /* Takes its standing hit box. */
-uint16_t kind_88_ready(uint16_t object)
+void kind_88_ready(uint16_t object)
 {
-	uint16_t box = 0;
 	uint8_t state = 0;
 
-	box = kind_88_body_box_ADDRESS;
-	vector_set_hit_box(object, box);
+	leftover_y = kind_88_body_box_ADDRESS;
+	vector_set_hit_box(object);
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
-	return kind_88_ready_wait(object, box);
+	kind_88_ready_wait(object);
 }
 
 /* After 64 frames faces the nearest player and starts fighting. */
-uint16_t kind_88_ready_wait(uint16_t object, uint16_t box)
+void kind_88_ready_wait(uint16_t object)
 {
 	uint16_t target = 0;
 	uint8_t timer = 0, state = 0;
@@ -774,28 +769,31 @@ uint16_t kind_88_ready_wait(uint16_t object, uint16_t box)
 	timer = OBJECT(object)->timer;
 	OBJECT(object)->timer = timer - 1u;
 	if (timer != 1u)
-		return kind_88_keep_on_screen(object, box);
+	{
+		kind_88_keep_on_screen(object);
+		return;
+	}
 	OBJECT(object)->animation = 0x81u;
 	target = vector_choose_nearest_player(object);
 	vector_measure_target(object, target);
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
 	OBJECT(object)->action_step = 0u;
-	return kind_88_keep_on_screen(object, box);
+	kind_88_keep_on_screen(object);
 }
 
 /* Turns the enemy back with a hop when it goes off the screen's sides, and off walls up and down. */
-uint16_t kind_88_keep_on_screen(uint16_t object, uint16_t box)
+void kind_88_keep_on_screen(uint16_t object)
 {
 	uint32_t negative = 0;
 	uint8_t floor_value = 0, random = 0;
 	uint16_t floor_cell = 0;
 	uint8_t blocked = 0;
-	uint16_t t1 = 0, t2 = 0, y_speed = 0, x_speed = 0, x_speed_2 = 0, y_speed_2 = 0;
+	uint16_t screen_x = 0, from_left_edge = 0, y_speed = 0, x_speed = 0, x_speed_2 = 0, y_speed_2 = 0;
 
-	t1 = OBJECT(object)->x;
-	t2 = t1 - 0x40u;
-	if (t2 < 0x140u)
+	screen_x = OBJECT(object)->x;
+	from_left_edge = screen_x - 0x40u;
+	if (from_left_edge < 0x140u)
 		OBJECT(object)->blocked = 0u;
 	else
 	{
@@ -809,7 +807,7 @@ uint16_t kind_88_keep_on_screen(uint16_t object, uint16_t box)
 				y_speed = OBJECT(object)->y_speed;
 				OBJECT(object)->y_speed = 0u - y_speed;
 			}
-			return box;
+			return;
 		}
 		x_speed = OBJECT(object)->x_speed;
 		OBJECT(object)->x_speed = (int16_t)x_speed >> 1;
@@ -826,8 +824,8 @@ uint16_t kind_88_keep_on_screen(uint16_t object, uint16_t box)
 		OBJECT(object)->z_speed = 0x200;
 		OBJECT(object)->flags = 0x88u;
 		OBJECT(object)->state = 9u;
-		box = kind_88_body_box_ADDRESS;
-		vector_set_hit_box(object, box);
+		leftover_y = kind_88_body_box_ADDRESS;
+		vector_set_hit_box(object);
 		OBJECT(object)->animation = 0x81u;
 	}
 	vector_floor_ahead_y(object, &floor_cell, &negative);
@@ -837,13 +835,11 @@ uint16_t kind_88_keep_on_screen(uint16_t object, uint16_t box)
 		y_speed = OBJECT(object)->y_speed;
 		OBJECT(object)->y_speed = 0u - y_speed;
 	}
-	return box;
 }
 
 /* Runs the kind 88 enemy's fight by its substep, keeping track of the nearest player. */
-void kind_88_fight_steps(uint16_t object, uint16_t *p_y, uint32_t *p_left_caller)
+uint32_t kind_88_fight_steps(uint16_t object, uint32_t left_caller)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint16_t ignored16 = 0, target = 0;
 	uint8_t action_step = 0;
 	uint16_t target_2 = 0;
@@ -861,36 +857,36 @@ void kind_88_fight_steps(uint16_t object, uint16_t *p_y, uint32_t *p_left_caller
 		kind_88_charge(object);
 		break;
 	case 6:
-		y = kind_88_charge_hit(object);
+		kind_88_charge_hit(object);
 		break;
 	case 8:
-		vector_goon_start(object, &y, &ignored16);
+		vector_goon_start(object);
 		break;
 	case 12:
 	case 24:
 	case 86:
-		vector_enemy_think(object, &y, &ignored16, p_left_caller);
+		vector_enemy_think(object, &ignored16, &left_caller);
 		break;
 	case 14:
 	case 26:
 	case 88:
-		vector_enemy_act(object, &y, &ignored16, p_left_caller);
+		vector_enemy_act(object, &ignored16, &left_caller);
 		break;
 	case 16:
 	case 28:
 	case 90:
-		enemy_hurt(object, &y, &ignored16);
+		enemy_hurt(object);
 		break;
 	case 18:
 	case 30:
 	case 92:
-		vector_enemy_climb(object, &y, &ignored16, p_left_caller);
+		vector_enemy_climb(object, &ignored16, &left_caller);
 		break;
 	case 20:
-		kind_98_start(object, &y, &ignored16);
+		kind_98_start(object);
 		break;
 	case 22:
-		kind_98_entrance_steps(object, &y, &ignored16);
+		kind_98_entrance_steps(object);
 		break;
 	}
 	if ((frame_count & 0xFu) == 0u)
@@ -898,8 +894,8 @@ void kind_88_fight_steps(uint16_t object, uint16_t *p_y, uint32_t *p_left_caller
 	target_2 = OBJECT(object)->target;
 	target = target_2;
 	vector_measure_target(object, target);
-	y = kind_88_keep_on_screen(object, y);
-	*p_y = y;
+	kind_88_keep_on_screen(object);
+	return left_caller;
 }
 
 /* Switches the side it comes at its target from. */
@@ -982,7 +978,7 @@ void kind_88_approach(uint16_t object)
 void kind_88_charge(uint16_t object)
 {
 	uint8_t timer = 0, blocked = 0, action_step = 0, target_direction = 0, attributes = 0, action_step_2 = 0;
-	uint16_t t1 = 0, x_speed = 0, x_speed_2 = 0;
+	uint16_t screen_x = 0, x_speed = 0, x_speed_2 = 0;
 
 	timer = OBJECT(object)->timer;
 	OBJECT(object)->timer = timer - 1u;
@@ -993,8 +989,8 @@ void kind_88_charge(uint16_t object)
 	blocked = OBJECT(object)->blocked;
 	if (blocked != 0u)
 	{
-		t1 = OBJECT(object)->x;
-		if (t1 >= 0xE0u)
+		screen_x = OBJECT(object)->x;
+		if (screen_x >= 0xE0u)
 		{
 			x_speed = OBJECT(object)->x_speed;
 			OBJECT(object)->x_speed = 0u - x_speed;
@@ -1017,9 +1013,8 @@ void kind_88_charge(uint16_t object)
 }
 
 /* Puts out the charging hit box one frame in eight. */
-uint16_t kind_88_charge_hit(uint16_t object)
+void kind_88_charge_hit(uint16_t object)
 {
-	uint16_t box = 0;
 	uint8_t timer = 0, timer_2 = 0;
 
 	timer = OBJECT(object)->timer;
@@ -1027,17 +1022,16 @@ uint16_t kind_88_charge_hit(uint16_t object)
 	timer_2 = OBJECT(object)->timer;
 	if ((timer_2 & 7u) != 0u)
 	{
-		box = kind_88_body_box_ADDRESS;
-		vector_set_hit_box(object, box);
-		return box;
+		leftover_y = kind_88_body_box_ADDRESS;
+		vector_set_hit_box(object);
+		return;
 	}
-	box = kind_88_leap_off_box_ADDRESS;
-	vector_set_hit_box(object, box);
-	return box;
+	leftover_y = kind_88_leap_off_box_ADDRESS;
+	vector_set_hit_box(object);
 }
 
 /* Lands from its hop with sound 6B00. */
-uint16_t kind_88_hop_land(uint16_t object, uint16_t box)
+void kind_88_hop_land(uint16_t object)
 {
 	uint32_t carry = 0;
 	uint16_t command = 0, ignored16 = 0;
@@ -1045,7 +1039,10 @@ uint16_t kind_88_hop_land(uint16_t object, uint16_t box)
 
 	vector_apply_gravity(object, &ignored16, &carry);
 	if (carry == 0u)
-		return kind_88_keep_on_screen(object, box);
+	{
+		kind_88_keep_on_screen(object);
+		return;
+	}
 	kind_88_colour_by_health(object);
 	command = 0x6B00u;
 	carry = vector_queue_sound(command);
@@ -1053,11 +1050,11 @@ uint16_t kind_88_hop_land(uint16_t object, uint16_t box)
 	OBJECT(object)->flags = 0xC0u;
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
-	return kind_88_keep_on_screen(object, box);
+	kind_88_keep_on_screen(object);
 }
 
 /* After 64 frames, gets ready to fight again. */
-uint16_t kind_88_hop_wait(uint16_t object, uint16_t box)
+void kind_88_hop_wait(uint16_t object)
 {
 	uint8_t timer = 0;
 
@@ -1068,5 +1065,5 @@ uint16_t kind_88_hop_wait(uint16_t object, uint16_t box)
 		OBJECT(object)->timer = 0x10u;
 		OBJECT(object)->state = 7u;
 	}
-	return kind_88_keep_on_screen(object, box);
+	kind_88_keep_on_screen(object);
 }

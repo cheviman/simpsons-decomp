@@ -3,7 +3,7 @@
  *    Description: the police car that drives into stage 1 and stage 2
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    10-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -12,9 +12,8 @@
 #include "game.h"
 
 /* Runs the police car's reaction to a hit, by its substep. */
-void police_car_hit_steps(uint16_t object, uint16_t *p_y, uint16_t *p_step_handlers)
+uint16_t police_car_hit_steps(uint16_t object)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint16_t step_handlers = 0;
 	uint8_t action_step = 0;
 
@@ -26,39 +25,33 @@ void police_car_hit_steps(uint16_t object, uint16_t *p_y, uint16_t *p_step_handl
 		{
 		case 0:
 			police_car_hit(object);
-			break;
+			return step_handlers;
 		case 2:
 			police_car_drive_off(object);
-			break;
+			return step_handlers;
 		case 4:
-			police_car_hit_wait();
 			break;
 		case -16:
 		case -14:
 			continue;
 		case -12:
-			police_car_start(object, &y, &step_handlers);
-			break;
+			return police_car_start(object);
 		case -10:
 			police_car_drive_in(object);
-			break;
+			return step_handlers;
 		case -8:
-			step_handlers = police_car_stopped(object, step_handlers);
-			break;
+			return police_car_stopped(object, step_handlers);
 		case -6:
-			step_handlers = police_car_wait(object, step_handlers);
-			break;
+			return police_car_wait(object, step_handlers);
 		case -4:
-			step_handlers = police_car_leave(object, step_handlers);
-			break;
+			return police_car_leave(object, step_handlers);
 		case -2:
-			step_handlers = police_car_driving_off(object, step_handlers);
-			break;
+			return police_car_driving_off(object, step_handlers);
 		}
 		break;
 	}
-	*p_y = y;
-	*p_step_handlers = step_handlers;
+	police_car_hit_wait();
+	return step_handlers;
 }
 
 /* Plays sound 6300 and the car's hit animation. */
@@ -97,14 +90,14 @@ void police_car_drive_off(uint16_t object)
 }
 
 /* Sets the police car up by its spawn's state: its speed, the frames it drives and its kind. */
-void police_car_start(uint16_t object, uint16_t *p_box, uint16_t *p_police_car_arrival)
+uint16_t police_car_start(uint16_t object)
 {
-	uint16_t box = 0, police_car_arrival = 0, setup = 0;
+	uint16_t police_car_arrival = 0, setup = 0;
 	uint8_t parameter = 0, state = 0;
 	uint16_t x_speed = 0, frames = 0;
 
 	setup = police_car_setup_ADDRESS;
-	box = vector_object_setup(object, setup);
+	vector_object_setup(object, setup);
 	OBJECT(object)->flags = 0x80u;
 	parameter = OBJECT(object)->parameter;
 	police_car_arrival = police_car_arrivals_ADDRESS + (int8_t)(((uint32_t)parameter << 1) << 1);
@@ -116,8 +109,7 @@ void police_car_start(uint16_t object, uint16_t *p_box, uint16_t *p_police_car_a
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
 	face_movement(object);
-	*p_box = box;
-	*p_police_car_arrival = police_car_arrival;
+	return police_car_arrival;
 }
 
 /* Drives in (holding the scroll in stage 1), then stops and tells the doors and bystanders (1884). */
@@ -242,36 +234,35 @@ uint16_t police_car_driving_off(uint16_t object, uint16_t hitter)
 
 /* Sets up a door of the police car: its wait and release list, or nothing if too few players are
    present. */
-void police_car_door_start(uint16_t object, uint16_t *p_box, uint16_t *p_police_car_door)
+uint16_t police_car_door_start(uint16_t object)
 {
-	uint16_t box = 0, police_car_door = 0, setup = 0;
-	uint8_t attributes = 0, parameter = 0, t1 = 0, trigger_x = 0, state = 0;
-	uint16_t t2 = 0, wait = 0;
+	uint16_t police_car_door = 0, setup = 0;
+	uint8_t attributes = 0, parameter = 0, players_now = 0, trigger_x = 0, state = 0;
+	uint16_t trigger_at_x = 0, wait = 0;
 
 	setup = police_car_door_setup_ADDRESS;
-	box = vector_object_setup(object, setup);
+	vector_object_setup(object, setup);
 	OBJECT(object)->flags = 0x80u;
 	attributes = OBJECT(object)->attributes;
 	OBJECT(object)->attributes = (attributes & 0xCFu) | 0x10u;
 	parameter = OBJECT(object)->parameter;
 	police_car_door = police_car_doors_ADDRESS + (int8_t)(((uint32_t)parameter << 1) << 1);
-	t1 = io_read8(0x1874u);
-	if (t1 < POLICE_CAR_DOOR(police_car_door)->players)
-		OBJECT(object)->state = 4u;
-	else
+	players_now = io_read8(0x1874u);
+	if (players_now < POLICE_CAR_DOOR(police_car_door)->players)
 	{
-		trigger_x = POLICE_CAR_DOOR(police_car_door)->trigger_x;
-		t2 = (uint32_t)trigger_x << 4;
-		OBJECT(object)->police_car_door.trigger_x = t2;
-		wait = (((uint32_t)POLICE_CAR_DOOR(police_car_door)->wait << 8u) | POLICE_CAR_DOOR(police_car_door)->releases);
-		OBJECT(object)->timer = wait >> 8;
-		OBJECT(object)->parameter = wait;
-		state = OBJECT(object)->state;
-		OBJECT(object)->state = state + 1u;
-		police_car_door_idle();
+		OBJECT(object)->state = 4u;
+		return police_car_door;
 	}
-	*p_box = box;
-	*p_police_car_door = police_car_door;
+	trigger_x = POLICE_CAR_DOOR(police_car_door)->trigger_x;
+	trigger_at_x = (uint32_t)trigger_x << 4;
+	OBJECT(object)->police_car_door.trigger_x = trigger_at_x;
+	wait = (((uint32_t)POLICE_CAR_DOOR(police_car_door)->wait << 8u) | POLICE_CAR_DOOR(police_car_door)->releases);
+	OBJECT(object)->timer = wait >> 8;
+	OBJECT(object)->parameter = wait;
+	state = OBJECT(object)->state;
+	OBJECT(object)->state = state + 1u;
+	police_car_door_idle();
+	return police_car_door;
 }
 
 /* Does nothing (a door too few players are present for). */
@@ -282,10 +273,10 @@ void police_car_door_idle(void)
 /* Waits until the police car has stopped. */
 void police_car_door_wait_car(uint16_t object)
 {
-	uint8_t t1 = 0, state = 0;
+	uint8_t car_stopped = 0, state = 0;
 
-	t1 = io_read8(0x1884u);
-	if (t1 != 0u)
+	car_stopped = io_read8(0x1884u);
+	if (car_stopped != 0u)
 	{
 		state = OBJECT(object)->state;
 		OBJECT(object)->state = state + 1u;
@@ -293,20 +284,18 @@ void police_car_door_wait_car(uint16_t object)
 }
 
 /* After its wait, opens and lets out the goons its list holds for the players present. */
-void police_car_door_open(uint16_t object, uint16_t *p_release, uint16_t *p_released)
+uint16_t police_car_door_open(uint16_t object, uint16_t states)
 {
-	uint16_t release = (uint16_t)*p_release;
-	uint16_t released = (uint16_t)*p_released;
 	uint32_t carry = 0;
-	uint8_t players = 0;
-	uint16_t ignored16 = 0;
-	uint8_t timer = 0, state = 0, parameter = 0, t2 = 0;
-	uint16_t t1 = 0;
+	uint8_t a = 0;
+	uint16_t ignored16 = 0, release = 0, released = 0;
+	uint8_t timer = 0, state = 0, parameter = 0, players_now = 0;
+	uint16_t release_record = 0;
 
 	timer = OBJECT(object)->timer;
 	OBJECT(object)->timer = timer - 1u;
 	if (timer != 1u)
-		return;
+		return states;
 	OBJECT(object)->animation = 0x95u;
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
@@ -315,18 +304,21 @@ void police_car_door_open(uint16_t object, uint16_t *p_release, uint16_t *p_rele
 	release = police_car_door_lists[(int8_t)((uint8_t)((uint32_t)parameter << 1)) / 2];
 	for (;;)
 	{
-		t1 = release;
-		release = t1 + 1u;
-		players = CAR_DOOR_RELEASE(t1)->players;
-		if (players == 0x7Fu)
+		release_record = release;
+		release = release_record + 1u;
+		a = mem_read8(release_record);
+		if (a == 0x7Fu)
 			break;
-		t2 = io_read8(0x1874u);
-		if (players < t2)
-			vector_spawn_child(object, release, &released, &ignored16, &carry);
+		players_now = io_read8(0x1874u);
+		if (a < players_now)
+		{
+			leftover_y = release;
+			vector_spawn_child(object, &release, &released, &ignored16, &carry);
+		}
 		release += 8u;
 	}
-	*p_release = release;
-	*p_released = released;
+	leftover_y = release;
+	return released;
 }
 
 /* When the door's animation ends, takes it away with sound 2200. */

@@ -3,7 +3,7 @@
  *    Description: the kind 87 character of stage 1 and its device
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    10-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -12,18 +12,17 @@
 #include "game.h"
 
 /* Sets up the device. */
-void kind_87_device_start(uint16_t object, uint16_t *p_box, uint16_t *p_setup)
+uint16_t kind_87_device_start(uint16_t object)
 {
-	uint16_t box = 0, setup = 0;
+	uint16_t setup = 0;
 	uint8_t state = 0;
 
 	setup = kind_87_device_setup_ADDRESS;
-	box = vector_object_setup(object, setup);
+	vector_object_setup(object, setup);
 	OBJECT(object)->attributes = 0u;
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
-	*p_box = box;
-	*p_setup = setup;
+	return setup;
 }
 
 /* Checks every 16 frames whether a player hit the device, and then calls its keeper over. */
@@ -53,14 +52,14 @@ void kind_87_device_idle(void)
 }
 
 /* Worked by its keeper: strikes (sound 6000), harder every other time. */
-uint16_t kind_87_device_strike(uint16_t object)
+void kind_87_device_strike(uint16_t object)
 {
 	uint32_t carry = 0;
-	uint16_t box = 0, command = 0;
+	uint16_t command = 0;
 	uint8_t strike_frames = 0, strike_frames_2 = 0, state = 0;
 
-	box = kind_87_device_strike_box_ADDRESS;
-	vector_set_hit_box(object, box);
+	leftover_y = kind_87_device_strike_box_ADDRESS;
+	vector_set_hit_box(object);
 	strike_frames = OBJECT(object)->kind_87_device.strike_frames;
 	OBJECT(object)->kind_87_device.strike_frames = strike_frames - 1u;
 	strike_frames_2 = OBJECT(object)->kind_87_device.strike_frames;
@@ -71,23 +70,21 @@ uint16_t kind_87_device_strike(uint16_t object)
 	OBJECT(object)->animation = 0x87u;
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
-	return box;
 }
 
 /* When the strike's animation ends, takes its standing hit box back. */
-uint16_t kind_87_device_strike_end(uint16_t object, uint16_t box)
+void kind_87_device_strike_end(uint16_t object)
 {
 	uint8_t animation_flags = 0, state = 0;
 
 	animation_flags = OBJECT(object)->animation_flags;
 	if ((animation_flags & 1u) == 0u)
-		return box;
-	box = kind_87_body_box_ADDRESS;
-	vector_set_hit_box(object, box);
+		return;
+	leftover_y = kind_87_body_box_ADDRESS;
+	vector_set_hit_box(object);
 	OBJECT(object)->timer = 0x20u;
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
-	return box;
 }
 
 /* After 32 frames, starts its reset animation. */
@@ -131,36 +128,35 @@ void kind_87_device_rest(uint16_t object)
 }
 
 /* Sets up the kind 87 character with its device, walking in from the right edge. */
-void kind_87_start(uint16_t object, uint16_t *p_child_record, uint16_t *p_u)
+uint16_t kind_87_start(uint16_t object)
 {
 	uint32_t carry = 0;
-	uint16_t child_record = 0, device = 0, ignored16 = 0, setup = 0;
+	uint16_t device = 0, ignored16 = 0, ignored16_2 = 0, setup = 0;
 	uint8_t attributes = 0, state = 0;
-	uint16_t t1 = 0, t2 = 0, t3 = 0, t4 = 0, t5 = 0;
+	uint16_t screen_x = 0, world_x = 0, home_place = 0, old_y = 0, new_y = 0;
 
 	setup = kind_87_setup_ADDRESS;
 	vector_object_setup(object, setup);
 	OBJECT(object)->flags = 0x80u;
 	attributes = OBJECT(object)->attributes;
 	OBJECT(object)->attributes = (attributes & 0xCFu) | 0x20u;
-	t1 = OBJECT(object)->x;
-	t2 = t1 + camera_x;
-	t3 = t2 - 0x30u;
-	OBJECT(object)->kind_87.home_x = t3;
-	child_record = kind_87_child_ADDRESS;
-	vector_spawn_child(object, child_record, &device, &ignored16, &carry);
+	screen_x = OBJECT(object)->x;
+	world_x = screen_x + camera_x;
+	home_place = world_x - 0x30u;
+	OBJECT(object)->kind_87.home_x = home_place;
+	leftover_y = kind_87_child_ADDRESS;
+	vector_spawn_child(object, &ignored16, &device, &ignored16_2, &carry);
 	OBJECT(object)->kind_87.device = device;
 	OBJECT(object)->x = 0x18Eu;
-	t4 = OBJECT(object)->y;
-	t5 = t4 - 6u;
-	OBJECT(object)->y = t5;
+	old_y = OBJECT(object)->y;
+	new_y = old_y - 6u;
+	OBJECT(object)->y = new_y;
 	OBJECT(object)->x_speed = -0x100;
 	OBJECT(object)->timer = 0x40u;
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
 	face_movement(object);
-	*p_child_record = child_record;
-	*p_u = device;
+	return device;
 }
 
 /* After 64 frames stops. */
@@ -184,7 +180,7 @@ void kind_87_stop(uint16_t object)
 void kind_87_wander(uint16_t object)
 {
 	uint8_t timer = 0, blocked = 0, state = 0;
-	uint16_t x_speed = 0, t1 = 0, t2 = 0, home_x = 0;
+	uint16_t x_speed = 0, screen_x = 0, world_x = 0, home_x = 0;
 
 	timer = OBJECT(object)->timer;
 	OBJECT(object)->timer = timer - 1u;
@@ -203,10 +199,10 @@ void kind_87_wander(uint16_t object)
 	}
 	else
 	{
-		t1 = OBJECT(object)->x;
-		t2 = t1 + camera_x;
+		screen_x = OBJECT(object)->x;
+		world_x = screen_x + camera_x;
 		home_x = OBJECT(object)->kind_87.home_x;
-		if (home_x <= t2)
+		if (home_x <= world_x)
 			OBJECT(object)->x_speed = -0x100;
 		else
 			OBJECT(object)->x_speed = 0x100;
@@ -222,14 +218,14 @@ uint16_t kind_87_run_to_device(uint16_t object)
 {
 	uint16_t device = 0;
 	uint8_t blocked = 0, state = 0;
-	uint16_t device_2 = 0, t1 = 0, t2 = 0, x_speed = 0;
+	uint16_t device_2 = 0, own_x = 0, device_x = 0, x_speed = 0;
 
 	OBJECT(object)->x_speed = 0x400;
 	device_2 = OBJECT(object)->kind_87.device;
 	device = device_2;
-	t1 = OBJECT(object)->x;
-	t2 = OBJECT(device)->x;
-	if (t2 <= t1)
+	own_x = OBJECT(object)->x;
+	device_x = OBJECT(device)->x;
+	if (device_x <= own_x)
 	{
 		x_speed = OBJECT(object)->x_speed;
 		OBJECT(object)->x_speed = 0u - x_speed;
@@ -248,16 +244,16 @@ uint16_t kind_87_reach_device(uint16_t object)
 {
 	uint16_t device = 0;
 	uint8_t attributes = 0, state = 0;
-	uint16_t device_2 = 0, t1 = 0, t2 = 0, t3 = 0, t4 = 0, t5 = 0, device_3 = 0;
+	uint16_t device_2 = 0, own_x = 0, device_x = 0, x_difference = 0, signed_x_difference = 0, x_distance = 0, device_3 = 0;
 
 	device_2 = OBJECT(object)->kind_87.device;
 	device = device_2;
-	t1 = OBJECT(object)->x;
-	t2 = OBJECT(device)->x;
-	t3 = t1 - t2;
-	t4 = t3;
-	t5 = t4 >> 15 ? 0u - t4 : t4;
-	if (t5 < 4u)
+	own_x = OBJECT(object)->x;
+	device_x = OBJECT(device)->x;
+	x_difference = own_x - device_x;
+	signed_x_difference = x_difference;
+	x_distance = signed_x_difference >> 15 ? 0u - signed_x_difference : signed_x_difference;
+	if (x_distance < 4u)
 	{
 		OBJECT(object)->x_speed = 0;
 		OBJECT(object)->y_speed = -0x100;

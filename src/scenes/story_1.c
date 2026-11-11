@@ -3,7 +3,7 @@
  *    Description: story 1: the opening
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    10-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -14,12 +14,12 @@
 /* Story 1, the opening: runs its part; carry set when a part has ended and the next one starts. */
 void story_1(uint16_t u)
 {
-	uint16_t x = 0;
-	uint8_t t1 = 0, t2 = 0, t3 = 0, t4 = 0, t5 = 0;
+	uint16_t scene_steps = 0;
+	uint8_t scene_step = 0, part_done = 0, discarded_read = 0, old_scene_state = 0, discarded_read_2 = 0;
 
-	x = story_1_states_ADDRESS;
-	t1 = io_read8(scene_state);
-	switch ((int8_t)(uint8_t)((uint32_t)t1 << 1))
+	scene_steps = story_1_states_ADDRESS;
+	scene_step = io_read8(scene_state);
+	switch ((int8_t)(uint8_t)((uint32_t)scene_step << 1))
 	{
 	case 0:
 		story_1_set_up_street(u);
@@ -28,7 +28,7 @@ void story_1(uint16_t u)
 		story_1_street(u);
 		break;
 	case 4:
-		story_1_redraw(x);
+		story_1_redraw(scene_steps);
 		break;
 	case 6:
 		story_1_rise(u);
@@ -49,10 +49,10 @@ void story_1(uint16_t u)
 		story_1_rise_coast();
 		break;
 	case 18:
-		story_1_pan_right(x);
+		story_1_pan_right(scene_steps);
 		break;
 	case 20:
-		story_1_pan_wait(x);
+		story_1_pan_wait(scene_steps);
 		break;
 	case 22:
 		story_1_end_start();
@@ -73,19 +73,19 @@ void story_1(uint16_t u)
 		story_1_show_text();
 		break;
 	case 42:
-		story_1_finish(x);
+		story_1_finish(scene_steps);
 		break;
 	case 44:
-		story_1_marge(x);
+		story_1_marge(scene_steps);
 		break;
 	case 46:
-		story_1_homer(x);
+		story_1_homer(scene_steps);
 		break;
 	case 48:
-		story_1_bart(x);
+		story_1_bart(scene_steps);
 		break;
 	case 50:
-		story_1_lisa(x);
+		story_1_lisa(scene_steps);
 		break;
 	case 52:
 		story_1_marge_walks_in();
@@ -100,7 +100,7 @@ void story_1(uint16_t u)
 		story_1_homer_walks_in();
 		break;
 	case 58:
-		story_1_homer_stops(x);
+		story_1_homer_stops(scene_steps);
 		break;
 	case 62:
 		story_1_bart_walks_in();
@@ -109,25 +109,25 @@ void story_1(uint16_t u)
 		story_1_lisa_walks_in();
 		break;
 	case 70:
-		story_1_smithers(x);
+		story_1_smithers(scene_steps);
 		break;
 	case 72:
-		story_1_first_goon(x);
+		story_1_first_goon(scene_steps);
 		break;
 	case 74:
-		story_1_second_goon(x);
+		story_1_second_goon(scene_steps);
 		break;
 	case 76:
 		story_1_smithers_runs_in();
 		break;
 	case 78:
-		story_1_smithers_collide(x);
+		story_1_smithers_collide(scene_steps);
 		break;
 	case 80:
-		story_1_smithers_drop(x);
+		story_1_smithers_drop(scene_steps);
 		break;
 	case 82:
-		story_1_smithers_run_off(x);
+		story_1_smithers_run_off(scene_steps);
 		break;
 	case 84:
 		story_1_smithers_gone();
@@ -137,11 +137,11 @@ void story_1(uint16_t u)
 		break;
 	case 88:
 	case 96:
-		story_1_goon_start_running(x);
+		story_1_goon_start_running(scene_steps);
 		break;
 	case 90:
 	case 98:
-		story_1_goon_run_off(x);
+		story_1_goon_run_off(scene_steps);
 		break;
 	case 92:
 	case 100:
@@ -154,29 +154,29 @@ void story_1(uint16_t u)
 		story_1_text_appears();
 		break;
 	case 104:
-		story_1_text_sound(x);
+		story_1_text_sound(scene_steps);
 		break;
 	case 106:
-		story_1_text_goes(x);
+		story_1_text_goes(scene_steps);
 		break;
 	case 108:
 		story_1_text_gone();
 		break;
 	case 110:
-		story_1_dropped_object_fall(x);
+		story_1_dropped_object_fall(scene_steps);
 		break;
 	case 112:
-		story_1_dropped_object_gone(x);
+		story_1_dropped_object_gone(scene_steps);
 		break;
 	}
-	t2 = io_read8(0x18E2u);
-	if (t2 == 0u)
+	part_done = io_read8(0x18E2u);
+	if (part_done == 0u)
 		return;
-	t3 = io_read8(0x18E2u);
+	discarded_read = io_read8(0x18E2u);
 	io_write8(0x18E2u, 0u);
-	t4 = io_read8(scene_state);
-	io_write8(scene_state, t4 + 1u);
-	t5 = io_read8(scene_substate);
+	old_scene_state = io_read8(scene_state);
+	io_write8(scene_state, old_scene_state + 1u);
+	discarded_read_2 = io_read8(scene_substate);
 	io_write8(scene_substate, 0u);
 }
 
@@ -185,8 +185,8 @@ void story_1(uint16_t u)
 uint16_t story_1_set_up_street(uint16_t palette_job)
 {
 	uint32_t carry = 0;
-	uint16_t command = 0, ignored16 = 0, ignored16_2 = 0, ignored16_3 = 0, layer_and_columns = 0, record = 0, request = 0, scroll_x = 0, scroll_y = 0, x = 0;
-	uint8_t t1 = 0;
+	uint16_t command = 0, ignored16 = 0, ignored16_2 = 0, layer_and_columns = 0, record = 0, request = 0, scroll_x = 0, scroll_y = 0, street_object = 0;
+	uint8_t old_part_done = 0;
 
 	scroll_x = 0u;
 	vector_set_scroll_x(scroll_x);
@@ -194,10 +194,10 @@ uint16_t story_1_set_up_street(uint16_t palette_job)
 	vector_set_scroll_y(scroll_y);
 	palette_request_kind = 1u;
 	request = 0xE81u;
-	vector_palette_request(request, &ignored16, &palette_job);
+	palette_job = vector_palette_request(palette_job, request);
 	palette_request_kind = 1u;
 	request = 0x805u;
-	vector_palette_request(request, &ignored16, &palette_job);
+	vector_palette_request(palette_job, request);
 	command = 0x9100u;
 	carry = vector_queue_sound(command);
 	command = 0x4600u;
@@ -208,19 +208,19 @@ uint16_t story_1_set_up_street(uint16_t palette_job)
 	map_area = 0u;
 	vector_set_layer_modes();
 	layer_and_columns = 0x2Cu;
-	vector_draw_layer_strips(layer_and_columns, &ignored16_2, &ignored16, &ignored16_3);
+	vector_draw_layer_strips(layer_and_columns, &ignored16, &ignored16_2);
 	layer_and_columns = 0x12Cu;
-	vector_draw_layer_strips(layer_and_columns, &ignored16_2, &ignored16, &ignored16_3);
+	vector_draw_layer_strips(layer_and_columns, &ignored16, &ignored16_2);
 	io_write8(0x1FB9u, 0x13u);
 	io_write8(0x1FBAu, 0x2Cu);
 	record = story_1_street_object_start_1_ADDRESS;
 	story_put_object(record);
 	record = story_1_street_object_start_2_ADDRESS;
-	x = story_put_object(record);
+	street_object = story_put_object(record);
 	io_write8(0x18E3u, 0xB0u);
-	t1 = io_read8(0x18E2u);
-	io_write8(0x18E2u, t1 + 1u);
-	return x;
+	old_part_done = io_read8(0x18E2u);
+	io_write8(0x18E2u, old_part_done + 1u);
+	return street_object;
 }
 
 /* Story 1's street: the family walks in from the right, Smithers runs in, stops, lets something fall and
@@ -231,16 +231,16 @@ uint16_t story_1_street(uint16_t palette_job)
 {
 	uint32_t carry = 0;
 	uint8_t b = 0;
-	uint16_t command = 0, ignored16 = 0, ignored16_2 = 0, ignored16_3 = 0, layer_and_columns = 0, object = 0, record = 0, request = 0, u = 0, wait = 0, x = 0;
-	uint8_t t1 = 0, t2 = 0;
+	uint16_t command = 0, effect_job = 0, ignored16 = 0, ignored16_2 = 0, layer_and_columns = 0, object = 0, record = 0, request = 0, wait = 0, x = 0;
+	uint8_t street_wait = 0, old_part_done = 0;
 
 	wait = 0x4000u | b;
 	vector_check_skip(wait, &ignored16, &carry);
 	if (carry == 0u)
 	{
-		t1 = io_read8(0x18E3u);
-		io_write8(0x18E3u, t1 - 1u);
-		if (t1 != 1u)
+		street_wait = io_read8(0x18E3u);
+		io_write8(0x18E3u, street_wait - 1u);
+		if (street_wait != 1u)
 		{
 			story_1_family();
 			story_1_runners();
@@ -251,7 +251,7 @@ uint16_t story_1_street(uint16_t palette_job)
 	}
 	palette_request_kind = 1u;
 	request = 0xF05u;
-	vector_palette_request(request, &ignored16_2, &palette_job);
+	vector_palette_request(palette_job, request);
 	io_write8(0x1FB9u, 0x3Fu);
 	io_write8(0x1FBAu, 0x36u);
 	layer_a_scroll_x = 0xFFF0u;
@@ -260,26 +260,26 @@ uint16_t story_1_street(uint16_t palette_job)
 	map_area = 0u;
 	vector_set_layer_modes();
 	layer_and_columns = 0x2Cu;
-	vector_draw_layer_strips(layer_and_columns, &ignored16, &ignored16_2, &u);
+	vector_draw_layer_strips(layer_and_columns, &ignored16, &effect_job);
 	vector_clear_layer_b();
 	io_write8(0x1FB9u, 0x13u);
 	io_write8(0x1FBAu, 0x2Cu);
 	skip_wait = 0u;
 	palette_request_kind = 2u;
 	request = 3u;
-	vector_palette_request(request, &ignored16_2, &u);
-	io_write16(0x18E7u, u);
+	effect_job = vector_palette_request(effect_job, request);
+	io_write16(0x18E7u, effect_job);
 	command = 0x3F25u;
 	carry = vector_queue_sound(command);
-	vector_clear_objects(&ignored16, &ignored16_3);
+	vector_clear_objects(&ignored16, &ignored16_2);
 	record = story_1_street_text_start_ADDRESS;
 	object = story_put_object(record);
 	OBJECT(object)->y_speed = 0x180;
 	screen_shake_on = 1u;
 	screen_shake_kind = 1u;
 	io_write8(0x18E3u, 0x50u);
-	t2 = io_read8(0x18E2u);
-	io_write8(0x18E2u, t2 + 1u);
+	old_part_done = io_read8(0x18E2u);
+	io_write8(0x18E2u, old_part_done + 1u);
 	return object;
 }
 
@@ -289,41 +289,41 @@ uint16_t story_1_redraw(uint16_t x)
 {
 	uint32_t carry = 0;
 	uint8_t b = 0;
-	uint16_t ignored16 = 0, ignored16_2 = 0, ignored16_3 = 0, layer_and_columns = 0, record = 0, wait = 0;
-	uint8_t t1 = 0, t3 = 0;
-	uint16_t t2 = 0;
+	uint16_t ignored16 = 0, ignored16_2 = 0, layer_and_columns = 0, record = 0, wait = 0;
+	uint8_t street_wait = 0, old_part_done = 0;
+	uint16_t effect_job = 0;
 
 	wait = 0x4000u | b;
 	vector_check_skip(wait, &x, &carry);
 	if (carry == 0u)
 	{
-		t1 = io_read8(0x18E3u);
-		io_write8(0x18E3u, t1 - 1u);
-		if (t1 != 1u)
+		street_wait = io_read8(0x18E3u);
+		io_write8(0x18E3u, street_wait - 1u);
+		if (street_wait != 1u)
 			return x;
 	}
-	t2 = io_read16(0x18E7u);
-	mem_write8(t2, 0u);
+	effect_job = io_read16(0x18E7u);
+	mem_write8(effect_job, 0u);
 	layer_b_scroll_x = 0xFFF0u;
 	layer_b_scroll_y = 0u;
 	map_area = 0u;
 	io_write8(0x1FB9u, 0x3Fu);
 	io_write8(0x1FBAu, 0x36u);
 	layer_and_columns = 0x124u;
-	vector_draw_layer_strips(layer_and_columns, &ignored16, &ignored16_2, &ignored16_3);
+	vector_draw_layer_strips(layer_and_columns, &ignored16, &ignored16_2);
 	layer_b_scroll_x = 0xF0u;
 	layer_a_scroll_x = 0x10u;
 	layer_a_scroll_y = 0x200u;
 	map_area = 1u;
 	layer_and_columns = 0x2Cu;
-	vector_draw_layer_strips(layer_and_columns, &ignored16, &ignored16_2, &ignored16_3);
+	vector_draw_layer_strips(layer_and_columns, &ignored16, &ignored16_2);
 	io_write8(0x1FB9u, 0x13u);
 	io_write8(0x1FBAu, 0x2Cu);
-	vector_clear_objects(&ignored16, &ignored16_3);
+	vector_clear_objects(&ignored16, &ignored16_2);
 	record = story_1_redraw_text_start_ADDRESS;
 	x = story_put_object(record);
-	t3 = io_read8(0x18E2u);
-	io_write8(0x18E2u, t3 + 1u);
+	old_part_done = io_read8(0x18E2u);
+	io_write8(0x18E2u, old_part_done + 1u);
 	return x;
 }
 
@@ -332,7 +332,7 @@ uint16_t story_1_rise(uint16_t u)
 {
 	uint32_t carry = 0;
 	uint16_t steps = 0, wait = 0;
-	uint8_t t1 = 0, t2 = 0;
+	uint8_t old_scene_state = 0, scene_substep = 0;
 
 	for (;;)
 	{
@@ -340,13 +340,13 @@ uint16_t story_1_rise(uint16_t u)
 		vector_check_skip(wait, &steps, &carry);
 		if (carry)
 		{
-			t1 = io_read8(scene_state);
-			io_write8(scene_state, t1 + 1u);
+			old_scene_state = io_read8(scene_state);
+			io_write8(scene_state, old_scene_state + 1u);
 			return story_1_last_view();
 		}
 		steps = story_1_rise_steps_ADDRESS;
-		t2 = io_read8(scene_substate);
-		switch ((int8_t)(uint8_t)((uint32_t)t2 << 1))
+		scene_substep = io_read8(scene_substate);
+		switch ((int8_t)(uint8_t)((uint32_t)scene_substep << 1))
 		{
 		case 0:
 			story_1_rise_start();
@@ -482,7 +482,7 @@ void story_1_rise_start(void)
 {
 	uint32_t carry = 0;
 	uint16_t command = 0;
-	uint8_t t1 = 0;
+	uint8_t old_scene_substate = 0;
 
 	layer_a_offset_y = 0u;
 	io_write16(0x18E5u, 0xFA00u);
@@ -491,8 +491,8 @@ void story_1_rise_start(void)
 	draw_all_layer_edges = 1u;
 	command = 0x101u;
 	carry = vector_queue_sound(command);
-	t1 = io_read8(scene_substate);
-	io_write8(scene_substate, t1 + 1u);
+	old_scene_substate = io_read8(scene_substate);
+	io_write8(scene_substate, old_scene_substate + 1u);
 }
 
 /* Its step 1: layer A scrolls with the speed slowing down while the text rises; when the speed has run
@@ -500,15 +500,15 @@ void story_1_rise_start(void)
 void story_1_rise_slow_down(uint16_t palette_job)
 {
 	uint8_t speed_high = 0;
-	uint16_t ignored16 = 0, request = 0;
-	uint8_t t3 = 0;
-	uint16_t t1 = 0, t2 = 0;
+	uint16_t request = 0;
+	uint8_t old_scene_substate = 0;
+	uint16_t rise_speed = 0, new_rise_speed = 0;
 
 	OBJECT(OBJECT_ADDRESS(14))->z_speed = 0x70;
-	t1 = io_read16(0x18E5u);
-	t2 = t1 + 0xAu;
-	speed_high = (uint8_t)(t2 >> 8);
-	io_write16(0x18E5u, ((uint32_t)speed_high << 8) | (t2 & 0xFFu));
+	rise_speed = io_read16(0x18E5u);
+	new_rise_speed = rise_speed + 0xAu;
+	speed_high = (uint8_t)(new_rise_speed >> 8);
+	io_write16(0x18E5u, ((uint32_t)speed_high << 8) | (new_rise_speed & 0xFFu));
 	if (speed_high != 0u)
 	{
 		story_1_scroll_layer_a();
@@ -516,25 +516,25 @@ void story_1_rise_slow_down(uint16_t palette_job)
 	}
 	palette_request_kind = 2u;
 	request = 4u;
-	vector_palette_request(request, &ignored16, &palette_job);
+	vector_palette_request(palette_job, request);
 	io_write8(0x18E3u, 0x98u);
 	layer_a_offset_y = 0xE0u;
-	t3 = io_read8(scene_substate);
-	io_write8(scene_substate, t3 + 1u);
+	old_scene_substate = io_read8(scene_substate);
+	io_write8(scene_substate, old_scene_substate + 1u);
 }
 
 /* Its step 2: for 98 frames layer A scrolls the other way, the text sinking; then the part ends. */
 void story_1_rise_coast(void)
 {
-	uint8_t t1 = 0, t3 = 0;
-	uint16_t t2 = 0;
+	uint8_t coast_wait = 0, old_part_done = 0;
+	uint16_t rise_speed = 0;
 
-	t1 = io_read8(0x18E3u);
-	io_write8(0x18E3u, t1 - 1u);
-	if (t1 != 1u)
+	coast_wait = io_read8(0x18E3u);
+	io_write8(0x18E3u, coast_wait - 1u);
+	if (coast_wait != 1u)
 	{
-		t2 = io_read16(0x18E5u);
-		io_write16(0x18E5u, t2 + 0xAu);
+		rise_speed = io_read16(0x18E5u);
+		io_write16(0x18E5u, rise_speed + 0xAu);
 		OBJECT(OBJECT_ADDRESS(14))->z_speed = -0x60;
 		story_1_scroll_layer_a();
 		return;
@@ -543,38 +543,38 @@ void story_1_rise_coast(void)
 	layer_rows_on = 0u;
 	draw_all_layer_edges = 0u;
 	io_write8(0x18E3u, 0x18u);
-	t3 = io_read8(0x18E2u);
-	io_write8(0x18E2u, t3 + 1u);
+	old_part_done = io_read8(0x18E2u);
+	io_write8(0x18E2u, old_part_done + 1u);
 }
 
 /* Moves layer A's y scroll by the story's scroll speed (18E5). */
 void story_1_scroll_layer_a(void)
 {
 	uint32_t carry = 0;
-	uint8_t t5 = 0;
-	uint16_t t1 = 0, t2 = 0, t3 = 0, t4 = 0;
+	uint8_t rise_speed_high = 0;
+	uint16_t layer_a_y_low = 0, rise_speed = 0, old_layer_a_y_low = 0, new_layer_a_y_low = 0;
 
-	t1 = AT16(layer_a_scroll_y, -1);
-	t2 = io_read16(0x18E5u);
-	t3 = t1;
-	t4 = t3 + t2;
-	carry = (uint16_t)(t3 + t2) < t3;
-	AT16(layer_a_scroll_y, -1) = t4;
-	t5 = io_read8(0x18E5u);
-	layer_a_scroll_y = (layer_a_scroll_y & 0xFFu) | ((((uint16_t)(int8_t)t5 >> 8) + (uint8_t)(layer_a_scroll_y >> 8u) + carry & 0xFFu) << 8u);
+	layer_a_y_low = AT16(layer_a_scroll_y, -1);
+	rise_speed = io_read16(0x18E5u);
+	old_layer_a_y_low = layer_a_y_low;
+	new_layer_a_y_low = old_layer_a_y_low + rise_speed;
+	carry = (uint16_t)(old_layer_a_y_low + rise_speed) < old_layer_a_y_low;
+	AT16(layer_a_scroll_y, -1) = new_layer_a_y_low;
+	rise_speed_high = io_read8(0x18E5u);
+	layer_a_scroll_y = (layer_a_scroll_y & 0xFFu) | ((((uint16_t)(int8_t)rise_speed_high >> 8) + (uint8_t)(layer_a_scroll_y >> 8u) + carry & 0xFFu) << 8u);
 }
 
 /* Story 1's panning part: runs its step (18E1). */
 uint16_t story_1_pan(uint16_t u)
 {
 	uint16_t steps = 0;
-	uint8_t t1 = 0;
+	uint8_t scene_substep = 0;
 
 	for (;;)
 	{
 		steps = story_1_pan_steps_ADDRESS;
-		t1 = io_read8(scene_substate);
-		switch ((int8_t)(uint8_t)((uint32_t)t1 << 1))
+		scene_substep = io_read8(scene_substate);
+		switch ((int8_t)(uint8_t)((uint32_t)scene_substep << 1))
 		{
 		case 0:
 			return story_1_pan_right(steps);
@@ -711,12 +711,12 @@ uint16_t story_1_pan_right(uint16_t x)
 {
 	uint32_t carry = 0;
 	uint16_t command = 0, object = 0, record = 0;
-	uint8_t t1 = 0, t2 = 0;
-	uint16_t t3 = 0, t4 = 0;
+	uint8_t pan_wait = 0, old_scene_substate = 0;
+	uint16_t layer_b_x_low = 0, old_layer_b_x_low = 0;
 
-	t1 = io_read8(0x18E3u);
-	io_write8(0x18E3u, t1 - 1u);
-	if (t1 == 1u)
+	pan_wait = io_read8(0x18E3u);
+	io_write8(0x18E3u, pan_wait - 1u);
+	if (pan_wait == 1u)
 	{
 		record = story_1_pan_text_start_ADDRESS;
 		object = story_put_object(record);
@@ -724,14 +724,14 @@ uint16_t story_1_pan_right(uint16_t x)
 		command = 0x4400u;
 		carry = vector_queue_sound(command);
 		io_write8(0x18E3u, 0x40u);
-		t2 = io_read8(scene_substate);
-		io_write8(scene_substate, t2 + 1u);
+		old_scene_substate = io_read8(scene_substate);
+		io_write8(scene_substate, old_scene_substate + 1u);
 		return object;
 	}
-	t3 = AT16(layer_b_scroll_x, -1);
-	t4 = t3;
-	carry = (uint16_t)(t4 + 0xA00u) < t4;
-	AT16(layer_b_scroll_x, -1) = t4 + 0xA00u;
+	layer_b_x_low = AT16(layer_b_scroll_x, -1);
+	old_layer_b_x_low = layer_b_x_low;
+	carry = (uint16_t)(old_layer_b_x_low + 0xA00u) < old_layer_b_x_low;
+	AT16(layer_b_scroll_x, -1) = old_layer_b_x_low + 0xA00u;
 	layer_b_scroll_x = (layer_b_scroll_x & 0xFFu) | ((0u + (uint8_t)(layer_b_scroll_x >> 8u) + carry & 0xFFu) << 8u);
 	return x;
 }
@@ -739,11 +739,11 @@ uint16_t story_1_pan_right(uint16_t x)
 /* Its step 1: waits, then redraws for the last part. */
 uint16_t story_1_pan_wait(uint16_t x)
 {
-	uint8_t t1 = 0;
+	uint8_t pan_wait = 0;
 
-	t1 = io_read8(0x18E3u);
-	io_write8(0x18E3u, t1 - 1u);
-	if (t1 == 1u)
+	pan_wait = io_read8(0x18E3u);
+	io_write8(0x18E3u, pan_wait - 1u);
+	if (pan_wait == 1u)
 		return story_1_last_view();
 	return x;
 }
@@ -751,8 +751,8 @@ uint16_t story_1_pan_wait(uint16_t x)
 /* Draws both layers at x 0110 and shows the last text (kind 0E animation 27); the part ends. */
 uint16_t story_1_last_view(void)
 {
-	uint16_t ignored16 = 0, ignored16_2 = 0, ignored16_3 = 0, layer_and_columns = 0, record = 0, x = 0;
-	uint8_t t1 = 0;
+	uint16_t ignored16 = 0, ignored16_2 = 0, layer_and_columns = 0, record = 0, text_object = 0;
+	uint8_t old_part_done = 0;
 
 	layer_a_scroll_x = 0x110u;
 	layer_a_scroll_y = 0u;
@@ -762,17 +762,17 @@ uint16_t story_1_last_view(void)
 	io_write8(0x1FBAu, 0x36u);
 	map_area = 0u;
 	layer_and_columns = 0x2Cu;
-	vector_draw_layer_strips(layer_and_columns, &ignored16, &ignored16_2, &ignored16_3);
+	vector_draw_layer_strips(layer_and_columns, &ignored16, &ignored16_2);
 	layer_and_columns = 0x12Cu;
-	vector_draw_layer_strips(layer_and_columns, &ignored16, &ignored16_2, &ignored16_3);
+	vector_draw_layer_strips(layer_and_columns, &ignored16, &ignored16_2);
 	io_write8(0x1FB9u, 0x13u);
 	io_write8(0x1FBAu, 0x2Cu);
-	vector_clear_objects(&ignored16, &ignored16_3);
+	vector_clear_objects(&ignored16, &ignored16_2);
 	record = story_1_last_view_text_start_ADDRESS;
-	x = story_put_object(record);
-	t1 = io_read8(0x18E2u);
-	io_write8(0x18E2u, t1 + 1u);
-	return x;
+	text_object = story_put_object(record);
+	old_part_done = io_read8(0x18E2u);
+	io_write8(0x18E2u, old_part_done + 1u);
+	return text_object;
 }
 
 /* Story 1's last part: runs its step (18E1); a button ends the story. */
@@ -780,7 +780,7 @@ uint16_t story_1_end(uint16_t u)
 {
 	uint32_t carry = 0;
 	uint16_t ignored16 = 0, steps = 0, wait = 0, x = 0;
-	uint8_t t1 = 0, t2 = 0;
+	uint8_t scene_substep = 0, old_part_done = 0;
 
 	for (;;)
 	{
@@ -789,8 +789,8 @@ uint16_t story_1_end(uint16_t u)
 		if (carry)
 			break;
 		steps = story_1_end_steps_ADDRESS;
-		t1 = io_read8(scene_substate);
-		switch ((int8_t)(uint8_t)((uint32_t)t1 << 1))
+		scene_substep = io_read8(scene_substate);
+		switch ((int8_t)(uint8_t)((uint32_t)scene_substep << 1))
 		{
 		case 0:
 			story_1_end_start();
@@ -919,19 +919,19 @@ uint16_t story_1_end(uint16_t u)
 	}
 	scene_running = 0u;
 	vector_clear_objects(&x, &ignored16);
-	t2 = io_read8(0x18E2u);
-	io_write8(0x18E2u, t2 + 1u);
+	old_part_done = io_read8(0x18E2u);
+	io_write8(0x18E2u, old_part_done + 1u);
 	return x;
 }
 
 /* Its first step: a wait of 20 frames. */
 void story_1_end_start(void)
 {
-	uint8_t t1 = 0;
+	uint8_t old_scene_substate = 0;
 
 	io_write8(0x18E3u, 0x20u);
-	t1 = io_read8(scene_substate);
-	io_write8(scene_substate, t1 + 1u);
+	old_scene_substate = io_read8(scene_substate);
+	io_write8(scene_substate, old_scene_substate + 1u);
 }
 
 /* Its second step: queues sounds 3F09-3F0B and waits 38 frames. */
@@ -939,7 +939,7 @@ void story_1_end_sounds(void)
 {
 	uint32_t carry = 0;
 	uint16_t command = 0;
-	uint8_t t1 = 0;
+	uint8_t old_scene_substate = 0;
 
 	io_write8(0x18E3u, 0x38u);
 	command = 0x3F09u;
@@ -948,23 +948,23 @@ void story_1_end_sounds(void)
 	carry = vector_queue_sound(command);
 	command = 0x3F0Bu;
 	carry = vector_queue_sound(command);
-	t1 = io_read8(scene_substate);
-	io_write8(scene_substate, t1 + 1u);
+	old_scene_substate = io_read8(scene_substate);
+	io_write8(scene_substate, old_scene_substate + 1u);
 }
 
 /* Hides the text after its wait, for 8 frames. */
 void story_1_hide_text(void)
 {
-	uint8_t t1 = 0, t2 = 0;
+	uint8_t caption_wait = 0, old_scene_substate = 0;
 
-	t1 = io_read8(0x18E3u);
-	io_write8(0x18E3u, t1 - 1u);
-	if (t1 == 1u)
+	caption_wait = io_read8(0x18E3u);
+	io_write8(0x18E3u, caption_wait - 1u);
+	if (caption_wait == 1u)
 	{
 		OBJECT(OBJECT_ADDRESS(14))->flags = 4u;
 		io_write8(0x18E3u, 8u);
-		t2 = io_read8(scene_substate);
-		io_write8(scene_substate, t2 + 1u);
+		old_scene_substate = io_read8(scene_substate);
+		io_write8(scene_substate, old_scene_substate + 1u);
 	}
 }
 
@@ -973,54 +973,54 @@ void story_1_hide_text(void)
 void story_1_show_text(void)
 {
 	uint32_t carry = 0;
-	uint8_t b = 0;
+	uint8_t next_wait = 0;
 	uint16_t command = 0;
-	uint8_t t1 = 0, t2 = 0, t3 = 0;
+	uint8_t caption_wait = 0, substate_now = 0, old_scene_substate = 0;
 
-	t1 = io_read8(0x18E3u);
-	io_write8(0x18E3u, t1 - 1u);
-	if (t1 != 1u)
+	caption_wait = io_read8(0x18E3u);
+	io_write8(0x18E3u, caption_wait - 1u);
+	if (caption_wait != 1u)
 		return;
 	command = 0x4A00u;
 	carry = vector_queue_sound(command);
 	OBJECT(OBJECT_ADDRESS(14))->flags = 0x80u;
-	b = 8u;
-	t2 = io_read8(scene_substate);
-	if (t2 == 9u)
-		b = 0x80u;
-	io_write8(0x18E3u, b);
-	t3 = io_read8(scene_substate);
-	io_write8(scene_substate, t3 + 1u);
+	next_wait = 8u;
+	substate_now = io_read8(scene_substate);
+	if (substate_now == 9u)
+		next_wait = 0x80u;
+	io_write8(0x18E3u, next_wait);
+	old_scene_substate = io_read8(scene_substate);
+	io_write8(scene_substate, old_scene_substate + 1u);
 }
 
 /* After the last wait the story ends: the objects cleared, direct page 72 cleared. */
 uint16_t story_1_finish(uint16_t x)
 {
 	uint16_t ignored16 = 0;
-	uint8_t t1 = 0, t2 = 0;
+	uint8_t finish_wait = 0, old_part_done = 0;
 
-	t1 = io_read8(0x18E3u);
-	io_write8(0x18E3u, t1 - 1u);
-	if (t1 != 1u)
+	finish_wait = io_read8(0x18E3u);
+	io_write8(0x18E3u, finish_wait - 1u);
+	if (finish_wait != 1u)
 		return x;
 	scene_running = 0u;
 	vector_clear_objects(&x, &ignored16);
-	t2 = io_read8(0x18E2u);
-	io_write8(0x18E2u, t2 + 1u);
+	old_part_done = io_read8(0x18E2u);
+	io_write8(0x18E2u, old_part_done + 1u);
 	return x;
 }
 
 /* Runs the script of each of the four players' objects (their field 01 the step). */
 void story_1_family(void)
 {
-	uint16_t object = 0, u = 0;
+	uint16_t family_scripts = 0, object = 0;
 	uint8_t stack = 0;
 
 	object = OBJECT_ADDRESS(0);
 	stack = 0u;
 	do
 	{
-		u = story_1_family_scripts_ADDRESS;
+		family_scripts = story_1_family_scripts_ADDRESS;
 		switch ((int8_t)(uint8_t)((uint32_t)stack << 1))
 		{
 		case 0:
@@ -1117,28 +1117,28 @@ void story_1_family(void)
 			story_1_dropped_object_gone(object);
 			break;
 		case -44:
-			object = story_1_set_up_street(u);
+			object = story_1_set_up_street(family_scripts);
 			break;
 		case -42:
-			object = story_1_street(u);
+			object = story_1_street(family_scripts);
 			break;
 		case -40:
 			object = story_1_redraw(object);
 			break;
 		case -38:
-			object = story_1_rise(u);
+			object = story_1_rise(family_scripts);
 			break;
 		case -36:
-			object = story_1_pan(u);
+			object = story_1_pan(family_scripts);
 			break;
 		case -34:
-			object = story_1_end(u);
+			object = story_1_end(family_scripts);
 			break;
 		case -32:
 			story_1_rise_start();
 			break;
 		case -30:
-			story_1_rise_slow_down(u);
+			story_1_rise_slow_down(family_scripts);
 			break;
 		case -28:
 			story_1_rise_coast();
@@ -1829,7 +1829,7 @@ void story_1_character_done(void)
 void story_1_runners(void)
 {
 	uint8_t attributes = 0;
-	uint16_t object = 0, u = 0;
+	uint16_t object = 0, runner_scripts = 0;
 	uint8_t stack = 0;
 	uint8_t attributes_2 = 0, x_speed = 0;
 
@@ -1837,7 +1837,7 @@ void story_1_runners(void)
 	stack = 0u;
 	do
 	{
-		u = story_1_runner_scripts_ADDRESS;
+		runner_scripts = story_1_runner_scripts_ADDRESS;
 		switch ((int8_t)(uint8_t)((uint32_t)stack << 1))
 		{
 		case 0:
@@ -1901,28 +1901,28 @@ void story_1_runners(void)
 			story_1_dropped_object_gone(object);
 			break;
 		case -70:
-			object = story_1_set_up_street(u);
+			object = story_1_set_up_street(runner_scripts);
 			break;
 		case -68:
-			object = story_1_street(u);
+			object = story_1_street(runner_scripts);
 			break;
 		case -66:
 			object = story_1_redraw(object);
 			break;
 		case -64:
-			object = story_1_rise(u);
+			object = story_1_rise(runner_scripts);
 			break;
 		case -62:
-			object = story_1_pan(u);
+			object = story_1_pan(runner_scripts);
 			break;
 		case -60:
-			object = story_1_end(u);
+			object = story_1_end(runner_scripts);
 			break;
 		case -58:
 			story_1_rise_start();
 			break;
 		case -56:
-			story_1_rise_slow_down(u);
+			story_1_rise_slow_down(runner_scripts);
 			break;
 		case -54:
 			story_1_rise_coast();
@@ -2160,16 +2160,16 @@ uint16_t story_1_smithers_runs_in(void)
 void story_1_smithers_collide(uint16_t object)
 {
 	uint8_t type = 0;
-	uint16_t t1 = 0, t2 = 0;
+	uint16_t smithers_x = 0, smithers_y = 0;
 
-	t1 = OBJECT(object)->x;
-	if ((int16_t)t1 <= 0xA0)
+	smithers_x = OBJECT(object)->x;
+	if ((int16_t)smithers_x <= 0xA0)
 	{
 		OBJECT(object)->animation = 0x8Du;
 		OBJECT(object)->attributes = 0x88u;
 		OBJECT(object)->x_speed = 0;
-		t2 = OBJECT(object)->y;
-		OBJECT(object)->y = t2 - 8u;
+		smithers_y = OBJECT(object)->y;
+		OBJECT(object)->y = smithers_y - 8u;
 		type = OBJECT(object)->type;
 		OBJECT(object)->type = type + 1u;
 	}
@@ -2200,13 +2200,13 @@ void story_1_smithers_run_off(uint16_t object)
 {
 	uint8_t action_step = 0;
 	uint16_t heading = 0;
-	uint8_t action_step_2 = 0, t1 = 0, type = 0;
+	uint8_t action_step_2 = 0, old_heading = 0, type = 0;
 
 	action_step_2 = OBJECT(object)->action_step;
-	t1 = action_step_2;
-	action_step = t1 + 2u;
+	old_heading = action_step_2;
+	action_step = old_heading + 2u;
 	OBJECT(object)->action_step = action_step;
-	if ((uint8_t)(t1 + 2u) < t1)
+	if ((uint8_t)(old_heading + 2u) < old_heading)
 	{
 		OBJECT(object)->x_speed = 0x200;
 		OBJECT(object)->y_speed = 0;
@@ -2555,13 +2555,13 @@ void story_1_goon_run_off(uint16_t object)
 {
 	uint8_t action_step = 0;
 	uint16_t heading = 0;
-	uint8_t action_step_2 = 0, t1 = 0, type = 0;
+	uint8_t action_step_2 = 0, old_heading = 0, type = 0;
 
 	action_step_2 = OBJECT(object)->action_step;
-	t1 = action_step_2;
-	action_step = t1 + 2u;
+	old_heading = action_step_2;
+	action_step = old_heading + 2u;
 	OBJECT(object)->action_step = action_step;
-	if ((uint8_t)(t1 + 2u) < t1)
+	if ((uint8_t)(old_heading + 2u) < old_heading)
 	{
 		OBJECT(object)->x_speed = 0x200;
 		OBJECT(object)->y_speed = 0;
@@ -2581,62 +2581,62 @@ void story_1_goon_gone(void)
 /* The story's text (4F80): runs its step. */
 void story_1_text(void)
 {
-	uint16_t u = 0, x = 0;
+	uint16_t text_object = 0, text_steps = 0;
 
-	u = story_1_text_steps_ADDRESS;
-	x = OBJECT_ADDRESS(14);
+	text_steps = story_1_text_steps_ADDRESS;
+	text_object = OBJECT_ADDRESS(14);
 	switch ((int8_t)(uint8_t)((uint32_t)OBJECT(OBJECT_ADDRESS(14))->type << 1))
 	{
 	case 0:
 		story_1_text_appears();
 		return;
 	case 2:
-		story_1_text_sound(x);
+		story_1_text_sound(text_object);
 		return;
 	case 4:
-		story_1_text_goes(x);
+		story_1_text_goes(text_object);
 		return;
 	case 6:
 		story_1_text_gone();
 		return;
 	case 8:
-		story_1_dropped_object_fall(x);
+		story_1_dropped_object_fall(text_object);
 		return;
 	case 10:
-		story_1_dropped_object_gone(x);
+		story_1_dropped_object_gone(text_object);
 		return;
 	case -102:
-		story_1_set_up_street(u);
+		story_1_set_up_street(text_steps);
 		return;
 	case -100:
-		story_1_street(u);
+		story_1_street(text_steps);
 		return;
 	case -98:
-		story_1_redraw(x);
+		story_1_redraw(text_object);
 		return;
 	case -96:
-		story_1_rise(u);
+		story_1_rise(text_steps);
 		return;
 	case -94:
-		story_1_pan(u);
+		story_1_pan(text_steps);
 		return;
 	case -92:
-		story_1_end(u);
+		story_1_end(text_steps);
 		return;
 	case -90:
 		story_1_rise_start();
 		return;
 	case -88:
-		story_1_rise_slow_down(u);
+		story_1_rise_slow_down(text_steps);
 		return;
 	case -86:
 		story_1_rise_coast();
 		return;
 	case -84:
-		story_1_pan_right(x);
+		story_1_pan_right(text_object);
 		return;
 	case -82:
-		story_1_pan_wait(x);
+		story_1_pan_wait(text_object);
 		return;
 	case -80:
 		story_1_end_start();
@@ -2657,19 +2657,19 @@ void story_1_text(void)
 		story_1_show_text();
 		return;
 	case -60:
-		story_1_finish(x);
+		story_1_finish(text_object);
 		return;
 	case -58:
-		story_1_marge(x);
+		story_1_marge(text_object);
 		return;
 	case -56:
-		story_1_homer(x);
+		story_1_homer(text_object);
 		return;
 	case -54:
-		story_1_bart(x);
+		story_1_bart(text_object);
 		return;
 	case -52:
-		story_1_lisa(x);
+		story_1_lisa(text_object);
 		return;
 	case -50:
 		story_1_marge_walks_in();
@@ -2684,7 +2684,7 @@ void story_1_text(void)
 		story_1_homer_walks_in();
 		return;
 	case -44:
-		story_1_homer_stops(x);
+		story_1_homer_stops(text_object);
 		return;
 	case -40:
 		story_1_bart_walks_in();
@@ -2693,25 +2693,25 @@ void story_1_text(void)
 		story_1_lisa_walks_in();
 		return;
 	case -32:
-		story_1_smithers(x);
+		story_1_smithers(text_object);
 		return;
 	case -30:
-		story_1_first_goon(x);
+		story_1_first_goon(text_object);
 		return;
 	case -28:
-		story_1_second_goon(x);
+		story_1_second_goon(text_object);
 		return;
 	case -26:
 		story_1_smithers_runs_in();
 		return;
 	case -24:
-		story_1_smithers_collide(x);
+		story_1_smithers_collide(text_object);
 		return;
 	case -22:
-		story_1_smithers_drop(x);
+		story_1_smithers_drop(text_object);
 		return;
 	case -20:
-		story_1_smithers_run_off(x);
+		story_1_smithers_run_off(text_object);
 		return;
 	case -18:
 		story_1_smithers_gone();
@@ -2721,11 +2721,11 @@ void story_1_text(void)
 		return;
 	case -14:
 	case -6:
-		story_1_goon_start_running(x);
+		story_1_goon_start_running(text_object);
 		return;
 	case -12:
 	case -4:
-		story_1_goon_run_off(x);
+		story_1_goon_run_off(text_object);
 		return;
 	case -10:
 	case -2:
@@ -2960,23 +2960,23 @@ void story_1_dropped_object_gone(uint16_t object)
 uint16_t story_put_object(uint16_t record)
 {
 	uint16_t object = 0;
-	uint16_t t1 = 0, t2 = 0, t3 = 0, t4 = 0, t5 = 0, t6 = 0, t7 = 0, t8 = 0;
+	uint16_t object_at = 0, kind_at = 0, animation_at = 0, x_at = 0, placed_x = 0, y_at = 0, placed_y = 0, placed_z = 0;
 
-	t1 = record;
-	object = mem_read16(t1);
+	object_at = record;
+	object = STORY_OBJECT_START(object_at)->object;
 	OBJECT(object)->animation_flags = 0x80u;
 	OBJECT(object)->flags = 0x80u;
-	t2 = t1 + 2u;
-	OBJECT(object)->kind = mem_read8(t2);
-	t3 = t2 + 1u;
-	OBJECT(object)->animation = mem_read8(t3) | 0x80u;
-	t4 = t3 + 1u;
-	t5 = mem_read16(t4);
-	OBJECT(object)->x = t5;
-	t6 = t4 + 2u;
-	t7 = mem_read16(t6);
-	OBJECT(object)->y = t7;
-	t8 = mem_read16(t6 + 2u);
-	OBJECT(object)->z = t8;
+	kind_at = object_at + 2u;
+	OBJECT(object)->kind = STORY_OBJECT_START(kind_at - 0x2u)->kind;
+	animation_at = kind_at + 1u;
+	OBJECT(object)->animation = STORY_OBJECT_START(animation_at - 0x3u)->animation | 0x80u;
+	x_at = animation_at + 1u;
+	placed_x = STORY_OBJECT_START(x_at - 0x4u)->x;
+	OBJECT(object)->x = placed_x;
+	y_at = x_at + 2u;
+	placed_y = STORY_OBJECT_START(y_at - 0x6u)->y;
+	OBJECT(object)->y = placed_y;
+	placed_z = STORY_OBJECT_START(y_at - 0x6u)->z;
+	OBJECT(object)->z = placed_z;
 	return object;
 }

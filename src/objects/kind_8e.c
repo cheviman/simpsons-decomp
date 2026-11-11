@@ -3,7 +3,7 @@
  *    Description: the kind 8E figures (types 24, 5280 20) and the shot type 24 throws (4D40 type 11)
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    10-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -99,7 +99,7 @@ void kind_8e_thrower_check_hit(uint16_t object)
 }
 
 /* The thrower when hit (step FF), by field 29: it runs off. */
-uint16_t kind_8e_thrower_hurt(uint16_t object, uint16_t y)
+void kind_8e_thrower_hurt(uint16_t object)
 {
 	uint8_t action_step = 0;
 
@@ -110,38 +110,39 @@ uint16_t kind_8e_thrower_hurt(uint16_t object, uint16_t y)
 		{
 		case 0:
 			kind_8e_thrower_run_off(object);
-			return y;
+			return;
 		case 2:
 			kind_8e_thrower_running();
-			return y;
+			return;
 		case 4:
 			kind_8e_thrower_stagger(object);
-			return y;
+			return;
 		case 6:
 			break;
 		case -14:
 			continue;
 		case -12:
-			return kind_8e_thrower_setup(object);
+			kind_8e_thrower_setup(object);
+			return;
 		case -10:
 			kind_8e_thrower_wait(object);
-			return y;
+			return;
 		case -8:
 			kind_8e_thrower_wind_up(object);
-			return y;
+			return;
 		case -6:
-			return kind_8e_thrower_throw(object, y);
+			kind_8e_thrower_throw(object);
+			return;
 		case -4:
 			kind_8e_thrower_follow_through(object);
-			return y;
+			return;
 		case -2:
 			kind_8e_thrower_repeat(object);
-			return y;
+			return;
 		}
 		break;
 	}
 	kind_8e_thrower_recover(object);
-	return y;
 }
 
 /* Sends the hit thrower running off to the right. */
@@ -179,7 +180,7 @@ void unused_kind_8e_thrower_run_step(uint16_t object)
 		kind_8e_thrower_recover(object);
 		return;
 	case -18:
-		kind_8e_thrower_hurt(object, 0u);
+		kind_8e_thrower_hurt(object);
 		return;
 	case -16:
 		kind_8e_thrower_setup(object);
@@ -191,7 +192,7 @@ void unused_kind_8e_thrower_run_step(uint16_t object)
 		kind_8e_thrower_wind_up(object);
 		return;
 	case -10:
-		kind_8e_thrower_throw(object, 0u);
+		kind_8e_thrower_throw(object);
 		return;
 	case -8:
 		kind_8e_thrower_follow_through(object);
@@ -232,28 +233,27 @@ void kind_8e_thrower_recover(uint16_t object)
 }
 
 /* Sets the thrower up facing left. */
-uint16_t kind_8e_thrower_setup(uint16_t object)
+void kind_8e_thrower_setup(uint16_t object)
 {
-	uint16_t box = 0, setup = 0;
+	uint16_t setup = 0;
 	uint8_t attributes = 0, state = 0;
 
 	setup = kind_8e_thrower_object_setup_ADDRESS;
-	box = vector_object_setup(object, setup);
+	vector_object_setup(object, setup);
 	attributes = OBJECT(object)->attributes;
 	OBJECT(object)->attributes = attributes | 0x40u;
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
-	return box;
 }
 
 /* Waits for the scroll to bring the thrower on the screen. */
 void kind_8e_thrower_wait(uint16_t object)
 {
 	uint8_t state = 0;
-	uint16_t t1 = 0;
+	uint16_t screen_x = 0;
 
-	t1 = OBJECT(object)->x;
-	if (t1 < 0x150u)
+	screen_x = OBJECT(object)->x;
+	if (screen_x < 0x150u)
 	{
 		state = OBJECT(object)->state;
 		OBJECT(object)->state = state + 1u;
@@ -271,21 +271,21 @@ void kind_8e_thrower_wind_up(uint16_t object)
 }
 
 /* On the throw's marked frame, puts in the shot. */
-uint16_t kind_8e_thrower_throw(uint16_t object, uint16_t y)
+void kind_8e_thrower_throw(uint16_t object)
 {
 	uint32_t carry = 0;
-	uint16_t ignored16 = 0, shot_record = 0;
+	uint16_t child_object = 0, ignored16 = 0;
 	uint8_t animation_flags = 0, state = 0;
 
 	animation_flags = OBJECT(object)->animation_flags;
 	if ((animation_flags & 2u) == 0u)
-		return y;
-	shot_record = kind_8e_thrower_throw_child_ADDRESS;
-	spawn_list_2_child(object, shot_record, &ignored16, &carry);
+		return;
+	leftover_y = kind_8e_thrower_throw_child_ADDRESS;
+	child_object = kind_8e_thrower_throw_child_ADDRESS;
+	spawn_list_2_child(object, child_object, &ignored16, &carry);
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
 	kind_8e_thrower_follow_through(object);
-	return shot_record;
 }
 
 /* When the throw ends, plays the thrower's animation 81. */

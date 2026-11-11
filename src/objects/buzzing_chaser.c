@@ -3,7 +3,7 @@
  *    Description: the buzzing thing let out by the object falling off the shaking scenery
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    10-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -101,10 +101,10 @@ void buzzing_chaser_spiral_end(uint16_t object)
 uint16_t buzzing_chaser_chase(uint16_t object)
 {
 	uint32_t carry = 0;
-	uint8_t a = 0, b = 0, direction = 0;
-	uint16_t command = 0, d = 0, heading = 0, target = 0;
+	uint8_t direction = 0, z_speed_high = 0, z_speed_low = 0;
+	uint16_t command = 0, direction_to_target = 0, heading = 0, target = 0;
 	uint8_t timer = 0, state = 0, direction_2 = 0, timer_2 = 0, timer_3 = 0, chases_left = 0, state_2 = 0;
-	uint16_t target_2 = 0, z = 0, t1 = 0, z_2 = 0;
+	uint16_t target_2 = 0, z = 0, target_height = 0, z_2 = 0;
 
 	target_2 = OBJECT(object)->target;
 	target = target_2;
@@ -127,25 +127,25 @@ uint16_t buzzing_chaser_chase(uint16_t object)
 		if ((timer_2 & 0xFu) == 0u)
 		{
 			z = OBJECT(target)->z;
-			t1 = z + 0x30u;
+			target_height = z + 0x30u;
 			z_2 = OBJECT(object)->z;
-			if (z_2 <= t1)
+			if (z_2 <= target_height)
 			{
-				a = 0u;
-				b = 0x40u;
+				z_speed_high = 0u;
+				z_speed_low = 0x40u;
 			}
 			else
 			{
-				a = 0xFFu;
-				b = 0xC0u;
+				z_speed_high = 0xFFu;
+				z_speed_low = 0xC0u;
 			}
-			OBJECT(object)->z_speed = ((uint32_t)a << 8) | b;
+			OBJECT(object)->z_speed = ((uint32_t)z_speed_high << 8) | z_speed_low;
 		}
 		timer_3 = OBJECT(object)->timer;
 		if (timer_3 >= 0xFu)
 		{
-			d = vector_direction_to(object, target);
-			direction = (uint8_t)(d >> 8);
+			direction_to_target = vector_direction_to(object, target);
+			direction = (uint8_t)(direction_to_target >> 8);
 			OBJECT(object)->buzzing_chaser.direction = direction;
 			heading = ((uint32_t)direction << 8) | 0x40u;
 			vector_set_speed_by_direction(object, heading);
@@ -167,8 +167,8 @@ uint16_t buzzing_chaser_chase(uint16_t object)
 	OBJECT(object)->buzzing_chaser.chases_left = chases_left - 1u;
 	if (chases_left != 1u)
 	{
-		d = vector_direction_to(object, target);
-		direction = (uint8_t)(d >> 8);
+		direction_to_target = vector_direction_to(object, target);
+		direction = (uint8_t)(direction_to_target >> 8);
 		OBJECT(object)->buzzing_chaser.direction = direction;
 		heading = ((uint32_t)direction << 8) | 0x40u;
 		vector_set_speed_by_direction(object, heading);

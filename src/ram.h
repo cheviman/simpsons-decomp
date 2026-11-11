@@ -3,7 +3,7 @@
  *    Description: the game's variables, tables, board registers and structures
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    10-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -675,8 +675,20 @@
 #define test_premium_coins RAM8(test_premium_coins_ADDRESS)
 #define coin_setting_ADDRESS 0x59F1u
 #define coin_setting RAM8(coin_setting_ADDRESS)
+#define difficulty_option_ADDRESS 0x59F4u
+#define difficulty_option RAM8(difficulty_option_ADDRESS)
+#define lives_option_ADDRESS 0x59F5u
+#define lives_option RAM8(lives_option_ADDRESS)
+#define attract_sound_option_ADDRESS 0x59F6u
+#define attract_sound_option RAM8(attract_sound_option_ADDRESS)
+#define screen_flip_option_ADDRESS 0x59F7u
+#define screen_flip_option RAM8(screen_flip_option_ADDRESS)
 #define coin_slots_setting_ADDRESS 0x59F8u
 #define coin_slots_setting RAM8(coin_slots_setting_ADDRESS)
+#define sound_output_option_ADDRESS 0x59F9u
+#define sound_output_option RAM8(sound_output_option_ADDRESS)
+#define first_credit_coins_option_ADDRESS 0x59FAu
+#define first_credit_coins_option RAM8(first_credit_coins_option_ADDRESS)
 #define eeprom_address_ADDRESS 0x5A00u
 #define eeprom_address RAM8(eeprom_address_ADDRESS)
 #define eeprom_data_ADDRESS 0x5A01u
@@ -14989,7 +15001,7 @@ struct object
 			uint8_t last_health;
 			uint8_t direction;
 			uint8_t side_direction;
-			uint8_t pad_33[0x2];
+			uint16_t target;
 			uint8_t target_wait;
 		} stage_7_boss;
 		struct
@@ -15008,9 +15020,15 @@ struct object
 			uint8_t last_health;
 			uint8_t direction;
 			uint8_t side_direction;
-			uint8_t pad_33[0x2];
+			uint16_t target;
 			uint16_t distance;
 		} stage_7_boss_helper;
+		struct
+		{
+			uint8_t pad_00[0x34];
+			uint16_t next_link;
+			uint16_t pair;
+		} stage_7_link;
 		struct
 		{
 			uint8_t pad_00[0x21];
@@ -15051,6 +15069,13 @@ struct object
 			uint8_t phase;
 			uint8_t phases_left;
 		} stage_8_boss_bomb;
+		struct
+		{
+			uint8_t pad_00[0x32];
+			uint8_t actor_player;
+			uint16_t stop_offset;
+			uint8_t actor_wait;
+		} stage_8_end;
 		struct
 		{
 			uint8_t pad_00[0x2D];
@@ -15103,7 +15128,7 @@ struct object
 			uint8_t last_health;
 			uint8_t direction;
 			uint8_t side_direction;
-			uint8_t pad_33[0x2];
+			uint16_t target;
 			uint8_t target_wait;
 		} wrestler;
 		struct
@@ -15128,6 +15153,206 @@ struct object_setup
 	uint8_t life;
 	uint16_t box;
 	uint16_t kind_and_animation;
+};
+
+struct palette_job
+{
+	union
+	{
+		struct
+		{
+			uint8_t unk_07;
+			uint16_t unk_05;
+			uint8_t unk_04;
+			uint16_t unk_02;
+			uint8_t unk_01;
+		};
+		struct
+		{
+			uint8_t pad_00[0x5];
+			uint16_t colour;
+		} background;
+		struct
+		{
+			uint8_t pad_00[0x6];
+			uint8_t ranges;
+		} clearing;
+		struct
+		{
+			uint8_t repeats;
+			uint8_t extra_colours;
+			uint8_t delay;
+			uint8_t frames_waited;
+			uint16_t step;
+			uint8_t direction;
+		} effect;
+		struct
+		{
+			uint8_t range;
+			uint16_t ranges_left;
+			uint16_t frames_left;
+			uint16_t ranges;
+		} fade;
+		struct
+		{
+			uint8_t pad_00[0x3];
+			uint8_t k053251_10;
+			uint8_t k053251_9;
+			uint8_t frames_left;
+			uint8_t flash_layers;
+		} flash;
+		struct
+		{
+			uint8_t pad_00[0x5];
+			uint8_t set;
+			uint8_t loads;
+		} sets;
+	};
+	uint8_t kind;
+};
+
+struct sprite_entry
+{
+	uint16_t borrowed_object;
+	uint8_t colour;
+	uint8_t priority;
+	uint8_t zoom_x;
+	uint8_t pad_05[0x1];
+	uint8_t zoom_y;
+	uint8_t pad_07[0x1];
+	uint16_t x;
+	uint16_t y;
+	uint16_t code;
+	uint8_t depth;
+	uint8_t flags;
+};
+
+struct queued_job
+{
+	union
+	{
+		uint16_t job;
+		struct
+		{
+			uint8_t pad_00[0x1];
+			uint8_t kind;
+		};
+	};
+};
+
+struct player_input
+{
+	uint8_t held;
+	uint8_t pressed;
+	uint8_t last;
+	uint8_t now;
+};
+
+struct shape_column
+{
+	uint8_t bottom_cell;
+	uint8_t pad_01[0x3];
+	uint8_t middle_cell;
+	uint8_t pad_05[0x3];
+	uint8_t top_cell;
+};
+
+struct boss_box
+{
+	int8_t dx;
+	uint8_t height;
+	uint8_t depth;
+	uint8_t width;
+};
+
+struct attack_range
+{
+	uint8_t pad_00[0x3];
+	uint8_t action_chances;
+	uint8_t unk_07;
+	uint8_t pad_05[0x2];
+	uint8_t actions;
+	uint8_t chance;
+	uint8_t most_dx;
+	uint8_t least_dx;
+	uint8_t most_dy;
+};
+
+struct player_values
+{
+	uint8_t state;
+	uint8_t grab_hints;
+	uint16_t score;
+	uint8_t entry_status;
+	uint8_t kept_life;
+	uint16_t lives;
+};
+
+struct coin_slot
+{
+	uint8_t credit_given;
+	uint8_t credits_per_coins;
+	uint8_t coins_per_credit;
+	uint8_t counter_time;
+	uint8_t counter_pulses;
+	uint8_t coins;
+	uint16_t own_credits;
+};
+
+struct player_counters
+{
+	uint8_t pad_00[0x3];
+	uint8_t gauge_delay;
+	uint8_t gauge_step;
+	uint8_t frames;
+	uint8_t seconds;
+};
+
+struct demo_playback
+{
+	uint8_t pad_00[0xB];
+	uint8_t controls_inverted;
+	uint8_t controls;
+	uint8_t frames;
+	uint16_t input;
+};
+
+struct attract_picture
+{
+	uint16_t y;
+	uint16_t x;
+	uint8_t animation;
+};
+
+struct story_object_start
+{
+	uint16_t z;
+	uint16_t y;
+	uint16_t x;
+	uint8_t animation;
+	uint8_t kind;
+	uint16_t object;
+};
+
+struct camera_entry
+{
+	uint16_t data;
+	uint16_t x;
+};
+
+struct camera_check
+{
+	union
+	{
+		uint16_t place;
+		uint8_t place_low;
+		struct
+		{
+			uint8_t pad_00[0x1];
+			uint8_t ratio;
+		};
+	};
+	uint8_t kind;
 };
 
 #pragma pack(pop)
@@ -15242,6 +15467,21 @@ _Static_assert(sizeof(struct layer_mode) == 0x2, "struct layer_mode has the size
 _Static_assert(sizeof(struct tile_picture) == 0x3, "struct tile_picture has the size of the program ROM's records");
 _Static_assert(sizeof(struct object) == 0x60, "struct object has the size of the game's blocks");
 _Static_assert(sizeof(struct object_setup) == 0x6, "struct object_setup has the size of the program ROM's records");
+_Static_assert(sizeof(struct palette_job) == 0x8, "struct palette_job has the size of the game's blocks");
+_Static_assert(sizeof(struct sprite_entry) == 0x10, "struct sprite_entry has the size of the game's blocks");
+_Static_assert(sizeof(struct queued_job) == 0x2, "struct queued_job has the size of the game's blocks");
+_Static_assert(sizeof(struct player_input) == 0x4, "struct player_input has the size of the game's blocks");
+_Static_assert(sizeof(struct shape_column) == 0x9, "struct shape_column has the size of the program ROM's records");
+_Static_assert(sizeof(struct boss_box) == 0x4, "struct boss_box has the size of the program ROM's records");
+_Static_assert(sizeof(struct attack_range) == 0xC, "struct attack_range has the size of the program ROM's records");
+_Static_assert(sizeof(struct player_values) == 0x8, "struct player_values has the size of the game's blocks");
+_Static_assert(sizeof(struct coin_slot) == 0x8, "struct coin_slot has the size of the game's blocks");
+_Static_assert(sizeof(struct player_counters) == 0x7, "struct player_counters has the size of the game's blocks");
+_Static_assert(sizeof(struct demo_playback) == 0x10, "struct demo_playback has the size of the game's blocks");
+_Static_assert(sizeof(struct attract_picture) == 0x5, "struct attract_picture has the size of the program ROM's records");
+_Static_assert(sizeof(struct story_object_start) == 0xA, "struct story_object_start has the size of the program ROM's records");
+_Static_assert(sizeof(struct camera_entry) == 0x4, "struct camera_entry has the size of the program ROM's records");
+_Static_assert(sizeof(struct camera_check) == 0x3, "struct camera_check has the size of the program ROM's records");
 
 #define ANIMATION_SET(address) ((const struct animation_set *)data_record((address), sizeof(struct animation_set)))
 #define SHADOW_SPRITE(address) ((const struct shadow_sprite *)data_record((address), sizeof(struct shadow_sprite)))
@@ -15422,6 +15662,27 @@ _Static_assert(sizeof(struct object_setup) == 0x6, "struct object_setup has the 
 #define HIT_ANIMATION_32(address) (*(const uint32_t *)data_record((address), 4))
 #define OBJECT(address) ((struct object *)ram((address), sizeof(struct object)))
 #define OBJECT_SETUP(address) ((const struct object_setup *)data_record((address), sizeof(struct object_setup)))
+#define PALETTE_JOB(address) ((struct palette_job *)ram((address), sizeof(struct palette_job)))
+#define SPRITE_ENTRY(address) ((struct sprite_entry *)ram((address), sizeof(struct sprite_entry)))
+#define QUEUED_JOB(address) ((struct queued_job *)ram((address), sizeof(struct queued_job)))
+#define PLAYER_INPUT(address) ((struct player_input *)ram((address), sizeof(struct player_input)))
+#define SHAPE_COLUMN(address) ((const struct shape_column *)data_record((address), sizeof(struct shape_column)))
+#define FIGURE_POSE(address) (*(const uint8_t *)data_record((address), 1))
+#define FIGURE_POSE_16(address) (*(const uint16_t *)data_record((address), 2))
+#define FIGURE_POSE_32(address) (*(const uint32_t *)data_record((address), 4))
+#define BOSS_BOX(address) ((const struct boss_box *)data_record((address), sizeof(struct boss_box)))
+#define GAUGE_HEALTH(address) (*(const uint8_t *)data_record((address), 1))
+#define GAUGE_HEALTH_16(address) (*(const uint16_t *)data_record((address), 2))
+#define GAUGE_HEALTH_32(address) (*(const uint32_t *)data_record((address), 4))
+#define ATTACK_RANGE(address) ((const struct attack_range *)data_record((address), sizeof(struct attack_range)))
+#define PLAYER_VALUES(address) ((struct player_values *)ram((address), sizeof(struct player_values)))
+#define COIN_SLOT(address) ((struct coin_slot *)ram((address), sizeof(struct coin_slot)))
+#define PLAYER_COUNTERS(address) ((struct player_counters *)ram((address), sizeof(struct player_counters)))
+#define DEMO_PLAYBACK(address) ((struct demo_playback *)ram((address), sizeof(struct demo_playback)))
+#define ATTRACT_PICTURE(address) ((const struct attract_picture *)data_record((address), sizeof(struct attract_picture)))
+#define STORY_OBJECT_START(address) ((const struct story_object_start *)data_record((address), sizeof(struct story_object_start)))
+#define CAMERA_ENTRY(address) ((const struct camera_entry *)data_record((address), sizeof(struct camera_entry)))
+#define CAMERA_CHECK(address) ((const struct camera_check *)data_record((address), sizeof(struct camera_check)))
 
 /* the program ROM's tables of records, by name: name[i].field */
 #define bonus_1_players_ADDRESS 0x7BD0u    /* 021BD0 */

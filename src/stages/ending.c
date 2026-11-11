@@ -3,7 +3,7 @@
  *    Description: the ending
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    10-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -12,7 +12,7 @@
 #include "game.h"
 
 /* Step 16, the ending, by step_phase, the gauges hidden */
-uint32_t step_ending(uint16_t y, uint16_t u)
+uint32_t step_ending(uint16_t u)
 {
 	uint32_t left_caller = 0;
 
@@ -70,7 +70,7 @@ uint32_t step_ending(uint16_t y, uint16_t u)
 		return left_caller;
 	case -120:
 		left_caller = 0u;
-		return stage_3_cemetery_play(y, left_caller);
+		return stage_3_cemetery_play(left_caller);
 	case -118:
 		left_caller = 0u;
 		stage_3_cemetery_over();
@@ -98,7 +98,7 @@ uint32_t step_ending(uint16_t y, uint16_t u)
 		return left_caller;
 	case -104:
 		left_caller = 0u;
-		return stage_4_play(y, left_caller);
+		return stage_4_play(left_caller);
 	case -102:
 		left_caller = 0u;
 		stage_4_over();
@@ -126,7 +126,7 @@ uint32_t step_ending(uint16_t y, uint16_t u)
 		return left_caller;
 	case -88:
 		left_caller = 0u;
-		return stage_5_play(y, left_caller);
+		return stage_5_play(left_caller);
 	case -86:
 		left_caller = 0u;
 		stage_5_over();
@@ -159,7 +159,7 @@ uint32_t step_ending(uint16_t y, uint16_t u)
 		return left_caller;
 	case -70:
 		left_caller = 0u;
-		return stage_6_play(y, left_caller);
+		return stage_6_play(left_caller);
 	case -68:
 		left_caller = 0u;
 		stage_6_over();
@@ -185,11 +185,11 @@ uint32_t step_ending(uint16_t y, uint16_t u)
 		return left_caller;
 	case -56:
 		left_caller = 0u;
-		bonus_2_intro_phase(y);
+		bonus_2_intro_phase();
 		return left_caller;
 	case -54:
 		left_caller = 0u;
-		bonus_2_run(y);
+		bonus_2_run();
 		return left_caller;
 	case -52:
 		left_caller = 0u;
@@ -216,7 +216,7 @@ uint32_t step_ending(uint16_t y, uint16_t u)
 		return left_caller;
 	case -40:
 		left_caller = 0u;
-		return stage_7_play(y, left_caller);
+		return stage_7_play(left_caller);
 	case -38:
 		left_caller = 0u;
 		stage_7_over();
@@ -251,7 +251,7 @@ uint32_t step_ending(uint16_t y, uint16_t u)
 		return left_caller;
 	case -20:
 		left_caller = 0u;
-		return stage_8_play(y, left_caller);
+		return stage_8_play(left_caller);
 	case -18:
 		left_caller = 0u;
 		return stage_8_first_part_exit(left_caller);
@@ -260,10 +260,10 @@ uint32_t step_ending(uint16_t y, uint16_t u)
 		return stage_8_story(u, left_caller);
 	case -14:
 		left_caller = 0u;
-		return stage_8_robot_entrance(y, left_caller);
+		return stage_8_robot_entrance(left_caller);
 	case -12:
 		left_caller = 0u;
-		return stage_8_final_fight(y, left_caller);
+		return stage_8_final_fight(left_caller);
 	case -10:
 		left_caller = 0u;
 		stage_8_over();
@@ -287,9 +287,7 @@ uint32_t step_ending(uint16_t y, uint16_t u)
 /* Clears the sprites, the tile layers and the scene's variables for the ending */
 void ending_setup(void)
 {
-	uint16_t ignored16 = 0, ignored16_2 = 0;
-
-	clear_sprites(&ignored16, &ignored16_2);
+	clear_sprites();
 	clear_tile_layers();
 	reset_for_stage();
 	step_phase++;

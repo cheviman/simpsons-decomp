@@ -3,7 +3,7 @@
  *    Description: the bird that rises, flutters and turns into an object to pick up
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    10-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -12,21 +12,20 @@
 #include "game.h"
 
 /* Sets the bird up under the floor, rising. */
-void bird_item_start(uint16_t object, uint16_t *p_box, uint16_t *p_setup)
+uint16_t bird_item_start(uint16_t object)
 {
-	uint16_t box = 0, setup = 0;
+	uint16_t setup = 0;
 	uint8_t state = 0;
 
 	setup = bird_item_setup_ADDRESS;
-	box = vector_object_setup(object, setup);
+	vector_object_setup(object, setup);
 	OBJECT(object)->z = 0xFF80u;
 	OBJECT(object)->flags = 0x80u;
 	OBJECT(object)->attributes = 0x20u;
 	OBJECT(object)->z_speed = 0xC0;
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
-	*p_box = box;
-	*p_setup = setup;
+	return setup;
 }
 
 /* Rises until 0070 over the floor. */

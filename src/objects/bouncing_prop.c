@@ -3,7 +3,7 @@
  *    Description: the kind 05 prop a stage event drops in (5280 type FB)
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    10-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -32,9 +32,8 @@ uint16_t bouncing_prop_check_owner(uint16_t object, uint16_t owner)
 }
 
 /* The prop leaving (step FE), by field 29: it flies off into the distance. */
-void bouncing_prop_leave(uint16_t object, uint16_t *p_y, uint16_t *p_steps)
+uint16_t bouncing_prop_leave(uint16_t object)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint16_t steps = 0;
 	uint8_t action_step = 0;
 
@@ -46,45 +45,41 @@ void bouncing_prop_leave(uint16_t object, uint16_t *p_y, uint16_t *p_steps)
 		{
 		case 0:
 			bouncing_prop_leave_start(object);
-			break;
+			return steps;
 		case 2:
 			bouncing_prop_fly_away(object);
-			break;
+			return steps;
 		case 4:
 			bouncing_prop_shrink_away(object);
-			break;
+			return steps;
 		case 6:
-			bouncing_prop_rise_out(object);
 			break;
 		case -18:
 			continue;
 		case -16:
 			bouncing_prop_fall_in(object);
-			break;
+			return steps;
 		case -14:
-			bouncing_prop_setup(object, &y, &steps);
-			break;
+			return bouncing_prop_setup(object);
 		case -12:
 		case -10:
-			steps = bouncing_prop_follow(object, steps);
-			break;
+			return bouncing_prop_follow(object, steps);
 		case -8:
 			bouncing_prop_stop(object);
-			break;
+			return steps;
 		case -6:
-			y = bouncing_prop_bounce_start(object, y);
-			break;
+			bouncing_prop_bounce_start(object);
+			return steps;
 		case -4:
-			bouncing_prop_bounce(object, &y, &steps);
-			break;
+			return bouncing_prop_bounce(object);
 		case -2:
-			y = bouncing_prop_knocked(object, y);
-			break;
+			bouncing_prop_knocked(object);
+			return steps;
 		}
 		break;
 	}
-	*p_y = y;
-	*p_steps = steps;
+	bouncing_prop_rise_out(object);
+	return steps;
 }
 
 /* Stops the prop at its plain size and throws it up. */
@@ -107,13 +102,13 @@ void bouncing_prop_leave_start(uint16_t object)
 void bouncing_prop_fly_away(uint16_t object)
 {
 	uint8_t action_step = 0;
-	uint16_t z = 0, t1 = 0;
+	uint16_t z = 0, camera_x_now = 0;
 
 	z = OBJECT(object)->z;
 	if (z < 0x40u)
 		return;
-	t1 = camera_x;
-	if (t1 > 0x3A2u)
+	camera_x_now = camera_x;
+	if (camera_x_now > 0x3A2u)
 	{
 		OBJECT(object)->animation = 0x95u;
 		OBJECT(object)->action_step = 3u;
@@ -169,51 +164,52 @@ void bouncing_prop_stop(uint16_t object)
 }
 
 /* Sends the hit prop off one way at random. */
-uint16_t bouncing_prop_knocked(uint16_t object, uint16_t y)
+void bouncing_prop_knocked(uint16_t object)
 {
 	uint16_t x_speed = 0;
 
 	OBJECT(object)->x_speed = 0x200;
 	if ((int8_t)random_number >= 0)
-		return bouncing_prop_bounce_start(object, y);
+	{
+		bouncing_prop_bounce_start(object);
+		return;
+	}
 	x_speed = OBJECT(object)->x_speed;
 	OBJECT(object)->x_speed = 0u - x_speed;
-	return bouncing_prop_bounce_start(object, y);
+	bouncing_prop_bounce_start(object);
 }
 
 /* Starts the prop's bounce (step 5) with its bouncing hit box; past scroll 03A2 it leaves instead. */
-uint16_t bouncing_prop_bounce_start(uint16_t object, uint16_t y)
+void bouncing_prop_bounce_start(uint16_t object)
 {
-	uint16_t box = 0;
-	uint16_t t1 = 0;
+	uint16_t camera_x_now = 0;
 
-	t1 = camera_x;
-	if (t1 > 0x3A2u)
+	camera_x_now = camera_x;
+	if (camera_x_now > 0x3A2u)
 	{
 		OBJECT(object)->state = 0xFEu;
 		OBJECT(object)->action = 0u;
 		OBJECT(object)->action_step = 0u;
-		return y;
+		return;
 	}
 	OBJECT(object)->flags = 0x80u;
 	OBJECT(object)->animation = 0x93u;
-	box = bouncing_prop_bounce_start_box_ADDRESS;
-	vector_set_hit_box(object, box);
+	leftover_y = bouncing_prop_bounce_start_box_ADDRESS;
+	vector_set_hit_box(object);
 	face_movement(object);
 	OBJECT(object)->z_speed = -0x100;
 	OBJECT(object)->state = 5u;
 	OBJECT(object)->action = 0u;
 	OBJECT(object)->action_step = 0u;
-	return box;
 }
 
 /* Sets the prop up with three bounces, thrown up big from the back, falling in (step FF). */
-void bouncing_prop_setup(uint16_t object, uint16_t *p_box, uint16_t *p_setup)
+uint16_t bouncing_prop_setup(uint16_t object)
 {
-	uint16_t box = 0, setup = 0;
+	uint16_t setup = 0;
 
 	setup = bouncing_prop_object_setup_ADDRESS;
-	box = vector_object_setup(object, setup);
+	vector_object_setup(object, setup);
 	OBJECT(object)->bouncing_prop.bounces_left = 3u;
 	OBJECT(object)->floor_z = 0u;
 	OBJECT(object)->attributes = 0x10u;
@@ -223,8 +219,7 @@ void bouncing_prop_setup(uint16_t object, uint16_t *p_box, uint16_t *p_setup)
 	OBJECT(object)->zoom_x = 0xFFu;
 	OBJECT(object)->zoom_y = 0xFFu;
 	OBJECT(object)->state = 0xFFu;
-	*p_box = box;
-	*p_setup = setup;
+	return setup;
 }
 
 /* Pulls the prop down, shrinking it to its plain size, until it lands; then it can be hit and moves at
@@ -261,9 +256,9 @@ uint16_t bouncing_prop_follow(uint16_t object, uint16_t player)
 {
 	uint32_t negative = 0;
 	uint8_t cell = 0, direction = 0;
-	uint16_t d = 0, floor_cell = 0, heading = 0;
+	uint16_t direction_offset = 0, floor_cell = 0, heading = 0;
 	uint8_t carrier_kind = 0, done = 0, parameter = 0;
-	uint16_t t1 = 0, t2 = 0, t3 = 0, t4 = 0, t5 = 0, t6 = 0, t7 = 0, t8 = 0, t9 = 0, t10 = 0, x_speed = 0, y_speed = 0;
+	uint16_t prop_x = 0, nearest_x = 0, difference_x = 0, signed_dx = 0, distance_x = 0, prop_y = 0, nearest_y = 0, difference_y = 0, signed_dy = 0, distance_y = 0, x_speed = 0, y_speed = 0;
 
 	carrier_kind = OBJECT(object)->bouncing_prop.carrier_kind;
 	if (carrier_kind != 0u)
@@ -271,19 +266,19 @@ uint16_t bouncing_prop_follow(uint16_t object, uint16_t player)
 	if ((frame_count & 0x3Fu) == 0u)
 	{
 		player = vector_choose_nearest_player(object);
-		t1 = OBJECT(object)->x;
-		t2 = mem_read16(player + 0xCu);
-		t3 = t1 - t2;
-		t4 = t3;
-		t5 = t4 >> 15 ? 0u - t4 : t4;
-		if (t5 < 0x40u)
+		prop_x = OBJECT(object)->x;
+		nearest_x = OBJECT(player)->x;
+		difference_x = prop_x - nearest_x;
+		signed_dx = difference_x;
+		distance_x = signed_dx >> 15 ? 0u - signed_dx : signed_dx;
+		if (distance_x < 0x40u)
 		{
-			t6 = OBJECT(object)->y;
-			t7 = mem_read16(player + 0x11u);
-			t8 = t6 - t7;
-			t9 = t8;
-			t10 = t9 >> 15 ? 0u - t9 : t9;
-			if (t10 < 0x40u)
+			prop_y = OBJECT(object)->y;
+			nearest_y = OBJECT(player)->y;
+			difference_y = prop_y - nearest_y;
+			signed_dy = difference_y;
+			distance_y = signed_dy >> 15 ? 0u - signed_dy : signed_dy;
+			if (distance_y < 0x40u)
 			{
 				OBJECT(object)->x_speed = 0;
 				OBJECT(object)->y_speed = 0;
@@ -299,9 +294,9 @@ uint16_t bouncing_prop_follow(uint16_t object, uint16_t player)
 			}
 		}
 		parameter = OBJECT(object)->parameter;
-		d = parameter;
-		d = vector_direction_to_offset(object, player, d);
-		direction = (uint8_t)(d >> 8);
+		direction_offset = parameter;
+		direction_offset = vector_direction_to_offset(object, player, direction_offset);
+		direction = (uint8_t)(direction_offset >> 8);
 		heading = ((uint32_t)direction << 8) | 0x10u;
 		vector_set_speed_by_direction(object, heading);
 	}
@@ -359,9 +354,8 @@ uint16_t bouncing_prop_follow(uint16_t object, uint16_t player)
 }
 
 /* The prop's bounce (step 5), by field 29. */
-void bouncing_prop_bounce(uint16_t object, uint16_t *p_y, uint16_t *p_steps)
+uint16_t bouncing_prop_bounce(uint16_t object)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint16_t steps = 0;
 	uint8_t action_step = 0;
 
@@ -370,30 +364,28 @@ void bouncing_prop_bounce(uint16_t object, uint16_t *p_y, uint16_t *p_steps)
 	switch ((int8_t)(uint8_t)((uint32_t)action_step << 1))
 	{
 	case 0:
-		y = bouncing_prop_bounce_off_edge(object, y);
-		break;
+		bouncing_prop_bounce_off_edge(object);
+		return steps;
 	case 2:
 		bouncing_prop_land(object);
-		break;
+		return steps;
 	}
-	*p_y = y;
-	*p_steps = steps;
+	unreachable();
 }
 
 /* Moves the knocked prop; at the screen's edge it bounces back up with its hit box. */
-uint16_t bouncing_prop_bounce_off_edge(uint16_t object, uint16_t y)
+void bouncing_prop_bounce_off_edge(uint16_t object)
 {
-	uint16_t box = 0;
 	uint8_t action_step = 0;
-	uint16_t t1 = 0, z_speed = 0, x_speed = 0;
+	uint16_t prop_x = 0, z_speed = 0, x_speed = 0;
 
-	t1 = OBJECT(object)->x;
-	if (t1 >= 0x60 && t1 <= 0x15F)
+	prop_x = OBJECT(object)->x;
+	if (prop_x >= 0x60 && prop_x <= 0x15F)
 	{
 		z_speed = OBJECT(object)->z_speed;
 		OBJECT(object)->z_speed = z_speed + 0x18u;
 		check_hits_with_enemies(object);
-		return y;
+		return;
 	}
 	x_speed = OBJECT(object)->x_speed;
 	OBJECT(object)->x_speed = 0u - x_speed;
@@ -403,9 +395,8 @@ uint16_t bouncing_prop_bounce_off_edge(uint16_t object, uint16_t y)
 	OBJECT(object)->animation = 0x95u;
 	OBJECT(object)->bouncing_prop.carrier_kind = 0u;
 	OBJECT(object)->flags = 0x88u;
-	box = bouncing_prop_bounce_off_edge_box_ADDRESS;
-	vector_set_hit_box(object, box);
-	return box;
+	leftover_y = bouncing_prop_bounce_off_edge_box_ADDRESS;
+	vector_set_hit_box(object);
 }
 
 /* Pulls the prop down; when it lands, counts a bounce: after the third it is done, otherwise it can be

@@ -3,7 +3,7 @@
  *    Description: speeds from a direction, the sine tables, the direction from one object to another
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    10-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -41,9 +41,9 @@ void scaled_sine(uint16_t *p_quarter_wave, uint16_t *p_heading)
 /* The sine of a direction times a factor, over 16, signed, from the quarter-wave table given. */
 uint16_t scaled_sine_from_table(uint16_t quarter_wave, uint16_t heading)
 {
-	uint8_t a = 0, d = 0, direction = 0, sine = 0;
+	uint8_t direction = 0, scaled_high = 0, scaled_low = 0, sine = 0;
 	uint16_t scaled = 0;
-	uint16_t t1 = 0, t2 = 0, t3 = 0;
+	uint16_t sine_product = 0, sine_sixteenths = 0, negated_sine = 0;
 
 	direction = (uint8_t)(heading >> 8);
 	sine_direction = direction;
@@ -53,20 +53,20 @@ uint16_t scaled_sine_from_table(uint16_t quarter_wave, uint16_t heading)
 	sine = mem_read8(quarter_wave + (int8_t)direction);
 	if ((uint8_t)heading != 0u)
 	{
-		t1 = (uint32_t)sine * (uint8_t)heading;
-		heading = t1;
-		sine = (uint8_t)(t1 >> 8);
+		sine_product = (uint32_t)sine * (uint8_t)heading;
+		heading = sine_product;
+		sine = (uint8_t)(sine_product >> 8);
 	}
-	t2 = (uint16_t)(((uint32_t)sine << 8) | (heading & 0xFFu)) >> 4;
-	d = (uint8_t)t2;
-	a = (uint8_t)(t2 >> 8);
+	sine_sixteenths = (uint16_t)(((uint32_t)sine << 8) | (heading & 0xFFu)) >> 4;
+	scaled_low = (uint8_t)sine_sixteenths;
+	scaled_high = (uint8_t)(sine_sixteenths >> 8);
 	if ((int8_t)sine_direction < 0)
 	{
-		t3 = 0u - (((uint32_t)a << 8) | (d & 0xFFu));
-		d = (uint8_t)t3;
-		a = (uint8_t)(t3 >> 8);
+		negated_sine = 0u - (((uint32_t)scaled_high << 8) | (scaled_low & 0xFFu));
+		scaled_low = (uint8_t)negated_sine;
+		scaled_high = (uint8_t)(negated_sine >> 8);
 	}
-	scaled = (d & 0xFFu) | ((uint32_t)a << 8);
+	scaled = (scaled_low & 0xFFu) | ((uint32_t)scaled_high << 8);
 	return scaled;
 }
 
@@ -85,47 +85,47 @@ void walk_sine(uint16_t *p_quarter_wave, uint16_t *p_heading)
 /* The sine of a direction from the quarter-wave table given, times 16, signed. */
 uint16_t walk_sine_from_table(uint16_t quarter_wave, uint16_t heading)
 {
-	uint8_t a = 0, b = 0, direction = 0;
+	uint8_t direction = 0, speed_high = 0, speed_low = 0;
 	uint16_t scaled = 0;
-	uint16_t t1 = 0, t2 = 0;
+	uint16_t sine_speed = 0, negated_speed = 0;
 
 	direction = (uint8_t)(heading >> 8);
 	sine_direction = direction;
 	direction &= 0x7Fu;
 	if ((direction & 0x40u) != 0u)
 		direction = 0u - ((direction & 0x3Fu) - 0x40u);
-	t1 = (uint32_t)mem_read8(quarter_wave + (int8_t)direction) << 4;
-	a = (uint8_t)(t1 >> 8);
-	b = (uint8_t)t1;
+	sine_speed = (uint32_t)mem_read8(quarter_wave + (int8_t)direction) << 4;
+	speed_high = (uint8_t)(sine_speed >> 8);
+	speed_low = (uint8_t)sine_speed;
 	if ((int8_t)sine_direction < 0)
 	{
-		t2 = 0u - (((uint32_t)a << 8) | b);
-		a = (uint8_t)(t2 >> 8);
-		b = (uint8_t)t2;
+		negated_speed = 0u - (((uint32_t)speed_high << 8) | speed_low);
+		speed_high = (uint8_t)(negated_speed >> 8);
+		speed_low = (uint8_t)negated_speed;
 	}
-	scaled = ((uint32_t)a << 8) | b;
+	scaled = ((uint32_t)speed_high << 8) | speed_low;
 	return scaled;
 }
 
 /* Sets the object's y and x speeds to walk in a direction (in 256ths of a turn) at the walking speed. */
 uint16_t set_walk_speeds_from_direction(uint16_t object, uint16_t u, uint16_t heading)
 {
-	uint8_t a = 0, b = 0;
-	uint16_t d = 0, quarter_wave = 0, u_2 = 0;
+	uint8_t speed_high = 0, speed_low = 0;
+	uint16_t across_heading = 0, quarter_wave = 0, u_2 = 0;
 	uint8_t stack = 0, stack_2 = 0, stack_4 = 0;
 
 	stack_2 = u >> 8;
 	stack = (uint8_t)u;
 	stack_4 = heading >> 8;
 	walk_sine(&quarter_wave, &heading);
-	a = (uint8_t)(heading >> 8);
-	b = (uint8_t)heading;
-	OBJECT(object)->y_speed = ((uint32_t)a << 8) | b;
-	d = (heading & 0xFFu) | ((uint32_t)(uint8_t)(stack_4 + 0x40u) << 8);
-	d = walk_sine_from_table(quarter_wave, d);
-	a = (uint8_t)(d >> 8);
-	b = (uint8_t)d;
-	OBJECT(object)->x_speed = ((uint32_t)a << 8) | b;
+	speed_high = (uint8_t)(heading >> 8);
+	speed_low = (uint8_t)heading;
+	OBJECT(object)->y_speed = ((uint32_t)speed_high << 8) | speed_low;
+	across_heading = (heading & 0xFFu) | ((uint32_t)(uint8_t)(stack_4 + 0x40u) << 8);
+	across_heading = walk_sine_from_table(quarter_wave, across_heading);
+	speed_high = (uint8_t)(across_heading >> 8);
+	speed_low = (uint8_t)across_heading;
+	OBJECT(object)->x_speed = ((uint32_t)speed_high << 8) | speed_low;
 	u_2 = ((uint32_t)stack_2 << 8) | stack;
 	return u_2;
 }
@@ -134,36 +134,36 @@ uint16_t set_walk_speeds_from_direction(uint16_t object, uint16_t u, uint16_t he
    in x. */
 uint16_t direction_to_beside(uint16_t object, uint16_t other, uint8_t x_offset)
 {
-	uint8_t a = 0, angle = 0, b = 0, shifts = 0;
+	uint8_t angle = 0, difference_high = 0, difference_low = 0, shifts = 0;
 	uint16_t direction = 0;
 	uint8_t stack = 0;
-	uint8_t t13 = 0, t14 = 0, t15 = 0, t16 = 0;
-	uint16_t t1 = 0, t2 = 0, t3 = 0, t4 = 0, t5 = 0, t6 = 0, t7 = 0, t8 = 0, t9 = 0, t10 = 0, t11 = 0, t12 = 0;
+	uint8_t shifts_left_2 = 0, shifts_to_go_2 = 0, shifts_left = 0, shifts_to_go = 0;
+	uint16_t x_offset_word = 0, other_x = 0, beside_x = 0, own_x = 0, x_difference = 0, signed_x_difference = 0, x_distance = 0, other_y = 0, own_y = 0, y_difference = 0, signed_y_difference = 0, y_distance = 0;
 
-	b = (uint8_t)x_offset;
-	stack = b;
-	t1 = (int8_t)b;
-	t2 = OBJECT(other)->x;
-	t3 = t1 + t2;
-	t4 = OBJECT(object)->x;
-	t5 = t3 - t4;
-	a = (uint8_t)(t5 >> 8);
-	b = (uint8_t)t5;
-	direction_dx_sign = a;
-	t6 = ((uint32_t)a << 8) | b;
-	t7 = t6 >> 15 ? 0u - t6 : t6;
-	direction_dx = t7;
-	t8 = OBJECT(other)->y;
-	t9 = OBJECT(object)->y;
-	t10 = t8 - t9;
-	a = (uint8_t)(t10 >> 8);
-	direction_dy_sign = a;
-	t11 = ((uint32_t)a << 8) | (uint8_t)t10;
-	t12 = t11 >> 15 ? 0u - t11 : t11;
-	a = (uint8_t)(t12 >> 8);
-	b = (uint8_t)t12;
-	direction_dy = ((uint32_t)a << 8) | b;
-	if (direction_dx < (uint16_t)(((uint32_t)a << 8) | b))
+	difference_low = (uint8_t)x_offset;
+	stack = difference_low;
+	x_offset_word = (int8_t)difference_low;
+	other_x = OBJECT(other)->x;
+	beside_x = x_offset_word + other_x;
+	own_x = OBJECT(object)->x;
+	x_difference = beside_x - own_x;
+	difference_high = (uint8_t)(x_difference >> 8);
+	difference_low = (uint8_t)x_difference;
+	direction_dx_sign = difference_high;
+	signed_x_difference = ((uint32_t)difference_high << 8) | difference_low;
+	x_distance = signed_x_difference >> 15 ? 0u - signed_x_difference : signed_x_difference;
+	direction_dx = x_distance;
+	other_y = OBJECT(other)->y;
+	own_y = OBJECT(object)->y;
+	y_difference = other_y - own_y;
+	difference_high = (uint8_t)(y_difference >> 8);
+	direction_dy_sign = difference_high;
+	signed_y_difference = ((uint32_t)difference_high << 8) | (uint8_t)y_difference;
+	y_distance = signed_y_difference >> 15 ? 0u - signed_y_difference : signed_y_difference;
+	difference_high = (uint8_t)(y_distance >> 8);
+	difference_low = (uint8_t)y_distance;
+	direction_dy = ((uint32_t)difference_high << 8) | difference_low;
+	if (direction_dx < (uint16_t)(((uint32_t)difference_high << 8) | difference_low))
 	{
 		shifts = 6u;
 		while (direction_dy_high != 0u)
@@ -178,18 +178,18 @@ uint16_t direction_to_beside(uint16_t object, uint16_t other, uint8_t x_offset)
 				do
 				{
 					direction_dx = (uint32_t)direction_dx << 1;
-					t13 = shifts;
-					shifts = t13 - 1u;
-				} while (t13 != 1u);
+					shifts_left_2 = shifts;
+					shifts = shifts_left_2 - 1u;
+				} while (shifts_left_2 != 1u);
 			}
 			else
 			{
 				do
 				{
 					direction_dx = direction_dx >> 1;
-					t14 = shifts + 1u;
-					shifts = t14;
-				} while (t14 != 0u);
+					shifts_to_go_2 = shifts + 1u;
+					shifts = shifts_to_go_2;
+				} while (shifts_to_go_2 != 0u);
 			}
 		}
 		angle = 0u - (arctangents[konami_divx(direction_dx, direction_dy_low)] - 0x40u);
@@ -209,18 +209,18 @@ uint16_t direction_to_beside(uint16_t object, uint16_t other, uint8_t x_offset)
 				do
 				{
 					direction_dy = (uint32_t)direction_dy << 1;
-					t15 = shifts;
-					shifts = t15 - 1u;
-				} while (t15 != 1u);
+					shifts_left = shifts;
+					shifts = shifts_left - 1u;
+				} while (shifts_left != 1u);
 			}
 			else
 			{
 				do
 				{
 					direction_dy = direction_dy >> 1;
-					t16 = shifts + 1u;
-					shifts = t16;
-				} while (t16 != 0u);
+					shifts_to_go = shifts + 1u;
+					shifts = shifts_to_go;
+				} while (shifts_to_go != 0u);
 			}
 		}
 		angle = arctangents[konami_divx(direction_dy, direction_dx_low)];
@@ -243,32 +243,32 @@ uint16_t direction_to_beside(uint16_t object, uint16_t other, uint8_t x_offset)
    arctangent of the shorter distance over the longer. */
 uint16_t direction_to(uint16_t object, uint16_t other)
 {
-	uint8_t a = 0, angle = 0, b = 0, shifts = 0;
+	uint8_t angle = 0, b = 0, difference_high = 0, difference_low = 0, shifts = 0;
 	uint16_t direction = 0;
 	uint8_t stack = 0;
-	uint8_t t11 = 0, t12 = 0, t13 = 0, t14 = 0;
-	uint16_t t1 = 0, t2 = 0, t3 = 0, t4 = 0, t5 = 0, t6 = 0, t7 = 0, t8 = 0, t9 = 0, t10 = 0;
+	uint8_t shifts_left_2 = 0, shifts_to_go_2 = 0, shifts_left = 0, shifts_to_go = 0;
+	uint16_t other_x = 0, own_x = 0, x_difference = 0, signed_x_difference = 0, x_distance = 0, other_y = 0, own_y = 0, y_difference = 0, signed_y_difference = 0, y_distance = 0;
 
 	stack = b;
-	t1 = OBJECT(other)->x;
-	t2 = OBJECT(object)->x;
-	t3 = t1 - t2;
-	a = (uint8_t)(t3 >> 8);
-	direction_dx_sign = a;
-	t4 = ((uint32_t)a << 8) | (uint8_t)t3;
-	t5 = t4 >> 15 ? 0u - t4 : t4;
-	direction_dx = t5;
-	t6 = OBJECT(other)->y;
-	t7 = OBJECT(object)->y;
-	t8 = t6 - t7;
-	a = (uint8_t)(t8 >> 8);
-	direction_dy_sign = a;
-	t9 = ((uint32_t)a << 8) | (uint8_t)t8;
-	t10 = t9 >> 15 ? 0u - t9 : t9;
-	a = (uint8_t)(t10 >> 8);
-	b = (uint8_t)t10;
-	direction_dy = ((uint32_t)a << 8) | b;
-	if (direction_dx < (uint16_t)(((uint32_t)a << 8) | b))
+	other_x = OBJECT(other)->x;
+	own_x = OBJECT(object)->x;
+	x_difference = other_x - own_x;
+	difference_high = (uint8_t)(x_difference >> 8);
+	direction_dx_sign = difference_high;
+	signed_x_difference = ((uint32_t)difference_high << 8) | (uint8_t)x_difference;
+	x_distance = signed_x_difference >> 15 ? 0u - signed_x_difference : signed_x_difference;
+	direction_dx = x_distance;
+	other_y = OBJECT(other)->y;
+	own_y = OBJECT(object)->y;
+	y_difference = other_y - own_y;
+	difference_high = (uint8_t)(y_difference >> 8);
+	direction_dy_sign = difference_high;
+	signed_y_difference = ((uint32_t)difference_high << 8) | (uint8_t)y_difference;
+	y_distance = signed_y_difference >> 15 ? 0u - signed_y_difference : signed_y_difference;
+	difference_high = (uint8_t)(y_distance >> 8);
+	difference_low = (uint8_t)y_distance;
+	direction_dy = ((uint32_t)difference_high << 8) | difference_low;
+	if (direction_dx < (uint16_t)(((uint32_t)difference_high << 8) | difference_low))
 	{
 		shifts = 6u;
 		while (direction_dy_high != 0u)
@@ -283,18 +283,18 @@ uint16_t direction_to(uint16_t object, uint16_t other)
 				do
 				{
 					direction_dx = (uint32_t)direction_dx << 1;
-					t11 = shifts;
-					shifts = t11 - 1u;
-				} while (t11 != 1u);
+					shifts_left_2 = shifts;
+					shifts = shifts_left_2 - 1u;
+				} while (shifts_left_2 != 1u);
 			}
 			else
 			{
 				do
 				{
 					direction_dx = direction_dx >> 1;
-					t12 = shifts + 1u;
-					shifts = t12;
-				} while (t12 != 0u);
+					shifts_to_go_2 = shifts + 1u;
+					shifts = shifts_to_go_2;
+				} while (shifts_to_go_2 != 0u);
 			}
 		}
 		angle = 0u - (arctangents[konami_divx(direction_dx, direction_dy_low)] - 0x40u);
@@ -314,18 +314,18 @@ uint16_t direction_to(uint16_t object, uint16_t other)
 				do
 				{
 					direction_dy = (uint32_t)direction_dy << 1;
-					t13 = shifts;
-					shifts = t13 - 1u;
-				} while (t13 != 1u);
+					shifts_left = shifts;
+					shifts = shifts_left - 1u;
+				} while (shifts_left != 1u);
 			}
 			else
 			{
 				do
 				{
 					direction_dy = direction_dy >> 1;
-					t14 = shifts + 1u;
-					shifts = t14;
-				} while (t14 != 0u);
+					shifts_to_go = shifts + 1u;
+					shifts = shifts_to_go;
+				} while (shifts_to_go != 0u);
 			}
 		}
 		angle = arctangents[konami_divx(direction_dy, direction_dx_low)];

@@ -223,6 +223,12 @@ void game_entry(void);      /* the reset's */
 void game_irq(void);        /* the IRQ's handler */
 void game_firq(void);       /* the FIRQ's handler */
 
+/* What the code carries in its registers from one routine to a later one, which the C keeps as globals (src/game.h,
+   src/table.c): the runtime puts back what an interrupt's handler found there when the handler returns, as the CPU's
+   RTI does */
+extern uint16_t *const game_context[];
+extern const size_t game_context_count;
+
 /* The default of a switch on a jump's target, with decompile.py --checks: the original would jump to 'address', which
    no case handles */
 GAME_NORETURN void invalid_jump(uint32_t address);

@@ -3,7 +3,7 @@
  *    Description: the game mode's frame and its first phase
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    10-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -15,32 +15,31 @@
    mode_phase, the points of the beaten enemies; in_attract cleared */
 void game_mode_frame(uint16_t u)
 {
-	uint16_t gauge_counters = 0;
 	uint32_t left_caller = 0;
 
 	next_random();
 	gauges_shown = 1u;
 	window_bank = 0x20u;
 	set_lines(window_bank);
-	gauge_counters = gauges_count_delays();
+	gauges_count_delays();
 	count_players_in_game();
 	left_caller = 0u;
 	switch ((int8_t)(uint8_t)((uint32_t)mode_phase << 1))
 	{
 	case 0:
-		left_caller = game_start_phase(gauge_counters, u);
+		left_caller = game_start_phase(u);
 		break;
 	case 2:
-		left_caller = game_run_step(gauge_counters, u);
+		left_caller = game_run_step(u);
 		break;
 	case 4:
 		game_continue_phase();
 		break;
 	case 6:
-		left_caller = game_over_phase(gauge_counters, u, left_caller);
+		left_caller = game_over_phase(u, left_caller);
 		break;
 	case 8:
-		left_caller = name_entry_phase(gauge_counters, u, left_caller);
+		left_caller = name_entry_phase(u, left_caller);
 		break;
 	case 10:
 		game_start_clear();
@@ -49,55 +48,55 @@ void game_mode_frame(uint16_t u)
 		game_start_palettes(u);
 		break;
 	case 14:
-		left_caller = step_portraits(gauge_counters, u);
+		left_caller = step_portraits(u);
 		break;
 	case 16:
-		left_caller = step_story_1(gauge_counters, u);
+		left_caller = step_story_1(u);
 		break;
 	case 18:
-		left_caller = step_stage_1(gauge_counters, u);
+		left_caller = step_stage_1(u);
 		break;
 	case 20:
-		left_caller = step_bonus_1(gauge_counters, u);
+		left_caller = step_bonus_1(u);
 		break;
 	case 22:
-		left_caller = step_stage_2(gauge_counters, u);
+		left_caller = step_stage_2(u);
 		break;
 	case 24:
 		step_story_2();
 		break;
 	case 26:
-		left_caller = step_stage_3_forest(gauge_counters, u);
+		left_caller = step_stage_3_forest(u);
 		break;
 	case 28:
-		left_caller = step_stage_3_cemetery(gauge_counters, u);
+		left_caller = step_stage_3_cemetery(u);
 		break;
 	case 30:
-		left_caller = step_stage_4(gauge_counters, u);
+		left_caller = step_stage_4(u);
 		break;
 	case 32:
-		left_caller = step_stage_5(gauge_counters, u);
+		left_caller = step_stage_5(u);
 		break;
 	case 34:
 		step_story_3();
 		break;
 	case 36:
-		left_caller = step_stage_6(gauge_counters, u);
+		left_caller = step_stage_6(u);
 		break;
 	case 38:
-		left_caller = step_bonus_2(gauge_counters, u);
+		left_caller = step_bonus_2(u);
 		break;
 	case 40:
-		left_caller = step_stage_7(gauge_counters, u);
+		left_caller = step_stage_7(u);
 		break;
 	case 42:
 		step_story_4();
 		break;
 	case 44:
-		left_caller = step_stage_8(gauge_counters, u);
+		left_caller = step_stage_8(u);
 		break;
 	case 46:
-		left_caller = step_ending(gauge_counters, u);
+		left_caller = step_ending(u);
 		break;
 	case 48:
 		portraits_start(u);
@@ -130,7 +129,7 @@ void game_mode_frame(uint16_t u)
 		stage_1_opening();
 		break;
 	case 68:
-		left_caller = stage_1_play(gauge_counters, left_caller);
+		left_caller = stage_1_play(left_caller);
 		break;
 	case 70:
 		stage_1_over();
@@ -148,10 +147,10 @@ void game_mode_frame(uint16_t u)
 		bonus_1_draw();
 		break;
 	case 80:
-		bonus_1_intro_phase(gauge_counters);
+		bonus_1_intro_phase();
 		break;
 	case 82:
-		bonus_1_run(gauge_counters);
+		bonus_1_run();
 		break;
 	case 84:
 		bonus_1_end_phase();
@@ -169,7 +168,7 @@ void game_mode_frame(uint16_t u)
 		stage_2_opening();
 		break;
 	case 94:
-		left_caller = stage_2_play(gauge_counters, left_caller);
+		left_caller = stage_2_play(left_caller);
 		break;
 	case 96:
 		stage_2_after_boss();
@@ -193,10 +192,10 @@ void game_mode_frame(uint16_t u)
 		stage_3_forest_opening();
 		break;
 	case 110:
-		left_caller = stage_3_forest_play(gauge_counters, left_caller);
+		left_caller = stage_3_forest_play(left_caller);
 		break;
 	case 112:
-		left_caller = stage_3_forest_cleared(gauge_counters, left_caller);
+		left_caller = stage_3_forest_cleared(left_caller);
 		break;
 	case 114:
 		stage_3_forest_over();
@@ -217,7 +216,7 @@ void game_mode_frame(uint16_t u)
 		stage_3_cemetery_opening();
 		break;
 	case 126:
-		left_caller = stage_3_cemetery_play(gauge_counters, left_caller);
+		left_caller = stage_3_cemetery_play(left_caller);
 		break;
 	}
 	if (left_caller != 0u)
@@ -227,7 +226,7 @@ void game_mode_frame(uint16_t u)
 }
 
 /* The game's first phase, by game_step: the screen cleared, then the palettes */
-uint32_t game_start_phase(uint16_t y, uint16_t u)
+uint32_t game_start_phase(uint16_t u)
 {
 	uint32_t left_caller = 0;
 
@@ -245,45 +244,45 @@ uint32_t game_start_phase(uint16_t y, uint16_t u)
 			game_start_palettes(u);
 			return left_caller;
 		case 4:
-			return step_portraits(y, u);
+			return step_portraits(u);
 		case 6:
-			return step_story_1(y, u);
+			return step_story_1(u);
 		case 8:
-			return step_stage_1(y, u);
+			return step_stage_1(u);
 		case 10:
-			return step_bonus_1(y, u);
+			return step_bonus_1(u);
 		case 12:
-			return step_stage_2(y, u);
+			return step_stage_2(u);
 		case 14:
 			left_caller = 0u;
 			step_story_2();
 			return left_caller;
 		case 16:
-			return step_stage_3_forest(y, u);
+			return step_stage_3_forest(u);
 		case 18:
-			return step_stage_3_cemetery(y, u);
+			return step_stage_3_cemetery(u);
 		case 20:
-			return step_stage_4(y, u);
+			return step_stage_4(u);
 		case 22:
-			return step_stage_5(y, u);
+			return step_stage_5(u);
 		case 24:
 			left_caller = 0u;
 			step_story_3();
 			return left_caller;
 		case 26:
-			return step_stage_6(y, u);
+			return step_stage_6(u);
 		case 28:
-			return step_bonus_2(y, u);
+			return step_bonus_2(u);
 		case 30:
-			return step_stage_7(y, u);
+			return step_stage_7(u);
 		case 32:
 			left_caller = 0u;
 			step_story_4();
 			return left_caller;
 		case 34:
-			return step_stage_8(y, u);
+			return step_stage_8(u);
 		case 36:
-			return step_ending(y, u);
+			return step_ending(u);
 		case 38:
 			left_caller = 0u;
 			portraits_start(u);
@@ -325,7 +324,7 @@ uint32_t game_start_phase(uint16_t y, uint16_t u)
 			return left_caller;
 		case 58:
 			left_caller = 0u;
-			return stage_1_play(y, left_caller);
+			return stage_1_play(left_caller);
 		case 60:
 			left_caller = 0u;
 			stage_1_over();
@@ -346,11 +345,11 @@ uint32_t game_start_phase(uint16_t y, uint16_t u)
 			return left_caller;
 		case 70:
 			left_caller = 0u;
-			bonus_1_intro_phase(y);
+			bonus_1_intro_phase();
 			return left_caller;
 		case 72:
 			left_caller = 0u;
-			bonus_1_run(y);
+			bonus_1_run();
 			return left_caller;
 		case 74:
 			left_caller = 0u;
@@ -373,7 +372,7 @@ uint32_t game_start_phase(uint16_t y, uint16_t u)
 			return left_caller;
 		case 84:
 			left_caller = 0u;
-			return stage_2_play(y, left_caller);
+			return stage_2_play(left_caller);
 		case 86:
 			left_caller = 0u;
 			stage_2_after_boss();
@@ -403,10 +402,10 @@ uint32_t game_start_phase(uint16_t y, uint16_t u)
 			return left_caller;
 		case 100:
 			left_caller = 0u;
-			return stage_3_forest_play(y, left_caller);
+			return stage_3_forest_play(left_caller);
 		case 102:
 			left_caller = 0u;
-			return stage_3_forest_cleared(y, left_caller);
+			return stage_3_forest_cleared(left_caller);
 		case 104:
 			left_caller = 0u;
 			stage_3_forest_over();
@@ -429,7 +428,7 @@ uint32_t game_start_phase(uint16_t y, uint16_t u)
 			return left_caller;
 		case 116:
 			left_caller = 0u;
-			return stage_3_cemetery_play(y, left_caller);
+			return stage_3_cemetery_play(left_caller);
 		case 118:
 			left_caller = 0u;
 			stage_3_cemetery_over();
@@ -449,17 +448,17 @@ uint32_t game_start_phase(uint16_t y, uint16_t u)
 		case -10:
 			continue;
 		case -8:
-			return game_run_step(y, u);
+			return game_run_step(u);
 		case -6:
 			left_caller = 0u;
 			game_continue_phase();
 			return left_caller;
 		case -4:
 			left_caller = 0u;
-			return game_over_phase(y, u, left_caller);
+			return game_over_phase(u, left_caller);
 		case -2:
 			left_caller = 0u;
-			return name_entry_phase(y, u, left_caller);
+			return name_entry_phase(u, left_caller);
 		}
 		break;
 	}
@@ -472,16 +471,16 @@ uint32_t game_start_phase(uint16_t y, uint16_t u)
 void game_start_clear(void)
 {
 	uint32_t carry = 0;
-	uint16_t command = 0, ignored16 = 0, ignored16_2 = 0, job = 0;
-	uint8_t t1 = 0;
+	uint16_t command = 0, job = 0;
+	uint8_t old_scroll_control = 0;
 
 	if (layer_clear_pending != 0u)
 		return;
-	t1 = io_read8(0x1C80u);
+	old_scroll_control = io_read8(0x1C80u);
 	io_write8(0x1C80u, 0u);
 	job = 0u;
 	queue_job(job);
-	clear_sprites(&ignored16, &ignored16_2);
+	clear_sprites();
 	reset_for_game();
 	command = 0u;
 	carry = queue_sound_always(command);
@@ -492,16 +491,16 @@ void game_start_clear(void)
    steps, from the portraits */
 void game_start_palettes(uint16_t palette_job)
 {
-	uint16_t ignored16 = 0, request = 0;
+	uint16_t request = 0;
 
 	if (layer_clear_pending != 0u)
 		return;
 	palette_request_kind = 3u;
 	request = 0u;
-	palette_request(request, &ignored16, &palette_job);
+	palette_job = palette_request(palette_job, request);
 	palette_request_kind = 1u;
 	request = 0xF00u;
-	palette_request(request, &ignored16, &palette_job);
+	palette_request(palette_job, request);
 	mode_phase++;
 	game_step = 0u;
 	step_phase = 0u;
@@ -511,7 +510,7 @@ void game_start_palettes(uint16_t palette_job)
 
 /* Runs the game's step, by game_step: the portraits, the stories, the stages, the bonus stages and the
    ending */
-uint32_t game_run_step(uint16_t y, uint16_t u)
+uint32_t game_run_step(uint16_t u)
 {
 	uint32_t left_caller = 0;
 
@@ -520,45 +519,45 @@ uint32_t game_run_step(uint16_t y, uint16_t u)
 		switch ((int8_t)(uint8_t)((uint32_t)game_step << 1))
 		{
 		case 0:
-			return step_portraits(y, u);
+			return step_portraits(u);
 		case 2:
-			return step_story_1(y, u);
+			return step_story_1(u);
 		case 4:
-			return step_stage_1(y, u);
+			return step_stage_1(u);
 		case 6:
-			return step_bonus_1(y, u);
+			return step_bonus_1(u);
 		case 8:
-			return step_stage_2(y, u);
+			return step_stage_2(u);
 		case 10:
 			left_caller = 0u;
 			step_story_2();
 			return left_caller;
 		case 12:
-			return step_stage_3_forest(y, u);
+			return step_stage_3_forest(u);
 		case 14:
-			return step_stage_3_cemetery(y, u);
+			return step_stage_3_cemetery(u);
 		case 16:
-			return step_stage_4(y, u);
+			return step_stage_4(u);
 		case 18:
-			return step_stage_5(y, u);
+			return step_stage_5(u);
 		case 20:
 			left_caller = 0u;
 			step_story_3();
 			return left_caller;
 		case 22:
-			return step_stage_6(y, u);
+			return step_stage_6(u);
 		case 24:
-			return step_bonus_2(y, u);
+			return step_bonus_2(u);
 		case 26:
-			return step_stage_7(y, u);
+			return step_stage_7(u);
 		case 28:
 			left_caller = 0u;
 			step_story_4();
 			return left_caller;
 		case 30:
-			return step_stage_8(y, u);
+			return step_stage_8(u);
 		case 32:
-			return step_ending(y, u);
+			return step_ending(u);
 		case 34:
 			left_caller = 0u;
 			portraits_start(u);
@@ -600,7 +599,7 @@ uint32_t game_run_step(uint16_t y, uint16_t u)
 			return left_caller;
 		case 54:
 			left_caller = 0u;
-			return stage_1_play(y, left_caller);
+			return stage_1_play(left_caller);
 		case 56:
 			left_caller = 0u;
 			stage_1_over();
@@ -621,11 +620,11 @@ uint32_t game_run_step(uint16_t y, uint16_t u)
 			return left_caller;
 		case 66:
 			left_caller = 0u;
-			bonus_1_intro_phase(y);
+			bonus_1_intro_phase();
 			return left_caller;
 		case 68:
 			left_caller = 0u;
-			bonus_1_run(y);
+			bonus_1_run();
 			return left_caller;
 		case 70:
 			left_caller = 0u;
@@ -648,7 +647,7 @@ uint32_t game_run_step(uint16_t y, uint16_t u)
 			return left_caller;
 		case 80:
 			left_caller = 0u;
-			return stage_2_play(y, left_caller);
+			return stage_2_play(left_caller);
 		case 82:
 			left_caller = 0u;
 			stage_2_after_boss();
@@ -678,10 +677,10 @@ uint32_t game_run_step(uint16_t y, uint16_t u)
 			return left_caller;
 		case 96:
 			left_caller = 0u;
-			return stage_3_forest_play(y, left_caller);
+			return stage_3_forest_play(left_caller);
 		case 98:
 			left_caller = 0u;
-			return stage_3_forest_cleared(y, left_caller);
+			return stage_3_forest_cleared(left_caller);
 		case 100:
 			left_caller = 0u;
 			stage_3_forest_over();
@@ -704,7 +703,7 @@ uint32_t game_run_step(uint16_t y, uint16_t u)
 			return left_caller;
 		case 112:
 			left_caller = 0u;
-			return stage_3_cemetery_play(y, left_caller);
+			return stage_3_cemetery_play(left_caller);
 		case 114:
 			left_caller = 0u;
 			stage_3_cemetery_over();
@@ -729,7 +728,7 @@ uint32_t game_run_step(uint16_t y, uint16_t u)
 		case 126:
 			break;
 		case -14:
-			return game_start_phase(y, u);
+			return game_start_phase(u);
 		case -12:
 			continue;
 		case -10:
@@ -738,10 +737,10 @@ uint32_t game_run_step(uint16_t y, uint16_t u)
 			return left_caller;
 		case -8:
 			left_caller = 0u;
-			return game_over_phase(y, u, left_caller);
+			return game_over_phase(u, left_caller);
 		case -6:
 			left_caller = 0u;
-			return name_entry_phase(y, u, left_caller);
+			return name_entry_phase(u, left_caller);
 		case -4:
 			left_caller = 0u;
 			game_start_clear();
@@ -763,8 +762,8 @@ uint32_t game_run_step(uint16_t y, uint16_t u)
 uint16_t end_game(void)
 {
 	uint8_t players_left = 0;
-	uint16_t health_address = 0, ignored16 = 0, play_status = 0, request = 0, u = 0;
-	uint8_t t1 = 0;
+	uint16_t health_address = 0, play_status = 0, request = 0, u = 0;
+	uint8_t players_to_check = 0;
 
 	mode_step = 0u;
 	mode_phase = 0u;
@@ -785,15 +784,15 @@ uint16_t end_game(void)
 		}
 		play_status++;
 		health_address += 8u;
-		t1 = players_left;
-		players_left = t1 - 1u;
-	} while (t1 != 1u);
+		players_to_check = players_left;
+		players_left = players_to_check - 1u;
+	} while (players_to_check != 1u);
 	if (players_going_on != 0u)
 	{
 		u = reset_for_game();
 		palette_request_kind = 1u;
 		request = 0xF00u;
-		palette_request(request, &ignored16, &u);
+		u = palette_request(u, request);
 		game_mode = 2u;
 		mode_phase = 1u;
 		game_step = 1u;

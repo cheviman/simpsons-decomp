@@ -3,7 +3,7 @@
  *    Description: the attract's high score table
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    10-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -12,7 +12,7 @@
 #include "game.h"
 
 /* The attract's high score step, by mode_phase */
-void attract_high_scores(uint16_t y, uint16_t u)
+void attract_high_scores(uint16_t u)
 {
 	for (;;)
 	{
@@ -51,21 +51,21 @@ void attract_high_scores(uint16_t y, uint16_t u)
 		case 20:
 			break;
 		case -32:
-			attract_opening_scene(y, u);
+			attract_opening_scene(u);
 			return;
 		case -30:
-			attract_demo(y, u);
+			attract_demo(u);
 			return;
 		case -28:
-			attract_title(y, u);
+			attract_title(u);
 			return;
 		case -26:
 			continue;
 		case -24:
-			attract_warning(y, u);
+			attract_warning(u);
 			return;
 		case -22:
-			attract_coin_title(y, u);
+			attract_coin_title(u);
 			return;
 		case -20:
 			attract_clear_screen();
@@ -74,7 +74,7 @@ void attract_high_scores(uint16_t y, uint16_t u)
 			attract_wait_clear();
 			return;
 		case -16:
-			attract_opening_run(y, u);
+			attract_opening_run(u);
 			return;
 		case -14:
 			attract_next_scene();
@@ -107,18 +107,18 @@ void attract_high_scores(uint16_t y, uint16_t u)
    and the palettes */
 void high_scores_start(uint16_t palette_job)
 {
-	uint16_t ignored16 = 0, job = 0, request = 0;
+	uint16_t job = 0, request = 0;
 
 	job = 0u;
 	queue_job(job);
 	palette_request_kind = 3u;
 	request = 0u;
-	palette_request(request, &ignored16, &palette_job);
+	palette_job = palette_request(palette_job, request);
 	layer_a_scroll_x = 0xFFF0u;
 	layer_b_scroll_x = 0xFFF0u;
 	palette_request_kind = 1u;
 	request = 0xF01u;
-	palette_request(request, &ignored16, &palette_job);
+	palette_request(palette_job, request);
 	attract_timer = 0x40u;
 	mode_phase++;
 }
@@ -127,7 +127,7 @@ void high_scores_start(uint16_t palette_job)
    background */
 void high_scores_draw_background(void)
 {
-	uint16_t ignored16 = 0, ignored16_2 = 0, ignored16_3 = 0, layer_and_columns = 0, request = 0, u = 0;
+	uint16_t ignored16 = 0, ignored16_2 = 0, layer_and_columns = 0, request = 0, u = 0;
 
 	if (layer_clear_pending != 0u)
 		return;
@@ -137,14 +137,14 @@ void high_scores_draw_background(void)
 	io_write8(0x1FB9u, 0x3Fu);
 	io_write8(0x1FBAu, 0x36u);
 	layer_and_columns = 0x26u;
-	draw_layer_columns(layer_and_columns, &ignored16, &ignored16_2, &ignored16_3);
+	draw_layer_columns(layer_and_columns, &ignored16, &ignored16_2);
 	layer_and_columns = 0x126u;
-	draw_layer_columns(layer_and_columns, &ignored16, &ignored16_2, &u);
+	draw_layer_columns(layer_and_columns, &ignored16, &u);
 	io_write8(0x1FB9u, 0x13u);
 	io_write8(0x1FBAu, 0x2Cu);
 	palette_request_kind = 3u;
 	request = 0x7A53u;
-	palette_request(request, &ignored16_2, &u);
+	palette_request(u, request);
 	mode_phase++;
 }
 
@@ -184,15 +184,15 @@ void high_scores_show(uint16_t palette_job)
    the attract's next step */
 void high_scores_close(uint16_t palette_job)
 {
-	uint16_t ignored16 = 0, ignored16_2 = 0, request = 0;
+	uint16_t request = 0;
 
 	palette_request_kind = 3u;
 	request = 0u;
-	palette_request(request, &ignored16, &palette_job);
-	clear_sprites(&ignored16_2, &ignored16);
+	palette_job = palette_request(palette_job, request);
+	clear_sprites();
 	palette_request_kind = 1u;
 	request = 0xF00u;
-	palette_request(request, &ignored16, &palette_job);
+	palette_request(palette_job, request);
 	layer_a_scroll_x = 0u;
 	layer_b_scroll_x = 0u;
 	mode_step++;

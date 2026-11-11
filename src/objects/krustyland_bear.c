@@ -3,7 +3,7 @@
  *    Description: Krustyland's bear and its kind B2 companions
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    10-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -12,28 +12,27 @@
 #include "game.h"
 
 /* Sets up the bear. */
-void krustyland_bear_start(uint16_t object, uint16_t *p_box, uint16_t *p_setup)
+uint16_t krustyland_bear_start(uint16_t object)
 {
-	uint16_t box = 0, setup = 0;
+	uint16_t setup = 0;
 	uint8_t state = 0;
 
 	setup = krustyland_bear_setup_ADDRESS;
-	box = vector_object_setup(object, setup);
+	vector_object_setup(object, setup);
 	OBJECT(object)->attributes = 0xADu;
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
-	*p_box = box;
-	*p_setup = setup;
+	return setup;
 }
 
 /* Waits for the camera to reach 0420. */
 void krustyland_bear_wait_camera(uint16_t object)
 {
 	uint8_t state = 0;
-	uint16_t t1 = 0;
+	uint16_t camera_position = 0;
 
-	t1 = camera_x;
-	if (t1 >= 0x420u)
+	camera_position = camera_x;
+	if (camera_position >= 0x420u)
 	{
 		OBJECT(object)->timer = 0x20u;
 		state = OBJECT(object)->state;
@@ -107,19 +106,18 @@ void krustyland_bear_idle(void)
 }
 
 /* Sets up the kind B2 object. */
-void kind_b2_start(uint16_t object, uint16_t *p_box, uint16_t *p_setup)
+uint16_t kind_b2_start(uint16_t object)
 {
-	uint16_t box = 0, setup = 0;
+	uint16_t setup = 0;
 	uint8_t state = 0;
 
 	setup = kind_b2_setup_ADDRESS;
-	box = vector_object_setup(object, setup);
+	vector_object_setup(object, setup);
 	OBJECT(object)->attributes = 0x10u;
 	OBJECT(object)->kind_b2.idle_frames = 0x10u;
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
-	*p_box = box;
-	*p_setup = setup;
+	return setup;
 }
 
 /* Calls out (sound 6800) once on screen, switches between its two idle animations, until hit. */
@@ -128,16 +126,16 @@ uint16_t kind_b2_idle(uint16_t object, uint16_t states)
 	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t idle_frames = 0, state = 0, idle_frames_2 = 0, timer = 0, timer_2 = 0, idle_number = 0, idle_number_2 = 0;
-	uint16_t t1 = 0, t2 = 0;
+	uint16_t screen_x = 0, own_y = 0;
 
 	idle_frames = OBJECT(object)->kind_b2.idle_frames;
 	if (idle_frames != 0u)
 	{
-		t1 = OBJECT(object)->x;
-		if (t1 < 0x130u)
+		screen_x = OBJECT(object)->x;
+		if (screen_x < 0x130u)
 		{
-			t2 = OBJECT(object)->y;
-			if (t2 < 0x120u)
+			own_y = OBJECT(object)->y;
+			if (own_y < 0x120u)
 			{
 				OBJECT(object)->kind_b2.idle_frames = 0u;
 				command = 0x6800u;
@@ -172,30 +170,26 @@ uint16_t kind_b2_idle(uint16_t object, uint16_t states)
 }
 
 /* Hit: takes its hit hit box. */
-uint16_t kind_b2_hit(uint16_t object)
+void kind_b2_hit(uint16_t object)
 {
-	uint16_t box = 0;
 	uint8_t state = 0;
 
-	box = kind_b2_hit_box_ADDRESS;
-	vector_set_hit_box(object, box);
+	leftover_y = kind_b2_hit_box_ADDRESS;
+	vector_set_hit_box(object);
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
-	return box;
 }
 
 /* Takes its standing hit box back and waits 128 frames. */
-uint16_t kind_b2_hit_wait(uint16_t object)
+void kind_b2_hit_wait(uint16_t object)
 {
-	uint16_t box = 0;
 	uint8_t state = 0;
 
-	box = kind_b2_body_box_ADDRESS;
-	vector_set_hit_box(object, box);
+	leftover_y = kind_b2_body_box_ADDRESS;
+	vector_set_hit_box(object);
 	OBJECT(object)->timer = 0x80u;
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
-	return box;
 }
 
 /* Calls out again (sound 6800) and gets up. */

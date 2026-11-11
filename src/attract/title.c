@@ -3,7 +3,7 @@
  *    Description: the attract's title screen (its end) and the title shown after a coin
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    10-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -16,12 +16,12 @@
 void title_show_notices(void)
 {
 	uint16_t text_number = 0;
-	uint8_t t1 = 0;
+	uint8_t wait_left = 0;
 
 	title_scroll_layers();
-	t1 = attract_timer;
-	attract_timer = t1 - 1u;
-	if (t1 != 1u)
+	wait_left = attract_timer;
+	attract_timer = wait_left - 1u;
+	if (wait_left != 1u)
 		return;
 	text_number = 0x82u;
 	print_game_text(text_number);
@@ -36,20 +36,20 @@ void title_show_notices(void)
    colour are reset and the attract moves to its next step */
 void title_end(void)
 {
-	uint16_t ignored16 = 0, ignored16_2 = 0, request = 0, u = 0;
-	uint8_t t1 = 0;
+	uint16_t ignored16 = 0, request = 0, u = 0;
+	uint8_t wait_left = 0;
 
 	title_scroll_layers();
-	t1 = attract_timer;
-	attract_timer = t1 - 1u;
-	if (t1 != 1u)
+	wait_left = attract_timer;
+	attract_timer = wait_left - 1u;
+	if (wait_left != 1u)
 		return;
 	layer_a_scroll_y = 0u;
 	layer_b_scroll_y = 0u;
 	clear_objects(&ignored16, &u);
 	palette_request_kind = 3u;
 	request = 0u;
-	palette_request(request, &ignored16_2, &u);
+	palette_request(u, request);
 	mode_step++;
 	mode_phase = 0u;
 	game_step = 0u;
@@ -62,23 +62,23 @@ void title_end(void)
 void title_scroll_layers(void)
 {
 	uint32_t carry = 0;
-	uint16_t t1 = 0, t2 = 0, t3 = 0, t4 = 0, t5 = 0;
+	uint16_t layer_a_x_low = 0, old_layer_a_x_low = 0, new_layer_a_x_low = 0, layer_b_x_low = 0, old_layer_b_x_low = 0;
 
-	t1 = AT16(layer_a_scroll_x, -1);
-	t2 = t1;
-	t3 = t2 - 0x40u;
-	carry = t2 < 0x40u;
-	AT16(layer_a_scroll_x, -1) = t3;
+	layer_a_x_low = AT16(layer_a_scroll_x, -1);
+	old_layer_a_x_low = layer_a_x_low;
+	new_layer_a_x_low = old_layer_a_x_low - 0x40u;
+	carry = old_layer_a_x_low < 0x40u;
+	AT16(layer_a_scroll_x, -1) = new_layer_a_x_low;
 	layer_a_scroll_x = (layer_a_scroll_x & 0xFFu) | (((uint8_t)(layer_a_scroll_x >> 8u) - carry & 0xFFu) << 8u);
-	t4 = AT16(layer_b_scroll_x, -1);
-	t5 = t4;
-	carry = (uint16_t)(t5 + 0x40u) < t5;
-	AT16(layer_b_scroll_x, -1) = t5 + 0x40u;
+	layer_b_x_low = AT16(layer_b_scroll_x, -1);
+	old_layer_b_x_low = layer_b_x_low;
+	carry = (uint16_t)(old_layer_b_x_low + 0x40u) < old_layer_b_x_low;
+	AT16(layer_b_scroll_x, -1) = old_layer_b_x_low + 0x40u;
 	layer_b_scroll_x = (layer_b_scroll_x & 0xFFu) | (((uint8_t)(layer_b_scroll_x >> 8u) + carry & 0xFFu) << 8u);
 }
 
 /* The attract's step after a coin that gave no credit yet: the title with INSERT COIN, by mode_phase */
-void attract_coin_title(uint16_t y, uint16_t u)
+void attract_coin_title(uint16_t u)
 {
 	for (;;)
 	{
@@ -93,19 +93,19 @@ void attract_coin_title(uint16_t y, uint16_t u)
 		case 4:
 			break;
 		case -48:
-			attract_opening_scene(y, u);
+			attract_opening_scene(u);
 			return;
 		case -46:
-			attract_demo(y, u);
+			attract_demo(u);
 			return;
 		case -44:
-			attract_title(y, u);
+			attract_title(u);
 			return;
 		case -42:
-			attract_high_scores(y, u);
+			attract_high_scores(u);
 			return;
 		case -40:
-			attract_warning(y, u);
+			attract_warning(u);
 			return;
 		case -38:
 			continue;
@@ -116,7 +116,7 @@ void attract_coin_title(uint16_t y, uint16_t u)
 			attract_wait_clear();
 			return;
 		case -32:
-			attract_opening_run(y, u);
+			attract_opening_run(u);
 			return;
 		case -30:
 			attract_next_scene();
@@ -185,12 +185,12 @@ void coin_title_draw(void)
 {
 	uint32_t carry = 0;
 	uint16_t command = 0, ignored16 = 0, u = 0;
-	uint8_t t1 = 0;
+	uint8_t discarded_read = 0;
 
 	if (layer_clear_pending != 0u)
 		return;
 	reset_for_game();
-	t1 = io_read8(0x1C80u);
+	discarded_read = io_read8(0x1C80u);
 	io_write8(0x1C80u, 0u);
 	command = 0u;
 	carry = queue_sound(command);

@@ -3,7 +3,7 @@
  *    Description: the HURRY UP that comes for idle players
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    10-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -15,9 +15,9 @@
 uint16_t hurry_up(uint16_t object, uint16_t child_handlers)
 {
 	uint32_t carry = 0;
-	uint16_t ignored16 = 0, u = 0;
+	uint16_t u = 0;
 	uint8_t step = 0;
-	uint16_t t1 = 0, t2 = 0, t3 = 0;
+	uint16_t player_offset = 0, player_object = 0, camera_x_now = 0;
 
 	if (OBJECT(object)->flags == 4u)
 	{
@@ -34,12 +34,12 @@ uint16_t hurry_up(uint16_t object, uint16_t child_handlers)
 		OBJECT(object)->box_height = 0x24u;
 		OBJECT(object)->box_dz = 0x24u;
 		OBJECT(object)->hurry_up.time = 0x200u;
-		t1 = (random_number & 3u) * 0xC0u;
-		t2 = t1 + OBJECT_ADDRESS(0);
-		OBJECT(object)->hurry_up.player = t2;
+		player_offset = (random_number & 3u) * 0xC0u;
+		player_object = player_offset + OBJECT_ADDRESS(0);
+		OBJECT(object)->hurry_up.player = player_object;
 		OBJECT(object)->hurry_up.tries = 0u;
-		t3 = camera_x;
-		OBJECT(object)->hurry_up.scroll_x = t3;
+		camera_x_now = camera_x;
+		OBJECT(object)->hurry_up.scroll_x = camera_x_now;
 	}
 	step = OBJECT(object)->hurry_up.step;
 	switch ((int8_t)(uint8_t)((uint32_t)step << 1))
@@ -61,69 +61,53 @@ uint16_t hurry_up(uint16_t object, uint16_t child_handlers)
 		hurry_up_vanish(object);
 		return child_handlers;
 	case 16:
-		stage_3_boss_start(object, &ignored16, &child_handlers);
-		return child_handlers;
+		return stage_3_boss_start(object, child_handlers);
 	case 18:
-		stage_3_boss_enter(object, 0u);
+		stage_3_boss_enter(object);
 		return child_handlers;
 	case 20:
-		stage_3_boss_arrive(object, &ignored16, &child_handlers);
-		return child_handlers;
+		return stage_3_boss_arrive(object, child_handlers);
 	case 22:
-		stage_3_boss_wait(object, &ignored16, &child_handlers);
-		return child_handlers;
+		return stage_3_boss_wait(object, child_handlers);
 	case 24:
-		stage_3_boss_walk(object, &ignored16, &child_handlers);
-		return child_handlers;
+		return stage_3_boss_walk(object, child_handlers);
 	case 26:
-		stage_3_boss_leap(object, &ignored16, &child_handlers);
-		return child_handlers;
+		return stage_3_boss_leap(object, child_handlers);
 	case 28:
-		stage_3_boss_attack(object, &ignored16, &child_handlers);
-		return child_handlers;
+		return stage_3_boss_attack(object, child_handlers);
 	case 30:
 	case 44:
-		stage_3_boss_strike(object, &ignored16, &child_handlers);
-		return child_handlers;
+		return stage_3_boss_strike(object, child_handlers);
 	case 32:
-		stage_3_boss_follow_up(object, &ignored16, &child_handlers);
-		return child_handlers;
+		return stage_3_boss_follow_up(object, child_handlers);
 	case 34:
-		stage_3_boss_reach_partner(object, &ignored16, &u);
-		return u;
+		return stage_3_boss_reach_partner(object);
 	case 36:
-		stage_3_boss_follow_partner(object, &ignored16, &u);
-		return u;
+		return stage_3_boss_follow_partner(object);
 	case 38:
-		stage_3_boss_join(object, &ignored16, &child_handlers);
-		return child_handlers;
+		return stage_3_boss_join(object, child_handlers);
 	case 40:
-		stage_3_boss_jump_on(object, 0u);
+		stage_3_boss_jump_on(object);
 		return child_handlers;
 	case 42:
-		stage_3_boss_together(object, &ignored16, &child_handlers);
-		return child_handlers;
+		return stage_3_boss_together(object, child_handlers);
 	case 46:
 		stage_3_boss_partner_ready(object, &u, &carry);
 		return u;
 	case 48:
-		stage_3_boss_pause(object, &ignored16, &child_handlers);
-		return child_handlers;
+		return stage_3_boss_pause(object, child_handlers);
 	case 50:
-		stage_3_boss_flinch(object, &ignored16, &child_handlers);
-		return child_handlers;
+		return stage_3_boss_flinch(object, child_handlers);
 	case 52:
-		stage_3_boss_knocked(object, &ignored16, &child_handlers);
-		return child_handlers;
+		return stage_3_boss_knocked(object, child_handlers);
 	case 54:
-		stage_3_boss_down(object, 0u);
+		stage_3_boss_down(object);
 		return child_handlers;
 	case 56:
-		stage_3_boss_defeated(object, 0u);
+		stage_3_boss_defeated(object);
 		return child_handlers;
 	case 58:
-		stage_3_boss_push(object, &ignored16, &child_handlers);
-		return child_handlers;
+		return stage_3_boss_push(object, child_handlers);
 	}
 	unreachable();
 }
@@ -134,14 +118,14 @@ void hurry_up_enter(uint16_t object)
 	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t animation_flags = 0, step = 0, animation = 0;
-	uint16_t t1 = 0, t2 = 0, time = 0;
+	uint16_t camera_speed = 0, against_camera = 0, time = 0;
 
 	OBJECT(object)->x = 0x148u;
 	OBJECT(object)->y = 0x80u;
 	OBJECT(object)->z = 0x80u;
-	t1 = camera_y_speed;
-	t2 = 0u - t1;
-	OBJECT(object)->y_speed = t2;
+	camera_speed = camera_y_speed;
+	against_camera = 0u - camera_speed;
+	OBJECT(object)->y_speed = against_camera;
 	animation_flags = OBJECT(object)->animation_flags;
 	if (animation_flags == 2u)
 	{
@@ -164,13 +148,13 @@ void hurry_up_enter(uint16_t object)
 /* Picks the next player in use to go to; leaves after 5 */
 uint16_t hurry_up_next_player(uint16_t object)
 {
-	uint16_t player = 0;
+	uint16_t candidate = 0;
 	uint8_t tries = 0, tries_2 = 0;
-	uint16_t player_2 = 0;
+	uint16_t player = 0;
 
 	OBJECT(object)->hurry_up.step = 5u;
-	player_2 = OBJECT(object)->hurry_up.player;
-	player = player_2;
+	player = OBJECT(object)->hurry_up.player;
+	candidate = player;
 	do
 	{
 		tries = OBJECT(object)->hurry_up.tries;
@@ -181,13 +165,13 @@ uint16_t hurry_up_next_player(uint16_t object)
 			OBJECT(object)->hurry_up.step = 7u;
 			OBJECT(object)->kind = 4u;
 			OBJECT(object)->animation = 0x80u;
-			return player;
+			return candidate;
 		}
-		player += 0xC0u;
-		if (player == OBJECT_ADDRESS(8))
-			player = OBJECT_ADDRESS(0);
-	} while (mem_read8(player) == 0u);
-	OBJECT(object)->hurry_up.player = player;
+		candidate += 0xC0u;
+		if (candidate == OBJECT_ADDRESS(8))
+			candidate = OBJECT_ADDRESS(0);
+	} while (OBJECT(candidate)->flags == 0u);
+	OBJECT(object)->hurry_up.player = candidate;
 	OBJECT(object)->hurry_up.time = 0xC8u;
 	return hurry_up_go_to_player(object);
 }
@@ -195,9 +179,9 @@ uint16_t hurry_up_next_player(uint16_t object)
 /* Flies to its player and hits it on reaching it */
 uint16_t hurry_up_go_to_player(uint16_t object)
 {
-	uint16_t d = 0, heading = 0, player_height = 0, player_y = 0, target = 0;
+	uint16_t edge_or_direction = 0, heading = 0, player_height = 0, player_y = 0, target = 0;
 	uint8_t step = 0;
-	uint16_t player = 0, time = 0, t1 = 0, z = 0, t2 = 0, t3 = 0, player_2 = 0, t4 = 0, z_2 = 0, t5 = 0, t6 = 0, t7 = 0, t8 = 0, t9 = 0, z_3 = 0, player_3 = 0, t10 = 0, z_4 = 0, z_5 = 0, z_6 = 0;
+	uint16_t player = 0, time = 0, target_y = 0, z = 0, hurry_x = 0, target_x = 0, player_2 = 0, raised_target_y_2nd = 0, z_2 = 0, target_x_2nd = 0, hurry_y = 0, raised_y_checked = 0, raised_y_checked_2nd = 0, raised_target_y = 0, z_3 = 0, player_3 = 0, hurry_y_now = 0, z_4 = 0, z_5 = 0, z_6 = 0;
 
 	player = OBJECT(object)->hurry_up.player;
 	target = player;
@@ -213,82 +197,82 @@ uint16_t hurry_up_go_to_player(uint16_t object)
 		hurry_up_after_hit(object);
 		return target;
 	}
-	t1 = OBJECT(target)->y;
+	target_y = OBJECT(target)->y;
 	z = OBJECT(target)->z;
-	OBJECT(target)->y = t1 + z - 0x80u;
-	t2 = OBJECT(object)->x;
-	d = t2 + 0x18u;
-	t3 = OBJECT(target)->x;
-	if ((int16_t)d <= (int16_t)t3)
+	OBJECT(target)->y = target_y + z - 0x80u;
+	hurry_x = OBJECT(object)->x;
+	edge_or_direction = hurry_x + 0x18u;
+	target_x = OBJECT(target)->x;
+	if ((int16_t)edge_or_direction <= (int16_t)target_x)
 	{
 		player_2 = OBJECT(object)->hurry_up.player;
 		target = player_2;
-		d = 0xF6u;
-		d = vector_direction_to_offset(object, target, d);
-		heading = (d & ~0xFFu) | 0x80u;
+		edge_or_direction = 0xF6u;
+		edge_or_direction = vector_direction_to_offset(object, target, edge_or_direction);
+		heading = (edge_or_direction & ~0xFFu) | 0x80u;
 		vector_set_speed_by_direction(object, heading);
-		t4 = OBJECT(target)->y;
+		raised_target_y_2nd = OBJECT(target)->y;
 		z_2 = OBJECT(target)->z;
-		OBJECT(target)->y = t4 - z_2 + 0x80u;
+		OBJECT(target)->y = raised_target_y_2nd - z_2 + 0x80u;
 		OBJECT(target)->animation_flags = 0x80u;
 		hurry_up_check_scroll(object);
 		return target;
 	}
-	t5 = OBJECT(target)->x;
-	if ((int16_t)t5 <= (int16_t)(d - 0x30u))
+	target_x_2nd = OBJECT(target)->x;
+	if ((int16_t)target_x_2nd <= (int16_t)(edge_or_direction - 0x30u))
 	{
 		player_2 = OBJECT(object)->hurry_up.player;
 		target = player_2;
-		d = 0xF6u;
-		d = vector_direction_to_offset(object, target, d);
-		heading = (d & ~0xFFu) | 0x80u;
+		edge_or_direction = 0xF6u;
+		edge_or_direction = vector_direction_to_offset(object, target, edge_or_direction);
+		heading = (edge_or_direction & ~0xFFu) | 0x80u;
 		vector_set_speed_by_direction(object, heading);
-		t4 = OBJECT(target)->y;
+		raised_target_y_2nd = OBJECT(target)->y;
 		z_2 = OBJECT(target)->z;
-		OBJECT(target)->y = t4 - z_2 + 0x80u;
+		OBJECT(target)->y = raised_target_y_2nd - z_2 + 0x80u;
 		OBJECT(target)->animation_flags = 0x80u;
 		hurry_up_check_scroll(object);
 		return target;
 	}
-	t6 = OBJECT(object)->y;
-	d = t6 + 0x10u;
-	t7 = OBJECT(target)->y;
-	if ((int16_t)d <= (int16_t)t7)
+	hurry_y = OBJECT(object)->y;
+	edge_or_direction = hurry_y + 0x10u;
+	raised_y_checked = OBJECT(target)->y;
+	if ((int16_t)edge_or_direction <= (int16_t)raised_y_checked)
 	{
 		player_2 = OBJECT(object)->hurry_up.player;
 		target = player_2;
-		d = 0xF6u;
-		d = vector_direction_to_offset(object, target, d);
-		heading = (d & ~0xFFu) | 0x80u;
+		edge_or_direction = 0xF6u;
+		edge_or_direction = vector_direction_to_offset(object, target, edge_or_direction);
+		heading = (edge_or_direction & ~0xFFu) | 0x80u;
 		vector_set_speed_by_direction(object, heading);
-		t4 = OBJECT(target)->y;
+		raised_target_y_2nd = OBJECT(target)->y;
 		z_2 = OBJECT(target)->z;
-		OBJECT(target)->y = t4 - z_2 + 0x80u;
+		OBJECT(target)->y = raised_target_y_2nd - z_2 + 0x80u;
 		OBJECT(target)->animation_flags = 0x80u;
 		hurry_up_check_scroll(object);
 		return target;
 	}
-	t8 = OBJECT(target)->y;
-	if ((int16_t)t8 <= (int16_t)(d - 0x20u))
+	raised_y_checked_2nd = OBJECT(target)->y;
+	if ((int16_t)raised_y_checked_2nd <= (int16_t)(edge_or_direction - 0x20u))
 	{
 		player_2 = OBJECT(object)->hurry_up.player;
 		target = player_2;
-		d = 0xF6u;
-		d = vector_direction_to_offset(object, target, d);
-		heading = (d & ~0xFFu) | 0x80u;
+		edge_or_direction = 0xF6u;
+		edge_or_direction = vector_direction_to_offset(object, target, edge_or_direction);
+		heading = (edge_or_direction & ~0xFFu) | 0x80u;
 		vector_set_speed_by_direction(object, heading);
-		t4 = OBJECT(target)->y;
+		raised_target_y_2nd = OBJECT(target)->y;
 		z_2 = OBJECT(target)->z;
-		OBJECT(target)->y = t4 - z_2 + 0x80u;
+		OBJECT(target)->y = raised_target_y_2nd - z_2 + 0x80u;
 		OBJECT(target)->animation_flags = 0x80u;
 		hurry_up_check_scroll(object);
 		return target;
 	}
 	OBJECT(object)->x_speed = 0;
 	OBJECT(object)->y_speed = 0;
-	t9 = OBJECT(target)->y;
+	raised_target_y = OBJECT(target)->y;
 	z_3 = OBJECT(target)->z;
-	OBJECT(target)->y = t9 - z_3 + 0x80u;
+	OBJECT(target)->y = raised_target_y - z_3 + 0x80u;
 	OBJECT(object)->animation = 0x84u;
 	OBJECT(object)->x_speed = 0;
 	OBJECT(object)->y_speed = 0;
@@ -296,8 +280,8 @@ uint16_t hurry_up_go_to_player(uint16_t object)
 	OBJECT(object)->flags = 0xC0u;
 	player_3 = OBJECT(object)->hurry_up.player;
 	target = player_3;
-	t10 = OBJECT(object)->y;
-	player_y = t10;
+	hurry_y_now = OBJECT(object)->y;
+	player_y = hurry_y_now;
 	OBJECT(object)->hurry_up.player_y = player_y;
 	z_4 = OBJECT(target)->z;
 	OBJECT(object)->y = player_y - z_4 + 0x80u;

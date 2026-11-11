@@ -3,7 +3,7 @@
  *    Description: stage 6's knight (type F5) and its action 3C
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    10-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -12,9 +12,8 @@
 #include "game.h"
 
 /* The knight beaten in its first form, by field 29: it falls and comes back as its fighting kind. */
-void knight_lose_first_form(uint16_t object, uint16_t *p_y, uint32_t *p_left_caller)
+uint32_t knight_lose_first_form(uint16_t object, uint32_t left_caller)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint16_t ignored16 = 0;
 	uint8_t action_step = 0;
 
@@ -24,43 +23,43 @@ void knight_lose_first_form(uint16_t object, uint16_t *p_y, uint32_t *p_left_cal
 		switch ((int8_t)(uint8_t)((uint32_t)action_step << 1))
 		{
 		case 0:
-			y = knight_fall(object, y);
-			break;
+			knight_fall(object);
+			return left_caller;
 		case 2:
-			knight_get_up(object);
 			break;
 		case -14:
 			continue;
 		case -12:
-			y = knight_setup(object);
-			break;
+			knight_setup(object);
+			return left_caller;
 		case -10:
 			knight_come_in(object);
-			break;
+			return left_caller;
 		case -8:
-			vector_enemy_think(object, &y, &ignored16, p_left_caller);
-			break;
+			vector_enemy_think(object, &ignored16, &left_caller);
+			return left_caller;
 		case -6:
-			vector_enemy_act(object, &y, &ignored16, p_left_caller);
-			break;
+			vector_enemy_act(object, &ignored16, &left_caller);
+			return left_caller;
 		case -4:
-			enemy_hurt(object, &y, &ignored16);
-			break;
+			enemy_hurt(object);
+			return left_caller;
 		case -2:
-			vector_enemy_climb(object, &y, &ignored16, p_left_caller);
-			break;
+			vector_enemy_climb(object, &ignored16, &left_caller);
+			return left_caller;
 		}
 		break;
 	}
-	*p_y = y;
+	knight_get_up(object);
+	return left_caller;
 }
 
 /* Pulls the beaten knight down; when it lands, puts in what it leaves behind (4D40 type 09) and plays
    animation 88. */
-uint16_t knight_fall(uint16_t object, uint16_t y)
+void knight_fall(uint16_t object)
 {
 	uint32_t carry = 0;
-	uint16_t child_record = 0, ignored16 = 0, ignored16_2 = 0, target_player = 0;
+	uint16_t ignored16 = 0, ignored16_2 = 0, ignored16_3 = 0, target_player = 0;
 	uint8_t action_step = 0;
 	uint16_t target = 0;
 
@@ -68,16 +67,15 @@ uint16_t knight_fall(uint16_t object, uint16_t y)
 	OBJECT(object)->y_speed = 0;
 	vector_apply_gravity(object, &ignored16, &carry);
 	if (carry == 0u)
-		return y;
-	child_record = knight_fall_child_ADDRESS;
-	vector_spawn_child(object, child_record, &ignored16_2, &ignored16, &carry);
+		return;
+	leftover_y = knight_fall_child_ADDRESS;
+	vector_spawn_child(object, &ignored16_2, &ignored16_3, &ignored16, &carry);
 	OBJECT(object)->animation = 0x88u;
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step + 1u;
 	target = OBJECT(object)->target;
 	target_player = target;
 	vector_enemy_leave_side(object, target_player);
-	return child_record;
 }
 
 /* When that animation ends, the knight takes its fighting kind (field 50) with one vitality point and
@@ -104,15 +102,15 @@ void knight_get_up(uint16_t object)
 
 /* Sets the knight up with its behaviour knight_behaviour in its first form: with state bit 7 hidden,
    with the entrance kind, wait, fighting kind and x from knight_entrances; otherwise fighting at once. */
-uint16_t knight_setup(uint16_t object)
+void knight_setup(uint16_t object)
 {
 	uint8_t variant = 0;
-	uint16_t entrance = 0, setup = 0, y = 0;
+	uint16_t entrance = 0, setup = 0;
 	uint8_t first_form = 0, parameter = 0, kind = 0, parameter_2 = 0, state = 0;
-	uint16_t wait = 0, kind_2 = 0, t1 = 0;
+	uint16_t wait = 0, kind_2 = 0, start_x = 0;
 
 	setup = knight_object_setup_ADDRESS;
-	y = vector_object_setup(object, setup);
+	vector_object_setup(object, setup);
 	OBJECT(object)->knight.vanishes = 1u;
 	first_form = OBJECT(object)->knight.first_form;
 	OBJECT(object)->knight.first_form = first_form + 1u;
@@ -129,7 +127,7 @@ uint16_t knight_setup(uint16_t object)
 		OBJECT(object)->knight.fighting_kind = kind;
 		OBJECT(object)->parameter = 0u;
 		OBJECT(object)->state = 2u;
-		return y;
+		return;
 	}
 	OBJECT(object)->flags = 4u;
 	parameter_2 = OBJECT(object)->parameter;
@@ -139,11 +137,10 @@ uint16_t knight_setup(uint16_t object)
 	OBJECT(object)->kind = wait;
 	kind_2 = (((uint32_t)KNIGHT_ENTRANCE(entrance)->kind << 8u) | KNIGHT_ENTRANCE(entrance)->x);
 	OBJECT(object)->knight.fighting_kind = kind_2 >> 8;
-	t1 = (kind_2 & 0xFFu) << 4;
-	OBJECT(object)->x = t1;
+	start_x = (kind_2 & 0xFFu) << 4;
+	OBJECT(object)->x = start_x;
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
-	return y;
 }
 
 /* The knight's way in, by field 29 (knight_entrance_styles gives where it starts). */
@@ -309,10 +306,10 @@ void knight_walk_in_start(uint16_t object)
 void knight_walk_in(uint16_t object)
 {
 	uint8_t action_step = 0;
-	uint16_t t1 = 0;
+	uint16_t knight_x = 0;
 
-	t1 = OBJECT(object)->x;
-	if (t1 < 0x160u)
+	knight_x = OBJECT(object)->x;
+	if (knight_x < 0x160u)
 	{
 		OBJECT(object)->x_speed = -0x40;
 		OBJECT(object)->y_speed = -0x80;
@@ -448,33 +445,30 @@ void knight_strike_start(uint16_t object)
 }
 
 /* On the blow's marked frame, gives the knight its attacking hit box. */
-uint16_t knight_strike_hit(uint16_t object, uint16_t y)
+void knight_strike_hit(uint16_t object)
 {
-	uint16_t box = 0;
 	uint8_t animation_flags = 0, action_step = 0;
 
 	animation_flags = OBJECT(object)->animation_flags;
 	if ((animation_flags & 2u) == 0u)
-		return y;
-	box = knight_strike_hit_box_ADDRESS;
-	vector_set_hit_box(object, box);
+		return;
+	leftover_y = knight_strike_hit_box_ADDRESS;
+	vector_set_hit_box(object);
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step + 1u;
-	return knight_strike_end(object, box);
+	knight_strike_end(object);
 }
 
 /* When the blow ends, gives the knight back its plain hit box and ends the action. */
-uint16_t knight_strike_end(uint16_t object, uint16_t y)
+void knight_strike_end(uint16_t object)
 {
-	uint16_t box = 0;
 	uint8_t animation_flags = 0;
 
 	animation_flags = OBJECT(object)->animation_flags;
 	if ((animation_flags & 1u) == 0u)
-		return y;
-	box = knight_body_box_ADDRESS;
-	vector_set_hit_box(object, box);
+		return;
+	leftover_y = knight_body_box_ADDRESS;
+	vector_set_hit_box(object);
 	OBJECT(object)->state = 2u;
 	OBJECT(object)->timer = 0u;
-	return box;
 }

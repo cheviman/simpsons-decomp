@@ -3,7 +3,7 @@
  *    Description: the enemies' shared reactions: spun away, defeated and knocked into the distance, fallen into a pit
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    10-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -29,9 +29,8 @@ void enemy_spin_land(uint16_t object)
 }
 
 /* Action 8: the enemy hit from the front by an attack of kind 13 spins away backwards, by its step. */
-void enemy_spin_backward(uint16_t object, uint8_t step, uint16_t *p_y, uint16_t *p_step_handlers, uint32_t *p_left_caller)
+void enemy_spin_backward(uint16_t object, uint8_t step, uint16_t *p_step_handlers, uint32_t *p_left_caller)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint16_t step_handlers = 0;
 	uint32_t left_caller = 0;
 
@@ -77,7 +76,7 @@ void enemy_spin_backward(uint16_t object, uint8_t step, uint16_t *p_y, uint16_t 
 	case -32:
 	case -28:
 	case -14:
-		y = enemy_back_to_thinking_after_animation(object, y);
+		enemy_back_to_thinking_after_animation(object);
 		break;
 	case -34:
 		enemy_flinch_kind_12_start(object);
@@ -120,7 +119,6 @@ void enemy_spin_backward(uint16_t object, uint8_t step, uint16_t *p_y, uint16_t 
 		left_caller = 0u;
 	else
 		vector_stop_at_screen_edges(object);
-	*p_y = y;
 	*p_step_handlers = step_handlers;
 	*p_left_caller = left_caller;
 }
@@ -153,9 +151,8 @@ void enemy_spin_backward_start(uint16_t object)
 }
 
 /* Action 0A: the enemy defeated from behind is knocked forwards and away, by its step. */
-void enemy_defeated_forward(uint16_t object, uint8_t step, uint16_t *p_y, uint16_t *p_step_handlers, uint32_t *p_left_caller)
+void enemy_defeated_forward(uint16_t object, uint8_t step, uint16_t *p_step_handlers, uint32_t *p_left_caller)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint16_t step_handlers = 0;
 	uint32_t left_caller = 0;
 
@@ -195,7 +192,7 @@ void enemy_defeated_forward(uint16_t object, uint8_t step, uint16_t *p_y, uint16
 	case -34:
 	case -20:
 		left_caller = 0u;
-		y = enemy_back_to_thinking_after_animation(object, y);
+		enemy_back_to_thinking_after_animation(object);
 		break;
 	case -40:
 		left_caller = 0u;
@@ -259,7 +256,6 @@ void enemy_defeated_forward(uint16_t object, uint8_t step, uint16_t *p_y, uint16
 		enemy_spin_backward_start(object);
 		break;
 	}
-	*p_y = y;
 	*p_step_handlers = step_handlers;
 	*p_left_caller = left_caller;
 }
@@ -280,7 +276,7 @@ void enemy_defeated_launch(uint16_t object)
 	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t attributes = 0, action_step = 0;
-	uint16_t t1 = 0, t2 = 0, y_speed = 0, x_speed = 0;
+	uint16_t enemy_y = 0, screen_y = 0, y_speed = 0, x_speed = 0;
 
 	OBJECT(object)->flags = 0x88u;
 	command = 0x6300u;
@@ -288,9 +284,9 @@ void enemy_defeated_launch(uint16_t object)
 	OBJECT(object)->z_speed = 0x200;
 	OBJECT(object)->y_speed = 0x100;
 	OBJECT(object)->timer = 0x68u;
-	t1 = OBJECT(object)->y;
-	t2 = t1 - camera_y;
-	if (t2 < 0xA0u)
+	enemy_y = OBJECT(object)->y;
+	screen_y = enemy_y - camera_y;
+	if (screen_y < 0xA0u)
 	{
 		OBJECT(object)->timer = 0x48u;
 		y_speed = OBJECT(object)->y_speed;
@@ -315,11 +311,11 @@ void enemy_defeated_fly(uint16_t object)
 	uint8_t floor_value = 0;
 	uint16_t floor_cell = 0;
 	uint8_t y_speed = 0, attributes = 0, action_step = 0;
-	uint16_t z_speed = 0, t1 = 0;
+	uint16_t z_speed = 0, falling_z_speed = 0;
 
 	z_speed = OBJECT(object)->z_speed;
-	t1 = z_speed - 0x20u;
-	OBJECT(object)->z_speed = t1;
+	falling_z_speed = z_speed - 0x20u;
+	OBJECT(object)->z_speed = falling_z_speed;
 	carry = vector_check_landing(object);
 	if (carry)
 	{
@@ -356,13 +352,13 @@ void enemy_defeated_shrink(uint16_t object, uint16_t *p_u, uint32_t *p_left_call
 	uint16_t command = 0, z_speed = 0;
 	uint32_t left_caller = 0;
 	uint8_t timer = 0, timer_2 = 0, timer_3 = 0;
-	uint16_t z_speed_2 = 0, t1 = 0, zoom_x = 0;
+	uint16_t z_speed_2 = 0, falling_z_speed = 0, zoom_x = 0;
 	uint32_t zoom_x_halfword = 0;
 
 	z_speed_2 = OBJECT(object)->z_speed;
-	t1 = z_speed_2 - 0x20u;
-	z_speed = t1;
-	if ((int16_t)t1 >= 0 || z_speed >= 0xFC00u)
+	falling_z_speed = z_speed_2 - 0x20u;
+	z_speed = falling_z_speed;
+	if ((int16_t)falling_z_speed >= 0 || z_speed >= 0xFC00u)
 		OBJECT(object)->z_speed = z_speed;
 	timer = OBJECT(object)->timer;
 	OBJECT(object)->timer = timer - 1u;
@@ -399,9 +395,8 @@ void enemy_defeated_shrink(uint16_t object, uint16_t *p_u, uint32_t *p_left_call
 }
 
 /* Action 0B: the enemy defeated from the front is knocked backwards and away, by its step. */
-void enemy_defeated_backward(uint16_t object, uint8_t step, uint16_t *p_y, uint16_t *p_step_handlers, uint32_t *p_left_caller)
+void enemy_defeated_backward(uint16_t object, uint8_t step, uint16_t *p_step_handlers, uint32_t *p_left_caller)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint16_t step_handlers = 0;
 	uint32_t left_caller = 0;
 
@@ -437,7 +432,7 @@ void enemy_defeated_backward(uint16_t object, uint8_t step, uint16_t *p_y, uint1
 	case -40:
 	case -26:
 		left_caller = 0u;
-		y = enemy_back_to_thinking_after_animation(object, y);
+		enemy_back_to_thinking_after_animation(object);
 		break;
 	case -46:
 		left_caller = 0u;
@@ -505,7 +500,6 @@ void enemy_defeated_backward(uint16_t object, uint8_t step, uint16_t *p_y, uint1
 		enemy_defeated_forward_start(object);
 		break;
 	}
-	*p_y = y;
 	*p_step_handlers = step_handlers;
 	*p_left_caller = left_caller;
 }
@@ -519,9 +513,8 @@ void enemy_defeated_backward_start(uint16_t object)
 }
 
 /* Action 0C: the enemy over a place with no floor falls into the pit, by its step. */
-void enemy_pit(uint16_t object, uint8_t step, uint16_t *p_y, uint16_t *p_step_handlers, uint32_t *p_left_caller)
+void enemy_pit(uint16_t object, uint8_t step, uint16_t *p_step_handlers, uint32_t *p_left_caller)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint16_t step_handlers = 0;
 	uint32_t left_caller = 0;
 
@@ -544,7 +537,7 @@ void enemy_pit(uint16_t object, uint8_t step, uint16_t *p_y, uint16_t *p_step_ha
 	case -46:
 	case -32:
 		left_caller = 0u;
-		y = enemy_back_to_thinking_after_animation(object, y);
+		enemy_back_to_thinking_after_animation(object);
 		break;
 	case -52:
 		left_caller = 0u;
@@ -625,7 +618,6 @@ void enemy_pit(uint16_t object, uint8_t step, uint16_t *p_y, uint16_t *p_step_ha
 		enemy_defeated_backward_start(object);
 		break;
 	}
-	*p_y = y;
 	*p_step_handlers = step_handlers;
 	*p_left_caller = left_caller;
 }
@@ -647,10 +639,10 @@ void enemy_pit_fall(uint16_t object, uint16_t *p_target, uint32_t *p_left_caller
 {
 	uint16_t target = (uint16_t)*p_target;
 	uint32_t carry = 0;
-	uint8_t a = 0, d = 0;
+	uint8_t z_speed_high = 0, z_speed_low = 0;
 	uint16_t command = 0;
 	uint8_t timer = 0, timer_2 = 0, attributes = 0;
-	uint16_t z_speed = 0, t1 = 0, z = 0;
+	uint16_t z_speed = 0, falling_z_speed = 0, z = 0;
 
 	timer = OBJECT(object)->timer;
 	OBJECT(object)->timer = timer - 1u;
@@ -663,11 +655,11 @@ void enemy_pit_fall(uint16_t object, uint16_t *p_target, uint32_t *p_left_caller
 			carry = vector_queue_sound(command);
 		}
 		z_speed = OBJECT(object)->z_speed;
-		t1 = z_speed - 0x40u;
-		d = (uint8_t)t1;
-		a = (uint8_t)(t1 >> 8);
-		if ((int16_t)t1 >= 0 || (uint16_t)(((uint32_t)a << 8) | (d & 0xFFu)) >= 0xFC00u)
-			OBJECT(object)->z_speed = ((uint32_t)a << 8) | (d & 0xFFu);
+		falling_z_speed = z_speed - 0x40u;
+		z_speed_low = (uint8_t)falling_z_speed;
+		z_speed_high = (uint8_t)(falling_z_speed >> 8);
+		if ((int16_t)falling_z_speed >= 0 || (uint16_t)(((uint32_t)z_speed_high << 8) | (z_speed_low & 0xFFu)) >= 0xFC00u)
+			OBJECT(object)->z_speed = ((uint32_t)z_speed_high << 8) | (z_speed_low & 0xFFu);
 		z = OBJECT(object)->z;
 		if ((int16_t)z < 0)
 		{

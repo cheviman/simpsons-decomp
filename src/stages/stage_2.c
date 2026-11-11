@@ -3,7 +3,7 @@
  *    Description: stage 2, Krustyland
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    10-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -12,7 +12,7 @@
 #include "game.h"
 
 /* Step 4, stage 2 (Krustyland), by step_phase */
-uint32_t step_stage_2(uint16_t y, uint16_t u)
+uint32_t step_stage_2(uint16_t u)
 {
 	uint32_t left_caller = 0;
 
@@ -35,7 +35,7 @@ uint32_t step_stage_2(uint16_t y, uint16_t u)
 		return left_caller;
 	case 8:
 		left_caller = 0u;
-		return stage_2_play(y, left_caller);
+		return stage_2_play(left_caller);
 	case 10:
 		left_caller = 0u;
 		stage_2_after_boss();
@@ -65,10 +65,10 @@ uint32_t step_stage_2(uint16_t y, uint16_t u)
 		return left_caller;
 	case 24:
 		left_caller = 0u;
-		return stage_3_forest_play(y, left_caller);
+		return stage_3_forest_play(left_caller);
 	case 26:
 		left_caller = 0u;
-		return stage_3_forest_cleared(y, left_caller);
+		return stage_3_forest_cleared(left_caller);
 	case 28:
 		left_caller = 0u;
 		stage_3_forest_over();
@@ -91,7 +91,7 @@ uint32_t step_stage_2(uint16_t y, uint16_t u)
 		return left_caller;
 	case 40:
 		left_caller = 0u;
-		return stage_3_cemetery_play(y, left_caller);
+		return stage_3_cemetery_play(left_caller);
 	case 42:
 		left_caller = 0u;
 		stage_3_cemetery_over();
@@ -119,7 +119,7 @@ uint32_t step_stage_2(uint16_t y, uint16_t u)
 		return left_caller;
 	case 56:
 		left_caller = 0u;
-		return stage_4_play(y, left_caller);
+		return stage_4_play(left_caller);
 	case 58:
 		left_caller = 0u;
 		stage_4_over();
@@ -147,7 +147,7 @@ uint32_t step_stage_2(uint16_t y, uint16_t u)
 		return left_caller;
 	case 72:
 		left_caller = 0u;
-		return stage_5_play(y, left_caller);
+		return stage_5_play(left_caller);
 	case 74:
 		left_caller = 0u;
 		stage_5_over();
@@ -180,7 +180,7 @@ uint32_t step_stage_2(uint16_t y, uint16_t u)
 		return left_caller;
 	case 90:
 		left_caller = 0u;
-		return stage_6_play(y, left_caller);
+		return stage_6_play(left_caller);
 	case 92:
 		left_caller = 0u;
 		stage_6_over();
@@ -206,11 +206,11 @@ uint32_t step_stage_2(uint16_t y, uint16_t u)
 		return left_caller;
 	case 104:
 		left_caller = 0u;
-		bonus_2_intro_phase(y);
+		bonus_2_intro_phase();
 		return left_caller;
 	case 106:
 		left_caller = 0u;
-		bonus_2_run(y);
+		bonus_2_run();
 		return left_caller;
 	case 108:
 		left_caller = 0u;
@@ -237,7 +237,7 @@ uint32_t step_stage_2(uint16_t y, uint16_t u)
 		return left_caller;
 	case 120:
 		left_caller = 0u;
-		return stage_7_play(y, left_caller);
+		return stage_7_play(left_caller);
 	case 122:
 		left_caller = 0u;
 		stage_7_over();
@@ -257,10 +257,10 @@ uint32_t step_stage_2(uint16_t y, uint16_t u)
 void stage_2_setup(void)
 {
 	uint32_t carry = 0;
-	uint16_t command = 0, ignored16 = 0, ignored16_2 = 0;
+	uint16_t command = 0;
 
 	gauges_shown = 0u;
-	clear_sprites(&ignored16, &ignored16_2);
+	clear_sprites();
 	clear_tile_layers();
 	reset_for_stage();
 	command = 0u;
@@ -284,7 +284,7 @@ void stage_2_title(uint16_t u)
    stage_players */
 uint32_t stage_2_begin(uint16_t palette_job, uint32_t left_caller)
 {
-	uint16_t ignored16 = 0, ignored16_2 = 0, ignored16_3 = 0, layer_and_columns = 0, request = 0, scroll_x = 0, scroll_y = 0, y = 0;
+	uint16_t ignored16 = 0, ignored16_2 = 0, layer_and_columns = 0, request = 0, scroll_x = 0, scroll_y = 0;
 
 	scroll_x = 0u;
 	set_scroll_x(scroll_x);
@@ -292,7 +292,7 @@ uint32_t stage_2_begin(uint16_t palette_job, uint32_t left_caller)
 	set_scroll_y(scroll_y);
 	palette_request_kind = 1u;
 	request = 0xF83u;
-	palette_request(request, &ignored16, &palette_job);
+	palette_request(palette_job, request);
 	play_stage_music();
 	io_write8(0x1FB9u, 0x3Fu);
 	io_write8(0x1FBAu, 0x36u);
@@ -300,13 +300,13 @@ uint32_t stage_2_begin(uint16_t palette_job, uint32_t left_caller)
 	map_area = 0u;
 	set_area_tile_banks();
 	layer_and_columns = 0x2Cu;
-	draw_layer_columns(layer_and_columns, &ignored16_2, &ignored16, &ignored16_3);
+	draw_layer_columns(layer_and_columns, &ignored16, &ignored16_2);
 	layer_and_columns = 0x12Cu;
-	draw_layer_columns_with_floor_map(layer_and_columns, &y, &ignored16_3);
-	left_caller = start_stage_objects(y, left_caller);
+	draw_layer_columns_with_floor_map(layer_and_columns);
+	left_caller = start_stage_objects(left_caller);
 	window_bank = 0x1Fu;
 	set_lines(window_bank);
-	scene_load_story_settings(&ignored16_2, &ignored16, &ignored16_3);
+	scene_load_story_settings(&ignored16, &ignored16_2);
 	io_write8(0x1FB9u, 0x13u);
 	io_write8(0x1FBAu, 0x2Cu);
 	players_present = players_playing;
@@ -321,11 +321,11 @@ void stage_2_opening(void)
 }
 
 /* A frame of stage 2's play; when boss_arrived is set the music moves to the stage's next part */
-uint32_t stage_2_play(uint16_t y, uint32_t left_caller)
+uint32_t stage_2_play(uint32_t left_caller)
 {
 	uint16_t ignored16 = 0;
 
-	stage_play_frame(y, &ignored16, &left_caller);
+	stage_play_frame(&ignored16, &left_caller);
 	if (boss_arrived != 0u)
 	{
 		boss_arrived = 0u;
@@ -339,12 +339,12 @@ uint32_t stage_2_play(uint16_t y, uint32_t left_caller)
 void stage_2_after_boss(void)
 {
 	uint32_t carry = 0;
-	uint16_t command = 0, ignored16 = 0, ignored16_2 = 0, ignored16_3 = 0, layer_and_columns = 0;
+	uint16_t command = 0, ignored16 = 0, ignored16_2 = 0, layer_and_columns = 0;
 
 	layer_b_offset_x = 0u - (camera_x - 0x680u);
 	map_area = 1u;
 	layer_and_columns = 0x13Cu;
-	draw_layer_columns(layer_and_columns, &ignored16, &ignored16_2, &ignored16_3);
+	draw_layer_columns(layer_and_columns, &ignored16, &ignored16_2);
 	command = 0x4F00u;
 	carry = queue_sound(command);
 	stage_over();
@@ -354,7 +354,7 @@ void stage_2_after_boss(void)
 void stage_2_closing_scene(void)
 {
 	uint32_t carry = 0;
-	uint16_t ignored16 = 0, ignored16_2 = 0, ignored16_3 = 0, ignored16_4 = 0;
+	uint16_t ignored16 = 0, ignored16_2 = 0, ignored16_3 = 0;
 
 	scene_running = 1u;
 	window_bank = 0x1Fu;
@@ -365,7 +365,7 @@ void stage_2_closing_scene(void)
 		scene_running = 1u;
 		step_phase++;
 	}
-	update_players(&ignored16, &ignored16_2, &ignored16_3, &ignored16_4, &carry);
+	update_players(&ignored16, &ignored16_2, &ignored16_3, &carry);
 }
 
 /* Stage 2's end, the players walking off (bank 12), which a button skips after F0 frames; then the next
@@ -374,7 +374,7 @@ void stage_2_end_phase(uint16_t u)
 {
 	uint32_t carry = 0;
 	uint8_t b = 0;
-	uint16_t command = 0, ignored16 = 0, ignored16_2 = 0, wait = 0;
+	uint16_t command = 0, ignored16 = 0, wait = 0;
 
 	wait = 0xF000u | b;
 	check_skip(wait, &ignored16, &carry);
@@ -382,7 +382,7 @@ void stage_2_end_phase(uint16_t u)
 	{
 		command = 0u;
 		carry = queue_sound_always(command);
-		clear_sprites(&ignored16, &ignored16_2);
+		clear_sprites();
 		game_step++;
 		step_phase = 0u;
 		step_subphase = 0u;
@@ -397,7 +397,7 @@ void stage_2_end_phase(uint16_t u)
 		return;
 	command = 0u;
 	carry = queue_sound_always(command);
-	clear_sprites(&ignored16, &ignored16_2);
+	clear_sprites();
 	game_step++;
 	step_phase = 0u;
 	step_subphase = 0u;

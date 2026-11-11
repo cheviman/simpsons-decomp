@@ -3,7 +3,7 @@
  *    Description: the nearest player, the direction and distance to it, the attack ranges, the random number
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    10-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -18,14 +18,14 @@ uint16_t enemy_target_nearest_player(uint16_t object)
 	uint16_t distance = 0, object_2 = 0, target = 0;
 	uint8_t stack = 0;
 	uint16_t stack_3 = 0;
-	uint8_t t1 = 0, t9 = 0;
-	uint16_t t2 = 0, t3 = 0, t4 = 0, t5 = 0, t6 = 0, t7 = 0, t8 = 0;
+	uint8_t players_counted = 0, slots_before = 0;
+	uint16_t nearest_player = 0, enemy_x = 0, player_x = 0, dx = 0, enemy_y = 0, player_y = 0, dy = 0;
 
-	t1 = io_read8(0x1874u);
-	if (t1 == 0u)
+	players_counted = io_read8(0x1874u);
+	if (players_counted == 0u)
 	{
-		t2 = io_read16(0x1872u);
-		target = t2;
+		nearest_player = io_read16(0x1872u);
+		target = nearest_player;
 		OBJECT(object)->target = target;
 		return target;
 	}
@@ -36,18 +36,18 @@ uint16_t enemy_target_nearest_player(uint16_t object)
 	{
 		if (OBJECT(object_2)->flags != 0u)
 		{
-			t3 = OBJECT(object)->x;
-			t4 = OBJECT(object_2)->x;
-			t5 = t3 - t4;
-			distance = t5;
-			if ((int16_t)t5 < 0)
+			enemy_x = OBJECT(object)->x;
+			player_x = OBJECT(object_2)->x;
+			dx = enemy_x - player_x;
+			distance = dx;
+			if ((int16_t)dx < 0)
 				distance = 0u - distance;
 			stack_3 = distance;
-			t6 = OBJECT(object)->y;
-			t7 = OBJECT(object_2)->y;
-			t8 = t6 - t7;
-			distance = t8;
-			if ((int16_t)t8 < 0)
+			enemy_y = OBJECT(object)->y;
+			player_y = OBJECT(object_2)->y;
+			dy = enemy_y - player_y;
+			distance = dy;
+			if ((int16_t)dy < 0)
 				distance = 0u - distance;
 			distance += stack_3;
 			if (distance < nearest_player_distance)
@@ -57,11 +57,11 @@ uint16_t enemy_target_nearest_player(uint16_t object)
 			}
 		}
 		object_2 += 0xC0u;
-		t9 = stack;
-		stack = t9 - 1u;
-	} while (t9 != 1u);
-	t2 = io_read16(0x1872u);
-	target = t2;
+		slots_before = stack;
+		stack = slots_before - 1u;
+	} while (slots_before != 1u);
+	nearest_player = io_read16(0x1872u);
+	target = nearest_player;
 	OBJECT(object)->target = target;
 	return target;
 }
@@ -71,10 +71,10 @@ uint16_t enemy_random(uint8_t d)
 {
 	uint8_t value = 0;
 	uint16_t roll = 0;
-	uint8_t t1 = 0;
+	uint8_t last_roll = 0;
 
-	t1 = io_read8(0x189Eu);
-	value = t1 + random_number;
+	last_roll = io_read8(0x189Eu);
+	value = last_roll + random_number;
 	io_write8(0x189Eu, value);
 	roll = (d & 0xFFu) | ((uint32_t)value << 8);
 	return roll;
@@ -86,35 +86,35 @@ void enemy_look_at_target(uint16_t object, uint16_t target)
 {
 	uint8_t distance_high = 0, distance_low = 0;
 	uint8_t target_direction = 0, target_direction_2 = 0, target_direction_3 = 0, attributes = 0;
-	uint16_t t1 = 0, t2 = 0, t3 = 0, t4 = 0, t5 = 0, t6 = 0, t7 = 0, t8 = 0, target_dx = 0, target_dy = 0, target_dx_2 = 0, target_dy_2 = 0, target_dy_3 = 0, target_dx_3 = 0;
+	uint16_t target_x = 0, enemy_x = 0, dx = 0, x_distance = 0, target_y = 0, enemy_y = 0, dy = 0, y_distance = 0, target_dx = 0, target_dy = 0, target_dx_2 = 0, target_dy_2 = 0, target_dy_3 = 0, target_dx_3 = 0;
 
 	target_left_bit = 0u;
 	OBJECT(object)->target_direction = 0u;
-	t1 = OBJECT(target)->x;
-	t2 = OBJECT(object)->x;
-	t3 = t1 - t2;
-	distance_low = (uint8_t)t3;
-	distance_high = (uint8_t)(t3 >> 8);
-	if ((int16_t)t3 >= 0)
+	target_x = OBJECT(target)->x;
+	enemy_x = OBJECT(object)->x;
+	dx = target_x - enemy_x;
+	distance_low = (uint8_t)dx;
+	distance_high = (uint8_t)(dx >> 8);
+	if ((int16_t)dx >= 0)
 		OBJECT(object)->target_dx = ((uint32_t)distance_high << 8) | (distance_low & 0xFFu);
 	else
 	{
-		t4 = 0u - (((uint32_t)distance_high << 8) | (distance_low & 0xFFu));
-		OBJECT(object)->target_dx = t4;
+		x_distance = 0u - (((uint32_t)distance_high << 8) | (distance_low & 0xFFu));
+		OBJECT(object)->target_dx = x_distance;
 		OBJECT(object)->target_direction = 0x40u;
 		target_left_bit = 0x40u;
 	}
-	t5 = OBJECT(target)->y;
-	t6 = OBJECT(object)->y;
-	t7 = t5 - t6;
-	distance_low = (uint8_t)t7;
-	distance_high = (uint8_t)(t7 >> 8);
-	if ((int16_t)t7 >= 0)
+	target_y = OBJECT(target)->y;
+	enemy_y = OBJECT(object)->y;
+	dy = target_y - enemy_y;
+	distance_low = (uint8_t)dy;
+	distance_high = (uint8_t)(dy >> 8);
+	if ((int16_t)dy >= 0)
 		OBJECT(object)->target_dy = ((uint32_t)distance_high << 8) | (distance_low & 0xFFu);
 	else
 	{
-		t8 = 0u - (((uint32_t)distance_high << 8) | (distance_low & 0xFFu));
-		OBJECT(object)->target_dy = t8;
+		y_distance = 0u - (((uint32_t)distance_high << 8) | (distance_low & 0xFFu));
+		OBJECT(object)->target_dy = y_distance;
 		target_direction = OBJECT(object)->target_direction;
 		OBJECT(object)->target_direction = target_direction ^ 0xC0u;
 	}
@@ -178,60 +178,60 @@ void enemy_find_attack_range(uint16_t object, uint16_t *p_range, uint16_t *p_cha
 {
 	uint16_t range = (uint16_t)*p_range;
 	uint32_t carry = *p_carry;
-	uint8_t a = 0, x_distance = 0;
+	uint8_t distance_high = 0, x_distance = 0;
 	uint16_t chance = 0;
-	uint8_t t1 = 0, t2 = 0, t3 = 0, t4 = 0, t5 = 0, t6 = 0;
+	uint8_t dy_low = 0, dx_low = 0, range_least_dx = 0, range_most_dx = 0, range_chance = 0, ranges_before = 0;
 	uint16_t target_dx = 0, target_dy = 0;
 
 	target_dx = OBJECT(object)->target_dx;
-	a = (uint8_t)(target_dx >> 8);
-	if ((uint16_t)(((uint32_t)a << 8) | (uint8_t)target_dx) >= 0x100u)
+	distance_high = (uint8_t)(target_dx >> 8);
+	if ((uint16_t)(((uint32_t)distance_high << 8) | (uint8_t)target_dx) >= 0x100u)
 	{
 		carry = 0u;
-		chance = (uint32_t)a << 8;
+		chance = (uint32_t)distance_high << 8;
 	}
 	else
 	{
 		target_dy = OBJECT(object)->target_dy;
-		a = (uint8_t)(target_dy >> 8);
-		if ((uint16_t)(((uint32_t)a << 8) | (uint8_t)target_dy) >= 0x100u)
+		distance_high = (uint8_t)(target_dy >> 8);
+		if ((uint16_t)(((uint32_t)distance_high << 8) | (uint8_t)target_dy) >= 0x100u)
 		{
 			carry = 0u;
-			chance = (uint32_t)a << 8;
+			chance = (uint32_t)distance_high << 8;
 		}
 		else
 		{
-			a = 4u;
+			distance_high = 4u;
 			for (;;)
 			{
-				t1 = (uint8_t)OBJECT(object)->target_dy;
-				if (mem_read8(range) < t1)
+				dy_low = (uint8_t)OBJECT(object)->target_dy;
+				if (ATTACK_RANGE(range)->most_dy < dy_low)
 				{
 					carry = 0u;
-					chance = (uint32_t)a << 8;
+					chance = (uint32_t)distance_high << 8;
 					break;
 				}
-				t2 = (uint8_t)OBJECT(object)->target_dx;
-				x_distance = t2;
-				t3 = mem_read8(range + 1u);
-				if (t3 <= x_distance)
+				dx_low = (uint8_t)OBJECT(object)->target_dx;
+				x_distance = dx_low;
+				range_least_dx = ATTACK_RANGE(range)->least_dx;
+				if (range_least_dx <= x_distance)
 				{
-					t4 = mem_read8(range + 2u);
-					if (x_distance <= t4)
+					range_most_dx = ATTACK_RANGE(range)->most_dx;
+					if (x_distance <= range_most_dx)
 					{
 						carry = 1u;
-						t5 = mem_read8(range + 3u);
-						chance = ((uint32_t)t5 << 8) | (uint8_t)~x_distance;
+						range_chance = ATTACK_RANGE(range)->chance;
+						chance = ((uint32_t)range_chance << 8) | (uint8_t)~x_distance;
 						break;
 					}
 				}
 				range += 0xCu;
-				t6 = a;
-				a = t6 - 1u;
-				if (t6 == 1u)
+				ranges_before = distance_high;
+				distance_high = ranges_before - 1u;
+				if (ranges_before == 1u)
 				{
 					carry = 0u;
-					chance = (uint32_t)a << 8;
+					chance = (uint32_t)distance_high << 8;
 					break;
 				}
 			}

@@ -3,7 +3,7 @@
  *    Description: the attract mode: its scenes until a credit starts the game
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    10-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -13,30 +13,30 @@
 
 /* The game's state 1, at each frame: with no credits runs the attract's scene (a coin skips to its scene
    5), with credits starts the game (state 2). */
-void attract(uint16_t y, uint16_t u)
+void attract(uint16_t u)
 {
-	uint8_t a = 0;
-	uint16_t t1 = 0, t2 = 0, t3 = 0, t4 = 0, t5 = 0;
+	uint8_t credits_high = 0;
+	uint16_t slot_1_credit_count = 0, slot_2_credit_count = 0, slot_3_credit_count = 0, slot_4_credit_count = 0, credit_count = 0;
 
 	in_attract = 1u;
 	gauges_shown = 0u;
 	if (separate_coin_slots != 0u)
 	{
-		t1 = slot_credits;
-		a = (uint8_t)(t1 >> 8);
-		if (t1 == 0u)
+		slot_1_credit_count = slot_credits;
+		credits_high = (uint8_t)(slot_1_credit_count >> 8);
+		if (slot_1_credit_count == 0u)
 		{
-			t2 = slot_2_credits;
-			a = (uint8_t)(t2 >> 8);
-			if (t2 == 0u)
+			slot_2_credit_count = slot_2_credits;
+			credits_high = (uint8_t)(slot_2_credit_count >> 8);
+			if (slot_2_credit_count == 0u)
 			{
-				t3 = slot_3_credits;
-				a = (uint8_t)(t3 >> 8);
-				if (t3 == 0u)
+				slot_3_credit_count = slot_3_credits;
+				credits_high = (uint8_t)(slot_3_credit_count >> 8);
+				if (slot_3_credit_count == 0u)
 				{
-					t4 = slot_4_credits;
-					a = (uint8_t)(t4 >> 8);
-					if (t4 == 0u)
+					slot_4_credit_count = slot_4_credits;
+					credits_high = (uint8_t)(slot_4_credit_count >> 8);
+					if (slot_4_credit_count == 0u)
 					{
 						if (coins_inserted != 0u)
 						{
@@ -51,22 +51,22 @@ void attract(uint16_t y, uint16_t u)
 						switch ((int8_t)(uint8_t)((uint32_t)mode_step << 1))
 						{
 						case 0:
-							attract_opening_scene(y, u);
+							attract_opening_scene(u);
 							break;
 						case 2:
-							attract_demo(y, u);
+							attract_demo(u);
 							break;
 						case 4:
-							attract_title(y, u);
+							attract_title(u);
 							break;
 						case 6:
-							attract_high_scores(y, u);
+							attract_high_scores(u);
 							break;
 						case 8:
-							attract_warning(y, u);
+							attract_warning(u);
 							break;
 						case 10:
-							attract_coin_title(y, u);
+							attract_coin_title(u);
 							break;
 						case 12:
 							attract_clear_screen();
@@ -75,7 +75,7 @@ void attract(uint16_t y, uint16_t u)
 							attract_wait_clear();
 							break;
 						case 16:
-							attract_opening_run(y, u);
+							attract_opening_run(u);
 							break;
 						case 18:
 							attract_next_scene();
@@ -140,9 +140,9 @@ void attract(uint16_t y, uint16_t u)
 	}
 	else
 	{
-		t5 = credits;
-		a = (uint8_t)(t5 >> 8);
-		if (t5 == 0u)
+		credit_count = credits;
+		credits_high = (uint8_t)(credit_count >> 8);
+		if (credit_count == 0u)
 		{
 			if (coins_inserted != 0u)
 			{
@@ -157,22 +157,22 @@ void attract(uint16_t y, uint16_t u)
 			switch ((int8_t)(uint8_t)((uint32_t)mode_step << 1))
 			{
 			case 0:
-				attract_opening_scene(y, u);
+				attract_opening_scene(u);
 				break;
 			case 2:
-				attract_demo(y, u);
+				attract_demo(u);
 				break;
 			case 4:
-				attract_title(y, u);
+				attract_title(u);
 				break;
 			case 6:
-				attract_high_scores(y, u);
+				attract_high_scores(u);
 				break;
 			case 8:
-				attract_warning(y, u);
+				attract_warning(u);
 				break;
 			case 10:
-				attract_coin_title(y, u);
+				attract_coin_title(u);
 				break;
 			case 12:
 				attract_clear_screen();
@@ -181,7 +181,7 @@ void attract(uint16_t y, uint16_t u)
 				attract_wait_clear();
 				break;
 			case 16:
-				attract_opening_run(y, u);
+				attract_opening_run(u);
 				break;
 			case 18:
 				attract_next_scene();
@@ -242,7 +242,7 @@ void attract(uint16_t y, uint16_t u)
 		}
 		players_joined = 0u;
 	}
-	players_joined = a;
+	players_joined = credits_high;
 	AT16(player_variables, -1) = 0u;
 	homer_lives = 0u;
 	bart_lives = 0u;
@@ -270,7 +270,7 @@ void attract(uint16_t y, uint16_t u)
 
 /* The attract's scene 0 by its step: the screens cleared, then bank 20's opening run step by step, then
    the next scene. */
-void attract_opening_scene(uint16_t y, uint16_t u)
+void attract_opening_scene(uint16_t u)
 {
 	for (;;)
 	{
@@ -283,7 +283,7 @@ void attract_opening_scene(uint16_t y, uint16_t u)
 			attract_wait_clear();
 			return;
 		case 4:
-			attract_opening_run(y, u);
+			attract_opening_run(u);
 			return;
 		case 6:
 			attract_next_scene();
@@ -341,19 +341,19 @@ void attract_opening_scene(uint16_t y, uint16_t u)
 		case -12:
 			continue;
 		case -10:
-			attract_demo(y, u);
+			attract_demo(u);
 			return;
 		case -8:
-			attract_title(y, u);
+			attract_title(u);
 			return;
 		case -6:
-			attract_high_scores(y, u);
+			attract_high_scores(u);
 			return;
 		case -4:
-			attract_warning(y, u);
+			attract_warning(u);
 			return;
 		case -2:
-			attract_coin_title(y, u);
+			attract_coin_title(u);
 			return;
 		}
 		break;
@@ -385,40 +385,40 @@ void attract_wait_clear(void)
 }
 
 /* Runs bank 20's opening for its step. */
-void attract_opening_run(uint16_t y, uint16_t u)
+void attract_opening_run(uint16_t u)
 {
-	uint8_t a = 0;
-	uint16_t move_number = 0, object = 0;
+	uint8_t step_offset = 0;
+	uint16_t move = 0, move_number = 0, object = 0;
 
 	window_bank = 0x20u;
 	set_lines(window_bank);
 	object = attract_opening_scenes_ADDRESS;
-	a = (uint32_t)game_step << 1;
-	switch ((int8_t)a)
+	step_offset = (uint32_t)game_step << 1;
+	switch ((int8_t)step_offset)
 	{
 	case 0:
-		attract_opening(y, u);
+		attract_opening(u);
 		return;
 	case 2:
-		attract_opening_end(y, u);
+		attract_opening_end(u);
 		return;
 	case 4:
-		attract_bart(y, u);
+		attract_bart(u);
 		return;
 	case 6:
-		attract_homer(y, u);
+		attract_homer(u);
 		return;
 	case 8:
-		attract_lisa(y, u);
+		attract_lisa(u);
 		return;
 	case 10:
-		attract_marge(y, u);
+		attract_marge(u);
 		return;
 	case 12:
-		attract_leap(y, u);
+		attract_leap(u);
 		return;
 	case 14:
-		attract_last_screen(y, u);
+		attract_last_screen(u);
 		return;
 	case 16:
 		attract_opening_start(u);
@@ -532,19 +532,21 @@ void attract_opening_run(uint16_t y, uint16_t u)
 		attract_last_screen_wait(u);
 		return;
 	case 90:
-		move_number = (uint32_t)a << 8;
-		attract_profile_move_out(object, y, move_number);
+		move = (uint16_t)leftover_y;
+		move_number = (uint32_t)step_offset << 8;
+		attract_profile_move_out(object, move, move_number);
 		return;
 	case 92:
 	case 98:
 		attract_profile_move_stop(object);
 		return;
 	case 94:
-		move_number = (uint32_t)a << 8;
+		move_number = (uint32_t)step_offset << 8;
 		attract_profile_move_pause(object, move_number);
 		return;
 	case 96:
-		attract_profile_move_back(object, y);
+		move = (uint16_t)leftover_y;
+		attract_profile_move_back(object, move);
 		return;
 	case 100:
 		attract_profile_move_done();
@@ -572,7 +574,7 @@ void attract_next_scene(void)
 
 /* The attract's scene 2 by its step: the title screen with the copyright, then the Life in Hell
    characters' credits. */
-void attract_title(uint16_t y, uint16_t u)
+void attract_title(uint16_t u)
 {
 	for (;;)
 	{
@@ -629,21 +631,21 @@ void attract_title(uint16_t y, uint16_t u)
 		case 32:
 			break;
 		case -20:
-			attract_opening_scene(y, u);
+			attract_opening_scene(u);
 			return;
 		case -18:
-			attract_demo(y, u);
+			attract_demo(u);
 			return;
 		case -16:
 			continue;
 		case -14:
-			attract_high_scores(y, u);
+			attract_high_scores(u);
 			return;
 		case -12:
-			attract_warning(y, u);
+			attract_warning(u);
 			return;
 		case -10:
-			attract_coin_title(y, u);
+			attract_coin_title(u);
 			return;
 		case -8:
 			attract_clear_screen();
@@ -652,7 +654,7 @@ void attract_title(uint16_t y, uint16_t u)
 			attract_wait_clear();
 			return;
 		case -4:
-			attract_opening_run(y, u);
+			attract_opening_run(u);
 			return;
 		case -2:
 			attract_next_scene();
@@ -689,7 +691,7 @@ void attract_title_wait(uint16_t palette_job)
    GROENING and the copyright, and fades the colours in. */
 void attract_title_draw(uint16_t palette_job)
 {
-	uint16_t ignored16 = 0, ignored16_2 = 0, ignored16_3 = 0, layer_and_columns = 0, request = 0, scroll_x = 0, scroll_y = 0, text_number = 0, u = 0;
+	uint16_t ignored16 = 0, ignored16_2 = 0, layer_and_columns = 0, request = 0, scroll_x = 0, scroll_y = 0, text_number = 0, u = 0;
 
 	scroll_x = 0x10u;
 	set_scroll_x(scroll_x);
@@ -697,19 +699,19 @@ void attract_title_draw(uint16_t palette_job)
 	set_scroll_y(scroll_y);
 	palette_request_kind = 3u;
 	request = 0x7A53u;
-	palette_request(request, &ignored16, &palette_job);
+	palette_job = palette_request(palette_job, request);
 	palette_request_kind = 1u;
 	request = 0xF07u;
-	palette_request(request, &ignored16, &palette_job);
+	palette_request(palette_job, request);
 	map_scene = 0u;
 	map_area = 0u;
 	set_area_tile_banks();
 	io_write8(0x1FB9u, 0x3Fu);
 	io_write8(0x1FBAu, 0x36u);
 	layer_and_columns = 0x26u;
-	draw_layer_columns(layer_and_columns, &ignored16_2, &ignored16, &ignored16_3);
+	draw_layer_columns(layer_and_columns, &ignored16, &ignored16_2);
 	layer_and_columns = 0x126u;
-	draw_layer_columns(layer_and_columns, &ignored16_2, &ignored16, &ignored16_3);
+	draw_layer_columns(layer_and_columns, &ignored16, &ignored16_2);
 	layer_a_scroll_y = 0x20u;
 	layer_b_scroll_y = 0x20u;
 	io_write8(0x1FB9u, 0x13u);
@@ -732,7 +734,7 @@ void attract_title_draw(uint16_t palette_job)
 	u = print_game_text(text_number);
 	palette_request_kind = 4u;
 	request = 0x1640u;
-	palette_request(request, &ignored16, &u);
+	palette_request(u, request);
 	attract_timer = 0u;
 	mode_phase++;
 }

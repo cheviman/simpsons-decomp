@@ -78,10 +78,11 @@ WINDOW_ELEMENTS = {0x079AE9: {0x6000: "animation_set_index"}}
 STRUCT_ARRAYS = {"object": (0x4A40, 33)}
 OBJECT_REGISTER = "x"
 # an object at a fixed address that is of one family in some functions only: the list at 5640 (one object, the
-# stage's events) is the story actor in the stories' routines (03E804 "LDX #$5640; LDA #$38; STA #$30,X; LBRA $605A":
+# stage's events) is the story actor in the stories' routines and stage 2's and 8's events (03E804 "LDX #$5640; LDA #$38; STA #$30,X; LBRA $605A":
 # a scene's actor started on its script), whose fields an access by its address reads by the family's names (the
 # players' objects at 4A40 + C0 n are not always the player family's: the bonus games' objects are there too)
-INSTANCE_FAMILIES_BY_FUNCTION = {(0x5640, "story"): "story_actor"}
+INSTANCE_FAMILIES_BY_FUNCTION = {(0x5640, "story"): "story_actor", (0x5640, "stage_2_events"): "story_actor",
+                                 (0x5640, "stage_8_events"): "story_actor"}
 OWN_OBJECT_POINTERS = True     # (the object register is the family's object in the pointer analysis too)
 NESTED_FAMILIES = True         # (a family's view takes the fields of the families its name extends)
 # names by use, as TMNT's: a parameter or result takes the name of the structure read through it, or of the variable
@@ -100,6 +101,14 @@ PASSES_BY_PART = True
 UNCHANGED_PARTS = True
 NARROW_OUTPUTS = True
 CHOSEN_IN_ORDER = True
+# what the registers carry from one routine to a later one that no call links to it (konami_cpu/decompile.py carry,
+# decompiler/carried.py) is in global variables: the object lists' runners hand each handler what the handler before
+# left in Y, which C would otherwise pass through hundreds of functions as a parameter and a result
+CARRIED_REGISTERS = True
+# (Y only: some functions keep U for themselves around the code that hands it on, 0214BA "PUSHS U")
+CARRIED_REGISTER_NAMES = ("y",)
+# a parameter a function reads for itself, or a result it works out, stays its own; the carried value crosses by a copy
+CARRIED_CUTS = True
 
 # The Z80 sound program (072-e03.6g: 0000-7FFF fixed, 16 KB banks at 8000-BFFF by FE00, which the Z80 only reads as
 # data; its RAM at F000): the reset (IM 1, then 0923), the interrupt (0038, from the 053248's read of 1FC4) and the

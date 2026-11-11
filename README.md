@@ -61,8 +61,11 @@ As of 09-11-2026:
       after a register or an address
 - [x] The 053248's work RAM named throughout (the direct page's scratch bytes by the routine that uses them), its data
       and unused code named by what they are, and most of its parameters and locals named by what they hold
-- [ ] The 053248's C made fully readable: 83 object fields still named after their offset, about 2,900 parameters and
-      locals still named after a register (mostly what a dispatcher hands its handlers unchanged, and the cases of the
+- [x] What the 053248's routines leave in Y for later ones, which no call links to them, kept as a global
+      (`leftover_y`, as TMNT's carried registers), not passed through hundreds of handlers; its temporaries named,
+      and its work RAM's records (palette jobs, sprite entries, coin slots, the players' records) as structures
+- [ ] The 053248's C made fully readable: 82 object fields still named after their offset, about 850 parameters and
+      locals still named after a register (mostly what a dispatcher hands its handlers in U and D, and the cases of the
       steps' switches that run on into the next table's)
 - [x] The assets extracted by subject and checked byte for byte (`tools/extract_assets.py --check`): the sprites by
       the objects whose animations show them, the tiles by the stages whose maps show them, the K053260's samples

@@ -3,7 +3,7 @@
  *    Description: the four helpers of stage 7's boss
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    10-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -17,9 +17,8 @@ void stage_7_boss_helper_idle(void)
 }
 
 /* Stage 7's boss' helper moving (states 1 to 6), by its step. */
-void stage_7_boss_helper_move(uint16_t object, uint16_t *p_y, uint16_t *p_action_handlers)
+uint16_t stage_7_boss_helper_move(uint16_t object)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint16_t action_handlers = 0;
 	uint8_t action = 0;
 
@@ -30,20 +29,18 @@ void stage_7_boss_helper_move(uint16_t object, uint16_t *p_y, uint16_t *p_action
 		switch ((int8_t)(uint8_t)((uint32_t)action << 1))
 		{
 		case 0:
-			action_handlers = stage_7_boss_helper_start_move(object);
-			break;
+			return stage_7_boss_helper_start_move(object);
 		case 2:
-			y = stage_7_boss_helper_moving(object);
-			break;
+			stage_7_boss_helper_moving(object);
+			return action_handlers;
 		case 4:
 			stage_7_boss_helper_throw_start(object);
-			break;
+			return action_handlers;
 		case 6:
-			stage_7_boss_helper_throw_end(object);
 			break;
 		case -16:
 			stage_7_boss_helper_idle();
-			break;
+			return action_handlers;
 		case -14:
 		case -12:
 		case -10:
@@ -52,13 +49,12 @@ void stage_7_boss_helper_move(uint16_t object, uint16_t *p_y, uint16_t *p_action
 		case -4:
 			continue;
 		case -2:
-			stage_7_boss_helper_attack(object, &y, &action_handlers);
-			break;
+			return stage_7_boss_helper_attack(object);
 		}
 		break;
 	}
-	*p_y = y;
-	*p_action_handlers = action_handlers;
+	stage_7_boss_helper_throw_end(object);
+	return action_handlers;
 }
 
 /* Stage 7's boss' helper: starts its move at the state's speed. */
@@ -66,54 +62,53 @@ uint16_t stage_7_boss_helper_start_move(uint16_t object)
 {
 	uint16_t speed_table = 0;
 	uint8_t state = 0, action = 0;
-	uint16_t t1 = 0;
+	uint16_t move_speed = 0;
 
 	speed_table = stage_7_boss_helper_speeds_ADDRESS;
 	state = OBJECT(object)->state;
-	t1 = stage_7_boss_helper_speeds[(int8_t)((uint8_t)((state - 1u) << 1)) / 2];
-	OBJECT(object)->x_speed = t1;
+	move_speed = stage_7_boss_helper_speeds[(int8_t)((uint8_t)((state - 1u) << 1)) / 2];
+	OBJECT(object)->x_speed = move_speed;
 	OBJECT(object)->stage_7_boss_helper.distance = 0u;
-	OBJECT(object)->behaviour &= 0xFF00u;
+	OBJECT(object)->stage_7_boss_helper.target &= 0xFFu;
 	action = OBJECT(object)->action;
 	OBJECT(object)->action = action + 1u;
 	return speed_table;
 }
 
 /* Stage 7's boss' helper: moves until it has gone the state's distance, then waits. */
-uint16_t stage_7_boss_helper_moving(uint16_t object)
+void stage_7_boss_helper_moving(uint16_t object)
 {
 	uint32_t carry = 0;
 	uint16_t distance = 0;
-	uint8_t state = 0, x_speed_2 = 0, t3 = 0;
-	uint16_t behaviour = 0, x_speed = 0, t1 = 0, t2 = 0, distance_2 = 0, t4 = 0, t5 = 0;
+	uint8_t state = 0, x_speed_2 = 0, distance_high = 0;
+	uint16_t behaviour = 0, x_speed = 0, old_distance_low = 0, new_distance_low = 0, distance_2 = 0, signed_distance = 0, distance_gone = 0;
 
 	state = OBJECT(object)->state;
 	distance = stage_7_boss_helper_distances_ADDRESS + (int8_t)((state - 1u) << 1);
 	behaviour = OBJECT(object)->behaviour;
 	x_speed = OBJECT(object)->x_speed;
-	t1 = behaviour;
-	t2 = t1 + x_speed;
-	carry = (uint16_t)(t1 + x_speed) < t1;
-	OBJECT(object)->behaviour = t2;
+	old_distance_low = behaviour;
+	new_distance_low = old_distance_low + x_speed;
+	carry = (uint16_t)(old_distance_low + x_speed) < old_distance_low;
+	OBJECT(object)->behaviour = new_distance_low;
 	x_speed_2 = (uint8_t)(OBJECT(object)->x_speed >> 8u);
-	t3 = (uint8_t)(OBJECT(object)->stage_7_boss_helper.distance >> 8u);
-	OBJECT(object)->stage_7_boss_helper.distance = (OBJECT(object)->stage_7_boss_helper.distance & 0xFFu) | ((((uint16_t)(int8_t)x_speed_2 >> 8) + t3 + carry & 0xFFu) << 8u);
+	distance_high = (uint8_t)(OBJECT(object)->stage_7_boss_helper.distance >> 8u);
+	OBJECT(object)->stage_7_boss_helper.distance = (OBJECT(object)->stage_7_boss_helper.distance & 0xFFu) | ((((uint16_t)(int8_t)x_speed_2 >> 8) + distance_high + carry & 0xFFu) << 8u);
 	distance_2 = OBJECT(object)->stage_7_boss_helper.distance;
-	t4 = distance_2;
-	t5 = t4 >> 15 ? 0u - t4 : t4;
-	if (t5 == HELPER_DISTANCE(distance))
+	signed_distance = distance_2;
+	distance_gone = signed_distance >> 15 ? 0u - signed_distance : signed_distance;
+	if (distance_gone == HELPER_DISTANCE(distance))
 	{
 		OBJECT(object)->x_speed = 0;
 		OBJECT(object)->state = 0u;
 		OBJECT(object)->action = 0u;
 	}
-	return distance;
+	leftover_y = distance;
 }
 
 /* Stage 7's boss' helper throwing (state 7), by its step. */
-void stage_7_boss_helper_attack(uint16_t object, uint16_t *p_y, uint16_t *p_action_handlers)
+uint16_t stage_7_boss_helper_attack(uint16_t object)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint16_t action_handlers = 0;
 	uint8_t action = 0;
 
@@ -125,34 +120,31 @@ void stage_7_boss_helper_attack(uint16_t object, uint16_t *p_y, uint16_t *p_acti
 		{
 		case 0:
 			stage_7_boss_helper_throw_start(object);
-			break;
+			return action_handlers;
 		case 2:
-			stage_7_boss_helper_throw_end(object);
 			break;
 		case -20:
 			stage_7_boss_helper_idle();
-			break;
+			return action_handlers;
 		case -18:
 		case -16:
 		case -14:
 		case -12:
 		case -10:
 		case -8:
-			stage_7_boss_helper_move(object, &y, &action_handlers);
-			break;
+			return stage_7_boss_helper_move(object);
 		case -6:
 			continue;
 		case -4:
-			action_handlers = stage_7_boss_helper_start_move(object);
-			break;
+			return stage_7_boss_helper_start_move(object);
 		case -2:
-			y = stage_7_boss_helper_moving(object);
-			break;
+			stage_7_boss_helper_moving(object);
+			return action_handlers;
 		}
 		break;
 	}
-	*p_y = y;
-	*p_action_handlers = action_handlers;
+	stage_7_boss_helper_throw_end(object);
+	return action_handlers;
 }
 
 /* Stage 7's boss' helper: throws (sound 6000). */

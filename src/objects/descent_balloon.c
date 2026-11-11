@@ -3,7 +3,7 @@
  *    Description: the balloon a descending fat goon lets go of
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    10-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -12,19 +12,18 @@
 #include "game.h"
 
 /* Sets up the balloon, hidden until the fat goon lets it go. */
-void descent_balloon_start(uint16_t object, uint16_t *p_box, uint16_t *p_setup)
+uint16_t descent_balloon_start(uint16_t object)
 {
-	uint16_t box = 0, setup = 0;
+	uint16_t setup = 0;
 	uint8_t state = 0;
 
 	setup = descent_balloon_setup_ADDRESS;
-	box = vector_object_setup(object, setup);
+	vector_object_setup(object, setup);
 	OBJECT(object)->flags = 4u;
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
 	descent_balloon_wait();
-	*p_box = box;
-	*p_setup = setup;
+	return setup;
 }
 
 /* Does nothing while the fat goon holds the balloon. */
@@ -37,7 +36,7 @@ uint16_t descent_balloon_release(uint16_t object)
 {
 	uint16_t carrier = 0;
 	uint8_t attributes = 0, attributes_2 = 0, state = 0;
-	uint16_t parent = 0, t1 = 0, t2 = 0, z = 0, t3 = 0;
+	uint16_t parent = 0, carrier_x = 0, carrier_y = 0, z = 0, balloon_z = 0;
 
 	OBJECT(object)->flags = 0x88u;
 	parent = OBJECT(object)->parent;
@@ -46,13 +45,13 @@ uint16_t descent_balloon_release(uint16_t object)
 	priority_bits = attributes & 0x30u;
 	attributes_2 = OBJECT(object)->attributes;
 	OBJECT(object)->attributes = (attributes_2 & 0xCFu) | priority_bits;
-	t1 = OBJECT(carrier)->x;
-	OBJECT(object)->x = t1;
-	t2 = OBJECT(carrier)->y;
-	OBJECT(object)->y = t2;
+	carrier_x = OBJECT(carrier)->x;
+	OBJECT(object)->x = carrier_x;
+	carrier_y = OBJECT(carrier)->y;
+	OBJECT(object)->y = carrier_y;
 	z = OBJECT(carrier)->z;
-	t3 = z + 0x3Cu;
-	OBJECT(object)->z = t3;
+	balloon_z = z + 0x3Cu;
+	OBJECT(object)->z = balloon_z;
 	OBJECT(object)->z_speed = 0x100;
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;

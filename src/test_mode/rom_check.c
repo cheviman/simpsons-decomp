@@ -3,7 +3,7 @@
  *    Description: the ROM check page
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    10-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -14,11 +14,11 @@
 /* Runs the ROM check's step */
 uint16_t test_rom_check_step(uint16_t d)
 {
-	uint8_t a = 0;
+	uint8_t step_offset = 0;
 	uint16_t d_2 = 0;
 
-	a = (uint32_t)rom_check_step << 1;
-	switch ((int8_t)a)
+	step_offset = (uint32_t)rom_check_step << 1;
+	switch ((int8_t)step_offset)
 	{
 	case 0:
 		return test_rom_check_start();
@@ -39,7 +39,7 @@ uint16_t test_rom_check_step(uint16_t d)
 	case 22:
 		return test_rom_check_7g(d);
 	case 24:
-		d_2 = (d & 0xFFu) | ((uint32_t)a << 8);
+		d_2 = (d & 0xFFu) | ((uint32_t)step_offset << 8);
 		test_rom_check_done();
 		return d_2;
 	}
@@ -49,8 +49,8 @@ uint16_t test_rom_check_step(uint16_t d)
 /* Clears the check's variables and asks the sound CPU to sum its ROM */
 uint16_t test_rom_check_start(void)
 {
-	uint8_t b = 0, no_sound_cpu = 0;
-	uint16_t clear_from = 0, clear_to = 0, count = 0, d = 0, ignored16 = 0, text_number = 0;
+	uint8_t answer_low = 0, no_sound_cpu = 0;
+	uint16_t clear_from = 0, clear_to = 0, count = 0, d = 0, ignored16 = 0, sound_cpu_answer = 0, text_number = 0;
 
 	clear_from = rom_check_step_ADDRESS;
 	clear_to = rom_check_chip_ADDRESS;
@@ -65,19 +65,19 @@ uint16_t test_rom_check_start(void)
 	}
 	text_number = 0xCu;
 	vector_print_game_text(text_number);
-	vector_ask_sound_cpu_check(&ignored16, &d);
-	no_sound_cpu = (uint8_t)(d >> 8);
-	b = (uint8_t)d;
+	vector_ask_sound_cpu_check(&ignored16, &sound_cpu_answer);
+	no_sound_cpu = (uint8_t)(sound_cpu_answer >> 8);
+	answer_low = (uint8_t)sound_cpu_answer;
 	no_sound_cpu &= 0x80u;
 	rom_check_no_sound_cpu = no_sound_cpu;
 	if (no_sound_cpu == 0u)
 	{
-		d = start_sample_rom_check();
-		no_sound_cpu = (uint8_t)(d >> 8);
-		b = (uint8_t)d;
+		sound_cpu_answer = start_sample_rom_check();
+		no_sound_cpu = (uint8_t)(sound_cpu_answer >> 8);
+		answer_low = (uint8_t)sound_cpu_answer;
 	}
 	rom_check_step++;
-	d = ((uint32_t)no_sound_cpu << 8) | b;
+	d = ((uint32_t)no_sound_cpu << 8) | answer_low;
 	return d;
 }
 
@@ -108,13 +108,13 @@ uint16_t test_rom_check_sum_tiles(void)
 uint16_t test_rom_check_tiles_result(void)
 {
 	uint16_t d = 0, sum = 0;
-	uint16_t t1 = 0, t2 = 0;
+	uint16_t tile_sum = 0, tile_sum_4 = 0;
 
-	t1 = rom_check_tile_sums(1);
-	sum = rom_check_tile_sums(0) + t1;
+	tile_sum = rom_check_tile_sums(1);
+	sum = rom_check_tile_sums(0) + tile_sum;
 	test_check_rom_sum(sum);
-	t2 = rom_check_tile_sums(3);
-	sum = rom_check_tile_sums(2) + t2;
+	tile_sum_4 = rom_check_tile_sums(3);
+	sum = rom_check_tile_sums(2) + tile_sum_4;
 	d = test_check_rom_sum(sum);
 	io_write8(0x1D80u, 0x10u);
 	io_write8(0x1F00u, 0x32u);
@@ -129,7 +129,7 @@ uint16_t test_rom_check_sum_sprites(void)
 {
 	uint8_t sprite_control = 0;
 	uint16_t d = 0, sum = 0;
-	uint8_t t1 = 0;
+	uint8_t passes_to_go = 0;
 
 	sprite_control = sprite_chip_control & 0xEFu;
 	sprite_chip_control = sprite_control;
@@ -141,9 +141,9 @@ uint16_t test_rom_check_sum_sprites(void)
 	do
 	{
 		sum = test_sum_sprite_rom(sum);
-		t1 = sprite_rom_passes_left;
-		sprite_rom_passes_left = t1 - 1u;
-	} while (t1 != 1u);
+		passes_to_go = sprite_rom_passes_left;
+		sprite_rom_passes_left = passes_to_go - 1u;
+	} while (passes_to_go != 1u);
 	d = test_check_rom_sum(sum);
 	rom_check_chip++;
 	rom_check_step++;
@@ -155,15 +155,15 @@ uint16_t test_rom_check_6g(uint16_t d)
 {
 	uint32_t zero = 0;
 	uint8_t answer_bits = 0, no_sound_cpu = 0, sprite_control = 0;
-	uint16_t d_2 = 0, place = 0, x = 0;
-	uint8_t t1 = 0;
+	uint16_t d_2 = 0, place = 0, sample_sum = 0;
+	uint8_t sound_cpu_missing = 0;
 
 	sprite_control = sprite_chip_control | 0x10u;
 	sprite_chip_control = sprite_control;
 	io_write8(0x1FA5u, sprite_control);
-	t1 = rom_check_no_sound_cpu;
-	no_sound_cpu = t1;
-	if (t1 != 0u)
+	sound_cpu_missing = rom_check_no_sound_cpu;
+	no_sound_cpu = sound_cpu_missing;
+	if (sound_cpu_missing != 0u)
 	{
 		rom_check_step++;
 		d_2 = (d & 0xFFu) | ((uint32_t)no_sound_cpu << 8);
@@ -176,18 +176,18 @@ uint16_t test_rom_check_6g(uint16_t d)
 		return d_2;
 	}
 	check_sample_rom_1f();
-	vector_ask_sound_cpu_check(&x, &d_2);
+	vector_ask_sound_cpu_check(&sample_sum, &d_2);
 	answer_bits = (uint8_t)(d_2 >> 8);
 	place = 0x251Fu;
 	if ((answer_bits & 4u) != 0u)
 	{
-		d = test_print_rom_bad(x, place);
+		d = test_print_rom_bad(sample_sum, place);
 		no_sound_cpu = (uint8_t)(d >> 8);
 		rom_check_step++;
 		d_2 = (d & 0xFFu) | ((uint32_t)no_sound_cpu << 8);
 		return d_2;
 	}
-	d_2 = test_print_rom_ok(x, place);
+	d_2 = test_print_rom_ok(sample_sum, place);
 	rom_check_step++;
 	return d_2;
 }
@@ -196,30 +196,30 @@ uint16_t test_rom_check_6g(uint16_t d)
 uint16_t test_rom_check_7g(uint16_t d)
 {
 	uint8_t answer_bits = 0, no_sound_cpu = 0;
-	uint16_t d_2 = 0, place = 0, x = 0;
-	uint8_t t1 = 0;
+	uint16_t d_2 = 0, place = 0, sample_sum = 0;
+	uint8_t sound_cpu_missing = 0;
 
-	t1 = rom_check_no_sound_cpu;
-	no_sound_cpu = t1;
-	if (t1 != 0u)
+	sound_cpu_missing = rom_check_no_sound_cpu;
+	no_sound_cpu = sound_cpu_missing;
+	if (sound_cpu_missing != 0u)
 	{
 		rom_check_step++;
 		d_2 = (d & 0xFFu) | ((uint32_t)no_sound_cpu << 8);
 		return d_2;
 	}
 	check_sample_rom_1d();
-	vector_ask_sound_cpu_check(&x, &d_2);
+	vector_ask_sound_cpu_check(&sample_sum, &d_2);
 	answer_bits = (uint8_t)(d_2 >> 8);
 	place = 0x259Fu;
 	if ((answer_bits & 8u) != 0u)
 	{
-		d = test_print_rom_bad(x, place);
+		d = test_print_rom_bad(sample_sum, place);
 		no_sound_cpu = (uint8_t)(d >> 8);
 		rom_check_step++;
 		d_2 = (d & 0xFFu) | ((uint32_t)no_sound_cpu << 8);
 		return d_2;
 	}
-	d_2 = test_print_rom_ok(x, place);
+	d_2 = test_print_rom_ok(sample_sum, place);
 	rom_check_step++;
 	return d_2;
 }
@@ -236,8 +236,8 @@ void test_sum_tile_rom(uint16_t *p_sum, uint16_t *p_d)
 	uint8_t control = 0, output = 0, rom_byte = 0;
 	uint16_t bytes_left = 0, d = 0, rom_place = 0;
 	uint8_t stack = 0;
-	uint8_t t1 = 0, t3 = 0;
-	uint16_t t2 = 0;
+	uint8_t watchdog_read = 0, pages_to_go = 0;
+	uint16_t remaining_bytes = 0;
 
 	disable_irq();
 	io_write8(0x1D00u, 0xFBu);
@@ -256,25 +256,27 @@ void test_sum_tile_rom(uint16_t *p_sum, uint16_t *p_d)
 		io_write8(0x1FC0u, output);
 		do
 		{
-			t1 = io_read8(0x1FCAu);
+			watchdog_read = io_read8(0x1FCAu);
 			rom_byte = mem_read8(rom_place);
 			sum += rom_byte;
 			rom_place += 4u;
-			t2 = bytes_left - 1u;
-			bytes_left = t2;
-		} while (t2 != 0u);
+			remaining_bytes = bytes_left - 1u;
+			bytes_left = remaining_bytes;
+		} while (remaining_bytes != 0u);
 		output = board_output & ~8u;
 		board_output = output;
 		io_write8(0x1FC0u, output);
 		tile_rom_page++;
-		t3 = tile_rom_pages_left;
-		tile_rom_pages_left = t3 - 1u;
-	} while (t3 != 1u);
+		pages_to_go = tile_rom_pages_left;
+		tile_rom_pages_left = pages_to_go - 1u;
+	} while (pages_to_go != 1u);
 	enable_irq();
+	leftover_y = bytes_left;
 	take_interrupts();
 	stack = output;
 	io_write8(0x1D00u, 0xFFu);
 	enable_firq();
+	leftover_y = bytes_left;
 	take_interrupts();
 	control = board_control | 4u;
 	board_control = control;
@@ -290,8 +292,8 @@ uint16_t test_sum_sprite_rom(uint16_t sum)
 	uint32_t carry = 0;
 	uint8_t control = 0, output = 0;
 	uint16_t reads_left = 0;
-	uint8_t t1 = 0, t2 = 0, t5 = 0;
-	uint16_t t3 = 0, t4 = 0, t6 = 0;
+	uint8_t first_byte = 0, second_byte = 0, watchdog_read = 0;
+	uint16_t old_address_low = 0, address_low_before = 0, remaining_reads = 0;
 
 	reads_left = 0u;
 	disable_irq();
@@ -308,25 +310,27 @@ uint16_t test_sum_sprite_rom(uint16_t sum)
 		io_write8(0x1FA6u, sprite_rom_address_high);
 		io_write8(0x1FA7u, sprite_rom_address_middle);
 		io_write8(0x1FA4u, sprite_rom_address_bottom);
-		t1 = io_read8(0x1FC8u);
-		t2 = io_read8(0x1FC9u);
-		sum = sum + t1 + t2;
-		t3 = sprite_rom_address_low;
-		t4 = t3;
-		carry = (uint16_t)(t4 + 4u) < t4;
-		sprite_rom_address_low = t4 + 4u;
+		first_byte = io_read8(0x1FC8u);
+		second_byte = io_read8(0x1FC9u);
+		sum = sum + first_byte + second_byte;
+		old_address_low = sprite_rom_address_low;
+		address_low_before = old_address_low;
+		carry = (uint16_t)(address_low_before + 4u) < address_low_before;
+		sprite_rom_address_low = address_low_before + 4u;
 		sprite_rom_address_high += carry;
-		t5 = io_read8(0x1FCAu);
-		t6 = reads_left - 1u;
-		reads_left = t6;
-	} while (t6 != 0u);
+		watchdog_read = io_read8(0x1FCAu);
+		remaining_reads = reads_left - 1u;
+		reads_left = remaining_reads;
+	} while (remaining_reads != 0u);
 	output = board_output | 0x20u;
 	board_output = output;
 	io_write8(0x1FC0u, output);
 	enable_irq();
+	leftover_y = reads_left;
 	take_interrupts();
 	io_write8(0x1D00u, 0xFFu);
 	enable_firq();
+	leftover_y = reads_left;
 	take_interrupts();
 	control = board_control | 4u;
 	board_control = control;
@@ -353,17 +357,17 @@ uint16_t test_print_rom_ok(uint16_t sum, uint16_t place)
 	uint8_t a = 0, b = 0;
 	uint16_t d = 0, place_2 = 0;
 	uint16_t stack = 0;
-	uint16_t t1 = 0, t2 = 0;
+	uint16_t letter_o_place = 0, letter_k_place = 0;
 
 	io_write8(place - 0x2000u, 0u);
-	t1 = place;
-	place = t1 + 1u;
-	io_write8(t1, 0x1Fu);
+	letter_o_place = place;
+	place = letter_o_place + 1u;
+	io_write8(letter_o_place, 0x1Fu);
 	mem_write8(place - 0x2000u, 0u);
-	t2 = place;
-	mem_write8(t2, 0x1Bu);
+	letter_k_place = place;
+	mem_write8(letter_k_place, 0x1Bu);
 	hex_colour = 0u;
-	place = t2 + 2u;
+	place = letter_k_place + 2u;
 	stack = sum;
 	place_2 = place + 2u;
 	d = stack;
@@ -381,22 +385,22 @@ uint16_t test_print_rom_bad(uint16_t sum, uint16_t place)
 	uint8_t a = 0, b = 0;
 	uint16_t d = 0, place_2 = 0;
 	uint16_t stack = 0;
-	uint16_t t1 = 0, t2 = 0, t3 = 0;
+	uint16_t letter_b_place = 0, letter_a_place = 0, letter_d_place = 0;
 
 	io_write8(place - 0x2000u, 0x40u);
-	t1 = place;
-	place = t1 + 1u;
-	io_write8(t1, 0x12u);
+	letter_b_place = place;
+	place = letter_b_place + 1u;
+	io_write8(letter_b_place, 0x12u);
 	mem_write8(place - 0x2000u, 0x40u);
-	t2 = place;
-	place = t2 + 1u;
-	mem_write8(t2, 0x11u);
+	letter_a_place = place;
+	place = letter_a_place + 1u;
+	mem_write8(letter_a_place, 0x11u);
 	mem_write8(place - 0x2000u, 0x40u);
-	t3 = place;
-	mem_write8(t3, 0x14u);
+	letter_d_place = place;
+	mem_write8(letter_d_place, 0x14u);
 	hex_colour = 0x40u;
 	stack = sum;
-	place_2 = t3 + 3u;
+	place_2 = letter_d_place + 3u;
 	d = stack;
 	d = vector_print_hex_word(place_2, d);
 	a = (uint8_t)(d >> 8);

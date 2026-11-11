@@ -3,7 +3,7 @@
  *    Description: the camera, the stages' scrolling and the screen shake
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    10-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -209,8 +209,8 @@ void cemetery_scroll_slow_down(void)
 	uint8_t tile_code = 0;
 	uint16_t command = 0, tile = 0;
 	uint16_t stack = 0;
-	uint8_t t2 = 0, t3 = 0;
-	uint16_t t1 = 0;
+	uint8_t cells_left = 0, rows_left = 0;
+	uint16_t floor_place = 0;
 
 	cemetery_scroll_speed--;
 	cemetery_scroll_up();
@@ -228,16 +228,16 @@ void cemetery_scroll_slow_down(void)
 		stack = tile;
 		do
 		{
-			t1 = tile;
-			tile = t1 + 1u;
-			mem_write8(t1, tile_code);
-			t2 = cemetery_floor_cells_left;
-			cemetery_floor_cells_left = t2 - 1u;
-		} while (t2 != 1u);
+			floor_place = tile;
+			tile = floor_place + 1u;
+			mem_write8(floor_place, tile_code);
+			cells_left = cemetery_floor_cells_left;
+			cemetery_floor_cells_left = cells_left - 1u;
+		} while (cells_left != 1u);
 		tile = stack + 0x40u;
-		t3 = cemetery_floor_rows_left;
-		cemetery_floor_rows_left = t3 - 1u;
-	} while (t3 != 1u);
+		rows_left = cemetery_floor_rows_left;
+		cemetery_floor_rows_left = rows_left - 1u;
+	} while (rows_left != 1u);
 	command = 0x5B00u;
 	carry = vector_queue_sound(command);
 	stage_scroll_step++;
@@ -245,24 +245,24 @@ void cemetery_scroll_slow_down(void)
 
 /* The cemetery's step 4: once 2 enemies or fewer are left, puts in stage 3's boss (list 0 type 3E) and
    its door (list 1 type ED). */
-uint16_t cemetery_put_in_boss(uint16_t u)
+uint16_t cemetery_put_in_boss(uint16_t object)
 {
 	uint32_t carry = 0;
 	uint8_t list_number = 0;
 	uint16_t new_object = 0;
-	uint8_t t1 = 0;
+	uint8_t enemies_in_play = 0;
 
-	t1 = io_read8(0x1876u);
-	if (t1 > 2u)
-		return u;
+	enemies_in_play = io_read8(0x1876u);
+	if (enemies_in_play > 2u)
+		return object;
 	list_number = 0u;
 	vector_find_free_slot(list_number, &new_object, &carry);
 	OBJECT(new_object)->type = 0x3E;
 	list_number = 1u;
-	vector_find_free_slot(list_number, &u, &carry);
-	mem_write8(u + 1u, 0xEDu);
+	vector_find_free_slot(list_number, &object, &carry);
+	OBJECT(object)->type = -0x13;
 	stage_scroll_step++;
-	return u;
+	return object;
 }
 
 /* The cemetery's step 5: the camera follows the stage's record, with both layers' x offset at 0130 and
@@ -285,12 +285,12 @@ void cemetery_scroll_up(void)
 	uint32_t carry = 0;
 	uint8_t scroll_high = 0, scroll_low = 0;
 	uint16_t step_word = 0;
-	uint16_t t1 = 0, until = 0, layer_step_word = 0, t2 = 0, t3 = 0, t4 = 0, t5 = 0;
+	uint16_t offset_record = 0, until = 0, layer_step_word = 0, cemetery_y_low = 0, cemetery_speed = 0, old_cemetery_y_low = 0, new_cemetery_y_low = 0;
 	uint32_t cemetery_scroll_halfword = 0;
 
-	t1 = stage_3_part_2_layer_offsets_ADDRESS + (int8_t)(((uint32_t)cemetery_layer_offset_step << 1) << 1);
-	step_word = t1 + 2u;
-	until = LAYER_OFFSET_STEP(t1)->until;
+	offset_record = stage_3_part_2_layer_offsets_ADDRESS + (int8_t)(((uint32_t)cemetery_layer_offset_step << 1) << 1);
+	step_word = offset_record + 2u;
+	until = LAYER_OFFSET_STEP(offset_record)->until;
 	if ((int16_t)until <= (int16_t)layer_a_scroll_y)
 	{
 		cemetery_layer_offset_step++;
@@ -298,13 +298,13 @@ void cemetery_scroll_up(void)
 	}
 	layer_step_word = LAYER_STEP_WORD(step_word);
 	layer_a_offset_y = layer_step_word;
-	t2 = (((uint32_t)(cemetery_scroll & 0xFFu) << 8u) | cemetery_scroll_fraction);
-	t3 = cemetery_scroll_speed;
-	t4 = t2;
-	t5 = t4 + t3;
-	carry = (uint16_t)(t4 + t3) < t4;
-	scroll_low = (uint8_t)t5;
-	scroll_high = (uint8_t)(t5 >> 8);
+	cemetery_y_low = (((uint32_t)(cemetery_scroll & 0xFFu) << 8u) | cemetery_scroll_fraction);
+	cemetery_speed = cemetery_scroll_speed;
+	old_cemetery_y_low = cemetery_y_low;
+	new_cemetery_y_low = old_cemetery_y_low + cemetery_speed;
+	carry = (uint16_t)(old_cemetery_y_low + cemetery_speed) < old_cemetery_y_low;
+	scroll_low = (uint8_t)new_cemetery_y_low;
+	scroll_high = (uint8_t)(new_cemetery_y_low >> 8);
 	AT16(layer_a_scroll_y, -1) = ((uint32_t)scroll_high << 8) | (scroll_low & 0xFFu);
 	cemetery_scroll_halfword = ((uint32_t)scroll_high << 8) | (scroll_low & 0xFFu);
 	cemetery_scroll = (cemetery_scroll & 0xFF00u) | ((cemetery_scroll_halfword >> 8u) & 0xFFu);
@@ -396,11 +396,11 @@ uint16_t stage_5_next_part(uint16_t part)
 {
 	uint32_t carry = 0;
 	uint16_t command = 0;
-	uint16_t t1 = 0;
+	uint16_t part_x_at = 0;
 
-	t1 = part;
-	part = t1 + 2u;
-	if ((int16_t)mem_read16(t1) <= (int16_t)camera_x)
+	part_x_at = part;
+	part = part_x_at + 2u;
+	if ((int16_t)mem_read16(part_x_at) <= (int16_t)camera_x)
 	{
 		stage_scroll_step++;
 		stage_part++;
@@ -440,21 +440,21 @@ void stage_scroll_none(void)
 void story_1_scroll(void)
 {
 	uint32_t carry = 0;
-	uint16_t t1 = 0, t2 = 0, t3 = 0, t4 = 0, t5 = 0, t6 = 0, t7 = 0, t8 = 0;
+	uint16_t layer_a_x_low = 0, camera_speed_x = 0, old_layer_a_x_low = 0, new_layer_a_x_low = 0, layer_a_y_low = 0, camera_speed_y = 0, old_layer_a_y_low = 0, new_layer_a_y_low = 0;
 
-	t1 = AT16(layer_a_scroll_x, -1);
-	t2 = camera_x_speed;
-	t3 = t1;
-	t4 = t3 + t2;
-	carry = (uint16_t)(t3 + t2) < t3;
-	AT16(layer_a_scroll_x, -1) = t4;
+	layer_a_x_low = AT16(layer_a_scroll_x, -1);
+	camera_speed_x = camera_x_speed;
+	old_layer_a_x_low = layer_a_x_low;
+	new_layer_a_x_low = old_layer_a_x_low + camera_speed_x;
+	carry = (uint16_t)(old_layer_a_x_low + camera_speed_x) < old_layer_a_x_low;
+	AT16(layer_a_scroll_x, -1) = new_layer_a_x_low;
 	layer_a_scroll_x = (layer_a_scroll_x & 0xFFu) | ((((uint16_t)(int8_t)(uint8_t)(camera_x_speed >> 8u) >> 8) + (uint8_t)(layer_a_scroll_x >> 8u) + carry & 0xFFu) << 8u);
-	t5 = AT16(layer_a_scroll_y, -1);
-	t6 = camera_y_speed;
-	t7 = t5;
-	t8 = t7 + t6;
-	carry = (uint16_t)(t7 + t6) < t7;
-	AT16(layer_a_scroll_y, -1) = t8;
+	layer_a_y_low = AT16(layer_a_scroll_y, -1);
+	camera_speed_y = camera_y_speed;
+	old_layer_a_y_low = layer_a_y_low;
+	new_layer_a_y_low = old_layer_a_y_low + camera_speed_y;
+	carry = (uint16_t)(old_layer_a_y_low + camera_speed_y) < old_layer_a_y_low;
+	AT16(layer_a_scroll_y, -1) = new_layer_a_y_low;
 	layer_a_scroll_y = (layer_a_scroll_y & 0xFFu) | ((((uint16_t)(int8_t)(uint8_t)(camera_y_speed >> 8u) >> 8) + (uint8_t)(layer_a_scroll_y >> 8u) + carry & 0xFFu) << 8u);
 }
 
@@ -522,7 +522,7 @@ uint16_t screen_shake_advance(uint16_t u)
 	uint32_t carry = 0;
 	uint8_t sprite_scroll_x_high = 0, sprite_scroll_x_low = 0;
 	uint16_t shake = 0;
-	uint16_t t1 = 0, pixels = 0, t2 = 0, t3 = 0, t4 = 0, pixels_2 = 0, t5 = 0, t6 = 0, t7 = 0, t8 = 0;
+	uint16_t layer_a_x_low = 0, pixels = 0, old_layer_a_x_low = 0, new_layer_a_x_low = 0, layer_b_x_low = 0, pixels_2 = 0, old_layer_b_x_low = 0, new_layer_b_x_low = 0, back_pixels = 0, new_sprite_scroll_x = 0;
 
 	if (screen_shake_frame != 1u)
 	{
@@ -531,24 +531,24 @@ uint16_t screen_shake_advance(uint16_t u)
 	}
 	screen_shake_frame = 0u;
 	shake = screen_shake_steps_ADDRESS + (uint8_t)((screen_shake_step & 7u) << 1);
-	t1 = AT16(layer_a_scroll_x, -1);
+	layer_a_x_low = AT16(layer_a_scroll_x, -1);
 	pixels = (((uint32_t)(uint8_t)SHAKE_STEP(shake)->pixels << 8u) | SHAKE_STEP(shake)->fraction);
-	t2 = t1;
-	t3 = t2 + pixels;
-	carry = (uint16_t)(t2 + pixels) < t2;
-	AT16(layer_a_scroll_x, -1) = t3;
+	old_layer_a_x_low = layer_a_x_low;
+	new_layer_a_x_low = old_layer_a_x_low + pixels;
+	carry = (uint16_t)(old_layer_a_x_low + pixels) < old_layer_a_x_low;
+	AT16(layer_a_scroll_x, -1) = new_layer_a_x_low;
 	layer_a_scroll_x = (layer_a_scroll_x & 0xFFu) | ((((uint16_t)SHAKE_STEP(shake)->pixels >> 8) + (uint8_t)(layer_a_scroll_x >> 8u) + carry & 0xFFu) << 8u);
-	t4 = AT16(layer_b_scroll_x, -1);
+	layer_b_x_low = AT16(layer_b_scroll_x, -1);
 	pixels_2 = (((uint32_t)(uint8_t)SHAKE_STEP(shake)->pixels << 8u) | SHAKE_STEP(shake)->fraction);
-	t5 = t4;
-	t6 = t5 + pixels_2;
-	carry = (uint16_t)(t5 + pixels_2) < t5;
-	AT16(layer_b_scroll_x, -1) = t6;
+	old_layer_b_x_low = layer_b_x_low;
+	new_layer_b_x_low = old_layer_b_x_low + pixels_2;
+	carry = (uint16_t)(old_layer_b_x_low + pixels_2) < old_layer_b_x_low;
+	AT16(layer_b_scroll_x, -1) = new_layer_b_x_low;
 	layer_b_scroll_x = (layer_b_scroll_x & 0xFFu) | ((((uint16_t)SHAKE_STEP(shake)->pixels >> 8) + (uint8_t)(layer_b_scroll_x >> 8u) + carry & 0xFFu) << 8u);
-	t7 = (int8_t)(0u - SHAKE_STEP(shake)->pixels);
-	t8 = t7 + sprite_scroll_x;
-	sprite_scroll_x_high = (uint8_t)(t8 >> 8);
-	sprite_scroll_x_low = (uint8_t)t8;
+	back_pixels = (int8_t)(0u - SHAKE_STEP(shake)->pixels);
+	new_sprite_scroll_x = back_pixels + sprite_scroll_x;
+	sprite_scroll_x_high = (uint8_t)(new_sprite_scroll_x >> 8);
+	sprite_scroll_x_low = (uint8_t)new_sprite_scroll_x;
 	sprite_scroll_x = ((uint32_t)sprite_scroll_x_high << 8) | sprite_scroll_x_low;
 	io_write16(0x1FA0u, ((uint32_t)sprite_scroll_x_high << 8) | sprite_scroll_x_low);
 	screen_shake_step++;
@@ -571,7 +571,7 @@ uint16_t camera_update(void)
 {
 	uint32_t carry = 0;
 	uint16_t entry = 0, entry_data = 0;
-	uint16_t t1 = 0, t2 = 0, t3 = 0, t4 = 0, t5 = 0, t6 = 0, t7 = 0, t8 = 0, t9 = 0, t10 = 0, t11 = 0, t12 = 0, t13 = 0, t14 = 0, t15 = 0, t16 = 0, t17 = 0, t18 = 0;
+	uint16_t first_data = 0, old_x_speed = 0, pushed_x_speed = 0, old_y_speed = 0, pushed_y_speed = 0, camera_x_low = 0, x_speed_now = 0, old_camera_x_low = 0, new_camera_x_low = 0, camera_y_low = 0, y_speed_now = 0, old_camera_y_low = 0, new_camera_y_low = 0, layer_a_edges_at = 0, layer_b_edges_at = 0, columns_at = 0, rows_at = 0, fast_x_speed = 0;
 
 	if (camera_x_held != 0u)
 		players_push_x = 0;
@@ -581,49 +581,49 @@ uint16_t camera_update(void)
 		camera_wait_frames = 0u;
 	camera_entry_advance = 0u;
 	entry = stage_record_entry;
-	t1 = io_read16(entry + 2u);
-	entry_data = t1;
-	t2 = camera_x_speed;
-	t3 = t2 + players_push_x;
-	camera_x_speed = t3;
-	t4 = camera_y_speed;
-	t5 = t4 - players_push_y;
-	camera_y_speed = t5;
+	first_data = CAMERA_ENTRY(entry)->data;
+	entry_data = first_data;
+	old_x_speed = camera_x_speed;
+	pushed_x_speed = old_x_speed + players_push_x;
+	camera_x_speed = pushed_x_speed;
+	old_y_speed = camera_y_speed;
+	pushed_y_speed = old_y_speed - players_push_y;
+	camera_y_speed = pushed_y_speed;
 	camera_check_x(&entry, &entry_data);
 	entry_data = camera_check_y(entry, entry_data);
-	t6 = (((uint32_t)(camera_x & 0xFFu) << 8u) | camera_x_fraction);
-	t7 = camera_x_speed;
-	t8 = t6;
-	t9 = t8 + t7;
-	carry = (uint16_t)(t8 + t7) < t8;
-	camera_x = (camera_x & 0xFF00u) | ((t9 >> 8u) & 0xFFu);
-	camera_x_fraction = (uint8_t)t9;
+	camera_x_low = (((uint32_t)(camera_x & 0xFFu) << 8u) | camera_x_fraction);
+	x_speed_now = camera_x_speed;
+	old_camera_x_low = camera_x_low;
+	new_camera_x_low = old_camera_x_low + x_speed_now;
+	carry = (uint16_t)(old_camera_x_low + x_speed_now) < old_camera_x_low;
+	camera_x = (camera_x & 0xFF00u) | ((new_camera_x_low >> 8u) & 0xFFu);
+	camera_x_fraction = (uint8_t)new_camera_x_low;
 	camera_x = (camera_x & 0xFFu) | ((((uint16_t)(int8_t)(uint8_t)(camera_x_speed >> 8u) >> 8) + (uint8_t)(camera_x >> 8u) + carry & 0xFFu) << 8u);
-	t10 = (((uint32_t)(camera_y & 0xFFu) << 8u) | camera_y_fraction);
-	t11 = camera_y_speed;
-	t12 = t10;
-	t13 = t12 + t11;
-	carry = (uint16_t)(t12 + t11) < t12;
-	camera_y = (camera_y & 0xFF00u) | ((t13 >> 8u) & 0xFFu);
-	camera_y_fraction = (uint8_t)t13;
+	camera_y_low = (((uint32_t)(camera_y & 0xFFu) << 8u) | camera_y_fraction);
+	y_speed_now = camera_y_speed;
+	old_camera_y_low = camera_y_low;
+	new_camera_y_low = old_camera_y_low + y_speed_now;
+	carry = (uint16_t)(old_camera_y_low + y_speed_now) < old_camera_y_low;
+	camera_y = (camera_y & 0xFF00u) | ((new_camera_y_low >> 8u) & 0xFFu);
+	camera_y_fraction = (uint8_t)new_camera_y_low;
 	camera_y = (camera_y & 0xFFu) | ((((uint16_t)(int8_t)(uint8_t)(camera_y_speed >> 8u) >> 8) + (uint8_t)(camera_y >> 8u) + carry & 0xFFu) << 8u);
 	entry_data = camera_scroll_layers(entry_data);
-	t14 = entry_data;
-	layer_a_edges_on = mem_read8(t14);
-	t15 = t14 + 1u;
-	layer_b_edges_on = mem_read8(t15);
-	t16 = t15 + 1u;
-	layer_columns_on = mem_read8(t16);
-	t17 = t16 + 1u;
-	entry_data = t17 + 1u;
-	layer_rows_on = mem_read8(t17);
+	layer_a_edges_at = entry_data;
+	layer_a_edges_on = mem_read8(layer_a_edges_at);
+	layer_b_edges_at = layer_a_edges_at + 1u;
+	layer_b_edges_on = mem_read8(layer_b_edges_at);
+	columns_at = layer_b_edges_at + 1u;
+	layer_columns_on = mem_read8(columns_at);
+	rows_at = columns_at + 1u;
+	entry_data = rows_at + 1u;
+	layer_rows_on = mem_read8(rows_at);
 	stage_scrolls_on = mem_read8(entry_data);
 	if (camera_entry_advance != 0u)
 		stage_record_entry += 4u;
 	if (draw_all_layer_edges == 0u && layer_columns_on != 0u)
 	{
-		t18 = camera_x_speed;
-		if ((int16_t)t18 >= 0x300)
+		fast_x_speed = camera_x_speed;
+		if ((int16_t)fast_x_speed >= 0x300)
 			camera_x_speed = 0x300;
 	}
 	players_push_x = 0;
@@ -750,43 +750,43 @@ void camera_stop_at_x(uint16_t check)
 {
 	uint32_t carry = 0;
 	uint8_t stack = 0;
-	uint8_t t5 = 0;
-	uint16_t t1 = 0, t2 = 0, t3 = 0, t4 = 0, t6 = 0;
+	uint8_t stop_x_low = 0;
+	uint16_t x_speed_now = 0, camera_x_low = 0, x_move = 0, stop_x = 0, stopping_speed = 0;
 
-	t1 = camera_x_speed;
-	t2 = (((uint32_t)(camera_x & 0xFFu) << 8u) | camera_x_fraction);
-	t3 = t1;
-	carry = (uint16_t)(t3 + t2) < t3;
-	stack = (uint16_t)(t3 + t2) >> 8;
-	t4 = mem_read16(check + 1u);
-	if ((int16_t)t4 <= (int16_t)(((uint32_t)(uint8_t)(((uint16_t)(int8_t)(uint8_t)(camera_x_speed >> 8u) >> 8) + (uint8_t)(camera_x >> 8u) + carry) << 8) | stack))
+	x_speed_now = camera_x_speed;
+	camera_x_low = (((uint32_t)(camera_x & 0xFFu) << 8u) | camera_x_fraction);
+	x_move = x_speed_now;
+	carry = (uint16_t)(x_move + camera_x_low) < x_move;
+	stack = (uint16_t)(x_move + camera_x_low) >> 8;
+	stop_x = CAMERA_CHECK(check)->place;
+	if ((int16_t)stop_x <= (int16_t)(((uint32_t)(uint8_t)(((uint16_t)(int8_t)(uint8_t)(camera_x_speed >> 8u) >> 8) + (uint8_t)(camera_x >> 8u) + carry) << 8) | stack))
 	{
-		t5 = mem_read8(check + 2u);
-		t6 = ((uint32_t)t5 << 8) - (((uint32_t)(camera_x & 0xFFu) << 8u) | camera_x_fraction);
-		camera_x_speed = t6;
+		stop_x_low = CAMERA_CHECK(check)->place_low;
+		stopping_speed = ((uint32_t)stop_x_low << 8) - (((uint32_t)(camera_x & 0xFFu) << 8u) | camera_x_fraction);
+		camera_x_speed = stopping_speed;
 	}
 }
 
 /* Moving right: counts the frames the camera waits (unless held) and moves to the record's next entry
    once the camera passes the entry's x. */
-void camera_next_entry_at_x(uint16_t *p_x, uint16_t *p_check)
+void camera_next_entry_at_x(uint16_t *p_entry, uint16_t *p_check)
 {
-	uint16_t x = (uint16_t)*p_x;
+	uint16_t entry = (uint16_t)*p_entry;
 	uint16_t check = (uint16_t)*p_check;
 	uint32_t carry = 0;
 	uint8_t stack = 0;
-	uint16_t t1 = 0, t2 = 0, t3 = 0;
+	uint16_t x_speed_now = 0, camera_x_low = 0, x_move = 0;
 
 	if (camera_x_held == 0u)
 		camera_wait_frames++;
-	t1 = camera_x_speed;
-	t2 = (((uint32_t)(camera_x & 0xFFu) << 8u) | camera_x_fraction);
-	t3 = t1;
-	carry = (uint16_t)(t3 + t2) < t3;
-	stack = (uint16_t)(t3 + t2) >> 8;
-	if (mem_read16(x) <= (uint16_t)(((uint32_t)(uint8_t)(((uint16_t)(int8_t)(uint8_t)(camera_x_speed >> 8u) >> 8) + (uint8_t)(camera_x >> 8u) + carry) << 8) | stack))
-		camera_next_entry(&x, &check);
-	*p_x = x;
+	x_speed_now = camera_x_speed;
+	camera_x_low = (((uint32_t)(camera_x & 0xFFu) << 8u) | camera_x_fraction);
+	x_move = x_speed_now;
+	carry = (uint16_t)(x_move + camera_x_low) < x_move;
+	stack = (uint16_t)(x_move + camera_x_low) >> 8;
+	if (CAMERA_ENTRY(entry)->x <= (uint16_t)(((uint32_t)(uint8_t)(((uint16_t)(int8_t)(uint8_t)(camera_x_speed >> 8u) >> 8) + (uint8_t)(camera_x >> 8u) + carry) << 8) | stack))
+		camera_next_entry(&entry, &check);
+	*p_entry = entry;
 	*p_check = check;
 }
 
@@ -794,7 +794,7 @@ void camera_next_entry_at_x(uint16_t *p_x, uint16_t *p_check)
 void camera_x_follows_y_down(uint16_t entry, uint16_t check)
 {
 	uint16_t x_move = 0, y_move = 0;
-	uint8_t t1 = 0;
+	uint8_t follow_ratio = 0;
 
 	camera_drop_push_x();
 	if (camera_y_speed < 0)
@@ -804,8 +804,8 @@ void camera_x_follows_y_down(uint16_t entry, uint16_t check)
 	}
 	y_move = camera_y_speed;
 	camera_scaled_move = y_move;
-	t1 = mem_read8(check + 1u);
-	x_move = (y_move & 0xFFu) | ((uint32_t)t1 << 8);
+	follow_ratio = CAMERA_CHECK(check)->ratio;
+	x_move = (y_move & 0xFFu) | ((uint32_t)follow_ratio << 8);
 	x_move = camera_scale_move(entry, x_move);
 	camera_x_speed = x_move;
 }
@@ -814,7 +814,7 @@ void camera_x_follows_y_down(uint16_t entry, uint16_t check)
 void camera_x_follows_y_up(uint16_t entry, uint16_t check)
 {
 	uint16_t x_move = 0, y_move = 0;
-	uint8_t t1 = 0;
+	uint8_t follow_ratio = 0;
 
 	camera_drop_push_x();
 	if (camera_y_speed >= 0)
@@ -824,8 +824,8 @@ void camera_x_follows_y_up(uint16_t entry, uint16_t check)
 	}
 	y_move = 0u - camera_y_speed;
 	camera_scaled_move = y_move;
-	t1 = mem_read8(check + 1u);
-	x_move = (y_move & 0xFFu) | ((uint32_t)t1 << 8);
+	follow_ratio = CAMERA_CHECK(check)->ratio;
+	x_move = (y_move & 0xFFu) | ((uint32_t)follow_ratio << 8);
 	x_move = camera_scale_move(entry, x_move);
 	camera_x_speed = x_move;
 }
@@ -840,20 +840,20 @@ void camera_stop_at_x_left(uint16_t check)
 {
 	uint32_t carry = 0;
 	uint8_t stack = 0;
-	uint8_t t5 = 0;
-	uint16_t t1 = 0, t2 = 0, t3 = 0, t4 = 0, t6 = 0;
+	uint8_t stop_x_low = 0;
+	uint16_t x_speed_now = 0, camera_x_low = 0, x_move = 0, stop_x = 0, stopping_speed = 0;
 
-	t1 = camera_x_speed;
-	t2 = (((uint32_t)(camera_x & 0xFFu) << 8u) | camera_x_fraction);
-	t3 = t1;
-	carry = (uint16_t)(t3 + t2) < t3;
-	stack = (uint16_t)(t3 + t2) >> 8;
-	t4 = mem_read16(check + 1u);
-	if ((int16_t)(((uint32_t)(uint8_t)(((uint16_t)(int8_t)(uint8_t)(camera_x_speed >> 8u) >> 8) + (uint8_t)(camera_x >> 8u) + carry) << 8) | stack) <= (int16_t)t4)
+	x_speed_now = camera_x_speed;
+	camera_x_low = (((uint32_t)(camera_x & 0xFFu) << 8u) | camera_x_fraction);
+	x_move = x_speed_now;
+	carry = (uint16_t)(x_move + camera_x_low) < x_move;
+	stack = (uint16_t)(x_move + camera_x_low) >> 8;
+	stop_x = CAMERA_CHECK(check)->place;
+	if ((int16_t)(((uint32_t)(uint8_t)(((uint16_t)(int8_t)(uint8_t)(camera_x_speed >> 8u) >> 8) + (uint8_t)(camera_x >> 8u) + carry) << 8) | stack) <= (int16_t)stop_x)
 	{
-		t5 = mem_read8(check + 2u);
-		t6 = ((uint32_t)t5 << 8) - (((uint32_t)(camera_x & 0xFFu) << 8u) | camera_x_fraction);
-		camera_x_speed = t6;
+		stop_x_low = CAMERA_CHECK(check)->place_low;
+		stopping_speed = ((uint32_t)stop_x_low << 8) - (((uint32_t)(camera_x & 0xFFu) << 8u) | camera_x_fraction);
+		camera_x_speed = stopping_speed;
 	}
 }
 
@@ -985,20 +985,20 @@ void camera_stop_at_y(uint16_t check)
 {
 	uint32_t carry = 0;
 	uint8_t stack = 0;
-	uint8_t t5 = 0;
-	uint16_t t1 = 0, t2 = 0, t3 = 0, t4 = 0, t6 = 0;
+	uint8_t stop_y_low = 0;
+	uint16_t y_speed_now = 0, camera_y_low = 0, y_move = 0, stop_y = 0, stopping_speed = 0;
 
-	t1 = camera_y_speed;
-	t2 = (((uint32_t)(camera_y & 0xFFu) << 8u) | camera_y_fraction);
-	t3 = t1;
-	carry = (uint16_t)(t3 + t2) < t3;
-	stack = (uint16_t)(t3 + t2) >> 8;
-	t4 = mem_read16(check + 1u);
-	if ((int16_t)t4 <= (int16_t)(((uint32_t)(uint8_t)(((uint16_t)(int8_t)(uint8_t)(camera_y_speed >> 8u) >> 8) + (uint8_t)(camera_y >> 8u) + carry) << 8) | stack))
+	y_speed_now = camera_y_speed;
+	camera_y_low = (((uint32_t)(camera_y & 0xFFu) << 8u) | camera_y_fraction);
+	y_move = y_speed_now;
+	carry = (uint16_t)(y_move + camera_y_low) < y_move;
+	stack = (uint16_t)(y_move + camera_y_low) >> 8;
+	stop_y = CAMERA_CHECK(check)->place;
+	if ((int16_t)stop_y <= (int16_t)(((uint32_t)(uint8_t)(((uint16_t)(int8_t)(uint8_t)(camera_y_speed >> 8u) >> 8) + (uint8_t)(camera_y >> 8u) + carry) << 8) | stack))
 	{
-		t5 = mem_read8(check + 2u);
-		t6 = ((uint32_t)t5 << 8) - (((uint32_t)(camera_y & 0xFFu) << 8u) | camera_y_fraction);
-		camera_y_speed = t6;
+		stop_y_low = CAMERA_CHECK(check)->place_low;
+		stopping_speed = ((uint32_t)stop_y_low << 8) - (((uint32_t)(camera_y & 0xFFu) << 8u) | camera_y_fraction);
+		camera_y_speed = stopping_speed;
 	}
 }
 
@@ -1012,20 +1012,20 @@ void camera_stop_at_y_up(uint16_t check)
 {
 	uint32_t carry = 0;
 	uint8_t stack = 0;
-	uint8_t t5 = 0;
-	uint16_t t1 = 0, t2 = 0, t3 = 0, t4 = 0, t6 = 0;
+	uint8_t stop_y_low = 0;
+	uint16_t y_speed_now = 0, camera_y_low = 0, y_move = 0, stop_y = 0, stopping_speed = 0;
 
-	t1 = camera_y_speed;
-	t2 = (((uint32_t)(camera_y & 0xFFu) << 8u) | camera_y_fraction);
-	t3 = t1;
-	carry = (uint16_t)(t3 + t2) < t3;
-	stack = (uint16_t)(t3 + t2) >> 8;
-	t4 = mem_read16(check + 1u);
-	if ((int16_t)(((uint32_t)(uint8_t)(((uint16_t)(int8_t)(uint8_t)(camera_y_speed >> 8u) >> 8) + (uint8_t)(camera_y >> 8u) + carry) << 8) | stack) <= (int16_t)t4)
+	y_speed_now = camera_y_speed;
+	camera_y_low = (((uint32_t)(camera_y & 0xFFu) << 8u) | camera_y_fraction);
+	y_move = y_speed_now;
+	carry = (uint16_t)(y_move + camera_y_low) < y_move;
+	stack = (uint16_t)(y_move + camera_y_low) >> 8;
+	stop_y = CAMERA_CHECK(check)->place;
+	if ((int16_t)(((uint32_t)(uint8_t)(((uint16_t)(int8_t)(uint8_t)(camera_y_speed >> 8u) >> 8) + (uint8_t)(camera_y >> 8u) + carry) << 8) | stack) <= (int16_t)stop_y)
 	{
-		t5 = mem_read8(check + 2u);
-		t6 = ((uint32_t)t5 << 8) - (((uint32_t)(camera_y & 0xFFu) << 8u) | camera_y_fraction);
-		camera_y_speed = t6;
+		stop_y_low = CAMERA_CHECK(check)->place_low;
+		stopping_speed = ((uint32_t)stop_y_low << 8) - (((uint32_t)(camera_y & 0xFFu) << 8u) | camera_y_fraction);
+		camera_y_speed = stopping_speed;
 	}
 }
 
@@ -1041,11 +1041,11 @@ uint16_t camera_scroll_layers(uint16_t entry_data)
 {
 	uint16_t layer_y_move = 0, main_layer = 0, ratio = 0, scroll = 0, x_move = 0, y_move = 0;
 	uint8_t stack = 0;
-	uint16_t t1 = 0, t2 = 0;
+	uint16_t main_layer_at = 0, ratio_at = 0;
 
-	t1 = entry_data;
-	entry_data = t1 + 1u;
-	main_layer = (uint32_t)mem_read8(t1) << 8;
+	main_layer_at = entry_data;
+	entry_data = main_layer_at + 1u;
+	main_layer = (uint32_t)mem_read8(main_layer_at) << 8;
 	camera_main_layer = main_layer >> 8;
 	scroll = LAYER_SCROLL(layer_scrolls_ADDRESS + (int8_t)((uint16_t)((uint32_t)(uint8_t)((uint32_t)(main_layer >> 8) << 1) << 8) >> 8) - 0x4u)->x;
 	layer_move_x = camera_x_speed;
@@ -1054,9 +1054,9 @@ uint16_t camera_scroll_layers(uint16_t entry_data)
 	scroll = LAYER_SCROLL(layer_scrolls_ADDRESS + ((uint16_t)((uint32_t)(uint8_t)((uint32_t)((uint16_t)((((uint16_t)((uint32_t)(uint8_t)(((uint16_t)((uint32_t)camera_main_layer << 8) >> 8) + 1u) << 8) >> 8) & 1u) << 8) >> 8) << 1) << 8) >> 8) - 0x4u)->x;
 	x_move = camera_x_speed;
 	camera_scaled_move = x_move;
-	t2 = entry_data;
-	entry_data = t2 + 1u;
-	ratio = (x_move & 0xFFu) | ((uint32_t)mem_read8(t2) << 8);
+	ratio_at = entry_data;
+	entry_data = ratio_at + 1u;
+	ratio = (x_move & 0xFFu) | ((uint32_t)mem_read8(ratio_at) << 8);
 	stack = ratio >> 8;
 	ratio = camera_scale_move(scroll, ratio);
 	layer_move_x = ratio;
@@ -1089,24 +1089,24 @@ void layer_scroll_move(uint16_t scroll)
 {
 	uint32_t carry = 0;
 	uint16_t scroll_variable = 0;
-	uint16_t t1 = 0, t2 = 0, t3 = 0, t4 = 0, t5 = 0, t6 = 0, t7 = 0, t8 = 0, t9 = 0;
+	uint16_t move_x = 0, scroll_x_low = 0, added_move_x = 0, new_scroll_x_low = 0, y_variable = 0, move_y = 0, scroll_y_low = 0, added_move_y = 0, new_scroll_y_low = 0;
 
 	scroll_variable = LAYER_SCROLL(scroll)->x;
-	t1 = layer_move_x;
-	t2 = io_read16(scroll_variable + 1u);
-	t3 = t1;
-	t4 = t3 + t2;
-	carry = (uint16_t)(t3 + t2) < t3;
-	io_write16(scroll_variable + 1u, t4);
+	move_x = layer_move_x;
+	scroll_x_low = io_read16(scroll_variable + 1u);
+	added_move_x = move_x;
+	new_scroll_x_low = added_move_x + scroll_x_low;
+	carry = (uint16_t)(added_move_x + scroll_x_low) < added_move_x;
+	io_write16(scroll_variable + 1u, new_scroll_x_low);
 	mem_write8(scroll_variable, ((uint16_t)layer_move_x_high >> 8) + mem_read8(scroll_variable) + carry);
-	t5 = LAYER_SCROLL(scroll)->y;
-	scroll_variable = t5;
-	t6 = layer_move_y;
-	t7 = mem_read16(scroll_variable + 1u);
-	t8 = t6;
-	t9 = t8 + t7;
-	carry = (uint16_t)(t8 + t7) < t8;
-	mem_write16(scroll_variable + 1u, t9);
+	y_variable = LAYER_SCROLL(scroll)->y;
+	scroll_variable = y_variable;
+	move_y = layer_move_y;
+	scroll_y_low = mem_read16(scroll_variable + 1u);
+	added_move_y = move_y;
+	new_scroll_y_low = added_move_y + scroll_y_low;
+	carry = (uint16_t)(added_move_y + scroll_y_low) < added_move_y;
+	mem_write16(scroll_variable + 1u, new_scroll_y_low);
 	mem_write8(scroll_variable, ((uint16_t)layer_move_y_high >> 8) + mem_read8(scroll_variable) + carry);
 }
 
@@ -1115,12 +1115,12 @@ void camera_next_entry(uint16_t *p_entry, uint16_t *p_entry_data)
 {
 	uint16_t entry = (uint16_t)*p_entry;
 	uint16_t entry_data = 0;
-	uint16_t t1 = 0;
+	uint16_t next_data = 0;
 
 	entry += 4u;
 	stage_record_entry = entry;
-	t1 = mem_read16(entry + 2u);
-	entry_data = t1;
+	next_data = CAMERA_ENTRY(entry)->data;
+	entry_data = next_data;
 	switch ((int8_t)(uint8_t)((uint32_t)mem_read8(entry_data) << 1))
 	{
 	case 0:
@@ -1188,15 +1188,15 @@ uint16_t camera_entry_start_going_down(uint16_t entry)
 /* Sets the x move so that the camera goes just past the last entry's x. */
 uint16_t camera_move_to_last_entry_x(uint16_t entry)
 {
-	uint8_t a = 0, b = 0;
+	uint8_t move_high = 0, move_low = 0;
 	uint16_t x_move = 0;
-	uint16_t t1 = 0;
+	uint16_t to_last_x = 0;
 
-	t1 = ((uint32_t)mem_read8(entry - 3u) << 8) - (((uint32_t)(camera_x & 0xFFu) << 8u) | camera_x_fraction);
-	b = (uint8_t)t1;
-	a = (t1 >> 8) + 1u;
-	camera_x_speed = ((uint32_t)a << 8) | b;
-	x_move = ((uint32_t)a << 8) | b;
+	to_last_x = ((uint32_t)(uint8_t)CAMERA_ENTRY(entry - 0x4u)->x << 8) - (((uint32_t)(camera_x & 0xFFu) << 8u) | camera_x_fraction);
+	move_low = (uint8_t)to_last_x;
+	move_high = (to_last_x >> 8) + 1u;
+	camera_x_speed = ((uint32_t)move_high << 8) | move_low;
+	x_move = ((uint32_t)move_high << 8) | move_low;
 	return x_move;
 }
 
@@ -1244,13 +1244,13 @@ uint16_t camera_scale_quarter(void)
 	uint32_t carry = 0;
 	uint8_t move_high = 0, move_low = 0;
 	uint16_t scaled_move = 0;
-	uint16_t t1 = 0;
+	uint16_t unscaled_move = 0;
 
-	t1 = camera_scaled_move;
-	move_high = (uint8_t)(t1 >> 8);
+	unscaled_move = camera_scaled_move;
+	move_high = (uint8_t)(unscaled_move >> 8);
 	carry = move_high & 1u;
 	move_high = (int8_t)move_high >> 1;
-	move_low = ((uint8_t)t1 >> 1) | (carry << 7);
+	move_low = ((uint8_t)unscaled_move >> 1) | (carry << 7);
 	carry = move_high & 1u;
 	scaled_move = ((uint32_t)(uint8_t)((int8_t)move_high >> 1) << 8) | (uint8_t)((move_low >> 1) | (carry << 7));
 	return scaled_move;
@@ -1262,12 +1262,12 @@ uint16_t camera_scale_half(void)
 	uint32_t carry = 0;
 	uint8_t move_high = 0;
 	uint16_t scaled_move = 0;
-	uint16_t t1 = 0;
+	uint16_t unscaled_move = 0;
 
-	t1 = camera_scaled_move;
-	move_high = (uint8_t)(t1 >> 8);
+	unscaled_move = camera_scaled_move;
+	move_high = (uint8_t)(unscaled_move >> 8);
 	carry = move_high & 1u;
-	scaled_move = ((uint32_t)(uint8_t)((int8_t)move_high >> 1) << 8) | (uint8_t)(((uint8_t)t1 >> 1) | (carry << 7));
+	scaled_move = ((uint32_t)(uint8_t)((int8_t)move_high >> 1) << 8) | (uint8_t)(((uint8_t)unscaled_move >> 1) | (carry << 7));
 	return scaled_move;
 }
 
@@ -1283,10 +1283,10 @@ uint16_t camera_scale_same(void)
 /* No move. */
 uint16_t camera_scale_none(void)
 {
-	uint16_t d = 0;
+	uint16_t scaled_move = 0;
 
-	d = 0u;
-	return d;
+	scaled_move = 0u;
+	return scaled_move;
 }
 
 /* The move in F0 times 2. */
@@ -1295,12 +1295,12 @@ uint16_t camera_scale_double(void)
 	uint32_t carry = 0;
 	uint8_t move_low = 0;
 	uint16_t scaled_move = 0;
-	uint16_t t1 = 0;
+	uint16_t unscaled_move = 0;
 
-	t1 = camera_scaled_move;
-	move_low = (uint8_t)t1;
+	unscaled_move = camera_scaled_move;
+	move_low = (uint8_t)unscaled_move;
 	carry = (int8_t)move_low < 0;
-	scaled_move = ((uint32_t)(uint8_t)(((uint32_t)(t1 >> 8) << 1) | carry) << 8) | (uint8_t)((uint32_t)move_low << 1);
+	scaled_move = ((uint32_t)(uint8_t)(((uint32_t)(unscaled_move >> 8) << 1) | carry) << 8) | (uint8_t)((uint32_t)move_low << 1);
 	return scaled_move;
 }
 
@@ -1310,13 +1310,13 @@ uint16_t camera_scale_quadruple(void)
 	uint32_t carry = 0;
 	uint8_t move_high = 0, move_low = 0;
 	uint16_t scaled_move = 0;
-	uint16_t t1 = 0;
+	uint16_t unscaled_move = 0;
 
-	t1 = camera_scaled_move;
-	move_low = (uint8_t)t1;
+	unscaled_move = camera_scaled_move;
+	move_low = (uint8_t)unscaled_move;
 	carry = (int8_t)move_low < 0;
 	move_low = (uint32_t)move_low << 1;
-	move_high = (uint8_t)(((uint32_t)(t1 >> 8) << 1) | carry);
+	move_high = (uint8_t)(((uint32_t)(unscaled_move >> 8) << 1) | carry);
 	carry = (int8_t)move_low < 0;
 	scaled_move = ((uint32_t)(uint8_t)(((uint32_t)move_high << 1) | carry) << 8) | (uint8_t)((uint32_t)move_low << 1);
 	return scaled_move;
@@ -1329,28 +1329,28 @@ uint16_t dreamland_scroll(void)
 	uint32_t carry = 0;
 	uint8_t scroll_step = 0;
 	uint16_t u = 0;
-	uint16_t t1 = 0, t2 = 0, t3 = 0, t4 = 0, t5 = 0, t6 = 0, t7 = 0, t8 = 0, t9 = 0, t10 = 0, t11 = 0, t12 = 0;
+	uint16_t layer_a_y_low = 0, old_layer_a_y_low = 0, layer_b_y_again = 0, layer_b_y_minus = 0, layer_b_y = 0, layer_b_y_plus = 0, sprite_y_again = 0, sprite_y_minus = 0, sprite_y = 0, sprite_y_plus = 0, sprite_x_now = 0, sprite_y_now = 0;
 
-	t1 = AT16(layer_a_scroll_y, -1);
-	t2 = t1;
-	carry = (uint16_t)(t2 + 0x100u) < t2;
-	AT16(layer_a_scroll_y, -1) = t2 + 0x100u;
+	layer_a_y_low = AT16(layer_a_scroll_y, -1);
+	old_layer_a_y_low = layer_a_y_low;
+	carry = (uint16_t)(old_layer_a_y_low + 0x100u) < old_layer_a_y_low;
+	AT16(layer_a_scroll_y, -1) = old_layer_a_y_low + 0x100u;
 	layer_a_scroll_y = (layer_a_scroll_y & 0xFFu) | ((((uint8_t)(layer_a_scroll_y >> 8u) + carry) & 1u & 0xFFu) << 8u);
 	scroll_step = stage_scroll_step;
 	if ((scroll_step & 0x20u) != 0u)
 	{
 		if ((scroll_step & 7u) == 0u)
 		{
-			t3 = layer_b_scroll_y;
-			t4 = t3 - 1u;
-			layer_b_scroll_y = t4;
+			layer_b_y_again = layer_b_scroll_y;
+			layer_b_y_minus = layer_b_y_again - 1u;
+			layer_b_scroll_y = layer_b_y_minus;
 		}
 	}
 	else if ((scroll_step & 7u) == 0u)
 	{
-		t5 = layer_b_scroll_y;
-		t6 = t5 + 1u;
-		layer_b_scroll_y = t6;
+		layer_b_y = layer_b_scroll_y;
+		layer_b_y_plus = layer_b_y + 1u;
+		layer_b_scroll_y = layer_b_y_plus;
 	}
 	scroll_step = stage_scroll_step;
 	if (flip_screen != 0u)
@@ -1359,22 +1359,22 @@ uint16_t dreamland_scroll(void)
 	{
 		if ((stage_scroll_step & 7u) == 0u)
 		{
-			t7 = sprite_scroll_y;
-			t8 = t7 - 1u;
-			sprite_scroll_y = t8;
+			sprite_y_again = sprite_scroll_y;
+			sprite_y_minus = sprite_y_again - 1u;
+			sprite_scroll_y = sprite_y_minus;
 		}
 	}
 	else if ((stage_scroll_step & 7u) == 0u)
 	{
-		t9 = sprite_scroll_y;
-		t10 = t9 + 1u;
-		sprite_scroll_y = t10;
+		sprite_y = sprite_scroll_y;
+		sprite_y_plus = sprite_y + 1u;
+		sprite_scroll_y = sprite_y_plus;
 	}
 	stage_scroll_step++;
-	t11 = sprite_scroll_x;
-	io_write16(0x1FA0u, t11);
-	t12 = sprite_scroll_y;
-	io_write16(0x1FA2u, t12);
+	sprite_x_now = sprite_scroll_x;
+	io_write16(0x1FA0u, sprite_x_now);
+	sprite_y_now = sprite_scroll_y;
+	io_write16(0x1FA2u, sprite_y_now);
 	u = camera_update();
 	return u;
 }

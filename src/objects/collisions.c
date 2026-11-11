@@ -3,7 +3,7 @@
  *    Description: the hit checks: the players against the enemies, the child objects, list 1's objects and each other
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    10-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -32,8 +32,8 @@ void check_collisions(uint16_t *p_object, uint16_t *p_d)
 uint16_t clear_hits(void)
 {
 	uint8_t count = 0, flags = 0;
-	uint16_t d = 0, object = 0;
-	uint8_t t1 = 0;
+	uint16_t count_and_flags = 0, object = 0;
+	uint8_t objects_left = 0;
 
 	object = OBJECT_ADDRESS(0);
 	count = 0x20u;
@@ -43,11 +43,11 @@ uint16_t clear_hits(void)
 		OBJECT(object)->flags = flags;
 		OBJECT(object)->hit = 0u;
 		object += 0x60u;
-		t1 = count;
-		count = t1 - 1u;
-	} while (t1 != 1u);
-	d = ((uint32_t)count << 8) | flags;
-	return d;
+		objects_left = count;
+		count = objects_left - 1u;
+	} while (objects_left != 1u);
+	count_and_flags = ((uint32_t)count << 8) | flags;
+	return count_and_flags;
 }
 
 /* Every player and partner in the hit checks against every enemy in them: where their boxes overlap,
@@ -56,8 +56,8 @@ uint16_t collide_players_with_enemies(uint16_t d)
 {
 	uint32_t carry = 0;
 	uint8_t flags = 0;
-	uint16_t d_2 = 0, object = 0, object_2 = 0;
-	uint8_t t1 = 0, t2 = 0;
+	uint16_t last_flags_word = 0, object = 0, object_2 = 0;
+	uint8_t enemy_checks_left = 0, players_left = 0;
 
 	object = OBJECT_ADDRESS(0);
 	hit_check_players_left = 8u;
@@ -82,16 +82,16 @@ uint16_t collide_players_with_enemies(uint16_t d)
 					}
 				}
 				object_2 += 0x60u;
-				t1 = hit_check_enemies_left;
-				hit_check_enemies_left = t1 - 1u;
-			} while (t1 != 1u);
+				enemy_checks_left = hit_check_enemies_left;
+				hit_check_enemies_left = enemy_checks_left - 1u;
+			} while (enemy_checks_left != 1u);
 		}
 		object += 0x60u;
-		t2 = hit_check_players_left;
-		hit_check_players_left = t2 - 1u;
-	} while (t2 != 1u);
-	d_2 = (d & 0xFFu) | ((uint32_t)flags << 8);
-	return d_2;
+		players_left = hit_check_players_left;
+		hit_check_players_left = players_left - 1u;
+	} while (players_left != 1u);
+	last_flags_word = (d & 0xFFu) | ((uint32_t)flags << 8);
+	return last_flags_word;
 }
 
 /* Every player in the hit checks against every child object in them: where their boxes overlap, they
@@ -100,8 +100,8 @@ uint16_t collide_players_with_child_objects(uint16_t d)
 {
 	uint32_t carry = 0;
 	uint8_t flags = 0;
-	uint16_t d_2 = 0, object = 0, object_2 = 0;
-	uint8_t t1 = 0, t2 = 0;
+	uint16_t last_flags_word = 0, object = 0, object_2 = 0;
+	uint8_t children_left = 0, players_left = 0;
 
 	object = OBJECT_ADDRESS(0);
 	hit_check_players_left = 4u;
@@ -126,16 +126,16 @@ uint16_t collide_players_with_child_objects(uint16_t d)
 					}
 				}
 				object_2 += 0x60u;
-				t1 = hit_check_children_left;
-				hit_check_children_left = t1 - 1u;
-			} while (t1 != 1u);
+				children_left = hit_check_children_left;
+				hit_check_children_left = children_left - 1u;
+			} while (children_left != 1u);
 		}
 		object += 0xC0u;
-		t2 = hit_check_players_left;
-		hit_check_players_left = t2 - 1u;
-	} while (t2 != 1u);
-	d_2 = (d & 0xFFu) | ((uint32_t)flags << 8);
-	return d_2;
+		players_left = hit_check_players_left;
+		hit_check_players_left = players_left - 1u;
+	} while (players_left != 1u);
+	last_flags_word = (d & 0xFFu) | ((uint32_t)flags << 8);
+	return last_flags_word;
 }
 
 /* Every player and partner in the hit checks against every object of list 1 in them: where their boxes
@@ -144,8 +144,8 @@ uint16_t collide_players_with_list_1_objects(uint16_t d)
 {
 	uint32_t carry = 0;
 	uint8_t flags = 0;
-	uint16_t d_2 = 0, object = 0, object_2 = 0;
-	uint8_t t1 = 0, t2 = 0;
+	uint16_t last_flags_word = 0, object = 0, object_2 = 0;
+	uint8_t list_1_left = 0, players_left = 0;
 
 	object = OBJECT_ADDRESS(0);
 	hit_check_players_left = 8u;
@@ -170,191 +170,191 @@ uint16_t collide_players_with_list_1_objects(uint16_t d)
 					}
 				}
 				object_2 += 0x60u;
-				t1 = hit_check_list_1_left;
-				hit_check_list_1_left = t1 - 1u;
-			} while (t1 != 1u);
+				list_1_left = hit_check_list_1_left;
+				hit_check_list_1_left = list_1_left - 1u;
+			} while (list_1_left != 1u);
 		}
 		object += 0x60u;
-		t2 = hit_check_players_left;
-		hit_check_players_left = t2 - 1u;
-	} while (t2 != 1u);
-	d_2 = (d & 0xFFu) | ((uint32_t)flags << 8);
-	return d_2;
+		players_left = hit_check_players_left;
+		hit_check_players_left = players_left - 1u;
+	} while (players_left != 1u);
+	last_flags_word = (d & 0xFFu) | ((uint32_t)flags << 8);
+	return last_flags_word;
 }
 
 /* Unused: checks the object's box against list 1's objects, trading hits with each it touches. */
-void unused_collide_with_list_1_objects(uint16_t x)
+void unused_collide_with_list_1_objects(uint16_t checked)
 {
 	uint32_t carry = 0;
 	uint16_t ignored16 = 0, object = 0;
-	uint8_t t1 = 0;
+	uint8_t list_1_left = 0;
 
-	mem_write8(x, mem_read8(x) & 0xDFu);
-	mem_write8(x + 0x1Eu, 0u);
+	OBJECT(checked)->flags &= 0xDFu;
+	OBJECT(checked)->hit = 0u;
 	object = OBJECT_ADDRESS(22);
 	hit_check_list_1_left = 0xAu;
 	do
 	{
 		if ((OBJECT(object)->flags & 0x40u) != 0u)
 		{
-			boxes_overlap(x, object, &ignored16, &carry);
+			boxes_overlap(checked, object, &ignored16, &carry);
 			if (carry)
-				trade_hits_unless_attacking(x, object);
+				trade_hits_unless_attacking(checked, object);
 		}
 		object += 0x60u;
-		t1 = hit_check_list_1_left;
-		hit_check_list_1_left = t1 - 1u;
-	} while (t1 != 1u);
+		list_1_left = hit_check_list_1_left;
+		hit_check_list_1_left = list_1_left - 1u;
+	} while (list_1_left != 1u);
 }
 
 /* Whether two objects' hit boxes overlap (carry set): in depth, in x (the box's x offset mirrored by the
    facing) and in height, each the distance between the boxes' centres against their two half sizes. */
-void boxes_overlap(uint16_t object, uint16_t other, uint16_t *p_d, uint32_t *p_carry)
+void boxes_overlap(uint16_t object, uint16_t other, uint16_t *p_overlap_word, uint32_t *p_carry)
 {
 	uint32_t carry = *p_carry;
-	uint8_t a = 0, b = 0;
-	uint16_t d = 0;
+	uint8_t distance_high = 0, distance_low = 0;
+	uint16_t overlap_word = 0;
 	uint8_t box_dy = 0, box_dy_2 = 0, box_depth = 0, box_depth_2 = 0, box_dx = 0, attributes = 0, box_dx_2 = 0, attributes_2 = 0, box_width = 0, box_width_2 = 0, box_dz = 0, box_dz_2 = 0, box_height = 0, box_height_2 = 0;
-	uint16_t t1 = 0, t2 = 0, t3 = 0, t4 = 0, t5 = 0, t6 = 0, t7 = 0, t8 = 0, t9 = 0, t10 = 0, t11 = 0, t12 = 0, t13 = 0, t14 = 0, t15 = 0, t16 = 0, t17 = 0, t18 = 0, t19 = 0, t20 = 0, z = 0, t21 = 0, z_2 = 0, t22 = 0, t23 = 0, t24 = 0;
+	uint16_t object_dy = 0, object_y = 0, object_box_y = 0, other_dy = 0, other_y = 0, other_box_y = 0, difference_y = 0, distance_y = 0, object_dx = 0, object_x = 0, object_box_x = 0, turned_object_x = 0, turned_object_box_x = 0, other_dx = 0, other_x = 0, other_box_x = 0, turned_other_x = 0, turned_other_box_x = 0, difference_x = 0, distance_x = 0, z = 0, object_box_z = 0, z_2 = 0, other_box_z = 0, difference_z = 0, distance_z = 0;
 
 	box_dy = OBJECT(object)->box_dy;
-	t1 = (int8_t)box_dy;
-	t2 = OBJECT(object)->y;
-	t3 = t1 + t2;
-	box_distance = t3;
+	object_dy = (int8_t)box_dy;
+	object_y = OBJECT(object)->y;
+	object_box_y = object_dy + object_y;
+	box_distance = object_box_y;
 	box_dy_2 = OBJECT(other)->box_dy;
-	t4 = (int8_t)box_dy_2;
-	t5 = OBJECT(other)->y;
-	t6 = t4 + t5;
-	t7 = t6 - box_distance;
-	a = (uint8_t)(t7 >> 8);
-	b = (uint8_t)t7;
-	if ((int16_t)t7 < 0)
+	other_dy = (int8_t)box_dy_2;
+	other_y = OBJECT(other)->y;
+	other_box_y = other_dy + other_y;
+	difference_y = other_box_y - box_distance;
+	distance_high = (uint8_t)(difference_y >> 8);
+	distance_low = (uint8_t)difference_y;
+	if ((int16_t)difference_y < 0)
 	{
-		t8 = 0u - (((uint32_t)a << 8) | b);
-		a = (uint8_t)(t8 >> 8);
-		b = (uint8_t)t8;
+		distance_y = 0u - (((uint32_t)distance_high << 8) | distance_low);
+		distance_high = (uint8_t)(distance_y >> 8);
+		distance_low = (uint8_t)distance_y;
 	}
-	box_distance = ((uint32_t)a << 8) | b;
+	box_distance = ((uint32_t)distance_high << 8) | distance_low;
 	box_depth = OBJECT(object)->box_depth;
-	b = box_depth;
+	distance_low = box_depth;
 	box_depth_2 = OBJECT(other)->box_depth;
-	carry = (uint8_t)(b + box_depth_2) < b;
-	b += box_depth_2;
-	if ((uint16_t)((carry << 8) | b) < box_distance)
+	carry = (uint8_t)(distance_low + box_depth_2) < distance_low;
+	distance_low += box_depth_2;
+	if ((uint16_t)((carry << 8) | distance_low) < box_distance)
 	{
 		carry = 0u;
-		d = b;
+		overlap_word = distance_low;
 	}
 	else
 	{
 		box_dx = OBJECT(object)->box_dx;
-		t9 = (int8_t)box_dx;
-		box_x_offset = t9;
+		object_dx = (int8_t)box_dx;
+		box_x_offset = object_dx;
 		attributes = OBJECT(object)->attributes;
 		if ((attributes & 0x40u) == 0u)
 		{
-			t10 = OBJECT(object)->x;
-			t11 = t10 + box_x_offset;
-			a = (uint8_t)(t11 >> 8);
-			b = (uint8_t)t11;
+			object_x = OBJECT(object)->x;
+			object_box_x = object_x + box_x_offset;
+			distance_high = (uint8_t)(object_box_x >> 8);
+			distance_low = (uint8_t)object_box_x;
 		}
 		else
 		{
-			t12 = OBJECT(object)->x;
-			t13 = t12 - box_x_offset;
-			a = (uint8_t)(t13 >> 8);
-			b = (uint8_t)t13;
+			turned_object_x = OBJECT(object)->x;
+			turned_object_box_x = turned_object_x - box_x_offset;
+			distance_high = (uint8_t)(turned_object_box_x >> 8);
+			distance_low = (uint8_t)turned_object_box_x;
 		}
-		box_distance = ((uint32_t)a << 8) | b;
+		box_distance = ((uint32_t)distance_high << 8) | distance_low;
 		box_dx_2 = OBJECT(other)->box_dx;
-		t14 = (int8_t)box_dx_2;
-		box_x_offset = t14;
+		other_dx = (int8_t)box_dx_2;
+		box_x_offset = other_dx;
 		attributes_2 = OBJECT(other)->attributes;
 		if ((attributes_2 & 0x40u) == 0u)
 		{
-			t15 = OBJECT(other)->x;
-			t16 = t15 + box_x_offset;
-			a = (uint8_t)(t16 >> 8);
-			b = (uint8_t)t16;
+			other_x = OBJECT(other)->x;
+			other_box_x = other_x + box_x_offset;
+			distance_high = (uint8_t)(other_box_x >> 8);
+			distance_low = (uint8_t)other_box_x;
 		}
 		else
 		{
-			t17 = OBJECT(other)->x;
-			t18 = t17 - box_x_offset;
-			a = (uint8_t)(t18 >> 8);
-			b = (uint8_t)t18;
+			turned_other_x = OBJECT(other)->x;
+			turned_other_box_x = turned_other_x - box_x_offset;
+			distance_high = (uint8_t)(turned_other_box_x >> 8);
+			distance_low = (uint8_t)turned_other_box_x;
 		}
-		t19 = (((uint32_t)a << 8) | b) - box_distance;
-		a = (uint8_t)(t19 >> 8);
-		b = (uint8_t)t19;
-		if ((int16_t)t19 < 0)
+		difference_x = (((uint32_t)distance_high << 8) | distance_low) - box_distance;
+		distance_high = (uint8_t)(difference_x >> 8);
+		distance_low = (uint8_t)difference_x;
+		if ((int16_t)difference_x < 0)
 		{
-			t20 = 0u - (((uint32_t)a << 8) | b);
-			a = (uint8_t)(t20 >> 8);
-			b = (uint8_t)t20;
+			distance_x = 0u - (((uint32_t)distance_high << 8) | distance_low);
+			distance_high = (uint8_t)(distance_x >> 8);
+			distance_low = (uint8_t)distance_x;
 		}
-		box_distance = ((uint32_t)a << 8) | b;
+		box_distance = ((uint32_t)distance_high << 8) | distance_low;
 		box_width = OBJECT(object)->box_width;
-		b = box_width;
+		distance_low = box_width;
 		box_width_2 = OBJECT(other)->box_width;
-		carry = (uint8_t)(b + box_width_2) < b;
-		b += box_width_2;
-		if ((uint16_t)((carry << 8) | b) < box_distance)
+		carry = (uint8_t)(distance_low + box_width_2) < distance_low;
+		distance_low += box_width_2;
+		if ((uint16_t)((carry << 8) | distance_low) < box_distance)
 		{
 			carry = 0u;
-			d = b;
+			overlap_word = distance_low;
 		}
 		else
 		{
 			box_dz = OBJECT(object)->box_dz;
 			z = OBJECT(object)->z;
-			t21 = box_dz + z;
-			box_distance = t21;
+			object_box_z = box_dz + z;
+			box_distance = object_box_z;
 			box_dz_2 = OBJECT(other)->box_dz;
 			z_2 = OBJECT(other)->z;
-			t22 = box_dz_2 + z_2;
-			t23 = t22 - box_distance;
-			a = (uint8_t)(t23 >> 8);
-			b = (uint8_t)t23;
-			if ((int16_t)t23 < 0)
+			other_box_z = box_dz_2 + z_2;
+			difference_z = other_box_z - box_distance;
+			distance_high = (uint8_t)(difference_z >> 8);
+			distance_low = (uint8_t)difference_z;
+			if ((int16_t)difference_z < 0)
 			{
-				t24 = 0u - (((uint32_t)a << 8) | b);
-				a = (uint8_t)(t24 >> 8);
-				b = (uint8_t)t24;
+				distance_z = 0u - (((uint32_t)distance_high << 8) | distance_low);
+				distance_high = (uint8_t)(distance_z >> 8);
+				distance_low = (uint8_t)distance_z;
 			}
-			box_distance = ((uint32_t)a << 8) | b;
+			box_distance = ((uint32_t)distance_high << 8) | distance_low;
 			box_height = OBJECT(object)->box_height;
-			b = box_height;
+			distance_low = box_height;
 			box_height_2 = OBJECT(other)->box_height;
-			carry = (uint8_t)(b + box_height_2) < b;
-			b += box_height_2;
-			a = carry;
-			if (box_distance <= (uint16_t)(((uint32_t)a << 8) | b))
+			carry = (uint8_t)(distance_low + box_height_2) < distance_low;
+			distance_low += box_height_2;
+			distance_high = carry;
+			if (box_distance <= (uint16_t)(((uint32_t)distance_high << 8) | distance_low))
 			{
 				carry = 1u;
-				d = ((uint32_t)(uint8_t)~a << 8) | b;
+				overlap_word = ((uint32_t)(uint8_t)~distance_high << 8) | distance_low;
 			}
 			else
 			{
 				carry = 0u;
-				d = b;
+				overlap_word = distance_low;
 			}
 		}
 	}
-	*p_d = d;
+	*p_overlap_word = overlap_word;
 	*p_carry = carry;
 }
 
 /* Every pair of the four players in the hit checks: where their boxes overlap, they touch (what bank
    1C's team moves start from). */
-void collide_players_with_players(uint16_t *p_object, uint16_t *p_d)
+void collide_players_with_players(uint16_t *p_object, uint16_t *p_last_flags_word)
 {
-	uint16_t d = (uint16_t)*p_d;
+	uint16_t last_flags_word = (uint16_t)*p_last_flags_word;
 	uint32_t carry = 0;
 	uint8_t flags = 0;
-	uint16_t d_2 = 0, object = 0, object_2 = 0;
-	uint8_t t1 = 0, t2 = 0;
+	uint16_t object = 0, object_2 = 0;
+	uint8_t players_left = 0, later_players_left = 0;
 
 	object_2 = OBJECT_ADDRESS(0);
 	object = OBJECT_ADDRESS(2);
@@ -365,14 +365,14 @@ void collide_players_with_players(uint16_t *p_object, uint16_t *p_d)
 		{
 			if ((OBJECT(object)->flags & 0x40u) != 0u)
 			{
-				boxes_overlap(object_2, object, &d, &carry);
+				boxes_overlap(object_2, object, &last_flags_word, &carry);
 				if (carry)
 					players_touch(object_2, object);
 			}
 			object += 0xC0u;
-			t1 = hit_check_players_left;
-			hit_check_players_left = t1 - 1u;
-		} while (t1 != 1u);
+			players_left = hit_check_players_left;
+			hit_check_players_left = players_left - 1u;
+		} while (players_left != 1u);
 	}
 	object_2 = OBJECT_ADDRESS(2);
 	object = OBJECT_ADDRESS(4);
@@ -383,20 +383,20 @@ void collide_players_with_players(uint16_t *p_object, uint16_t *p_d)
 		{
 			if ((OBJECT(object)->flags & 0x40u) != 0u)
 			{
-				boxes_overlap(object_2, object, &d, &carry);
+				boxes_overlap(object_2, object, &last_flags_word, &carry);
 				if (carry)
 					players_touch(object_2, object);
 			}
 			object += 0xC0u;
-			t2 = hit_check_players_left;
-			hit_check_players_left = t2 - 1u;
-		} while (t2 != 1u);
+			later_players_left = hit_check_players_left;
+			hit_check_players_left = later_players_left - 1u;
+		} while (later_players_left != 1u);
 	}
 	object_2 = OBJECT_ADDRESS(4);
 	object = OBJECT_ADDRESS(6);
 	if ((OBJECT(OBJECT_ADDRESS(4))->flags & 0x40u) != 0u && (OBJECT(object)->flags & 0x40u) != 0u)
 	{
-		boxes_overlap(object_2, object, &d, &carry);
+		boxes_overlap(object_2, object, &last_flags_word, &carry);
 		if (carry)
 			players_touch(object_2, object);
 	}
@@ -408,18 +408,18 @@ void collide_players_with_players(uint16_t *p_object, uint16_t *p_d)
 		flags = OBJECT(object)->flags;
 		if ((flags & 0x40u) != 0u)
 		{
-			boxes_overlap(object_2, object, &d, &carry);
-			flags = (uint8_t)(d >> 8);
+			boxes_overlap(object_2, object, &last_flags_word, &carry);
+			flags = (uint8_t)(last_flags_word >> 8);
 			if (carry)
 			{
 				players_touch(object_2, object);
-				flags = (uint8_t)(d >> 8);
+				flags = (uint8_t)(last_flags_word >> 8);
 			}
 		}
 	}
-	d_2 = (d & 0xFFu) | ((uint32_t)flags << 8);
+	last_flags_word = (last_flags_word & 0xFFu) | ((uint32_t)flags << 8);
 	*p_object = object;
-	*p_d = d_2;
+	*p_last_flags_word = last_flags_word;
 }
 
 /* The object and the one it overlaps hit each other: each loses the other's power from its life unless
@@ -427,7 +427,7 @@ void collide_players_with_players(uint16_t *p_object, uint16_t *p_d)
 void trade_hits_with_enemy(uint16_t object, uint16_t other)
 {
 	uint8_t attack = 0, vitality = 0;
-	uint8_t vitality_2 = 0, damage = 0, t1 = 0, hit = 0, attack_2 = 0, attack_3 = 0;
+	uint8_t vitality_2 = 0, damage = 0, old_vitality = 0, hit = 0, attack_2 = 0, attack_3 = 0;
 
 	if ((OBJECT(object)->flags & 4u) != 0u)
 	{
@@ -436,9 +436,9 @@ void trade_hits_with_enemy(uint16_t object, uint16_t other)
 	}
 	vitality_2 = OBJECT(object)->vitality;
 	damage = OBJECT(other)->damage;
-	t1 = vitality_2;
-	vitality = t1 - damage;
-	if (t1 < damage)
+	old_vitality = vitality_2;
+	vitality = old_vitality - damage;
+	if (old_vitality < damage)
 		vitality = 0u;
 	OBJECT(object)->vitality = vitality;
 	hit = OBJECT(object)->hit;
@@ -468,21 +468,21 @@ void trade_hits_with_enemy(uint16_t object, uint16_t other)
    it, and is marked hit. */
 void give_hit(uint16_t hitter, uint16_t target)
 {
-	uint8_t a = 0, attack = 0, vitality = 0;
-	uint8_t damage = 0, vitality_2 = 0, t1 = 0, t2 = 0, hit = 0, attack_2 = 0, attack_3 = 0;
+	uint8_t attack = 0, hitter_damage = 0, vitality = 0;
+	uint8_t damage = 0, vitality_2 = 0, damage_dealt = 0, old_vitality = 0, hit = 0, attack_2 = 0, attack_3 = 0;
 
 	if ((OBJECT(target)->flags & 4u) != 0u)
 		return;
 	damage = OBJECT(hitter)->damage;
-	a = damage;
+	hitter_damage = damage;
 	if (damage != 0u)
 	{
-		hit_damage = a;
+		hit_damage = hitter_damage;
 		vitality_2 = OBJECT(target)->vitality;
-		t1 = hit_damage;
-		t2 = vitality_2;
-		vitality = t2 - t1;
-		if (t2 < t1)
+		damage_dealt = hit_damage;
+		old_vitality = vitality_2;
+		vitality = old_vitality - damage_dealt;
+		if (old_vitality < damage_dealt)
 			vitality = 0u;
 		OBJECT(target)->vitality = vitality;
 	}
@@ -523,15 +523,15 @@ void trade_hits_unless_attacking(uint16_t object, uint16_t other)
 void trade_hits(uint16_t object, uint16_t other)
 {
 	uint8_t attack = 0, vitality = 0;
-	uint8_t vitality_2 = 0, damage = 0, t1 = 0, hit = 0, attack_2 = 0, attack_3 = 0, vitality_3 = 0, damage_2 = 0, t2 = 0, hit_2 = 0, attack_4 = 0, attack_5 = 0;
+	uint8_t vitality_2 = 0, damage = 0, old_vitality = 0, hit = 0, attack_2 = 0, attack_3 = 0, vitality_3 = 0, damage_2 = 0, other_old_vitality = 0, hit_2 = 0, attack_4 = 0, attack_5 = 0;
 
 	if ((OBJECT(object)->flags & 4u) == 0u)
 	{
 		vitality_2 = OBJECT(object)->vitality;
 		damage = OBJECT(other)->damage;
-		t1 = vitality_2;
-		vitality = t1 - damage;
-		if (t1 < damage)
+		old_vitality = vitality_2;
+		vitality = old_vitality - damage;
+		if (old_vitality < damage)
 			vitality = 0u;
 		OBJECT(object)->vitality = vitality;
 		hit = OBJECT(object)->hit;
@@ -558,9 +558,9 @@ void trade_hits(uint16_t object, uint16_t other)
 		return;
 	vitality_3 = OBJECT(other)->vitality;
 	damage_2 = OBJECT(object)->damage;
-	t2 = vitality_3;
-	vitality = t2 - damage_2;
-	if (t2 < damage_2)
+	other_old_vitality = vitality_3;
+	vitality = other_old_vitality - damage_2;
+	if (other_old_vitality < damage_2)
 		vitality = 0u;
 	OBJECT(other)->vitality = vitality;
 	hit_2 = OBJECT(other)->hit;

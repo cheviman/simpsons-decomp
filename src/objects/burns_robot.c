@@ -3,7 +3,7 @@
  *    Description: Mr. Burns' robot (4F80 type EC, kinds CC-D4): its entrance, its forms and attacks, how each form breaks
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    10-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -13,23 +13,23 @@
 
 /* Mr. Burns' robot (type EC): counts its timers up, takes the players' blows, runs its handler by its
    handler number (field 02), and while it walks turns round at walls. */
-uint16_t burns_robot_run(uint16_t robot, uint16_t y)
+void burns_robot_run(uint16_t robot)
 {
 	uint32_t negative = 0;
-	uint8_t a = 0, cell = 0, d = 0;
+	uint8_t cell = 0, look_ahead_high = 0, look_ahead_low = 0;
 	uint16_t floor_cell = 0, handlers = 0;
 	uint8_t state = 0, state_2 = 0, state_3 = 0, walk_direction = 0, walk_direction_2 = 0, walk_direction_3 = 0;
-	uint16_t lob_frames = 0, t1 = 0, volley_frames = 0, t2 = 0, part_frames = 0, t3 = 0, x_speed = 0, t4 = 0, t5 = 0, t6 = 0, y_speed = 0;
+	uint16_t lob_frames = 0, new_lob_frames = 0, volley_frames = 0, new_volley_frames = 0, part_frames = 0, new_part_frames = 0, x_speed = 0, look_ahead_left = 0, look_ahead_right = 0, saved_look_ahead = 0, y_speed = 0;
 
 	lob_frames = OBJECT(robot)->burns_robot.lob_frames;
-	t1 = lob_frames + 1u;
-	OBJECT(robot)->burns_robot.lob_frames = t1;
+	new_lob_frames = lob_frames + 1u;
+	OBJECT(robot)->burns_robot.lob_frames = new_lob_frames;
 	volley_frames = OBJECT(robot)->burns_robot.volley_frames;
-	t2 = volley_frames + 1u;
-	OBJECT(robot)->burns_robot.volley_frames = t2;
+	new_volley_frames = volley_frames + 1u;
+	OBJECT(robot)->burns_robot.volley_frames = new_volley_frames;
 	part_frames = OBJECT(robot)->burns_robot.part_frames;
-	t3 = part_frames + 1u;
-	OBJECT(robot)->burns_robot.part_frames = t3;
+	new_part_frames = part_frames + 1u;
+	OBJECT(robot)->burns_robot.part_frames = new_part_frames;
 	state = OBJECT(robot)->state;
 	if (state != 0xF9u)
 		burns_robot_check_hit(robot);
@@ -38,50 +38,50 @@ uint16_t burns_robot_run(uint16_t robot, uint16_t y)
 	switch ((int8_t)(uint8_t)((uint32_t)state_2 << 1))
 	{
 	case 0:
-		y = burns_robot_entrance(robot, y);
+		burns_robot_entrance(robot);
 		break;
 	case 2:
-		y = burns_robot_walk_form_0(robot, y);
+		burns_robot_walk_form_0(robot);
 		break;
 	case 4:
-		y = burns_robot_walk_form_1(robot, y);
+		burns_robot_walk_form_1(robot);
 		break;
 	case 6:
 	case 8:
 	case 10:
-		y = burns_robot_walk_late_forms(robot, y);
+		burns_robot_walk_late_forms(robot);
 		break;
 	case 12:
 	case 14:
 	case 16:
-		y = burns_robot_swing(robot, y);
+		burns_robot_swing(robot);
 		break;
 	case 18:
-		y = burns_robot_volley(robot, y);
+		burns_robot_volley(robot);
 		break;
 	case 20:
-		y = burns_robot_lunge(robot, y);
+		burns_robot_lunge(robot);
 		break;
 	case 22:
-		y = burns_robot_part_attack(robot);
+		burns_robot_part_attack(robot);
 		break;
 	case 24:
-		y = burns_robot_lob_bombs(robot, y);
+		burns_robot_lob_bombs(robot);
 		break;
 	case 26:
-		y = burns_robot_gloat(robot, y);
+		burns_robot_gloat(robot);
 		break;
 	case 28:
 		burns_robot_drop_maggie(robot);
 		break;
 	case 30:
-		y = burns_robot_walk_to_maggie(robot, y);
+		burns_robot_walk_to_maggie(robot);
 		break;
 	case 32:
 		burns_robot_stop_at_maggie(robot);
 		break;
 	case 34:
-		y = burns_robot_let_burns_out(robot, y);
+		burns_robot_let_burns_out(robot);
 		break;
 	case 36:
 		burns_robot_leave(robot);
@@ -91,10 +91,10 @@ uint16_t burns_robot_run(uint16_t robot, uint16_t y)
 		burns_robot_start_breaking(robot);
 		break;
 	case 40:
-		y = burns_robot_shed_form_3(robot, y);
+		burns_robot_shed_form_3(robot);
 		break;
 	case 44:
-		y = burns_robot_shed_form_2(robot, y);
+		burns_robot_shed_form_2(robot);
 		break;
 	case 46:
 	case 60:
@@ -105,7 +105,7 @@ uint16_t burns_robot_run(uint16_t robot, uint16_t y)
 		burns_robot_broken_cry(robot);
 		break;
 	case 50:
-		y = burns_robot_shed_form_1(robot, y);
+		burns_robot_shed_form_1(robot);
 		break;
 	case 52:
 	case 66:
@@ -121,16 +121,16 @@ uint16_t burns_robot_run(uint16_t robot, uint16_t y)
 		break;
 	case 58:
 	case 72:
-		y = burns_robot_start_form(robot, y);
+		burns_robot_start_form(robot);
 		break;
 	case 64:
-		y = burns_robot_shed_form_0(robot, y);
+		burns_robot_shed_form_0(robot);
 		break;
 	case 74:
-		y = burns_robot_hurt_flash(robot, y, handlers);
+		burns_robot_hurt_flash(robot, handlers);
 		break;
 	case 76:
-		y = burns_robot_hurt_end(robot, y);
+		burns_robot_hurt_end(robot);
 		break;
 	case 78:
 		burns_robot_place(robot);
@@ -148,7 +148,7 @@ uint16_t burns_robot_run(uint16_t robot, uint16_t y)
 		burns_robot_speak(robot);
 		break;
 	case 88:
-		y = burns_robot_toss_part(robot, y);
+		burns_robot_toss_part(robot);
 		break;
 	case 90:
 		burns_robot_start_fight(robot);
@@ -166,56 +166,56 @@ uint16_t burns_robot_run(uint16_t robot, uint16_t y)
 		break;
 	case 98:
 	case 118:
-		y = burns_robot_walk_on(robot, y);
+		burns_robot_walk_on(robot);
 		break;
 	case 102:
-		y = burns_robot_fire_shot(robot, y);
+		burns_robot_fire_shot(robot);
 		break;
 	case 104:
 		burns_robot_volley_next(robot);
 		break;
 	case 106:
-		y = burns_robot_volley_end(robot, y);
+		burns_robot_volley_end(robot);
 		break;
 	case -12:
-		y = burns_robot_final_defeat(robot, y);
+		burns_robot_final_defeat(robot);
 		break;
 	case -10:
-		y = burns_robot_form_3_broken(robot, y);
+		burns_robot_form_3_broken(robot);
 		break;
 	case -8:
-		y = burns_robot_form_2_broken(robot, y);
+		burns_robot_form_2_broken(robot);
 		break;
 	case -6:
-		y = burns_robot_form_1_broken(robot, y);
+		burns_robot_form_1_broken(robot);
 		break;
 	case -4:
-		y = burns_robot_form_0_broken(robot, y);
+		burns_robot_form_0_broken(robot);
 		break;
 	case -2:
-		y = burns_robot_hurt(robot, y);
+		burns_robot_hurt(robot);
 		break;
 	}
 	state_3 = OBJECT(robot)->state;
 	if (state_3 == 0u)
-		return y;
+		return;
 	x_speed = OBJECT(robot)->x_speed;
-	d = (uint8_t)x_speed;
-	a = (uint8_t)(x_speed >> 8);
+	look_ahead_low = (uint8_t)x_speed;
+	look_ahead_high = (uint8_t)(x_speed >> 8);
 	if ((int16_t)x_speed < 0)
 	{
-		t4 = (((uint32_t)a << 8) | (d & 0xFFu)) - 0x20u;
-		d = (uint8_t)t4;
-		a = (uint8_t)(t4 >> 8);
+		look_ahead_left = (((uint32_t)look_ahead_high << 8) | (look_ahead_low & 0xFFu)) - 0x20u;
+		look_ahead_low = (uint8_t)look_ahead_left;
+		look_ahead_high = (uint8_t)(look_ahead_left >> 8);
 	}
 	else
 	{
-		t5 = (((uint32_t)a << 8) | (d & 0xFFu)) + 0x20u;
-		d = (uint8_t)t5;
-		a = (uint8_t)(t5 >> 8);
+		look_ahead_right = (((uint32_t)look_ahead_high << 8) | (look_ahead_low & 0xFFu)) + 0x20u;
+		look_ahead_low = (uint8_t)look_ahead_right;
+		look_ahead_high = (uint8_t)(look_ahead_right >> 8);
 	}
-	floor_probe_dx = ((uint32_t)a << 8) | (d & 0xFFu);
-	wall_probe_dx = ((uint32_t)a << 8) | (d & 0xFFu);
+	floor_probe_dx = ((uint32_t)look_ahead_high << 8) | (look_ahead_low & 0xFFu);
+	wall_probe_dx = ((uint32_t)look_ahead_high << 8) | (look_ahead_low & 0xFFu);
 	floor_probe_dy = 0;
 	floor_cell = floor_at_scratch_offset(robot);
 	cell = (uint8_t)(floor_cell >> 8);
@@ -224,7 +224,7 @@ uint16_t burns_robot_run(uint16_t robot, uint16_t y)
 		walk_direction = OBJECT(robot)->burns_robot.walk_direction;
 		OBJECT(robot)->burns_robot.walk_direction = 0x80u - walk_direction;
 		burns_robot_stop(robot);
-		return y;
+		return;
 	}
 	vector_floor_ahead_y(robot, &floor_cell, &negative);
 	cell = (uint8_t)(floor_cell >> 8);
@@ -233,24 +233,23 @@ uint16_t burns_robot_run(uint16_t robot, uint16_t y)
 		walk_direction_2 = OBJECT(robot)->burns_robot.walk_direction;
 		OBJECT(robot)->burns_robot.walk_direction = 0u - walk_direction_2;
 		burns_robot_stop(robot);
-		return y;
+		return;
 	}
-	t6 = wall_probe_dx;
-	floor_probe_dx = t6;
+	saved_look_ahead = wall_probe_dx;
+	floor_probe_dx = saved_look_ahead;
 	y_speed = OBJECT(robot)->y_speed;
 	floor_probe_dy = y_speed;
 	floor_cell = floor_at_scratch_offset(robot);
 	cell = (uint8_t)(floor_cell >> 8);
 	if ((int8_t)cell >= 0)
-		return y;
+		return;
 	walk_direction_3 = OBJECT(robot)->burns_robot.walk_direction;
 	OBJECT(robot)->burns_robot.walk_direction = walk_direction_3 - 0x80u;
 	burns_robot_stop(robot);
-	return y;
 }
 
 /* Its last form broken: drops Maggie's object, walks to it, stops and lets Mr. Burns out, then is gone. */
-uint16_t burns_robot_final_defeat(uint16_t robot, uint16_t y)
+void burns_robot_final_defeat(uint16_t robot)
 {
 	uint16_t steps = 0;
 	uint8_t step = 0;
@@ -263,137 +262,164 @@ uint16_t burns_robot_final_defeat(uint16_t robot, uint16_t y)
 		{
 		case 0:
 			burns_robot_drop_maggie(robot);
-			return y;
+			return;
 		case 2:
-			return burns_robot_walk_to_maggie(robot, y);
+			burns_robot_walk_to_maggie(robot);
+			return;
 		case 4:
 			burns_robot_stop_at_maggie(robot);
-			return y;
+			return;
 		case 6:
-			return burns_robot_let_burns_out(robot, y);
+			burns_robot_let_burns_out(robot);
+			return;
 		case 8:
 			burns_robot_leave(robot);
-			return y;
+			return;
 		case 10:
 		case 14:
 			burns_robot_start_breaking(robot);
-			return y;
+			return;
 		case 12:
-			return burns_robot_shed_form_3(robot, y);
+			burns_robot_shed_form_3(robot);
+			return;
 		case 16:
-			return burns_robot_shed_form_2(robot, y);
+			burns_robot_shed_form_2(robot);
+			return;
 		case 18:
 		case 32:
 			burns_robot_broken_shake(robot);
-			return y;
+			return;
 		case 20:
 		case 34:
 			burns_robot_broken_cry(robot);
-			return y;
+			return;
 		case 22:
-			return burns_robot_shed_form_1(robot, y);
+			burns_robot_shed_form_1(robot);
+			return;
 		case 24:
 		case 38:
 			burns_robot_fall_down(robot);
-			return y;
+			return;
 		case 26:
 		case 40:
 			burns_robot_lie_broken(robot);
-			return y;
+			return;
 		case 28:
 		case 42:
 			burns_robot_rise_as_next_form(robot);
-			return y;
+			return;
 		case 30:
 		case 44:
-			return burns_robot_start_form(robot, y);
+			burns_robot_start_form(robot);
+			return;
 		case 36:
-			return burns_robot_shed_form_0(robot, y);
+			burns_robot_shed_form_0(robot);
+			return;
 		case 46:
-			return burns_robot_hurt_flash(robot, y, steps);
+			burns_robot_hurt_flash(robot, steps);
+			return;
 		case 48:
-			return burns_robot_hurt_end(robot, y);
+			burns_robot_hurt_end(robot);
+			return;
 		case 50:
 			burns_robot_place(robot);
-			return y;
+			return;
 		case 52:
 			burns_robot_wait_for_story(robot);
-			return y;
+			return;
 		case 54:
 			burns_robot_appear(robot);
-			return y;
+			return;
 		case 56:
 			burns_robot_step_up(robot);
-			return y;
+			return;
 		case 58:
 			burns_robot_speak(robot);
-			return y;
+			return;
 		case 60:
-			return burns_robot_toss_part(robot, y);
+			burns_robot_toss_part(robot);
+			return;
 		case 62:
 			burns_robot_start_fight(robot);
-			return y;
+			return;
 		case 64:
 			burns_robot_ready(robot);
-			return y;
+			return;
 		case 66:
 		case 72:
 			burns_robot_stop_and_wind_up(robot);
-			return y;
+			return;
 		case 68:
 		case 88:
 			burns_robot_swing_hit(robot);
-			return y;
+			return;
 		case 70:
 		case 90:
-			return burns_robot_walk_on(robot, y);
+			burns_robot_walk_on(robot);
+			return;
 		case 74:
-			return burns_robot_fire_shot(robot, y);
+			burns_robot_fire_shot(robot);
+			return;
 		case 76:
 			burns_robot_volley_next(robot);
-			return y;
+			return;
 		case 78:
 			break;
 		case -40:
 			continue;
 		case -38:
-			return burns_robot_form_3_broken(robot, y);
+			burns_robot_form_3_broken(robot);
+			return;
 		case -36:
-			return burns_robot_form_2_broken(robot, y);
+			burns_robot_form_2_broken(robot);
+			return;
 		case -34:
-			return burns_robot_form_1_broken(robot, y);
+			burns_robot_form_1_broken(robot);
+			return;
 		case -32:
-			return burns_robot_form_0_broken(robot, y);
+			burns_robot_form_0_broken(robot);
+			return;
 		case -30:
-			return burns_robot_hurt(robot, y);
+			burns_robot_hurt(robot);
+			return;
 		case -28:
-			return burns_robot_entrance(robot, y);
+			burns_robot_entrance(robot);
+			return;
 		case -26:
-			return burns_robot_walk_form_0(robot, y);
+			burns_robot_walk_form_0(robot);
+			return;
 		case -24:
-			return burns_robot_walk_form_1(robot, y);
+			burns_robot_walk_form_1(robot);
+			return;
 		case -22:
 		case -20:
 		case -18:
-			return burns_robot_walk_late_forms(robot, y);
+			burns_robot_walk_late_forms(robot);
+			return;
 		case -16:
 		case -14:
 		case -12:
-			return burns_robot_swing(robot, y);
+			burns_robot_swing(robot);
+			return;
 		case -10:
-			return burns_robot_volley(robot, y);
+			burns_robot_volley(robot);
+			return;
 		case -8:
-			return burns_robot_lunge(robot, y);
+			burns_robot_lunge(robot);
+			return;
 		case -6:
-			return burns_robot_part_attack(robot);
+			burns_robot_part_attack(robot);
+			return;
 		case -4:
-			return burns_robot_lob_bombs(robot, y);
+			burns_robot_lob_bombs(robot);
+			return;
 		case -2:
-			return burns_robot_gloat(robot, y);
+			burns_robot_gloat(robot);
+			return;
 		}
 		break;
 	}
-	return burns_robot_volley_end(robot, y);
+	burns_robot_volley_end(robot);
 }
 
 /* Puts in Maggie's object (5280 type E7) at the stage's x 420 and keeps it; walks 192 frames, then up to
@@ -402,19 +428,19 @@ void burns_robot_drop_maggie(uint16_t robot)
 {
 	uint32_t carry = 0;
 	uint8_t list = 0;
-	uint16_t maggie = 0;
+	uint16_t maggie_object = 0;
 	uint8_t step = 0;
-	uint16_t t1 = 0, t2 = 0;
+	uint16_t maggie_x = 0, maggie_y = 0;
 
 	OBJECT(robot)->animation = 0x84u;
 	list = 1u;
-	vector_find_free_slot(list, &maggie, &carry);
-	mem_write8(maggie + 1u, 0xE7u);
-	t1 = 0x420u - camera_x;
-	mem_write16(maggie + 0xCu, t1);
-	t2 = 0xA8u + camera_y;
-	mem_write16(maggie + 0x11u, t2);
-	OBJECT(robot)->burns_robot.maggie = maggie;
+	vector_find_free_slot(list, &maggie_object, &carry);
+	OBJECT(maggie_object)->type = -0x19;
+	maggie_x = 0x420u - camera_x;
+	OBJECT(maggie_object)->x = maggie_x;
+	maggie_y = 0xA8u + camera_y;
+	OBJECT(maggie_object)->y = maggie_y;
+	OBJECT(robot)->burns_robot.maggie = maggie_object;
 	OBJECT(robot)->burns_robot.wait_frames = 0xC0u;
 	OBJECT(robot)->burns_robot.walk_frames = 0x100u;
 	step = OBJECT(robot)->burns_robot.step;
@@ -422,12 +448,12 @@ void burns_robot_drop_maggie(uint16_t robot)
 }
 
 /* Walks to Maggie's object, staggering; once there (or out of time) sound 6E and the next step. */
-uint16_t burns_robot_walk_to_maggie(uint16_t robot, uint16_t y)
+void burns_robot_walk_to_maggie(uint16_t robot)
 {
 	uint32_t carry = 0;
-	uint16_t command = 0, direction = 0, distance = 0, object = 0, y_2 = 0;
+	uint16_t command = 0, direction = 0, distance = 0, object = 0;
 	uint8_t wait_frames = 0, wait_frames_2 = 0, step = 0;
-	uint16_t maggie = 0, walk_frames = 0, t1 = 0, t2 = 0, t3 = 0, t4 = 0, x_speed = 0;
+	uint16_t maggie = 0, walk_frames = 0, robot_x = 0, maggie_x = 0, robot_y = 0, maggie_y = 0, x_speed = 0;
 
 	maggie = OBJECT(robot)->burns_robot.maggie;
 	object = maggie;
@@ -447,35 +473,34 @@ uint16_t burns_robot_walk_to_maggie(uint16_t robot, uint16_t y)
 			carry = vector_queue_sound(command);
 			step = OBJECT(robot)->burns_robot.step;
 			OBJECT(robot)->burns_robot.step = step + 1u;
-			return y;
+			return;
 		}
-		t1 = OBJECT(robot)->x;
-		t2 = OBJECT(object)->x;
-		distance = t1 - t2;
+		robot_x = OBJECT(robot)->x;
+		maggie_x = OBJECT(object)->x;
+		distance = robot_x - maggie_x;
 		if ((int16_t)(distance >> 15 ? 0u - distance : distance) <= 0x20)
 		{
-			t3 = OBJECT(robot)->y;
-			t4 = OBJECT(object)->y;
-			distance = t3 - t4;
+			robot_y = OBJECT(robot)->y;
+			maggie_y = OBJECT(object)->y;
+			distance = robot_y - maggie_y;
 			if ((int16_t)(distance >> 15 ? 0u - distance : distance) <= 0x20)
 			{
 				command = 0x6E00u;
 				carry = vector_queue_sound(command);
 				step = OBJECT(robot)->burns_robot.step;
 				OBJECT(robot)->burns_robot.step = step + 1u;
-				return y;
+				return;
 			}
 		}
 	}
 	direction = vector_direction_to(robot, object);
 	OBJECT(robot)->burns_robot.aim = direction >> 8;
-	y_2 = burns_robot_steer(robot);
+	burns_robot_steer(robot);
 	stagger_speed = 0x300;
 	if ((((uint16_t)((uint32_t)(uint8_t)frame_count << 8) >> 8) & 1u) != 0u)
 		stagger_speed = 0u - stagger_speed;
 	x_speed = OBJECT(robot)->x_speed;
 	OBJECT(robot)->x_speed = x_speed + stagger_speed;
-	return y_2;
 }
 
 /* Starts breaking down (sound 6E, its look) and stops. */
@@ -487,31 +512,31 @@ void burns_robot_stop_at_maggie(uint16_t robot)
 
 /* When its animation ends, Mr. Burns comes out of it (5280 type E2), he and Maggie's object linked; the
    robot shows kind D4. */
-uint16_t burns_robot_let_burns_out(uint16_t robot, uint16_t object)
+void burns_robot_let_burns_out(uint16_t robot)
 {
 	uint32_t carry = 0;
 	uint8_t list = 0;
-	uint16_t behaviour = 0, part_code = 0;
+	uint16_t burns_object = 0, maggie_object = 0, part_code = 0;
 	uint8_t animation_flags = 0, step = 0;
 	uint16_t maggie = 0;
 
 	animation_flags = OBJECT(robot)->animation_flags;
 	if ((animation_flags & 1u) == 0u)
-		return object;
+		return;
 	list = 1u;
-	vector_find_free_slot(list, &behaviour, &carry);
+	vector_find_free_slot(list, &burns_object, &carry);
 	part_code = 0x701u;
-	burns_robot_place_part(robot, behaviour, part_code);
-	mem_write8(behaviour, 0x80u);
+	burns_robot_place_part(robot, burns_object, part_code);
+	OBJECT(burns_object)->flags = 0x80u;
 	maggie = OBJECT(robot)->burns_robot.maggie;
-	object = maggie;
-	OBJECT(object)->behaviour = behaviour;
-	mem_write16(behaviour + 0x29u, object);
+	maggie_object = maggie;
+	leftover_y = maggie_object;
+	OBJECT(maggie_object)->rescued_maggie.burns = burns_object;
+	OBJECT(burns_object)->mr_burns.maggie = maggie_object;
 	OBJECT(robot)->kind = 0xD4u;
 	OBJECT(robot)->animation = 0x89u;
 	step = OBJECT(robot)->burns_robot.step;
 	OBJECT(robot)->burns_robot.step = step + 1u;
-	return object;
 }
 
 /* When its animation ends, gives its score and is gone. */
@@ -529,7 +554,7 @@ void burns_robot_leave(uint16_t robot)
 }
 
 /* Form 3 broken: slows, sheds its pieces and goes on as form 4. */
-uint16_t burns_robot_form_3_broken(uint16_t robot, uint16_t y)
+void burns_robot_form_3_broken(uint16_t robot)
 {
 	uint16_t steps = 0;
 	uint8_t step = 0;
@@ -543,164 +568,191 @@ uint16_t burns_robot_form_3_broken(uint16_t robot, uint16_t y)
 		case 0:
 		case 4:
 			burns_robot_start_breaking(robot);
-			return y;
+			return;
 		case 2:
-			return burns_robot_shed_form_3(robot, y);
+			burns_robot_shed_form_3(robot);
+			return;
 		case 6:
-			return burns_robot_shed_form_2(robot, y);
+			burns_robot_shed_form_2(robot);
+			return;
 		case 8:
 		case 22:
 			burns_robot_broken_shake(robot);
-			return y;
+			return;
 		case 10:
 		case 24:
 			burns_robot_broken_cry(robot);
-			return y;
+			return;
 		case 12:
-			return burns_robot_shed_form_1(robot, y);
+			burns_robot_shed_form_1(robot);
+			return;
 		case 14:
 		case 28:
 			burns_robot_fall_down(robot);
-			return y;
+			return;
 		case 16:
 		case 30:
 			burns_robot_lie_broken(robot);
-			return y;
+			return;
 		case 18:
 		case 32:
 			burns_robot_rise_as_next_form(robot);
-			return y;
+			return;
 		case 20:
 		case 34:
-			return burns_robot_start_form(robot, y);
+			burns_robot_start_form(robot);
+			return;
 		case 26:
-			return burns_robot_shed_form_0(robot, y);
+			burns_robot_shed_form_0(robot);
+			return;
 		case 36:
-			return burns_robot_hurt_flash(robot, y, steps);
+			burns_robot_hurt_flash(robot, steps);
+			return;
 		case 38:
-			return burns_robot_hurt_end(robot, y);
+			burns_robot_hurt_end(robot);
+			return;
 		case 40:
 			burns_robot_place(robot);
-			return y;
+			return;
 		case 42:
 			burns_robot_wait_for_story(robot);
-			return y;
+			return;
 		case 44:
 			burns_robot_appear(robot);
-			return y;
+			return;
 		case 46:
 			burns_robot_step_up(robot);
-			return y;
+			return;
 		case 48:
 			burns_robot_speak(robot);
-			return y;
+			return;
 		case 50:
-			return burns_robot_toss_part(robot, y);
+			burns_robot_toss_part(robot);
+			return;
 		case 52:
 			burns_robot_start_fight(robot);
-			return y;
+			return;
 		case 54:
 			burns_robot_ready(robot);
-			return y;
+			return;
 		case 56:
 		case 62:
 			burns_robot_stop_and_wind_up(robot);
-			return y;
+			return;
 		case 58:
 		case 78:
 			burns_robot_swing_hit(robot);
-			return y;
+			return;
 		case 60:
 		case 80:
-			return burns_robot_walk_on(robot, y);
+			burns_robot_walk_on(robot);
+			return;
 		case 64:
-			return burns_robot_fire_shot(robot, y);
+			burns_robot_fire_shot(robot);
+			return;
 		case 66:
 			burns_robot_volley_next(robot);
-			return y;
+			return;
 		case 68:
 			break;
 		case -50:
-			return burns_robot_final_defeat(robot, y);
+			burns_robot_final_defeat(robot);
+			return;
 		case -48:
 			continue;
 		case -46:
-			return burns_robot_form_2_broken(robot, y);
+			burns_robot_form_2_broken(robot);
+			return;
 		case -44:
-			return burns_robot_form_1_broken(robot, y);
+			burns_robot_form_1_broken(robot);
+			return;
 		case -42:
-			return burns_robot_form_0_broken(robot, y);
+			burns_robot_form_0_broken(robot);
+			return;
 		case -40:
-			return burns_robot_hurt(robot, y);
+			burns_robot_hurt(robot);
+			return;
 		case -38:
-			return burns_robot_entrance(robot, y);
+			burns_robot_entrance(robot);
+			return;
 		case -36:
-			return burns_robot_walk_form_0(robot, y);
+			burns_robot_walk_form_0(robot);
+			return;
 		case -34:
-			return burns_robot_walk_form_1(robot, y);
+			burns_robot_walk_form_1(robot);
+			return;
 		case -32:
 		case -30:
 		case -28:
-			return burns_robot_walk_late_forms(robot, y);
+			burns_robot_walk_late_forms(robot);
+			return;
 		case -26:
 		case -24:
 		case -22:
-			return burns_robot_swing(robot, y);
+			burns_robot_swing(robot);
+			return;
 		case -20:
-			return burns_robot_volley(robot, y);
+			burns_robot_volley(robot);
+			return;
 		case -18:
-			return burns_robot_lunge(robot, y);
+			burns_robot_lunge(robot);
+			return;
 		case -16:
-			return burns_robot_part_attack(robot);
+			burns_robot_part_attack(robot);
+			return;
 		case -14:
-			return burns_robot_lob_bombs(robot, y);
+			burns_robot_lob_bombs(robot);
+			return;
 		case -12:
-			return burns_robot_gloat(robot, y);
+			burns_robot_gloat(robot);
+			return;
 		case -10:
 			burns_robot_drop_maggie(robot);
-			return y;
+			return;
 		case -8:
-			return burns_robot_walk_to_maggie(robot, y);
+			burns_robot_walk_to_maggie(robot);
+			return;
 		case -6:
 			burns_robot_stop_at_maggie(robot);
-			return y;
+			return;
 		case -4:
-			return burns_robot_let_burns_out(robot, y);
+			burns_robot_let_burns_out(robot);
+			return;
 		case -2:
 			burns_robot_leave(robot);
-			return y;
+			return;
 		}
 		break;
 	}
-	return burns_robot_volley_end(robot, y);
+	burns_robot_volley_end(robot);
 }
 
 /* At its frame: the next music, pieces 3 and 4 fly off both ways, and it goes on as the next form with
    that form's health, walking at a target. */
-uint16_t burns_robot_shed_form_3(uint16_t robot, uint16_t y)
+void burns_robot_shed_form_3(uint16_t robot)
 {
 	uint32_t carry = 0;
-	uint8_t a = 0, health = 0;
-	uint16_t d = 0, ignored16 = 0, piece = 0, piece_number = 0, u = 0, y_2 = 0;
+	uint8_t health = 0, piece_word_high = 0;
+	uint16_t piece = 0, piece_number = 0, piece_word = 0, u = 0;
 	uint8_t animation_flags = 0, form_extra = 0, form_base = 0, form_extra_2 = 0;
 
 	animation_flags = OBJECT(robot)->animation_flags;
 	if ((animation_flags & 2u) == 0u)
-		return y;
+		return;
 	boss_arrived++;
 	piece_number = 0x300u;
-	burns_robot_throw_piece(robot, &ignored16, &piece, &piece_number);
+	burns_robot_throw_piece(robot, &piece, &piece_number);
 	OBJECT(piece)->x_speed = 0x100;
 	piece_number = 0x8300u;
-	burns_robot_throw_piece(robot, &ignored16, &piece, &piece_number);
+	burns_robot_throw_piece(robot, &piece, &piece_number);
 	OBJECT(piece)->x_speed = -0x100;
-	d = 0x400u;
-	burns_robot_throw_piece(robot, &ignored16, &piece, &d);
-	a = (uint8_t)(d >> 8);
-	OBJECT(piece)->x = (uint32_t)a << 8;
+	piece_word = 0x400u;
+	burns_robot_throw_piece(robot, &piece, &piece_word);
+	piece_word_high = (uint8_t)(piece_word >> 8);
+	OBJECT(piece)->x = (uint32_t)piece_word_high << 8;
 	OBJECT(piece)->x_speed = 0x100;
 	piece_number = 0x8400u;
-	burns_robot_throw_piece(robot, &y_2, &piece, &piece_number);
+	burns_robot_throw_piece(robot, &piece, &piece_number);
 	OBJECT(piece)->x_speed = -0x100;
 	form_extra = OBJECT(robot)->burns_robot.form_extra;
 	OBJECT(robot)->burns_robot.form_extra = form_extra + 1u;
@@ -711,34 +763,32 @@ uint16_t burns_robot_shed_form_3(uint16_t robot, uint16_t y)
 	OBJECT(robot)->burns_robot.health_mark = health;
 	burns_robot_reset_timers(robot);
 	u = burns_robot_start_walking(robot);
-	burns_robot_choose_target(robot, u, &y_2, &carry);
-	return y_2;
+	carry = burns_robot_choose_target(robot, u);
 }
 
 /* Throws off piece A of object_1d_parts (in the 5280 list), up at 0500. */
-void burns_robot_throw_piece(uint16_t robot, uint16_t *p_y, uint16_t *p_piece, uint16_t *p_piece_number)
+void burns_robot_throw_piece(uint16_t robot, uint16_t *p_piece, uint16_t *p_piece_number)
 {
 	uint16_t piece_number = (uint16_t)*p_piece_number;
 	uint32_t carry = 0;
 	uint8_t list = 0;
-	uint16_t part_code = 0, piece = 0, y = 0;
+	uint16_t part_code = 0, piece = 0;
 	uint8_t stack = 0;
 
 	stack = piece_number >> 8;
 	list = 1u;
 	vector_find_free_slot(list, &piece, &carry);
 	part_code = 1u | ((uint32_t)stack << 8);
-	y = burns_robot_place_part(robot, piece, part_code);
+	burns_robot_place_part(robot, piece, part_code);
 	OBJECT(piece)->flags = 0x88u;
 	OBJECT(piece)->z_speed = 0x500;
 	piece_number = 0x500u;
-	*p_y = y;
 	*p_piece = piece;
 	*p_piece_number = piece_number;
 }
 
 /* Form 2 broken: slows, sheds its pieces and goes on as form 3. */
-uint16_t burns_robot_form_2_broken(uint16_t robot, uint16_t y)
+void burns_robot_form_2_broken(uint16_t robot)
 {
 	uint16_t steps = 0;
 	uint8_t step = 0;
@@ -752,136 +802,163 @@ uint16_t burns_robot_form_2_broken(uint16_t robot, uint16_t y)
 		case -4:
 		case 0:
 			burns_robot_start_breaking(robot);
-			return y;
+			return;
 		case 2:
-			return burns_robot_shed_form_2(robot, y);
+			burns_robot_shed_form_2(robot);
+			return;
 		case 4:
 		case 18:
 			burns_robot_broken_shake(robot);
-			return y;
+			return;
 		case 6:
 		case 20:
 			burns_robot_broken_cry(robot);
-			return y;
+			return;
 		case 8:
-			return burns_robot_shed_form_1(robot, y);
+			burns_robot_shed_form_1(robot);
+			return;
 		case 10:
 		case 24:
 			burns_robot_fall_down(robot);
-			return y;
+			return;
 		case 12:
 		case 26:
 			burns_robot_lie_broken(robot);
-			return y;
+			return;
 		case 14:
 		case 28:
 			burns_robot_rise_as_next_form(robot);
-			return y;
+			return;
 		case 16:
 		case 30:
-			return burns_robot_start_form(robot, y);
+			burns_robot_start_form(robot);
+			return;
 		case 22:
-			return burns_robot_shed_form_0(robot, y);
+			burns_robot_shed_form_0(robot);
+			return;
 		case 32:
-			return burns_robot_hurt_flash(robot, y, steps);
+			burns_robot_hurt_flash(robot, steps);
+			return;
 		case 34:
-			return burns_robot_hurt_end(robot, y);
+			burns_robot_hurt_end(robot);
+			return;
 		case 36:
 			burns_robot_place(robot);
-			return y;
+			return;
 		case 38:
 			burns_robot_wait_for_story(robot);
-			return y;
+			return;
 		case 40:
 			burns_robot_appear(robot);
-			return y;
+			return;
 		case 42:
 			burns_robot_step_up(robot);
-			return y;
+			return;
 		case 44:
 			burns_robot_speak(robot);
-			return y;
+			return;
 		case 46:
-			return burns_robot_toss_part(robot, y);
+			burns_robot_toss_part(robot);
+			return;
 		case 48:
 			burns_robot_start_fight(robot);
-			return y;
+			return;
 		case 50:
 			burns_robot_ready(robot);
-			return y;
+			return;
 		case 52:
 		case 58:
 			burns_robot_stop_and_wind_up(robot);
-			return y;
+			return;
 		case 54:
 		case 74:
 			burns_robot_swing_hit(robot);
-			return y;
+			return;
 		case 56:
 		case 76:
-			return burns_robot_walk_on(robot, y);
+			burns_robot_walk_on(robot);
+			return;
 		case 60:
-			return burns_robot_fire_shot(robot, y);
+			burns_robot_fire_shot(robot);
+			return;
 		case 62:
 			burns_robot_volley_next(robot);
-			return y;
+			return;
 		case 64:
 			break;
 		case -54:
-			return burns_robot_final_defeat(robot, y);
+			burns_robot_final_defeat(robot);
+			return;
 		case -52:
-			return burns_robot_form_3_broken(robot, y);
+			burns_robot_form_3_broken(robot);
+			return;
 		case -50:
 			continue;
 		case -48:
-			return burns_robot_form_1_broken(robot, y);
+			burns_robot_form_1_broken(robot);
+			return;
 		case -46:
-			return burns_robot_form_0_broken(robot, y);
+			burns_robot_form_0_broken(robot);
+			return;
 		case -44:
-			return burns_robot_hurt(robot, y);
+			burns_robot_hurt(robot);
+			return;
 		case -42:
-			return burns_robot_entrance(robot, y);
+			burns_robot_entrance(robot);
+			return;
 		case -40:
-			return burns_robot_walk_form_0(robot, y);
+			burns_robot_walk_form_0(robot);
+			return;
 		case -38:
-			return burns_robot_walk_form_1(robot, y);
+			burns_robot_walk_form_1(robot);
+			return;
 		case -36:
 		case -34:
 		case -32:
-			return burns_robot_walk_late_forms(robot, y);
+			burns_robot_walk_late_forms(robot);
+			return;
 		case -30:
 		case -28:
 		case -26:
-			return burns_robot_swing(robot, y);
+			burns_robot_swing(robot);
+			return;
 		case -24:
-			return burns_robot_volley(robot, y);
+			burns_robot_volley(robot);
+			return;
 		case -22:
-			return burns_robot_lunge(robot, y);
+			burns_robot_lunge(robot);
+			return;
 		case -20:
-			return burns_robot_part_attack(robot);
+			burns_robot_part_attack(robot);
+			return;
 		case -18:
-			return burns_robot_lob_bombs(robot, y);
+			burns_robot_lob_bombs(robot);
+			return;
 		case -16:
-			return burns_robot_gloat(robot, y);
+			burns_robot_gloat(robot);
+			return;
 		case -14:
 			burns_robot_drop_maggie(robot);
-			return y;
+			return;
 		case -12:
-			return burns_robot_walk_to_maggie(robot, y);
+			burns_robot_walk_to_maggie(robot);
+			return;
 		case -10:
 			burns_robot_stop_at_maggie(robot);
-			return y;
+			return;
 		case -8:
-			return burns_robot_let_burns_out(robot, y);
+			burns_robot_let_burns_out(robot);
+			return;
 		case -6:
 			burns_robot_leave(robot);
-			return y;
+			return;
 		case -2:
-			return burns_robot_shed_form_3(robot, y);
+			burns_robot_shed_form_3(robot);
+			return;
 		}
 		break;
 	}
-	return burns_robot_volley_end(robot, y);
+	burns_robot_volley_end(robot);
 }
 
 /* Starts breaking: its breaking look for its form, sound 6E, slowed to a quarter. */
@@ -904,30 +981,30 @@ void burns_robot_start_breaking(uint16_t robot)
 
 /* At its frame: pieces 2 fly off, and it goes on as the next form with that form's health, walking at a
    target. */
-uint16_t burns_robot_shed_form_2(uint16_t robot, uint16_t y)
+void burns_robot_shed_form_2(uint16_t robot)
 {
 	uint32_t carry = 0;
-	uint8_t a = 0, health = 0;
-	uint16_t ignored16 = 0, piece = 0, piece_number = 0, u = 0, y_2 = 0;
-	uint8_t animation_flags = 0, t1 = 0, form_extra = 0, form_base = 0, form_extra_2 = 0;
-	uint16_t t2 = 0, t3 = 0;
+	uint8_t first_piece = 0, health = 0;
+	uint16_t piece = 0, piece_number = 0, u = 0;
+	uint8_t animation_flags = 0, shed_frame = 0, form_extra = 0, form_base = 0, form_extra_2 = 0;
+	uint16_t robot_x = 0, piece_x = 0;
 
 	animation_flags = OBJECT(robot)->animation_flags;
-	t1 = animation_flags & 2u;
-	a = t1;
-	if (t1 == 0u)
-		return y;
-	piece_number = (uint32_t)a << 8;
-	burns_robot_throw_piece_2(robot, piece_number, &ignored16, &piece);
-	t2 = OBJECT(robot)->x;
-	t3 = t2 + 0x20u;
-	OBJECT(piece)->x = t3;
+	shed_frame = animation_flags & 2u;
+	first_piece = shed_frame;
+	if (shed_frame == 0u)
+		return;
+	piece_number = (uint32_t)first_piece << 8;
+	piece = burns_robot_throw_piece_2(robot, piece_number);
+	robot_x = OBJECT(robot)->x;
+	piece_x = robot_x + 0x20u;
+	OBJECT(piece)->x = piece_x;
 	OBJECT(piece)->x_speed = 0x80;
 	piece_number = 0x8280u;
-	burns_robot_throw_piece_2(robot, piece_number, &ignored16, &piece);
+	piece = burns_robot_throw_piece_2(robot, piece_number);
 	OBJECT(piece)->x_speed = -0x100;
 	piece_number = 0x200u;
-	burns_robot_throw_piece_2(robot, piece_number, &y_2, &piece);
+	piece = burns_robot_throw_piece_2(robot, piece_number);
 	OBJECT(piece)->x_speed = 0x100;
 	form_extra = OBJECT(robot)->burns_robot.form_extra;
 	OBJECT(robot)->burns_robot.form_extra = form_extra + 1u;
@@ -938,31 +1015,29 @@ uint16_t burns_robot_shed_form_2(uint16_t robot, uint16_t y)
 	OBJECT(robot)->burns_robot.health_mark = health;
 	burns_robot_reset_timers(robot);
 	u = burns_robot_start_walking(robot);
-	burns_robot_choose_target(robot, u, &y_2, &carry);
-	return y_2;
+	carry = burns_robot_choose_target(robot, u);
 }
 
 /* Throws off piece A, up at 0500 (as burns_robot_throw_piece). */
-void burns_robot_throw_piece_2(uint16_t robot, uint16_t piece_number, uint16_t *p_y, uint16_t *p_piece)
+uint16_t burns_robot_throw_piece_2(uint16_t robot, uint16_t piece_number)
 {
 	uint32_t carry = 0;
 	uint8_t list = 0;
-	uint16_t part_code = 0, piece = 0, y = 0;
+	uint16_t part_code = 0, piece = 0;
 	uint8_t stack = 0;
 
 	stack = piece_number >> 8;
 	list = 1u;
 	vector_find_free_slot(list, &piece, &carry);
 	part_code = 1u | ((uint32_t)stack << 8);
-	y = burns_robot_place_part(robot, piece, part_code);
+	burns_robot_place_part(robot, piece, part_code);
 	OBJECT(piece)->flags = 0x88u;
 	OBJECT(piece)->z_speed = 0x500;
-	*p_y = y;
-	*p_piece = piece;
+	return piece;
 }
 
 /* Form 1 broken: shakes, sheds its pieces, falls, lies, and gets up as form 2. */
-uint16_t burns_robot_form_1_broken(uint16_t robot, uint16_t y)
+void burns_robot_form_1_broken(uint16_t robot)
 {
 	uint16_t steps = 0;
 	uint8_t step = 0;
@@ -976,145 +1051,172 @@ uint16_t burns_robot_form_1_broken(uint16_t robot, uint16_t y)
 		case 0:
 		case 14:
 			burns_robot_broken_shake(robot);
-			return y;
+			return;
 		case 2:
 		case 16:
 			burns_robot_broken_cry(robot);
-			return y;
+			return;
 		case 4:
-			return burns_robot_shed_form_1(robot, y);
+			burns_robot_shed_form_1(robot);
+			return;
 		case 6:
 		case 20:
 			burns_robot_fall_down(robot);
-			return y;
+			return;
 		case 8:
 		case 22:
 			burns_robot_lie_broken(robot);
-			return y;
+			return;
 		case 10:
 		case 24:
 			burns_robot_rise_as_next_form(robot);
-			return y;
+			return;
 		case 12:
 		case 26:
-			return burns_robot_start_form(robot, y);
+			burns_robot_start_form(robot);
+			return;
 		case 18:
-			return burns_robot_shed_form_0(robot, y);
+			burns_robot_shed_form_0(robot);
+			return;
 		case 28:
-			return burns_robot_hurt_flash(robot, y, steps);
+			burns_robot_hurt_flash(robot, steps);
+			return;
 		case 30:
-			return burns_robot_hurt_end(robot, y);
+			burns_robot_hurt_end(robot);
+			return;
 		case 32:
 			burns_robot_place(robot);
-			return y;
+			return;
 		case 34:
 			burns_robot_wait_for_story(robot);
-			return y;
+			return;
 		case 36:
 			burns_robot_appear(robot);
-			return y;
+			return;
 		case 38:
 			burns_robot_step_up(robot);
-			return y;
+			return;
 		case 40:
 			burns_robot_speak(robot);
-			return y;
+			return;
 		case 42:
-			return burns_robot_toss_part(robot, y);
+			burns_robot_toss_part(robot);
+			return;
 		case 44:
 			burns_robot_start_fight(robot);
-			return y;
+			return;
 		case 46:
 			burns_robot_ready(robot);
-			return y;
+			return;
 		case 48:
 		case 54:
 			burns_robot_stop_and_wind_up(robot);
-			return y;
+			return;
 		case 50:
 		case 70:
 			burns_robot_swing_hit(robot);
-			return y;
+			return;
 		case 52:
 		case 72:
-			return burns_robot_walk_on(robot, y);
+			burns_robot_walk_on(robot);
+			return;
 		case 56:
-			return burns_robot_fire_shot(robot, y);
+			burns_robot_fire_shot(robot);
+			return;
 		case 58:
 			burns_robot_volley_next(robot);
-			return y;
+			return;
 		case 60:
 			break;
 		case -58:
-			return burns_robot_final_defeat(robot, y);
+			burns_robot_final_defeat(robot);
+			return;
 		case -56:
-			return burns_robot_form_3_broken(robot, y);
+			burns_robot_form_3_broken(robot);
+			return;
 		case -54:
-			return burns_robot_form_2_broken(robot, y);
+			burns_robot_form_2_broken(robot);
+			return;
 		case -52:
 			continue;
 		case -50:
-			return burns_robot_form_0_broken(robot, y);
+			burns_robot_form_0_broken(robot);
+			return;
 		case -48:
-			return burns_robot_hurt(robot, y);
+			burns_robot_hurt(robot);
+			return;
 		case -46:
-			return burns_robot_entrance(robot, y);
+			burns_robot_entrance(robot);
+			return;
 		case -44:
-			return burns_robot_walk_form_0(robot, y);
+			burns_robot_walk_form_0(robot);
+			return;
 		case -42:
-			return burns_robot_walk_form_1(robot, y);
+			burns_robot_walk_form_1(robot);
+			return;
 		case -40:
 		case -38:
 		case -36:
-			return burns_robot_walk_late_forms(robot, y);
+			burns_robot_walk_late_forms(robot);
+			return;
 		case -34:
 		case -32:
 		case -30:
-			return burns_robot_swing(robot, y);
+			burns_robot_swing(robot);
+			return;
 		case -28:
-			return burns_robot_volley(robot, y);
+			burns_robot_volley(robot);
+			return;
 		case -26:
-			return burns_robot_lunge(robot, y);
+			burns_robot_lunge(robot);
+			return;
 		case -24:
-			return burns_robot_part_attack(robot);
+			burns_robot_part_attack(robot);
+			return;
 		case -22:
-			return burns_robot_lob_bombs(robot, y);
+			burns_robot_lob_bombs(robot);
+			return;
 		case -20:
-			return burns_robot_gloat(robot, y);
+			burns_robot_gloat(robot);
+			return;
 		case -18:
 			burns_robot_drop_maggie(robot);
-			return y;
+			return;
 		case -16:
-			return burns_robot_walk_to_maggie(robot, y);
+			burns_robot_walk_to_maggie(robot);
+			return;
 		case -14:
 			burns_robot_stop_at_maggie(robot);
-			return y;
+			return;
 		case -12:
-			return burns_robot_let_burns_out(robot, y);
+			burns_robot_let_burns_out(robot);
+			return;
 		case -10:
 			burns_robot_leave(robot);
-			return y;
+			return;
 		case -8:
 		case -4:
 			burns_robot_start_breaking(robot);
-			return y;
+			return;
 		case -6:
-			return burns_robot_shed_form_3(robot, y);
+			burns_robot_shed_form_3(robot);
+			return;
 		case -2:
-			return burns_robot_shed_form_2(robot, y);
+			burns_robot_shed_form_2(robot);
+			return;
 		}
 		break;
 	}
-	return burns_robot_volley_end(robot, y);
+	burns_robot_volley_end(robot);
 }
 
 /* At its frame: stops, rises 32, throws off pieces 1 both ways, and takes its falling look. */
-uint16_t burns_robot_shed_form_1(uint16_t robot, uint16_t y)
+void burns_robot_shed_form_1(uint16_t robot)
 {
-	uint8_t d = 0;
-	uint16_t ignored16 = 0, look = 0, piece = 0, piece_number = 0, y_2 = 0;
+	uint8_t raised_z_low = 0;
+	uint16_t look = 0, piece = 0, piece_number = 0;
 	uint8_t animation_flags = 0, step = 0;
-	uint16_t x_speed = 0, z = 0, t1 = 0;
+	uint16_t x_speed = 0, z = 0, raised_z = 0;
 
 	animation_flags = OBJECT(robot)->animation_flags;
 	if ((animation_flags & 2u) == 0u)
@@ -1125,20 +1227,20 @@ uint16_t burns_robot_shed_form_1(uint16_t robot, uint16_t y)
 			x_speed = OBJECT(robot)->x_speed;
 			OBJECT(robot)->x_speed = 0u - x_speed;
 		}
-		return y;
+		return;
 	}
 	OBJECT(robot)->x_speed = 0;
 	z = OBJECT(robot)->z;
-	t1 = z + 0x20u;
-	d = (uint8_t)t1;
-	OBJECT(robot)->z = ((uint32_t)(t1 >> 8) << 8) | (d & 0xFFu);
-	piece_number = (d & 0xFFu) | 0x8100u;
-	burns_robot_throw_piece_3(robot, piece_number, &ignored16, &piece);
+	raised_z = z + 0x20u;
+	raised_z_low = (uint8_t)raised_z;
+	OBJECT(robot)->z = ((uint32_t)(raised_z >> 8) << 8) | (raised_z_low & 0xFFu);
+	piece_number = (raised_z_low & 0xFFu) | 0x8100u;
+	piece = burns_robot_throw_piece_3(robot, piece_number);
 	OBJECT(piece)->x_speed = 0x100;
 	OBJECT(piece)->y_speed = -0x40;
 	OBJECT(piece)->z_speed = 0x500;
 	piece_number = 0x100u;
-	burns_robot_throw_piece_3(robot, piece_number, &y_2, &piece);
+	piece = burns_robot_throw_piece_3(robot, piece_number);
 	OBJECT(piece)->x_speed = -0x100;
 	OBJECT(piece)->y_speed = -0x20;
 	OBJECT(piece)->z_speed = 0x300;
@@ -1146,29 +1248,27 @@ uint16_t burns_robot_shed_form_1(uint16_t robot, uint16_t y)
 	burns_robot_set_look(robot, look);
 	step = OBJECT(robot)->burns_robot.step;
 	OBJECT(robot)->burns_robot.step = step + 1u;
-	return y_2;
 }
 
 /* Puts in piece A, shown. */
-void burns_robot_throw_piece_3(uint16_t robot, uint16_t piece_number, uint16_t *p_y, uint16_t *p_piece)
+uint16_t burns_robot_throw_piece_3(uint16_t robot, uint16_t piece_number)
 {
 	uint32_t carry = 0;
 	uint8_t list = 0;
-	uint16_t part_code = 0, piece = 0, y = 0;
+	uint16_t part_code = 0, piece = 0;
 	uint8_t stack = 0;
 
 	stack = piece_number >> 8;
 	list = 1u;
 	vector_find_free_slot(list, &piece, &carry);
 	part_code = 1u | ((uint32_t)stack << 8);
-	y = burns_robot_place_part(robot, piece, part_code);
+	burns_robot_place_part(robot, piece, part_code);
 	OBJECT(piece)->flags = 0x80u;
-	*p_y = y;
-	*p_piece = piece;
+	return piece;
 }
 
 /* Form 0 broken: shakes, sheds its pieces, falls, lies, and gets up as form 1. */
-uint16_t burns_robot_form_0_broken(uint16_t robot, uint16_t y)
+void burns_robot_form_0_broken(uint16_t robot)
 {
 	uint16_t steps = 0;
 	uint8_t step = 0;
@@ -1182,136 +1282,163 @@ uint16_t burns_robot_form_0_broken(uint16_t robot, uint16_t y)
 		case -14:
 		case 0:
 			burns_robot_broken_shake(robot);
-			return y;
+			return;
 		case -12:
 		case 2:
 			burns_robot_broken_cry(robot);
-			return y;
+			return;
 		case 4:
-			return burns_robot_shed_form_0(robot, y);
+			burns_robot_shed_form_0(robot);
+			return;
 		case -8:
 		case 6:
 			burns_robot_fall_down(robot);
-			return y;
+			return;
 		case -6:
 		case 8:
 			burns_robot_lie_broken(robot);
-			return y;
+			return;
 		case -4:
 		case 10:
 			burns_robot_rise_as_next_form(robot);
-			return y;
+			return;
 		case -2:
 		case 12:
-			return burns_robot_start_form(robot, y);
+			burns_robot_start_form(robot);
+			return;
 		case 14:
-			return burns_robot_hurt_flash(robot, y, steps);
+			burns_robot_hurt_flash(robot, steps);
+			return;
 		case 16:
-			return burns_robot_hurt_end(robot, y);
+			burns_robot_hurt_end(robot);
+			return;
 		case 18:
 			burns_robot_place(robot);
-			return y;
+			return;
 		case 20:
 			burns_robot_wait_for_story(robot);
-			return y;
+			return;
 		case 22:
 			burns_robot_appear(robot);
-			return y;
+			return;
 		case 24:
 			burns_robot_step_up(robot);
-			return y;
+			return;
 		case 26:
 			burns_robot_speak(robot);
-			return y;
+			return;
 		case 28:
-			return burns_robot_toss_part(robot, y);
+			burns_robot_toss_part(robot);
+			return;
 		case 30:
 			burns_robot_start_fight(robot);
-			return y;
+			return;
 		case 32:
 			burns_robot_ready(robot);
-			return y;
+			return;
 		case 34:
 		case 40:
 			burns_robot_stop_and_wind_up(robot);
-			return y;
+			return;
 		case 36:
 		case 56:
 			burns_robot_swing_hit(robot);
-			return y;
+			return;
 		case 38:
 		case 58:
-			return burns_robot_walk_on(robot, y);
+			burns_robot_walk_on(robot);
+			return;
 		case 42:
-			return burns_robot_fire_shot(robot, y);
+			burns_robot_fire_shot(robot);
+			return;
 		case 44:
 			burns_robot_volley_next(robot);
-			return y;
+			return;
 		case 46:
 			break;
 		case -72:
-			return burns_robot_final_defeat(robot, y);
+			burns_robot_final_defeat(robot);
+			return;
 		case -70:
-			return burns_robot_form_3_broken(robot, y);
+			burns_robot_form_3_broken(robot);
+			return;
 		case -68:
-			return burns_robot_form_2_broken(robot, y);
+			burns_robot_form_2_broken(robot);
+			return;
 		case -66:
-			return burns_robot_form_1_broken(robot, y);
+			burns_robot_form_1_broken(robot);
+			return;
 		case -64:
 			continue;
 		case -62:
-			return burns_robot_hurt(robot, y);
+			burns_robot_hurt(robot);
+			return;
 		case -60:
-			return burns_robot_entrance(robot, y);
+			burns_robot_entrance(robot);
+			return;
 		case -58:
-			return burns_robot_walk_form_0(robot, y);
+			burns_robot_walk_form_0(robot);
+			return;
 		case -56:
-			return burns_robot_walk_form_1(robot, y);
+			burns_robot_walk_form_1(robot);
+			return;
 		case -54:
 		case -52:
 		case -50:
-			return burns_robot_walk_late_forms(robot, y);
+			burns_robot_walk_late_forms(robot);
+			return;
 		case -48:
 		case -46:
 		case -44:
-			return burns_robot_swing(robot, y);
+			burns_robot_swing(robot);
+			return;
 		case -42:
-			return burns_robot_volley(robot, y);
+			burns_robot_volley(robot);
+			return;
 		case -40:
-			return burns_robot_lunge(robot, y);
+			burns_robot_lunge(robot);
+			return;
 		case -38:
-			return burns_robot_part_attack(robot);
+			burns_robot_part_attack(robot);
+			return;
 		case -36:
-			return burns_robot_lob_bombs(robot, y);
+			burns_robot_lob_bombs(robot);
+			return;
 		case -34:
-			return burns_robot_gloat(robot, y);
+			burns_robot_gloat(robot);
+			return;
 		case -32:
 			burns_robot_drop_maggie(robot);
-			return y;
+			return;
 		case -30:
-			return burns_robot_walk_to_maggie(robot, y);
+			burns_robot_walk_to_maggie(robot);
+			return;
 		case -28:
 			burns_robot_stop_at_maggie(robot);
-			return y;
+			return;
 		case -26:
-			return burns_robot_let_burns_out(robot, y);
+			burns_robot_let_burns_out(robot);
+			return;
 		case -24:
 			burns_robot_leave(robot);
-			return y;
+			return;
 		case -22:
 		case -18:
 			burns_robot_start_breaking(robot);
-			return y;
+			return;
 		case -20:
-			return burns_robot_shed_form_3(robot, y);
+			burns_robot_shed_form_3(robot);
+			return;
 		case -16:
-			return burns_robot_shed_form_2(robot, y);
+			burns_robot_shed_form_2(robot);
+			return;
 		case -10:
-			return burns_robot_shed_form_1(robot, y);
+			burns_robot_shed_form_1(robot);
+			return;
 		}
 		break;
 	}
-	return burns_robot_volley_end(robot, y);
+	burns_robot_volley_end(robot);
 }
 
 /* Shakes in its form's look for 64 frames. */
@@ -1370,11 +1497,11 @@ void burns_robot_broken_cry(uint16_t robot)
 }
 
 /* At its frame: stops, rises 32, throws off pieces 0 both ways, and takes its falling look. */
-uint16_t burns_robot_shed_form_0(uint16_t robot, uint16_t y)
+void burns_robot_shed_form_0(uint16_t robot)
 {
-	uint16_t d = 0, ignored16 = 0, look = 0, piece = 0, piece_number = 0, y_2 = 0;
+	uint16_t first_piece_word = 0, look = 0, piece = 0, piece_number = 0;
 	uint8_t animation_flags = 0, step = 0;
-	uint16_t x_speed = 0, z = 0, t1 = 0;
+	uint16_t x_speed = 0, z = 0, raised_z = 0;
 
 	animation_flags = OBJECT(robot)->animation_flags;
 	if ((animation_flags & 2u) == 0u)
@@ -1385,24 +1512,23 @@ uint16_t burns_robot_shed_form_0(uint16_t robot, uint16_t y)
 			x_speed = OBJECT(robot)->x_speed;
 			OBJECT(robot)->x_speed = 0u - x_speed;
 		}
-		return y;
+		return;
 	}
 	OBJECT(robot)->x_speed = 0;
 	z = OBJECT(robot)->z;
-	t1 = z + 0x20u;
-	d = t1;
-	OBJECT(robot)->z = ((uint32_t)(t1 >> 8) << 8) | (d & 0xFFu);
-	d &= 0xFFu;
-	burns_robot_throw_piece_4(robot, d, &ignored16, &piece);
+	raised_z = z + 0x20u;
+	first_piece_word = raised_z;
+	OBJECT(robot)->z = ((uint32_t)(raised_z >> 8) << 8) | (first_piece_word & 0xFFu);
+	first_piece_word &= 0xFFu;
+	piece = burns_robot_throw_piece_4(robot, first_piece_word);
 	OBJECT(piece)->x_speed = 0x100;
 	piece_number = 0x8000u;
-	burns_robot_throw_piece_4(robot, piece_number, &y_2, &piece);
+	piece = burns_robot_throw_piece_4(robot, piece_number);
 	OBJECT(piece)->x_speed = -0x100;
 	look = 0x1400u;
 	burns_robot_set_look(robot, look);
 	step = OBJECT(robot)->burns_robot.step;
 	OBJECT(robot)->burns_robot.step = step + 1u;
-	return y_2;
 }
 
 /* Falls to the floor, then lies 128 frames. */
@@ -1465,7 +1591,7 @@ void burns_robot_rise_as_next_form(uint16_t robot)
 }
 
 /* After 64 frames: its new form's health, its timers back to 0, walking at a target. */
-uint16_t burns_robot_start_form(uint16_t robot, uint16_t current_target)
+void burns_robot_start_form(uint16_t robot)
 {
 	uint32_t carry = 0;
 	uint8_t health = 0;
@@ -1475,7 +1601,7 @@ uint16_t burns_robot_start_form(uint16_t robot, uint16_t current_target)
 	wait_frames = OBJECT(robot)->burns_robot.wait_frames;
 	OBJECT(robot)->burns_robot.wait_frames = wait_frames - 1u;
 	if (wait_frames != 1u)
-		return current_target;
+		return;
 	form_base = OBJECT(robot)->burns_robot.form_base;
 	form_extra = OBJECT(robot)->burns_robot.form_extra;
 	health = burns_robot_healths[(int8_t)((uint8_t)(form_base + form_extra))];
@@ -1483,31 +1609,29 @@ uint16_t burns_robot_start_form(uint16_t robot, uint16_t current_target)
 	OBJECT(robot)->burns_robot.health_mark = health;
 	burns_robot_reset_timers(robot);
 	u = burns_robot_start_walking(robot);
-	burns_robot_choose_target(robot, u, &current_target, &carry);
-	return current_target;
+	carry = burns_robot_choose_target(robot, u);
 }
 
 /* Throws off piece A, up at 0500 (as burns_robot_throw_piece). */
-void burns_robot_throw_piece_4(uint16_t robot, uint16_t piece_number, uint16_t *p_y, uint16_t *p_piece)
+uint16_t burns_robot_throw_piece_4(uint16_t robot, uint16_t piece_number)
 {
 	uint32_t carry = 0;
 	uint8_t list = 0;
-	uint16_t part_code = 0, piece = 0, y = 0;
+	uint16_t part_code = 0, piece = 0;
 	uint8_t stack = 0;
 
 	stack = piece_number >> 8;
 	list = 1u;
 	vector_find_free_slot(list, &piece, &carry);
 	part_code = 1u | ((uint32_t)stack << 8);
-	y = burns_robot_place_part(robot, piece, part_code);
+	burns_robot_place_part(robot, piece, part_code);
 	OBJECT(piece)->flags = 0x88u;
 	OBJECT(piece)->z_speed = 0x500;
-	*p_y = y;
-	*p_piece = piece;
+	return piece;
 }
 
 /* Hurt by a blow: flashes and reels for 16 frames. */
-uint16_t burns_robot_hurt(uint16_t robot, uint16_t y)
+void burns_robot_hurt(uint16_t robot)
 {
 	uint16_t steps = 0;
 	uint8_t step = 0;
@@ -1519,149 +1643,176 @@ uint16_t burns_robot_hurt(uint16_t robot, uint16_t y)
 		switch ((int8_t)(uint8_t)((uint32_t)step << 1))
 		{
 		case 0:
-			return burns_robot_hurt_flash(robot, y, steps);
+			burns_robot_hurt_flash(robot, steps);
+			return;
 		case 2:
-			return burns_robot_hurt_end(robot, y);
+			burns_robot_hurt_end(robot);
+			return;
 		case 4:
 			burns_robot_place(robot);
-			return y;
+			return;
 		case 6:
 			burns_robot_wait_for_story(robot);
-			return y;
+			return;
 		case 8:
 			burns_robot_appear(robot);
-			return y;
+			return;
 		case 10:
 			burns_robot_step_up(robot);
-			return y;
+			return;
 		case 12:
 			burns_robot_speak(robot);
-			return y;
+			return;
 		case 14:
-			return burns_robot_toss_part(robot, y);
+			burns_robot_toss_part(robot);
+			return;
 		case 16:
 			burns_robot_start_fight(robot);
-			return y;
+			return;
 		case 18:
 			burns_robot_ready(robot);
-			return y;
+			return;
 		case 20:
 		case 26:
 			burns_robot_stop_and_wind_up(robot);
-			return y;
+			return;
 		case 22:
 		case 42:
 			burns_robot_swing_hit(robot);
-			return y;
+			return;
 		case 24:
 		case 44:
-			return burns_robot_walk_on(robot, y);
+			burns_robot_walk_on(robot);
+			return;
 		case 28:
-			return burns_robot_fire_shot(robot, y);
+			burns_robot_fire_shot(robot);
+			return;
 		case 30:
 			burns_robot_volley_next(robot);
-			return y;
+			return;
 		case 32:
 			break;
 		case -86:
-			return burns_robot_final_defeat(robot, y);
+			burns_robot_final_defeat(robot);
+			return;
 		case -84:
-			return burns_robot_form_3_broken(robot, y);
+			burns_robot_form_3_broken(robot);
+			return;
 		case -82:
-			return burns_robot_form_2_broken(robot, y);
+			burns_robot_form_2_broken(robot);
+			return;
 		case -80:
-			return burns_robot_form_1_broken(robot, y);
+			burns_robot_form_1_broken(robot);
+			return;
 		case -78:
-			return burns_robot_form_0_broken(robot, y);
+			burns_robot_form_0_broken(robot);
+			return;
 		case -76:
 			continue;
 		case -74:
-			return burns_robot_entrance(robot, y);
+			burns_robot_entrance(robot);
+			return;
 		case -72:
-			return burns_robot_walk_form_0(robot, y);
+			burns_robot_walk_form_0(robot);
+			return;
 		case -70:
-			return burns_robot_walk_form_1(robot, y);
+			burns_robot_walk_form_1(robot);
+			return;
 		case -68:
 		case -66:
 		case -64:
-			return burns_robot_walk_late_forms(robot, y);
+			burns_robot_walk_late_forms(robot);
+			return;
 		case -62:
 		case -60:
 		case -58:
-			return burns_robot_swing(robot, y);
+			burns_robot_swing(robot);
+			return;
 		case -56:
-			return burns_robot_volley(robot, y);
+			burns_robot_volley(robot);
+			return;
 		case -54:
-			return burns_robot_lunge(robot, y);
+			burns_robot_lunge(robot);
+			return;
 		case -52:
-			return burns_robot_part_attack(robot);
+			burns_robot_part_attack(robot);
+			return;
 		case -50:
-			return burns_robot_lob_bombs(robot, y);
+			burns_robot_lob_bombs(robot);
+			return;
 		case -48:
-			return burns_robot_gloat(robot, y);
+			burns_robot_gloat(robot);
+			return;
 		case -46:
 			burns_robot_drop_maggie(robot);
-			return y;
+			return;
 		case -44:
-			return burns_robot_walk_to_maggie(robot, y);
+			burns_robot_walk_to_maggie(robot);
+			return;
 		case -42:
 			burns_robot_stop_at_maggie(robot);
-			return y;
+			return;
 		case -40:
-			return burns_robot_let_burns_out(robot, y);
+			burns_robot_let_burns_out(robot);
+			return;
 		case -38:
 			burns_robot_leave(robot);
-			return y;
+			return;
 		case -36:
 		case -32:
 			burns_robot_start_breaking(robot);
-			return y;
+			return;
 		case -34:
-			return burns_robot_shed_form_3(robot, y);
+			burns_robot_shed_form_3(robot);
+			return;
 		case -30:
-			return burns_robot_shed_form_2(robot, y);
+			burns_robot_shed_form_2(robot);
+			return;
 		case -28:
 		case -14:
 			burns_robot_broken_shake(robot);
-			return y;
+			return;
 		case -26:
 		case -12:
 			burns_robot_broken_cry(robot);
-			return y;
+			return;
 		case -24:
-			return burns_robot_shed_form_1(robot, y);
+			burns_robot_shed_form_1(robot);
+			return;
 		case -22:
 		case -8:
 			burns_robot_fall_down(robot);
-			return y;
+			return;
 		case -20:
 		case -6:
 			burns_robot_lie_broken(robot);
-			return y;
+			return;
 		case -18:
 		case -4:
 			burns_robot_rise_as_next_form(robot);
-			return y;
+			return;
 		case -16:
 		case -2:
-			return burns_robot_start_form(robot, y);
+			burns_robot_start_form(robot);
+			return;
 		case -10:
-			return burns_robot_shed_form_0(robot, y);
+			burns_robot_shed_form_0(robot);
+			return;
 		}
 		break;
 	}
-	return burns_robot_volley_end(robot, y);
+	burns_robot_volley_end(robot);
 }
 
 /* Flashes its palette and takes its hurt look for 16 frames. */
-uint16_t burns_robot_hurt_flash(uint16_t robot, uint16_t y, uint16_t palette_job)
+void burns_robot_hurt_flash(uint16_t robot, uint16_t palette_job)
 {
 	uint16_t look = 0, request = 0;
 	uint8_t form_base = 0, form_extra = 0, step = 0;
 
 	palette_request_kind = 2u;
 	request = 0x3Fu;
-	vector_palette_request(request, &y, &palette_job);
+	vector_palette_request(palette_job, request);
 	form_base = OBJECT(robot)->burns_robot.form_base;
 	form_extra = OBJECT(robot)->burns_robot.form_extra;
 	look = 0x3Fu | ((uint32_t)(uint8_t)(0x17u + form_base + form_extra) << 8);
@@ -1669,11 +1820,10 @@ uint16_t burns_robot_hurt_flash(uint16_t robot, uint16_t y, uint16_t palette_job
 	OBJECT(robot)->burns_robot.wait_frames = 0x10u;
 	step = OBJECT(robot)->burns_robot.step;
 	OBJECT(robot)->burns_robot.step = step + 1u;
-	return y;
 }
 
 /* When the 16 frames are up, walks at a target again. */
-uint16_t burns_robot_hurt_end(uint16_t robot, uint16_t current_target)
+void burns_robot_hurt_end(uint16_t robot)
 {
 	uint32_t carry = 0;
 	uint16_t u = 0;
@@ -1682,14 +1832,13 @@ uint16_t burns_robot_hurt_end(uint16_t robot, uint16_t current_target)
 	wait_frames = OBJECT(robot)->burns_robot.wait_frames;
 	OBJECT(robot)->burns_robot.wait_frames = wait_frames - 1u;
 	if (wait_frames != 1u)
-		return current_target;
+		return;
 	u = burns_robot_start_walking(robot);
-	burns_robot_choose_target(robot, u, &current_target, &carry);
-	return current_target;
+	carry = burns_robot_choose_target(robot, u);
 }
 
 /* Its entrance, step by step until it can be fought. */
-uint16_t burns_robot_entrance(uint16_t robot, uint16_t y)
+void burns_robot_entrance(uint16_t robot)
 {
 	uint16_t steps = 0;
 	uint8_t step = 0;
@@ -1702,151 +1851,178 @@ uint16_t burns_robot_entrance(uint16_t robot, uint16_t y)
 		{
 		case 0:
 			burns_robot_place(robot);
-			return y;
+			return;
 		case 2:
 			burns_robot_wait_for_story(robot);
-			return y;
+			return;
 		case 4:
 			burns_robot_appear(robot);
-			return y;
+			return;
 		case 6:
 			burns_robot_step_up(robot);
-			return y;
+			return;
 		case 8:
 			burns_robot_speak(robot);
-			return y;
+			return;
 		case 10:
-			return burns_robot_toss_part(robot, y);
+			burns_robot_toss_part(robot);
+			return;
 		case 12:
 			burns_robot_start_fight(robot);
-			return y;
+			return;
 		case 14:
 			burns_robot_ready(robot);
-			return y;
+			return;
 		case 16:
 		case 22:
 			burns_robot_stop_and_wind_up(robot);
-			return y;
+			return;
 		case 18:
 		case 38:
 			burns_robot_swing_hit(robot);
-			return y;
+			return;
 		case 20:
 		case 40:
-			return burns_robot_walk_on(robot, y);
+			burns_robot_walk_on(robot);
+			return;
 		case 24:
-			return burns_robot_fire_shot(robot, y);
+			burns_robot_fire_shot(robot);
+			return;
 		case 26:
 			burns_robot_volley_next(robot);
-			return y;
+			return;
 		case 28:
 			break;
 		case -90:
-			return burns_robot_final_defeat(robot, y);
+			burns_robot_final_defeat(robot);
+			return;
 		case -88:
-			return burns_robot_form_3_broken(robot, y);
+			burns_robot_form_3_broken(robot);
+			return;
 		case -86:
-			return burns_robot_form_2_broken(robot, y);
+			burns_robot_form_2_broken(robot);
+			return;
 		case -84:
-			return burns_robot_form_1_broken(robot, y);
+			burns_robot_form_1_broken(robot);
+			return;
 		case -82:
-			return burns_robot_form_0_broken(robot, y);
+			burns_robot_form_0_broken(robot);
+			return;
 		case -80:
-			return burns_robot_hurt(robot, y);
+			burns_robot_hurt(robot);
+			return;
 		case -78:
 			continue;
 		case -76:
-			return burns_robot_walk_form_0(robot, y);
+			burns_robot_walk_form_0(robot);
+			return;
 		case -74:
-			return burns_robot_walk_form_1(robot, y);
+			burns_robot_walk_form_1(robot);
+			return;
 		case -72:
 		case -70:
 		case -68:
-			return burns_robot_walk_late_forms(robot, y);
+			burns_robot_walk_late_forms(robot);
+			return;
 		case -66:
 		case -64:
 		case -62:
-			return burns_robot_swing(robot, y);
+			burns_robot_swing(robot);
+			return;
 		case -60:
-			return burns_robot_volley(robot, y);
+			burns_robot_volley(robot);
+			return;
 		case -58:
-			return burns_robot_lunge(robot, y);
+			burns_robot_lunge(robot);
+			return;
 		case -56:
-			return burns_robot_part_attack(robot);
+			burns_robot_part_attack(robot);
+			return;
 		case -54:
-			return burns_robot_lob_bombs(robot, y);
+			burns_robot_lob_bombs(robot);
+			return;
 		case -52:
-			return burns_robot_gloat(robot, y);
+			burns_robot_gloat(robot);
+			return;
 		case -50:
 			burns_robot_drop_maggie(robot);
-			return y;
+			return;
 		case -48:
-			return burns_robot_walk_to_maggie(robot, y);
+			burns_robot_walk_to_maggie(robot);
+			return;
 		case -46:
 			burns_robot_stop_at_maggie(robot);
-			return y;
+			return;
 		case -44:
-			return burns_robot_let_burns_out(robot, y);
+			burns_robot_let_burns_out(robot);
+			return;
 		case -42:
 			burns_robot_leave(robot);
-			return y;
+			return;
 		case -40:
 		case -36:
 			burns_robot_start_breaking(robot);
-			return y;
+			return;
 		case -38:
-			return burns_robot_shed_form_3(robot, y);
+			burns_robot_shed_form_3(robot);
+			return;
 		case -34:
-			return burns_robot_shed_form_2(robot, y);
+			burns_robot_shed_form_2(robot);
+			return;
 		case -32:
 		case -18:
 			burns_robot_broken_shake(robot);
-			return y;
+			return;
 		case -30:
 		case -16:
 			burns_robot_broken_cry(robot);
-			return y;
+			return;
 		case -28:
-			return burns_robot_shed_form_1(robot, y);
+			burns_robot_shed_form_1(robot);
+			return;
 		case -26:
 		case -12:
 			burns_robot_fall_down(robot);
-			return y;
+			return;
 		case -24:
 		case -10:
 			burns_robot_lie_broken(robot);
-			return y;
+			return;
 		case -22:
 		case -8:
 			burns_robot_rise_as_next_form(robot);
-			return y;
+			return;
 		case -20:
 		case -6:
-			return burns_robot_start_form(robot, y);
+			burns_robot_start_form(robot);
+			return;
 		case -14:
-			return burns_robot_shed_form_0(robot, y);
+			burns_robot_shed_form_0(robot);
+			return;
 		case -4:
-			return burns_robot_hurt_flash(robot, y, steps);
+			burns_robot_hurt_flash(robot, steps);
+			return;
 		case -2:
-			return burns_robot_hurt_end(robot, y);
+			burns_robot_hurt_end(robot);
+			return;
 		}
 		break;
 	}
-	return burns_robot_volley_end(robot, y);
+	burns_robot_volley_end(robot);
 }
 
 /* Puts the robot at the stage's x 420 with health A0, and keeps it in 1854. */
 void burns_robot_place(uint16_t robot)
 {
 	uint8_t step = 0;
-	uint16_t t1 = 0, t2 = 0;
+	uint16_t robot_x = 0, robot_y = 0;
 
 	io_write16(0x1854u, robot);
 	OBJECT(robot)->shadow_player = 1u;
-	t1 = 0x420u - camera_x;
-	OBJECT(robot)->x = t1;
-	t2 = 0xE8u + camera_y;
-	OBJECT(robot)->y = t2;
+	robot_x = 0x420u - camera_x;
+	OBJECT(robot)->x = robot_x;
+	robot_y = 0xE8u + camera_y;
+	OBJECT(robot)->y = robot_y;
 	OBJECT(robot)->vitality = 0xA0u;
 	OBJECT(robot)->burns_robot.health_mark = 0xA0u;
 	step = OBJECT(robot)->burns_robot.step;
@@ -1869,7 +2045,7 @@ void burns_robot_wait_for_story(uint16_t robot)
 /* After 32 frames shows itself (look 32), harmless. */
 void burns_robot_appear(uint16_t robot)
 {
-	uint16_t d = 0;
+	uint16_t look_word = 0;
 	uint8_t wait_frames = 0, step = 0;
 
 	wait_frames = OBJECT(robot)->burns_robot.wait_frames;
@@ -1877,10 +2053,10 @@ void burns_robot_appear(uint16_t robot)
 	if (wait_frames != 1u)
 		return;
 	OBJECT(robot)->flags = 0x80u;
-	d = 0x3200u;
-	d = burns_robot_set_look(robot, d);
-	d &= 0xFFu;
-	burns_robot_set_box(robot, d);
+	look_word = 0x3200u;
+	look_word = burns_robot_set_look(robot, look_word);
+	look_word &= 0xFFu;
+	burns_robot_set_box(robot, look_word);
 	step = OBJECT(robot)->burns_robot.step;
 	OBJECT(robot)->burns_robot.step = step + 1u;
 }
@@ -1889,14 +2065,14 @@ void burns_robot_appear(uint16_t robot)
 void burns_robot_step_up(uint16_t robot)
 {
 	uint8_t animation_flags = 0, step = 0;
-	uint16_t t1 = 0, t2 = 0;
+	uint16_t robot_y = 0, raised_y = 0;
 
 	animation_flags = OBJECT(robot)->animation_flags;
 	if ((animation_flags & 1u) == 0u)
 	{
-		t1 = OBJECT(robot)->y;
-		t2 = t1 - 0x10u;
-		OBJECT(robot)->y = t2;
+		robot_y = OBJECT(robot)->y;
+		raised_y = robot_y - 0x10u;
+		OBJECT(robot)->y = raised_y;
 		OBJECT(robot)->burns_robot.wait_frames = 0x40u;
 		step = OBJECT(robot)->burns_robot.step;
 		OBJECT(robot)->burns_robot.step = step + 1u;
@@ -1936,7 +2112,7 @@ void burns_robot_speak(uint16_t robot)
 }
 
 /* At its frame tosses away a part (object_1d_parts 8, 5280 type E4) at full size, with sound 0301. */
-uint16_t burns_robot_toss_part(uint16_t robot, uint16_t y)
+void burns_robot_toss_part(uint16_t robot)
 {
 	uint32_t carry = 0;
 	uint8_t list = 0;
@@ -1945,13 +2121,13 @@ uint16_t burns_robot_toss_part(uint16_t robot, uint16_t y)
 
 	animation_flags = OBJECT(robot)->animation_flags;
 	if ((animation_flags & 2u) == 0u)
-		return y;
+		return;
 	list = 1u;
 	vector_find_free_slot(list, &part, &carry);
 	if (carry)
 	{
 		part_code = 0x801u;
-		y = burns_robot_place_part(robot, part, part_code);
+		burns_robot_place_part(robot, part, part_code);
 		OBJECT(part)->flags = 0x80u;
 		OBJECT(part)->zoom_x = 0x40u;
 		OBJECT(part)->zoom_y = 0x40u;
@@ -1961,15 +2137,14 @@ uint16_t burns_robot_toss_part(uint16_t robot, uint16_t y)
 	}
 	step = OBJECT(robot)->burns_robot.step;
 	OBJECT(robot)->burns_robot.step = step + 1u;
-	return y;
 }
 
 /* After 64 frames: sound 14, the scene's next music, its fighting look, and the step moves on. */
 void burns_robot_start_fight(uint16_t robot)
 {
 	uint32_t carry = 0;
-	uint8_t a = 0;
-	uint16_t command = 0, d = 0;
+	uint8_t look_kind = 0;
+	uint16_t command = 0, look_word = 0;
 	uint8_t wait_frames = 0, step = 0;
 	uint32_t step_subphase_halfword = 0;
 
@@ -1980,13 +2155,13 @@ void burns_robot_start_fight(uint16_t robot)
 	command = 0x1400u;
 	carry = vector_queue_sound(command);
 	boss_arrived = 1u;
-	d = 0x3400u;
-	d = burns_robot_set_look(robot, d);
-	a = (uint8_t)(d >> 8);
+	look_word = 0x3400u;
+	look_word = burns_robot_set_look(robot, look_word);
+	look_kind = (uint8_t)(look_word >> 8);
 	step = OBJECT(robot)->burns_robot.step;
 	OBJECT(robot)->burns_robot.step = step + 1u;
 	step_phase++;
-	step_subphase_halfword = ((uint32_t)a << 8) | (d & 0xFFu);
+	step_subphase_halfword = ((uint32_t)look_kind << 8) | (look_word & 0xFFu);
 	step_subphase = (uint8_t)(step_subphase_halfword >> 8u);
 	step_countdown = (uint8_t)step_subphase_halfword;
 }
@@ -2006,18 +2181,18 @@ void burns_robot_ready(uint16_t robot)
 }
 
 /* Form 0 walking straight at its target with heavy steps (sound 5A), attacking when it can. */
-uint16_t burns_robot_walk_form_0(uint16_t robot, uint16_t y)
+void burns_robot_walk_form_0(uint16_t robot)
 {
 	uint32_t carry = 0;
 	uint16_t command = 0, look = 0, u = 0;
 	uint8_t animation = 0, form_base = 0, aim = 0, animation_flags = 0;
 
-	burns_robot_decide_form_0(robot, &y, &u, &carry);
+	burns_robot_decide_form_0(robot, &u, &carry);
 	if (carry)
-		return y;
-	burns_robot_choose_target(robot, u, &y, &carry);
+		return;
+	carry = burns_robot_choose_target(robot, u);
 	if (carry)
-		return y;
+		return;
 	animation = OBJECT(robot)->animation;
 	if (animation != 4u)
 	{
@@ -2028,31 +2203,30 @@ uint16_t burns_robot_walk_form_0(uint16_t robot, uint16_t y)
 	burns_robot_aim_at_target(robot);
 	aim = OBJECT(robot)->burns_robot.aim;
 	OBJECT(robot)->burns_robot.walk_direction = aim;
-	y = burns_robot_walk(robot);
+	burns_robot_walk(robot);
 	animation_flags = OBJECT(robot)->animation_flags;
 	if ((animation_flags & 2u) != 0u)
 	{
 		command = 0x5A00u;
 		carry = vector_queue_sound(command);
 	}
-	return y;
 }
 
 /* Form 1 walking at its target, turning a step at a time, sound 13 every 64 frames, attacking when it
    can. */
-uint16_t burns_robot_walk_form_1(uint16_t robot, uint16_t y)
+void burns_robot_walk_form_1(uint16_t robot)
 {
 	uint32_t negative = 0, carry = 0;
 	uint8_t turn = 0, walk_direction = 0;
 	uint16_t command = 0, look = 0, u = 0;
 	uint8_t animation = 0, form_base = 0, aim = 0, walk_direction_2 = 0, walk_direction_3 = 0;
 
-	burns_robot_decide_form_1(robot, &y, &u, &carry);
+	burns_robot_decide_form_1(robot, &u, &carry);
 	if (carry)
-		return y;
-	burns_robot_choose_target(robot, u, &y, &carry);
+		return;
+	carry = burns_robot_choose_target(robot, u);
 	if (carry)
-		return y;
+		return;
 	if ((frame_count & 0x3Fu) == 0u)
 	{
 		command = 0x1300u;
@@ -2073,30 +2247,29 @@ uint16_t burns_robot_walk_form_1(uint16_t robot, uint16_t y)
 	negative = (uint8_t)(walk_direction - walk_direction_2) >> 7;
 	if (walk_direction == walk_direction_2)
 	{
-		y = burns_robot_walk(robot);
-		return y;
+		burns_robot_walk(robot);
+		return;
 	}
 	if (negative)
 		turn = 0u - turn;
 	walk_direction_3 = OBJECT(robot)->burns_robot.walk_direction;
 	OBJECT(robot)->burns_robot.walk_direction = turn + walk_direction_3;
-	y = burns_robot_walk(robot);
-	return y;
+	burns_robot_walk(robot);
 }
 
 /* Forms 2-4 walking at their target, turning 3 steps at a time, attacking when they can. */
-uint16_t burns_robot_walk_late_forms(uint16_t robot, uint16_t y)
+void burns_robot_walk_late_forms(uint16_t robot)
 {
 	uint32_t carry = 0;
 	uint16_t look = 0, u = 0;
 	uint8_t animation = 0, form_base = 0, form_extra = 0;
 
-	burns_robot_decide_late_forms(robot, &y, &u, &carry);
+	burns_robot_decide_late_forms(robot, &u, &carry);
 	if (carry)
-		return y;
-	burns_robot_choose_target(robot, u, &y, &carry);
+		return;
+	carry = burns_robot_choose_target(robot, u);
 	if (carry)
-		return y;
+		return;
 	animation = OBJECT(robot)->animation;
 	if (animation != 1u)
 	{
@@ -2106,15 +2279,14 @@ uint16_t burns_robot_walk_late_forms(uint16_t robot, uint16_t y)
 		burns_robot_set_look(robot, look);
 	}
 	burns_robot_aim_at_target(robot);
-	return burns_robot_steer(robot);
+	burns_robot_steer(robot);
 }
 
 /* Turns its walking direction up to 3 steps toward its aim and walks that way. */
-uint16_t burns_robot_steer(uint16_t robot)
+void burns_robot_steer(uint16_t robot)
 {
 	uint32_t negative = 0;
 	uint8_t turn = 0, walk_direction = 0;
-	uint16_t y = 0;
 	uint8_t aim = 0, walk_direction_2 = 0, walk_direction_3 = 0;
 
 	turn = 3u;
@@ -2124,19 +2296,18 @@ uint16_t burns_robot_steer(uint16_t robot)
 	negative = (uint8_t)(walk_direction - walk_direction_2) >> 7;
 	if (walk_direction == walk_direction_2)
 	{
-		y = burns_robot_walk(robot);
-		return y;
+		burns_robot_walk(robot);
+		return;
 	}
 	if (negative)
 		turn = 0u - turn;
 	walk_direction_3 = OBJECT(robot)->burns_robot.walk_direction;
 	OBJECT(robot)->burns_robot.walk_direction = turn + walk_direction_3;
-	y = burns_robot_walk(robot);
-	return y;
+	burns_robot_walk(robot);
 }
 
 /* A swing (forms 0 and 1, and form 2's other attack): stops, winds up, hits at its frames, walks on. */
-uint16_t burns_robot_swing(uint16_t robot, uint16_t y)
+void burns_robot_swing(uint16_t robot)
 {
 	uint16_t steps = 0;
 	uint8_t step = 0;
@@ -2150,136 +2321,163 @@ uint16_t burns_robot_swing(uint16_t robot, uint16_t y)
 		case 0:
 		case 6:
 			burns_robot_stop_and_wind_up(robot);
-			return y;
+			return;
 		case 2:
 		case 22:
 			burns_robot_swing_hit(robot);
-			return y;
+			return;
 		case 4:
 		case 24:
-			return burns_robot_walk_on(robot, y);
+			burns_robot_walk_on(robot);
+			return;
 		case 8:
-			return burns_robot_fire_shot(robot, y);
+			burns_robot_fire_shot(robot);
+			return;
 		case 10:
 			burns_robot_volley_next(robot);
-			return y;
+			return;
 		case 12:
 			break;
 		case -106:
-			return burns_robot_final_defeat(robot, y);
+			burns_robot_final_defeat(robot);
+			return;
 		case -104:
-			return burns_robot_form_3_broken(robot, y);
+			burns_robot_form_3_broken(robot);
+			return;
 		case -102:
-			return burns_robot_form_2_broken(robot, y);
+			burns_robot_form_2_broken(robot);
+			return;
 		case -100:
-			return burns_robot_form_1_broken(robot, y);
+			burns_robot_form_1_broken(robot);
+			return;
 		case -98:
-			return burns_robot_form_0_broken(robot, y);
+			burns_robot_form_0_broken(robot);
+			return;
 		case -96:
-			return burns_robot_hurt(robot, y);
+			burns_robot_hurt(robot);
+			return;
 		case -94:
-			return burns_robot_entrance(robot, y);
+			burns_robot_entrance(robot);
+			return;
 		case -92:
-			return burns_robot_walk_form_0(robot, y);
+			burns_robot_walk_form_0(robot);
+			return;
 		case -90:
-			return burns_robot_walk_form_1(robot, y);
+			burns_robot_walk_form_1(robot);
+			return;
 		case -88:
 		case -86:
 		case -84:
-			return burns_robot_walk_late_forms(robot, y);
+			burns_robot_walk_late_forms(robot);
+			return;
 		case -82:
 		case -80:
 		case -78:
 			continue;
 		case -76:
-			return burns_robot_volley(robot, y);
+			burns_robot_volley(robot);
+			return;
 		case -74:
-			return burns_robot_lunge(robot, y);
+			burns_robot_lunge(robot);
+			return;
 		case -72:
-			return burns_robot_part_attack(robot);
+			burns_robot_part_attack(robot);
+			return;
 		case -70:
-			return burns_robot_lob_bombs(robot, y);
+			burns_robot_lob_bombs(robot);
+			return;
 		case -68:
-			return burns_robot_gloat(robot, y);
+			burns_robot_gloat(robot);
+			return;
 		case -66:
 			burns_robot_drop_maggie(robot);
-			return y;
+			return;
 		case -64:
-			return burns_robot_walk_to_maggie(robot, y);
+			burns_robot_walk_to_maggie(robot);
+			return;
 		case -62:
 			burns_robot_stop_at_maggie(robot);
-			return y;
+			return;
 		case -60:
-			return burns_robot_let_burns_out(robot, y);
+			burns_robot_let_burns_out(robot);
+			return;
 		case -58:
 			burns_robot_leave(robot);
-			return y;
+			return;
 		case -56:
 		case -52:
 			burns_robot_start_breaking(robot);
-			return y;
+			return;
 		case -54:
-			return burns_robot_shed_form_3(robot, y);
+			burns_robot_shed_form_3(robot);
+			return;
 		case -50:
-			return burns_robot_shed_form_2(robot, y);
+			burns_robot_shed_form_2(robot);
+			return;
 		case -48:
 		case -34:
 			burns_robot_broken_shake(robot);
-			return y;
+			return;
 		case -46:
 		case -32:
 			burns_robot_broken_cry(robot);
-			return y;
+			return;
 		case -44:
-			return burns_robot_shed_form_1(robot, y);
+			burns_robot_shed_form_1(robot);
+			return;
 		case -42:
 		case -28:
 			burns_robot_fall_down(robot);
-			return y;
+			return;
 		case -40:
 		case -26:
 			burns_robot_lie_broken(robot);
-			return y;
+			return;
 		case -38:
 		case -24:
 			burns_robot_rise_as_next_form(robot);
-			return y;
+			return;
 		case -36:
 		case -22:
-			return burns_robot_start_form(robot, y);
+			burns_robot_start_form(robot);
+			return;
 		case -30:
-			return burns_robot_shed_form_0(robot, y);
+			burns_robot_shed_form_0(robot);
+			return;
 		case -20:
-			return burns_robot_hurt_flash(robot, y, steps);
+			burns_robot_hurt_flash(robot, steps);
+			return;
 		case -18:
-			return burns_robot_hurt_end(robot, y);
+			burns_robot_hurt_end(robot);
+			return;
 		case -16:
 			burns_robot_place(robot);
-			return y;
+			return;
 		case -14:
 			burns_robot_wait_for_story(robot);
-			return y;
+			return;
 		case -12:
 			burns_robot_appear(robot);
-			return y;
+			return;
 		case -10:
 			burns_robot_step_up(robot);
-			return y;
+			return;
 		case -8:
 			burns_robot_speak(robot);
-			return y;
+			return;
 		case -6:
-			return burns_robot_toss_part(robot, y);
+			burns_robot_toss_part(robot);
+			return;
 		case -4:
 			burns_robot_start_fight(robot);
-			return y;
+			return;
 		case -2:
 			burns_robot_ready(robot);
-			return y;
+			return;
 		}
 		break;
 	}
-	return burns_robot_volley_end(robot, y);
+	burns_robot_volley_end(robot);
 }
 
 /* Stops and winds up. */
@@ -2345,18 +2543,17 @@ void burns_robot_swing_hit(uint16_t robot)
 }
 
 /* Walks at a target again. */
-uint16_t burns_robot_walk_on(uint16_t robot, uint16_t current_target)
+void burns_robot_walk_on(uint16_t robot)
 {
 	uint32_t carry = 0;
 	uint16_t u = 0;
 
 	u = burns_robot_start_walking(robot);
-	burns_robot_choose_target(robot, u, &current_target, &carry);
-	return current_target;
+	carry = burns_robot_choose_target(robot, u);
 }
 
 /* A volley of shots (form 1's second attack): winds up, fires shot after shot, walks on. */
-uint16_t burns_robot_volley(uint16_t robot, uint16_t y)
+void burns_robot_volley(uint16_t robot)
 {
 	uint16_t steps = 0;
 	uint8_t step = 0;
@@ -2370,157 +2567,184 @@ uint16_t burns_robot_volley(uint16_t robot, uint16_t y)
 		case -6:
 		case 0:
 			burns_robot_stop_and_wind_up(robot);
-			return y;
+			return;
 		case 2:
-			return burns_robot_fire_shot(robot, y);
+			burns_robot_fire_shot(robot);
+			return;
 		case 4:
 			burns_robot_volley_next(robot);
-			return y;
+			return;
 		case 6:
 			break;
 		case -4:
 		case 16:
 			burns_robot_swing_hit(robot);
-			return y;
+			return;
 		case -2:
 		case 18:
-			return burns_robot_walk_on(robot, y);
+			burns_robot_walk_on(robot);
+			return;
 		case -112:
-			return burns_robot_final_defeat(robot, y);
+			burns_robot_final_defeat(robot);
+			return;
 		case -110:
-			return burns_robot_form_3_broken(robot, y);
+			burns_robot_form_3_broken(robot);
+			return;
 		case -108:
-			return burns_robot_form_2_broken(robot, y);
+			burns_robot_form_2_broken(robot);
+			return;
 		case -106:
-			return burns_robot_form_1_broken(robot, y);
+			burns_robot_form_1_broken(robot);
+			return;
 		case -104:
-			return burns_robot_form_0_broken(robot, y);
+			burns_robot_form_0_broken(robot);
+			return;
 		case -102:
-			return burns_robot_hurt(robot, y);
+			burns_robot_hurt(robot);
+			return;
 		case -100:
-			return burns_robot_entrance(robot, y);
+			burns_robot_entrance(robot);
+			return;
 		case -98:
-			return burns_robot_walk_form_0(robot, y);
+			burns_robot_walk_form_0(robot);
+			return;
 		case -96:
-			return burns_robot_walk_form_1(robot, y);
+			burns_robot_walk_form_1(robot);
+			return;
 		case -94:
 		case -92:
 		case -90:
-			return burns_robot_walk_late_forms(robot, y);
+			burns_robot_walk_late_forms(robot);
+			return;
 		case -88:
 		case -86:
 		case -84:
-			return burns_robot_swing(robot, y);
+			burns_robot_swing(robot);
+			return;
 		case -82:
 			continue;
 		case -80:
-			return burns_robot_lunge(robot, y);
+			burns_robot_lunge(robot);
+			return;
 		case -78:
-			return burns_robot_part_attack(robot);
+			burns_robot_part_attack(robot);
+			return;
 		case -76:
-			return burns_robot_lob_bombs(robot, y);
+			burns_robot_lob_bombs(robot);
+			return;
 		case -74:
-			return burns_robot_gloat(robot, y);
+			burns_robot_gloat(robot);
+			return;
 		case -72:
 			burns_robot_drop_maggie(robot);
-			return y;
+			return;
 		case -70:
-			return burns_robot_walk_to_maggie(robot, y);
+			burns_robot_walk_to_maggie(robot);
+			return;
 		case -68:
 			burns_robot_stop_at_maggie(robot);
-			return y;
+			return;
 		case -66:
-			return burns_robot_let_burns_out(robot, y);
+			burns_robot_let_burns_out(robot);
+			return;
 		case -64:
 			burns_robot_leave(robot);
-			return y;
+			return;
 		case -62:
 		case -58:
 			burns_robot_start_breaking(robot);
-			return y;
+			return;
 		case -60:
-			return burns_robot_shed_form_3(robot, y);
+			burns_robot_shed_form_3(robot);
+			return;
 		case -56:
-			return burns_robot_shed_form_2(robot, y);
+			burns_robot_shed_form_2(robot);
+			return;
 		case -54:
 		case -40:
 			burns_robot_broken_shake(robot);
-			return y;
+			return;
 		case -52:
 		case -38:
 			burns_robot_broken_cry(robot);
-			return y;
+			return;
 		case -50:
-			return burns_robot_shed_form_1(robot, y);
+			burns_robot_shed_form_1(robot);
+			return;
 		case -48:
 		case -34:
 			burns_robot_fall_down(robot);
-			return y;
+			return;
 		case -46:
 		case -32:
 			burns_robot_lie_broken(robot);
-			return y;
+			return;
 		case -44:
 		case -30:
 			burns_robot_rise_as_next_form(robot);
-			return y;
+			return;
 		case -42:
 		case -28:
-			return burns_robot_start_form(robot, y);
+			burns_robot_start_form(robot);
+			return;
 		case -36:
-			return burns_robot_shed_form_0(robot, y);
+			burns_robot_shed_form_0(robot);
+			return;
 		case -26:
-			return burns_robot_hurt_flash(robot, y, steps);
+			burns_robot_hurt_flash(robot, steps);
+			return;
 		case -24:
-			return burns_robot_hurt_end(robot, y);
+			burns_robot_hurt_end(robot);
+			return;
 		case -22:
 			burns_robot_place(robot);
-			return y;
+			return;
 		case -20:
 			burns_robot_wait_for_story(robot);
-			return y;
+			return;
 		case -18:
 			burns_robot_appear(robot);
-			return y;
+			return;
 		case -16:
 			burns_robot_step_up(robot);
-			return y;
+			return;
 		case -14:
 			burns_robot_speak(robot);
-			return y;
+			return;
 		case -12:
-			return burns_robot_toss_part(robot, y);
+			burns_robot_toss_part(robot);
+			return;
 		case -10:
 			burns_robot_start_fight(robot);
-			return y;
+			return;
 		case -8:
 			burns_robot_ready(robot);
-			return y;
+			return;
 		}
 		break;
 	}
-	return burns_robot_volley_end(robot, y);
+	burns_robot_volley_end(robot);
 }
 
 /* At its frame fires a shot (4D40 type 25) at x speed 0500 the way it faces, sound 1D. */
-uint16_t burns_robot_fire_shot(uint16_t robot, uint16_t y)
+void burns_robot_fire_shot(uint16_t robot)
 {
 	uint32_t carry = 0;
 	uint8_t facing = 0, list = 0, turned_part = 0;
 	uint16_t box_number = 0, command = 0, object = 0, part_code = 0, self = 0, shot = 0;
 	uint16_t stack = 0;
 	uint8_t animation_flags = 0, attributes = 0, action = 0;
-	uint16_t t1 = 0;
+	uint16_t shot_x_speed = 0;
 
 	animation_flags = OBJECT(robot)->animation_flags;
 	if ((animation_flags & 2u) == 0u)
-		return y;
+		return;
 	list = 2u;
 	vector_find_free_slot(list, &shot, &carry);
 	if (carry == 0u)
 	{
 		burns_robot_start_walking(robot);
-		return y;
+		return;
 	}
 	OBJECT(shot)->flags = 0x88u;
 	OBJECT(shot)->action_step = 0x10u;
@@ -2535,11 +2759,11 @@ uint16_t burns_robot_fire_shot(uint16_t robot, uint16_t y)
 		shot_speed = 0u - shot_speed;
 	}
 	part_code = 2u | ((turned_part | 5u) << 8);
-	y = burns_robot_place_part(robot, shot, part_code);
+	burns_robot_place_part(robot, shot, part_code);
 	command = 0x1D00u;
 	carry = vector_queue_sound(command);
-	t1 = shot_speed;
-	OBJECT(shot)->x_speed = t1;
+	shot_x_speed = shot_speed;
+	OBJECT(shot)->x_speed = shot_x_speed;
 	stack = robot;
 	self = shot;
 	box_number = 0xF00u;
@@ -2547,7 +2771,6 @@ uint16_t burns_robot_fire_shot(uint16_t robot, uint16_t y)
 	object = stack;
 	action = OBJECT(object)->action;
 	OBJECT(object)->action = action + 1u;
-	return y;
 }
 
 /* When the animation ends: another shot until burns_robot_volleys_by_players are fired, then the
@@ -2577,7 +2800,7 @@ void burns_robot_volley_next(uint16_t robot)
 }
 
 /* When the animation ends, walks at a target again. */
-uint16_t burns_robot_volley_end(uint16_t robot, uint16_t current_target)
+void burns_robot_volley_end(uint16_t robot)
 {
 	uint32_t carry = 0;
 	uint16_t u = 0;
@@ -2585,14 +2808,13 @@ uint16_t burns_robot_volley_end(uint16_t robot, uint16_t current_target)
 
 	animation_flags = OBJECT(robot)->animation_flags;
 	if ((animation_flags & 1u) == 0u)
-		return current_target;
+		return;
 	u = burns_robot_start_walking(robot);
-	burns_robot_choose_target(robot, u, &current_target, &carry);
-	return current_target;
+	carry = burns_robot_choose_target(robot, u);
 }
 
 /* A lunge (form 2's first attack): slows, winds up, hits, walks on. */
-uint16_t burns_robot_lunge(uint16_t robot, uint16_t y)
+void burns_robot_lunge(uint16_t robot)
 {
 	uint8_t step = 0;
 
@@ -2601,39 +2823,43 @@ uint16_t burns_robot_lunge(uint16_t robot, uint16_t y)
 	{
 	case 0:
 		burns_robot_slow_down_step(robot);
-		return y;
+		return;
 	case 2:
 		burns_robot_wind_up(robot);
-		return y;
+		return;
 	case -16:
 	case 4:
 		burns_robot_swing_hit(robot);
-		return y;
+		return;
 	case -14:
 	case 6:
-		return burns_robot_walk_on(robot, y);
+		burns_robot_walk_on(robot);
+		return;
 	case 8:
 		burns_robot_part_attack_start(robot);
-		return y;
+		return;
 	case 10:
 		burns_robot_part_attack_raise(robot);
-		return y;
+		return;
 	case 12:
-		return burns_robot_part_attack_hold(robot, y);
+		burns_robot_part_attack_hold(robot);
+		return;
 	case 14:
-		return burns_robot_part_attack_carry(robot, y);
+		burns_robot_part_attack_carry(robot);
+		return;
 	case 16:
 		burns_robot_lob_aim(robot);
-		return y;
+		return;
 	case 18:
-		return burns_robot_lob_throw(robot, y);
+		burns_robot_lob_throw(robot);
+		return;
 	case 20:
 		burns_robot_lob_recover(robot);
-		return y;
+		return;
 	case 22:
-		return burns_robot_lob_end(robot, y);
+		burns_robot_lob_end(robot);
+		return;
 	}
-	unreachable();
 }
 
 /* Slows to a quarter of its speed, then the next step. */
@@ -2648,7 +2874,7 @@ void burns_robot_slow_down_step(uint16_t robot)
 
 /* Its held part (forms 2 and 3): raises it, holds it out in front for 64 frames while it walks, then
    walks on. */
-uint16_t burns_robot_part_attack(uint16_t robot)
+void burns_robot_part_attack(uint16_t robot)
 {
 	uint8_t step = 0;
 
@@ -2662,22 +2888,22 @@ uint16_t burns_robot_part_attack(uint16_t robot)
 		burns_robot_part_attack_raise(robot);
 		break;
 	case 4:
-		burns_robot_part_attack_hold(robot, 0u);
+		burns_robot_part_attack_hold(robot);
 		break;
 	case 6:
-		burns_robot_part_attack_carry(robot, 0u);
+		burns_robot_part_attack_carry(robot);
 		break;
 	case 8:
 		burns_robot_lob_aim(robot);
 		break;
 	case 10:
-		burns_robot_lob_throw(robot, 0u);
+		burns_robot_lob_throw(robot);
 		break;
 	case 12:
 		burns_robot_lob_recover(robot);
 		break;
 	case 14:
-		burns_robot_lob_end(robot, 0u);
+		burns_robot_lob_end(robot);
 		break;
 	case -24:
 	case -4:
@@ -2685,7 +2911,7 @@ uint16_t burns_robot_part_attack(uint16_t robot)
 		break;
 	case -22:
 	case -2:
-		burns_robot_walk_on(robot, 0u);
+		burns_robot_walk_on(robot);
 		break;
 	case -8:
 		burns_robot_slow_down_step(robot);
@@ -2695,7 +2921,7 @@ uint16_t burns_robot_part_attack(uint16_t robot)
 		break;
 	}
 	burns_robot_aim_at_target(robot);
-	return burns_robot_steer(robot);
+	burns_robot_steer(robot);
 }
 
 /* Takes its look for the held part's attack by form. */
@@ -2733,60 +2959,59 @@ void burns_robot_part_attack_raise(uint16_t robot)
 }
 
 /* At its frame holds out its part (4F80 type EA) in front of it, harmful, for 64 frames. */
-uint16_t burns_robot_part_attack_hold(uint16_t robot, uint16_t y)
+void burns_robot_part_attack_hold(uint16_t robot)
 {
 	uint32_t carry = 0;
 	uint8_t list = 0, turned_part = 0;
-	uint16_t box_number = 0, held_part = 0, object = 0, part_code = 0, self = 0;
+	uint16_t box_number = 0, held_object = 0, part_code = 0, robot_back = 0, self = 0;
 	uint16_t stack = 0;
-	uint8_t animation_flags = 0, action = 0, attributes = 0;
+	uint8_t animation_flags = 0, step = 0, attributes = 0;
 
 	animation_flags = OBJECT(robot)->animation_flags;
 	if ((animation_flags & 2u) == 0u)
-		return y;
+		return;
 	OBJECT(robot)->flags &= ~4u;
 	list = 0u;
-	vector_find_free_slot(list, &held_part, &carry);
+	vector_find_free_slot(list, &held_object, &carry);
 	if (carry == 0u)
 	{
-		mem_write8(held_part, 0xC0u);
-		mem_write16(held_part + 0x29u, robot);
-		OBJECT(robot)->burns_robot.held_part = held_part;
+		OBJECT(held_object)->flags = 0xC0u;
+		OBJECT(held_object)->burns_held_part.robot = robot;
+		OBJECT(robot)->burns_robot.held_part = held_object;
 		stack = robot;
-		self = held_part;
+		self = held_object;
 		box_number = 0x1000u;
 		burns_robot_set_box(self, box_number);
-		object = stack;
-		OBJECT(object)->action_step = 0x40u;
-		OBJECT(object)->unk_43 = 1u;
-		action = OBJECT(object)->action;
-		OBJECT(object)->action = action + 1u;
-		return y;
+		robot_back = stack;
+		OBJECT(robot_back)->burns_robot.wait_frames = 0x40u;
+		OBJECT(robot_back)->burns_robot.holding_part = 1u;
+		step = OBJECT(robot_back)->burns_robot.step;
+		OBJECT(robot_back)->burns_robot.step = step + 1u;
+		return;
 	}
 	turned_part = 0xEu;
 	attributes = OBJECT(robot)->attributes;
 	if ((attributes & 0x40u) != 0u)
 		turned_part -= 0x80u;
 	part_code = (uint32_t)turned_part << 8;
-	y = burns_robot_place_part(robot, held_part, part_code);
-	mem_write8(held_part, 0xC0u);
-	mem_write16(held_part + 0x29u, robot);
-	OBJECT(robot)->burns_robot.held_part = held_part;
+	burns_robot_place_part(robot, held_object, part_code);
+	OBJECT(held_object)->flags = 0xC0u;
+	OBJECT(held_object)->burns_held_part.robot = robot;
+	OBJECT(robot)->burns_robot.held_part = held_object;
 	stack = robot;
-	self = held_part;
+	self = held_object;
 	box_number = 0x1000u;
 	burns_robot_set_box(self, box_number);
-	object = stack;
-	OBJECT(object)->action_step = 0x40u;
-	OBJECT(object)->unk_43 = 1u;
-	action = OBJECT(object)->action;
-	OBJECT(object)->action = action + 1u;
-	return y;
+	robot_back = stack;
+	OBJECT(robot_back)->burns_robot.wait_frames = 0x40u;
+	OBJECT(robot_back)->burns_robot.holding_part = 1u;
+	step = OBJECT(robot_back)->burns_robot.step;
+	OBJECT(robot_back)->burns_robot.step = step + 1u;
 }
 
 /* Carries the held part along with its speeds; when the 64 frames are up lets go of it and walks at a
    target. */
-uint16_t burns_robot_part_attack_carry(uint16_t robot, uint16_t current_target)
+void burns_robot_part_attack_carry(uint16_t robot)
 {
 	uint32_t carry = 0;
 	uint16_t part = 0, u = 0;
@@ -2802,15 +3027,14 @@ uint16_t burns_robot_part_attack_carry(uint16_t robot, uint16_t current_target)
 	wait_frames = OBJECT(robot)->burns_robot.wait_frames;
 	OBJECT(robot)->burns_robot.wait_frames = wait_frames - 1u;
 	if (wait_frames != 1u)
-		return current_target;
+		return;
 	OBJECT(robot)->burns_robot.holding_part = 0u;
 	u = burns_robot_start_walking(robot);
-	burns_robot_choose_target(robot, u, &current_target, &carry);
-	return current_target;
+	carry = burns_robot_choose_target(robot, u);
 }
 
 /* Lobs bombs (the tables' shots: 4D40 type 26): aims, throws, recovers; form 4 throws three. */
-uint16_t burns_robot_lob_bombs(uint16_t robot, uint16_t y)
+void burns_robot_lob_bombs(uint16_t robot)
 {
 	uint8_t step = 0;
 
@@ -2819,39 +3043,43 @@ uint16_t burns_robot_lob_bombs(uint16_t robot, uint16_t y)
 	{
 	case 0:
 		burns_robot_lob_aim(robot);
-		return y;
+		return;
 	case 2:
-		return burns_robot_lob_throw(robot, y);
+		burns_robot_lob_throw(robot);
+		return;
 	case 4:
 		burns_robot_lob_recover(robot);
-		return y;
+		return;
 	case 6:
-		return burns_robot_lob_end(robot, y);
+		burns_robot_lob_end(robot);
+		return;
 	case -32:
 	case -12:
 		burns_robot_swing_hit(robot);
-		return y;
+		return;
 	case -30:
 	case -10:
-		return burns_robot_walk_on(robot, y);
+		burns_robot_walk_on(robot);
+		return;
 	case -16:
 		burns_robot_slow_down_step(robot);
-		return y;
+		return;
 	case -14:
 		burns_robot_wind_up(robot);
-		return y;
+		return;
 	case -8:
 		burns_robot_part_attack_start(robot);
-		return y;
+		return;
 	case -6:
 		burns_robot_part_attack_raise(robot);
-		return y;
+		return;
 	case -4:
-		return burns_robot_part_attack_hold(robot, y);
+		burns_robot_part_attack_hold(robot);
+		return;
 	case -2:
-		return burns_robot_part_attack_carry(robot, y);
+		burns_robot_part_attack_carry(robot);
+		return;
 	}
-	unreachable();
 }
 
 /* Takes its throwing look by form, slowing (forms 2-4) or stopping. */
@@ -2877,24 +3105,24 @@ void burns_robot_lob_aim(uint16_t robot)
 
 /* At its frame throws a bomb (4D40 type 26) at x speed 0200 the way it faces, its y speed by the count
    of bombs thrown. */
-uint16_t burns_robot_lob_throw(uint16_t robot, uint16_t y)
+void burns_robot_lob_throw(uint16_t robot)
 {
 	uint32_t carry = 0;
 	uint8_t facing = 0, list = 0, turned_part = 0;
 	uint16_t bomb = 0, part_code = 0;
 	uint8_t animation_flags = 0, step = 0, attributes = 0, form_base = 0, form_extra = 0, bombs_lobbed = 0;
-	uint16_t t1 = 0, t2 = 0;
+	uint16_t lob_x_speed = 0, lob_y_speed = 0;
 
 	animation_flags = OBJECT(robot)->animation_flags;
 	if ((animation_flags & 2u) == 0u)
-		return y;
+		return;
 	list = 2u;
 	vector_find_free_slot(list, &bomb, &carry);
 	if (carry == 0u)
 	{
 		step = OBJECT(robot)->burns_robot.step;
 		OBJECT(robot)->burns_robot.step = step + 1u;
-		return y;
+		return;
 	}
 	OBJECT(bomb)->flags = 0xC8u;
 	lob_speed = 0x200;
@@ -2911,15 +3139,14 @@ uint16_t burns_robot_lob_throw(uint16_t robot, uint16_t y)
 	form_extra = OBJECT(robot)->burns_robot.form_extra;
 	part_code = 2u | ((uint32_t)(uint8_t)(turned_part + form_base + form_extra) << 8);
 	burns_robot_place_part(robot, bomb, part_code);
-	t1 = lob_speed;
-	OBJECT(bomb)->x_speed = t1;
-	y = burns_robot_shot_y_speeds_ADDRESS;
+	lob_x_speed = lob_speed;
+	OBJECT(bomb)->x_speed = lob_x_speed;
+	leftover_y = burns_robot_shot_y_speeds_ADDRESS;
 	bombs_lobbed = OBJECT(robot)->burns_robot.bombs_lobbed;
-	t2 = burns_robot_shot_y_speeds[(int8_t)((uint8_t)((uint32_t)bombs_lobbed << 1)) / 2];
-	OBJECT(bomb)->y_speed = t2;
+	lob_y_speed = burns_robot_shot_y_speeds[(int8_t)((uint8_t)((uint32_t)bombs_lobbed << 1)) / 2];
+	OBJECT(bomb)->y_speed = lob_y_speed;
 	step = OBJECT(robot)->burns_robot.step;
 	OBJECT(robot)->burns_robot.step = step + 1u;
-	return y;
 }
 
 /* When its animation ends, its look after the throw. */
@@ -2940,7 +3167,7 @@ void burns_robot_lob_recover(uint16_t robot)
 }
 
 /* When its animation ends, form 4 throws again up to three bombs; then walks at a target. */
-uint16_t burns_robot_lob_end(uint16_t robot, uint16_t current_target)
+void burns_robot_lob_end(uint16_t robot)
 {
 	uint32_t carry = 0;
 	uint16_t u = 0;
@@ -2948,7 +3175,7 @@ uint16_t burns_robot_lob_end(uint16_t robot, uint16_t current_target)
 
 	animation_flags = OBJECT(robot)->animation_flags;
 	if ((animation_flags & 1u) == 0u)
-		return current_target;
+		return;
 	form_base = OBJECT(robot)->burns_robot.form_base;
 	form_extra = OBJECT(robot)->burns_robot.form_extra;
 	if ((uint8_t)(form_base + form_extra) == 4u)
@@ -2959,16 +3186,15 @@ uint16_t burns_robot_lob_end(uint16_t robot, uint16_t current_target)
 		if ((int8_t)bombs_lobbed_2 < 3)
 		{
 			OBJECT(robot)->burns_robot.step = 0u;
-			return current_target;
+			return;
 		}
 	}
 	u = burns_robot_start_walking(robot);
-	burns_robot_choose_target(robot, u, &current_target, &carry);
-	return current_target;
+	carry = burns_robot_choose_target(robot, u);
 }
 
 /* Gloating with no target (a player down or none to go for): waits for a player, then walks on. */
-uint16_t burns_robot_gloat(uint16_t robot, uint16_t y)
+void burns_robot_gloat(uint16_t robot)
 {
 	uint8_t step = 0;
 
@@ -2977,11 +3203,11 @@ uint16_t burns_robot_gloat(uint16_t robot, uint16_t y)
 	{
 	case 0:
 		burns_robot_gloat_until_player(robot);
-		return y;
+		return;
 	case 2:
-		return burns_robot_gloat_end(robot, y);
+		burns_robot_gloat_end(robot);
+		return;
 	}
-	unreachable();
 }
 
 /* Stands (but in forms 2-4) until there is a player to go for, then can be hit again and waits 32
@@ -3006,7 +3232,7 @@ void burns_robot_gloat_until_player(uint16_t robot)
 }
 
 /* After 32 frames walks at a target. */
-uint16_t burns_robot_gloat_end(uint16_t robot, uint16_t current_target)
+void burns_robot_gloat_end(uint16_t robot)
 {
 	uint32_t carry = 0;
 	uint16_t u = 0;
@@ -3015,10 +3241,9 @@ uint16_t burns_robot_gloat_end(uint16_t robot, uint16_t current_target)
 	wait_frames = OBJECT(robot)->burns_robot.wait_frames;
 	OBJECT(robot)->burns_robot.wait_frames = wait_frames - 1u;
 	if (wait_frames != 1u)
-		return current_target;
+		return;
 	u = burns_robot_start_walking(robot);
-	burns_robot_choose_target(robot, u, &current_target, &carry);
-	return current_target;
+	carry = burns_robot_choose_target(robot, u);
 }
 
 /* When a player's blow hits it, lets go of its held part and takes the blow. */
@@ -3041,9 +3266,8 @@ void burns_robot_check_hit(uint16_t robot)
 
 /* Form 0: facing its target, lobs bombs when they are due and it is in the middle, else attacks a target
    in reach (its second attack by chance); carry when it does. */
-void burns_robot_decide_form_0(uint16_t robot, uint16_t *p_y, uint16_t *p_target, uint32_t *p_carry)
+void burns_robot_decide_form_0(uint16_t robot, uint16_t *p_target, uint32_t *p_carry)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint32_t carry = *p_carry;
 	uint16_t target = 0;
 
@@ -3052,7 +3276,7 @@ void burns_robot_decide_form_0(uint16_t robot, uint16_t *p_y, uint16_t *p_target
 		carry = 0u;
 	else
 	{
-		burns_robot_lob_due(robot, &y, &carry);
+		carry = burns_robot_lob_due(robot);
 		if (carry == 0u)
 		{
 			reach_x = 0x58;
@@ -3096,16 +3320,14 @@ void burns_robot_decide_form_0(uint16_t robot, uint16_t *p_y, uint16_t *p_target
 			}
 		}
 	}
-	*p_y = y;
 	*p_target = target;
 	*p_carry = carry;
 }
 
 /* Form 1: as form 0, and fires a volley at a target in line across but further back once 128 frames have
    passed since the last. */
-void burns_robot_decide_form_1(uint16_t robot, uint16_t *p_y, uint16_t *p_target, uint32_t *p_carry)
+void burns_robot_decide_form_1(uint16_t robot, uint16_t *p_target, uint32_t *p_carry)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint32_t carry = *p_carry;
 	uint16_t look = 0, target = 0;
 	uint16_t target_player = 0, volley_frames = 0;
@@ -3117,14 +3339,13 @@ void burns_robot_decide_form_1(uint16_t robot, uint16_t *p_y, uint16_t *p_target
 	{
 		target_player = OBJECT(robot)->burns_robot.target_player;
 		target = target_player;
-		burns_robot_lob_due(robot, &y, &carry);
+		carry = burns_robot_lob_due(robot);
 		if (carry)
 		{
 			carry = burns_robot_in_middle(robot);
 			if (carry)
 			{
 				carry = burns_robot_start_lob(robot);
-				*p_y = y;
 				*p_target = target;
 				*p_carry = carry;
 				return;
@@ -3174,34 +3395,31 @@ void burns_robot_decide_form_1(uint16_t robot, uint16_t *p_y, uint16_t *p_target
 				chosen_attack = 0u;
 				*p_target = target;
 				burns_robot_start_attack(robot, p_target, &carry);
-				*p_y = y;
 				*p_carry = carry;
 				return;
 			}
 			carry = 0u;
 		}
 	}
-	*p_y = y;
 	*p_target = target;
 	*p_carry = carry;
 }
 
 /* Forms 2-4: as form 0, and holds out its part when burns_robot_held_part_times have passed (not form
    4). */
-void burns_robot_decide_late_forms(uint16_t robot, uint16_t *p_y, uint16_t *p_target, uint32_t *p_carry)
+void burns_robot_decide_late_forms(uint16_t robot, uint16_t *p_target, uint32_t *p_carry)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint32_t carry = *p_carry;
 	uint16_t target = 0;
 	uint8_t form_extra = 0, form_extra_2 = 0;
-	uint16_t t1 = 0, part_frames = 0;
+	uint16_t held_part_time = 0, part_frames = 0;
 
 	burns_robot_facing_target(robot, &target, &carry);
 	if (carry == 0u)
 		carry = 0u;
 	else
 	{
-		burns_robot_lob_due(robot, &y, &carry);
+		carry = burns_robot_lob_due(robot);
 		if (carry == 0u)
 		{
 			reach_x = 0x58;
@@ -3214,11 +3432,11 @@ void burns_robot_decide_late_forms(uint16_t robot, uint16_t *p_y, uint16_t *p_ta
 					carry = 0u;
 				else
 				{
-					y = burns_robot_held_part_times_ADDRESS;
+					leftover_y = burns_robot_held_part_times_ADDRESS;
 					form_extra_2 = OBJECT(robot)->burns_robot.form_extra;
-					t1 = burns_robot_held_part_times[(((((uint32_t)form_extra_2 << 1) << 1) + rank) & 0x1Eu) / 2u];
+					held_part_time = burns_robot_held_part_times[(((((uint32_t)form_extra_2 << 1) << 1) + rank) & 0x1Eu) / 2u];
 					part_frames = OBJECT(robot)->burns_robot.part_frames;
-					if ((int16_t)t1 <= (int16_t)part_frames)
+					if ((int16_t)held_part_time <= (int16_t)part_frames)
 					{
 						OBJECT(robot)->burns_robot.part_frames = 0u;
 						if (player_count >= 3u)
@@ -3255,11 +3473,11 @@ void burns_robot_decide_late_forms(uint16_t robot, uint16_t *p_y, uint16_t *p_ta
 						carry = 0u;
 					else
 					{
-						y = burns_robot_held_part_times_ADDRESS;
+						leftover_y = burns_robot_held_part_times_ADDRESS;
 						form_extra_2 = OBJECT(robot)->burns_robot.form_extra;
-						t1 = burns_robot_held_part_times[(((((uint32_t)form_extra_2 << 1) << 1) + rank) & 0x1Eu) / 2u];
+						held_part_time = burns_robot_held_part_times[(((((uint32_t)form_extra_2 << 1) << 1) + rank) & 0x1Eu) / 2u];
 						part_frames = OBJECT(robot)->burns_robot.part_frames;
-						if ((int16_t)t1 <= (int16_t)part_frames)
+						if ((int16_t)held_part_time <= (int16_t)part_frames)
 						{
 							OBJECT(robot)->burns_robot.part_frames = 0u;
 							if (player_count >= 3u)
@@ -3281,7 +3499,6 @@ void burns_robot_decide_late_forms(uint16_t robot, uint16_t *p_y, uint16_t *p_ta
 			}
 		}
 	}
-	*p_y = y;
 	*p_target = target;
 	*p_carry = carry;
 }
@@ -3292,13 +3509,13 @@ void burns_robot_facing_target(uint16_t robot, uint16_t *p_target, uint32_t *p_c
 	uint32_t carry = *p_carry;
 	uint16_t target = 0;
 	uint8_t attributes = 0, attributes_2 = 0;
-	uint16_t target_player = 0, t1 = 0, t2 = 0;
+	uint16_t target_player = 0, robot_x = 0, target_x = 0;
 
 	target_player = OBJECT(robot)->burns_robot.target_player;
 	target = target_player;
-	t1 = OBJECT(robot)->x;
-	t2 = OBJECT(target)->x;
-	if ((int16_t)t1 < (int16_t)t2)
+	robot_x = OBJECT(robot)->x;
+	target_x = OBJECT(target)->x;
+	if ((int16_t)robot_x < (int16_t)target_x)
 	{
 		attributes = OBJECT(robot)->attributes;
 		if ((attributes & 0x40u) != 0u)
@@ -3319,7 +3536,7 @@ void burns_robot_facing_target(uint16_t robot, uint16_t *p_target, uint32_t *p_c
 }
 
 /* Walks in its walking direction at its form's speed for the rank, facing it. */
-uint16_t burns_robot_walk(uint16_t robot)
+void burns_robot_walk(uint16_t robot)
 {
 	uint16_t heading = 0, speeds = 0;
 	uint8_t walk_direction = 0, form_base = 0, form_extra = 0;
@@ -3331,61 +3548,44 @@ uint16_t burns_robot_walk(uint16_t robot)
 	heading = ((uint32_t)walk_direction << 8) | WALK_SPEED(speeds + (rank >> 1));
 	vector_set_speed_by_direction(robot, heading);
 	burns_robot_face_target(robot);
-	return speeds;
+	leftover_y = speeds;
 }
 
 /* Keeps its target for 64 frames, taking the player 07D2AB finds when the target is gone or down; with
    none it gloats (carry). */
-void burns_robot_choose_target(uint16_t robot, uint16_t target_player, uint16_t *p_current_target, uint32_t *p_carry)
+uint32_t burns_robot_choose_target(uint16_t robot, uint16_t target_player)
 {
-	uint16_t current_target = (uint16_t)*p_current_target;
-	uint32_t carry = *p_carry;
-	uint16_t ignored16 = 0;
-	uint8_t t1 = 0, target_frames = 0, target_frames_2 = 0;
+	uint32_t carry = 0;
+	uint16_t current_target = 0, ignored16 = 0;
+	uint8_t target_state = 0, target_frames = 0, target_frames_2 = 0;
 	uint16_t target_player_2 = 0;
 
 	find_nearest_player(robot, &target_player, &ignored16, &carry);
 	if (carry == 0u)
-		carry = burns_robot_start_gloating(robot);
-	else
+		return burns_robot_start_gloating(robot);
+	target_player_2 = OBJECT(robot)->burns_robot.target_player;
+	current_target = target_player_2;
+	if (OBJECT(current_target)->flags != 0u)
 	{
-		target_player_2 = OBJECT(robot)->burns_robot.target_player;
-		current_target = target_player_2;
-		if (mem_read8(current_target) == 0u)
+		target_state = OBJECT(current_target)->state;
+		if ((int8_t)target_state >= 0)
 		{
-			OBJECT(robot)->burns_robot.target_frames = 0x40u;
-			OBJECT(robot)->burns_robot.target_player = target_player;
-			carry = 0u;
-		}
-		else
-		{
-			t1 = mem_read8(current_target + 2u);
-			if ((int8_t)t1 < 0)
+			target_frames = OBJECT(robot)->burns_robot.target_frames;
+			if (target_frames != 0u)
 			{
-				OBJECT(robot)->burns_robot.target_frames = 0x40u;
-				OBJECT(robot)->burns_robot.target_player = target_player;
+				target_frames_2 = OBJECT(robot)->burns_robot.target_frames;
+				OBJECT(robot)->burns_robot.target_frames = target_frames_2 - 1u;
 				carry = 0u;
-			}
-			else
-			{
-				target_frames = OBJECT(robot)->burns_robot.target_frames;
-				if (target_frames == 0u)
-				{
-					OBJECT(robot)->burns_robot.target_frames = 0x40u;
-					OBJECT(robot)->burns_robot.target_player = target_player;
-					carry = 0u;
-				}
-				else
-				{
-					target_frames_2 = OBJECT(robot)->burns_robot.target_frames;
-					OBJECT(robot)->burns_robot.target_frames = target_frames_2 - 1u;
-					carry = 0u;
-				}
+				leftover_y = current_target;
+				return carry;
 			}
 		}
 	}
-	*p_current_target = current_target;
-	*p_carry = carry;
+	OBJECT(robot)->burns_robot.target_frames = 0x40u;
+	OBJECT(robot)->burns_robot.target_player = target_player;
+	carry = 0u;
+	leftover_y = current_target;
+	return carry;
 }
 
 /* Aims at the place beside its target on its own side (the other side when that is a wall), and notes
@@ -3394,31 +3594,31 @@ void burns_robot_aim_at_target(uint16_t robot)
 {
 	uint32_t negative = 0;
 	uint8_t a = 0, cell = 0, direction = 0, side = 0, target_dy = 0;
-	uint16_t d = 0, direction_to_target = 0, object = 0, target = 0;
+	uint16_t direction_to_target = 0, object = 0, side_probe = 0, target = 0;
 	uint8_t stack_3 = 0;
 	uint16_t stack = 0;
-	uint16_t target_player = 0, t1 = 0, t2 = 0;
+	uint16_t target_player = 0, robot_x = 0, target_x = 0;
 
 	target_player = OBJECT(robot)->burns_robot.target_player;
 	target = target_player;
-	t1 = OBJECT(robot)->x;
-	t2 = OBJECT(target)->x;
-	if ((int16_t)t2 < (int16_t)t1)
+	robot_x = OBJECT(robot)->x;
+	target_x = OBJECT(target)->x;
+	if ((int16_t)target_x < (int16_t)robot_x)
 		side = 0x40u;
 	else
 		side = 0xC0u;
 	stack = robot;
 	stack_3 = side;
 	object = target;
-	d = (uint32_t)(uint16_t)(((uint32_t)a << 8) | side) << 8;
-	vector_floor_at_offset(object, &d, &negative);
-	cell = (uint8_t)(d >> 8);
+	side_probe = (uint32_t)(uint16_t)(((uint32_t)a << 8) | side) << 8;
+	vector_floor_at_offset(object, &side_probe, &negative);
+	cell = (uint8_t)(side_probe >> 8);
 	if ((int8_t)cell < 0)
 		stack_3 = 0u - stack_3;
 	object = stack;
-	d = stack_3;
-	d = vector_direction_to_offset(object, target, d);
-	direction = (uint8_t)(d >> 8);
+	side_probe = stack_3;
+	side_probe = vector_direction_to_offset(object, target, side_probe);
+	direction = (uint8_t)(side_probe >> 8);
 	OBJECT(object)->target_dx = (OBJECT(object)->target_dx & 0xFF00u) | (direction & 0xFFu);
 	direction_to_target = vector_direction_to(object, target);
 	target_dy = (uint8_t)(direction_to_target >> 8);
@@ -3445,12 +3645,12 @@ void burns_robot_face_target(uint16_t robot)
 uint16_t burns_robot_set_look(uint16_t robot, uint16_t look)
 {
 	uint8_t look_animation = 0, look_kind = 0;
-	uint16_t t1 = 0;
+	uint16_t look_entry = 0;
 	uint32_t kind_halfword = 0;
 
-	t1 = burns_robot_animations[(int8_t)((uint8_t)((uint32_t)(look >> 8) << 1)) / 2];
-	look_kind = (uint8_t)(t1 >> 8);
-	look_animation = t1 | 0x80u;
+	look_entry = burns_robot_animations[(int8_t)((uint8_t)((uint32_t)(look >> 8) << 1)) / 2];
+	look_kind = (uint8_t)(look_entry >> 8);
+	look_animation = look_entry | 0x80u;
 	kind_halfword = ((uint32_t)look_kind << 8) | look_animation;
 	OBJECT(robot)->kind = (uint8_t)(kind_halfword >> 8u);
 	OBJECT(robot)->animation = (uint8_t)kind_halfword;
@@ -3461,28 +3661,28 @@ uint16_t burns_robot_set_look(uint16_t robot, uint16_t look)
 /* Takes box A of burns_robot_hit_boxes: its hit, sizes and offsets. */
 uint16_t burns_robot_set_box(uint16_t self, uint16_t box_number)
 {
-	uint16_t field_1c = 0, u = 0;
-	uint16_t t1 = 0, t2 = 0, t3 = 0, t4 = 0;
+	uint16_t box_end = 0, field_1c = 0;
+	uint16_t box_record = 0, box_sizes = 0, box_heights = 0, box_offsets = 0;
 	uint32_t box_width_halfword = 0, box_height_halfword = 0, box_dy_halfword = 0;
 
-	t1 = TABLE16(burns_robot_hit_boxes, (int8_t)((uint16_t)((uint32_t)(uint8_t)((uint32_t)(box_number >> 8) << 1) << 8) >> 8));
-	field_1c = HIT_BOX(t1)->field_1c;
+	box_record = TABLE16(burns_robot_hit_boxes, (int8_t)((uint16_t)((uint32_t)(uint8_t)((uint32_t)(box_number >> 8) << 1) << 8) >> 8));
+	field_1c = HIT_BOX(box_record)->field_1c;
 	OBJECT(self)->damage = (uint8_t)(field_1c >> 8u);
 	OBJECT(self)->attack = (uint8_t)field_1c;
-	t2 = t1 + 2u;
-	box_width_halfword = HIT_BOX(t2 - 0x2u)->field_1f;
+	box_sizes = box_record + 2u;
+	box_width_halfword = HIT_BOX(box_sizes - 0x2u)->field_1f;
 	OBJECT(self)->box_width = (uint8_t)(box_width_halfword >> 8u);
 	OBJECT(self)->box_depth = (uint8_t)box_width_halfword;
-	t3 = t2 + 2u;
-	box_height_halfword = HIT_BOX(t3 - 0x4u)->field_21;
+	box_heights = box_sizes + 2u;
+	box_height_halfword = HIT_BOX(box_heights - 0x4u)->field_21;
 	OBJECT(self)->box_height = (uint8_t)(box_height_halfword >> 8u);
 	OBJECT(self)->box_dx = (uint8_t)box_height_halfword;
-	t4 = t3 + 2u;
-	u = t4 + 2u;
-	box_dy_halfword = HIT_BOX(t4 - 0x6u)->field_23;
+	box_offsets = box_heights + 2u;
+	box_end = box_offsets + 2u;
+	box_dy_halfword = HIT_BOX(box_offsets - 0x6u)->field_23;
 	OBJECT(self)->box_dy = (uint8_t)(box_dy_halfword >> 8u);
 	OBJECT(self)->box_dz = (uint8_t)box_dy_halfword;
-	return u;
+	return box_end;
 }
 
 /* Carry when its target is within F8 across and up to FA further down the screen. */
@@ -3508,13 +3708,13 @@ uint32_t burns_robot_target_in_depth(uint16_t robot, uint16_t target)
 {
 	uint32_t carry = 0;
 	uint16_t depth = 0;
-	uint16_t t1 = 0, t2 = 0, t3 = 0;
+	uint16_t target_y = 0, robot_y = 0, difference_y = 0;
 
-	t1 = OBJECT(target)->y;
-	t2 = OBJECT(robot)->y;
-	t3 = t1 - t2;
-	depth = t3;
-	if ((int16_t)t3 < 0 || reach_y < (int16_t)depth)
+	target_y = OBJECT(target)->y;
+	robot_y = OBJECT(robot)->y;
+	difference_y = target_y - robot_y;
+	depth = difference_y;
+	if ((int16_t)difference_y < 0 || reach_y < (int16_t)depth)
 	{
 		carry = 0u;
 		return carry;
@@ -3528,11 +3728,11 @@ uint32_t burns_robot_target_across(uint16_t robot, uint16_t target)
 {
 	uint32_t carry = 0;
 	uint16_t across = 0;
-	uint16_t t1 = 0, t2 = 0;
+	uint16_t robot_x = 0, target_x = 0;
 
-	t1 = OBJECT(robot)->x;
-	t2 = OBJECT(target)->x;
-	across = t1 - t2;
+	robot_x = OBJECT(robot)->x;
+	target_x = OBJECT(target)->x;
+	across = robot_x - target_x;
 	if (reach_x < (int16_t)(across >> 15 ? 0u - across : across))
 	{
 		carry = 0u;
@@ -3545,18 +3745,18 @@ uint32_t burns_robot_target_across(uint16_t robot, uint16_t target)
 /* Back to walking: can be hit and hurt, its body's box, its form's walking handler. */
 uint16_t burns_robot_start_walking(uint16_t robot)
 {
-	uint16_t box_number = 0, u = 0;
+	uint16_t box_end = 0, box_number = 0;
 	uint8_t form_base = 0, form_base_2 = 0;
 
 	OBJECT(robot)->flags = (OBJECT(robot)->flags | 0x40u) & ~4u;
 	form_base = OBJECT(robot)->burns_robot.form_base;
 	box_number = (uint32_t)form_base << 8;
-	u = burns_robot_set_box(robot, box_number);
+	box_end = burns_robot_set_box(robot, box_number);
 	form_base_2 = OBJECT(robot)->burns_robot.form_base;
 	OBJECT(robot)->state = 1u + form_base_2;
 	OBJECT(robot)->burns_robot.step = 0u;
 	OBJECT(robot)->burns_robot.wait_frames = 0u;
-	return u;
+	return box_end;
 }
 
 /* Mr. Burns gloats (voice 3F38): handler 0D with its gloating look; it can not be hit meanwhile. */
@@ -3703,32 +3903,32 @@ void burns_robot_stop(uint16_t self)
 void burns_robot_slow_down(uint16_t robot)
 {
 	uint32_t carry = 0;
-	uint8_t a = 0, b = 0;
+	uint8_t speed_high = 0, speed_low = 0;
 	uint16_t x_speed = 0, y_speed = 0;
 
 	x_speed = OBJECT(robot)->x_speed;
-	a = (uint8_t)(x_speed >> 8);
-	carry = a & 1u;
-	a = (int8_t)a >> 1;
-	b = ((uint8_t)x_speed >> 1) | (carry << 7);
-	carry = a & 1u;
-	OBJECT(robot)->x_speed = ((uint32_t)(uint8_t)((int8_t)a >> 1) << 8) | (uint8_t)((b >> 1) | (carry << 7));
+	speed_high = (uint8_t)(x_speed >> 8);
+	carry = speed_high & 1u;
+	speed_high = (int8_t)speed_high >> 1;
+	speed_low = ((uint8_t)x_speed >> 1) | (carry << 7);
+	carry = speed_high & 1u;
+	OBJECT(robot)->x_speed = ((uint32_t)(uint8_t)((int8_t)speed_high >> 1) << 8) | (uint8_t)((speed_low >> 1) | (carry << 7));
 	y_speed = OBJECT(robot)->y_speed;
-	a = (uint8_t)(y_speed >> 8);
-	carry = a & 1u;
-	a = (int8_t)a >> 1;
-	b = ((uint8_t)y_speed >> 1) | (carry << 7);
-	carry = a & 1u;
-	OBJECT(robot)->y_speed = ((uint32_t)(uint8_t)((int8_t)a >> 1) << 8) | (uint8_t)((b >> 1) | (carry << 7));
+	speed_high = (uint8_t)(y_speed >> 8);
+	carry = speed_high & 1u;
+	speed_high = (int8_t)speed_high >> 1;
+	speed_low = ((uint8_t)y_speed >> 1) | (carry << 7);
+	carry = speed_high & 1u;
+	OBJECT(robot)->y_speed = ((uint32_t)(uint8_t)((int8_t)speed_high >> 1) << 8) | (uint8_t)((speed_low >> 1) | (carry << 7));
 }
 
 /* Sets up the new object U as part A of object_1d_parts at the robot's place (turned round when A has
    bit 7): its offsets, type, kind and animation. */
-uint16_t burns_robot_place_part(uint16_t self, uint16_t part, uint16_t part_code)
+void burns_robot_place_part(uint16_t self, uint16_t part, uint16_t part_code)
 {
-	uint8_t a = 0, b = 0, part_number = 0;
+	uint8_t part_number = 0, shift_x_high = 0, shift_x_low = 0;
 	uint16_t part_2 = 0;
-	uint16_t t1 = 0, t2 = 0, dy = 0, t3 = 0, t4 = 0, t5 = 0, dz = 0, z = 0, t6 = 0, t7 = 0, kind = 0, t8 = 0, t9 = 0, t10 = 0, t11 = 0;
+	uint16_t part_record = 0, record_dy = 0, dy = 0, self_y = 0, part_y = 0, record_dz = 0, dz = 0, z = 0, part_z = 0, record_type = 0, kind = 0, shift_x = 0, turned_shift_x = 0, self_x = 0, part_x = 0;
 
 	part_number = (uint8_t)(part_code >> 8);
 	part_dx &= 0xFFu;
@@ -3738,50 +3938,50 @@ uint16_t burns_robot_place_part(uint16_t self, uint16_t part, uint16_t part_code
 		OBJECT(part)->attributes = 0x40u;
 		part_number &= 0x7Fu;
 	}
-	t1 = object_1d_parts_ADDRESS + (int8_t)((((uint32_t)part_number << 1) << 1) << 1);
-	part_dx_low = PART(t1)->dx;
-	t2 = t1 + 1u;
-	dy = PART(t2 - 0x1u)->dy;
-	t3 = OBJECT(self)->y;
-	t4 = dy + t3;
-	OBJECT(part)->y = t4;
-	t5 = t2 + 1u;
-	dz = PART(t5 - 0x2u)->dz;
+	part_record = object_1d_parts_ADDRESS + (int8_t)((((uint32_t)part_number << 1) << 1) << 1);
+	part_dx_low = PART(part_record)->dx;
+	record_dy = part_record + 1u;
+	dy = PART(record_dy - 0x1u)->dy;
+	self_y = OBJECT(self)->y;
+	part_y = dy + self_y;
+	OBJECT(part)->y = part_y;
+	record_dz = record_dy + 1u;
+	dz = PART(record_dz - 0x2u)->dz;
 	z = OBJECT(self)->z;
-	t6 = dz + z;
-	OBJECT(part)->z = t6;
-	t7 = t5 + 1u;
-	part_2 = t7 + 1u;
-	OBJECT(part)->type = PART(t7 - 0x3u)->type;
+	part_z = dz + z;
+	OBJECT(part)->z = part_z;
+	record_type = record_dz + 1u;
+	part_2 = record_type + 1u;
+	OBJECT(part)->type = PART(record_type - 0x3u)->type;
 	kind = (((uint32_t)PART(part_2 - 0x4u)->kind << 8u) | PART(part_2 - 0x4u)->animation);
 	OBJECT(part)->kind = (uint8_t)(kind >> 8u);
 	OBJECT(part)->animation = (uint8_t)kind;
-	t8 = part_dx;
-	a = (uint8_t)(t8 >> 8);
-	b = (uint8_t)t8;
+	shift_x = part_dx;
+	shift_x_high = (uint8_t)(shift_x >> 8);
+	shift_x_low = (uint8_t)shift_x;
 	if ((int8_t)placed_part_number < 0)
 	{
-		t9 = 0u - (((uint32_t)a << 8) | b);
-		a = (uint8_t)(t9 >> 8);
-		b = (uint8_t)t9;
+		turned_shift_x = 0u - (((uint32_t)shift_x_high << 8) | shift_x_low);
+		shift_x_high = (uint8_t)(turned_shift_x >> 8);
+		shift_x_low = (uint8_t)turned_shift_x;
 	}
-	t10 = OBJECT(self)->x;
-	t11 = (((uint32_t)a << 8) | b) + t10;
-	OBJECT(part)->x = t11;
-	return part_2;
+	self_x = OBJECT(self)->x;
+	part_x = (((uint32_t)shift_x_high << 8) | shift_x_low) + self_x;
+	OBJECT(part)->x = part_x;
+	leftover_y = part_2;
 }
 
 /* Carry when its x is within 40-180. */
 uint32_t burns_robot_in_middle(uint16_t robot)
 {
 	uint32_t carry = 0;
-	uint8_t a = 0, d = 0;
-	uint16_t t1 = 0;
+	uint8_t robot_x_high = 0, robot_x_low = 0;
+	uint16_t robot_x = 0;
 
-	t1 = OBJECT(robot)->x;
-	d = (uint8_t)t1;
-	a = (uint8_t)(t1 >> 8);
-	if ((int16_t)(((uint32_t)a << 8) | (d & 0xFFu)) < 0x40 || (int16_t)(((uint32_t)a << 8) | (d & 0xFFu)) > 0x180)
+	robot_x = OBJECT(robot)->x;
+	robot_x_low = (uint8_t)robot_x;
+	robot_x_high = (uint8_t)(robot_x >> 8);
+	if ((int16_t)(((uint32_t)robot_x_high << 8) | (robot_x_low & 0xFFu)) < 0x40 || (int16_t)(((uint32_t)robot_x_high << 8) | (robot_x_low & 0xFFu)) > 0x180)
 	{
 		carry = 0u;
 		return carry;
@@ -3791,24 +3991,27 @@ uint32_t burns_robot_in_middle(uint16_t robot)
 }
 
 /* Carry when the frames since its last bombs pass burns_robot_shot_times for the rank and form. */
-void burns_robot_lob_due(uint16_t robot, uint16_t *p_shot_times, uint32_t *p_carry)
+uint32_t burns_robot_lob_due(uint16_t robot)
 {
-	uint32_t carry = *p_carry;
+	uint32_t carry = 0;
 	uint16_t shot_times = 0;
 	uint8_t form_base = 0, form_extra = 0;
-	uint16_t t1 = 0, lob_frames = 0;
+	uint16_t lob_time = 0, lob_frames = 0;
 
 	shot_times = burns_robot_shot_times_ADDRESS;
 	form_base = OBJECT(robot)->burns_robot.form_base;
 	form_extra = OBJECT(robot)->burns_robot.form_extra;
-	t1 = burns_robot_shot_times[((rank + form_base + form_extra) & 0x1Eu) / 2u];
+	lob_time = burns_robot_shot_times[((rank + form_base + form_extra) & 0x1Eu) / 2u];
 	lob_frames = OBJECT(robot)->burns_robot.lob_frames;
-	if ((int16_t)t1 < (int16_t)lob_frames)
+	if ((int16_t)lob_time < (int16_t)lob_frames)
+	{
 		carry = 1u;
-	else
-		carry = 0u;
-	*p_shot_times = shot_times;
-	*p_carry = carry;
+		leftover_y = shot_times;
+		return carry;
+	}
+	carry = 0u;
+	leftover_y = shot_times;
+	return carry;
 }
 
 /* Its three attack timers back to 0. */

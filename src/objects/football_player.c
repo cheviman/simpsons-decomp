@@ -3,7 +3,7 @@
  *    Description: stage 4's boss (type 19, kind 92), its football and its charge's line
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    10-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -12,7 +12,7 @@
 #include "game.h"
 
 /* Runs the football player, stage 4's boss: shows its gauge and runs its state */
-uint16_t football_player(uint16_t object, uint16_t enemy_handlers)
+void football_player(uint16_t object, uint16_t enemy_handlers)
 {
 	uint8_t gauge_number = 0;
 	uint16_t piece_health_by_players = 0, states = 0;
@@ -26,49 +26,74 @@ uint16_t football_player(uint16_t object, uint16_t enemy_handlers)
 	switch ((int8_t)(uint8_t)((uint32_t)phase << 1))
 	{
 	case 0:
-		return football_player_start(object);
+		football_player_start(object);
+		return;
 	case 2:
-		return football_player_wait_cue(object, states);
+		leftover_y = states;
+		football_player_wait_cue(object);
+		return;
 	case 4:
 	case 38:
-		return football_player_stand(object, enemy_handlers);
+		football_player_stand(object, enemy_handlers);
+		return;
 	case 6:
-		return football_player_run_at_target(object, enemy_handlers);
+		football_player_run_at_target(object, enemy_handlers);
+		return;
 	case 8:
-		return football_player_wander(object, enemy_handlers);
+		football_player_wander(object, enemy_handlers);
+		return;
 	case 10:
-		return football_player_appear(object, states);
+		leftover_y = states;
+		football_player_appear(object);
+		return;
 	case 12:
-		return football_player_ready(object, states);
+		leftover_y = states;
+		football_player_ready(object);
+		return;
 	case 14:
-		return football_player_tackle(object, enemy_handlers);
+		football_player_tackle(object, enemy_handlers);
+		return;
 	case 16:
-		return football_player_rest(object, enemy_handlers);
+		football_player_rest(object, enemy_handlers);
+		return;
 	case 18:
-		return football_player_throw(object, enemy_handlers);
+		football_player_throw(object, enemy_handlers);
+		return;
 	case 20:
-		return football_player_throwing(object, enemy_handlers);
+		football_player_throwing(object, enemy_handlers);
+		return;
 	case 22:
-		return football_player_charge_windup(object, enemy_handlers);
+		football_player_charge_windup(object, enemy_handlers);
+		return;
 	case 24:
-		return football_player_charge(object, enemy_handlers);
+		football_player_charge(object, enemy_handlers);
+		return;
 	case 26:
-		return football_player_hurt_pose(object, enemy_handlers);
+		football_player_hurt_pose(object, enemy_handlers);
+		return;
 	case 28:
-		return football_player_hurt_pose_wait(object, enemy_handlers);
+		football_player_hurt_pose_wait(object, enemy_handlers);
+		return;
 	case 30:
-		return football_player_flinch(object, states);
+		leftover_y = states;
+		football_player_flinch(object);
+		return;
 	case 32:
-		return football_player_knocked_back(object, states);
+		leftover_y = states;
+		football_player_knocked_back(object);
+		return;
 	case 34:
-		return football_player_knocked_out(object, states);
+		leftover_y = states;
+		football_player_knocked_out(object);
+		return;
 	case 36:
+		leftover_y = states;
 		football_player_defeated(object);
-		return states;
+		return;
 	case 40:
-		return football_player_start_tackle(object, enemy_handlers);
+		football_player_start_tackle(object, enemy_handlers);
+		return;
 	}
-	unreachable();
 }
 
 /* The football it throws: a hit box with damage for 15 frames */
@@ -103,31 +128,31 @@ uint16_t football_line_piece(uint16_t object, uint16_t child)
 	uint32_t carry = 0;
 	uint8_t dx = 0, flags = 0, piece_number = 0, step = 0;
 	uint16_t box = 0, child_object = 0;
-	uint8_t t1 = 0, t2 = 0, t3 = 0, t4 = 0, t5 = 0, life_frames = 0, t6 = 0, t7 = 0, attributes = 0;
-	uint16_t t8 = 0, t9 = 0, t10 = 0, t11 = 0;
+	uint8_t piece_step = 0, step_before = 0, pieces_out = 0, pieces_before = 0, early_step_before = 0, life_frames = 0, line_piece_number = 0, piece_index = 0, attributes = 0;
+	uint16_t piece_record = 0, shift_x = 0, piece_x = 0, moved_x = 0;
 	uint32_t kind_halfword = 0, kind_halfword_2 = 0;
 
 	if ((OBJECT(object)->flags & 4u) == 0u)
 	{
-		t1 = (uint8_t)OBJECT(object)->target_dy;
-		step = t1;
+		piece_step = (uint8_t)OBJECT(object)->target_dy;
+		step = piece_step;
 		if (step == 4u)
 		{
-			t2 = (uint8_t)OBJECT(object)->target_dy;
-			OBJECT(object)->target_dy = (OBJECT(object)->target_dy & 0xFF00u) | (t2 + 1u & 0xFFu);
-			t3 = io_read8(0x184Au);
-			if ((int8_t)t3 < 7)
+			step_before = (uint8_t)OBJECT(object)->target_dy;
+			OBJECT(object)->target_dy = (OBJECT(object)->target_dy & 0xFF00u) | (step_before + 1u & 0xFFu);
+			pieces_out = io_read8(0x184Au);
+			if ((int8_t)pieces_out < 7)
 			{
-				t4 = io_read8(0x184Au);
-				io_write8(0x184Au, t4 + 1u);
+				pieces_before = io_read8(0x184Au);
+				io_write8(0x184Au, pieces_before + 1u);
 				child_object = football_line_piece_child_ADDRESS;
 				spawn_list_2_child(object, child_object, &child, &carry);
 			}
 		}
 		else if ((int8_t)step <= 4)
 		{
-			t5 = (uint8_t)OBJECT(object)->target_dy;
-			OBJECT(object)->target_dy = (OBJECT(object)->target_dy & 0xFF00u) | (t5 + 1u & 0xFFu);
+			early_step_before = (uint8_t)OBJECT(object)->target_dy;
+			OBJECT(object)->target_dy = (OBJECT(object)->target_dy & 0xFF00u) | (early_step_before + 1u & 0xFFu);
 		}
 		life_frames = OBJECT(object)->football_line_piece.life_frames;
 		OBJECT(object)->football_line_piece.life_frames = life_frames - 1u;
@@ -136,24 +161,24 @@ uint16_t football_line_piece(uint16_t object, uint16_t child)
 		return child;
 	}
 	flags = 0x80u;
-	t6 = io_read8(0x184Au);
-	piece_number = t6;
-	if (t6 != 0u && piece_number != 3u && piece_number != 6u)
+	line_piece_number = io_read8(0x184Au);
+	piece_number = line_piece_number;
+	if (line_piece_number != 0u && piece_number != 3u && piece_number != 6u)
 	{
 		OBJECT(object)->flags = flags;
-		t7 = io_read8(0x184Au);
-		t8 = football_player_line_pieces_ADDRESS + (int8_t)((uint32_t)t7 << 1);
-		kind_halfword = 0x9200u | LINE_PIECE(t8)->animation;
+		piece_index = io_read8(0x184Au);
+		piece_record = football_player_line_pieces_ADDRESS + (int8_t)((uint32_t)piece_index << 1);
+		kind_halfword = 0x9200u | LINE_PIECE(piece_record)->animation;
 		OBJECT(object)->kind = (uint8_t)(kind_halfword >> 8u);
 		OBJECT(object)->animation = (uint8_t)kind_halfword;
-		dx = LINE_PIECE(t8)->dx;
+		dx = LINE_PIECE(piece_record)->dx;
 		attributes = OBJECT(object)->attributes;
 		if ((attributes & 0x40u) != 0u)
 			dx = 0u - dx;
-		t9 = (int8_t)dx;
-		t10 = OBJECT(object)->x;
-		t11 = t9 + t10;
-		OBJECT(object)->x = t11;
+		shift_x = (int8_t)dx;
+		piece_x = OBJECT(object)->x;
+		moved_x = shift_x + piece_x;
+		OBJECT(object)->x = moved_x;
 		OBJECT(object)->football_line_piece.life_frames = 0x13u;
 		return child;
 	}
@@ -164,30 +189,30 @@ uint16_t football_line_piece(uint16_t object, uint16_t child)
 	OBJECT(object)->attack = 5u;
 	flags = 0xC0u;
 	OBJECT(object)->flags = flags;
-	t7 = io_read8(0x184Au);
-	t8 = football_player_line_pieces_ADDRESS + (int8_t)((uint32_t)t7 << 1);
-	kind_halfword_2 = 0x9200u | LINE_PIECE(t8)->animation;
+	piece_index = io_read8(0x184Au);
+	piece_record = football_player_line_pieces_ADDRESS + (int8_t)((uint32_t)piece_index << 1);
+	kind_halfword_2 = 0x9200u | LINE_PIECE(piece_record)->animation;
 	OBJECT(object)->kind = (uint8_t)(kind_halfword_2 >> 8u);
 	OBJECT(object)->animation = (uint8_t)kind_halfword_2;
-	dx = LINE_PIECE(t8)->dx;
+	dx = LINE_PIECE(piece_record)->dx;
 	attributes = OBJECT(object)->attributes;
 	if ((attributes & 0x40u) != 0u)
 		dx = 0u - dx;
-	t9 = (int8_t)dx;
-	t10 = OBJECT(object)->x;
-	t11 = t9 + t10;
-	OBJECT(object)->x = t11;
+	shift_x = (int8_t)dx;
+	piece_x = OBJECT(object)->x;
+	moved_x = shift_x + piece_x;
+	OBJECT(object)->x = moved_x;
 	OBJECT(object)->football_line_piece.life_frames = 0x13u;
 	return child;
 }
 
 /* Sets the football player up: kind, health, its first state, and the marker the story uses */
-uint16_t football_player_start(uint16_t object)
+void football_player_start(uint16_t object)
 {
 	uint32_t carry = 0;
-	uint16_t animation_number = 0, ignored16 = 0, marker = 0, record = 0, state_wait = 0;
-	uint8_t t4 = 0;
-	uint16_t t1 = 0, t2 = 0, z = 0, t3 = 0;
+	uint16_t animation_number = 0, ignored16 = 0, ignored16_2 = 0, marker = 0, state_wait = 0;
+	uint8_t old_line_cue = 0;
+	uint16_t football_y = 0, lowered_y = 0, z = 0, dropped_z = 0;
 
 	stage_boss_activate(object);
 	OBJECT(object)->kind = 0x92u;
@@ -198,45 +223,42 @@ uint16_t football_player_start(uint16_t object)
 	state_wait = 0x100u;
 	animation_number = 0x8200u;
 	stage_boss_set_state(object, state_wait, animation_number);
-	t1 = OBJECT(object)->y;
-	t2 = t1 + 0x30u;
-	OBJECT(object)->y = t2;
+	football_y = OBJECT(object)->y;
+	lowered_y = football_y + 0x30u;
+	OBJECT(object)->y = lowered_y;
 	z = OBJECT(object)->z;
-	t3 = z - 0x30u;
-	OBJECT(object)->z = t3;
+	dropped_z = z - 0x30u;
+	OBJECT(object)->z = dropped_z;
 	OBJECT(object)->football_player.hurt_pose = 0x14u;
 	OBJECT(object)->entrance_pending = 0x14u;
-	t4 = io_read8(0x184Au);
+	old_line_cue = io_read8(0x184Au);
 	io_write8(0x184Au, 0u);
-	record = football_player_child_ADDRESS;
-	vector_spawn_child(object, record, &marker, &ignored16, &carry);
+	leftover_y = football_player_child_ADDRESS;
+	vector_spawn_child(object, &ignored16, &marker, &ignored16_2, &carry);
 	io_write16(0x1852u, marker);
-	return record;
 }
 
 /* Waits for the story to set the cue in 184A, then drops to the floor */
-uint16_t football_player_wait_cue(uint16_t object, uint16_t states)
+void football_player_wait_cue(uint16_t object)
 {
-	uint16_t state_wait = 0;
-	uint8_t t1 = 0;
-	uint16_t t2 = 0;
+	uint8_t line_cue = 0;
+	uint16_t football_y = 0;
 
-	t1 = io_read8(0x184Au);
-	if (t1 == 0u)
-		return states;
-	state_wait = 0x514u;
+	line_cue = io_read8(0x184Au);
+	if (line_cue == 0u)
+		return;
 	OBJECT(object)->football_player.phase = 5u;
 	OBJECT(object)->football_player.wait = 0x14u;
-	t2 = OBJECT(object)->y;
-	OBJECT(object)->y = t2 - 0x30u;
+	football_y = OBJECT(object)->y;
+	OBJECT(object)->y = football_y - 0x30u;
 	OBJECT(object)->z = 0u;
 	OBJECT(object)->attributes = 0u;
 	OBJECT(object)->entrance_pending = 0u;
-	return state_wait;
+	leftover_y = 0x514u;
 }
 
 /* After its wait, marks the boss entering and starts its entrance animation */
-uint16_t football_player_appear(uint16_t object, uint16_t states)
+void football_player_appear(uint16_t object)
 {
 	uint16_t animation_number = 0, state_wait = 0;
 	uint8_t wait = 0;
@@ -244,26 +266,26 @@ uint16_t football_player_appear(uint16_t object, uint16_t states)
 	wait = OBJECT(object)->football_player.wait;
 	OBJECT(object)->football_player.wait = wait - 1u;
 	if (wait != 1u)
-		return states;
+		return;
 	boss_arrived = 1u;
 	OBJECT(object)->football_player.charge_wait = 0x86u - rank - rank;
+	leftover_y = 0x600u;
 	state_wait = 0x600u;
 	animation_number = 0x8300u;
 	stage_boss_set_state(object, state_wait, animation_number);
-	return state_wait;
 }
 
 /* At its entrance's end takes its stance, hit box and flags and looks for a player to tackle */
-uint16_t football_player_ready(uint16_t object, uint16_t states)
+void football_player_ready(uint16_t object)
 {
 	uint32_t carry = 0;
-	uint8_t a = 0, b = 0, next_state = 0, next_wait = 0;
+	uint8_t next_state = 0, next_wait = 0, place_high = 0, place_low = 0;
 	uint16_t animation_number = 0, box = 0, ignored16 = 0, player = 0, state_wait = 0;
 	uint8_t animation_flags = 0, attack_health = 0, vitality = 0, vitality_2 = 0;
 
 	animation_flags = OBJECT(object)->animation_flags;
 	if ((animation_flags & 1u) == 0u)
-		return states;
+		return;
 	boss_arrived = 0u;
 	state_wait = 0x214u;
 	animation_number = 0x8000u;
@@ -271,13 +293,16 @@ uint16_t football_player_ready(uint16_t object, uint16_t states)
 	box = football_player_box_ADDRESS;
 	stage_boss_set_hit_box(object, box);
 	OBJECT(object)->flags = (OBJECT(object)->flags & ~4u) | 0xC0u;
-	a = 0u;
-	b = 0x3Cu;
-	reach_x = ((uint32_t)a << 8) | b;
+	place_high = 0u;
+	place_low = 0x3Cu;
+	reach_x = ((uint32_t)place_high << 8) | place_low;
 	reach_y = 0xC;
 	stage_boss_find_near_player(object, &player, &ignored16, &carry);
 	if (carry == 0u)
-		return football_player_check_hit(object, player);
+	{
+		football_player_check_hit(object, player);
+		return;
+	}
 	attack_health = OBJECT(object)->football_player.attack_health;
 	vitality = OBJECT(object)->vitality;
 	if ((uint8_t)(attack_health - vitality) < 0xCu)
@@ -296,50 +321,59 @@ uint16_t football_player_ready(uint16_t object, uint16_t states)
 	OBJECT(object)->target_dy = ((uint32_t)next_state << 8) | next_wait;
 	OBJECT(object)->x_speed = 0;
 	OBJECT(object)->y_speed = 0;
-	return football_player_start_tackle(object, player);
+	football_player_start_tackle(object, player);
 }
 
 /* Waits, then rests, charges or runs at the nearest player */
-uint16_t football_player_stand(uint16_t object, uint16_t enemy_handlers)
+void football_player_stand(uint16_t object, uint16_t enemy_handlers)
 {
 	uint8_t wait = 0, runs_to_rest = 0, charge_wait = 0;
 
 	wait = OBJECT(object)->football_player.wait;
 	OBJECT(object)->football_player.wait = wait - 1u;
 	if (wait != 1u)
-		return football_player_check_hit(object, enemy_handlers);
+	{
+		football_player_check_hit(object, enemy_handlers);
+		return;
+	}
 	runs_to_rest = OBJECT(object)->football_player.runs_to_rest;
 	OBJECT(object)->football_player.runs_to_rest = runs_to_rest - 1u;
 	if (runs_to_rest == 1u)
-		return football_player_start_rest(object, enemy_handlers);
+	{
+		football_player_start_rest(object, enemy_handlers);
+		return;
+	}
 	charge_wait = OBJECT(object)->football_player.charge_wait;
 	OBJECT(object)->football_player.charge_wait = charge_wait - 1u;
 	if (charge_wait == 1u)
-		return football_player_start_charge(object, enemy_handlers);
-	return football_player_start_run(object);
+	{
+		football_player_start_charge(object, enemy_handlers);
+		return;
+	}
+	football_player_start_run(object);
 }
 
 /* Runs at the nearest player */
-uint16_t football_player_start_run(uint16_t object)
+void football_player_start_run(uint16_t object)
 {
 	uint8_t direction = 0;
-	uint16_t animation_number = 0, chase_target = 0, d = 0, state_wait = 0;
+	uint16_t animation_number = 0, chase_target = 0, direction_word = 0, state_wait = 0;
 
 	state_wait = 0x300u;
 	animation_number = 0x8100u;
 	stage_boss_set_state(object, state_wait, animation_number);
 	chase_target = vector_choose_nearest_player(object);
 	OBJECT(object)->football_player.chase_target = chase_target;
-	d = stage_boss_offset_ahead_of(chase_target);
-	d = vector_direction_to_offset(object, chase_target, d);
-	direction = (uint8_t)(d >> 8);
+	direction_word = stage_boss_offset_ahead_of(chase_target);
+	direction_word = vector_direction_to_offset(object, chase_target, direction_word);
+	direction = (uint8_t)(direction_word >> 8);
 	OBJECT(object)->football_player.direction = direction;
 	OBJECT(object)->football_player.speed = 0x10u;
-	return football_player_check_hit(object, chase_target);
+	football_player_check_hit(object, chase_target);
 }
 
 /* Starts a rest (animation 85); its count of 1E goes to 003C instead of its own field 3C */
-uint16_t football_player_start_rest(uint16_t object, uint16_t u)
+void football_player_start_rest(uint16_t object, uint16_t u)
 {
 	uint16_t animation_number = 0, state_wait = 0;
 
@@ -347,31 +381,37 @@ uint16_t football_player_start_rest(uint16_t object, uint16_t u)
 	state_wait = 0x800u;
 	animation_number = 0x8500u;
 	stage_boss_set_state(object, state_wait, animation_number);
-	return football_player_check_hit(object, u);
+	football_player_check_hit(object, u);
 }
 
 /* Runs turning toward its target until its charge is due, now and then wandering */
-uint16_t football_player_run_at_target(uint16_t object, uint16_t enemy_handlers)
+void football_player_run_at_target(uint16_t object, uint16_t enemy_handlers)
 {
 	uint32_t negative = 0, overflow = 0;
 	uint8_t direction = 0, turn = 0;
-	uint16_t d = 0, heading = 0, target = 0;
+	uint16_t direction_word = 0, heading = 0, target = 0;
 	uint8_t charge_wait = 0, runs_to_rest = 0, direction_2 = 0, direction_3 = 0, speed = 0;
 	uint16_t chase_target = 0;
 
 	charge_wait = OBJECT(object)->football_player.charge_wait;
 	OBJECT(object)->football_player.charge_wait = charge_wait - 1u;
 	if (charge_wait == 1u)
-		return football_player_start_charge(object, enemy_handlers);
+	{
+		football_player_start_charge(object, enemy_handlers);
+		return;
+	}
 	runs_to_rest = OBJECT(object)->football_player.runs_to_rest;
 	OBJECT(object)->football_player.runs_to_rest = runs_to_rest - 1u;
 	if (runs_to_rest == 1u)
-		return football_player_start_rest(object, enemy_handlers);
+	{
+		football_player_start_rest(object, enemy_handlers);
+		return;
+	}
 	chase_target = OBJECT(object)->football_player.chase_target;
 	target = chase_target;
-	d = stage_boss_offset_ahead_of(target);
-	d = vector_direction_to_offset(object, target, d);
-	direction = (uint8_t)(d >> 8);
+	direction_word = stage_boss_offset_ahead_of(target);
+	direction_word = vector_direction_to_offset(object, target, direction_word);
+	direction = (uint8_t)(direction_word >> 8);
 	direction_2 = OBJECT(object)->football_player.direction;
 	negative = (uint8_t)(direction - direction_2) >> 7;
 	overflow = (uint32_t)(int8_t)direction - (int8_t)direction_2 != (uint32_t)(int8_t)(direction - direction_2);
@@ -392,11 +432,15 @@ uint16_t football_player_run_at_target(uint16_t object, uint16_t enemy_handlers)
 				heading = ((uint32_t)turn << 8) | speed;
 				vector_set_speed_by_direction(object, heading);
 				if ((random_number & 0x7Fu) != 0u)
-					return football_player_run(object, target);
+				{
+					football_player_run(object, target);
+					return;
+				}
 				OBJECT(object)->football_player.phase = 4u;
 				OBJECT(object)->football_player.wait = 0x78u;
 				OBJECT(object)->football_player.turn = 5;
-				return football_player_run(object, target);
+				football_player_run(object, target);
+				return;
 			}
 			turn = 7u;
 			OBJECT(object)->football_player.turn = turn;
@@ -407,11 +451,15 @@ uint16_t football_player_run_at_target(uint16_t object, uint16_t enemy_handlers)
 			heading = ((uint32_t)turn << 8) | speed;
 			vector_set_speed_by_direction(object, heading);
 			if ((random_number & 0x7Fu) != 0u)
-				return football_player_run(object, target);
+			{
+				football_player_run(object, target);
+				return;
+			}
 			OBJECT(object)->football_player.phase = 4u;
 			OBJECT(object)->football_player.wait = 0x78u;
 			OBJECT(object)->football_player.turn = 5;
-			return football_player_run(object, target);
+			football_player_run(object, target);
+			return;
 		}
 		if (overflow)
 			turn = 7u;
@@ -426,15 +474,18 @@ uint16_t football_player_run_at_target(uint16_t object, uint16_t enemy_handlers)
 	heading = ((uint32_t)turn << 8) | speed;
 	vector_set_speed_by_direction(object, heading);
 	if ((random_number & 0x7Fu) != 0u)
-		return football_player_run(object, target);
+	{
+		football_player_run(object, target);
+		return;
+	}
 	OBJECT(object)->football_player.phase = 4u;
 	OBJECT(object)->football_player.wait = 0x78u;
 	OBJECT(object)->football_player.turn = 5;
-	return football_player_run(object, target);
+	football_player_run(object, target);
 }
 
 /* Winds up its charge (unhurtable with three or more players) */
-uint16_t football_player_start_charge(uint16_t object, uint16_t enemy_handlers)
+void football_player_start_charge(uint16_t object, uint16_t enemy_handlers)
 {
 	uint16_t animation_number = 0, state_wait = 0;
 	uint8_t stack = 0, stack_10002 = 0;
@@ -448,11 +499,11 @@ uint16_t football_player_start_charge(uint16_t object, uint16_t enemy_handlers)
 	state_wait = ((uint32_t)stack << 8) | stack_10002;
 	animation_number = 0x8900u;
 	stage_boss_set_state(object, state_wait, animation_number);
-	return football_player_check_hit(object, enemy_handlers);
+	football_player_check_hit(object, enemy_handlers);
 }
 
 /* Runs turning at random for its wait, then at its target again */
-uint16_t football_player_wander(uint16_t object, uint16_t chase_target)
+void football_player_wander(uint16_t object, uint16_t chase_target)
 {
 	uint8_t direction = 0, turn = 0;
 	uint16_t heading = 0;
@@ -469,7 +520,10 @@ uint16_t football_player_wander(uint16_t object, uint16_t chase_target)
 	runs_to_rest = OBJECT(object)->football_player.runs_to_rest;
 	OBJECT(object)->football_player.runs_to_rest = runs_to_rest - 1u;
 	if (runs_to_rest == 1u)
-		return football_player_start_rest(object, chase_target);
+	{
+		football_player_start_rest(object, chase_target);
+		return;
+	}
 	turn_2 = OBJECT(object)->football_player.turn;
 	turn = turn_2;
 	if ((random_number & ~0xFu) == 0u)
@@ -481,18 +535,18 @@ uint16_t football_player_wander(uint16_t object, uint16_t chase_target)
 	speed = OBJECT(object)->football_player.speed;
 	heading = ((uint32_t)direction << 8) | speed;
 	vector_set_speed_by_direction(object, heading);
-	return football_player_run(object, chase_target);
+	football_player_run(object, chase_target);
 }
 
 /* Moves it on its run, bounces off the screen's sides and decides to pose, throw, taunt or tackle */
-uint16_t football_player_run(uint16_t object, uint16_t u)
+void football_player_run(uint16_t object, uint16_t u)
 {
 	uint32_t negative = 0, carry = 0;
-	uint8_t a = 0, attributes = 0, b = 0, cell = 0, next_state = 0, next_wait = 0;
+	uint8_t attributes = 0, cell = 0, next_state = 0, next_wait = 0, place_high = 0, place_low = 0;
 	uint16_t animation_number = 0, floor_cell = 0, ignored16 = 0, limit = 0, player = 0, state_wait = 0;
 	uint8_t stack = 0, stack_10002 = 0;
-	uint8_t attributes_2 = 0, wrong_way = 0, wrong_way_2 = 0, x_fraction = 0, y_fraction = 0, vitality = 0, direction = 0, x_speed_2 = 0, t3 = 0, y_speed = 0, t6 = 0, vitality_2 = 0, hurt_pose = 0, direction_2 = 0, throw_wait = 0, attack_health = 0, vitality_3 = 0, vitality_4 = 0;
-	uint16_t x_speed = 0, t1 = 0, x_speed_3 = 0, t2 = 0, t4 = 0, y_speed_2 = 0, t5 = 0;
+	uint8_t attributes_2 = 0, wrong_way = 0, wrong_way_2 = 0, x_fraction = 0, y_fraction = 0, vitality = 0, direction = 0, x_speed_2 = 0, x_high = 0, y_speed = 0, y_high = 0, vitality_2 = 0, hurt_pose = 0, direction_2 = 0, throw_wait = 0, attack_health = 0, vitality_3 = 0, vitality_4 = 0;
+	uint16_t x_speed = 0, x_low_and_fraction = 0, x_speed_3 = 0, x_low_fraction = 0, y_low_and_fraction = 0, y_speed_2 = 0, y_low_fraction = 0;
 
 	attributes = 0u;
 	x_speed = OBJECT(object)->x_speed;
@@ -532,15 +586,15 @@ uint16_t football_player_run(uint16_t object, uint16_t u)
 	{
 		x_speed_2 = (uint8_t)(OBJECT(object)->x_speed >> 8u);
 		players_share = (uint16_t)(int8_t)x_speed_2 >> 8;
-		t1 = (((uint32_t)(OBJECT(object)->x & 0xFFu) << 8u) | OBJECT(object)->x_fraction);
+		x_low_and_fraction = (((uint32_t)(OBJECT(object)->x & 0xFFu) << 8u) | OBJECT(object)->x_fraction);
 		x_speed_3 = OBJECT(object)->x_speed;
-		t2 = t1;
-		carry = (uint16_t)(t2 + x_speed_3) < t2;
-		b = (uint8_t)((uint16_t)(t2 + x_speed_3) >> 8);
-		t3 = (uint8_t)(OBJECT(object)->x >> 8u);
-		a = t3 + players_share + carry;
+		x_low_fraction = x_low_and_fraction;
+		carry = (uint16_t)(x_low_fraction + x_speed_3) < x_low_fraction;
+		place_low = (uint8_t)((uint16_t)(x_low_fraction + x_speed_3) >> 8);
+		x_high = (uint8_t)(OBJECT(object)->x >> 8u);
+		place_high = x_high + players_share + carry;
 		limit = 0x30u;
-		if ((int16_t)(((uint32_t)a << 8) | b) < 0x30)
+		if ((int16_t)(((uint32_t)place_high << 8) | place_low) < 0x30)
 		{
 			OBJECT(object)->x = limit;
 			direction = OBJECT(object)->football_player.direction;
@@ -551,19 +605,19 @@ uint16_t football_player_run(uint16_t object, uint16_t u)
 		else
 		{
 			limit = 0x180u;
-			if ((int16_t)(((uint32_t)a << 8) | b) <= 0x180)
+			if ((int16_t)(((uint32_t)place_high << 8) | place_low) <= 0x180)
 			{
 				y_speed = (uint8_t)(OBJECT(object)->y_speed >> 8u);
 				players_share = (uint16_t)(int8_t)y_speed >> 8;
-				t4 = (((uint32_t)(OBJECT(object)->y & 0xFFu) << 8u) | OBJECT(object)->y_fraction);
+				y_low_and_fraction = (((uint32_t)(OBJECT(object)->y & 0xFFu) << 8u) | OBJECT(object)->y_fraction);
 				y_speed_2 = OBJECT(object)->y_speed;
-				t5 = t4;
-				carry = (uint16_t)(t5 + y_speed_2) < t5;
-				b = (uint8_t)((uint16_t)(t5 + y_speed_2) >> 8);
-				t6 = (uint8_t)(OBJECT(object)->y >> 8u);
-				a = t6 + players_share + carry;
+				y_low_fraction = y_low_and_fraction;
+				carry = (uint16_t)(y_low_fraction + y_speed_2) < y_low_fraction;
+				place_low = (uint8_t)((uint16_t)(y_low_fraction + y_speed_2) >> 8);
+				y_high = (uint8_t)(OBJECT(object)->y >> 8u);
+				place_high = y_high + players_share + carry;
 				limit = 0x58u;
-				if ((int16_t)(((uint32_t)a << 8) | b) < 0x58)
+				if ((int16_t)(((uint32_t)place_high << 8) | place_low) < 0x58)
 				{
 					OBJECT(object)->y = limit;
 					direction = OBJECT(object)->football_player.direction;
@@ -574,7 +628,7 @@ uint16_t football_player_run(uint16_t object, uint16_t u)
 				else
 				{
 					limit = 0x170u;
-					if ((int16_t)(((uint32_t)a << 8) | b) > 0x170)
+					if ((int16_t)(((uint32_t)place_high << 8) | place_low) > 0x170)
 					{
 						OBJECT(object)->y = limit;
 						direction = OBJECT(object)->football_player.direction;
@@ -607,7 +661,8 @@ uint16_t football_player_run(uint16_t object, uint16_t u)
 				state_wait = 0xD00u;
 				animation_number = (floor_cell & 0xFFu) | 0x8C00u;
 				stage_boss_set_state(object, state_wait, animation_number);
-				return football_player_check_hit(object, u);
+				football_player_check_hit(object, u);
+				return;
 			}
 		}
 	}
@@ -622,18 +677,22 @@ uint16_t football_player_run(uint16_t object, uint16_t u)
 		state_wait = ((uint32_t)stack << 8) | stack_10002;
 		animation_number = (floor_cell & 0xFFu) | 0x8600u;
 		stage_boss_set_state(object, state_wait, animation_number);
-		return football_player_check_hit(object, u);
+		football_player_check_hit(object, u);
+		return;
 	}
 	carry = stage_boss_any_player_down();
 	if (carry == 0u)
 	{
-		a = 0u;
-		b = 0x3Cu;
-		reach_x = ((uint32_t)a << 8) | b;
+		place_high = 0u;
+		place_low = 0x3Cu;
+		reach_x = ((uint32_t)place_high << 8) | place_low;
 		reach_y = 0xC;
 		stage_boss_find_near_player(object, &player, &ignored16, &carry);
 		if (carry == 0u)
-			return football_player_check_hit(object, player);
+		{
+			football_player_check_hit(object, player);
+			return;
+		}
 		attack_health = OBJECT(object)->football_player.attack_health;
 		vitality_3 = OBJECT(object)->vitality;
 		if ((uint8_t)(attack_health - vitality_3) < 0xCu)
@@ -652,7 +711,8 @@ uint16_t football_player_run(uint16_t object, uint16_t u)
 		OBJECT(object)->target_dy = ((uint32_t)next_state << 8) | next_wait;
 		OBJECT(object)->x_speed = 0;
 		OBJECT(object)->y_speed = 0;
-		return football_player_start_tackle(object, player);
+		football_player_start_tackle(object, player);
+		return;
 	}
 	if (player_count == 1u)
 		state_wait = 0x13FEu;
@@ -664,11 +724,11 @@ uint16_t football_player_run(uint16_t object, uint16_t u)
 	}
 	animation_number = (floor_cell & 0xFFu) | 0x9000u;
 	stage_boss_set_state(object, state_wait, animation_number);
-	return football_player_check_hit(object, u);
+	football_player_check_hit(object, u);
 }
 
 /* After its wait, tackles: attack animation, hit box, unhurtable */
-uint16_t football_player_start_tackle(uint16_t object, uint16_t u)
+void football_player_start_tackle(uint16_t object, uint16_t u)
 {
 	uint16_t animation_number = 0, state_wait = 0;
 	uint8_t wait = 0;
@@ -676,7 +736,10 @@ uint16_t football_player_start_tackle(uint16_t object, uint16_t u)
 	wait = OBJECT(object)->football_player.wait;
 	OBJECT(object)->football_player.wait = wait - 1u;
 	if (wait != 1u)
-		return football_player_check_hit(object, u);
+	{
+		football_player_check_hit(object, u);
+		return;
+	}
 	state_wait = 0x728u;
 	animation_number = 0x8400u;
 	stage_boss_set_state(object, state_wait, animation_number);
@@ -686,15 +749,18 @@ uint16_t football_player_start_tackle(uint16_t object, uint16_t u)
 	u = stage_boss_face_nearest_player(object);
 	OBJECT(object)->football_player.wrong_way = 0u;
 	if (1u == 0u)
-		return football_player_check_hit(object, u);
-	return football_player_tackle(object, u);
+	{
+		football_player_check_hit(object, u);
+		return;
+	}
+	football_player_tackle(object, u);
 }
 
 /* Its tackle's damage on the attack frames, back to standing when done */
-uint16_t football_player_tackle(uint16_t object, uint16_t u)
+void football_player_tackle(uint16_t object, uint16_t u)
 {
 	uint32_t carry = 0;
-	uint8_t a = 0, b = 0, next_state = 0, next_wait = 0, throw_wait = 0;
+	uint8_t next_state = 0, next_wait = 0, place_high = 0, place_low = 0, throw_wait = 0;
 	uint16_t animation_number = 0, box = 0, damage = 0, ignored16 = 0, state_wait = 0;
 	uint8_t charge_wait = 0, charge_wait_2 = 0, throw_wait_2 = 0, throw_wait_3 = 0, wait = 0, attack_health = 0, vitality = 0, vitality_2 = 0;
 
@@ -716,20 +782,26 @@ uint16_t football_player_tackle(uint16_t object, uint16_t u)
 	wait = OBJECT(object)->football_player.wait;
 	OBJECT(object)->football_player.wait = wait - 1u;
 	if (wait != 1u)
-		return football_player_check_hit(object, u);
+	{
+		football_player_check_hit(object, u);
+		return;
+	}
 	state_wait = 0x214u;
 	animation_number = 0x8000u;
 	stage_boss_set_state(object, state_wait, animation_number);
 	box = football_player_box_ADDRESS;
 	stage_boss_set_hit_box(object, box);
 	OBJECT(object)->flags = (OBJECT(object)->flags & ~4u) | 0xC0u;
-	a = 0u;
-	b = 0x3Cu;
-	reach_x = ((uint32_t)a << 8) | b;
+	place_high = 0u;
+	place_low = 0x3Cu;
+	reach_x = ((uint32_t)place_high << 8) | place_low;
 	reach_y = 0xC;
 	stage_boss_find_near_player(object, &u, &ignored16, &carry);
 	if (carry == 0u)
-		return football_player_check_hit(object, u);
+	{
+		football_player_check_hit(object, u);
+		return;
+	}
 	attack_health = OBJECT(object)->football_player.attack_health;
 	vitality = OBJECT(object)->vitality;
 	if ((uint8_t)(attack_health - vitality) < 0xCu)
@@ -748,22 +820,25 @@ uint16_t football_player_tackle(uint16_t object, uint16_t u)
 	OBJECT(object)->target_dy = ((uint32_t)next_state << 8) | next_wait;
 	OBJECT(object)->x_speed = 0;
 	OBJECT(object)->y_speed = 0;
-	return football_player_start_tackle(object, u);
+	football_player_start_tackle(object, u);
 }
 
 /* Rests until its animation ends, then runs again */
-uint16_t football_player_rest(uint16_t object, uint16_t enemy_handlers)
+void football_player_rest(uint16_t object, uint16_t enemy_handlers)
 {
 	uint8_t animation_flags = 0;
 
 	animation_flags = OBJECT(object)->animation_flags;
 	if ((animation_flags & 1u) == 0u)
-		return football_player_check_hit(object, enemy_handlers);
-	return football_player_start_run(object);
+	{
+		football_player_check_hit(object, enemy_handlers);
+		return;
+	}
+	football_player_start_run(object);
 }
 
 /* After its wait, throws a football */
-uint16_t football_player_throw(uint16_t object, uint16_t enemy_handlers)
+void football_player_throw(uint16_t object, uint16_t enemy_handlers)
 {
 	uint32_t carry = 0;
 	uint16_t animation_number = 0, ball = 0, command = 0, record = 0, state_wait = 0;
@@ -772,7 +847,10 @@ uint16_t football_player_throw(uint16_t object, uint16_t enemy_handlers)
 	wait = OBJECT(object)->football_player.wait;
 	OBJECT(object)->football_player.wait = wait - 1u;
 	if (wait != 1u)
-		return football_player_shield_if_crowded(object, enemy_handlers);
+	{
+		football_player_shield_if_crowded(object, enemy_handlers);
+		return;
+	}
 	state_wait = 0xA00u;
 	animation_number = 0x8700u;
 	stage_boss_set_state(object, state_wait, animation_number);
@@ -780,40 +858,45 @@ uint16_t football_player_throw(uint16_t object, uint16_t enemy_handlers)
 	spawn_list_2_child(object, record, &ball, &carry);
 	command = 0x6D00u;
 	carry = vector_queue_sound(command);
-	return football_player_check_hit(object, ball);
+	football_player_check_hit(object, ball);
 }
 
 /* Makes it unhurtable when three or four play */
-uint16_t football_player_shield_if_crowded(uint16_t object, uint16_t enemy_handlers)
+void football_player_shield_if_crowded(uint16_t object, uint16_t enemy_handlers)
 {
 	if ((int8_t)player_count <= 2)
-		return football_player_check_hit(object, enemy_handlers);
+	{
+		football_player_check_hit(object, enemy_handlers);
+		return;
+	}
 	stage_boss_shield(object);
-	return football_player_check_hit(object, enemy_handlers);
+	football_player_check_hit(object, enemy_handlers);
 }
 
 /* Its throw's animation, hurting on the attack frames */
-uint16_t football_player_throwing(uint16_t object, uint16_t enemy_handlers)
+void football_player_throwing(uint16_t object, uint16_t enemy_handlers)
 {
 	uint32_t carry = 0;
-	uint8_t a = 0, b = 0, next_state = 0, next_wait = 0;
+	uint8_t frame_or_reach_high = 0, next_state = 0, next_wait = 0, place_high = 0, place_low = 0;
 	uint16_t animation_number = 0, box = 0, ignored16 = 0, player = 0, state_wait = 0;
 	uint8_t animation_flags = 0, attack_health = 0, vitality = 0, vitality_2 = 0;
 
 	OBJECT(object)->flags |= 0xC0u;
 	animation_flags = OBJECT(object)->animation_flags;
-	a = animation_flags;
-	if ((a & 1u) == 0u)
+	frame_or_reach_high = animation_flags;
+	if ((frame_or_reach_high & 1u) == 0u)
 	{
-		if ((a & 2u) == 0u)
+		if ((frame_or_reach_high & 2u) == 0u)
 		{
 			OBJECT(object)->damage = 0u;
 			OBJECT(object)->attack = 0u;
-			return football_player_check_hit(object, enemy_handlers);
+			football_player_check_hit(object, enemy_handlers);
+			return;
 		}
 		OBJECT(object)->damage = 4u;
 		OBJECT(object)->attack = 0xAu;
-		return football_player_check_hit(object, enemy_handlers);
+		football_player_check_hit(object, enemy_handlers);
+		return;
 	}
 	state_wait = 0x214u;
 	animation_number = 0x8000u;
@@ -821,13 +904,16 @@ uint16_t football_player_throwing(uint16_t object, uint16_t enemy_handlers)
 	box = football_player_box_ADDRESS;
 	stage_boss_set_hit_box(object, box);
 	OBJECT(object)->flags = (OBJECT(object)->flags & ~4u) | 0xC0u;
-	a = 0u;
-	b = 0x3Cu;
-	reach_x = ((uint32_t)a << 8) | b;
+	place_high = 0u;
+	place_low = 0x3Cu;
+	reach_x = ((uint32_t)place_high << 8) | place_low;
 	reach_y = 0xC;
 	stage_boss_find_near_player(object, &player, &ignored16, &carry);
 	if (carry == 0u)
-		return football_player_check_hit(object, player);
+	{
+		football_player_check_hit(object, player);
+		return;
+	}
 	attack_health = OBJECT(object)->football_player.attack_health;
 	vitality = OBJECT(object)->vitality;
 	if ((uint8_t)(attack_health - vitality) < 0xCu)
@@ -846,11 +932,11 @@ uint16_t football_player_throwing(uint16_t object, uint16_t enemy_handlers)
 	OBJECT(object)->target_dy = ((uint32_t)next_state << 8) | next_wait;
 	OBJECT(object)->x_speed = 0;
 	OBJECT(object)->y_speed = 0;
-	return football_player_start_tackle(object, player);
+	football_player_start_tackle(object, player);
 }
 
 /* Waits out the charge's wind-up, then charges */
-uint16_t football_player_charge_windup(uint16_t object, uint16_t enemy_handlers)
+void football_player_charge_windup(uint16_t object, uint16_t enemy_handlers)
 {
 	uint16_t animation_number = 0, state_wait = 0;
 	uint8_t wait = 0, animation_flags = 0;
@@ -861,27 +947,30 @@ uint16_t football_player_charge_windup(uint16_t object, uint16_t enemy_handlers)
 	{
 		animation_flags = OBJECT(object)->animation_flags;
 		if ((animation_flags & 1u) == 0u)
-			return football_player_shield_if_crowded(object, enemy_handlers);
+		{
+			football_player_shield_if_crowded(object, enemy_handlers);
+			return;
+		}
 	}
 	state_wait = 0xC00u;
 	animation_number = 0x8A00u;
 	stage_boss_set_state(object, state_wait, animation_number);
 	OBJECT(object)->flags = 0xC0u;
-	return football_player_check_hit(object, enemy_handlers);
+	football_player_check_hit(object, enemy_handlers);
 }
 
 /* Charges, leaving its line of pictures behind */
-uint16_t football_player_charge(uint16_t object, uint16_t enemy_handlers)
+void football_player_charge(uint16_t object, uint16_t enemy_handlers)
 {
 	uint32_t carry = 0;
-	uint8_t a = 0, b = 0, next_state = 0, next_wait = 0;
+	uint8_t frame_or_reach_high = 0, next_state = 0, next_wait = 0, place_high = 0, place_low = 0;
 	uint16_t animation_number = 0, box = 0, command = 0, ignored16 = 0, piece = 0, record = 0, state_wait = 0;
-	uint8_t animation_flags = 0, attack_health = 0, vitality = 0, vitality_2 = 0, t1 = 0;
+	uint8_t animation_flags = 0, attack_health = 0, vitality = 0, vitality_2 = 0, old_line_pieces = 0;
 
 	OBJECT(object)->flags |= 0xC0u;
 	animation_flags = OBJECT(object)->animation_flags;
-	a = animation_flags;
-	if ((a & 1u) != 0u)
+	frame_or_reach_high = animation_flags;
+	if ((frame_or_reach_high & 1u) != 0u)
 	{
 		state_wait = 0x214u;
 		animation_number = 0x8000u;
@@ -889,13 +978,16 @@ uint16_t football_player_charge(uint16_t object, uint16_t enemy_handlers)
 		box = football_player_box_ADDRESS;
 		stage_boss_set_hit_box(object, box);
 		OBJECT(object)->flags = (OBJECT(object)->flags & ~4u) | 0xC0u;
-		a = 0u;
-		b = 0x3Cu;
-		reach_x = ((uint32_t)a << 8) | b;
+		place_high = 0u;
+		place_low = 0x3Cu;
+		reach_x = ((uint32_t)place_high << 8) | place_low;
 		reach_y = 0xC;
 		stage_boss_find_near_player(object, &enemy_handlers, &ignored16, &carry);
 		if (carry == 0u)
-			return football_player_check_hit(object, enemy_handlers);
+		{
+			football_player_check_hit(object, enemy_handlers);
+			return;
+		}
 		attack_health = OBJECT(object)->football_player.attack_health;
 		vitality = OBJECT(object)->vitality;
 		if ((uint8_t)(attack_health - vitality) < 0xCu)
@@ -914,36 +1006,43 @@ uint16_t football_player_charge(uint16_t object, uint16_t enemy_handlers)
 		OBJECT(object)->target_dy = ((uint32_t)next_state << 8) | next_wait;
 		OBJECT(object)->x_speed = 0;
 		OBJECT(object)->y_speed = 0;
-		return football_player_start_tackle(object, enemy_handlers);
+		football_player_start_tackle(object, enemy_handlers);
+		return;
 	}
-	if ((a & 2u) == 0u)
-		return football_player_check_hit(object, enemy_handlers);
+	if ((frame_or_reach_high & 2u) == 0u)
+	{
+		football_player_check_hit(object, enemy_handlers);
+		return;
+	}
 	record = football_player_charge_child_ADDRESS;
 	spawn_list_2_child(object, record, &piece, &carry);
-	t1 = io_read8(0x184Au);
+	old_line_pieces = io_read8(0x184Au);
 	io_write8(0x184Au, 0u);
 	command = 0x6200u;
 	carry = vector_queue_sound(command);
-	return football_player_check_hit(object, piece);
+	football_player_check_hit(object, piece);
 }
 
 /* The pose it strikes once when its health falls under 60 */
-uint16_t football_player_hurt_pose(uint16_t object, uint16_t enemy_handlers)
+void football_player_hurt_pose(uint16_t object, uint16_t enemy_handlers)
 {
 	uint16_t animation_number = 0, state_wait = 0;
 	uint8_t animation_flags = 0;
 
 	animation_flags = OBJECT(object)->animation_flags;
 	if ((animation_flags & 1u) == 0u)
-		return football_player_check_hit(object, enemy_handlers);
+	{
+		football_player_check_hit(object, enemy_handlers);
+		return;
+	}
 	state_wait = 0xE78u;
 	animation_number = 0x8200u;
 	stage_boss_set_state(object, state_wait, animation_number);
-	return football_player_check_hit(object, enemy_handlers);
+	football_player_check_hit(object, enemy_handlers);
 }
 
 /* Waits after the pose, then takes its stance again */
-uint16_t football_player_hurt_pose_wait(uint16_t object, uint16_t enemy_handlers)
+void football_player_hurt_pose_wait(uint16_t object, uint16_t enemy_handlers)
 {
 	uint16_t animation_number = 0, state_wait = 0;
 	uint8_t wait = 0;
@@ -953,38 +1052,42 @@ uint16_t football_player_hurt_pose_wait(uint16_t object, uint16_t enemy_handlers
 	if (wait == 1u)
 	{
 		OBJECT(object)->football_player.charge_wait = 0x86u - rank - rank;
+		leftover_y = 0x600u;
 		state_wait = 0x600u;
 		animation_number = 0x8300u;
 		stage_boss_set_state(object, state_wait, animation_number);
-		return state_wait;
+		return;
 	}
-	return football_player_check_hit(object, enemy_handlers);
+	football_player_check_hit(object, enemy_handlers);
 }
 
 /* Flinches until its animation ends */
-uint16_t football_player_flinch(uint16_t object, uint16_t states)
+void football_player_flinch(uint16_t object)
 {
 	uint32_t carry = 0;
-	uint8_t a = 0, b = 0, next_state = 0, next_wait = 0;
+	uint8_t next_state = 0, next_wait = 0, place_high = 0, place_low = 0;
 	uint16_t animation_number = 0, box = 0, ignored16 = 0, player = 0, state_wait = 0;
 	uint8_t animation_flags = 0, attack_health = 0, vitality = 0, vitality_2 = 0;
 
 	animation_flags = OBJECT(object)->animation_flags;
 	if ((animation_flags & 1u) == 0u)
-		return states;
+		return;
 	state_wait = 0x206u;
 	animation_number = 0x8000u;
 	stage_boss_set_state(object, state_wait, animation_number);
 	box = football_player_box_ADDRESS;
 	stage_boss_set_hit_box(object, box);
 	OBJECT(object)->flags = (OBJECT(object)->flags & ~4u) | 0xC0u;
-	a = 0u;
-	b = 0x3Cu;
-	reach_x = ((uint32_t)a << 8) | b;
+	place_high = 0u;
+	place_low = 0x3Cu;
+	reach_x = ((uint32_t)place_high << 8) | place_low;
 	reach_y = 0xC;
 	stage_boss_find_near_player(object, &player, &ignored16, &carry);
 	if (carry == 0u)
-		return football_player_check_hit(object, player);
+	{
+		football_player_check_hit(object, player);
+		return;
+	}
 	attack_health = OBJECT(object)->football_player.attack_health;
 	vitality = OBJECT(object)->vitality;
 	if ((uint8_t)(attack_health - vitality) < 0xCu)
@@ -1003,32 +1106,32 @@ uint16_t football_player_flinch(uint16_t object, uint16_t states)
 	OBJECT(object)->target_dy = ((uint32_t)next_state << 8) | next_wait;
 	OBJECT(object)->x_speed = 0;
 	OBJECT(object)->y_speed = 0;
-	return football_player_start_tackle(object, player);
+	football_player_start_tackle(object, player);
 }
 
 /* Knocked back; stands up when it lands */
-uint16_t football_player_knocked_back(uint16_t object, uint16_t landing_speed)
+void football_player_knocked_back(uint16_t object)
 {
 	uint32_t carry = 0;
 	uint16_t animation_number = 0, state_wait = 0;
 
-	stage_boss_move_on_screen(object, &landing_speed, &carry);
+	carry = stage_boss_move_on_screen(object);
 	if (carry == 0u)
-		return landing_speed;
+		return;
+	leftover_y = 0x600u;
 	state_wait = 0x600u;
 	animation_number = 0x8300u;
 	stage_boss_set_state(object, state_wait, animation_number);
-	return state_wait;
 }
 
 /* Beaten and thrown; after landing goes to its last state with a cry */
-uint16_t football_player_knocked_out(uint16_t object, uint16_t landing_speed)
+void football_player_knocked_out(uint16_t object)
 {
 	uint32_t carry = 0;
 	uint16_t command = 0, state_wait = 0;
 	uint8_t wait = 0;
 
-	stage_boss_move_on_screen(object, &landing_speed, &carry);
+	carry = stage_boss_move_on_screen(object);
 	if (carry)
 	{
 		wait = OBJECT(object)->football_player.wait;
@@ -1040,10 +1143,10 @@ uint16_t football_player_knocked_out(uint16_t object, uint16_t landing_speed)
 			OBJECT(object)->football_player.wait = 0x78u;
 			command = 0x3F3Au;
 			carry = vector_queue_sound(command);
-			return state_wait;
+			leftover_y = state_wait;
+			return;
 		}
 	}
-	return landing_speed;
 }
 
 /* Blinks out; then plays area_clear, marks the boss beaten and moves the stage on */
@@ -1051,12 +1154,12 @@ void football_player_defeated(uint16_t object)
 {
 	uint32_t carry = 0;
 	uint16_t command = 0;
-	uint8_t t1 = 0;
+	uint8_t old_stage_flag = 0;
 
 	carry = stage_boss_blink_out(object);
 	if (carry == 0u)
 		return;
-	t1 = io_read8(0x1850u);
+	old_stage_flag = io_read8(0x1850u);
 	io_write8(0x1850u, 0u);
 	command = 0x9600u;
 	carry = vector_queue_sound_unless_attract(command);
@@ -1067,16 +1170,17 @@ void football_player_defeated(uint16_t object)
 }
 
 /* Its hits: a flinch, a knock back, or beaten (boss_defeated) and thrown */
-uint16_t football_player_check_hit(uint16_t object, uint16_t u)
+void football_player_check_hit(uint16_t object, uint16_t u)
 {
 	uint32_t zero = 0, negative = 0, carry = 0;
-	uint16_t animation_number = 0, command = 0, ignored16 = 0, object_2 = 0, request = 0, state_wait = 0, y = 0;
-	uint8_t flinch_health = 0, vitality = 0, vitality_2 = 0, t1 = 0;
+	uint16_t animation_number = 0, command = 0, health_limits = 0, object_2 = 0, request = 0, state_wait = 0;
+	uint8_t flinch_health = 0, vitality = 0, vitality_2 = 0, z_low = 0;
 
-	y = football_player_beaten_vitality_ADDRESS;
-	stage_boss_check_hit(object, y, &u, &zero, &negative);
+	leftover_y = football_player_beaten_vitality_ADDRESS;
+	health_limits = football_player_beaten_vitality_ADDRESS;
+	stage_boss_check_hit(object, health_limits, &u, &zero, &negative);
 	if (zero)
-		return y;
+		return;
 	if (negative)
 	{
 		command = 0u;
@@ -1087,21 +1191,22 @@ uint16_t football_player_check_hit(uint16_t object, uint16_t u)
 		animation_number = 0x8F00u;
 		stage_boss_set_state(object, state_wait, animation_number);
 		object_2 = 0x600u;
-		y = 0x400u;
-		stage_boss_knock_away(object, &y, &object_2);
-		return y;
+		leftover_y = 0x400u;
+		stage_boss_knock_away(object, object_2);
+		return;
 	}
 	palette_request_kind = 2u;
 	request = 0xEu;
-	vector_palette_request(request, &ignored16, &u);
+	vector_palette_request(u, request);
 	flinch_health = OBJECT(object)->football_player.flinch_health;
 	vitality = OBJECT(object)->vitality;
 	if ((uint8_t)(flinch_health - vitality) <= 8u)
 	{
+		leftover_y = 0xF06u;
 		state_wait = 0xF06u;
 		animation_number = 0x8D0Eu;
 		stage_boss_set_state(object, state_wait, animation_number);
-		return state_wait;
+		return;
 	}
 	vitality_2 = OBJECT(object)->vitality;
 	OBJECT(object)->football_player.flinch_health = vitality_2;
@@ -1109,9 +1214,9 @@ uint16_t football_player_check_hit(uint16_t object, uint16_t u)
 	animation_number = 0x8E0Eu;
 	stage_boss_set_state(object, state_wait, animation_number);
 	object_2 = 0x600u;
-	y = 0x400u;
-	stage_boss_knock_away(object, &y, &object_2);
-	t1 = (uint8_t)OBJECT(object)->z;
-	OBJECT(object)->z = (OBJECT(object)->z & 0xFF00u) | (t1 + 1u & 0xFFu);
-	return football_player_knocked_back(object, y);
+	leftover_y = 0x400u;
+	stage_boss_knock_away(object, object_2);
+	z_low = (uint8_t)OBJECT(object)->z;
+	OBJECT(object)->z = (OBJECT(object)->z & 0xFF00u) | (z_low + 1u & 0xFFu);
+	football_player_knocked_back(object);
 }

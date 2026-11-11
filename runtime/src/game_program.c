@@ -144,8 +144,17 @@ const void *data_record(uint32_t address, uint32_t size)
 	if (size > RECORD_MAX)
 		stop("the program read a record too long at", address);
 	copy = copies[next++ % RECORD_COPIES];
-	for (uint32_t at = 0; at < size; at++)
-		copy[size + RECORD_SLACK - 1u - at] = *data_at((address + at) & 0xFFFFu);
+	/* (the record's first byte must be the program's data; the ones after it, where the assets give them, else 0: a
+	   pointer the code walks to the end of a table names a record that runs into code, whose fields it does not read;
+	   stage 3 at frame 7117 copied one from the end of an enemy's behaviour, 029910-029967, into the code at 029968) */
+	copy[size + RECORD_SLACK - 1u] = *data_at(address);
+	for (uint32_t at = 1; at < size; at++)
+	{
+		const int32_t place = simpsons_program_offset((uint16_t)(address + at));
+		const uint8_t *byte = place >= 0 ? program_byte((uint32_t)place) : NULL;
+
+		copy[size + RECORD_SLACK - 1u - at] = byte ? *byte : 0u;
+	}
 	/* (and the few bytes after it, where the assets give them: a word the program reads across the record's last
 	   byte, which the C reads as a part of that field, AT16(record->field, -1)) */
 	for (uint32_t at = size; at < size + RECORD_SLACK; at++)
@@ -280,6 +289,25 @@ uint32_t interrupt_mask(void)
 	return mask;
 }
 
+/* An interrupt's handler, with what the code carries in its registers (game_context) put back when it returns: the
+   IRQ's handler finds every register saved on the stack and its RTI pulls them back (the 6809's E flag); the FIRQ's
+   saves CC and PC only, and its handler pushes and pulls the registers it uses (0791B4 "PUSHS A"): either way the
+   interrupted code finds its registers as it left them */
+#define MAX_CONTEXT 8
+
+static void run_handler(void (*handler)(void))
+{
+	uint16_t kept[MAX_CONTEXT];
+
+	if (game_context_count > MAX_CONTEXT)
+		stop("the program carries more values in its registers than the runtime keeps:", (uint32_t)game_context_count);
+	for (size_t index = 0; index < game_context_count; index++)
+		kept[index] = *game_context[index];
+	handler();
+	for (size_t index = 0; index < game_context_count; index++)
+		*game_context[index] = kept[index];
+}
+
 void take_interrupts(void)
 {
 	for (;;)
@@ -290,13 +318,13 @@ void take_interrupts(void)
 		{
 			mask |= CC_F | CC_I;
 			interrupts++;
-			game_firq();
+			run_handler(game_firq);
 		}
 		else if (simpsons_board.irq && !(mask & CC_I))
 		{
 			mask |= CC_I;
 			interrupts++;
-			game_irq();
+			run_handler(game_irq);
 		}
 		else
 			return;

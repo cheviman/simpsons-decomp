@@ -3,7 +3,7 @@
  *    Description: stage 5's gorge: the falling boulders and the rocks
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    10-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -13,16 +13,16 @@
 
 /* Sets a boulder up, hidden: whether it bounces away, its floor height and its wait, by its spawn's
    state. */
-void boulder_start(uint16_t object, uint16_t *p_box, uint16_t *p_boulder_drop)
+uint16_t boulder_start(uint16_t object)
 {
 	uint32_t negative = 0;
 	uint8_t cell = 0, drop_number = 0;
-	uint16_t boulder_drop = 0, box = 0, floor_cell = 0, setup = 0;
+	uint16_t boulder_drop = 0, floor_cell = 0, setup = 0;
 	uint8_t parameter = 0, wait = 0, state = 0;
 	uint16_t bounces = 0;
 
 	setup = boulder_setup_ADDRESS;
-	box = vector_object_setup(object, setup);
+	vector_object_setup(object, setup);
 	OBJECT(object)->flags = 4u;
 	OBJECT(object)->shadow_player = 0x40u;
 	parameter = OBJECT(object)->parameter;
@@ -43,8 +43,7 @@ void boulder_start(uint16_t object, uint16_t *p_box, uint16_t *p_boulder_drop)
 		OBJECT(object)->floor_z = (OBJECT(object)->floor_z & 0xFF00u) | ((((cell & 0xFu) << 1) << 1) << 1 & 0xFFu);
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
-	*p_box = box;
-	*p_boulder_drop = boulder_drop;
+	return boulder_drop;
 }
 
 /* Waits, showing the boulder 16 frames before it falls; a boulder with state bit 7 falls in front. */
@@ -141,7 +140,7 @@ void boulder_bounce(uint16_t object)
 	uint8_t cell = 0, new_zoom_x = 0, new_zoom_y = 0, z_speed_high = 0;
 	uint16_t command = 0, floor_cell = 0;
 	uint8_t parameter = 0, timer = 0;
-	uint16_t zoom_x = 0, t1 = 0, t2 = 0, z_speed = 0, t3 = 0, t4 = 0, z_speed_2 = 0, t5 = 0;
+	uint16_t zoom_x = 0, smaller_zoom = 0, boulder_y = 0, z_speed = 0, dropping_z_speed = 0, kept_z_speed = 0, z_speed_2 = 0, next_z_speed = 0;
 	uint32_t zoom_x_halfword = 0;
 
 	OBJECT(object)->flags = 0u;
@@ -150,9 +149,9 @@ void boulder_bounce(uint16_t object)
 	{
 		OBJECT(object)->flags = 0x10u;
 		zoom_x = (((uint32_t)OBJECT(object)->zoom_x << 8u) | OBJECT(object)->zoom_y);
-		t1 = zoom_x - 0x101u;
-		new_zoom_y = (uint8_t)t1;
-		new_zoom_x = (uint8_t)(t1 >> 8);
+		smaller_zoom = zoom_x - 0x101u;
+		new_zoom_y = (uint8_t)smaller_zoom;
+		new_zoom_x = (uint8_t)(smaller_zoom >> 8);
 		if ((uint16_t)(((uint32_t)new_zoom_x << 8) | (new_zoom_y & 0xFFu)) >= 0x2020u)
 		{
 			zoom_x_halfword = ((uint32_t)new_zoom_x << 8) | (new_zoom_y & 0xFFu);
@@ -165,8 +164,8 @@ void boulder_bounce(uint16_t object)
 	cell = (uint8_t)(floor_cell >> 8);
 	if ((int8_t)cell < 0)
 	{
-		t2 = OBJECT(object)->y;
-		if (t2 < 0x40u)
+		boulder_y = OBJECT(object)->y;
+		if (boulder_y < 0x40u)
 			OBJECT(object)->y_speed = 0;
 		OBJECT(object)->floor_z &= 0xFF00u;
 		OBJECT(object)->flags |= 0x80u;
@@ -175,11 +174,11 @@ void boulder_bounce(uint16_t object)
 		if (timer != 1u)
 		{
 			z_speed = OBJECT(object)->z_speed;
-			t3 = z_speed - 0x20u;
-			z_speed_high = (uint8_t)(t3 >> 8);
-			t4 = ((uint32_t)z_speed_high << 8) | (t3 & 0xFFu);
-			OBJECT(object)->z_speed = t4;
-			if ((int16_t)t4 >= 0 || z_speed_high >= 0xFCu)
+			dropping_z_speed = z_speed - 0x20u;
+			z_speed_high = (uint8_t)(dropping_z_speed >> 8);
+			kept_z_speed = ((uint32_t)z_speed_high << 8) | (dropping_z_speed & 0xFFu);
+			OBJECT(object)->z_speed = kept_z_speed;
+			if ((int16_t)kept_z_speed >= 0 || z_speed_high >= 0xFCu)
 				return;
 			OBJECT(object)->z_speed = (OBJECT(object)->z_speed & 0xFFu) | 0xFC00u;
 			return;
@@ -192,8 +191,8 @@ void boulder_bounce(uint16_t object)
 	OBJECT(object)->floor_z = (OBJECT(object)->floor_z & 0xFF00u) | ((((cell & 0xFu) << 1) << 1) << 1 & 0xFFu);
 	OBJECT(object)->flags |= 0xC8u;
 	z_speed_2 = OBJECT(object)->z_speed;
-	t5 = z_speed_2 - 0x20u;
-	OBJECT(object)->z_speed = t5;
+	next_z_speed = z_speed_2 - 0x20u;
+	OBJECT(object)->z_speed = next_z_speed;
 	carry = vector_check_landing(object);
 	if (carry == 0u)
 	{
@@ -247,13 +246,13 @@ void boulder_fall_in_front(uint16_t object)
 }
 
 /* Sets a rock up; the first also sets the four players' field 44 to 97. */
-void gorge_rock_start(uint16_t object, uint16_t *p_box, uint16_t *p_setup)
+uint16_t gorge_rock_start(uint16_t object)
 {
-	uint16_t box = 0, setup = 0;
+	uint16_t setup = 0;
 	uint8_t parameter = 0, attributes = 0, state = 0;
 
 	setup = gorge_rock_setup_ADDRESS;
-	box = vector_object_setup(object, setup);
+	vector_object_setup(object, setup);
 	parameter = OBJECT(object)->parameter;
 	if (parameter == 0u)
 	{
@@ -266,8 +265,7 @@ void gorge_rock_start(uint16_t object, uint16_t *p_box, uint16_t *p_setup)
 	OBJECT(object)->attributes = (attributes & 0xCFu) | 0x10u;
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
-	*p_box = box;
-	*p_setup = setup;
+	return setup;
 }
 
 /* Waits until something hits the rock, then starts its breaking animation. */

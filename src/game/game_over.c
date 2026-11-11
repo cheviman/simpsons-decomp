@@ -3,7 +3,7 @@
  *    Description: GAME OVER and the high score check
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    10-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -12,7 +12,7 @@
 #include "game.h"
 
 /* The game over phase, by game_step, the gauges hidden */
-uint32_t game_over_phase(uint16_t y, uint16_t u, uint32_t left_caller)
+uint32_t game_over_phase(uint16_t u, uint32_t left_caller)
 {
 	gauges_shown = 0u;
 	switch ((int8_t)(uint8_t)((uint32_t)game_step << 1))
@@ -39,7 +39,7 @@ uint32_t game_over_phase(uint16_t y, uint16_t u, uint32_t left_caller)
 		stage_3_cemetery_opening();
 		return left_caller;
 	case -126:
-		return stage_3_cemetery_play(y, left_caller);
+		return stage_3_cemetery_play(left_caller);
 	case -124:
 		stage_3_cemetery_over();
 		return left_caller;
@@ -59,7 +59,7 @@ uint32_t game_over_phase(uint16_t y, uint16_t u, uint32_t left_caller)
 		stage_4_opening();
 		return left_caller;
 	case -110:
-		return stage_4_play(y, left_caller);
+		return stage_4_play(left_caller);
 	case -108:
 		stage_4_over();
 		return left_caller;
@@ -79,7 +79,7 @@ uint32_t game_over_phase(uint16_t y, uint16_t u, uint32_t left_caller)
 		stage_5_opening();
 		return left_caller;
 	case -94:
-		return stage_5_play(y, left_caller);
+		return stage_5_play(left_caller);
 	case -92:
 		stage_5_over();
 		return left_caller;
@@ -103,7 +103,7 @@ uint32_t game_over_phase(uint16_t y, uint16_t u, uint32_t left_caller)
 		stage_6_opening();
 		return left_caller;
 	case -76:
-		return stage_6_play(y, left_caller);
+		return stage_6_play(left_caller);
 	case -74:
 		stage_6_over();
 		return left_caller;
@@ -122,10 +122,10 @@ uint32_t game_over_phase(uint16_t y, uint16_t u, uint32_t left_caller)
 		bonus_2_draw();
 		return left_caller;
 	case -62:
-		bonus_2_intro_phase(y);
+		bonus_2_intro_phase();
 		return left_caller;
 	case -60:
-		bonus_2_run(y);
+		bonus_2_run();
 		return left_caller;
 	case -58:
 		bonus_2_wait();
@@ -145,7 +145,7 @@ uint32_t game_over_phase(uint16_t y, uint16_t u, uint32_t left_caller)
 		stage_7_opening();
 		return left_caller;
 	case -46:
-		return stage_7_play(y, left_caller);
+		return stage_7_play(left_caller);
 	case -44:
 		stage_7_over();
 		return left_caller;
@@ -170,15 +170,15 @@ uint32_t game_over_phase(uint16_t y, uint16_t u, uint32_t left_caller)
 		stage_8_opening();
 		return left_caller;
 	case -26:
-		return stage_8_play(y, left_caller);
+		return stage_8_play(left_caller);
 	case -24:
 		return stage_8_first_part_exit(left_caller);
 	case -22:
 		return stage_8_story(u, left_caller);
 	case -20:
-		return stage_8_robot_entrance(y, left_caller);
+		return stage_8_robot_entrance(left_caller);
 	case -18:
-		return stage_8_final_fight(y, left_caller);
+		return stage_8_final_fight(left_caller);
 	case -16:
 		stage_8_over();
 		return left_caller;
@@ -208,7 +208,7 @@ uint32_t game_over_phase(uint16_t y, uint16_t u, uint32_t left_caller)
 void game_over_start(void)
 {
 	uint8_t delay = 0;
-	uint16_t clear_from = 0, clear_to = 0, count = 0, ignored16 = 0, job = 0, request = 0;
+	uint16_t clear_from = 0, clear_to = 0, count = 0, job = 0, request = 0;
 
 	delay = 0u;
 	do
@@ -230,10 +230,10 @@ void game_over_start(void)
 	}
 	palette_request_kind = 2u;
 	request = 0xBu;
-	palette_request(request, &ignored16, &count);
+	count = palette_request(count, request);
 	palette_request_kind = 4u;
 	request = 0x1E80u;
-	palette_request(request, &ignored16, &count);
+	palette_request(count, request);
 	game_step++;
 }
 
@@ -252,11 +252,11 @@ void game_over_show(void)
 /* Waits for scene_timer, then the game's end */
 void game_over_wait(void)
 {
-	uint16_t t1 = 0;
+	uint16_t timer_before = 0;
 
-	t1 = scene_timer;
-	scene_timer = t1 - 1u;
-	if (t1 != 1u)
+	timer_before = scene_timer;
+	scene_timer = timer_before - 1u;
+	if (timer_before != 1u)
 		return;
 	game_finish();
 }
@@ -266,12 +266,12 @@ void game_over_wait(void)
 void game_finish(void)
 {
 	uint32_t carry = 0;
-	uint16_t ignored16 = 0, ignored16_2 = 0, score = 0, score_address = 0;
-	uint8_t t1 = 0, t2 = 0;
+	uint16_t score = 0, score_address = 0;
+	uint8_t old_scroll_control = 0, scores_left = 0;
 
-	t1 = io_read8(0x1C80u);
+	old_scroll_control = io_read8(0x1C80u);
 	io_write8(0x1C80u, 0u);
-	clear_sprites(&ignored16, &ignored16_2);
+	clear_sprites();
 	clear_tile_layers();
 	score_address = marge_score_ADDRESS;
 	finish_scores_left = 4u;
@@ -287,8 +287,8 @@ void game_finish(void)
 			return;
 		}
 		score_address += 8u;
-		t2 = finish_scores_left;
-		finish_scores_left = t2 - 1u;
-	} while (t2 != 1u);
+		scores_left = finish_scores_left;
+		finish_scores_left = scores_left - 1u;
+	} while (scores_left != 1u);
 	end_game();
 }

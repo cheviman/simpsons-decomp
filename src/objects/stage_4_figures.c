@@ -3,7 +3,7 @@
  *    Description: the figures of stages 4 and 5: kinds 87, 9E, 8E (5280 types 1D, 22, 20), 8C, 8A (4F80 22, 21)
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    10-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -12,30 +12,29 @@
 #include "game.h"
 
 /* Sets the kind 87 figure up, shown. */
-void walking_kind_87_setup(uint16_t object, uint16_t *p_box, uint16_t *p_setup)
+uint16_t walking_kind_87_setup(uint16_t object)
 {
-	uint16_t box = 0, setup = 0;
+	uint16_t setup = 0;
 	uint8_t attributes = 0, state = 0;
 
 	setup = walking_kind_87_object_setup_ADDRESS;
-	box = vector_object_setup(object, setup);
+	vector_object_setup(object, setup);
 	OBJECT(object)->flags = 0x80u;
 	attributes = OBJECT(object)->attributes;
 	OBJECT(object)->attributes = (attributes & 0xCFu) | 0xA9u;
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
-	*p_box = box;
-	*p_setup = setup;
+	return setup;
 }
 
 /* Waits for the scroll to bring the figure on, then waits 32 frames more. */
 void walking_kind_87_wait(uint16_t object)
 {
 	uint8_t state = 0;
-	uint16_t t1 = 0;
+	uint16_t screen_x = 0;
 
-	t1 = OBJECT(object)->x;
-	if (t1 < 0x120u)
+	screen_x = OBJECT(object)->x;
+	if (screen_x < 0x120u)
 	{
 		OBJECT(object)->timer = 0x20u;
 		state = OBJECT(object)->state;
@@ -119,13 +118,13 @@ void walking_kind_87_running(void)
 }
 
 /* Sets the kind 9E figure up a little above the ground, walking left for 72 frames. */
-void kind_9e_setup(uint16_t object, uint16_t *p_box, uint16_t *p_setup)
+uint16_t kind_9e_setup(uint16_t object)
 {
-	uint16_t box = 0, setup = 0;
+	uint16_t setup = 0;
 	uint8_t attributes = 0, state = 0;
 
 	setup = kind_9e_object_setup_ADDRESS;
-	box = vector_object_setup(object, setup);
+	vector_object_setup(object, setup);
 	OBJECT(object)->flags = 0x80u;
 	OBJECT(object)->z = 0x10u;
 	attributes = OBJECT(object)->attributes;
@@ -135,8 +134,7 @@ void kind_9e_setup(uint16_t object, uint16_t *p_box, uint16_t *p_setup)
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
 	face_movement(object);
-	*p_box = box;
-	*p_setup = setup;
+	return setup;
 }
 
 /* Counts the walk down, then stops the figure, hides its parent (field 40) and plays animation 82. */
@@ -180,10 +178,10 @@ void kind_9e_wait_pose(uint16_t object)
 void kind_9e_wait_for_scroll(uint16_t object)
 {
 	uint8_t state = 0;
-	uint16_t t1 = 0;
+	uint16_t camera_position = 0;
 
-	t1 = camera_x;
-	if (t1 >= 0x238u)
+	camera_position = camera_x;
+	if (camera_position >= 0x238u)
 	{
 		OBJECT(object)->animation = 0x84u;
 		state = OBJECT(object)->state;
@@ -218,18 +216,18 @@ uint16_t kind_9e_show_parent(uint16_t object, uint16_t states)
 void kind_9e_walk_right(uint16_t object)
 {
 	uint8_t state = 0;
-	uint16_t t1 = 0, t2 = 0;
+	uint16_t screen_x = 0, camera_position = 0;
 
-	t1 = OBJECT(object)->x;
-	if (t1 >= 0x100u)
+	screen_x = OBJECT(object)->x;
+	if (screen_x >= 0x100u)
 	{
 		OBJECT(object)->x_speed = 0;
 		OBJECT(object)->animation = 0x80u;
 		state = OBJECT(object)->state;
 		OBJECT(object)->state = state + 1u;
 	}
-	t2 = camera_x;
-	if (t2 >= 0x340u)
+	camera_position = camera_x;
+	if (camera_position >= 0x340u)
 	{
 		OBJECT(object)->x_speed = 0;
 		OBJECT(object)->animation = 0x80u;
@@ -266,10 +264,10 @@ void kind_9e_pace(uint16_t object)
 {
 	uint8_t x_high = 0, x_low = 0;
 	uint8_t timer = 0, state = 0, state_2 = 0;
-	uint16_t t1 = 0, t2 = 0;
+	uint16_t camera_position = 0, screen_x = 0;
 
-	t1 = camera_x;
-	if (t1 < 0x340u)
+	camera_position = camera_x;
+	if (camera_position < 0x340u)
 	{
 		timer = OBJECT(object)->timer;
 		OBJECT(object)->timer = timer - 1u;
@@ -281,9 +279,9 @@ void kind_9e_pace(uint16_t object)
 			OBJECT(object)->state = state - 1u;
 			return;
 		}
-		t2 = OBJECT(object)->x;
-		x_low = (uint8_t)t2;
-		x_high = (uint8_t)(t2 >> 8);
+		screen_x = OBJECT(object)->x;
+		x_low = (uint8_t)screen_x;
+		x_high = (uint8_t)(screen_x >> 8);
 		if ((uint16_t)(((uint32_t)x_high << 8) | (x_low & 0xFFu)) < 0xE0u)
 		{
 			OBJECT(object)->x_speed = 0x100;
@@ -319,23 +317,23 @@ void kind_9e_leave(uint16_t object)
 /* Frees the figure's slot when it reaches the screen's left edge. */
 void kind_9e_remove_at_edge(uint16_t object)
 {
-	uint16_t t1 = 0;
+	uint16_t screen_x = 0;
 
-	t1 = OBJECT(object)->x;
-	if (t1 < 0x30u)
+	screen_x = OBJECT(object)->x;
+	if (screen_x < 0x30u)
 		OBJECT(object)->flags = 0u;
 }
 
 /* Sets the kind 8E figure up in its pose from kind_8e_poses; state 0 waits for work RAM 187F, the others
    just stand. */
-void kind_8e_watcher_setup(uint16_t object, uint16_t *p_box, uint16_t *p_look)
+uint16_t kind_8e_watcher_setup(uint16_t object)
 {
-	uint16_t box = 0, look = 0, setup = 0;
+	uint16_t look = 0, setup = 0;
 	uint8_t parameter = 0, parameter_2 = 0, state = 0;
 	uint16_t flags = 0;
 
 	setup = kind_8e_watcher_object_setup_ADDRESS;
-	box = vector_object_setup(object, setup);
+	vector_object_setup(object, setup);
 	OBJECT(object)->flags = 0x80u;
 	parameter = OBJECT(object)->parameter;
 	look = kind_8e_poses_ADDRESS + (int8_t)((uint32_t)parameter << 1);
@@ -348,11 +346,10 @@ void kind_8e_watcher_setup(uint16_t object, uint16_t *p_box, uint16_t *p_look)
 		state = OBJECT(object)->state;
 		OBJECT(object)->state = state + 1u;
 		kind_8e_watcher_stand();
+		return look;
 	}
-	else
-		OBJECT(object)->state = 2u;
-	*p_box = box;
-	*p_look = look;
+	OBJECT(object)->state = 2u;
+	return look;
 }
 
 /* The figure standing: nothing to do. */
@@ -364,10 +361,10 @@ void kind_8e_watcher_stand(void)
    hittable. */
 void kind_8e_watcher_wait_signal(uint16_t object)
 {
-	uint8_t t1 = 0, state = 0;
+	uint8_t watch_signal = 0, state = 0;
 
-	t1 = io_read8(0x187Fu);
-	if (t1 != 0u)
+	watch_signal = io_read8(0x187Fu);
+	if (watch_signal != 0u)
 	{
 		OBJECT(OBJECT_ADDRESS(0))->unk_44 = 0x9Fu;
 		OBJECT(OBJECT_ADDRESS(2))->unk_44 = 0x9Fu;
@@ -395,7 +392,7 @@ void unused_kind_8e_watcher_no_op(void)
 }
 
 /* The bystander leaving (step FD), by field 28. */
-uint16_t kind_8c_bystander_leave(uint16_t object, uint16_t y)
+void kind_8c_bystander_leave(uint16_t object)
 {
 	uint8_t action = 0;
 
@@ -406,32 +403,33 @@ uint16_t kind_8c_bystander_leave(uint16_t object, uint16_t y)
 		{
 		case 0:
 			kind_8c_bystander_turn_away(object);
-			return y;
+			return;
 		case 2:
 		case 8:
 			kind_8c_bystander_walk_off(object);
-			return y;
+			return;
 		case 4:
 		case 10:
 			kind_8c_bystander_walking();
-			return y;
+			return;
 		case 6:
 			break;
 		case -10:
 			continue;
 		case -8:
 		case -6:
-			return kind_8c_bystander_hurt(object, y);
+			kind_8c_bystander_hurt(object);
+			return;
 		case -4:
-			return kind_8c_bystander_setup(object);
+			kind_8c_bystander_setup(object);
+			return;
 		case -2:
 			kind_8c_bystander_pose(object);
-			return y;
+			return;
 		}
 		break;
 	}
 	kind_8c_bystander_reel(object);
-	return y;
 }
 
 /* Stops the bystander and plays its turning animation. */
@@ -447,7 +445,7 @@ void kind_8c_bystander_turn_away(uint16_t object)
 }
 
 /* The bystander when hit (steps FE, FF), by field 28: it reels and walks off. */
-uint16_t kind_8c_bystander_hurt(uint16_t object, uint16_t y)
+void kind_8c_bystander_hurt(uint16_t object)
 {
 	uint8_t action = 0;
 
@@ -461,29 +459,30 @@ uint16_t kind_8c_bystander_hurt(uint16_t object, uint16_t y)
 		case -4:
 		case 2:
 			kind_8c_bystander_walk_off(object);
-			return y;
+			return;
 		case -2:
 		case 4:
 			kind_8c_bystander_walking();
-			return y;
+			return;
 		case -16:
-			return kind_8c_bystander_leave(object, y);
+			kind_8c_bystander_leave(object);
+			return;
 		case -14:
 		case -12:
 			continue;
 		case -10:
-			return kind_8c_bystander_setup(object);
+			kind_8c_bystander_setup(object);
+			return;
 		case -8:
 			kind_8c_bystander_pose(object);
-			return y;
+			return;
 		case -6:
 			kind_8c_bystander_turn_away(object);
-			return y;
+			return;
 		}
 		break;
 	}
 	kind_8c_bystander_reel(object);
-	return y;
 }
 
 /* Stops the hit bystander with the hit sound and its hurt animation. */
@@ -523,19 +522,18 @@ void kind_8c_bystander_walking(void)
 }
 
 /* Sets the bystander up facing left, out of the enemy count. */
-uint16_t kind_8c_bystander_setup(uint16_t object)
+void kind_8c_bystander_setup(uint16_t object)
 {
-	uint16_t box = 0, setup = 0;
+	uint16_t setup = 0;
 	uint8_t state = 0;
 
 	setup = kind_8c_bystander_object_setup_ADDRESS;
-	box = vector_object_setup(object, setup);
+	vector_object_setup(object, setup);
 	OBJECT(object)->attributes = 0x40u;
 	OBJECT(object)->enemy_class = -1;
 	OBJECT(object)->entrance_pending = 0xFFu;
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
-	return box;
 }
 
 /* Every 128 frames shows the bystander's next pose from kind_8c_animations; when the scroll reaches 0270
@@ -543,7 +541,7 @@ uint16_t kind_8c_bystander_setup(uint16_t object)
 void kind_8c_bystander_pose(uint16_t object)
 {
 	uint8_t pose = 0, pose_2 = 0;
-	uint16_t t1 = 0;
+	uint16_t camera_position = 0;
 
 	if ((frame_count & 0x7Fu) == 0u)
 	{
@@ -552,8 +550,8 @@ void kind_8c_bystander_pose(uint16_t object)
 		pose_2 = OBJECT(object)->kind_8c_bystander.pose;
 		OBJECT(object)->animation = kind_8c_animations[pose_2 & 3u];
 	}
-	t1 = camera_x;
-	if (t1 >= 0x270u)
+	camera_position = camera_x;
+	if (camera_position >= 0x270u)
 	{
 		OBJECT(object)->flags = 0x80u;
 		OBJECT(object)->state = 0xFDu;
@@ -562,7 +560,7 @@ void kind_8c_bystander_pose(uint16_t object)
 }
 
 /* The carrier when hit or when it has set its goon down (steps FE, FF), by field 28: it runs off. */
-uint16_t kind_8a_carrier_hurt(uint16_t object, uint16_t y)
+void kind_8a_carrier_hurt(uint16_t object)
 {
 	uint8_t action = 0;
 
@@ -573,33 +571,34 @@ uint16_t kind_8a_carrier_hurt(uint16_t object, uint16_t y)
 		{
 		case 0:
 			kind_8a_carrier_run_off(object);
-			return y;
+			return;
 		case 2:
 			break;
 		case -16:
 		case -14:
 			continue;
 		case -12:
-			return kind_8a_carrier_setup(object);
+			kind_8a_carrier_setup(object);
+			return;
 		case -10:
-			return kind_8a_carrier_pick_up(object);
+			kind_8a_carrier_pick_up(object);
+			return;
 		case -8:
 			kind_8a_carrier_carry(object);
-			return y;
+			return;
 		case -6:
 			kind_8a_carrier_set_down(object);
-			return y;
+			return;
 		case -4:
 			kind_8a_carrier_straighten(object);
-			return y;
+			return;
 		case -2:
 			kind_8a_carrier_done(object);
-			return y;
+			return;
 		}
 		break;
 	}
 	kind_8a_carrier_running();
-	return y;
 }
 
 /* Sends the carrier running off to the right. */
@@ -620,35 +619,34 @@ void kind_8a_carrier_running(void)
 }
 
 /* Sets the carrier up out of the enemy count, coming in from the right. */
-uint16_t kind_8a_carrier_setup(uint16_t object)
+void kind_8a_carrier_setup(uint16_t object)
 {
-	uint16_t box = 0, setup = 0;
+	uint16_t setup = 0;
 	uint8_t enemy_class = 0, state = 0;
 
 	setup = kind_8a_carrier_object_setup_ADDRESS;
-	box = vector_object_setup(object, setup);
+	vector_object_setup(object, setup);
 	enemy_class = OBJECT(object)->enemy_class;
 	OBJECT(object)->enemy_class = enemy_class - 1u;
 	OBJECT(object)->x_speed = -0x200;
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
-	return box;
 }
 
 /* Puts in the goon it carries (5280 type 17) and walks in with it; with no free slot it runs off. */
-uint16_t kind_8a_carrier_pick_up(uint16_t object)
+void kind_8a_carrier_pick_up(uint16_t object)
 {
 	uint32_t carry = 0;
-	uint16_t carried_goon = 0, child_record = 0, ignored16 = 0;
+	uint16_t carried_goon = 0, ignored16 = 0, ignored16_2 = 0;
 	uint8_t state = 0;
 
-	child_record = kind_8a_carrier_pick_up_child_ADDRESS;
-	vector_spawn_child(object, child_record, &carried_goon, &ignored16, &carry);
+	leftover_y = kind_8a_carrier_pick_up_child_ADDRESS;
+	vector_spawn_child(object, &ignored16, &carried_goon, &ignored16_2, &carry);
 	if (carry == 0u)
 	{
 		OBJECT(object)->state = 0xFEu;
 		OBJECT(object)->action = 0u;
-		return child_record;
+		return;
 	}
 	OBJECT(object)->kind_8a_carrier.carried_goon = carried_goon;
 	OBJECT(object)->timer = 0x40u;
@@ -658,7 +656,6 @@ uint16_t kind_8a_carrier_pick_up(uint16_t object)
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
 	face_movement(object);
-	return child_record;
 }
 
 /* Keeps the goon on the carrier's back while it walks in; when its walk is over it stops; if the goon is
@@ -667,7 +664,7 @@ void kind_8a_carrier_carry(uint16_t object)
 {
 	uint16_t carried_goon = 0;
 	uint8_t state = 0, animation_flags = 0, timer = 0, state_2 = 0;
-	uint16_t carried_goon_2 = 0, carried_goon_3 = 0, t1 = 0, t2 = 0, t3 = 0, z = 0, t4 = 0;
+	uint16_t carried_goon_2 = 0, carried_goon_3 = 0, carrier_x = 0, carrier_y = 0, goon_y = 0, z = 0, goon_z = 0;
 
 	carried_goon_2 = OBJECT(object)->kind_8a_carrier.carried_goon;
 	carried_goon = carried_goon_2;
@@ -681,14 +678,14 @@ void kind_8a_carrier_carry(uint16_t object)
 	carried_goon = carried_goon_3;
 	animation_flags = OBJECT(carried_goon)->animation_flags;
 	OBJECT(carried_goon)->animation_flags = animation_flags | 0x80u;
-	t1 = OBJECT(object)->x;
-	OBJECT(carried_goon)->x = t1;
-	t2 = OBJECT(object)->y;
-	t3 = t2 - 4u;
-	OBJECT(carried_goon)->y = t3;
+	carrier_x = OBJECT(object)->x;
+	OBJECT(carried_goon)->x = carrier_x;
+	carrier_y = OBJECT(object)->y;
+	goon_y = carrier_y - 4u;
+	OBJECT(carried_goon)->y = goon_y;
 	z = OBJECT(object)->z;
-	t4 = z + 0x40u;
-	OBJECT(carried_goon)->z = t4;
+	goon_z = z + 0x40u;
+	OBJECT(carried_goon)->z = goon_z;
 	timer = OBJECT(object)->timer;
 	OBJECT(object)->timer = timer - 1u;
 	if (timer == 1u)

@@ -3,7 +3,7 @@
  *    Description: stage 7's kind B3 object that takes six hits
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    10-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -12,20 +12,19 @@
 #include "game.h"
 
 /* Sets up the kind B3 object, good for six hits. */
-void kind_b3_start(uint16_t object, uint16_t *p_box, uint16_t *p_setup)
+uint16_t kind_b3_start(uint16_t object)
 {
-	uint16_t box = 0, setup = 0;
+	uint16_t setup = 0;
 	uint8_t attributes = 0, state = 0;
 
 	setup = kind_b3_setup_ADDRESS;
-	box = vector_object_setup(object, setup);
+	vector_object_setup(object, setup);
 	attributes = OBJECT(object)->attributes;
 	OBJECT(object)->attributes = (attributes & 0xCFu) | 0x20u;
 	OBJECT(object)->kind_b3.hits_left = 6u;
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
-	*p_box = box;
-	*p_setup = setup;
+	return setup;
 }
 
 /* Takes a hit, showing the animation of the hits left; the sixth breaks it for good. */

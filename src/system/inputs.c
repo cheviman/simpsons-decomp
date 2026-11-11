@@ -3,7 +3,7 @@
  *    Description: the coin slots, the credits and the players' controls, read at each IRQ
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    10-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -20,12 +20,12 @@ void coin_inserted(uint16_t *p_coin_bit, uint32_t *p_carry)
 	uint8_t b = 0, inserted = 0;
 	uint16_t command = 0;
 	uint8_t stack = 0;
-	uint8_t t1 = 0;
+	uint8_t released_coin_bits = 0;
 
 	stack = coin_bit >> 8;
-	t1 = ~(coin_inputs | coin_inputs_last) & coin_inputs_before & stack;
-	inserted = t1;
-	if (t1 == 0u)
+	released_coin_bits = ~(coin_inputs | coin_inputs_last) & coin_inputs_before & stack;
+	inserted = released_coin_bits;
+	if (released_coin_bits == 0u)
 	{
 		carry = 0u;
 		coin_bit = ((uint32_t)stack << 8) | inserted;
@@ -46,54 +46,54 @@ void coin_inserted(uint16_t *p_coin_bit, uint32_t *p_carry)
 /* Counts a coin in the coin slot's record at U and gives the credits it is worth when enough coins are
    in: into the shared credits, or into the slot's own when each slot has its credits (the first credit
    of a slot may take more coins). */
-uint16_t add_coin(uint16_t slot, uint8_t d)
+uint16_t add_coin(uint16_t slot, uint8_t coin_bit)
 {
 	uint8_t b = 0, coins = 0, coins_needed = 0, first_credit_given = 0;
-	uint16_t d_2 = 0;
+	uint16_t d = 0, d_2 = 0;
 	uint8_t stack = 0;
-	uint8_t t1 = 0, t2 = 0, t3 = 0, t4 = 0, t5 = 0, t6 = 0, t8 = 0, t9 = 0, t10 = 0;
-	uint16_t t7 = 0, t11 = 0;
+	uint8_t coins_before = 0, pulses_before = 0, slot_coins = 0, credit_price = 0, credit_price_2 = 0, credit_gain = 0, given_already = 0, slot_coins_2 = 0, slot_coins_3 = 0;
+	uint16_t new_credits = 0, new_slot_credits = 0;
 
-	b = (uint8_t)d;
-	t1 = mem_read8(slot + 2u);
-	mem_write8(slot + 2u, t1 + 1u);
+	b = (uint8_t)coin_bit;
+	coins_before = COIN_SLOT(slot)->coins;
+	COIN_SLOT(slot)->coins = coins_before + 1u;
 	if (separate_coin_slots == 0u)
 	{
-		t2 = mem_read8(slot + 3u);
-		mem_write8(slot + 3u, t2 + 1u);
-		t3 = mem_read8(slot + 2u);
-		coins = t3;
-		t4 = mem_read8(slot + 5u);
-		if (t4 <= coins)
+		pulses_before = COIN_SLOT(slot)->counter_pulses;
+		COIN_SLOT(slot)->counter_pulses = pulses_before + 1u;
+		slot_coins = COIN_SLOT(slot)->coins;
+		coins = slot_coins;
+		credit_price = COIN_SLOT(slot)->coins_per_credit;
+		if (credit_price <= coins)
 		{
-			t5 = mem_read8(slot + 5u);
-			mem_write8(slot + 2u, coins - t5);
-			t6 = mem_read8(slot + 6u);
-			t7 = t6 + credits;
-			coins = (uint8_t)(t7 >> 8);
-			b = (uint8_t)t7;
+			credit_price_2 = COIN_SLOT(slot)->coins_per_credit;
+			COIN_SLOT(slot)->coins = coins - credit_price_2;
+			credit_gain = COIN_SLOT(slot)->credits_per_coins;
+			new_credits = credit_gain + credits;
+			coins = (uint8_t)(new_credits >> 8);
+			b = (uint8_t)new_credits;
 			credits = ((uint32_t)coins << 8) | b;
 		}
-		d_2 = ((uint32_t)coins << 8) | b;
-		return d_2;
+		d = ((uint32_t)coins << 8) | b;
+		return d;
 	}
 	slot_1_counter_pulses++;
 	coins_needed = slot_1_coins_per_credit;
-	t8 = mem_read8(slot + 7u);
-	first_credit_given = t8;
-	if (t8 == 0u)
+	given_already = COIN_SLOT(slot)->credit_given;
+	first_credit_given = given_already;
+	if (given_already == 0u)
 		coins_needed += first_credit_extra_coins;
-	t9 = mem_read8(slot + 2u);
-	if (coins_needed <= t9)
+	slot_coins_2 = COIN_SLOT(slot)->coins;
+	if (coins_needed <= slot_coins_2)
 	{
 		stack = coins_needed;
-		t10 = mem_read8(slot + 2u);
-		mem_write8(slot + 2u, t10 - stack);
-		t11 = slot_1_credits_per_coins + mem_read16(slot);
-		first_credit_given = (uint8_t)t11;
-		mem_write16(slot, ((uint32_t)(t11 >> 8) << 8) | first_credit_given);
+		slot_coins_3 = COIN_SLOT(slot)->coins;
+		COIN_SLOT(slot)->coins = slot_coins_3 - stack;
+		new_slot_credits = slot_1_credits_per_coins + COIN_SLOT(slot)->own_credits;
+		first_credit_given = (uint8_t)new_slot_credits;
+		COIN_SLOT(slot)->own_credits = ((uint32_t)(new_slot_credits >> 8) << 8) | first_credit_given;
 		coins_needed = 1u;
-		mem_write8(slot + 7u, 1u);
+		COIN_SLOT(slot)->credit_given = 1u;
 	}
 	d_2 = ((uint32_t)coins_needed << 8) | first_credit_given;
 	return d_2;
@@ -111,12 +111,12 @@ void read_controls(uint16_t controls, uint16_t port)
    pressed and the ones held. */
 void update_controls(uint16_t controls, uint16_t port)
 {
-	uint8_t t1 = 0, t2 = 0;
+	uint8_t last_controls = 0, last_controls_2 = 0;
 
-	mem_write8(controls + 1u, mem_read8(controls));
-	mem_write8(controls, ~mem_read8(port));
-	t1 = mem_read8(controls + 1u);
-	mem_write8(controls + 3u, t1 & mem_read8(controls));
-	t2 = mem_read8(controls + 1u);
-	mem_write8(controls + 2u, ~t2 & mem_read8(controls));
+	PLAYER_INPUT(controls)->last = PLAYER_INPUT(controls)->now;
+	PLAYER_INPUT(controls)->now = ~mem_read8(port);
+	last_controls = PLAYER_INPUT(controls)->last;
+	PLAYER_INPUT(controls)->held = last_controls & PLAYER_INPUT(controls)->now;
+	last_controls_2 = PLAYER_INPUT(controls)->last;
+	PLAYER_INPUT(controls)->pressed = ~last_controls_2 & PLAYER_INPUT(controls)->now;
 }

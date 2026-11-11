@@ -3,7 +3,7 @@
  *    Description: stage 7's boss (Channel 6)
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    10-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -12,7 +12,7 @@
 #include "game.h"
 
 /* Stage 7's boss beaten (state FD), by its step. */
-uint16_t stage_7_boss_beaten(uint16_t object, uint16_t y)
+void stage_7_boss_beaten(uint16_t object)
 {
 	uint32_t carry = 0;
 	uint8_t action_index = 0;
@@ -29,89 +29,102 @@ uint16_t stage_7_boss_beaten(uint16_t object, uint16_t y)
 		{
 		case 0:
 			stage_7_boss_beaten_wait(object);
-			return y;
+			return;
 		case 2:
 			stage_7_boss_blink_out(object, carry);
-			return y;
+			return;
 		case 4:
 			stage_7_boss_fall(object);
-			return y;
+			return;
 		case 6:
 			stage_7_boss_lie(object);
-			return y;
+			return;
 		case 8:
-			return stage_7_boss_get_up(object, y);
+			stage_7_boss_get_up(object);
+			return;
 		case 10:
 			stage_7_boss_flinch_wait(object);
-			return y;
+			return;
 		case 12:
-			return stage_7_boss_flinch_land(object, y);
+			stage_7_boss_flinch_land(object);
+			return;
 		case 14:
-			return stage_7_boss_put_in(object);
+			stage_7_boss_put_in(object);
+			return;
 		case 16:
 			stage_7_boss_start_entrance(object);
-			return y;
+			return;
 		case 18:
 			stage_7_boss_move_helpers(object);
-			return y;
+			return;
 		case 20:
 			stage_7_boss_step_forward(object);
-			return y;
+			return;
 		case 22:
 			stage_7_boss_arrive(object);
-			return y;
+			return;
 		case 24:
 			stage_7_boss_entrance_pose(object);
-			return y;
+			return;
 		case 26:
 			stage_7_boss_entrance_end(object);
-			return y;
+			return;
 		case 28:
 			stage_7_boss_wind_up(object);
-			return y;
+			return;
 		case 30:
 			stage_7_boss_strike(object);
-			return y;
+			return;
 		case 32:
-			return stage_7_boss_recover(object, y);
+			stage_7_boss_recover(object);
+			return;
 		case 34:
 			stage_7_boss_charging(object);
-			return y;
+			return;
 		case 36:
-			return stage_7_boss_charge_end(object, y);
+			stage_7_boss_charge_end(object);
+			return;
 		case 38:
 			stage_7_boss_jump_rise(object);
-			return y;
+			return;
 		case 40:
 			stage_7_boss_jump_land(object);
-			return y;
+			return;
 		case 42:
 			break;
 		case -20:
 			continue;
 		case -18:
-			return stage_7_boss_knocked_down(object, y);
+			stage_7_boss_knocked_down(object);
+			return;
 		case -16:
-			return stage_7_boss_flinch(object, y);
+			stage_7_boss_flinch(object);
+			return;
 		case -14:
-			return stage_7_boss_entrance(object, y);
+			stage_7_boss_entrance(object);
+			return;
 		case -12:
-			return stage_7_boss_walk(object, y);
+			stage_7_boss_walk(object);
+			return;
 		case -10:
-			return stage_7_boss_attack(object, y);
+			stage_7_boss_attack(object);
+			return;
 		case -8:
-			return stage_7_boss_charge(object, y);
+			stage_7_boss_charge(object);
+			return;
 		case -6:
-			return stage_7_boss_jump_away(object, y);
+			stage_7_boss_jump_away(object);
+			return;
 		case -4:
-			return stage_7_boss_idle(object, y, action_handlers);
+			stage_7_boss_idle(object, action_handlers);
+			return;
 		case -2:
-			return stage_7_boss_wait_target_up(object, y);
+			stage_7_boss_wait_target_up(object);
+			return;
 		}
 		break;
 	}
 	stage_7_boss_jump_end(object);
-	return y;
 }
 
 /* Stage 7's boss beaten: waits, then cries out (3F3B). */
@@ -137,13 +150,13 @@ void stage_7_boss_blink_out(uint16_t object, uint32_t carry)
 {
 	uint8_t frame_bit = 0;
 	uint16_t command = 0;
-	uint8_t t1 = 0, action_step = 0, action_step_2 = 0, points = 0;
+	uint8_t rotated_once = 0, action_step = 0, action_step_2 = 0, points = 0;
 
 	OBJECT(object)->flags &= 0x7Fu;
 	frame_bit = (uint8_t)frame_count & 1u;
-	t1 = (frame_bit >> 1) | (carry << 7);
+	rotated_once = (frame_bit >> 1) | (carry << 7);
 	carry = frame_bit;
-	OBJECT(object)->flags |= (t1 >> 1) | (carry << 7);
+	OBJECT(object)->flags |= (rotated_once >> 1) | (carry << 7);
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step + 1u;
 	action_step_2 = OBJECT(object)->action_step;
@@ -161,7 +174,7 @@ void stage_7_boss_blink_out(uint16_t object, uint32_t carry)
 }
 
 /* Stage 7's boss knocked down (state FE), by its step. */
-uint16_t stage_7_boss_knocked_down(uint16_t object, uint16_t y)
+void stage_7_boss_knocked_down(uint16_t object)
 {
 	uint32_t carry = 0;
 	uint8_t action_index = 0;
@@ -178,100 +191,113 @@ uint16_t stage_7_boss_knocked_down(uint16_t object, uint16_t y)
 		{
 		case 0:
 			stage_7_boss_fall(object);
-			return y;
+			return;
 		case 2:
 			stage_7_boss_lie(object);
-			return y;
+			return;
 		case 4:
-			return stage_7_boss_get_up(object, y);
+			stage_7_boss_get_up(object);
+			return;
 		case 6:
 			stage_7_boss_flinch_wait(object);
-			return y;
+			return;
 		case 8:
-			return stage_7_boss_flinch_land(object, y);
+			stage_7_boss_flinch_land(object);
+			return;
 		case 10:
-			return stage_7_boss_put_in(object);
+			stage_7_boss_put_in(object);
+			return;
 		case 12:
 			stage_7_boss_start_entrance(object);
-			return y;
+			return;
 		case 14:
 			stage_7_boss_move_helpers(object);
-			return y;
+			return;
 		case 16:
 			stage_7_boss_step_forward(object);
-			return y;
+			return;
 		case 18:
 			stage_7_boss_arrive(object);
-			return y;
+			return;
 		case 20:
 			stage_7_boss_entrance_pose(object);
-			return y;
+			return;
 		case 22:
 			stage_7_boss_entrance_end(object);
-			return y;
+			return;
 		case 24:
 			stage_7_boss_wind_up(object);
-			return y;
+			return;
 		case 26:
 			stage_7_boss_strike(object);
-			return y;
+			return;
 		case 28:
-			return stage_7_boss_recover(object, y);
+			stage_7_boss_recover(object);
+			return;
 		case 30:
 			stage_7_boss_charging(object);
-			return y;
+			return;
 		case 32:
-			return stage_7_boss_charge_end(object, y);
+			stage_7_boss_charge_end(object);
+			return;
 		case 34:
 			stage_7_boss_jump_rise(object);
-			return y;
+			return;
 		case 36:
 			stage_7_boss_jump_land(object);
-			return y;
+			return;
 		case 38:
 			break;
 		case -24:
-			return stage_7_boss_beaten(object, y);
+			stage_7_boss_beaten(object);
+			return;
 		case -22:
 			continue;
 		case -20:
-			return stage_7_boss_flinch(object, y);
+			stage_7_boss_flinch(object);
+			return;
 		case -18:
-			return stage_7_boss_entrance(object, y);
+			stage_7_boss_entrance(object);
+			return;
 		case -16:
-			return stage_7_boss_walk(object, y);
+			stage_7_boss_walk(object);
+			return;
 		case -14:
-			return stage_7_boss_attack(object, y);
+			stage_7_boss_attack(object);
+			return;
 		case -12:
-			return stage_7_boss_charge(object, y);
+			stage_7_boss_charge(object);
+			return;
 		case -10:
-			return stage_7_boss_jump_away(object, y);
+			stage_7_boss_jump_away(object);
+			return;
 		case -8:
-			return stage_7_boss_idle(object, y, action_handlers);
+			stage_7_boss_idle(object, action_handlers);
+			return;
 		case -6:
-			return stage_7_boss_wait_target_up(object, y);
+			stage_7_boss_wait_target_up(object);
+			return;
 		case -4:
 			stage_7_boss_beaten_wait(object);
-			return y;
+			return;
 		case -2:
 			stage_7_boss_blink_out(object, carry);
-			return y;
+			return;
 		}
 		break;
 	}
 	stage_7_boss_jump_end(object);
-	return y;
 }
 
 /* Stage 7's boss knocked down: falls; landing with too little health it is beaten, else it lies. */
 void stage_7_boss_fall(uint16_t object)
 {
 	uint32_t carry = 0;
-	uint16_t animation_number = 0, command = 0, d = 0;
-	uint8_t vitality = 0, t1 = 0, shadow_player = 0, action = 0;
+	uint16_t animation_number = 0, command = 0, landing_result = 0;
+	uint8_t vitality = 0, ninja_vanish_signal = 0, shadow_player = 0, action = 0;
 	uint16_t hit_by = 0;
 
-	vector_apply_gravity(object, &d, &carry);
+	vector_apply_gravity(object, &landing_result, &carry);
 	if (carry == 0u)
 		return;
 	OBJECT(object)->x_speed = 0;
@@ -280,10 +306,10 @@ void stage_7_boss_fall(uint16_t object)
 	if (vitality <= stage_7_boss_beaten_health_by_players[(int8_t)((uint8_t)(player_count - 1u))])
 	{
 		OBJECT(object)->flags = (OBJECT(object)->flags & 0xBFu) | 4u;
-		animation_number = (d & 0xFFu) | 0x800u;
+		animation_number = (landing_result & 0xFFu) | 0x800u;
 		carry = stage_7_boss_set_animation(object, animation_number);
-		t1 = io_read8(0x187Eu);
-		io_write8(0x187Eu, t1 + 1u);
+		ninja_vanish_signal = io_read8(0x187Eu);
+		io_write8(0x187Eu, ninja_vanish_signal + 1u);
 		command = 0x9800u;
 		carry = vector_queue_sound(command);
 		hit_by = OBJECT(object)->hit_by;
@@ -295,7 +321,7 @@ void stage_7_boss_fall(uint16_t object)
 		OBJECT(object)->action = 0u;
 		return;
 	}
-	animation_number = (d & 0xFFu) | 0xB00u;
+	animation_number = (landing_result & 0xFFu) | 0xB00u;
 	carry = stage_7_boss_set_animation(object, animation_number);
 	OBJECT(object)->action_step = 0x40u;
 	action = OBJECT(object)->action;
@@ -320,20 +346,20 @@ void stage_7_boss_lie(uint16_t object)
 }
 
 /* Stage 7's boss knocked down: once up, stands and picks its target again. */
-uint16_t stage_7_boss_get_up(uint16_t object, uint16_t y)
+void stage_7_boss_get_up(uint16_t object)
 {
-	uint16_t u = 0;
+	uint16_t box_end = 0;
 	uint8_t animation_flags = 0;
 
 	animation_flags = OBJECT(object)->animation_flags;
 	if ((animation_flags & 1u) == 0u)
-		return y;
-	u = stage_7_boss_stand(object);
-	return stage_7_boss_pick_target(object, y, u);
+		return;
+	box_end = stage_7_boss_stand(object);
+	stage_7_boss_pick_target(object, box_end);
 }
 
 /* Stage 7's boss hit (state FF), by its step. */
-uint16_t stage_7_boss_flinch(uint16_t object, uint16_t y)
+void stage_7_boss_flinch(uint16_t object)
 {
 	uint32_t carry = 0;
 	uint8_t action_index = 0;
@@ -350,89 +376,102 @@ uint16_t stage_7_boss_flinch(uint16_t object, uint16_t y)
 		{
 		case 0:
 			stage_7_boss_flinch_wait(object);
-			return y;
+			return;
 		case 2:
-			return stage_7_boss_flinch_land(object, y);
+			stage_7_boss_flinch_land(object);
+			return;
 		case 4:
-			return stage_7_boss_put_in(object);
+			stage_7_boss_put_in(object);
+			return;
 		case 6:
 			stage_7_boss_start_entrance(object);
-			return y;
+			return;
 		case 8:
 			stage_7_boss_move_helpers(object);
-			return y;
+			return;
 		case 10:
 			stage_7_boss_step_forward(object);
-			return y;
+			return;
 		case 12:
 			stage_7_boss_arrive(object);
-			return y;
+			return;
 		case 14:
 			stage_7_boss_entrance_pose(object);
-			return y;
+			return;
 		case 16:
 			stage_7_boss_entrance_end(object);
-			return y;
+			return;
 		case 18:
 			stage_7_boss_wind_up(object);
-			return y;
+			return;
 		case 20:
 			stage_7_boss_strike(object);
-			return y;
+			return;
 		case 22:
-			return stage_7_boss_recover(object, y);
+			stage_7_boss_recover(object);
+			return;
 		case 24:
 			stage_7_boss_charging(object);
-			return y;
+			return;
 		case 26:
-			return stage_7_boss_charge_end(object, y);
+			stage_7_boss_charge_end(object);
+			return;
 		case 28:
 			stage_7_boss_jump_rise(object);
-			return y;
+			return;
 		case 30:
 			stage_7_boss_jump_land(object);
-			return y;
+			return;
 		case 32:
 			break;
 		case -30:
-			return stage_7_boss_beaten(object, y);
+			stage_7_boss_beaten(object);
+			return;
 		case -28:
-			return stage_7_boss_knocked_down(object, y);
+			stage_7_boss_knocked_down(object);
+			return;
 		case -26:
 			continue;
 		case -24:
-			return stage_7_boss_entrance(object, y);
+			stage_7_boss_entrance(object);
+			return;
 		case -22:
-			return stage_7_boss_walk(object, y);
+			stage_7_boss_walk(object);
+			return;
 		case -20:
-			return stage_7_boss_attack(object, y);
+			stage_7_boss_attack(object);
+			return;
 		case -18:
-			return stage_7_boss_charge(object, y);
+			stage_7_boss_charge(object);
+			return;
 		case -16:
-			return stage_7_boss_jump_away(object, y);
+			stage_7_boss_jump_away(object);
+			return;
 		case -14:
-			return stage_7_boss_idle(object, y, action_handlers);
+			stage_7_boss_idle(object, action_handlers);
+			return;
 		case -12:
-			return stage_7_boss_wait_target_up(object, y);
+			stage_7_boss_wait_target_up(object);
+			return;
 		case -10:
 			stage_7_boss_beaten_wait(object);
-			return y;
+			return;
 		case -8:
 			stage_7_boss_blink_out(object, carry);
-			return y;
+			return;
 		case -6:
 			stage_7_boss_fall(object);
-			return y;
+			return;
 		case -4:
 			stage_7_boss_lie(object);
-			return y;
+			return;
 		case -2:
-			return stage_7_boss_get_up(object, y);
+			stage_7_boss_get_up(object);
+			return;
 		}
 		break;
 	}
 	stage_7_boss_jump_end(object);
-	return y;
 }
 
 /* Stage 7's boss hit: waits for its flinch's animation to end. */
@@ -449,21 +488,20 @@ void stage_7_boss_flinch_wait(uint16_t object)
 }
 
 /* Stage 7's boss hit: once back on the floor, stands and picks its target again. */
-uint16_t stage_7_boss_flinch_land(uint16_t object, uint16_t y)
+void stage_7_boss_flinch_land(uint16_t object)
 {
 	uint32_t carry = 0;
-	uint16_t ignored16 = 0, u = 0;
+	uint16_t box_end = 0, ignored16 = 0;
 
 	vector_apply_gravity(object, &ignored16, &carry);
 	if (carry == 0u)
-		return y;
-	u = stage_7_boss_stand(object);
-	y = stage_7_boss_pick_target(object, y, u);
-	return y;
+		return;
+	box_end = stage_7_boss_stand(object);
+	stage_7_boss_pick_target(object, box_end);
 }
 
 /* Stage 7's boss' entrance (state 0), by its step. */
-uint16_t stage_7_boss_entrance(uint16_t object, uint16_t y)
+void stage_7_boss_entrance(uint16_t object)
 {
 	uint32_t carry = 0;
 	uint8_t action_index = 0;
@@ -479,100 +517,113 @@ uint16_t stage_7_boss_entrance(uint16_t object, uint16_t y)
 		switch ((int8_t)(uint8_t)((uint32_t)action_index << 1))
 		{
 		case 0:
-			return stage_7_boss_put_in(object);
+			stage_7_boss_put_in(object);
+			return;
 		case 2:
 			stage_7_boss_start_entrance(object);
-			return y;
+			return;
 		case 4:
 			stage_7_boss_move_helpers(object);
-			return y;
+			return;
 		case 6:
 			stage_7_boss_step_forward(object);
-			return y;
+			return;
 		case 8:
 			stage_7_boss_arrive(object);
-			return y;
+			return;
 		case 10:
 			stage_7_boss_entrance_pose(object);
-			return y;
+			return;
 		case 12:
 			stage_7_boss_entrance_end(object);
-			return y;
+			return;
 		case 14:
 			stage_7_boss_wind_up(object);
-			return y;
+			return;
 		case 16:
 			stage_7_boss_strike(object);
-			return y;
+			return;
 		case 18:
-			return stage_7_boss_recover(object, y);
+			stage_7_boss_recover(object);
+			return;
 		case 20:
 			stage_7_boss_charging(object);
-			return y;
+			return;
 		case 22:
-			return stage_7_boss_charge_end(object, y);
+			stage_7_boss_charge_end(object);
+			return;
 		case 24:
 			stage_7_boss_jump_rise(object);
-			return y;
+			return;
 		case 26:
 			stage_7_boss_jump_land(object);
-			return y;
+			return;
 		case 28:
 			break;
 		case -34:
-			return stage_7_boss_beaten(object, y);
+			stage_7_boss_beaten(object);
+			return;
 		case -32:
-			return stage_7_boss_knocked_down(object, y);
+			stage_7_boss_knocked_down(object);
+			return;
 		case -30:
-			return stage_7_boss_flinch(object, y);
+			stage_7_boss_flinch(object);
+			return;
 		case -28:
 			continue;
 		case -26:
-			return stage_7_boss_walk(object, y);
+			stage_7_boss_walk(object);
+			return;
 		case -24:
-			return stage_7_boss_attack(object, y);
+			stage_7_boss_attack(object);
+			return;
 		case -22:
-			return stage_7_boss_charge(object, y);
+			stage_7_boss_charge(object);
+			return;
 		case -20:
-			return stage_7_boss_jump_away(object, y);
+			stage_7_boss_jump_away(object);
+			return;
 		case -18:
-			return stage_7_boss_idle(object, y, action_handlers);
+			stage_7_boss_idle(object, action_handlers);
+			return;
 		case -16:
-			return stage_7_boss_wait_target_up(object, y);
+			stage_7_boss_wait_target_up(object);
+			return;
 		case -14:
 			stage_7_boss_beaten_wait(object);
-			return y;
+			return;
 		case -12:
 			stage_7_boss_blink_out(object, carry);
-			return y;
+			return;
 		case -10:
 			stage_7_boss_fall(object);
-			return y;
+			return;
 		case -8:
 			stage_7_boss_lie(object);
-			return y;
+			return;
 		case -6:
-			return stage_7_boss_get_up(object, y);
+			stage_7_boss_get_up(object);
+			return;
 		case -4:
 			stage_7_boss_flinch_wait(object);
-			return y;
+			return;
 		case -2:
-			return stage_7_boss_flinch_land(object, y);
+			stage_7_boss_flinch_land(object);
+			return;
 		}
 		break;
 	}
 	stage_7_boss_jump_end(object);
-	return y;
 }
 
 /* Stage 7's boss' entrance: puts its four helpers in their places and itself, with its health. */
-uint16_t stage_7_boss_put_in(uint16_t object)
+void stage_7_boss_put_in(uint16_t object)
 {
 	uint32_t carry = 0;
 	uint8_t slot_list = 0;
 	uint16_t animation_number = 0, helper = 0, helper_start = 0;
 	uint8_t action = 0;
-	uint16_t t1 = 0, t2 = 0, t3 = 0, t4 = 0, t5 = 0, t6 = 0, t7 = 0;
+	uint16_t helper_start_record = 0, start_cursor = 0, start_offset_x = 0, helper_stage_x = 0, helper_screen_x = 0, helper_y = 0, boss_screen_x = 0;
 
 	boss_helper_number = 0u;
 	do
@@ -581,17 +632,17 @@ uint16_t stage_7_boss_put_in(uint16_t object)
 		vector_find_free_slot(slot_list, &helper, &carry);
 		OBJECT(helper)->flags = 0x80u;
 		OBJECT(helper)->kind = 0x12u;
-		t1 = stage_7_boss_helper_starts_ADDRESS + (int8_t)(((uint32_t)boss_helper_number << 1) << 1);
-		OBJECT(helper)->animation = HELPER_START(t1)->animation;
+		helper_start_record = stage_7_boss_helper_starts_ADDRESS + (int8_t)(((uint32_t)boss_helper_number << 1) << 1);
+		OBJECT(helper)->animation = HELPER_START(helper_start_record)->animation;
 		OBJECT(helper)->attributes = 0x20u;
-		t2 = t1 + 1u;
-		helper_start = t2 + 2u;
-		t3 = HELPER_START(t2 - 0x1u)->x;
-		t4 = t3 + 0x91Fu;
-		t5 = t4 - camera_x;
-		OBJECT(helper)->x = t5;
-		t6 = 0xC8u + camera_y;
-		OBJECT(helper)->y = t6;
+		start_cursor = helper_start_record + 1u;
+		helper_start = start_cursor + 2u;
+		start_offset_x = HELPER_START(start_cursor - 0x1u)->x;
+		helper_stage_x = start_offset_x + 0x91Fu;
+		helper_screen_x = helper_stage_x - camera_x;
+		OBJECT(helper)->x = helper_screen_x;
+		helper_y = 0xC8u + camera_y;
+		OBJECT(helper)->y = helper_y;
 		OBJECT(helper)->z = 0x20u;
 		OBJECT(helper)->type = 0x37;
 		mem_write16(object + (int8_t)HELPER_START(helper_start - 0x3u)->slot, helper);
@@ -603,20 +654,21 @@ uint16_t stage_7_boss_put_in(uint16_t object)
 	OBJECT(object)->shadow_player = 1u;
 	animation_number = 0x101u;
 	carry = stage_7_boss_set_animation(object, animation_number);
-	t7 = 0x96Fu - camera_x;
-	OBJECT(object)->x = t7;
+	boss_screen_x = 0x96Fu - camera_x;
+	OBJECT(object)->x = boss_screen_x;
 	OBJECT(object)->vitality = 0xE0u;
 	OBJECT(object)->stage_7_boss.last_health = 0xE0u;
 	OBJECT(object)->floor_z = 0x20u;
 	action = OBJECT(object)->action;
 	OBJECT(object)->action = action + 1u;
-	return helper_start;
+	leftover_y = helper_start;
 }
 
 /* Stage 7's boss' entrance: once the camera's flag from the stage record clears, says a boss is in and
    sets two helpers moving. */
 void stage_7_boss_start_entrance(uint16_t object)
 {
+	uint16_t first_helper = 0, second_helper = 0;
 	uint8_t action = 0;
 	uint16_t helper = 0, helper_2 = 0;
 
@@ -625,9 +677,11 @@ void stage_7_boss_start_entrance(uint16_t object)
 		OBJECT(object)->entrance_pending = 0u;
 		boss_arrived++;
 		helper = OBJECT(object)->stage_7_boss.helper_1;
-		mem_write8(helper + 2u, 3u);
+		first_helper = helper;
+		OBJECT(first_helper)->state = 3u;
 		helper_2 = OBJECT(object)->stage_7_boss.helper_2;
-		mem_write8(helper_2 + 2u, 1u);
+		second_helper = helper_2;
+		OBJECT(second_helper)->state = 1u;
 		action = OBJECT(object)->action;
 		OBJECT(object)->action = action + 1u;
 	}
@@ -636,7 +690,7 @@ void stage_7_boss_start_entrance(uint16_t object)
 /* Stage 7's boss' entrance: when the first helper is done, sets all four moving. */
 void stage_7_boss_move_helpers(uint16_t object)
 {
-	uint16_t helper = 0;
+	uint16_t fourth_helper = 0, helper = 0, second_helper = 0, third_helper = 0;
 	uint8_t state = 0, action = 0;
 	uint16_t helper_1 = 0, helper_2 = 0, helper_3 = 0, helper_4 = 0;
 
@@ -647,11 +701,14 @@ void stage_7_boss_move_helpers(uint16_t object)
 	{
 		OBJECT(helper)->state = 3u;
 		helper_2 = OBJECT(object)->stage_7_boss.helper_2;
-		mem_write8(helper_2 + 2u, 1u);
+		second_helper = helper_2;
+		OBJECT(second_helper)->state = 1u;
 		helper_3 = OBJECT(object)->stage_7_boss.helper_3;
-		mem_write8(helper_3 + 2u, 3u);
+		third_helper = helper_3;
+		OBJECT(third_helper)->state = 3u;
 		helper_4 = OBJECT(object)->stage_7_boss.helper_4;
-		mem_write8(helper_4 + 2u, 1u);
+		fourth_helper = helper_4;
+		OBJECT(fourth_helper)->state = 1u;
 		action = OBJECT(object)->action;
 		OBJECT(object)->action = action + 1u;
 	}
@@ -660,12 +717,14 @@ void stage_7_boss_move_helpers(uint16_t object)
 /* Stage 7's boss' entrance: when the helpers are done, comes forward. */
 void stage_7_boss_step_forward(uint16_t object)
 {
-	uint8_t t1 = 0, action = 0;
+	uint16_t first_helper = 0;
+	uint8_t first_helper_state = 0, action = 0;
 	uint16_t helper = 0;
 
 	helper = OBJECT(object)->stage_7_boss.helper_1;
-	t1 = mem_read8(helper + 2u);
-	if (t1 == 0u)
+	first_helper = helper;
+	first_helper_state = OBJECT(first_helper)->state;
+	if (first_helper_state == 0u)
 	{
 		OBJECT(object)->y_speed = -0x40;
 		action = OBJECT(object)->action;
@@ -677,26 +736,30 @@ void stage_7_boss_step_forward(uint16_t object)
 void stage_7_boss_arrive(uint16_t object)
 {
 	uint32_t carry = 0;
-	uint16_t animation_number = 0;
+	uint16_t animation_number = 0, first_helper = 0, fourth_helper = 0, second_helper = 0, third_helper = 0;
 	uint8_t action = 0;
-	uint16_t t1 = 0, t2 = 0, helper = 0, helper_2 = 0, helper_3 = 0, helper_4 = 0;
+	uint16_t own_y = 0, screen_y = 0, helper = 0, helper_2 = 0, helper_3 = 0, helper_4 = 0;
 
-	t1 = OBJECT(object)->y;
-	t2 = t1 - camera_y;
-	if ((int16_t)t2 > 0xC8)
+	own_y = OBJECT(object)->y;
+	screen_y = own_y - camera_y;
+	if ((int16_t)screen_y > 0xC8)
 		return;
 	OBJECT(object)->attributes = 0u;
 	OBJECT(object)->y_speed = 0;
 	animation_number = 0xD00u;
 	carry = stage_7_boss_set_animation(object, animation_number);
 	helper = OBJECT(object)->stage_7_boss.helper_1;
-	mem_write8(helper + 2u, 6u);
+	first_helper = helper;
+	OBJECT(first_helper)->state = 6u;
 	helper_2 = OBJECT(object)->stage_7_boss.helper_2;
-	mem_write8(helper_2 + 2u, 5u);
+	second_helper = helper_2;
+	OBJECT(second_helper)->state = 5u;
 	helper_3 = OBJECT(object)->stage_7_boss.helper_3;
-	mem_write8(helper_3 + 2u, 4u);
+	third_helper = helper_3;
+	OBJECT(third_helper)->state = 4u;
 	helper_4 = OBJECT(object)->stage_7_boss.helper_4;
-	mem_write8(helper_4 + 2u, 2u);
+	fourth_helper = helper_4;
+	OBJECT(fourth_helper)->state = 2u;
 	action = OBJECT(object)->action;
 	OBJECT(object)->action = action + 1u;
 }
@@ -731,7 +794,7 @@ void stage_7_boss_entrance_end(uint16_t object)
 }
 
 /* Stage 7's boss walks toward its target at its speed by rank. */
-uint16_t stage_7_boss_walk(uint16_t object, uint16_t y)
+void stage_7_boss_walk(uint16_t object)
 {
 	uint32_t carry = 0;
 	uint16_t animation_number = 0, heading = 0, u = 0;
@@ -739,8 +802,8 @@ uint16_t stage_7_boss_walk(uint16_t object, uint16_t y)
 
 	stage_7_boss_approach(object, &u, &carry);
 	if (carry)
-		return y;
-	stage_7_boss_pick_target(object, y, u);
+		return;
+	stage_7_boss_pick_target(object, u);
 	animation = OBJECT(object)->animation;
 	if (animation != 0u)
 	{
@@ -749,15 +812,14 @@ uint16_t stage_7_boss_walk(uint16_t object, uint16_t y)
 	}
 	stage_7_boss_aim(object);
 	side_direction = OBJECT(object)->stage_7_boss.side_direction;
-	y = stage_7_boss_speeds_by_rank_ADDRESS;
+	leftover_y = stage_7_boss_speeds_by_rank_ADDRESS;
 	heading = ((uint32_t)side_direction << 8) | stage_7_boss_speeds_by_rank[rank >> 1];
 	vector_set_speed_by_direction(object, heading);
 	stage_7_boss_face_target(object);
-	return y;
 }
 
 /* Stage 7's boss attacks (state 2), by its step. */
-uint16_t stage_7_boss_attack(uint16_t object, uint16_t y)
+void stage_7_boss_attack(uint16_t object)
 {
 	uint32_t carry = 0;
 	uint8_t action_index = 0;
@@ -774,89 +836,102 @@ uint16_t stage_7_boss_attack(uint16_t object, uint16_t y)
 		{
 		case 0:
 			stage_7_boss_wind_up(object);
-			return y;
+			return;
 		case 2:
 			stage_7_boss_strike(object);
-			return y;
+			return;
 		case 4:
-			return stage_7_boss_recover(object, y);
+			stage_7_boss_recover(object);
+			return;
 		case 6:
 			stage_7_boss_charging(object);
-			return y;
+			return;
 		case 8:
-			return stage_7_boss_charge_end(object, y);
+			stage_7_boss_charge_end(object);
+			return;
 		case 10:
 			stage_7_boss_jump_rise(object);
-			return y;
+			return;
 		case 12:
 			stage_7_boss_jump_land(object);
-			return y;
+			return;
 		case 14:
 			break;
 		case -48:
-			return stage_7_boss_beaten(object, y);
+			stage_7_boss_beaten(object);
+			return;
 		case -46:
-			return stage_7_boss_knocked_down(object, y);
+			stage_7_boss_knocked_down(object);
+			return;
 		case -44:
-			return stage_7_boss_flinch(object, y);
+			stage_7_boss_flinch(object);
+			return;
 		case -42:
-			return stage_7_boss_entrance(object, y);
+			stage_7_boss_entrance(object);
+			return;
 		case -40:
-			return stage_7_boss_walk(object, y);
+			stage_7_boss_walk(object);
+			return;
 		case -38:
 			continue;
 		case -36:
-			return stage_7_boss_charge(object, y);
+			stage_7_boss_charge(object);
+			return;
 		case -34:
-			return stage_7_boss_jump_away(object, y);
+			stage_7_boss_jump_away(object);
+			return;
 		case -32:
-			return stage_7_boss_idle(object, y, action_handlers);
+			stage_7_boss_idle(object, action_handlers);
+			return;
 		case -30:
-			return stage_7_boss_wait_target_up(object, y);
+			stage_7_boss_wait_target_up(object);
+			return;
 		case -28:
 			stage_7_boss_beaten_wait(object);
-			return y;
+			return;
 		case -26:
 			stage_7_boss_blink_out(object, carry);
-			return y;
+			return;
 		case -24:
 			stage_7_boss_fall(object);
-			return y;
+			return;
 		case -22:
 			stage_7_boss_lie(object);
-			return y;
+			return;
 		case -20:
-			return stage_7_boss_get_up(object, y);
+			stage_7_boss_get_up(object);
+			return;
 		case -18:
 			stage_7_boss_flinch_wait(object);
-			return y;
+			return;
 		case -16:
-			return stage_7_boss_flinch_land(object, y);
+			stage_7_boss_flinch_land(object);
+			return;
 		case -14:
-			return stage_7_boss_put_in(object);
+			stage_7_boss_put_in(object);
+			return;
 		case -12:
 			stage_7_boss_start_entrance(object);
-			return y;
+			return;
 		case -10:
 			stage_7_boss_move_helpers(object);
-			return y;
+			return;
 		case -8:
 			stage_7_boss_step_forward(object);
-			return y;
+			return;
 		case -6:
 			stage_7_boss_arrive(object);
-			return y;
+			return;
 		case -4:
 			stage_7_boss_entrance_pose(object);
-			return y;
+			return;
 		case -2:
 			stage_7_boss_entrance_end(object);
-			return y;
+			return;
 		}
 		break;
 	}
 	stage_7_boss_jump_end(object);
-	return y;
 }
 
 /* Stage 7's boss attacks: after a wait, winds up (sound 6A00), not to be hurt meanwhile. */
@@ -887,42 +962,41 @@ void stage_7_boss_strike(uint16_t object)
 {
 	uint32_t carry = 0;
 	uint8_t own_box = 0;
-	uint16_t d = 0, ignored16 = 0;
+	uint16_t ignored16 = 0, look_numbers = 0;
 	uint8_t animation_flags = 0, animation_flags_2 = 0, action = 0;
 
 	own_box = 0u;
 	animation_flags = OBJECT(object)->animation_flags;
 	if ((animation_flags & 2u) != 0u)
 		own_box = 1u;
-	d = (uint32_t)own_box << 8;
-	stage_7_boss_set_hit_box(object, &ignored16, &d);
+	look_numbers = (uint32_t)own_box << 8;
+	stage_7_boss_set_hit_box(object, &ignored16, &look_numbers);
 	animation_flags_2 = OBJECT(object)->animation_flags;
 	if ((animation_flags_2 & 1u) == 0u)
 		return;
-	d &= 0xFFu;
-	carry = stage_7_boss_set_animation(object, d);
+	look_numbers &= 0xFFu;
+	carry = stage_7_boss_set_animation(object, look_numbers);
 	OBJECT(object)->action_step = 0x10u;
 	action = OBJECT(object)->action;
 	OBJECT(object)->action = action + 1u;
 }
 
 /* Stage 7's boss attacks: after 16 frames, stands and picks its target again. */
-uint16_t stage_7_boss_recover(uint16_t object, uint16_t y)
+void stage_7_boss_recover(uint16_t object)
 {
-	uint16_t u = 0;
+	uint16_t box_end = 0;
 	uint8_t action_step = 0;
 
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step - 1u;
 	if (action_step != 1u)
-		return y;
-	u = stage_7_boss_stand(object);
-	y = stage_7_boss_pick_target(object, y, u);
-	return y;
+		return;
+	box_end = stage_7_boss_stand(object);
+	stage_7_boss_pick_target(object, box_end);
 }
 
 /* Stage 7's boss charges (state 3), by its step. */
-uint16_t stage_7_boss_charge(uint16_t object, uint16_t y)
+void stage_7_boss_charge(uint16_t object)
 {
 	uint32_t carry = 0;
 	uint8_t action_index = 0;
@@ -939,89 +1013,102 @@ uint16_t stage_7_boss_charge(uint16_t object, uint16_t y)
 		{
 		case 0:
 			stage_7_boss_charging(object);
-			return y;
+			return;
 		case 2:
-			return stage_7_boss_charge_end(object, y);
+			stage_7_boss_charge_end(object);
+			return;
 		case 4:
 			stage_7_boss_jump_rise(object);
-			return y;
+			return;
 		case 6:
 			stage_7_boss_jump_land(object);
-			return y;
+			return;
 		case 8:
 			break;
 		case -54:
-			return stage_7_boss_beaten(object, y);
+			stage_7_boss_beaten(object);
+			return;
 		case -52:
-			return stage_7_boss_knocked_down(object, y);
+			stage_7_boss_knocked_down(object);
+			return;
 		case -50:
-			return stage_7_boss_flinch(object, y);
+			stage_7_boss_flinch(object);
+			return;
 		case -48:
-			return stage_7_boss_entrance(object, y);
+			stage_7_boss_entrance(object);
+			return;
 		case -46:
-			return stage_7_boss_walk(object, y);
+			stage_7_boss_walk(object);
+			return;
 		case -44:
-			return stage_7_boss_attack(object, y);
+			stage_7_boss_attack(object);
+			return;
 		case -42:
 			continue;
 		case -40:
-			return stage_7_boss_jump_away(object, y);
+			stage_7_boss_jump_away(object);
+			return;
 		case -38:
-			return stage_7_boss_idle(object, y, action_handlers);
+			stage_7_boss_idle(object, action_handlers);
+			return;
 		case -36:
-			return stage_7_boss_wait_target_up(object, y);
+			stage_7_boss_wait_target_up(object);
+			return;
 		case -34:
 			stage_7_boss_beaten_wait(object);
-			return y;
+			return;
 		case -32:
 			stage_7_boss_blink_out(object, carry);
-			return y;
+			return;
 		case -30:
 			stage_7_boss_fall(object);
-			return y;
+			return;
 		case -28:
 			stage_7_boss_lie(object);
-			return y;
+			return;
 		case -26:
-			return stage_7_boss_get_up(object, y);
+			stage_7_boss_get_up(object);
+			return;
 		case -24:
 			stage_7_boss_flinch_wait(object);
-			return y;
+			return;
 		case -22:
-			return stage_7_boss_flinch_land(object, y);
+			stage_7_boss_flinch_land(object);
+			return;
 		case -20:
-			return stage_7_boss_put_in(object);
+			stage_7_boss_put_in(object);
+			return;
 		case -18:
 			stage_7_boss_start_entrance(object);
-			return y;
+			return;
 		case -16:
 			stage_7_boss_move_helpers(object);
-			return y;
+			return;
 		case -14:
 			stage_7_boss_step_forward(object);
-			return y;
+			return;
 		case -12:
 			stage_7_boss_arrive(object);
-			return y;
+			return;
 		case -10:
 			stage_7_boss_entrance_pose(object);
-			return y;
+			return;
 		case -8:
 			stage_7_boss_entrance_end(object);
-			return y;
+			return;
 		case -6:
 			stage_7_boss_wind_up(object);
-			return y;
+			return;
 		case -4:
 			stage_7_boss_strike(object);
-			return y;
+			return;
 		case -2:
-			return stage_7_boss_recover(object, y);
+			stage_7_boss_recover(object);
+			return;
 		}
 		break;
 	}
 	stage_7_boss_jump_end(object);
-	return y;
 }
 
 /* Stage 7's boss charges at its target, turning toward it a little each frame, with a sound every 64
@@ -1030,12 +1117,12 @@ void stage_7_boss_charging(uint16_t object)
 {
 	uint32_t negative = 0, carry = 0;
 	uint8_t attributes = 0, charge_direction = 0;
-	uint16_t box_number = 0, command = 0, d = 0, heading = 0, ignored16 = 0, ignored16_2 = 0, u = 0;
+	uint16_t box_number = 0, command = 0, heading = 0, ignored16 = 0, ignored16_2 = 0, target_or_box_end = 0, toward_target = 0;
 	uint8_t action = 0, animation_flags = 0, charge_direction_2 = 0, charge_direction_3 = 0, attributes_2 = 0, charge_direction_4 = 0, charge_direction_5 = 0, charge_direction_6 = 0;
 	uint16_t charge_time = 0;
 
 	box_number = 0u;
-	stage_7_boss_set_hit_box(object, &u, &box_number);
+	stage_7_boss_set_hit_box(object, &target_or_box_end, &box_number);
 	if ((frame_count & 0x3Fu) == 0u)
 	{
 		command = 0x7600u;
@@ -1054,7 +1141,7 @@ void stage_7_boss_charging(uint16_t object)
 		OBJECT(object)->action = action + 1u;
 		return;
 	}
-	find_nearest_player(object, &u, &ignored16, &carry);
+	find_nearest_player(object, &target_or_box_end, &ignored16, &carry);
 	if (carry == 0u)
 	{
 		OBJECT(object)->action_step = 0x20u;
@@ -1070,10 +1157,10 @@ void stage_7_boss_charging(uint16_t object)
 	if ((animation_flags & 2u) != 0u)
 	{
 		box_number = 0x200u;
-		stage_7_boss_set_hit_box(object, &u, &box_number);
+		stage_7_boss_set_hit_box(object, &target_or_box_end, &box_number);
 	}
-	d = vector_direction_to(object, u);
-	charge_direction = (uint8_t)(d >> 8);
+	toward_target = vector_direction_to(object, target_or_box_end);
+	charge_direction = (uint8_t)(toward_target >> 8);
 	charge_direction_2 = OBJECT(object)->stage_7_boss.charge_direction;
 	negative = (uint8_t)(charge_direction - charge_direction_2) >> 7;
 	if (charge_direction == charge_direction_2)
@@ -1118,22 +1205,21 @@ void stage_7_boss_charging(uint16_t object)
 }
 
 /* Stage 7's boss charges: after a short stop, stands and picks its target again. */
-uint16_t stage_7_boss_charge_end(uint16_t object, uint16_t y)
+void stage_7_boss_charge_end(uint16_t object)
 {
-	uint16_t u = 0;
+	uint16_t box_end = 0;
 	uint8_t action_step = 0;
 
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step - 1u;
 	if (action_step != 1u)
-		return y;
-	u = stage_7_boss_stand(object);
-	y = stage_7_boss_pick_target(object, y, u);
-	return y;
+		return;
+	box_end = stage_7_boss_stand(object);
+	stage_7_boss_pick_target(object, box_end);
 }
 
 /* Stage 7's boss jumps away (state 4), by its step. */
-uint16_t stage_7_boss_jump_away(uint16_t object, uint16_t y)
+void stage_7_boss_jump_away(uint16_t object)
 {
 	uint32_t carry = 0;
 	uint8_t action_index = 0;
@@ -1150,103 +1236,116 @@ uint16_t stage_7_boss_jump_away(uint16_t object, uint16_t y)
 		{
 		case 0:
 			stage_7_boss_jump_rise(object);
-			return y;
+			return;
 		case 2:
 			stage_7_boss_jump_land(object);
-			return y;
+			return;
 		case 4:
 			break;
 		case -58:
-			return stage_7_boss_beaten(object, y);
+			stage_7_boss_beaten(object);
+			return;
 		case -56:
-			return stage_7_boss_knocked_down(object, y);
+			stage_7_boss_knocked_down(object);
+			return;
 		case -54:
-			return stage_7_boss_flinch(object, y);
+			stage_7_boss_flinch(object);
+			return;
 		case -52:
-			return stage_7_boss_entrance(object, y);
+			stage_7_boss_entrance(object);
+			return;
 		case -50:
-			return stage_7_boss_walk(object, y);
+			stage_7_boss_walk(object);
+			return;
 		case -48:
-			return stage_7_boss_attack(object, y);
+			stage_7_boss_attack(object);
+			return;
 		case -46:
-			return stage_7_boss_charge(object, y);
+			stage_7_boss_charge(object);
+			return;
 		case -44:
 			continue;
 		case -42:
-			return stage_7_boss_idle(object, y, action_handlers);
+			stage_7_boss_idle(object, action_handlers);
+			return;
 		case -40:
-			return stage_7_boss_wait_target_up(object, y);
+			stage_7_boss_wait_target_up(object);
+			return;
 		case -38:
 			stage_7_boss_beaten_wait(object);
-			return y;
+			return;
 		case -36:
 			stage_7_boss_blink_out(object, carry);
-			return y;
+			return;
 		case -34:
 			stage_7_boss_fall(object);
-			return y;
+			return;
 		case -32:
 			stage_7_boss_lie(object);
-			return y;
+			return;
 		case -30:
-			return stage_7_boss_get_up(object, y);
+			stage_7_boss_get_up(object);
+			return;
 		case -28:
 			stage_7_boss_flinch_wait(object);
-			return y;
+			return;
 		case -26:
-			return stage_7_boss_flinch_land(object, y);
+			stage_7_boss_flinch_land(object);
+			return;
 		case -24:
-			return stage_7_boss_put_in(object);
+			stage_7_boss_put_in(object);
+			return;
 		case -22:
 			stage_7_boss_start_entrance(object);
-			return y;
+			return;
 		case -20:
 			stage_7_boss_move_helpers(object);
-			return y;
+			return;
 		case -18:
 			stage_7_boss_step_forward(object);
-			return y;
+			return;
 		case -16:
 			stage_7_boss_arrive(object);
-			return y;
+			return;
 		case -14:
 			stage_7_boss_entrance_pose(object);
-			return y;
+			return;
 		case -12:
 			stage_7_boss_entrance_end(object);
-			return y;
+			return;
 		case -10:
 			stage_7_boss_wind_up(object);
-			return y;
+			return;
 		case -8:
 			stage_7_boss_strike(object);
-			return y;
+			return;
 		case -6:
-			return stage_7_boss_recover(object, y);
+			stage_7_boss_recover(object);
+			return;
 		case -4:
 			stage_7_boss_charging(object);
-			return y;
+			return;
 		case -2:
-			return stage_7_boss_charge_end(object, y);
+			stage_7_boss_charge_end(object);
+			return;
 		}
 		break;
 	}
 	stage_7_boss_jump_end(object);
-	return y;
 }
 
 /* Stage 7's boss jumps away: in the air until its animation ends. */
 void stage_7_boss_jump_rise(uint16_t object)
 {
 	uint32_t carry = 0;
-	uint16_t animation_number = 0, d = 0;
+	uint16_t animation_number = 0, landing_result = 0;
 	uint8_t animation_flags = 0, action = 0;
 
-	vector_apply_gravity(object, &d, &carry);
+	vector_apply_gravity(object, &landing_result, &carry);
 	animation_flags = OBJECT(object)->animation_flags;
 	if ((animation_flags & 1u) == 0u)
 		return;
-	animation_number = (d & 0xFFu) | 0xC00u;
+	animation_number = (landing_result & 0xFFu) | 0xC00u;
 	carry = stage_7_boss_set_animation(object, animation_number);
 	action = OBJECT(object)->action;
 	OBJECT(object)->action = action + 1u;
@@ -1284,7 +1383,7 @@ void stage_7_boss_jump_end(uint16_t object)
 }
 
 /* Stage 7's boss with no target (state 5): waits for a player. */
-uint16_t stage_7_boss_idle(uint16_t object, uint16_t y, uint16_t nearest)
+void stage_7_boss_idle(uint16_t object, uint16_t nearest)
 {
 	uint32_t carry = 0;
 	uint16_t ignored16 = 0;
@@ -1297,31 +1396,31 @@ uint16_t stage_7_boss_idle(uint16_t object, uint16_t y, uint16_t nearest)
 		OBJECT(object)->flags |= 0x40u;
 		OBJECT(object)->state = 1u;
 		OBJECT(object)->action = 0u;
-		y = stage_7_boss_pick_target(object, y, nearest);
+		stage_7_boss_pick_target(object, nearest);
 	}
-	return y;
 }
 
 /* Stage 7's boss waits while its target is down, then stands (no scenario reaches it). */
-uint16_t stage_7_boss_wait_target_up(uint16_t object, uint16_t y)
+void stage_7_boss_wait_target_up(uint16_t object)
 {
 	uint16_t target_player = 0;
 	uint8_t state = 0;
-	uint16_t t1 = 0;
+	uint16_t read_target = 0;
 
-	t1 = mem_read16(y + 0x2Bu);
-	target_player = t1;
+	read_target = mem_read16(leftover_y + 0x2Bu);
+	target_player = read_target;
 	state = OBJECT(target_player)->state;
 	if ((int8_t)state >= 0)
 	{
+		leftover_y = target_player;
 		stage_7_boss_stand(object);
-		return target_player;
+		return;
 	}
-	return target_player;
+	leftover_y = target_player;
 }
 
 /* Stage 7's boss: when hit, takes the hit. */
-uint16_t stage_7_boss_check_hit(uint16_t object, uint16_t y)
+void stage_7_boss_check_hit(uint16_t object)
 {
 	uint32_t negative = 0;
 	uint8_t hit = 0;
@@ -1331,9 +1430,8 @@ uint16_t stage_7_boss_check_hit(uint16_t object, uint16_t y)
 		hit = OBJECT(object)->hit;
 		negative = hit >> 7;
 		if (hit != 0u && negative == 0u)
-			y = stage_7_boss_take_hit(object, y);
+			stage_7_boss_take_hit(object);
 	}
-	return y;
 }
 
 /* Stage 7's boss walking: at its target, decides how to attack; after walking too long without reaching
@@ -1344,13 +1442,13 @@ void stage_7_boss_approach(uint16_t object, uint16_t *p_object_2, uint32_t *p_ca
 	uint8_t charge_direction = 0;
 	uint16_t animation_number = 0, direction = 0, heading = 0, target = 0, wait = 0;
 	uint8_t attributes = 0, attributes_2 = 0, state = 0, last_health = 0, vitality = 0, vitality_2 = 0;
-	uint16_t t1 = 0, t2 = 0, t3 = 0, walk_time = 0, t4 = 0, t5 = 0, t6 = 0, t7 = 0, t8 = 0, walk_time_2 = 0, t9 = 0, t10 = 0, t11 = 0, t12 = 0, t13 = 0, t14 = 0;
+	uint16_t walk_target = 0, own_x = 0, target_x = 0, walk_time = 0, boss_x = 0, target_place_x = 0, x_difference = 0, signed_x_difference = 0, x_distance = 0, walk_time_2 = 0, boss_y = 0, target_y = 0, y_difference = 0, signed_y_difference = 0, y_distance = 0, attack_target = 0;
 
-	t1 = (((uint32_t)(OBJECT(object)->behaviour & 0xFFu) << 8u) | (OBJECT(object)->target_dx >> 8u));
-	wait = t1;
-	t2 = OBJECT(object)->x;
-	t3 = mem_read16(wait + 0xCu);
-	if ((int16_t)t2 < (int16_t)t3)
+	walk_target = OBJECT(object)->stage_7_boss.target;
+	wait = walk_target;
+	own_x = OBJECT(object)->x;
+	target_x = mem_read16(wait + 0xCu);
+	if ((int16_t)own_x < (int16_t)target_x)
 	{
 		attributes = OBJECT(object)->attributes;
 		if ((attributes & 0x40u) != 0u)
@@ -1376,12 +1474,12 @@ void stage_7_boss_approach(uint16_t object, uint16_t *p_object_2, uint32_t *p_ca
 			return;
 		}
 	}
-	t4 = OBJECT(object)->x;
-	t5 = mem_read16(wait + 0xCu);
-	t6 = t4 - t5;
-	t7 = t6;
-	t8 = t7 >> 15 ? 0u - t7 : t7;
-	if ((int16_t)t8 > 0x40)
+	boss_x = OBJECT(object)->x;
+	target_place_x = mem_read16(wait + 0xCu);
+	x_difference = boss_x - target_place_x;
+	signed_x_difference = x_difference;
+	x_distance = signed_x_difference >> 15 ? 0u - signed_x_difference : signed_x_difference;
+	if ((int16_t)x_distance > 0x40)
 	{
 		wait = stage_7_boss_charge_waits_by_players_ADDRESS + (int8_t)((player_count - 1u) << 1);
 		walk_time_2 = OBJECT(object)->stage_7_boss.walk_time;
@@ -1415,12 +1513,12 @@ void stage_7_boss_approach(uint16_t object, uint16_t *p_object_2, uint32_t *p_ca
 		*p_carry = carry;
 		return;
 	}
-	t9 = OBJECT(object)->y;
-	t10 = mem_read16(wait + 0x11u);
-	t11 = t9 - t10;
-	t12 = t11;
-	t13 = t12 >> 15 ? 0u - t12 : t12;
-	if ((int16_t)t13 > 8)
+	boss_y = OBJECT(object)->y;
+	target_y = mem_read16(wait + 0x11u);
+	y_difference = boss_y - target_y;
+	signed_y_difference = y_difference;
+	y_distance = signed_y_difference >> 15 ? 0u - signed_y_difference : signed_y_difference;
+	if ((int16_t)y_distance > 8)
 	{
 		walk_time = OBJECT(object)->stage_7_boss.walk_time;
 		OBJECT(object)->stage_7_boss.walk_time = walk_time + 1u;
@@ -1429,8 +1527,8 @@ void stage_7_boss_approach(uint16_t object, uint16_t *p_object_2, uint32_t *p_ca
 		*p_carry = carry;
 		return;
 	}
-	t14 = (((uint32_t)(OBJECT(object)->behaviour & 0xFFu) << 8u) | (OBJECT(object)->target_dx >> 8u));
-	target = t14;
+	attack_target = OBJECT(object)->stage_7_boss.target;
+	target = attack_target;
 	state = OBJECT(target)->state;
 	if ((int8_t)state < 0)
 	{
@@ -1469,21 +1567,21 @@ void stage_7_boss_approach(uint16_t object, uint16_t *p_object_2, uint32_t *p_ca
 }
 
 /* Stage 7's boss: keeps its target a while, then takes the nearest player; with none present, goes idle. */
-uint16_t stage_7_boss_pick_target(uint16_t object, uint16_t y, uint16_t nearest)
+void stage_7_boss_pick_target(uint16_t object, uint16_t nearest)
 {
 	uint32_t carry = 0;
 	uint16_t ignored16 = 0, target_player = 0;
 	uint8_t state = 0, target_wait = 0, target_wait_2 = 0;
-	uint16_t t1 = 0;
+	uint16_t kept_target = 0;
 
 	find_nearest_player(object, &nearest, &ignored16, &carry);
 	if (carry == 0u)
 	{
 		carry = stage_7_boss_go_idle(object);
-		return y;
+		return;
 	}
-	t1 = (((uint32_t)(OBJECT(object)->behaviour & 0xFFu) << 8u) | (OBJECT(object)->target_dx >> 8u));
-	target_player = t1;
+	kept_target = OBJECT(object)->stage_7_boss.target;
+	target_player = kept_target;
 	if (OBJECT(target_player)->flags != 0u)
 	{
 		state = OBJECT(target_player)->state;
@@ -1494,14 +1592,14 @@ uint16_t stage_7_boss_pick_target(uint16_t object, uint16_t y, uint16_t nearest)
 			{
 				target_wait_2 = OBJECT(object)->stage_7_boss.target_wait;
 				OBJECT(object)->stage_7_boss.target_wait = target_wait_2 - 1u;
-				return target_player;
+				leftover_y = target_player;
+				return;
 			}
 		}
 	}
 	OBJECT(object)->stage_7_boss.target_wait = 0x40u;
-	OBJECT(object)->behaviour = (OBJECT(object)->behaviour & 0xFF00u) | ((nearest >> 8u) & 0xFFu);
-	OBJECT(object)->target_dx = (OBJECT(object)->target_dx & 0xFFu) | ((nearest & 0xFFu) << 8u);
-	return target_player;
+	OBJECT(object)->stage_7_boss.target = nearest;
+	leftover_y = target_player;
 }
 
 /* Stage 7's boss: the direction to the side of its target (field 2D) and to the target itself (2E). */
@@ -1509,13 +1607,13 @@ void stage_7_boss_aim(uint16_t object)
 {
 	uint8_t side_offset = 0;
 	uint16_t aim_direction = 0, direction = 0, target_player = 0;
-	uint16_t t1 = 0, t2 = 0, t3 = 0;
+	uint16_t aim_target = 0, own_x = 0, target_x = 0;
 
-	t1 = (((uint32_t)(OBJECT(object)->behaviour & 0xFFu) << 8u) | (OBJECT(object)->target_dx >> 8u));
-	target_player = t1;
-	t2 = OBJECT(object)->x;
-	t3 = OBJECT(target_player)->x;
-	if ((int16_t)t3 < (int16_t)t2)
+	aim_target = OBJECT(object)->stage_7_boss.target;
+	target_player = aim_target;
+	own_x = OBJECT(object)->x;
+	target_x = OBJECT(target_player)->x;
+	if ((int16_t)target_x < (int16_t)own_x)
 		side_offset = 0x20u;
 	else
 		side_offset = 0xE0u;
@@ -1547,13 +1645,13 @@ uint32_t stage_7_boss_set_animation(uint16_t object, uint16_t animation_number)
 {
 	uint32_t carry = 0;
 	uint8_t animation_index = 0;
-	uint16_t t1 = 0;
+	uint16_t kind_with_animation = 0;
 	uint32_t kind_halfword = 0;
 
 	animation_index = (uint8_t)(animation_number >> 8);
 	carry = (int8_t)animation_index < 0;
-	t1 = stage_7_boss_animations[animation_index & 0x7Fu];
-	kind_halfword = ((uint32_t)(t1 >> 8) << 8) | (uint8_t)(t1 | 0x80u);
+	kind_with_animation = stage_7_boss_animations[animation_index & 0x7Fu];
+	kind_halfword = ((uint32_t)(kind_with_animation >> 8) << 8) | (uint8_t)(kind_with_animation | 0x80u);
 	OBJECT(object)->kind = (uint8_t)(kind_halfword >> 8u);
 	OBJECT(object)->animation = (uint8_t)kind_halfword;
 	return carry;
@@ -1564,24 +1662,24 @@ void stage_7_boss_set_hit_box(uint16_t object, uint16_t *p_box_end, uint16_t *p_
 {
 	uint16_t box_number = (uint16_t)*p_box_number;
 	uint16_t box_end = 0;
-	uint16_t t1 = 0, field_1c = 0, t2 = 0, field_1f = 0, t3 = 0, field = 0, t4 = 0, field_23 = 0;
+	uint16_t box_record = 0, field_1c = 0, box_cursor = 0, field_1f = 0, box_cursor_2 = 0, field = 0, box_cursor_3 = 0, field_23 = 0;
 	uint32_t box_dy_halfword = 0;
 
-	t1 = stage_7_boss_hit_boxes_ADDRESS + (uint8_t)((((uint32_t)(box_number >> 8) << 1) << 1) << 1);
-	field_1c = HIT_BOX(t1)->field_1c;
+	box_record = stage_7_boss_hit_boxes_ADDRESS + (uint8_t)((((uint32_t)(box_number >> 8) << 1) << 1) << 1);
+	field_1c = HIT_BOX(box_record)->field_1c;
 	OBJECT(object)->damage = (uint8_t)(field_1c >> 8u);
 	OBJECT(object)->attack = (uint8_t)field_1c;
-	t2 = t1 + 2u;
-	field_1f = HIT_BOX(t2 - 0x2u)->field_1f;
+	box_cursor = box_record + 2u;
+	field_1f = HIT_BOX(box_cursor - 0x2u)->field_1f;
 	OBJECT(object)->box_width = (uint8_t)(field_1f >> 8u);
 	OBJECT(object)->box_depth = (uint8_t)field_1f;
-	t3 = t2 + 2u;
-	field = HIT_BOX(t3 - 0x4u)->field_21;
+	box_cursor_2 = box_cursor + 2u;
+	field = HIT_BOX(box_cursor_2 - 0x4u)->field_21;
 	OBJECT(object)->box_height = (uint8_t)(field >> 8u);
 	OBJECT(object)->box_dx = (uint8_t)field;
-	t4 = t3 + 2u;
-	box_end = t4 + 2u;
-	field_23 = HIT_BOX(t4 - 0x6u)->field_23;
+	box_cursor_3 = box_cursor_2 + 2u;
+	box_end = box_cursor_3 + 2u;
+	field_23 = HIT_BOX(box_cursor_3 - 0x6u)->field_23;
 	box_number = field_23;
 	box_dy_halfword = ((uint32_t)(field_23 >> 8) << 8) | (box_number & 0xFFu);
 	OBJECT(object)->box_dy = (uint8_t)(box_dy_halfword >> 8u);
@@ -1595,21 +1693,21 @@ void stage_7_boss_keep_in_x(uint16_t object)
 {
 	uint32_t carry = 0;
 	uint16_t next_stage_x = 0, next_x_and_fraction = 0, x_and_fraction = 0;
-	uint8_t x_speed_2 = 0, t2 = 0;
-	uint16_t t1 = 0, x_speed = 0, t3 = 0;
+	uint8_t x_speed_2 = 0, x_high = 0;
+	uint16_t x_low_and_fraction = 0, x_speed = 0, camera_x_low_and_fraction = 0;
 
-	t1 = (((uint32_t)(OBJECT(object)->x & 0xFFu) << 8u) | OBJECT(object)->x_fraction);
-	x_and_fraction = t1;
+	x_low_and_fraction = (((uint32_t)(OBJECT(object)->x & 0xFFu) << 8u) | OBJECT(object)->x_fraction);
+	x_and_fraction = x_low_and_fraction;
 	x_speed = OBJECT(object)->x_speed;
 	carry = (uint16_t)(x_and_fraction + x_speed) < x_and_fraction;
 	area_next_x = x_and_fraction + x_speed;
 	x_speed_2 = (uint8_t)(OBJECT(object)->x_speed >> 8u);
-	t2 = (uint8_t)(OBJECT(object)->x >> 8u);
-	area_next_x_high = (uint16_t)((uint32_t)(uint8_t)(((uint16_t)(int8_t)x_speed_2 >> 8) + t2 + carry) << 8) >> 8;
+	x_high = (uint8_t)(OBJECT(object)->x >> 8u);
+	area_next_x_high = (uint16_t)((uint32_t)(uint8_t)(((uint16_t)(int8_t)x_speed_2 >> 8) + x_high + carry) << 8) >> 8;
 	next_x_and_fraction = area_next_x;
-	t3 = (((uint32_t)(camera_x & 0xFFu) << 8u) | camera_x_fraction);
-	carry = (uint16_t)(next_x_and_fraction + t3) < next_x_and_fraction;
-	area_next_x = next_x_and_fraction + t3;
+	camera_x_low_and_fraction = (((uint32_t)(camera_x & 0xFFu) << 8u) | camera_x_fraction);
+	carry = (uint16_t)(next_x_and_fraction + camera_x_low_and_fraction) < next_x_and_fraction;
+	area_next_x = next_x_and_fraction + camera_x_low_and_fraction;
 	next_stage_x = ((uint32_t)(uint8_t)(((uint16_t)((uint32_t)(uint8_t)(camera_x >> 8u) << 8) >> 8) + area_next_x_high + carry) << 8) | area_next_x_pixels;
 	if ((int16_t)next_stage_x <= 0x8B0 || (int16_t)next_stage_x >= 0xA0F)
 		OBJECT(object)->x_speed = 0;
@@ -1620,27 +1718,27 @@ void stage_7_boss_keep_in_y(uint16_t object)
 {
 	uint32_t carry = 0;
 	uint8_t next_y_high = 0, next_y_low = 0;
-	uint8_t state = 0, y_speed_2 = 0, t4 = 0;
-	uint16_t t1 = 0, y_speed = 0, t2 = 0, t3 = 0, t5 = 0, t6 = 0, t7 = 0, t8 = 0;
+	uint8_t state = 0, y_speed_2 = 0, y_high = 0;
+	uint16_t y_low_and_fraction = 0, y_speed = 0, old_y_low_and_fraction = 0, next_y_low_and_fraction = 0, stage_y_low_and_fraction = 0, camera_y_low_and_fraction = 0, next_stage_y_low = 0, screen_y_low_and_fraction = 0;
 
 	state = OBJECT(object)->state;
 	if (state != 0u)
 	{
-		t1 = (((uint32_t)(OBJECT(object)->y & 0xFFu) << 8u) | OBJECT(object)->y_fraction);
+		y_low_and_fraction = (((uint32_t)(OBJECT(object)->y & 0xFFu) << 8u) | OBJECT(object)->y_fraction);
 		y_speed = OBJECT(object)->y_speed;
-		t2 = t1;
-		t3 = t2 + y_speed;
-		carry = (uint16_t)(t2 + y_speed) < t2;
-		area_next_y = t3;
+		old_y_low_and_fraction = y_low_and_fraction;
+		next_y_low_and_fraction = old_y_low_and_fraction + y_speed;
+		carry = (uint16_t)(old_y_low_and_fraction + y_speed) < old_y_low_and_fraction;
+		area_next_y = next_y_low_and_fraction;
 		y_speed_2 = (uint8_t)(OBJECT(object)->y_speed >> 8u);
-		t4 = (uint8_t)(OBJECT(object)->y >> 8u);
-		area_next_y_high = ((uint16_t)(int8_t)y_speed_2 >> 8) + t4 + carry;
-		t5 = area_next_y;
-		t6 = (((uint32_t)(camera_y & 0xFFu) << 8u) | camera_y_fraction);
-		t7 = t5;
-		t8 = t7 - t6;
-		carry = t7 < t6;
-		area_next_y = t8;
+		y_high = (uint8_t)(OBJECT(object)->y >> 8u);
+		area_next_y_high = ((uint16_t)(int8_t)y_speed_2 >> 8) + y_high + carry;
+		stage_y_low_and_fraction = area_next_y;
+		camera_y_low_and_fraction = (((uint32_t)(camera_y & 0xFFu) << 8u) | camera_y_fraction);
+		next_stage_y_low = stage_y_low_and_fraction;
+		screen_y_low_and_fraction = next_stage_y_low - camera_y_low_and_fraction;
+		carry = next_stage_y_low < camera_y_low_and_fraction;
+		area_next_y = screen_y_low_and_fraction;
 		next_y_high = (uint8_t)(camera_y >> 8u) + area_next_y_high + carry;
 		next_y_low = area_next_y_pixels;
 		if ((int16_t)(((uint32_t)next_y_high << 8) | next_y_low) <= 0x78 || (int16_t)(((uint32_t)next_y_high << 8) | next_y_low) >= 0xC8)
@@ -1649,14 +1747,14 @@ void stage_7_boss_keep_in_y(uint16_t object)
 }
 
 /* Stage 7's boss: every so often by the rank, sends some of its idle helpers to throw. */
-uint16_t stage_7_boss_order_throws(uint16_t object, uint16_t y)
+void stage_7_boss_order_throws(uint16_t object)
 {
 	uint32_t negative = 0;
 	uint8_t other_enemies = 0, throws = 0;
-	uint16_t d = 0;
+	uint16_t helper_number = 0;
 	uint8_t stack = 0;
-	uint8_t state = 0, vitality = 0, t3 = 0, t4 = 0, t5 = 0, t6 = 0;
-	uint16_t throw_wait = 0, t1 = 0, t2 = 0, throw_wait_2 = 0;
+	uint8_t state = 0, vitality = 0, enemies_last_frame = 0, throws_allowed = 0, throws_wanted = 0, throws_to_order = 0;
+	uint16_t throw_wait = 0, new_throw_wait = 0, attack_time = 0, throw_wait_2 = 0;
 
 	state = OBJECT(object)->state;
 	if (state != 0u)
@@ -1665,73 +1763,71 @@ uint16_t stage_7_boss_order_throws(uint16_t object, uint16_t y)
 		if (vitality != 0u)
 		{
 			throw_wait = OBJECT(object)->stage_7_boss.throw_wait;
-			t1 = throw_wait + 1u;
-			OBJECT(object)->stage_7_boss.throw_wait = t1;
-			t2 = stage_7_boss_helper_attack_times_by_rank[(int8_t)(rank & ~1u) / 2];
+			new_throw_wait = throw_wait + 1u;
+			OBJECT(object)->stage_7_boss.throw_wait = new_throw_wait;
+			attack_time = stage_7_boss_helper_attack_times_by_rank[(int8_t)(rank & ~1u) / 2];
 			throw_wait_2 = OBJECT(object)->stage_7_boss.throw_wait;
-			if ((int16_t)t2 <= (int16_t)throw_wait_2)
+			if ((int16_t)attack_time <= (int16_t)throw_wait_2)
 			{
 				OBJECT(object)->stage_7_boss.throw_wait = 0u;
 				throw_helper = random_number & 3u;
-				t3 = io_read8(0x1880u);
-				other_enemies = t3 - 1u;
+				enemies_last_frame = io_read8(0x1880u);
+				other_enemies = enemies_last_frame - 1u;
 				stack = other_enemies;
-				t4 = ((uint8_t)(player_count - 1u) >> 1) + 1u;
-				t5 = t4 - stack;
-				negative = t5 >> 7;
-				throws = t5;
-				if (t4 != stack && negative == 0u)
+				throws_allowed = ((uint8_t)(player_count - 1u) >> 1) + 1u;
+				throws_wanted = throws_allowed - stack;
+				negative = throws_wanted >> 7;
+				throws = throws_wanted;
+				if (throws_allowed != stack && negative == 0u)
 				{
 					helper_throws_left = throws;
 					do
 					{
-						d = ((throw_helper & 3u) << 8) | other_enemies;
-						y = stage_7_boss_order_throw(object, y, d);
-						other_enemies = (uint8_t)d;
+						helper_number = ((throw_helper & 3u) << 8) | other_enemies;
+						stage_7_boss_order_throw(object, helper_number);
+						other_enemies = (uint8_t)helper_number;
 						throw_helper++;
-						t6 = helper_throws_left;
-						helper_throws_left = t6 - 1u;
-					} while (t6 != 1u);
+						throws_to_order = helper_throws_left;
+						helper_throws_left = throws_to_order - 1u;
+					} while (throws_to_order != 1u);
 				}
 			}
 		}
 	}
-	return y;
 }
 
 /* Stage 7's boss: the given helper, if idle, gets its missile and starts throwing. */
-uint16_t stage_7_boss_order_throw(uint16_t object, uint16_t y, uint16_t helper_number)
+void stage_7_boss_order_throw(uint16_t object, uint16_t helper_number)
 {
 	uint32_t carry = 0;
-	uint16_t helper = 0, ignored16 = 0, ignored16_2 = 0;
+	uint16_t helper = 0, ignored16 = 0, ignored16_2 = 0, ignored16_3 = 0;
 	uint8_t state = 0;
 
 	helper = mem_read16(object + (uint8_t)(((uint32_t)(helper_number >> 8) << 1) + 0x33u));
 	state = OBJECT(helper)->state;
 	if (state != 0u)
-		return y;
-	y = stage_7_boss_order_throw_child_ADDRESS;
-	vector_spawn_child(helper, y, &ignored16, &ignored16_2, &carry);
+		return;
+	leftover_y = stage_7_boss_order_throw_child_ADDRESS;
+	vector_spawn_child(helper, &ignored16, &ignored16_2, &ignored16_3, &carry);
 	if (carry)
 		OBJECT(helper)->state = 7u;
-	return y;
 }
 
 /* Stage 7's boss stands and goes back to walking. */
 uint16_t stage_7_boss_stand(uint16_t object)
 {
 	uint32_t carry = 0;
-	uint16_t animation_number = 0, box_number = 0, u = 0;
+	uint16_t animation_number = 0, box_end = 0, box_number = 0;
 
 	animation_number = 0x100u;
 	carry = stage_7_boss_set_animation(object, animation_number);
 	box_number = 0u;
-	stage_7_boss_set_hit_box(object, &u, &box_number);
+	stage_7_boss_set_hit_box(object, &box_end, &box_number);
 	OBJECT(object)->flags = (OBJECT(object)->flags | 0x40u) & ~4u;
 	OBJECT(object)->state = 1u;
 	OBJECT(object)->action = 0u;
 	OBJECT(object)->action_step = 0u;
-	return u;
+	return box_end;
 }
 
 /* Stage 7's boss has no target left: waits. */
@@ -1750,12 +1846,12 @@ uint32_t stage_7_boss_go_idle(uint16_t object)
 
 /* Stage 7's boss takes a hit: flashes; with no health left it is knocked down; on a heavy hit (or every
    third) it jumps away to the middle or is knocked down, else it flinches. */
-uint16_t stage_7_boss_take_hit(uint16_t object, uint16_t y)
+void stage_7_boss_take_hit(uint16_t object)
 {
 	uint32_t carry = 0;
 	uint16_t animation_number = 0, command = 0, d = 0, ignored16 = 0, object_2 = 0, palette_effect_number = 0;
 	uint8_t vitality = 0, direction = 0, hit = 0, hits = 0, hits_2 = 0, attributes = 0, attributes_2 = 0;
-	uint16_t hit_by = 0, t1 = 0;
+	uint16_t hit_by = 0, screen_x = 0;
 
 	hit_by = OBJECT(object)->hit_by;
 	object_2 = hit_by;
@@ -1767,7 +1863,7 @@ uint16_t stage_7_boss_take_hit(uint16_t object, uint16_t y)
 	OBJECT(object)->z_speed = 0;
 	palette_request_kind = 2u;
 	palette_effect_number = 0x28u;
-	vector_palette_request(palette_effect_number, &y, &object_2);
+	vector_palette_request(object_2, palette_effect_number);
 	command = 0x6600u;
 	carry = vector_queue_sound(command);
 	d = 0u;
@@ -1787,10 +1883,10 @@ uint16_t stage_7_boss_take_hit(uint16_t object, uint16_t y)
 		if ((uint8_t)(direction + 0x40u) < 0x80u)
 		{
 			OBJECT(object)->x_speed = -0x300;
-			return y;
+			return;
 		}
 		OBJECT(object)->x_speed = 0x300;
-		return y;
+		return;
 	}
 	hit = OBJECT(object)->hit;
 	if (hit != 0x13u)
@@ -1804,7 +1900,7 @@ uint16_t stage_7_boss_take_hit(uint16_t object, uint16_t y)
 			carry = stage_7_boss_set_animation(object, animation_number);
 			OBJECT(object)->state = 0xFFu;
 			OBJECT(object)->action = 0u;
-			return y;
+			return;
 		}
 	}
 	OBJECT(object)->stage_7_boss.hits = 0u;
@@ -1820,14 +1916,14 @@ uint16_t stage_7_boss_take_hit(uint16_t object, uint16_t y)
 		if ((uint8_t)(direction + 0x40u) < 0x80u)
 		{
 			OBJECT(object)->x_speed = -0x300;
-			return y;
+			return;
 		}
 		OBJECT(object)->x_speed = 0x300;
-		return y;
+		return;
 	}
 	OBJECT(object)->flags = (OBJECT(object)->flags & 0xBFu) | 8u;
-	t1 = OBJECT(object)->x;
-	if ((int16_t)t1 <= 0xE0)
+	screen_x = OBJECT(object)->x;
+	if ((int16_t)screen_x <= 0xE0)
 	{
 		attributes = OBJECT(object)->attributes;
 		OBJECT(object)->attributes = attributes | 0x40u;
@@ -1844,5 +1940,4 @@ uint16_t stage_7_boss_take_hit(uint16_t object, uint16_t y)
 	carry = stage_7_boss_set_animation(object, animation_number);
 	OBJECT(object)->state = 4u;
 	OBJECT(object)->action = 0u;
-	return y;
 }

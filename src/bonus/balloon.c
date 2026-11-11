@@ -3,7 +3,7 @@
  *    Description: the bank's jump table, then bonus 1: blow up the balloon (the step after stage 1)
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    10-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -13,152 +13,152 @@
 
 /* Runs bonus 1's contest by the scene's state: the players' portraits along the bottom, then the start,
    the blowing, the result and the flight of the balloons. */
-void bonus_1_contest(uint16_t y)
+void bonus_1_contest(void)
 {
 	uint32_t carry = 0;
-	uint8_t a = 0;
-	uint16_t d = 0, ignored16 = 0, ignored16_2 = 0, ignored16_3 = 0, x = 0;
-	uint8_t t1 = 0;
+	uint8_t state_offset = 0;
+	uint16_t d = 0, ignored16 = 0, ignored16_2 = 0, state_table = 0;
+	uint8_t state_number = 0;
 
 	bonus_draw_x = 0x7Cu;
 	bonus_draw_y = 0x98u;
 	portrait_animation = 0x10u;
-	y = bonus_show_player_portraits(y);
+	bonus_show_player_portraits();
 	d = bonus_1_zoom_players();
-	x = bonus_1_contest_states_ADDRESS;
-	t1 = io_read8(scene_state);
-	a = (uint32_t)t1 << 1;
-	switch ((int8_t)a)
+	state_table = bonus_1_contest_states_ADDRESS;
+	state_number = io_read8(scene_state);
+	state_offset = (uint32_t)state_number << 1;
+	switch ((int8_t)state_offset)
 	{
 	case 0:
-		bonus_1_contest_start(&ignored16, &y, &d, &carry);
+		bonus_1_contest_start(&ignored16, &d, &carry);
 		return;
 	case 2:
-		bonus_1_contest_play(&ignored16, &ignored16_2, &ignored16_3, &carry);
+		bonus_1_contest_play(&ignored16, &ignored16_2, &carry);
 		return;
 	case 4:
-		bonus_1_finish(&ignored16, &y, &d, &carry);
+		bonus_1_finish(&ignored16, &d, &carry);
 		return;
 	case 6:
-		bonus_1_contest_set_up(&ignored16, &ignored16_2, &ignored16_3, &carry);
+		bonus_1_contest_set_up(&ignored16, &ignored16_2, &carry);
 		return;
 	case 8:
-		bonus_1_contest_ready(&ignored16, &ignored16_2, &ignored16_3, &carry);
+		bonus_1_contest_ready(&ignored16, &ignored16_2, &carry);
 		return;
 	case 10:
-		bonus_1_start_music(&ignored16_3, &carry);
+		bonus_1_start_music(&ignored16_2, &carry);
 		return;
 	case 12:
-		bonus_1_blow_until_done(&ignored16, &ignored16_2, &ignored16_3, &carry);
+		bonus_1_blow_until_done(&ignored16, &ignored16_2, &carry);
 		return;
 	case 14:
-		bonus_1_finish_music(&ignored16_3, &carry);
+		bonus_1_finish_music(&ignored16_2, &carry);
 		return;
 	case 16:
-		bonus_1_results(&ignored16, &ignored16_2, &ignored16_3, &carry);
+		bonus_1_results(&ignored16, &ignored16_2, &carry);
 		return;
 	case 18:
-		bonus_1_top_up_balloons(&ignored16, &ignored16_2, &ignored16_3, &carry);
+		bonus_1_top_up_balloons(&ignored16, &ignored16_2, &carry);
 		return;
 	case 20:
-		bonus_1_fly_away(&ignored16, &y, &d, &carry);
+		bonus_1_fly_away(&ignored16, &d, &carry);
 		return;
 	case 22:
-		d = (d & 0xFFu) | ((uint32_t)a << 8);
+		d = (d & 0xFFu) | ((uint32_t)state_offset << 8);
 		bonus_1_end(&d, &carry);
 		return;
 	case 24:
-		bonus_1_fly(&x, &y, &d, &carry);
+		bonus_1_fly(&state_table, &d, &carry);
 		return;
 	case 26:
-		bonus_1_popped(&x, &y, &d, &carry);
+		bonus_1_popped(&state_table, &d, &carry);
 		return;
 	case 28:
-		bonus_1_take_off(x, &ignored16_2, &ignored16_3);
+		bonus_1_take_off(state_table);
 		return;
 	case 30:
-		bonus_1_lift_off(x, &ignored16_2, &ignored16_3);
+		bonus_1_lift_off(state_table);
 		return;
 	case 32:
-		bonus_1_speed_up(x, &ignored16_2, &ignored16_3, &carry);
+		bonus_1_speed_up(state_table, &ignored16_2, &carry);
 		return;
 	case 34:
-		bonus_1_rise(x, &ignored16_2, &ignored16_3, &carry);
+		bonus_1_rise(state_table, &ignored16_2, &carry);
 		return;
 	case 36:
-		bonus_1_pop(x, &ignored16_3, &carry);
+		bonus_1_pop(state_table, &ignored16_2, &carry);
 		return;
 	case 38:
-		bonus_1_fall(x, &ignored16_3, &carry);
+		bonus_1_fall(state_table, &ignored16_2, &carry);
 		return;
 	case 40:
-		bonus_1_lie(x);
+		bonus_1_lie(state_table);
 		return;
 	case 42:
 		bonus_1_fall_done();
 		return;
 	case 44:
-		bonus_pan_start(y, &ignored16_3, &carry);
+		bonus_pan_start(&ignored16_2, &carry);
 		return;
 	case 46:
-		bonus_pan_up(&ignored16, &ignored16_3, &carry);
+		bonus_pan_up(&ignored16, &ignored16_2, &carry);
 		return;
 	case 48:
 	case 52:
 		carry = bonus_hide_hints();
 		return;
 	case 50:
-		bonus_show_hints_1(x, &ignored16_2, &ignored16_3, &carry);
+		bonus_show_hints_1(state_table, &ignored16_2, &carry);
 		return;
 	case 54:
-		bonus_show_hints_2(x, &ignored16_2, &ignored16_3, &carry);
+		bonus_show_hints_2(state_table, &ignored16_2, &carry);
 		return;
 	case 56:
 		bonus_title_wait();
 		return;
 	case 58:
-		d = (uint32_t)a << 8;
-		bonus_title_show(&x, &ignored16_2, &d, &carry);
+		d = (uint32_t)state_offset << 8;
+		bonus_title_show(&state_table, &d, &carry);
 		return;
 	case 60:
 		bonus_title_done();
 		return;
 	case -6:
-		bonus_1_intro_pan(&ignored16, &y, &d, &carry);
+		bonus_1_intro_pan(&ignored16, &d, &carry);
 		return;
 	case -4:
-		bonus_1_intro_set_up(&ignored16, &ignored16_2, &ignored16_3, &carry);
+		bonus_1_intro_set_up(&ignored16, &ignored16_2, &carry);
 		return;
 	case -2:
-		bonus_1_intro_show_how(&ignored16, &y, &ignored16_3, &carry);
+		bonus_1_intro_show_how(&ignored16, &ignored16_2, &carry);
 		return;
 	}
 }
 
 /* Runs bonus 2's contest by its state (from 3 on): the players' set up, the countdown, the yelling, the
    results and the end. */
-void bonus_2_contest(uint16_t y)
+void bonus_2_contest(void)
 {
-	uint8_t a = 0;
-	uint8_t t1 = 0;
+	uint8_t state_number = 0;
+	uint8_t read_state = 0;
 
-	t1 = io_read8(0x1840u);
-	a = t1;
-	if ((int8_t)a < 3)
+	read_state = io_read8(0x1840u);
+	state_number = read_state;
+	if ((int8_t)state_number < 3)
 	{
-		a = 3u;
+		state_number = 3u;
 		io_write8(0x1840u, 3u);
 	}
-	switch ((int8_t)(uint8_t)((uint32_t)a << 1))
+	switch ((int8_t)(uint8_t)((uint32_t)state_number << 1))
 	{
 	case 0:
 		bonus_2_start_music();
 		return;
 	case 2:
-		bonus_2_intro_set_up(y);
+		bonus_2_intro_set_up();
 		return;
 	case 4:
-		bonus_2_intro_try(y);
+		bonus_2_intro_try();
 		return;
 	case 6:
 		bonus_2_set_up();
@@ -180,47 +180,47 @@ void bonus_2_contest(uint16_t y)
 
 /* Runs stage 1's boss, the wrestler, each frame: reacts to a hit, runs its state, keeps it inside its
    fighting area and draws its health gauge. */
-uint16_t wrestler_update(uint16_t object, uint16_t y, uint16_t state)
+void wrestler_update(uint16_t object, uint16_t state)
 {
 	uint32_t carry = 0;
-	uint8_t a = 0, b = 0, d = 0;
-	uint16_t step_and_row = 0, u = 0;
+	uint8_t b = 0, d = 0, state_offset = 0;
+	uint16_t state_table = 0, step_and_row = 0;
 	uint8_t state_2 = 0;
 
-	wrestler_check_hit(object, &y, &state);
+	state = wrestler_check_hit(object, (uint8_t)state);
 	b = (uint8_t)state;
-	u = wrestler_states_ADDRESS;
+	state_table = wrestler_states_ADDRESS;
 	state_2 = OBJECT(object)->state;
-	a = state_2;
-	carry = (int8_t)a < 0;
-	a = (uint32_t)a << 1;
+	state_offset = state_2;
+	carry = (int8_t)state_offset < 0;
+	state_offset = (uint32_t)state_offset << 1;
 	d = b;
-	switch ((int8_t)a)
+	switch ((int8_t)state_offset)
 	{
 	case 0:
-		y = wrestler_entrance(object, y, d);
+		wrestler_entrance(object, d);
 		break;
 	case 2:
-		y = wrestler_walk(object, y);
+		wrestler_walk(object);
 		break;
 	case 4:
-		y = wrestler_punch(object, y, d);
+		wrestler_punch(object, d);
 		break;
 	case 6:
-		y = wrestler_guard(object, y, d);
+		wrestler_guard(object, d);
 		break;
 	case 8:
 	case 10:
-		y = wrestler_jump(object, y, d);
+		wrestler_jump(object, d);
 		break;
 	case 12:
-		y = wrestler_idle(object, y, d);
+		wrestler_idle(object, d);
 		break;
 	case 14:
-		y = wrestler_wait_target_up(object, y);
+		wrestler_wait_target_up(object);
 		break;
 	case 16:
-		y = wrestler_beaten_wait(object, y, u);
+		wrestler_beaten_wait(object, state_table);
 		break;
 	case 18:
 		wrestler_blink_out(object, d, carry);
@@ -232,28 +232,28 @@ uint16_t wrestler_update(uint16_t object, uint16_t y, uint16_t state)
 		wrestler_lie(object);
 		break;
 	case 24:
-		y = wrestler_get_up(object, y);
+		wrestler_get_up(object);
 		break;
 	case 26:
 		wrestler_flinch_wait(object);
 		break;
 	case 28:
-		y = wrestler_flinch_land(object, y);
+		wrestler_flinch_land(object);
 		break;
 	case 30:
-		y = wrestler_put_in(object, y);
+		wrestler_put_in(object);
 		break;
 	case 32:
 		wrestler_entrance_drop(object);
 		break;
 	case 34:
-		y = wrestler_entrance_pose(object, y, u);
+		wrestler_entrance_pose(object, state_table);
 		break;
 	case 36:
 		wrestler_entrance_step_out(object);
 		break;
 	case 38:
-		y = wrestler_entrance_land(object, y, u);
+		wrestler_entrance_land(object, state_table);
 		break;
 	case 40:
 		wrestler_entrance_stand(object);
@@ -271,10 +271,10 @@ uint16_t wrestler_update(uint16_t object, uint16_t y, uint16_t state)
 		wrestler_punch_strike(object);
 		break;
 	case 50:
-		y = wrestler_punch_recover(object, y);
+		wrestler_punch_recover(object);
 		break;
 	case 52:
-		y = wrestler_guarding(object, y);
+		wrestler_guarding(object);
 		break;
 	case 54:
 		wrestler_jump_rise(object);
@@ -286,144 +286,143 @@ uint16_t wrestler_update(uint16_t object, uint16_t y, uint16_t state)
 		wrestler_jump_recover(object);
 		break;
 	case 60:
-		y = wrestler_jump_end(object, y, u);
+		wrestler_jump_end(object, state_table);
 		break;
 	case 62:
 		wrestler_idle_look(object);
 		break;
 	case 64:
-		y = wrestler_idle_end(object, y, u);
+		wrestler_idle_end(object, state_table);
 		break;
 	case -6:
-		y = wrestler_beaten(object, y, d);
+		wrestler_beaten(object, d);
 		break;
 	case -4:
-		y = wrestler_knocked_down(object, y, d);
+		wrestler_knocked_down(object, d);
 		break;
 	case -2:
-		y = wrestler_flinch(object, y, d);
+		wrestler_flinch(object, d);
 		break;
 	}
 	wrestler_keep_in_area(object);
 	step_and_row = (uint32_t)wrestler_gauge_piece_health_by_players[(int8_t)((uint8_t)(player_count - 1u))] << 8;
-	y = boss_shade_by_vitality(object, y, step_and_row);
-	return y;
+	boss_shade_by_vitality(object, step_and_row);
 }
 
 /* Runs bonus 1's introduction: the title, the camera's pan and a character showing how to blow up the
    balloon. */
-void bonus_1_intro(uint16_t y)
+void bonus_1_intro(void)
 {
 	uint32_t carry = 0;
-	uint8_t a = 0;
-	uint16_t d = 0, ignored16 = 0, ignored16_2 = 0, ignored16_3 = 0, x = 0;
-	uint8_t t1 = 0;
+	uint8_t state_offset = 0;
+	uint16_t d = 0, ignored16 = 0, ignored16_2 = 0, state_table = 0;
+	uint8_t state_number = 0;
 
 	d = 0u;
-	bonus_title(&y, &d);
-	x = bonus_1_intro_states_ADDRESS;
-	t1 = io_read8(scene_state);
-	a = (uint32_t)t1 << 1;
-	switch ((int8_t)a)
+	d = bonus_title(d);
+	state_table = bonus_1_intro_states_ADDRESS;
+	state_number = io_read8(scene_state);
+	state_offset = (uint32_t)state_number << 1;
+	switch ((int8_t)state_offset)
 	{
 	case 0:
-		bonus_1_intro_pan(&ignored16, &y, &d, &carry);
+		bonus_1_intro_pan(&ignored16, &d, &carry);
 		return;
 	case 2:
-		bonus_1_intro_set_up(&ignored16, &ignored16_2, &ignored16_3, &carry);
+		bonus_1_intro_set_up(&ignored16, &ignored16_2, &carry);
 		return;
 	case 4:
-		bonus_1_intro_show_how(&ignored16, &y, &ignored16_3, &carry);
+		bonus_1_intro_show_how(&ignored16, &ignored16_2, &carry);
 		return;
 	case 6:
-		bonus_1_contest_start(&ignored16, &y, &d, &carry);
+		bonus_1_contest_start(&ignored16, &d, &carry);
 		return;
 	case 8:
-		bonus_1_contest_play(&ignored16, &ignored16_2, &ignored16_3, &carry);
+		bonus_1_contest_play(&ignored16, &ignored16_2, &carry);
 		return;
 	case 10:
-		bonus_1_finish(&ignored16, &y, &d, &carry);
+		bonus_1_finish(&ignored16, &d, &carry);
 		return;
 	case 12:
-		bonus_1_contest_set_up(&ignored16, &ignored16_2, &ignored16_3, &carry);
+		bonus_1_contest_set_up(&ignored16, &ignored16_2, &carry);
 		return;
 	case 14:
-		bonus_1_contest_ready(&ignored16, &ignored16_2, &ignored16_3, &carry);
+		bonus_1_contest_ready(&ignored16, &ignored16_2, &carry);
 		return;
 	case 16:
-		bonus_1_start_music(&ignored16_3, &carry);
+		bonus_1_start_music(&ignored16_2, &carry);
 		return;
 	case 18:
-		bonus_1_blow_until_done(&ignored16, &ignored16_2, &ignored16_3, &carry);
+		bonus_1_blow_until_done(&ignored16, &ignored16_2, &carry);
 		return;
 	case 20:
-		bonus_1_finish_music(&ignored16_3, &carry);
+		bonus_1_finish_music(&ignored16_2, &carry);
 		return;
 	case 22:
-		bonus_1_results(&ignored16, &ignored16_2, &ignored16_3, &carry);
+		bonus_1_results(&ignored16, &ignored16_2, &carry);
 		return;
 	case 24:
-		bonus_1_top_up_balloons(&ignored16, &ignored16_2, &ignored16_3, &carry);
+		bonus_1_top_up_balloons(&ignored16, &ignored16_2, &carry);
 		return;
 	case 26:
-		bonus_1_fly_away(&ignored16, &y, &d, &carry);
+		bonus_1_fly_away(&ignored16, &d, &carry);
 		return;
 	case 28:
-		d = (d & 0xFFu) | ((uint32_t)a << 8);
+		d = (d & 0xFFu) | ((uint32_t)state_offset << 8);
 		bonus_1_end(&d, &carry);
 		return;
 	case 30:
-		bonus_1_fly(&x, &y, &d, &carry);
+		bonus_1_fly(&state_table, &d, &carry);
 		return;
 	case 32:
-		bonus_1_popped(&x, &y, &d, &carry);
+		bonus_1_popped(&state_table, &d, &carry);
 		return;
 	case 34:
-		bonus_1_take_off(x, &ignored16_2, &ignored16_3);
+		bonus_1_take_off(state_table);
 		return;
 	case 36:
-		bonus_1_lift_off(x, &ignored16_2, &ignored16_3);
+		bonus_1_lift_off(state_table);
 		return;
 	case 38:
-		bonus_1_speed_up(x, &ignored16_2, &ignored16_3, &carry);
+		bonus_1_speed_up(state_table, &ignored16_2, &carry);
 		return;
 	case 40:
-		bonus_1_rise(x, &ignored16_2, &ignored16_3, &carry);
+		bonus_1_rise(state_table, &ignored16_2, &carry);
 		return;
 	case 42:
-		bonus_1_pop(x, &ignored16_3, &carry);
+		bonus_1_pop(state_table, &ignored16_2, &carry);
 		return;
 	case 44:
-		bonus_1_fall(x, &ignored16_3, &carry);
+		bonus_1_fall(state_table, &ignored16_2, &carry);
 		return;
 	case 46:
-		bonus_1_lie(x);
+		bonus_1_lie(state_table);
 		return;
 	case 48:
 		bonus_1_fall_done();
 		return;
 	case 50:
-		bonus_pan_start(y, &ignored16_3, &carry);
+		bonus_pan_start(&ignored16_2, &carry);
 		return;
 	case 52:
-		bonus_pan_up(&ignored16, &ignored16_3, &carry);
+		bonus_pan_up(&ignored16, &ignored16_2, &carry);
 		return;
 	case 54:
 	case 58:
 		carry = bonus_hide_hints();
 		return;
 	case 56:
-		bonus_show_hints_1(x, &ignored16_2, &ignored16_3, &carry);
+		bonus_show_hints_1(state_table, &ignored16_2, &carry);
 		return;
 	case 60:
-		bonus_show_hints_2(x, &ignored16_2, &ignored16_3, &carry);
+		bonus_show_hints_2(state_table, &ignored16_2, &carry);
 		return;
 	case 62:
 		bonus_title_wait();
 		return;
 	case 64:
-		d = (uint32_t)a << 8;
-		bonus_title_show(&x, &ignored16_2, &d, &carry);
+		d = (uint32_t)state_offset << 8;
+		bonus_title_show(&state_table, &d, &carry);
 		return;
 	case 66:
 		bonus_title_done();
@@ -433,21 +432,21 @@ void bonus_1_intro(uint16_t y)
 
 /* Runs bonus 2's introduction by its state (0 to 2): the music, the title and the camera's pan, then the
    first player in the game trying it out. */
-void bonus_2_intro(uint16_t y)
+void bonus_2_intro(void)
 {
-	uint8_t t1 = 0;
+	uint8_t state_number = 0;
 
-	t1 = io_read8(0x1840u);
-	switch ((int8_t)(uint8_t)((uint32_t)t1 << 1))
+	state_number = io_read8(0x1840u);
+	switch ((int8_t)(uint8_t)((uint32_t)state_number << 1))
 	{
 	case 0:
 		bonus_2_start_music();
 		return;
 	case 2:
-		bonus_2_intro_set_up(y);
+		bonus_2_intro_set_up();
 		return;
 	case 4:
-		bonus_2_intro_try(y);
+		bonus_2_intro_try();
 		return;
 	case 6:
 		bonus_2_set_up();
@@ -485,39 +484,37 @@ uint16_t speech_balloon_update(uint16_t object)
 }
 
 /* Bonus 1's introduction, first state: waits for the camera's pan to end. */
-void bonus_1_intro_pan(uint16_t *p_x, uint16_t *p_y, uint16_t *p_d, uint32_t *p_carry)
+void bonus_1_intro_pan(uint16_t *p_step_table, uint16_t *p_d, uint32_t *p_carry)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint16_t d = (uint16_t)*p_d;
 	uint32_t carry = *p_carry;
-	uint16_t x = 0;
-	uint8_t t1 = 0;
+	uint16_t step_table = 0;
+	uint8_t state_number = 0;
 
-	bonus_pan(&x, &y, &d, &carry);
+	bonus_pan(&step_table, &d, &carry);
 	if (carry)
 	{
-		t1 = io_read8(scene_state);
-		io_write8(scene_state, t1 + 1u);
+		state_number = io_read8(scene_state);
+		io_write8(scene_state, state_number + 1u);
 	}
-	*p_x = x;
-	*p_y = y;
+	*p_step_table = step_table;
 	*p_d = d;
 	*p_carry = carry;
 }
 
 /* Bonus 1's introduction: puts the players' bonus objects and shows the first player in the game alone
    in the middle, the others hidden. */
-void bonus_1_intro_set_up(uint16_t *p_balloon, uint16_t *p_y, uint16_t *p_d, uint32_t *p_carry)
+void bonus_1_intro_set_up(uint16_t *p_balloon, uint16_t *p_d, uint32_t *p_carry)
 {
 	uint32_t carry = *p_carry;
-	uint8_t a = 0;
-	uint16_t balloon = 0, d = 0, ignored16 = 0, u = 0, y = 0;
-	uint8_t in_game = 0, t1 = 0;
+	uint8_t players_done = 0;
+	uint16_t balloon = 0, d = 0, ignored16 = 0, placed_part = 0;
+	uint8_t in_game = 0, state_number = 0;
 	uint16_t flyer = 0, middle_part = 0, blower = 0, blower_2 = 0, flyer_2 = 0, middle_part_2 = 0;
 
 	bonus_keep_backdrop();
 	bonus_mark_players_in_game();
-	bonus_1_put_players(&ignored16, &y, &d, &carry);
+	bonus_1_put_players(&ignored16, &d, &carry);
 	balloon = OBJECT_ADDRESS(0);
 	intro_player_number = 0u;
 	intro_player_shown = 0u;
@@ -543,549 +540,509 @@ void bonus_1_intro_set_up(uint16_t *p_balloon, uint16_t *p_y, uint16_t *p_d, uin
 			OBJECT(balloon)->y = 0xE8u;
 			OBJECT(balloon)->z = 0x28u;
 			blower_2 = OBJECT(balloon)->bonus_1.blower;
-			u = blower_2;
-			mem_write16(u + 0xCu, 0xAEu);
-			mem_write16(u + 0x11u, 0xE8u);
-			mem_write16(u + 0x16u, 0u);
+			placed_part = blower_2;
+			OBJECT(placed_part)->x = 0xAEu;
+			OBJECT(placed_part)->y = 0xE8u;
+			OBJECT(placed_part)->z = 0u;
 			flyer_2 = OBJECT(balloon)->bonus_1.flyer;
 			mem_write8(flyer_2, 0u);
 			middle_part_2 = OBJECT(balloon)->bonus_1.middle_part;
-			u = middle_part_2;
-			mem_write16(u + 0xCu, 0xAEu);
-			mem_write16(u + 0x11u, 0xE8u);
+			placed_part = middle_part_2;
+			OBJECT(placed_part)->x = 0xAEu;
+			OBJECT(placed_part)->y = 0xE8u;
 			d = 0u;
-			mem_write16(u + 0x16u, 0u);
+			OBJECT(placed_part)->z = 0u;
 		}
 		balloon += 0xC0u;
 		intro_player_number++;
-		a = intro_player_number;
-		carry = a < 4u;
-	} while (a != 4u);
-	t1 = io_read8(scene_state);
-	io_write8(scene_state, t1 + 1u);
-	d = (d & 0xFFu) | ((uint32_t)a << 8);
+		players_done = intro_player_number;
+		carry = players_done < 4u;
+	} while (players_done != 4u);
+	state_number = io_read8(scene_state);
+	io_write8(scene_state, state_number + 1u);
+	d = (d & 0xFFu) | ((uint32_t)players_done << 8);
 	*p_balloon = balloon;
-	*p_y = y;
 	*p_d = d;
 	*p_carry = carry;
 }
 
 /* Bonus 1's introduction: the shown player blows its balloon by itself, a press every 4 frames, while
    the button hints blink. */
-void bonus_1_intro_show_how(uint16_t *p_x, uint16_t *p_y, uint16_t *p_d, uint32_t *p_carry)
+void bonus_1_intro_show_how(uint16_t *p_player_balloon, uint16_t *p_d, uint32_t *p_carry)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint32_t carry = *p_carry;
-	uint16_t bonus_player = 0, d = 0, ignored16 = 0, ignored16_2 = 0, record = 0, x = 0, y_2 = 0;
+	uint16_t bonus_player = 0, d = 0, ignored16 = 0, ignored16_2 = 0, player_balloon = 0, record = 0;
 	uint16_t stack = 0, stack_4 = 0;
-	uint8_t t1 = 0, t2 = 0;
+	uint8_t shown_player_number = 0, player_number = 0;
 	uint16_t object = 0;
 
-	bonus_blink_hints(y);
-	t1 = io_read8(0x18EEu);
-	bonus_player = bonus_1_player_records[(int8_t)((uint8_t)((uint32_t)t1 << 1)) / 2];
+	bonus_blink_hints();
+	shown_player_number = io_read8(0x18EEu);
+	bonus_player = bonus_1_player_records[(int8_t)((uint8_t)((uint32_t)shown_player_number << 1)) / 2];
 	object = BONUS_PLAYER(bonus_player)->object;
-	x = object;
-	mem_write8(x, mem_read8(x) | 0x10u);
+	player_balloon = object;
+	OBJECT(player_balloon)->flags |= 0x10u;
 	mem_write8(BONUS_PLAYER(bonus_player)->presses, 0u);
 	if ((frame_count & 3u) == 0u)
 		mem_write8(BONUS_PLAYER(bonus_player)->presses, 0x10u);
 	stack = bonus_player;
-	stack_4 = x;
+	stack_4 = player_balloon;
 	bonus_1_press_sound(&ignored16, &ignored16_2, &carry);
-	x = stack_4;
+	player_balloon = stack_4;
 	record = stack;
-	t2 = io_read8(0x18EEu);
-	d = (uint32_t)t2 << 8;
-	*p_x = x;
-	*p_y = y_2;
+	player_number = io_read8(0x18EEu);
+	d = (uint32_t)player_number << 8;
+	*p_player_balloon = player_balloon;
 	*p_d = d;
-	bonus_1_blow(record, p_x, p_y, p_d, &carry);
+	bonus_1_blow(record, p_player_balloon, p_d, &carry);
 	*p_carry = carry;
 }
 
 /* Bonus 1's contest, first state: runs its start by the sub-state. */
-void bonus_1_contest_start(uint16_t *p_x, uint16_t *p_y, uint16_t *p_d, uint32_t *p_carry)
+void bonus_1_contest_start(uint16_t *p_step_table, uint16_t *p_d, uint32_t *p_carry)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint16_t d = (uint16_t)*p_d;
 	uint32_t carry = *p_carry;
-	uint8_t a = 0;
-	uint16_t x = 0;
-	uint8_t t1 = 0;
+	uint8_t step_offset = 0;
+	uint16_t step_table = 0;
+	uint8_t step_number = 0;
 
 	for (;;)
 	{
 		portrait_animation = 0x10u;
-		x = bonus_1_contest_start_steps_ADDRESS;
-		t1 = io_read8(scene_substate);
-		a = t1;
-		carry = (int8_t)a < 0;
-		a = (uint32_t)a << 1;
-		switch ((int8_t)a)
+		step_table = bonus_1_contest_start_steps_ADDRESS;
+		step_number = io_read8(scene_substate);
+		step_offset = step_number;
+		carry = (int8_t)step_offset < 0;
+		step_offset = (uint32_t)step_offset << 1;
+		switch ((int8_t)step_offset)
 		{
 		case 0:
-			bonus_1_contest_set_up(&x, &y, &d, &carry);
+			bonus_1_contest_set_up(&step_table, &d, &carry);
 			break;
 		case 2:
-			bonus_1_contest_ready(&x, &y, &d, &carry);
+			bonus_1_contest_ready(&step_table, &d, &carry);
 			break;
 		case 4:
 			bonus_1_start_music(&d, &carry);
 			break;
 		case 6:
-			bonus_1_blow_until_done(&x, &y, &d, &carry);
+			bonus_1_blow_until_done(&step_table, &d, &carry);
 			break;
 		case 8:
 			bonus_1_finish_music(&d, &carry);
 			break;
 		case 10:
-			bonus_1_results(&x, &y, &d, &carry);
+			bonus_1_results(&step_table, &d, &carry);
 			break;
 		case 12:
-			bonus_1_top_up_balloons(&x, &y, &d, &carry);
+			bonus_1_top_up_balloons(&step_table, &d, &carry);
 			break;
 		case 14:
-			bonus_1_fly_away(&x, &y, &d, &carry);
+			bonus_1_fly_away(&step_table, &d, &carry);
 			break;
 		case 16:
-			d = (d & 0xFFu) | ((uint32_t)a << 8);
+			d = (d & 0xFFu) | ((uint32_t)step_offset << 8);
 			bonus_1_end(&d, &carry);
 			break;
 		case 18:
-			bonus_1_fly(&x, &y, &d, &carry);
+			bonus_1_fly(&step_table, &d, &carry);
 			break;
 		case 20:
-			bonus_1_popped(&x, &y, &d, &carry);
+			bonus_1_popped(&step_table, &d, &carry);
 			break;
 		case 22:
-			bonus_1_take_off(x, &y, &d);
+			d = bonus_1_take_off(step_table);
 			break;
 		case 24:
-			bonus_1_lift_off(x, &y, &d);
+			d = bonus_1_lift_off(step_table);
 			break;
 		case 26:
-			bonus_1_speed_up(x, &y, &d, &carry);
+			bonus_1_speed_up(step_table, &d, &carry);
 			break;
 		case 28:
-			bonus_1_rise(x, &y, &d, &carry);
+			bonus_1_rise(step_table, &d, &carry);
 			break;
 		case 30:
-			bonus_1_pop(x, &d, &carry);
+			bonus_1_pop(step_table, &d, &carry);
 			break;
 		case 32:
-			bonus_1_fall(x, &d, &carry);
+			bonus_1_fall(step_table, &d, &carry);
 			break;
 		case 34:
-			d = (d & 0xFFu) | ((uint32_t)a << 8);
-			bonus_1_lie(x);
+			d = (d & 0xFFu) | ((uint32_t)step_offset << 8);
+			bonus_1_lie(step_table);
 			break;
 		case 36:
-			d = (d & 0xFFu) | ((uint32_t)a << 8);
+			d = (d & 0xFFu) | ((uint32_t)step_offset << 8);
 			bonus_1_fall_done();
 			break;
 		case 38:
-			bonus_pan_start(y, &d, &carry);
+			bonus_pan_start(&d, &carry);
 			break;
 		case 40:
-			bonus_pan_up(&x, &d, &carry);
+			bonus_pan_up(&step_table, &d, &carry);
 			break;
 		case 42:
 		case 46:
-			d = (d & 0xFFu) | ((uint32_t)a << 8);
+			d = (d & 0xFFu) | ((uint32_t)step_offset << 8);
 			carry = bonus_hide_hints();
 			break;
 		case 44:
-			bonus_show_hints_1(x, &y, &d, &carry);
+			bonus_show_hints_1(step_table, &d, &carry);
 			break;
 		case 48:
-			bonus_show_hints_2(x, &y, &d, &carry);
+			bonus_show_hints_2(step_table, &d, &carry);
 			break;
 		case 50:
 			d = bonus_title_wait();
 			break;
 		case 52:
-			d = (d & 0xFFu) | ((uint32_t)a << 8);
-			bonus_title_show(&x, &y, &d, &carry);
+			d = (d & 0xFFu) | ((uint32_t)step_offset << 8);
+			bonus_title_show(&step_table, &d, &carry);
 			break;
 		case 54:
-			d = (d & 0xFFu) | ((uint32_t)a << 8);
+			d = (d & 0xFFu) | ((uint32_t)step_offset << 8);
 			bonus_title_done();
 			break;
 		case -12:
-			bonus_1_intro_pan(&x, &y, &d, &carry);
+			bonus_1_intro_pan(&step_table, &d, &carry);
 			break;
 		case -10:
-			bonus_1_intro_set_up(&x, &y, &d, &carry);
+			bonus_1_intro_set_up(&step_table, &d, &carry);
 			break;
 		case -8:
-			bonus_1_intro_show_how(&x, &y, &d, &carry);
+			bonus_1_intro_show_how(&step_table, &d, &carry);
 			break;
 		case -6:
 			continue;
 		case -4:
-			bonus_1_contest_play(&x, &y, &d, &carry);
+			bonus_1_contest_play(&step_table, &d, &carry);
 			break;
 		case -2:
-			bonus_1_finish(&x, &y, &d, &carry);
+			bonus_1_finish(&step_table, &d, &carry);
 			break;
 		}
 		break;
 	}
-	*p_x = x;
-	*p_y = y;
+	*p_step_table = step_table;
 	*p_d = d;
 	*p_carry = carry;
 }
 
 /* Bonus 1's contest: sets the timer to 10 seconds, marks the players in the game, gives the absent
    players their press rates and puts everyone's balloon and its parts. */
-void bonus_1_contest_set_up(uint16_t *p_player_object, uint16_t *p_y, uint16_t *p_d, uint32_t *p_carry)
+void bonus_1_contest_set_up(uint16_t *p_player_object, uint16_t *p_d, uint32_t *p_carry)
 {
 	uint32_t carry = *p_carry;
-	uint16_t d = 0, player_object = 0, y = 0;
-	uint8_t t1 = 0, t2 = 0, t3 = 0, t4 = 0, t5 = 0;
+	uint16_t d = 0, player_object = 0;
+	uint8_t old_marge_presses = 0, old_homer_presses = 0, old_bart_presses = 0, old_lisa_presses = 0, step_number = 0;
 
-	t1 = io_read8(0x18E8u);
+	old_marge_presses = io_read8(0x18E8u);
 	io_write8(0x18E8u, 0u);
-	t2 = io_read8(0x18E9u);
+	old_homer_presses = io_read8(0x18E9u);
 	io_write8(0x18E9u, 0u);
-	t3 = io_read8(0x18EAu);
+	old_bart_presses = io_read8(0x18EAu);
 	io_write8(0x18EAu, 0u);
-	t4 = io_read8(0x18EBu);
+	old_lisa_presses = io_read8(0x18EBu);
 	io_write8(0x18EBu, 0u);
 	bonus_seconds = 0x10u;
 	bonus_mark_players_in_game();
 	bonus_1_set_absent_rates();
-	bonus_1_put_players(&player_object, &y, &d, &carry);
+	bonus_1_put_players(&player_object, &d, &carry);
 	io_write8(0x18E2u, 0x60u);
-	t5 = io_read8(scene_substate);
-	io_write8(scene_substate, t5 + 1u);
+	step_number = io_read8(scene_substate);
+	io_write8(scene_substate, step_number + 1u);
 	d = (d & 0xFFu) | 0x6000u;
 	*p_player_object = player_object;
-	*p_y = y;
 	*p_d = d;
 	*p_carry = carry;
 }
 
 /* Bonus 1's contest: shows the READY sign for 96 frames while the balloons stay as they are. */
-void bonus_1_contest_ready(uint16_t *p_player_object, uint16_t *p_blower, uint16_t *p_d, uint32_t *p_carry)
+void bonus_1_contest_ready(uint16_t *p_player_object, uint16_t *p_timer_x, uint32_t *p_carry)
 {
 	uint32_t carry = *p_carry;
-	uint16_t blower = 0, d = 0, ignored16 = 0, player_object = 0;
-	uint8_t t1 = 0, t2 = 0, t3 = 0;
+	uint16_t ignored16 = 0, player_object = 0, timer_x = 0;
+	uint8_t ready_frames = 0, state_number = 0, old_step = 0;
 
 	bonus_show_ready();
-	bonus_1_blow_all(&player_object, &blower, &ignored16);
+	bonus_1_blow_all(&player_object, &ignored16);
 	bonus_draw_x = 0xB8u;
 	bonus_draw_y = 0xB8u;
 	bonus_1_draw_sign();
-	d = bonus_draw_x;
-	carry = (uint16_t)(d + 0x28u) < d;
-	d += 0x28u;
-	bonus_draw_x = d;
+	timer_x = bonus_draw_x;
+	carry = (uint16_t)(timer_x + 0x28u) < timer_x;
+	timer_x += 0x28u;
+	bonus_draw_x = timer_x;
 	bonus_draw_timer();
-	t1 = io_read8(0x18E2u);
-	io_write8(0x18E2u, t1 - 1u);
-	if (t1 == 1u)
+	ready_frames = io_read8(0x18E2u);
+	io_write8(0x18E2u, ready_frames - 1u);
+	if (ready_frames == 1u)
 	{
-		t2 = io_read8(scene_state);
-		io_write8(scene_state, t2 + 1u);
-		t3 = io_read8(scene_substate);
+		state_number = io_read8(scene_state);
+		io_write8(scene_state, state_number + 1u);
+		old_step = io_read8(scene_substate);
 		carry = 0u;
 		io_write8(scene_substate, 0u);
 	}
 	*p_player_object = player_object;
-	*p_blower = blower;
-	*p_d = d;
+	*p_timer_x = timer_x;
 	*p_carry = carry;
 }
 
 /* Bonus 1's contest, while it lasts: takes everyone's presses (the absent players' by their rates),
    blows the balloons and runs the sub-state. */
-void bonus_1_contest_play(uint16_t *p_x, uint16_t *p_y, uint16_t *p_d, uint32_t *p_carry)
+void bonus_1_contest_play(uint16_t *p_step_table, uint16_t *p_d, uint32_t *p_carry)
 {
 	uint32_t carry = *p_carry;
-	uint8_t a = 0;
-	uint16_t d = 0, ignored16 = 0, x = 0, y = 0;
-	uint8_t t1 = 0;
+	uint8_t step_offset = 0;
+	uint16_t d = 0, ignored16 = 0, step_table = 0, x = 0;
+	uint8_t step_number = 0;
 
 	for (;;)
 	{
 		bonus_1_take_presses();
 		bonus_1_absent_presses();
-		bonus_1_blow_all(&ignored16, &y, &d);
-		x = bonus_1_contest_play_steps_ADDRESS;
-		t1 = io_read8(scene_substate);
-		a = t1;
-		carry = (int8_t)a < 0;
-		a = (uint32_t)a << 1;
-		switch ((int8_t)a)
+		bonus_1_blow_all(&ignored16, &d);
+		step_table = bonus_1_contest_play_steps_ADDRESS;
+		step_number = io_read8(scene_substate);
+		step_offset = step_number;
+		carry = (int8_t)step_offset < 0;
+		step_offset = (uint32_t)step_offset << 1;
+		switch ((int8_t)step_offset)
 		{
 		case 0:
 			*p_d = d;
 			bonus_1_start_music(p_d, &carry);
-			*p_x = x;
-			*p_y = y;
+			*p_step_table = step_table;
 			*p_carry = carry;
 			return;
 		case 2:
-			*p_x = x;
-			*p_y = y;
+			*p_step_table = x;
 			*p_d = d;
-			bonus_1_blow_until_done(p_x, p_y, p_d, &carry);
+			bonus_1_blow_until_done(p_step_table, p_d, &carry);
 			*p_carry = carry;
 			return;
 		case 4:
 			*p_d = d;
 			bonus_1_finish_music(p_d, &carry);
-			*p_x = x;
-			*p_y = y;
+			*p_step_table = step_table;
 			*p_carry = carry;
 			return;
 		case 6:
-			*p_x = x;
-			*p_y = y;
+			*p_step_table = x;
 			*p_d = d;
-			bonus_1_results(p_x, p_y, p_d, &carry);
+			bonus_1_results(p_step_table, p_d, &carry);
 			*p_carry = carry;
 			return;
 		case 8:
-			*p_x = x;
-			*p_y = y;
+			*p_step_table = x;
 			*p_d = d;
-			bonus_1_top_up_balloons(p_x, p_y, p_d, &carry);
+			bonus_1_top_up_balloons(p_step_table, p_d, &carry);
 			*p_carry = carry;
 			return;
 		case 10:
-			*p_x = x;
-			*p_y = y;
+			*p_step_table = x;
 			*p_d = d;
-			bonus_1_fly_away(p_x, p_y, p_d, &carry);
+			bonus_1_fly_away(p_step_table, p_d, &carry);
 			*p_carry = carry;
 			return;
 		case 12:
-			d = (d & 0xFFu) | ((uint32_t)a << 8);
+			d = (d & 0xFFu) | ((uint32_t)step_offset << 8);
 			*p_d = d;
 			bonus_1_end(p_d, &carry);
-			*p_x = x;
-			*p_y = y;
+			*p_step_table = step_table;
 			*p_carry = carry;
 			return;
 		case 14:
-			*p_x = x;
-			*p_y = y;
+			*p_step_table = step_table;
 			*p_d = d;
-			bonus_1_fly(p_x, p_y, p_d, &carry);
+			bonus_1_fly(p_step_table, p_d, &carry);
 			*p_carry = carry;
 			return;
 		case 16:
-			*p_x = x;
-			*p_y = y;
+			*p_step_table = step_table;
 			*p_d = d;
-			bonus_1_popped(p_x, p_y, p_d, &carry);
+			bonus_1_popped(p_step_table, p_d, &carry);
 			*p_carry = carry;
 			return;
 		case 18:
-			*p_y = y;
+			d = bonus_1_take_off(step_table);
+			*p_step_table = step_table;
 			*p_d = d;
-			bonus_1_take_off(x, p_y, p_d);
-			*p_x = x;
 			*p_carry = carry;
 			return;
 		case 20:
-			*p_y = y;
+			d = bonus_1_lift_off(step_table);
+			*p_step_table = step_table;
 			*p_d = d;
-			bonus_1_lift_off(x, p_y, p_d);
-			*p_x = x;
 			*p_carry = carry;
 			return;
 		case 22:
-			*p_y = y;
 			*p_d = d;
-			bonus_1_speed_up(x, p_y, p_d, &carry);
-			*p_x = x;
+			bonus_1_speed_up(step_table, p_d, &carry);
+			*p_step_table = step_table;
 			*p_carry = carry;
 			return;
 		case 24:
-			*p_y = y;
 			*p_d = d;
-			bonus_1_rise(x, p_y, p_d, &carry);
-			*p_x = x;
+			bonus_1_rise(step_table, p_d, &carry);
+			*p_step_table = step_table;
 			*p_carry = carry;
 			return;
 		case 26:
 			*p_d = d;
-			bonus_1_pop(x, p_d, &carry);
-			*p_x = x;
-			*p_y = y;
+			bonus_1_pop(step_table, p_d, &carry);
+			*p_step_table = step_table;
 			*p_carry = carry;
 			return;
 		case 28:
 			*p_d = d;
-			bonus_1_fall(x, p_d, &carry);
-			*p_x = x;
-			*p_y = y;
+			bonus_1_fall(step_table, p_d, &carry);
+			*p_step_table = step_table;
 			*p_carry = carry;
 			return;
 		case 30:
-			d = (d & 0xFFu) | ((uint32_t)a << 8);
-			bonus_1_lie(x);
-			*p_x = x;
-			*p_y = y;
+			d = (d & 0xFFu) | ((uint32_t)step_offset << 8);
+			bonus_1_lie(step_table);
+			*p_step_table = step_table;
 			*p_d = d;
 			*p_carry = carry;
 			return;
 		case 32:
-			d = (d & 0xFFu) | ((uint32_t)a << 8);
+			d = (d & 0xFFu) | ((uint32_t)step_offset << 8);
 			bonus_1_fall_done();
-			*p_x = x;
-			*p_y = y;
+			*p_step_table = step_table;
 			*p_d = d;
 			*p_carry = carry;
 			return;
 		case 34:
 			*p_d = d;
-			bonus_pan_start(y, p_d, &carry);
-			*p_x = x;
-			*p_y = y;
+			bonus_pan_start(p_d, &carry);
+			*p_step_table = step_table;
 			*p_carry = carry;
 			return;
 		case 36:
-			*p_x = x;
+			*p_step_table = x;
 			*p_d = d;
-			bonus_pan_up(p_x, p_d, &carry);
-			*p_y = y;
+			bonus_pan_up(p_step_table, p_d, &carry);
 			*p_carry = carry;
 			return;
 		case 38:
 		case 42:
-			d = (d & 0xFFu) | ((uint32_t)a << 8);
+			d = (d & 0xFFu) | ((uint32_t)step_offset << 8);
 			carry = bonus_hide_hints();
-			*p_x = x;
-			*p_y = y;
+			*p_step_table = step_table;
 			*p_d = d;
 			*p_carry = carry;
 			return;
 		case 40:
-			*p_y = y;
 			*p_d = d;
-			bonus_show_hints_1(x, p_y, p_d, &carry);
-			*p_x = x;
+			bonus_show_hints_1(step_table, p_d, &carry);
+			*p_step_table = step_table;
 			*p_carry = carry;
 			return;
 		case 44:
-			*p_y = y;
 			*p_d = d;
-			bonus_show_hints_2(x, p_y, p_d, &carry);
-			*p_x = x;
+			bonus_show_hints_2(step_table, p_d, &carry);
+			*p_step_table = step_table;
 			*p_carry = carry;
 			return;
 		case 46:
 			d = bonus_title_wait();
-			*p_x = x;
-			*p_y = y;
+			*p_step_table = step_table;
 			*p_d = d;
 			*p_carry = carry;
 			return;
 		case 48:
-			d = (d & 0xFFu) | ((uint32_t)a << 8);
-			*p_x = x;
-			*p_y = y;
+			d = (d & 0xFFu) | ((uint32_t)step_offset << 8);
+			*p_step_table = step_table;
 			*p_d = d;
-			bonus_title_show(p_x, p_y, p_d, &carry);
+			bonus_title_show(p_step_table, p_d, &carry);
 			*p_carry = carry;
 			return;
 		case 50:
 			break;
 		case -16:
-			*p_x = x;
-			*p_y = y;
+			*p_step_table = x;
 			*p_d = d;
-			bonus_1_intro_pan(p_x, p_y, p_d, &carry);
+			bonus_1_intro_pan(p_step_table, p_d, &carry);
 			*p_carry = carry;
 			return;
 		case -14:
-			*p_x = x;
-			*p_y = y;
+			*p_step_table = x;
 			*p_d = d;
-			bonus_1_intro_set_up(p_x, p_y, p_d, &carry);
+			bonus_1_intro_set_up(p_step_table, p_d, &carry);
 			*p_carry = carry;
 			return;
 		case -12:
-			*p_x = x;
-			*p_y = y;
+			*p_step_table = x;
 			*p_d = d;
-			bonus_1_intro_show_how(p_x, p_y, p_d, &carry);
+			bonus_1_intro_show_how(p_step_table, p_d, &carry);
 			*p_carry = carry;
 			return;
 		case -10:
-			*p_x = x;
-			*p_y = y;
+			*p_step_table = x;
 			*p_d = d;
-			bonus_1_contest_start(p_x, p_y, p_d, &carry);
+			bonus_1_contest_start(p_step_table, p_d, &carry);
 			*p_carry = carry;
 			return;
 		case -8:
 			continue;
 		case -6:
-			*p_x = x;
-			*p_y = y;
+			*p_step_table = x;
 			*p_d = d;
-			bonus_1_finish(p_x, p_y, p_d, &carry);
+			bonus_1_finish(p_step_table, p_d, &carry);
 			*p_carry = carry;
 			return;
 		case -4:
-			*p_x = x;
-			*p_y = y;
+			*p_step_table = x;
 			*p_d = d;
-			bonus_1_contest_set_up(p_x, p_y, p_d, &carry);
+			bonus_1_contest_set_up(p_step_table, p_d, &carry);
 			*p_carry = carry;
 			return;
 		case -2:
-			*p_x = x;
-			*p_y = y;
+			*p_step_table = x;
 			*p_d = d;
-			bonus_1_contest_ready(p_x, p_y, p_d, &carry);
+			bonus_1_contest_ready(p_step_table, p_d, &carry);
 			*p_carry = carry;
 			return;
 		}
 		break;
 	}
-	d = (d & 0xFFu) | ((uint32_t)a << 8);
+	d = (d & 0xFFu) | ((uint32_t)step_offset << 8);
 	bonus_title_done();
-	*p_x = x;
-	*p_y = y;
+	*p_step_table = step_table;
 	*p_d = d;
 	*p_carry = carry;
 }
 
 /* Bonus 1's contest: starts its music (sound 8900). */
-void bonus_1_start_music(uint16_t *p_d, uint32_t *p_carry)
+void bonus_1_start_music(uint16_t *p_music_command, uint32_t *p_carry)
 {
 	uint32_t carry = *p_carry;
-	uint16_t d = 0;
-	uint8_t t1 = 0;
+	uint16_t music_command = 0;
+	uint8_t step_number = 0;
 
-	d = 0x8900u;
-	carry = vector_queue_sound_unless_attract(d);
-	t1 = io_read8(scene_substate);
-	io_write8(scene_substate, t1 + 1u);
-	*p_d = d;
+	music_command = 0x8900u;
+	carry = vector_queue_sound_unless_attract(music_command);
+	step_number = io_read8(scene_substate);
+	io_write8(scene_substate, step_number + 1u);
+	*p_music_command = music_command;
 	*p_carry = carry;
 }
 
 /* Bonus 1's contest: shows GO and counts the time down; when a balloon is full or the time is up, stops
    the balloons and keeps each player's result (from its balloon's size) for the ranking. */
-void bonus_1_blow_until_done(uint16_t *p_balloon, uint16_t *p_middle_part, uint16_t *p_d, uint32_t *p_carry)
+void bonus_1_blow_until_done(uint16_t *p_balloon, uint16_t *p_d, uint32_t *p_carry)
 {
-	uint16_t middle_part = (uint16_t)*p_middle_part;
 	uint32_t carry = *p_carry;
-	uint8_t a = 0, animation = 0, b = 0, type = 0;
-	uint16_t balloon = 0, blower = 0, d = 0;
+	uint8_t animation = 0, timer_x_high = 0, timer_x_low = 0, type = 0;
+	uint16_t balloon = 0, blower = 0, d = 0, middle_part = 0;
 	uint8_t stack = 0;
-	uint8_t in_game = 0, t2 = 0, t3 = 0, t4 = 0;
-	uint16_t blower_2 = 0, middle_part_2 = 0, size = 0, t1 = 0, t5 = 0, t6 = 0;
+	uint8_t in_game = 0, balloons_left = 0, state_number = 0, old_step = 0;
+	uint16_t blower_2 = 0, middle_part_2 = 0, size = 0, size_over_minimum = 0, sign_x = 0, draw_x = 0;
 
 	bonus_show_go();
 	bonus_1_any_balloon_full(&balloon, &carry);
@@ -1106,18 +1063,19 @@ void bonus_1_blow_until_done(uint16_t *p_balloon, uint16_t *p_middle_part, uint1
 			middle_part = middle_part_2;
 			OBJECT(middle_part)->animation = 0x81u;
 			size = OBJECT(balloon)->bonus_1.size;
-			t1 = size - 0xA0u;
-			type = (uint8_t)(t1 >> 2);
+			size_over_minimum = size - 0xA0u;
+			type = (uint8_t)(size_over_minimum >> 2);
 			OBJECT(balloon)->type = type;
 			balloon += 0xC0u;
-			t2 = stack;
-			stack = t2 - 1u;
-		} while (t2 != 1u);
-		t3 = io_read8(scene_state);
-		io_write8(scene_state, t3 + 1u);
-		t4 = io_read8(scene_substate);
+			balloons_left = stack;
+			stack = balloons_left - 1u;
+		} while (balloons_left != 1u);
+		state_number = io_read8(scene_state);
+		io_write8(scene_state, state_number + 1u);
+		old_step = io_read8(scene_substate);
 		carry = 0u;
 		io_write8(scene_substate, 0u);
+		leftover_y = middle_part;
 		d = ((uint32_t)stack << 8) | type;
 	}
 	else
@@ -1140,18 +1098,19 @@ void bonus_1_blow_until_done(uint16_t *p_balloon, uint16_t *p_middle_part, uint1
 				middle_part = middle_part_2;
 				OBJECT(middle_part)->animation = 0x81u;
 				size = OBJECT(balloon)->bonus_1.size;
-				t1 = size - 0xA0u;
-				type = (uint8_t)(t1 >> 2);
+				size_over_minimum = size - 0xA0u;
+				type = (uint8_t)(size_over_minimum >> 2);
 				OBJECT(balloon)->type = type;
 				balloon += 0xC0u;
-				t2 = stack;
-				stack = t2 - 1u;
-			} while (t2 != 1u);
-			t3 = io_read8(scene_state);
-			io_write8(scene_state, t3 + 1u);
-			t4 = io_read8(scene_substate);
+				balloons_left = stack;
+				stack = balloons_left - 1u;
+			} while (balloons_left != 1u);
+			state_number = io_read8(scene_state);
+			io_write8(scene_state, state_number + 1u);
+			old_step = io_read8(scene_substate);
 			carry = 0u;
 			io_write8(scene_substate, 0u);
+			leftover_y = middle_part;
 			d = ((uint32_t)stack << 8) | type;
 		}
 		else
@@ -1159,186 +1118,182 @@ void bonus_1_blow_until_done(uint16_t *p_balloon, uint16_t *p_middle_part, uint1
 			bonus_draw_x = 0xB8u;
 			bonus_draw_y = 0xB8u;
 			bonus_1_draw_sign();
-			t5 = bonus_draw_x;
-			t6 = t5;
-			carry = (uint16_t)(t6 + 0x28u) < t6;
-			a = (uint8_t)((uint16_t)(t6 + 0x28u) >> 8);
-			b = (uint8_t)(t6 + 0x28u);
-			bonus_draw_x = ((uint32_t)a << 8) | b;
+			sign_x = bonus_draw_x;
+			draw_x = sign_x;
+			carry = (uint16_t)(draw_x + 0x28u) < draw_x;
+			timer_x_high = (uint8_t)((uint16_t)(draw_x + 0x28u) >> 8);
+			timer_x_low = (uint8_t)(draw_x + 0x28u);
+			bonus_draw_x = ((uint32_t)timer_x_high << 8) | timer_x_low;
 			bonus_draw_timer();
-			d = ((uint32_t)a << 8) | b;
+			d = ((uint32_t)timer_x_high << 8) | timer_x_low;
 		}
 	}
 	*p_balloon = balloon;
-	*p_middle_part = middle_part;
 	*p_d = d;
 	*p_carry = carry;
 }
 
 /* Bonus 1's end: runs it by the sub-state: the music, the results, the small balloons topped up and the
    flight. */
-void bonus_1_finish(uint16_t *p_x, uint16_t *p_y, uint16_t *p_d, uint32_t *p_carry)
+void bonus_1_finish(uint16_t *p_step_table, uint16_t *p_d, uint32_t *p_carry)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint16_t d = (uint16_t)*p_d;
 	uint32_t carry = *p_carry;
-	uint8_t a = 0;
-	uint16_t x = 0;
-	uint8_t t1 = 0;
+	uint8_t step_offset = 0;
+	uint16_t step_table = 0;
+	uint8_t step_number = 0;
 
 	for (;;)
 	{
-		x = bonus_1_finish_steps_ADDRESS;
-		t1 = io_read8(scene_substate);
-		a = t1;
-		carry = (int8_t)a < 0;
-		a = (uint32_t)a << 1;
-		switch ((int8_t)a)
+		step_table = bonus_1_finish_steps_ADDRESS;
+		step_number = io_read8(scene_substate);
+		step_offset = step_number;
+		carry = (int8_t)step_offset < 0;
+		step_offset = (uint32_t)step_offset << 1;
+		switch ((int8_t)step_offset)
 		{
 		case 0:
 			bonus_1_finish_music(&d, &carry);
 			break;
 		case 2:
-			bonus_1_results(&x, &y, &d, &carry);
+			bonus_1_results(&step_table, &d, &carry);
 			break;
 		case 4:
-			bonus_1_top_up_balloons(&x, &y, &d, &carry);
+			bonus_1_top_up_balloons(&step_table, &d, &carry);
 			break;
 		case 6:
-			bonus_1_fly_away(&x, &y, &d, &carry);
+			bonus_1_fly_away(&step_table, &d, &carry);
 			break;
 		case 8:
-			d = (d & 0xFFu) | ((uint32_t)a << 8);
+			d = (d & 0xFFu) | ((uint32_t)step_offset << 8);
 			bonus_1_end(&d, &carry);
 			break;
 		case 10:
-			bonus_1_fly(&x, &y, &d, &carry);
+			bonus_1_fly(&step_table, &d, &carry);
 			break;
 		case 12:
-			bonus_1_popped(&x, &y, &d, &carry);
+			bonus_1_popped(&step_table, &d, &carry);
 			break;
 		case 14:
-			bonus_1_take_off(x, &y, &d);
+			d = bonus_1_take_off(step_table);
 			break;
 		case 16:
-			bonus_1_lift_off(x, &y, &d);
+			d = bonus_1_lift_off(step_table);
 			break;
 		case 18:
-			bonus_1_speed_up(x, &y, &d, &carry);
+			bonus_1_speed_up(step_table, &d, &carry);
 			break;
 		case 20:
-			bonus_1_rise(x, &y, &d, &carry);
+			bonus_1_rise(step_table, &d, &carry);
 			break;
 		case 22:
-			bonus_1_pop(x, &d, &carry);
+			bonus_1_pop(step_table, &d, &carry);
 			break;
 		case 24:
-			bonus_1_fall(x, &d, &carry);
+			bonus_1_fall(step_table, &d, &carry);
 			break;
 		case 26:
-			d = (d & 0xFFu) | ((uint32_t)a << 8);
-			bonus_1_lie(x);
+			d = (d & 0xFFu) | ((uint32_t)step_offset << 8);
+			bonus_1_lie(step_table);
 			break;
 		case 28:
-			d = (d & 0xFFu) | ((uint32_t)a << 8);
+			d = (d & 0xFFu) | ((uint32_t)step_offset << 8);
 			bonus_1_fall_done();
 			break;
 		case 30:
-			bonus_pan_start(y, &d, &carry);
+			bonus_pan_start(&d, &carry);
 			break;
 		case 32:
-			bonus_pan_up(&x, &d, &carry);
+			bonus_pan_up(&step_table, &d, &carry);
 			break;
 		case 34:
 		case 38:
-			d = (d & 0xFFu) | ((uint32_t)a << 8);
+			d = (d & 0xFFu) | ((uint32_t)step_offset << 8);
 			carry = bonus_hide_hints();
 			break;
 		case 36:
-			bonus_show_hints_1(x, &y, &d, &carry);
+			bonus_show_hints_1(step_table, &d, &carry);
 			break;
 		case 40:
-			bonus_show_hints_2(x, &y, &d, &carry);
+			bonus_show_hints_2(step_table, &d, &carry);
 			break;
 		case 42:
 			d = bonus_title_wait();
 			break;
 		case 44:
-			d = (d & 0xFFu) | ((uint32_t)a << 8);
-			bonus_title_show(&x, &y, &d, &carry);
+			d = (d & 0xFFu) | ((uint32_t)step_offset << 8);
+			bonus_title_show(&step_table, &d, &carry);
 			break;
 		case 46:
-			d = (d & 0xFFu) | ((uint32_t)a << 8);
+			d = (d & 0xFFu) | ((uint32_t)step_offset << 8);
 			bonus_title_done();
 			break;
 		case -20:
-			bonus_1_intro_pan(&x, &y, &d, &carry);
+			bonus_1_intro_pan(&step_table, &d, &carry);
 			break;
 		case -18:
-			bonus_1_intro_set_up(&x, &y, &d, &carry);
+			bonus_1_intro_set_up(&step_table, &d, &carry);
 			break;
 		case -16:
-			bonus_1_intro_show_how(&x, &y, &d, &carry);
+			bonus_1_intro_show_how(&step_table, &d, &carry);
 			break;
 		case -14:
-			bonus_1_contest_start(&x, &y, &d, &carry);
+			bonus_1_contest_start(&step_table, &d, &carry);
 			break;
 		case -12:
-			bonus_1_contest_play(&x, &y, &d, &carry);
+			bonus_1_contest_play(&step_table, &d, &carry);
 			break;
 		case -10:
 			continue;
 		case -8:
-			bonus_1_contest_set_up(&x, &y, &d, &carry);
+			bonus_1_contest_set_up(&step_table, &d, &carry);
 			break;
 		case -6:
-			bonus_1_contest_ready(&x, &y, &d, &carry);
+			bonus_1_contest_ready(&step_table, &d, &carry);
 			break;
 		case -4:
 			bonus_1_start_music(&d, &carry);
 			break;
 		case -2:
-			bonus_1_blow_until_done(&x, &y, &d, &carry);
+			bonus_1_blow_until_done(&step_table, &d, &carry);
 			break;
 		}
 		break;
 	}
-	*p_x = x;
-	*p_y = y;
+	*p_step_table = step_table;
 	*p_d = d;
 	*p_carry = carry;
 }
 
 /* Bonus 1's end: starts the results' music (sound 8800). */
-void bonus_1_finish_music(uint16_t *p_d, uint32_t *p_carry)
+void bonus_1_finish_music(uint16_t *p_music_command, uint32_t *p_carry)
 {
 	uint32_t carry = *p_carry;
-	uint16_t d = 0;
-	uint8_t t1 = 0;
+	uint16_t music_command = 0;
+	uint8_t step_number = 0;
 
-	d = 0x8800u;
-	carry = vector_queue_sound_unless_attract(d);
-	t1 = io_read8(scene_substate);
-	io_write8(scene_substate, t1 + 1u);
-	*p_d = d;
+	music_command = 0x8800u;
+	carry = vector_queue_sound_unless_attract(music_command);
+	step_number = io_read8(scene_substate);
+	io_write8(scene_substate, step_number + 1u);
+	*p_music_command = music_command;
 	*p_carry = carry;
 }
 
 /* Bonus 1's end: shows the results; when they are done, marks the players whose balloon is too small and
    gives each a wait before its flight by its place. */
-void bonus_1_results(uint16_t *p_balloon, uint16_t *p_wait_place, uint16_t *p_d, uint32_t *p_carry)
+void bonus_1_results(uint16_t *p_balloon, uint16_t *p_d, uint32_t *p_carry)
 {
-	uint16_t wait_place = (uint16_t)*p_wait_place;
 	uint16_t d = (uint16_t)*p_d;
 	uint32_t carry = *p_carry;
 	uint8_t a = 0, animation = 0, b = 0, player_number = 0, wait = 0;
-	uint16_t balloon = 0, blower = 0, d_2 = 0, places = 0;
+	uint16_t balloon = 0, blower = 0, d_2 = 0, middle_part_object = 0, places = 0, wait_place = 0;
 	uint8_t stack = 0;
 	uint16_t stack_3 = 0;
-	uint8_t too_small = 0, in_game = 0, t2 = 0;
-	uint16_t size = 0, blower_2 = 0, middle_part = 0, t1 = 0;
+	uint8_t too_small = 0, in_game = 0, step_number = 0;
+	uint16_t size = 0, blower_2 = 0, middle_part = 0, place_address = 0;
 
-	bonus_results(&balloon, &wait_place, &d, &carry);
+	bonus_results(&balloon, &d, &carry);
 	a = (uint8_t)(d >> 8);
 	b = (uint8_t)d;
 	if (carry == 0u)
@@ -1368,12 +1323,13 @@ void bonus_1_results(uint16_t *p_balloon, uint16_t *p_wait_place, uint16_t *p_d,
 					animation = 0xAAu;
 				OBJECT(blower)->animation = animation;
 				middle_part = OBJECT(balloon)->bonus_1.middle_part;
-				mem_write8(middle_part + 5u, 0x81u);
+				middle_part_object = middle_part;
+				OBJECT(middle_part_object)->animation = 0x81u;
 				wait_place = stack_3;
 			}
-			t1 = places;
-			places = t1 + 1u;
-			wait = 0xFu * mem_read8(t1);
+			place_address = places;
+			places = place_address + 1u;
+			wait = 0xFu * mem_read8(place_address);
 			mem_write8(wait_place, wait);
 			wait_place++;
 			balloon += 0xC0u;
@@ -1381,26 +1337,25 @@ void bonus_1_results(uint16_t *p_balloon, uint16_t *p_wait_place, uint16_t *p_d,
 			player_number = stack;
 			carry = player_number < 4u;
 		} while (player_number != 4u);
-		t2 = io_read8(scene_substate);
-		io_write8(scene_substate, t2 + 1u);
+		step_number = io_read8(scene_substate);
+		io_write8(scene_substate, step_number + 1u);
+		leftover_y = wait_place;
 		d_2 = ((uint32_t)stack << 8) | wait;
 	}
 	*p_balloon = balloon;
-	*p_wait_place = wait_place;
 	*p_d = d_2;
 	*p_carry = carry;
 }
 
 /* Bonus 1's end: the balloons too small blow up by themselves until big enough to fly, then a sound
    (AD00). */
-void bonus_1_top_up_balloons(uint16_t *p_player_records_place, uint16_t *p_middle_part, uint16_t *p_d, uint32_t *p_carry)
+void bonus_1_top_up_balloons(uint16_t *p_player_records_place, uint16_t *p_d, uint32_t *p_carry)
 {
-	uint16_t middle_part = (uint16_t)*p_middle_part;
 	uint32_t carry = *p_carry;
 	uint8_t animation = 0, b = 0;
-	uint16_t balloon = 0, blower = 0, bonus_player = 0, command = 0, d = 0, player_number = 0, player_records_place = 0;
+	uint16_t balloon = 0, blower = 0, bonus_player = 0, command = 0, d = 0, middle_part = 0, player_number = 0, player_records_place = 0;
 	uint8_t stack = 0;
-	uint8_t too_small = 0, in_game = 0, t1 = 0, t2 = 0;
+	uint8_t too_small = 0, in_game = 0, still_too_small = 0, step_number = 0;
 	uint16_t size = 0, blower_2 = 0, middle_part_2 = 0;
 
 	balloons_growing = 0u;
@@ -1424,6 +1379,7 @@ void bonus_1_top_up_balloons(uint16_t *p_player_records_place, uint16_t *p_middl
 				OBJECT(blower)->animation = animation;
 				middle_part_2 = OBJECT(balloon)->bonus_1.middle_part;
 				middle_part = middle_part_2;
+				leftover_y = middle_part;
 				OBJECT(middle_part)->animation = 0x81u;
 			}
 			else
@@ -1433,11 +1389,11 @@ void bonus_1_top_up_balloons(uint16_t *p_player_records_place, uint16_t *p_middl
 				if ((frame_count & 1u) == 0u)
 					mem_write8(BONUS_PLAYER(bonus_player)->presses, 0x10u);
 				player_number = (uint32_t)stack << 8;
-				bonus_1_blow(bonus_player, &balloon, &middle_part, &player_number, &carry);
+				bonus_1_blow(bonus_player, &balloon, &player_number, &carry);
 			}
 		}
-		t1 = OBJECT(balloon)->unk_3F;
-		balloons_growing |= t1;
+		still_too_small = OBJECT(balloon)->bonus_1.too_small;
+		balloons_growing |= still_too_small;
 		balloon += 0xC0u;
 		stack = stack + 1u;
 	} while (stack != 4u);
@@ -1445,31 +1401,29 @@ void bonus_1_top_up_balloons(uint16_t *p_player_records_place, uint16_t *p_middl
 	{
 		command = 0xAD00u;
 		carry = vector_queue_sound(command);
-		t2 = io_read8(scene_substate);
-		io_write8(scene_substate, t2 + 1u);
+		step_number = io_read8(scene_substate);
+		io_write8(scene_substate, step_number + 1u);
 	}
 	bonus_1_press_sound(&player_records_place, &d, &carry);
 	b = (uint8_t)d;
 	d = ((uint32_t)stack << 8) | b;
 	*p_player_records_place = player_records_place;
-	*p_middle_part = middle_part;
 	*p_d = d;
 	*p_carry = carry;
 }
 
 /* Bonus 1's end: after each player's wait, runs its balloon's flight; goes on when all four are gone. */
-void bonus_1_fly_away(uint16_t *p_player_object, uint16_t *p_y, uint16_t *p_d, uint32_t *p_carry)
+void bonus_1_fly_away(uint16_t *p_player_object, uint16_t *p_d, uint32_t *p_carry)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint16_t d = (uint16_t)*p_d;
 	uint32_t carry = *p_carry;
 	uint8_t flown = 0;
 	uint16_t d_2 = 0, player_object = 0, wait_place = 0;
 	uint8_t stack = 0;
 	uint16_t stack_3 = 0;
-	uint8_t t1 = 0, t2 = 0, t3 = 0;
+	uint8_t old_flown = 0, flown_count = 0, step_number = 0;
 
-	t1 = io_read8(0x18ECu);
+	old_flown = io_read8(0x18ECu);
 	io_write8(0x18ECu, 0u);
 	player_object = OBJECT_ADDRESS(0);
 	wait_place = 0x18E4u;
@@ -1481,24 +1435,23 @@ void bonus_1_fly_away(uint16_t *p_player_object, uint16_t *p_y, uint16_t *p_d, u
 		else
 		{
 			stack_3 = wait_place;
-			bonus_1_flight(&player_object, &y, &d);
+			bonus_1_flight(&player_object, &d);
 			wait_place = stack_3;
 		}
 		player_object += 0xC0u;
 		wait_place++;
 		stack = stack + 1u;
 	} while (stack != 4u);
-	t2 = io_read8(0x18ECu);
-	flown = t2;
+	flown_count = io_read8(0x18ECu);
+	flown = flown_count;
 	carry = flown < 4u;
 	if (flown == 4u)
 	{
-		t3 = io_read8(scene_substate);
-		io_write8(scene_substate, t3 + 1u);
+		step_number = io_read8(scene_substate);
+		io_write8(scene_substate, step_number + 1u);
 	}
 	d_2 = (d & 0xFFu) | ((uint32_t)stack << 8);
 	*p_player_object = player_object;
-	*p_y = y;
 	*p_d = d_2;
 	*p_carry = carry;
 }
@@ -1522,11 +1475,11 @@ void bonus_1_end(uint16_t *p_d, uint32_t *p_carry)
 }
 
 /* Bonus 1: blows each player's balloon by its presses. */
-void bonus_1_blow_all(uint16_t *p_player_object, uint16_t *p_blower, uint16_t *p_d)
+void bonus_1_blow_all(uint16_t *p_player_object, uint16_t *p_d)
 {
 	uint32_t carry = 0;
 	uint8_t player_number = 0;
-	uint16_t blower = 0, d = 0, ignored16 = 0, ignored16_2 = 0, player_object = 0, record = 0;
+	uint16_t d = 0, ignored16 = 0, ignored16_2 = 0, player_object = 0, record = 0;
 
 	bonus_1_press_sound(&ignored16, &ignored16_2, &carry);
 	player_object = OBJECT_ADDRESS(0);
@@ -1535,35 +1488,34 @@ void bonus_1_blow_all(uint16_t *p_player_object, uint16_t *p_blower, uint16_t *p
 	{
 		record = bonus_1_player_records[(int8_t)((uint8_t)((uint32_t)blowing_player_number << 1)) / 2];
 		d = (uint32_t)blowing_player_number << 8;
-		bonus_1_blow(record, &player_object, &blower, &d, &carry);
+		bonus_1_blow(record, &player_object, &d, &carry);
 		player_object += 0xC0u;
 		blowing_player_number++;
 		player_number = blowing_player_number;
 	} while (player_number != 4u);
 	d = (d & 0xFFu) | ((uint32_t)player_number << 8);
 	*p_player_object = player_object;
-	*p_blower = blower;
 	*p_d = d;
 }
 
 /* Bonus 1: one player's balloon: a press makes it grow for 16 frames, else it shrinks; its zoom follows
    its size, and at the smallest it shows empty. */
-void bonus_1_blow(uint16_t record, uint16_t *p_balloon, uint16_t *p_blower, uint16_t *p_player_number, uint32_t *p_carry)
+void bonus_1_blow(uint16_t record, uint16_t *p_balloon, uint16_t *p_player_number, uint32_t *p_carry)
 {
 	uint16_t balloon = (uint16_t)*p_balloon;
 	uint16_t player_number = (uint16_t)*p_player_number;
 	uint32_t carry = *p_carry;
 	uint8_t a = 0, animation = 0, animation_flags = 0, b = 0, state = 0;
-	uint16_t blower = 0, middle_part = 0;
+	uint16_t blower = 0, middle_part = 0, middle_part_object = 0, y = 0;
 	uint8_t stack_10001 = 0, stack_10002 = 0;
 	uint16_t stack = 0, stack_4 = 0;
-	uint8_t t1 = 0, animation_flags_2 = 0, animation_flags_3 = 0, growing = 0, animation_flags_4 = 0, timer = 0, animation_flags_5 = 0, growing_2 = 0, in_game = 0, animation_flags_6 = 0, animation_2 = 0, t2 = 0, t3 = 0, t4 = 0, t5 = 0, zoom_x = 0, zoom_x_2 = 0, in_game_2 = 0, t7 = 0, t8 = 0;
+	uint8_t state_number = 0, animation_flags_2 = 0, animation_flags_3 = 0, growing = 0, animation_flags_4 = 0, timer = 0, animation_flags_5 = 0, growing_2 = 0, in_game = 0, animation_flags_6 = 0, animation_2 = 0, zoom_width = 0, zoom_height = 0, size_width = 0, size_height = 0, zoom_x = 0, zoom_x_2 = 0, in_game_2 = 0, checked_width = 0, checked_height = 0;
 	uint16_t blower_2 = 0, blower_3 = 0, middle_part_2 = 0, blower_4 = 0, middle_part_3 = 0, growth = 0, growth_2 = 0;
-	uint32_t t6 = 0;
+	uint32_t box_dx_product = 0;
 
 	blowing_player = player_number >> 8;
-	t1 = io_read8(scene_state);
-	state = t1;
+	state_number = io_read8(scene_state);
+	state = state_number;
 	carry = state < 0u;
 	if (state == 0u)
 	{
@@ -1572,6 +1524,7 @@ void bonus_1_blow(uint16_t record, uint16_t *p_balloon, uint16_t *p_blower, uint
 		animation_flags_2 = OBJECT(blower)->animation_flags;
 		animation_flags = animation_flags_2 | 0x40u;
 		OBJECT(blower)->animation_flags = animation_flags;
+		leftover_y = blower;
 		player_number = ((uint32_t)animation_flags << 8) | state;
 	}
 	else
@@ -1595,7 +1548,8 @@ void bonus_1_blow(uint16_t record, uint16_t *p_balloon, uint16_t *p_blower, uint
 					animation_flags_5 = OBJECT(blower)->animation_flags;
 					OBJECT(blower)->animation_flags = animation_flags_5 | 0x40u;
 					middle_part_2 = OBJECT(balloon)->bonus_1.middle_part;
-					mem_write8(middle_part_2 + 5u, 0x81u);
+					middle_part_object = middle_part_2;
+					OBJECT(middle_part_object)->animation = 0x81u;
 				}
 				OBJECT(balloon)->bonus_1.growth = -0x1800;
 			}
@@ -1667,15 +1621,15 @@ void bonus_1_blow(uint16_t record, uint16_t *p_balloon, uint16_t *p_blower, uint
 					carry = bonus_1_stretch_height(balloon);
 			}
 		}
-		t2 = (uint8_t)(OBJECT(balloon)->bonus_1.width_zoom >> 8u);
-		OBJECT(balloon)->zoom_x = t2;
-		t3 = (uint8_t)(OBJECT(balloon)->bonus_1.height_zoom >> 8u);
-		OBJECT(balloon)->zoom_y = t3;
-		t4 = (uint8_t)(OBJECT(balloon)->bonus_1.width_zoom >> 8u);
+		zoom_width = (uint8_t)(OBJECT(balloon)->bonus_1.width_zoom >> 8u);
+		OBJECT(balloon)->zoom_x = zoom_width;
+		zoom_height = (uint8_t)(OBJECT(balloon)->bonus_1.height_zoom >> 8u);
+		OBJECT(balloon)->zoom_y = zoom_height;
+		size_width = (uint8_t)(OBJECT(balloon)->bonus_1.width_zoom >> 8u);
 		stack_10001 = 0u;
-		stack_10002 = 0u - t4;
-		t5 = (uint8_t)(OBJECT(balloon)->bonus_1.height_zoom >> 8u);
-		b = 0u - t5;
+		stack_10002 = 0u - size_width;
+		size_height = (uint8_t)(OBJECT(balloon)->bonus_1.height_zoom >> 8u);
+		b = 0u - size_height;
 		OBJECT(balloon)->bonus_1.size = b + (((uint32_t)stack_10001 << 8) | stack_10002);
 		stack = balloon;
 		zoom_x = OBJECT(balloon)->zoom_x;
@@ -1685,10 +1639,10 @@ void bonus_1_blow(uint16_t record, uint16_t *p_balloon, uint16_t *p_blower, uint
 		OBJECT(balloon)->box_depth = 0x40u;
 		stack = balloon;
 		zoom_x_2 = OBJECT(balloon)->zoom_x;
-		t6 = konami_divx(0x4000u, zoom_x_2) * 0u;
-		blower = (uint16_t)t6;
-		carry = t6 >> 15;
-		stack_4 = blower;
+		box_dx_product = konami_divx(0x4000u, zoom_x_2) * 0u;
+		y = (uint16_t)box_dx_product;
+		carry = box_dx_product >> 15;
+		stack_4 = y;
 		b = (uint8_t)stack_4;
 		balloon = stack;
 		OBJECT(balloon)->box_dx = stack_4 >> 8;
@@ -1699,13 +1653,13 @@ void bonus_1_blow(uint16_t record, uint16_t *p_balloon, uint16_t *p_blower, uint
 		if (in_game_2 != 0u)
 		{
 			OBJECT(balloon)->animation = 0x86u;
-			t7 = (uint8_t)(OBJECT(balloon)->bonus_1.width_zoom >> 8u);
-			a = t7;
+			checked_width = (uint8_t)(OBJECT(balloon)->bonus_1.width_zoom >> 8u);
+			a = checked_width;
 			carry = a < 0xB0u;
 			if (a == 0xB0u)
 			{
-				t8 = (uint8_t)(OBJECT(balloon)->bonus_1.height_zoom >> 8u);
-				a = t8;
+				checked_height = (uint8_t)(OBJECT(balloon)->bonus_1.height_zoom >> 8u);
+				a = checked_height;
 				carry = a < 0xB0u;
 				if (a == 0xB0u)
 				{
@@ -1716,10 +1670,10 @@ void bonus_1_blow(uint16_t record, uint16_t *p_balloon, uint16_t *p_blower, uint
 				}
 			}
 		}
+		leftover_y = y;
 		player_number = ((uint32_t)a << 8) | b;
 	}
 	*p_balloon = balloon;
-	*p_blower = blower;
 	*p_player_number = player_number;
 	*p_carry = carry;
 }
@@ -1728,37 +1682,34 @@ void bonus_1_blow(uint16_t record, uint16_t *p_balloon, uint16_t *p_blower, uint
 uint32_t bonus_1_stretch_width(uint16_t object)
 {
 	uint32_t carry = 0;
-	uint16_t action_step = 0;
+	uint16_t balloon = 0, change = 0;
 	uint16_t stack = 0, stack_4 = 0;
-	uint16_t growth = 0, width_zoom = 0, action_step_2 = 0;
+	uint16_t growth = 0, width_zoom = 0, width_zoom_2 = 0;
 
 	stack = object;
 	growth = OBJECT(object)->bonus_1.growth;
 	stack_4 = growth;
 	width_zoom = OBJECT(object)->bonus_1.width_zoom;
 	stack_4 = ((((uint32_t)width_zoom * width_zoom) >> 16) * stack_4) >> 16;
-	action_step = stack_4;
-	object = stack;
+	change = stack_4;
+	balloon = stack;
 	if (balloon_growing == 0u)
-		action_step = 0u - action_step;
-	action_step_2 = (((uint32_t)OBJECT(object)->action_step << 8u) | (OBJECT(object)->behaviour >> 8u));
-	action_step += action_step_2;
-	if (action_step > 0xB000u)
+		change = 0u - change;
+	width_zoom_2 = OBJECT(balloon)->bonus_1.width_zoom;
+	change += width_zoom_2;
+	if (change > 0xB000u)
 	{
-		OBJECT(object)->action_step = 0xB0u;
-		OBJECT(object)->behaviour &= 0xFFu;
+		OBJECT(balloon)->bonus_1.width_zoom = 0xB000u;
 		carry = 1u;
 		return carry;
 	}
-	if (action_step >= floor_map_ADDRESS)
+	if (change >= floor_map_ADDRESS)
 	{
-		OBJECT(object)->action_step = (uint8_t)(action_step >> 8u);
-		OBJECT(object)->behaviour = (OBJECT(object)->behaviour & 0xFFu) | ((action_step & 0xFFu) << 8u);
+		OBJECT(balloon)->bonus_1.width_zoom = change;
 		carry = 0u;
 		return carry;
 	}
-	OBJECT(object)->action_step = 0x40u;
-	OBJECT(object)->behaviour &= 0xFFu;
+	OBJECT(balloon)->bonus_1.width_zoom = 0x4000u;
 	carry = 1u;
 	return carry;
 }
@@ -1768,9 +1719,9 @@ uint32_t bonus_1_stretch_width(uint16_t object)
 uint32_t bonus_1_stretch_height(uint16_t object)
 {
 	uint32_t carry = 0;
-	uint16_t change = 0;
+	uint16_t balloon = 0, change = 0;
 	uint16_t stack = 0, stack_4 = 0;
-	uint16_t growth = 0, height_zoom = 0, t1 = 0;
+	uint16_t growth = 0, height_zoom = 0, old_height_zoom = 0;
 
 	stack = object;
 	growth = OBJECT(object)->bonus_1.growth;
@@ -1778,62 +1729,58 @@ uint32_t bonus_1_stretch_height(uint16_t object)
 	height_zoom = OBJECT(object)->bonus_1.height_zoom;
 	stack_4 = ((((uint32_t)height_zoom * height_zoom) >> 16) * stack_4) >> 16;
 	change = stack_4;
-	object = stack;
+	balloon = stack;
 	if (balloon_growing == 0u)
 		change = 0u - change;
-	t1 = (((uint32_t)(OBJECT(object)->behaviour & 0xFFu) << 8u) | (OBJECT(object)->target_dx >> 8u));
-	change += t1;
+	old_height_zoom = OBJECT(balloon)->bonus_1.height_zoom;
+	change += old_height_zoom;
 	if (change > 0xB000u)
 	{
-		OBJECT(object)->behaviour = (OBJECT(object)->behaviour & 0xFF00u) | 0xB0u;
-		OBJECT(object)->target_dx &= 0xFFu;
+		OBJECT(balloon)->bonus_1.height_zoom = 0xB000u;
 		carry = 1u;
 		return carry;
 	}
 	if (change >= 0x2000u)
 	{
-		OBJECT(object)->behaviour = (OBJECT(object)->behaviour & 0xFF00u) | ((change >> 8u) & 0xFFu);
-		OBJECT(object)->target_dx = (OBJECT(object)->target_dx & 0xFFu) | ((change & 0xFFu) << 8u);
+		OBJECT(balloon)->bonus_1.height_zoom = change;
 		carry = 0u;
 		return carry;
 	}
-	OBJECT(object)->behaviour = (OBJECT(object)->behaviour & 0xFF00u) | 0x20u;
-	OBJECT(object)->target_dx &= 0xFFu;
+	OBJECT(balloon)->bonus_1.height_zoom = 0x2000u;
 	carry = 1u;
 	return carry;
 }
 
 /* Bonus 1: runs a player's balloon by its flight (field 43): flying off, or popped. */
-void bonus_1_flight(uint16_t *p_object, uint16_t *p_y, uint16_t *p_d)
+void bonus_1_flight(uint16_t *p_object, uint16_t *p_d)
 {
 	uint16_t object = (uint16_t)*p_object;
-	uint16_t y = (uint16_t)*p_y;
 	uint16_t d = (uint16_t)*p_d;
 	uint32_t carry = 0;
-	uint8_t a = 0;
+	uint8_t flight_offset = 0;
 	uint8_t flight = 0;
 
 	flight = OBJECT(object)->bonus_1.flight;
-	a = (uint32_t)flight << 1;
-	switch ((int8_t)a)
+	flight_offset = (uint32_t)flight << 1;
+	switch ((int8_t)flight_offset)
 	{
 	case 0:
-		bonus_1_fly(&object, &y, &d, &carry);
+		bonus_1_fly(&object, &d, &carry);
 		break;
 	case 2:
-		bonus_1_popped(&object, &y, &d, &carry);
+		bonus_1_popped(&object, &d, &carry);
 		break;
 	case 4:
-		bonus_1_take_off(object, &y, &d);
+		d = bonus_1_take_off(object);
 		break;
 	case 6:
-		bonus_1_lift_off(object, &y, &d);
+		d = bonus_1_lift_off(object);
 		break;
 	case 8:
-		bonus_1_speed_up(object, &y, &d, &carry);
+		bonus_1_speed_up(object, &d, &carry);
 		break;
 	case 10:
-		bonus_1_rise(object, &y, &d, &carry);
+		bonus_1_rise(object, &d, &carry);
 		break;
 	case 12:
 		bonus_1_pop(object, &d, &carry);
@@ -1842,122 +1789,120 @@ void bonus_1_flight(uint16_t *p_object, uint16_t *p_y, uint16_t *p_d)
 		bonus_1_fall(object, &d, &carry);
 		break;
 	case 16:
-		d = (d & 0xFFu) | ((uint32_t)a << 8);
+		d = (d & 0xFFu) | ((uint32_t)flight_offset << 8);
 		bonus_1_lie(object);
 		break;
 	case 18:
-		d = (d & 0xFFu) | ((uint32_t)a << 8);
+		d = (d & 0xFFu) | ((uint32_t)flight_offset << 8);
 		bonus_1_fall_done();
 		break;
 	case 20:
-		bonus_pan_start(y, &d, &carry);
+		bonus_pan_start(&d, &carry);
 		break;
 	case 22:
 		bonus_pan_up(&object, &d, &carry);
 		break;
 	case 24:
 	case 28:
-		d = (d & 0xFFu) | ((uint32_t)a << 8);
+		d = (d & 0xFFu) | ((uint32_t)flight_offset << 8);
 		carry = bonus_hide_hints();
 		break;
 	case 26:
-		bonus_show_hints_1(object, &y, &d, &carry);
+		bonus_show_hints_1(object, &d, &carry);
 		break;
 	case 30:
-		bonus_show_hints_2(object, &y, &d, &carry);
+		bonus_show_hints_2(object, &d, &carry);
 		break;
 	case 32:
 		d = bonus_title_wait();
 		break;
 	case 34:
-		d = (d & 0xFFu) | ((uint32_t)a << 8);
-		bonus_title_show(&object, &y, &d, &carry);
+		d = (d & 0xFFu) | ((uint32_t)flight_offset << 8);
+		bonus_title_show(&object, &d, &carry);
 		break;
 	case 36:
-		d = (d & 0xFFu) | ((uint32_t)a << 8);
+		d = (d & 0xFFu) | ((uint32_t)flight_offset << 8);
 		bonus_title_done();
 		break;
 	case -30:
-		bonus_1_intro_pan(&object, &y, &d, &carry);
+		bonus_1_intro_pan(&object, &d, &carry);
 		break;
 	case -28:
-		bonus_1_intro_set_up(&object, &y, &d, &carry);
+		bonus_1_intro_set_up(&object, &d, &carry);
 		break;
 	case -26:
-		bonus_1_intro_show_how(&object, &y, &d, &carry);
+		bonus_1_intro_show_how(&object, &d, &carry);
 		break;
 	case -24:
-		bonus_1_contest_start(&object, &y, &d, &carry);
+		bonus_1_contest_start(&object, &d, &carry);
 		break;
 	case -22:
-		bonus_1_contest_play(&object, &y, &d, &carry);
+		bonus_1_contest_play(&object, &d, &carry);
 		break;
 	case -20:
-		bonus_1_finish(&object, &y, &d, &carry);
+		bonus_1_finish(&object, &d, &carry);
 		break;
 	case -18:
-		bonus_1_contest_set_up(&object, &y, &d, &carry);
+		bonus_1_contest_set_up(&object, &d, &carry);
 		break;
 	case -16:
-		bonus_1_contest_ready(&object, &y, &d, &carry);
+		bonus_1_contest_ready(&object, &d, &carry);
 		break;
 	case -14:
 		bonus_1_start_music(&d, &carry);
 		break;
 	case -12:
-		bonus_1_blow_until_done(&object, &y, &d, &carry);
+		bonus_1_blow_until_done(&object, &d, &carry);
 		break;
 	case -10:
 		bonus_1_finish_music(&d, &carry);
 		break;
 	case -8:
-		bonus_1_results(&object, &y, &d, &carry);
+		bonus_1_results(&object, &d, &carry);
 		break;
 	case -6:
-		bonus_1_top_up_balloons(&object, &y, &d, &carry);
+		bonus_1_top_up_balloons(&object, &d, &carry);
 		break;
 	case -4:
-		bonus_1_fly_away(&object, &y, &d, &carry);
+		bonus_1_fly_away(&object, &d, &carry);
 		break;
 	case -2:
-		d = (d & 0xFFu) | ((uint32_t)a << 8);
+		d = (d & 0xFFu) | ((uint32_t)flight_offset << 8);
 		bonus_1_end(&d, &carry);
 		break;
 	}
 	*p_object = object;
-	*p_y = y;
 	*p_d = d;
 }
 
 /* Bonus 1: runs a flying balloon by its step (field 44). */
-void bonus_1_fly(uint16_t *p_object, uint16_t *p_y, uint16_t *p_d, uint32_t *p_carry)
+void bonus_1_fly(uint16_t *p_object, uint16_t *p_d, uint32_t *p_carry)
 {
 	uint16_t object = (uint16_t)*p_object;
-	uint16_t y = (uint16_t)*p_y;
 	uint16_t d = (uint16_t)*p_d;
 	uint32_t carry = *p_carry;
-	uint8_t a = 0;
+	uint8_t step_offset = 0;
 	uint8_t flight_step = 0;
 
 	for (;;)
 	{
 		flight_step = OBJECT(object)->bonus_1.flight_step;
-		a = flight_step;
-		carry = (int8_t)a < 0;
-		a = (uint32_t)a << 1;
-		switch ((int8_t)a)
+		step_offset = flight_step;
+		carry = (int8_t)step_offset < 0;
+		step_offset = (uint32_t)step_offset << 1;
+		switch ((int8_t)step_offset)
 		{
 		case 0:
-			bonus_1_take_off(object, &y, &d);
+			d = bonus_1_take_off(object);
 			break;
 		case 2:
-			bonus_1_lift_off(object, &y, &d);
+			d = bonus_1_lift_off(object);
 			break;
 		case 4:
-			bonus_1_speed_up(object, &y, &d, &carry);
+			bonus_1_speed_up(object, &d, &carry);
 			break;
 		case 6:
-			bonus_1_rise(object, &y, &d, &carry);
+			bonus_1_rise(object, &d, &carry);
 			break;
 		case 8:
 			bonus_1_pop(object, &d, &carry);
@@ -1966,106 +1911,105 @@ void bonus_1_fly(uint16_t *p_object, uint16_t *p_y, uint16_t *p_d, uint32_t *p_c
 			bonus_1_fall(object, &d, &carry);
 			break;
 		case 12:
-			d = (d & 0xFFu) | ((uint32_t)a << 8);
+			d = (d & 0xFFu) | ((uint32_t)step_offset << 8);
 			bonus_1_lie(object);
 			break;
 		case 14:
-			d = (d & 0xFFu) | ((uint32_t)a << 8);
+			d = (d & 0xFFu) | ((uint32_t)step_offset << 8);
 			bonus_1_fall_done();
 			break;
 		case 16:
-			bonus_pan_start(y, &d, &carry);
+			bonus_pan_start(&d, &carry);
 			break;
 		case 18:
 			bonus_pan_up(&object, &d, &carry);
 			break;
 		case 20:
 		case 24:
-			d = (d & 0xFFu) | ((uint32_t)a << 8);
+			d = (d & 0xFFu) | ((uint32_t)step_offset << 8);
 			carry = bonus_hide_hints();
 			break;
 		case 22:
-			bonus_show_hints_1(object, &y, &d, &carry);
+			bonus_show_hints_1(object, &d, &carry);
 			break;
 		case 26:
-			bonus_show_hints_2(object, &y, &d, &carry);
+			bonus_show_hints_2(object, &d, &carry);
 			break;
 		case 28:
 			d = bonus_title_wait();
 			break;
 		case 30:
-			d = (d & 0xFFu) | ((uint32_t)a << 8);
-			bonus_title_show(&object, &y, &d, &carry);
+			d = (d & 0xFFu) | ((uint32_t)step_offset << 8);
+			bonus_title_show(&object, &d, &carry);
 			break;
 		case 32:
-			d = (d & 0xFFu) | ((uint32_t)a << 8);
+			d = (d & 0xFFu) | ((uint32_t)step_offset << 8);
 			bonus_title_done();
 			break;
 		case -34:
-			bonus_1_intro_pan(&object, &y, &d, &carry);
+			bonus_1_intro_pan(&object, &d, &carry);
 			break;
 		case -32:
-			bonus_1_intro_set_up(&object, &y, &d, &carry);
+			bonus_1_intro_set_up(&object, &d, &carry);
 			break;
 		case -30:
-			bonus_1_intro_show_how(&object, &y, &d, &carry);
+			bonus_1_intro_show_how(&object, &d, &carry);
 			break;
 		case -28:
-			bonus_1_contest_start(&object, &y, &d, &carry);
+			bonus_1_contest_start(&object, &d, &carry);
 			break;
 		case -26:
-			bonus_1_contest_play(&object, &y, &d, &carry);
+			bonus_1_contest_play(&object, &d, &carry);
 			break;
 		case -24:
-			bonus_1_finish(&object, &y, &d, &carry);
+			bonus_1_finish(&object, &d, &carry);
 			break;
 		case -22:
-			bonus_1_contest_set_up(&object, &y, &d, &carry);
+			bonus_1_contest_set_up(&object, &d, &carry);
 			break;
 		case -20:
-			bonus_1_contest_ready(&object, &y, &d, &carry);
+			bonus_1_contest_ready(&object, &d, &carry);
 			break;
 		case -18:
 			bonus_1_start_music(&d, &carry);
 			break;
 		case -16:
-			bonus_1_blow_until_done(&object, &y, &d, &carry);
+			bonus_1_blow_until_done(&object, &d, &carry);
 			break;
 		case -14:
 			bonus_1_finish_music(&d, &carry);
 			break;
 		case -12:
-			bonus_1_results(&object, &y, &d, &carry);
+			bonus_1_results(&object, &d, &carry);
 			break;
 		case -10:
-			bonus_1_top_up_balloons(&object, &y, &d, &carry);
+			bonus_1_top_up_balloons(&object, &d, &carry);
 			break;
 		case -8:
-			bonus_1_fly_away(&object, &y, &d, &carry);
+			bonus_1_fly_away(&object, &d, &carry);
 			break;
 		case -6:
-			d = (d & 0xFFu) | ((uint32_t)a << 8);
+			d = (d & 0xFFu) | ((uint32_t)step_offset << 8);
 			bonus_1_end(&d, &carry);
 			break;
 		case -4:
 			continue;
 		case -2:
-			bonus_1_popped(&object, &y, &d, &carry);
+			bonus_1_popped(&object, &d, &carry);
 			break;
 		}
 		break;
 	}
 	*p_object = object;
-	*p_y = y;
 	*p_d = d;
 	*p_carry = carry;
 }
 
 /* Bonus 1: a balloon's flight starts: the player holds on to it. */
-void bonus_1_take_off(uint16_t object, uint16_t *p_blower, uint16_t *p_d)
+uint16_t bonus_1_take_off(uint16_t object)
 {
 	uint8_t animation = 0, in_game = 0;
-	uint16_t blower = 0, d = 0, flyer = 0;
+	uint16_t blower = 0, d = 0, flyer = 0, middle_part_object = 0;
 	uint8_t in_game_2 = 0, flight_step = 0;
 	uint16_t flyer_2 = 0, middle_part = 0, blower_2 = 0;
 
@@ -2079,7 +2023,8 @@ void bonus_1_take_off(uint16_t object, uint16_t *p_blower, uint16_t *p_d)
 		animation = 0xABu;
 	OBJECT(flyer)->animation = animation;
 	middle_part = OBJECT(object)->bonus_1.middle_part;
-	mem_write8(middle_part + 5u, 0x83u);
+	middle_part_object = middle_part;
+	OBJECT(middle_part_object)->animation = 0x83u;
 	blower_2 = OBJECT(object)->bonus_1.blower;
 	blower = blower_2;
 	OBJECT(blower)->kind = 0xAu;
@@ -2087,16 +2032,15 @@ void bonus_1_take_off(uint16_t object, uint16_t *p_blower, uint16_t *p_d)
 	OBJECT(object)->bonus_1.lift_time = 0x20u;
 	flight_step = OBJECT(object)->bonus_1.flight_step;
 	OBJECT(object)->bonus_1.flight_step = flight_step + 1u;
+	leftover_y = blower;
 	d = 0x2000u | in_game;
-	*p_blower = blower;
-	*p_d = d;
+	return d;
 }
 
 /* Bonus 1: the player and its balloon start rising. */
-void bonus_1_lift_off(uint16_t object, uint16_t *p_flyer, uint16_t *p_z_speed)
+uint16_t bonus_1_lift_off(uint16_t object)
 {
-	uint16_t flyer = (uint16_t)*p_flyer;
-	uint16_t z_speed = 0;
+	uint16_t flyer = 0, z_speed = 0;
 	uint8_t lift_time = 0, flight_step = 0;
 	uint16_t flyer_2 = 0, z_speed_2 = 0;
 
@@ -2108,18 +2052,18 @@ void bonus_1_lift_off(uint16_t object, uint16_t *p_flyer, uint16_t *p_z_speed)
 	{
 		flyer_2 = OBJECT(object)->bonus_1.flyer;
 		flyer = flyer_2;
+		leftover_y = flyer;
 		z_speed_2 = OBJECT(object)->z_speed;
 		z_speed = z_speed_2;
 		OBJECT(flyer)->z_speed = z_speed;
 		flight_step = OBJECT(object)->bonus_1.flight_step;
 		OBJECT(object)->bonus_1.flight_step = flight_step + 1u;
 	}
-	*p_flyer = flyer;
-	*p_z_speed = z_speed;
+	return z_speed;
 }
 
 /* Bonus 1: the flying player and balloon rise faster. */
-void bonus_1_speed_up(uint16_t object, uint16_t *p_flyer, uint16_t *p_z_speed, uint32_t *p_carry)
+void bonus_1_speed_up(uint16_t object, uint16_t *p_z_speed, uint32_t *p_carry)
 {
 	uint32_t carry = *p_carry;
 	uint16_t flyer = 0, z_speed = 0;
@@ -2137,18 +2081,18 @@ void bonus_1_speed_up(uint16_t object, uint16_t *p_flyer, uint16_t *p_z_speed, u
 	OBJECT(flyer)->z_speed = z_speed;
 	flight_step = OBJECT(object)->bonus_1.flight_step;
 	OBJECT(object)->bonus_1.flight_step = flight_step + 1u;
-	*p_flyer = flyer;
+	leftover_y = flyer;
 	*p_z_speed = z_speed;
 	*p_carry = carry;
 }
 
 /* Bonus 1: the flying player and balloon rise faster; an absent player's balloon pops on the way up, and
    one past the top is gone. */
-void bonus_1_rise(uint16_t object, uint16_t *p_flyer, uint16_t *p_height, uint32_t *p_carry)
+void bonus_1_rise(uint16_t object, uint16_t *p_height, uint32_t *p_carry)
 {
 	uint32_t carry = *p_carry;
 	uint16_t flyer = 0, height = 0;
-	uint8_t in_game = 0, t1 = 0;
+	uint8_t in_game = 0, flown_count = 0;
 	uint16_t z_speed = 0, flyer_2 = 0, z_speed_2 = 0, z = 0, z_2 = 0, flyer_3 = 0;
 
 	z_speed = OBJECT(object)->z_speed;
@@ -2176,144 +2120,142 @@ void bonus_1_rise(uint16_t object, uint16_t *p_flyer, uint16_t *p_height, uint32
 		flyer_3 = OBJECT(object)->bonus_1.flyer;
 		carry = 0u;
 		mem_write8(flyer_3, 0u);
-		t1 = io_read8(0x18ECu);
-		io_write8(0x18ECu, t1 + 1u);
+		flown_count = io_read8(0x18ECu);
+		io_write8(0x18ECu, flown_count + 1u);
 	}
-	*p_flyer = flyer;
+	leftover_y = flyer;
 	*p_height = height;
 	*p_carry = carry;
 }
 
 /* Bonus 1: runs a popped balloon by its step (field 44); never seen in the scenarios. */
-void bonus_1_popped(uint16_t *p_object, uint16_t *p_y, uint16_t *p_d, uint32_t *p_carry)
+void bonus_1_popped(uint16_t *p_balloon_object, uint16_t *p_d, uint32_t *p_carry)
 {
-	uint16_t object = (uint16_t)*p_object;
-	uint16_t y = (uint16_t)*p_y;
+	uint16_t balloon_object = (uint16_t)*p_balloon_object;
 	uint8_t d = (uint8_t)*p_d;
 	uint32_t carry = *p_carry;
-	uint8_t a = 0, animation_done = 0;
+	uint8_t animation_done = 0, step_offset = 0;
 	uint16_t d_2 = 0;
-	uint8_t flight_step = 0, t1 = 0, t2 = 0;
+	uint8_t flight_step = 0, popped_flags = 0, animation_ended = 0;
 
-	flight_step = OBJECT(object)->bonus_1.flight_step;
-	a = flight_step;
-	carry = (int8_t)a < 0;
-	a = (uint32_t)a << 1;
-	d_2 = (d & 0xFFu) | ((uint32_t)a << 8);
-	switch ((int8_t)a)
+	flight_step = OBJECT(balloon_object)->bonus_1.flight_step;
+	step_offset = flight_step;
+	carry = (int8_t)step_offset < 0;
+	step_offset = (uint32_t)step_offset << 1;
+	d_2 = (d & 0xFFu) | ((uint32_t)step_offset << 8);
+	switch ((int8_t)step_offset)
 	{
 	case 0:
-		bonus_1_pop(object, &d_2, &carry);
+		bonus_1_pop(balloon_object, &d_2, &carry);
 		break;
 	case 2:
-		bonus_1_fall(object, &d_2, &carry);
+		bonus_1_fall(balloon_object, &d_2, &carry);
 		break;
 	case 4:
-		bonus_1_lie(object);
+		bonus_1_lie(balloon_object);
 		break;
 	case 6:
 		bonus_1_fall_done();
 		break;
 	case 8:
-		bonus_pan_start(y, &d_2, &carry);
+		bonus_pan_start(&d_2, &carry);
 		break;
 	case 10:
-		bonus_pan_up(&object, &d_2, &carry);
+		bonus_pan_up(&balloon_object, &d_2, &carry);
 		break;
 	case 12:
 	case 16:
 		carry = bonus_hide_hints();
 		break;
 	case 14:
-		bonus_show_hints_1(object, &y, &d_2, &carry);
+		bonus_show_hints_1(balloon_object, &d_2, &carry);
 		break;
 	case 18:
-		bonus_show_hints_2(object, &y, &d_2, &carry);
+		bonus_show_hints_2(balloon_object, &d_2, &carry);
 		break;
 	case 20:
 		d_2 = bonus_title_wait();
 		break;
 	case 22:
-		bonus_title_show(&object, &y, &d_2, &carry);
+		bonus_title_show(&balloon_object, &d_2, &carry);
 		break;
 	case 24:
 		bonus_title_done();
 		break;
 	case -42:
-		bonus_1_intro_pan(&object, &y, &d_2, &carry);
+		bonus_1_intro_pan(&balloon_object, &d_2, &carry);
 		break;
 	case -40:
-		bonus_1_intro_set_up(&object, &y, &d_2, &carry);
+		bonus_1_intro_set_up(&balloon_object, &d_2, &carry);
 		break;
 	case -38:
-		bonus_1_intro_show_how(&object, &y, &d_2, &carry);
+		bonus_1_intro_show_how(&balloon_object, &d_2, &carry);
 		break;
 	case -36:
-		bonus_1_contest_start(&object, &y, &d_2, &carry);
+		bonus_1_contest_start(&balloon_object, &d_2, &carry);
 		break;
 	case -34:
-		bonus_1_contest_play(&object, &y, &d_2, &carry);
+		bonus_1_contest_play(&balloon_object, &d_2, &carry);
 		break;
 	case -32:
-		bonus_1_finish(&object, &y, &d_2, &carry);
+		bonus_1_finish(&balloon_object, &d_2, &carry);
 		break;
 	case -30:
-		bonus_1_contest_set_up(&object, &y, &d_2, &carry);
+		bonus_1_contest_set_up(&balloon_object, &d_2, &carry);
 		break;
 	case -28:
-		bonus_1_contest_ready(&object, &y, &d_2, &carry);
+		bonus_1_contest_ready(&balloon_object, &d_2, &carry);
 		break;
 	case -26:
 		bonus_1_start_music(&d_2, &carry);
 		break;
 	case -24:
-		bonus_1_blow_until_done(&object, &y, &d_2, &carry);
+		bonus_1_blow_until_done(&balloon_object, &d_2, &carry);
 		break;
 	case -22:
 		bonus_1_finish_music(&d_2, &carry);
 		break;
 	case -20:
-		bonus_1_results(&object, &y, &d_2, &carry);
+		bonus_1_results(&balloon_object, &d_2, &carry);
 		break;
 	case -18:
-		bonus_1_top_up_balloons(&object, &y, &d_2, &carry);
+		bonus_1_top_up_balloons(&balloon_object, &d_2, &carry);
 		break;
 	case -16:
-		bonus_1_fly_away(&object, &y, &d_2, &carry);
+		bonus_1_fly_away(&balloon_object, &d_2, &carry);
 		break;
 	case -14:
 		bonus_1_end(&d_2, &carry);
 		break;
 	case -12:
-		bonus_1_fly(&object, &y, &d_2, &carry);
+		bonus_1_fly(&balloon_object, &d_2, &carry);
 		break;
 	case -10:
-		bonus_1_popped(&object, &y, &d_2, &carry);
+		bonus_1_popped(&balloon_object, &d_2, &carry);
 		break;
 	case -8:
-		bonus_1_take_off(object, &y, &d_2);
+		d_2 = bonus_1_take_off(balloon_object);
 		break;
 	case -6:
-		bonus_1_lift_off(object, &y, &d_2);
+		d_2 = bonus_1_lift_off(balloon_object);
 		break;
 	case -4:
-		bonus_1_speed_up(object, &y, &d_2, &carry);
+		bonus_1_speed_up(balloon_object, &d_2, &carry);
 		break;
 	case -2:
-		bonus_1_rise(object, &y, &d_2, &carry);
+		bonus_1_rise(balloon_object, &d_2, &carry);
 		break;
 	}
-	t1 = mem_read8(object + 6u);
-	t2 = t1 & 1u;
-	animation_done = t2;
-	if (t2 != 0u)
+	popped_flags = OBJECT(balloon_object)->animation_flags;
+	animation_ended = popped_flags & 1u;
+	animation_done = animation_ended;
+	if (animation_ended != 0u)
 	{
 		carry = 0u;
-		mem_write8(object, 0u);
+		OBJECT(balloon_object)->flags = 0u;
 	}
 	d_2 = (d_2 & 0xFFu) | ((uint32_t)animation_done << 8);
-	*p_object = object;
-	*p_y = y;
+	*p_balloon_object = balloon_object;
 	*p_d = d_2;
 	*p_carry = carry;
 }
@@ -2350,7 +2292,7 @@ void bonus_1_fall(uint16_t object, uint16_t *p_d, uint32_t *p_carry)
 {
 	uint32_t carry = *p_carry;
 	uint8_t lie_time = 0;
-	uint16_t balloon = 0, d = 0;
+	uint16_t balloon = 0, d = 0, flyer_object = 0;
 	uint16_t stack = 0;
 	uint8_t flight_step = 0;
 	uint16_t flyer = 0, flyer_2 = 0;
@@ -2364,7 +2306,8 @@ void bonus_1_fall(uint16_t object, uint16_t *p_d, uint32_t *p_carry)
 	if (carry)
 	{
 		flyer_2 = OBJECT(balloon)->bonus_1.flyer;
-		mem_write8(flyer_2 + 5u, 0x8Eu);
+		flyer_object = flyer_2;
+		OBJECT(flyer_object)->animation = 0x8Eu;
 		lie_time = 0x60u;
 		OBJECT(balloon)->bonus_1.lie_time = 0x60u;
 		flight_step = OBJECT(balloon)->bonus_1.flight_step;
@@ -2392,41 +2335,41 @@ void bonus_1_lie(uint16_t object)
 /* Bonus 1: counts the fallen player as gone. */
 void bonus_1_fall_done(void)
 {
-	uint8_t t1 = 0;
+	uint8_t flown_count = 0;
 
-	t1 = io_read8(0x18ECu);
-	io_write8(0x18ECu, t1 + 1u);
+	flown_count = io_read8(0x18ECu);
+	io_write8(0x18ECu, flown_count + 1u);
 }
 
 /* Bonus 1: whether a player's balloon has grown past its limit (carry). */
-void bonus_1_any_balloon_full(uint16_t *p_object, uint32_t *p_carry)
+void bonus_1_any_balloon_full(uint16_t *p_balloon, uint32_t *p_carry)
 {
 	uint32_t carry = *p_carry;
-	uint16_t object = 0;
+	uint16_t balloon = 0;
 	uint8_t stack = 0;
-	uint8_t t1 = 0;
-	uint16_t parameter = 0;
+	uint8_t balloons_left = 0;
+	uint16_t size = 0;
 
-	object = OBJECT_ADDRESS(0);
+	balloon = OBJECT_ADDRESS(0);
 	stack = 4u;
 	for (;;)
 	{
-		parameter = (((uint32_t)OBJECT(object)->parameter << 8u) | OBJECT(object)->blocked);
-		if (parameter >= 0x1A0u)
+		size = OBJECT(balloon)->bonus_1.size;
+		if (size >= 0x1A0u)
 		{
 			carry = 1u;
 			break;
 		}
-		object += 0xC0u;
-		t1 = stack;
-		stack = t1 - 1u;
-		if (t1 == 1u)
+		balloon += 0xC0u;
+		balloons_left = stack;
+		stack = balloons_left - 1u;
+		if (balloons_left == 1u)
 		{
 			carry = 0u;
 			break;
 		}
 	}
-	*p_object = object;
+	*p_balloon = balloon;
 	*p_carry = carry;
 }
 
@@ -2435,16 +2378,16 @@ uint32_t bonus_timer_tick(void)
 {
 	uint32_t carry = 0, half_carry = 0;
 	uint8_t frames = 0, seconds = 0;
-	uint8_t t1 = 0, t2 = 0;
+	uint8_t old_frames = 0, old_seconds = 0;
 
-	t1 = bonus_frames;
-	frames = t1;
-	if (t1 == 0u)
+	old_frames = bonus_frames;
+	frames = old_frames;
+	if (old_frames == 0u)
 	{
 		bonus_frames = frames;
-		t2 = bonus_seconds;
-		seconds = t2;
-		if (t2 == 0u)
+		old_seconds = bonus_seconds;
+		seconds = old_seconds;
+		if (old_seconds == 0u)
 		{
 			bonus_draw_x = 0xE0u;
 			bonus_draw_y = 0xB8u;
@@ -2465,9 +2408,9 @@ uint32_t bonus_timer_tick(void)
 	if (frames == 0u)
 	{
 		bonus_frames = frames;
-		t2 = bonus_seconds;
-		seconds = t2;
-		if (t2 == 0u)
+		old_seconds = bonus_seconds;
+		seconds = old_seconds;
+		if (old_seconds == 0u)
 		{
 			bonus_draw_x = 0xE0u;
 			bonus_draw_y = 0xB8u;
@@ -2492,9 +2435,9 @@ uint32_t bonus_timer_tick(void)
 		return carry;
 	}
 	bonus_frames = frames;
-	t2 = bonus_seconds;
-	seconds = t2;
-	if (t2 == 0u)
+	old_seconds = bonus_seconds;
+	seconds = old_seconds;
+	if (old_seconds == 0u)
 	{
 		bonus_draw_x = 0xE0u;
 		bonus_draw_y = 0xB8u;
@@ -2522,8 +2465,8 @@ void unused_bonus_draw_timer_digits(void)
 	uint8_t a = 0, d = 0;
 	uint16_t object = 0;
 	uint8_t stack = 0;
-	uint8_t t6 = 0, t7 = 0;
-	uint16_t t1 = 0, t2 = 0, t3 = 0, t4 = 0, t5 = 0;
+	uint8_t digits_left = 0, seconds_tens = 0;
+	uint16_t digit_x = 0, next_digit_x = 0, digit_z = 0, x_before_gap = 0, x_after_gap = 0;
 
 	object = OBJECT_ADDRESS(9);
 	stack = 4u;
@@ -2531,29 +2474,29 @@ void unused_bonus_draw_timer_digits(void)
 	{
 		OBJECT(object)->flags = 0x80u;
 		OBJECT(object)->kind = 0xEu;
-		t1 = bonus_draw_x;
-		d = (uint8_t)t1;
-		a = (uint8_t)(t1 >> 8);
+		digit_x = bonus_draw_x;
+		d = (uint8_t)digit_x;
+		a = (uint8_t)(digit_x >> 8);
 		OBJECT(object)->x = ((uint32_t)a << 8) | (d & 0xFFu);
-		t2 = (((uint32_t)a << 8) | (d & 0xFFu)) + 0x10u;
-		bonus_draw_x = t2;
+		next_digit_x = (((uint32_t)a << 8) | (d & 0xFFu)) + 0x10u;
+		bonus_draw_x = next_digit_x;
 		OBJECT(object)->y = 0xA0u;
-		t3 = bonus_draw_y;
-		OBJECT(object)->z = t3;
+		digit_z = bonus_draw_y;
+		OBJECT(object)->z = digit_z;
 		if (stack == 3u)
 		{
-			t4 = bonus_draw_x;
-			t5 = t4 + 8u;
-			bonus_draw_x = t5;
+			x_before_gap = bonus_draw_x;
+			x_after_gap = x_before_gap + 8u;
+			bonus_draw_x = x_after_gap;
 		}
 		object += 0x60u;
-		t6 = stack;
-		stack = t6 - 1u;
-	} while (t6 != 1u);
+		digits_left = stack;
+		stack = digits_left - 1u;
+	} while (digits_left != 1u);
 	object = OBJECT_ADDRESS(9);
-	t7 = (((bonus_seconds >> 1) >> 1) >> 1) >> 1;
-	a = t7;
-	if (t7 == 0u)
+	seconds_tens = (((bonus_seconds >> 1) >> 1) >> 1) >> 1;
+	a = seconds_tens;
+	if (seconds_tens == 0u)
 		OBJECT(object)->flags = 0u;
 	OBJECT(object)->animation = a - 0x50u;
 	object += 0x60u;
@@ -2572,28 +2515,28 @@ void bonus_1_draw_sign(void)
 /* Unused: would put a kind 0E sign (animation 8F) at the given place. */
 void unused_bonus_1_put_sign(void)
 {
-	uint16_t t1 = 0, t2 = 0;
+	uint16_t sign_x = 0, sign_z = 0;
 
 	OBJECT(OBJECT_ADDRESS(8))->flags = 0x80u;
 	OBJECT(OBJECT_ADDRESS(8))->kind = 0xEu;
 	OBJECT(OBJECT_ADDRESS(8))->animation = 0x8Fu;
-	t1 = bonus_draw_x;
-	OBJECT(OBJECT_ADDRESS(8))->x = t1;
+	sign_x = bonus_draw_x;
+	OBJECT(OBJECT_ADDRESS(8))->x = sign_x;
 	OBJECT(OBJECT_ADDRESS(8))->y = 0xA0u;
-	t2 = bonus_draw_y;
-	OBJECT(OBJECT_ADDRESS(8))->z = t2;
+	sign_z = bonus_draw_y;
+	OBJECT(OBJECT_ADDRESS(8))->z = sign_z;
 }
 
 /* Bonus 1: puts each player's balloon and its three parts (the character blowing, the part between and
    the one that flies with it), the absent players' in their own look. */
-void bonus_1_put_players(uint16_t *p_player_object, uint16_t *p_y, uint16_t *p_d, uint32_t *p_carry)
+void bonus_1_put_players(uint16_t *p_player_object, uint16_t *p_d, uint32_t *p_carry)
 {
 	uint32_t carry = *p_carry;
 	uint8_t part_field = 0, player_number = 0, zoom_x = 0, zoom_y = 0;
-	uint16_t balloon = 0, d = 0, default_object = 0, object = 0, player_object = 0, record_number = 0, y = 0;
+	uint16_t balloon = 0, d = 0, default_object = 0, object = 0, placed_part = 0, player_object = 0, record_number = 0;
 	uint8_t stack = 0, stack_2 = 0;
-	uint8_t in_game = 0, in_game_2 = 0, in_game_3 = 0, t1 = 0;
-	uint16_t hit_from_behind = 0;
+	uint8_t in_game = 0, in_game_2 = 0, in_game_3 = 0, player_in_game = 0;
+	uint16_t flyer = 0;
 
 	balloon = OBJECT_ADDRESS(0);
 	player_number = 0u;
@@ -2633,23 +2576,25 @@ void bonus_1_put_players(uint16_t *p_player_object, uint16_t *p_y, uint16_t *p_d
 		do
 		{
 			record_number = (uint32_t)(uint8_t)((((uint32_t)balloon_part << 1) << 1) + balloon_player_number + 4u) << 8;
-			bonus_put_placement(player_object, &y, &record_number, &carry);
-			t1 = OBJECT(player_object)->unk_3E;
-			if (t1 == 0u)
+			bonus_put_placement(player_object, &placed_part, &record_number, &carry);
+			leftover_y = placed_part;
+			player_in_game = OBJECT(player_object)->bonus_1.in_game;
+			if (player_in_game == 0u)
 			{
 				stack_2 = player_object >> 8;
 				stack = (uint8_t)player_object;
-				default_object = y;
+				default_object = leftover_y;
 				record_number = (uint32_t)(uint8_t)(0x11u + balloon_part) << 8;
-				bonus_put_placement(default_object, &y, &record_number, &carry);
+				bonus_put_placement(default_object, &placed_part, &record_number, &carry);
+				leftover_y = placed_part;
 				player_object = ((uint32_t)stack_2 << 8) | stack;
 			}
 			part_field = ((uint32_t)balloon_part << 1) + 0x33u;
-			mem_write16(player_object + (int8_t)part_field, y);
+			mem_write16(player_object + (int8_t)part_field, leftover_y);
 			balloon_part++;
 		} while (balloon_part != 3u);
-		hit_from_behind = (((uint32_t)OBJECT(player_object)->hit_from_behind << 8u) | OBJECT(player_object)->unk_34);
-		mem_write8(hit_from_behind, 0u);
+		flyer = OBJECT(player_object)->bonus_1.flyer;
+		mem_write8(flyer, 0u);
 		player_object += 0xC0u;
 		balloon_player_number++;
 		player_number = balloon_player_number;
@@ -2657,7 +2602,6 @@ void bonus_1_put_players(uint16_t *p_player_object, uint16_t *p_y, uint16_t *p_d
 	} while (player_number != 4u);
 	d = ((uint32_t)player_number << 8) | part_field;
 	*p_player_object = player_object;
-	*p_y = y;
 	*p_d = d;
 	*p_carry = carry;
 }
@@ -2668,38 +2612,38 @@ void bonus_put_placement(uint16_t default_object, uint16_t *p_placed, uint16_t *
 {
 	uint16_t record_number = (uint16_t)*p_record_number;
 	uint32_t carry = *p_carry;
-	uint8_t a = 0, b = 0;
-	uint16_t placed = 0, placement = 0, u = 0;
-	uint16_t t1 = 0, t2 = 0, kind = 0, t3 = 0, t4 = 0, z = 0, t5 = 0;
+	uint8_t coordinate_high = 0, coordinate_low = 0;
+	uint16_t placed = 0, placement = 0, record_cursor = 0;
+	uint16_t placement_record = 0, kind_cursor = 0, kind = 0, x_cursor = 0, new_x = 0, z = 0, new_z = 0;
 	uint32_t kind_halfword = 0;
 
-	t1 = bonus_placements[(int8_t)((uint8_t)((uint32_t)(record_number >> 8) << 1)) / 2];
-	u = t1 + 2u;
-	placed = PLACEMENT(t1)->object;
+	placement_record = bonus_placements[(int8_t)((uint8_t)((uint32_t)(record_number >> 8) << 1)) / 2];
+	record_cursor = placement_record + 2u;
+	placed = PLACEMENT(placement_record)->object;
 	if (placed == 0xFFFFu)
 		placed = default_object;
 	OBJECT(placed)->flags |= 0x80u;
-	t2 = u;
-	kind = PLACEMENT(t2 - 0x2u)->kind;
+	kind_cursor = record_cursor;
+	kind = PLACEMENT(kind_cursor - 0x2u)->kind;
 	kind_halfword = ((uint32_t)(kind >> 8) << 8) | (uint8_t)(kind | 0x80u);
 	OBJECT(placed)->kind = (uint8_t)(kind_halfword >> 8u);
 	OBJECT(placed)->animation = (uint8_t)kind_halfword;
-	t3 = t2 + 2u;
-	placement = t3 + 2u;
-	t4 = PLACEMENT(t3 - 0x4u)->x;
-	a = (uint8_t)(t4 >> 8);
-	b = (uint8_t)t4;
-	if ((uint16_t)(((uint32_t)a << 8) | b) != 0xFFFFu)
-		OBJECT(placed)->x = ((uint32_t)a << 8) | b;
+	x_cursor = kind_cursor + 2u;
+	placement = x_cursor + 2u;
+	new_x = PLACEMENT(x_cursor - 0x4u)->x;
+	coordinate_high = (uint8_t)(new_x >> 8);
+	coordinate_low = (uint8_t)new_x;
+	if ((uint16_t)(((uint32_t)coordinate_high << 8) | coordinate_low) != 0xFFFFu)
+		OBJECT(placed)->x = ((uint32_t)coordinate_high << 8) | coordinate_low;
 	OBJECT(placed)->y = 0xB0u;
 	z = PLACEMENT(placement - 0x6u)->z;
-	a = (uint8_t)(z >> 8);
-	b = (uint8_t)z;
-	t5 = ((uint32_t)a << 8) | b;
-	carry = t5 < 0xFFFFu;
-	if (t5 != 0xFFFFu)
-		OBJECT(placed)->z = ((uint32_t)a << 8) | b;
-	record_number = ((uint32_t)a << 8) | b;
+	coordinate_high = (uint8_t)(z >> 8);
+	coordinate_low = (uint8_t)z;
+	new_z = ((uint32_t)coordinate_high << 8) | coordinate_low;
+	carry = new_z < 0xFFFFu;
+	if (new_z != 0xFFFFu)
+		OBJECT(placed)->z = ((uint32_t)coordinate_high << 8) | coordinate_low;
+	record_number = ((uint32_t)coordinate_high << 8) | coordinate_low;
 	*p_placed = placed;
 	*p_record_number = record_number;
 	*p_carry = carry;
@@ -2735,7 +2679,7 @@ void bonus_1_set_absent_rates(void)
 {
 	uint16_t player_object = 0;
 	uint8_t stack = 0, stack_2 = 0;
-	uint8_t t1 = 0, enemy_class = 0;
+	uint8_t player_in_game = 0, press_rate = 0;
 	uint16_t object = 0;
 
 	absent_player_seen = 0u;
@@ -2745,19 +2689,19 @@ void bonus_1_set_absent_rates(void)
 	{
 		object = BONUS_PLAYER(bonus_1_player_records[stack_2 & 0x7Fu])->object;
 		player_object = object;
-		t1 = OBJECT(player_object)->unk_3E;
-		if (t1 == 0u)
+		player_in_game = OBJECT(player_object)->bonus_1.in_game;
+		if (player_in_game == 0u)
 		{
 			if (absent_player_seen == 0u)
 			{
 				absent_player_seen++;
-				OBJECT(player_object)->enemy_class = 0;
+				OBJECT(player_object)->bonus_1.press_rate = 0u;
 			}
 			else
-				OBJECT(player_object)->enemy_class = stack + stack_2;
+				OBJECT(player_object)->bonus_1.press_rate = stack + stack_2;
 		}
-		enemy_class = OBJECT(player_object)->enemy_class;
-		OBJECT(player_object)->enemy_class = enemy_class + 5u;
+		press_rate = OBJECT(player_object)->bonus_1.press_rate;
+		OBJECT(player_object)->bonus_1.press_rate = press_rate + 5u;
 		stack_2 = (stack_2 + 1u) & 3u;
 		stack = stack + 1u;
 	} while (stack != 4u);
@@ -2804,13 +2748,13 @@ void bonus_1_press_sound(uint16_t *p_player_records_place, uint16_t *p_d, uint32
 	uint8_t player_number = 0, presses = 0;
 	uint16_t command = 0, d = 0, player_records_place = 0, record = 0;
 	uint8_t stack = 0;
-	uint8_t t1 = 0, t2 = 0, t3 = 0, t4 = 0, t5 = 0, t6 = 0;
+	uint8_t frames_since_sound = 0, counted_frames = 0, slot_in_game = 0, pressed_bits = 0, waited_frames = 0, old_waited_frames = 0;
 
-	t1 = io_read8(0x18EDu);
-	if ((int8_t)t1 >= 0)
+	frames_since_sound = io_read8(0x18EDu);
+	if ((int8_t)frames_since_sound >= 0)
 	{
-		t2 = io_read8(0x18EDu);
-		io_write8(0x18EDu, t2 + 1u);
+		counted_frames = io_read8(0x18EDu);
+		io_write8(0x18EDu, counted_frames + 1u);
 	}
 	presses = 0u;
 	stack = 0u;
@@ -2818,24 +2762,24 @@ void bonus_1_press_sound(uint16_t *p_player_records_place, uint16_t *p_d, uint32
 	do
 	{
 		record = mem_read16(player_records_place);
-		t3 = mem_read8(player_records_place + 0x3Eu);
-		if (t3 != 0u)
+		slot_in_game = mem_read8(player_records_place + 0x3Eu);
+		if (slot_in_game != 0u)
 			presses |= mem_read8(mem_read16(record));
 		player_records_place += 2u;
 		stack = stack + 1u;
 		player_number = stack;
 		carry = player_number < 4u;
 	} while (player_number != 4u);
-	t4 = presses & 0x3Fu;
-	presses = t4;
-	if (t4 != 0u)
+	pressed_bits = presses & 0x3Fu;
+	presses = pressed_bits;
+	if (pressed_bits != 0u)
 	{
-		t5 = io_read8(0x18EDu);
-		presses = t5;
+		waited_frames = io_read8(0x18EDu);
+		presses = waited_frames;
 		carry = presses < 0x20u;
 		if (presses > 0x20u)
 		{
-			t6 = io_read8(0x18EDu);
+			old_waited_frames = io_read8(0x18EDu);
 			io_write8(0x18EDu, 0u);
 			presses = 0x29u;
 			player_number = 0u;
@@ -2854,7 +2798,7 @@ void bonus_mark_players_in_game(void)
 {
 	uint8_t player_bit = 0, players_left = 0;
 	uint16_t balloon = 0;
-	uint8_t in_game = 0, t1 = 0;
+	uint8_t in_game = 0, players_left_before = 0;
 
 	balloon = OBJECT_ADDRESS(0);
 	player_bit = 1u;
@@ -2869,9 +2813,9 @@ void bonus_mark_players_in_game(void)
 		}
 		player_bit = (uint32_t)player_bit << 1;
 		balloon += 0xC0u;
-		t1 = players_left;
-		players_left = t1 - 1u;
-	} while (t1 != 1u);
+		players_left_before = players_left;
+		players_left = players_left_before - 1u;
+	} while (players_left_before != 1u);
 }
 
 /* Bonus 1: has the 4 players' objects drawn zoomed (by their balloon's size). */
@@ -2879,7 +2823,7 @@ uint16_t bonus_1_zoom_players(void)
 {
 	uint8_t flags = 0, players_left = 0;
 	uint16_t d = 0, object = 0;
-	uint8_t t1 = 0;
+	uint8_t players_left_before = 0;
 
 	object = OBJECT_ADDRESS(0);
 	players_left = 4u;
@@ -2888,150 +2832,148 @@ uint16_t bonus_1_zoom_players(void)
 		flags = OBJECT(object)->flags | 0x10u;
 		OBJECT(object)->flags = flags;
 		object += 0xC0u;
-		t1 = players_left;
-		players_left = t1 - 1u;
-	} while (t1 != 1u);
+		players_left_before = players_left;
+		players_left = players_left_before - 1u;
+	} while (players_left_before != 1u);
 	d = ((uint32_t)flags << 8) | players_left;
 	return d;
 }
 
 /* The bonuses' introduction: runs the camera's pan by its step; carry when it is over. */
-void bonus_pan(uint16_t *p_x, uint16_t *p_y, uint16_t *p_d, uint32_t *p_carry)
+void bonus_pan(uint16_t *p_step_table, uint16_t *p_d, uint32_t *p_carry)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint16_t d = (uint16_t)*p_d;
 	uint32_t carry = *p_carry;
-	uint8_t a = 0;
-	uint16_t x = 0;
+	uint8_t step_offset = 0;
+	uint16_t step_table = 0;
 
-	x = bonus_pan_steps_ADDRESS;
-	a = step_subphase;
-	carry = (int8_t)a < 0;
-	a = (uint32_t)a << 1;
-	switch ((int8_t)a)
+	step_table = bonus_pan_steps_ADDRESS;
+	step_offset = step_subphase;
+	carry = (int8_t)step_offset < 0;
+	step_offset = (uint32_t)step_offset << 1;
+	switch ((int8_t)step_offset)
 	{
 	case 0:
-		bonus_pan_start(y, &d, &carry);
+		bonus_pan_start(&d, &carry);
 		break;
 	case 2:
-		bonus_pan_up(&x, &d, &carry);
+		bonus_pan_up(&step_table, &d, &carry);
 		break;
 	case 4:
 	case 8:
-		d = (d & 0xFFu) | ((uint32_t)a << 8);
+		d = (d & 0xFFu) | ((uint32_t)step_offset << 8);
 		carry = bonus_hide_hints();
 		break;
 	case 6:
-		bonus_show_hints_1(x, &y, &d, &carry);
+		bonus_show_hints_1(step_table, &d, &carry);
 		break;
 	case 10:
-		bonus_show_hints_2(x, &y, &d, &carry);
+		bonus_show_hints_2(step_table, &d, &carry);
 		break;
 	case 12:
 		d = bonus_title_wait();
 		break;
 	case 14:
-		d = (d & 0xFFu) | ((uint32_t)a << 8);
-		bonus_title_show(&x, &y, &d, &carry);
+		d = (d & 0xFFu) | ((uint32_t)step_offset << 8);
+		bonus_title_show(&step_table, &d, &carry);
 		break;
 	case 16:
-		d = (d & 0xFFu) | ((uint32_t)a << 8);
+		d = (d & 0xFFu) | ((uint32_t)step_offset << 8);
 		bonus_title_done();
 		break;
 	case -50:
-		bonus_1_intro_pan(&x, &y, &d, &carry);
+		bonus_1_intro_pan(&step_table, &d, &carry);
 		break;
 	case -48:
-		bonus_1_intro_set_up(&x, &y, &d, &carry);
+		bonus_1_intro_set_up(&step_table, &d, &carry);
 		break;
 	case -46:
-		bonus_1_intro_show_how(&x, &y, &d, &carry);
+		bonus_1_intro_show_how(&step_table, &d, &carry);
 		break;
 	case -44:
-		bonus_1_contest_start(&x, &y, &d, &carry);
+		bonus_1_contest_start(&step_table, &d, &carry);
 		break;
 	case -42:
-		bonus_1_contest_play(&x, &y, &d, &carry);
+		bonus_1_contest_play(&step_table, &d, &carry);
 		break;
 	case -40:
-		bonus_1_finish(&x, &y, &d, &carry);
+		bonus_1_finish(&step_table, &d, &carry);
 		break;
 	case -38:
-		bonus_1_contest_set_up(&x, &y, &d, &carry);
+		bonus_1_contest_set_up(&step_table, &d, &carry);
 		break;
 	case -36:
-		bonus_1_contest_ready(&x, &y, &d, &carry);
+		bonus_1_contest_ready(&step_table, &d, &carry);
 		break;
 	case -34:
 		bonus_1_start_music(&d, &carry);
 		break;
 	case -32:
-		bonus_1_blow_until_done(&x, &y, &d, &carry);
+		bonus_1_blow_until_done(&step_table, &d, &carry);
 		break;
 	case -30:
 		bonus_1_finish_music(&d, &carry);
 		break;
 	case -28:
-		bonus_1_results(&x, &y, &d, &carry);
+		bonus_1_results(&step_table, &d, &carry);
 		break;
 	case -26:
-		bonus_1_top_up_balloons(&x, &y, &d, &carry);
+		bonus_1_top_up_balloons(&step_table, &d, &carry);
 		break;
 	case -24:
-		bonus_1_fly_away(&x, &y, &d, &carry);
+		bonus_1_fly_away(&step_table, &d, &carry);
 		break;
 	case -22:
-		d = (d & 0xFFu) | ((uint32_t)a << 8);
+		d = (d & 0xFFu) | ((uint32_t)step_offset << 8);
 		bonus_1_end(&d, &carry);
 		break;
 	case -20:
-		bonus_1_fly(&x, &y, &d, &carry);
+		bonus_1_fly(&step_table, &d, &carry);
 		break;
 	case -18:
-		bonus_1_popped(&x, &y, &d, &carry);
+		bonus_1_popped(&step_table, &d, &carry);
 		break;
 	case -16:
-		bonus_1_take_off(x, &y, &d);
+		d = bonus_1_take_off(step_table);
 		break;
 	case -14:
-		bonus_1_lift_off(x, &y, &d);
+		d = bonus_1_lift_off(step_table);
 		break;
 	case -12:
-		bonus_1_speed_up(x, &y, &d, &carry);
+		bonus_1_speed_up(step_table, &d, &carry);
 		break;
 	case -10:
-		bonus_1_rise(x, &y, &d, &carry);
+		bonus_1_rise(step_table, &d, &carry);
 		break;
 	case -8:
-		bonus_1_pop(x, &d, &carry);
+		bonus_1_pop(step_table, &d, &carry);
 		break;
 	case -6:
-		bonus_1_fall(x, &d, &carry);
+		bonus_1_fall(step_table, &d, &carry);
 		break;
 	case -4:
-		d = (d & 0xFFu) | ((uint32_t)a << 8);
-		bonus_1_lie(x);
+		d = (d & 0xFFu) | ((uint32_t)step_offset << 8);
+		bonus_1_lie(step_table);
 		break;
 	case -2:
-		d = (d & 0xFFu) | ((uint32_t)a << 8);
+		d = (d & 0xFFu) | ((uint32_t)step_offset << 8);
 		bonus_1_fall_done();
 		break;
 	}
-	*p_x = x;
-	*p_y = y;
+	*p_step_table = step_table;
 	*p_d = d;
 	*p_carry = carry;
 }
 
 /* The bonuses' introduction: shows the title's object and starts the camera's pan. */
-void bonus_pan_start(uint16_t object, uint16_t *p_d, uint32_t *p_carry)
+void bonus_pan_start(uint16_t *p_d, uint32_t *p_carry)
 {
 	uint32_t carry = *p_carry;
 	uint16_t d = 0;
 
-	OBJECT(object)->flags = 0x80u;
-	OBJECT(object)->y = 0x70u;
-	OBJECT(object)->attributes = 0x20u;
+	OBJECT(leftover_y)->flags = 0x80u;
+	OBJECT(leftover_y)->y = 0x70u;
+	OBJECT(leftover_y)->attributes = 0x20u;
 	step_subphase++;
 	carry = 0u;
 	d = 0x70u;
@@ -3044,20 +2986,20 @@ void bonus_pan_start(uint16_t object, uint16_t *p_d, uint32_t *p_carry)
 void bonus_pan_up(uint16_t *p_backdrop, uint16_t *p_d, uint32_t *p_carry)
 {
 	uint32_t carry = *p_carry;
-	uint8_t b = 0;
+	uint8_t new_scroll_low = 0;
 	uint16_t backdrop = 0, d = 0;
-	uint16_t t1 = 0, t2 = 0;
+	uint16_t scroll_y_read = 0, old_scroll_y = 0;
 
 	backdrop = OBJECT_ADDRESS(8);
 	OBJECT(OBJECT_ADDRESS(8))->z_speed = 0x300;
-	t1 = layer_a_scroll_y;
-	t2 = t1;
-	b = (uint8_t)(t2 + 3u);
-	layer_a_scroll_y = ((uint32_t)((uint16_t)(t2 + 3u) >> 8) << 8) | b;
-	if (t2 <= (uint16_t)(t2 + 3u))
+	scroll_y_read = layer_a_scroll_y;
+	old_scroll_y = scroll_y_read;
+	new_scroll_low = (uint8_t)(old_scroll_y + 3u);
+	layer_a_scroll_y = ((uint32_t)((uint16_t)(old_scroll_y + 3u) >> 8) << 8) | new_scroll_low;
+	if (old_scroll_y <= (uint16_t)(old_scroll_y + 3u))
 	{
 		carry = 0u;
-		d = b;
+		d = new_scroll_low;
 	}
 	else
 	{
@@ -3076,129 +3018,128 @@ void bonus_pan_up(uint16_t *p_backdrop, uint16_t *p_d, uint32_t *p_carry)
 }
 
 /* The bonuses' introduction: shows the press hints in turn, one pair after the other with a gap between. */
-uint16_t bonus_blink_hints(uint16_t y)
+void bonus_blink_hints(void)
 {
 	uint32_t carry = 0;
-	uint8_t a = 0, b = 0;
-	uint16_t d = 0, ignored16 = 0, ignored16_2 = 0, x = 0, y_2 = 0;
-	uint16_t t1 = 0;
+	uint8_t a = 0, step_offset = 0;
+	uint16_t d = 0, ignored16 = 0, ignored16_2 = 0, step_table = 0;
+	uint16_t blink_step = 0;
 
-	t1 = ((uint8_t)frame_count & 0x60u) >> 5;
-	a = (uint8_t)(t1 >> 8);
-	x = bonus_hint_blink_steps_ADDRESS;
-	b = (uint32_t)t1 << 1;
-	switch ((int8_t)b)
+	blink_step = ((uint8_t)frame_count & 0x60u) >> 5;
+	a = (uint8_t)(blink_step >> 8);
+	step_table = bonus_hint_blink_steps_ADDRESS;
+	step_offset = (uint32_t)blink_step << 1;
+	switch ((int8_t)step_offset)
 	{
 	case 0:
 	case 4:
 		carry = bonus_hide_hints();
-		return y;
+		return;
 	case 2:
-		bonus_show_hints_1(x, &y_2, &ignored16_2, &carry);
-		return y_2;
+		bonus_show_hints_1(step_table, &ignored16_2, &carry);
+		return;
 	case 6:
-		bonus_show_hints_2(x, &y_2, &ignored16_2, &carry);
-		return y_2;
+		bonus_show_hints_2(step_table, &ignored16_2, &carry);
+		return;
 	case 8:
 		bonus_title_wait();
-		return y;
+		return;
 	case 10:
 		d = (uint32_t)a << 8;
-		bonus_title_show(&x, &y, &d, &carry);
-		return y;
+		bonus_title_show(&step_table, &d, &carry);
+		return;
 	case 12:
 		bonus_title_done();
-		return y;
+		return;
 	case -54:
-		d = b;
-		bonus_1_intro_pan(&ignored16, &y, &d, &carry);
-		return y;
+		d = step_offset;
+		bonus_1_intro_pan(&ignored16, &d, &carry);
+		return;
 	case -52:
-		bonus_1_intro_set_up(&ignored16, &y_2, &ignored16_2, &carry);
-		return y_2;
+		bonus_1_intro_set_up(&ignored16, &ignored16_2, &carry);
+		return;
 	case -50:
-		bonus_1_intro_show_how(&ignored16, &y, &ignored16_2, &carry);
-		return y;
+		bonus_1_intro_show_how(&ignored16, &ignored16_2, &carry);
+		return;
 	case -48:
-		d = b;
-		bonus_1_contest_start(&ignored16, &y, &d, &carry);
-		return y;
+		d = step_offset;
+		bonus_1_contest_start(&ignored16, &d, &carry);
+		return;
 	case -46:
-		bonus_1_contest_play(&ignored16, &y_2, &ignored16_2, &carry);
-		return y_2;
+		bonus_1_contest_play(&ignored16, &ignored16_2, &carry);
+		return;
 	case -44:
-		d = b;
-		bonus_1_finish(&ignored16, &y, &d, &carry);
-		return y;
+		d = step_offset;
+		bonus_1_finish(&ignored16, &d, &carry);
+		return;
 	case -42:
-		bonus_1_contest_set_up(&ignored16, &y_2, &ignored16_2, &carry);
-		return y_2;
+		bonus_1_contest_set_up(&ignored16, &ignored16_2, &carry);
+		return;
 	case -40:
-		bonus_1_contest_ready(&ignored16, &y_2, &ignored16_2, &carry);
-		return y_2;
+		bonus_1_contest_ready(&ignored16, &ignored16_2, &carry);
+		return;
 	case -38:
 		bonus_1_start_music(&ignored16_2, &carry);
-		return y;
+		return;
 	case -36:
-		bonus_1_blow_until_done(&ignored16, &y, &ignored16_2, &carry);
-		return y;
+		bonus_1_blow_until_done(&ignored16, &ignored16_2, &carry);
+		return;
 	case -34:
 		bonus_1_finish_music(&ignored16_2, &carry);
-		return y;
+		return;
 	case -32:
-		bonus_1_results(&ignored16, &y, &ignored16_2, &carry);
-		return y;
+		bonus_1_results(&ignored16, &ignored16_2, &carry);
+		return;
 	case -30:
-		bonus_1_top_up_balloons(&ignored16, &y, &ignored16_2, &carry);
-		return y;
+		bonus_1_top_up_balloons(&ignored16, &ignored16_2, &carry);
+		return;
 	case -28:
-		d = b;
-		bonus_1_fly_away(&ignored16, &y, &d, &carry);
-		return y;
+		d = step_offset;
+		bonus_1_fly_away(&ignored16, &d, &carry);
+		return;
 	case -26:
-		d = ((uint32_t)a << 8) | b;
+		d = ((uint32_t)a << 8) | step_offset;
 		bonus_1_end(&d, &carry);
-		return y;
+		return;
 	case -24:
-		d = b;
-		bonus_1_fly(&x, &y, &d, &carry);
-		return y;
+		d = step_offset;
+		bonus_1_fly(&step_table, &d, &carry);
+		return;
 	case -22:
-		d = b;
-		bonus_1_popped(&x, &y, &d, &carry);
-		return y;
+		d = step_offset;
+		bonus_1_popped(&step_table, &d, &carry);
+		return;
 	case -20:
-		bonus_1_take_off(x, &y_2, &ignored16_2);
-		return y_2;
+		bonus_1_take_off(step_table);
+		return;
 	case -18:
-		bonus_1_lift_off(x, &y, &ignored16_2);
-		return y;
+		bonus_1_lift_off(step_table);
+		return;
 	case -16:
-		bonus_1_speed_up(x, &y_2, &ignored16_2, &carry);
-		return y_2;
+		bonus_1_speed_up(step_table, &ignored16_2, &carry);
+		return;
 	case -14:
-		bonus_1_rise(x, &y_2, &ignored16_2, &carry);
-		return y_2;
+		bonus_1_rise(step_table, &ignored16_2, &carry);
+		return;
 	case -12:
-		bonus_1_pop(x, &ignored16_2, &carry);
-		return y;
+		bonus_1_pop(step_table, &ignored16_2, &carry);
+		return;
 	case -10:
-		bonus_1_fall(x, &ignored16_2, &carry);
-		return y;
+		bonus_1_fall(step_table, &ignored16_2, &carry);
+		return;
 	case -8:
-		bonus_1_lie(x);
-		return y;
+		bonus_1_lie(step_table);
+		return;
 	case -6:
 		bonus_1_fall_done();
-		return y;
+		return;
 	case -4:
-		bonus_pan_start(y, &ignored16_2, &carry);
-		return y;
+		bonus_pan_start(&ignored16_2, &carry);
+		return;
 	case -2:
 		bonus_pan_up(&ignored16, &ignored16_2, &carry);
-		return y;
+		return;
 	}
-	unreachable();
 }
 
 /* The bonuses' introduction: hides the press hints. */
@@ -3213,39 +3154,39 @@ uint32_t bonus_hide_hints(void)
 }
 
 /* The bonuses' introduction: shows the first pair of press hints. */
-void bonus_show_hints_1(uint16_t default_object, uint16_t *p_object, uint16_t *p_d, uint32_t *p_carry)
+void bonus_show_hints_1(uint16_t default_object, uint16_t *p_d, uint32_t *p_carry)
 {
 	uint32_t carry = *p_carry;
-	uint16_t d = 0, object = 0, record_number = 0;
+	uint16_t d = 0, object = 0, placed = 0, record_number = 0;
 
 	record_number = 0x1500u;
 	bonus_put_placement(default_object, &object, &record_number, &carry);
 	OBJECT(object)->flags = 0x80u;
 	d = 0x1600u;
-	bonus_put_placement(default_object, &object, &d, &carry);
-	OBJECT(object)->flags = 0x80u;
-	OBJECT(object)->attributes = 0x20u;
+	bonus_put_placement(default_object, &placed, &d, &carry);
+	leftover_y = placed;
+	OBJECT(leftover_y)->flags = 0x80u;
+	OBJECT(leftover_y)->attributes = 0x20u;
 	d = (d & 0xFFu) | 0x2000u;
-	*p_object = object;
 	*p_d = d;
 	*p_carry = carry;
 }
 
 /* The bonuses' introduction: shows the second pair of press hints. */
-void bonus_show_hints_2(uint16_t default_object, uint16_t *p_object, uint16_t *p_d, uint32_t *p_carry)
+void bonus_show_hints_2(uint16_t default_object, uint16_t *p_d, uint32_t *p_carry)
 {
 	uint32_t carry = *p_carry;
-	uint16_t d = 0, object = 0, record_number = 0;
+	uint16_t d = 0, object = 0, placed = 0, record_number = 0;
 
 	record_number = 0x1700u;
 	bonus_put_placement(default_object, &object, &record_number, &carry);
 	OBJECT(object)->flags = 0x80u;
 	d = 0x1800u;
-	bonus_put_placement(default_object, &object, &d, &carry);
-	OBJECT(object)->flags = 0x80u;
-	OBJECT(object)->attributes = 0x20u;
+	bonus_put_placement(default_object, &placed, &d, &carry);
+	leftover_y = placed;
+	OBJECT(leftover_y)->flags = 0x80u;
+	OBJECT(leftover_y)->attributes = 0x20u;
 	d = (d & 0xFFu) | 0x2000u;
-	*p_object = object;
 	*p_d = d;
 	*p_carry = carry;
 }
@@ -3265,185 +3206,178 @@ void bonus_keep_backdrop(void)
 }
 
 /* The bonuses' introduction: shows the bonus' title by its step: a wait, then the title and its sound. */
-void bonus_title(uint16_t *p_y, uint16_t *p_d)
+uint16_t bonus_title(uint16_t d)
 {
-	uint16_t y = (uint16_t)*p_y;
-	uint16_t d = (uint16_t)*p_d;
 	uint32_t carry = 0;
-	uint8_t b = 0;
-	uint16_t ignored16 = 0, x = 0;
-	uint8_t t1 = 0;
+	uint8_t step_offset = 0;
+	uint16_t d_2 = 0, ignored16 = 0, step_table = 0;
+	uint8_t title_step = 0;
 
-	x = bonus_title_steps_ADDRESS;
-	t1 = io_read8(0x18F1u);
-	b = (uint32_t)t1 << 1;
-	switch ((int8_t)b)
+	step_table = bonus_title_steps_ADDRESS;
+	title_step = io_read8(0x18F1u);
+	step_offset = (uint32_t)title_step << 1;
+	switch ((int8_t)step_offset)
 	{
 	case 0:
-		d = bonus_title_wait();
-		break;
+		return bonus_title_wait();
 	case 2:
-		d |= b;
-		bonus_title_show(&x, &y, &d, &carry);
-		break;
+		d |= step_offset;
+		bonus_title_show(&step_table, &d, &carry);
+		return d;
 	case 4:
-		d |= b;
+		d |= step_offset;
 		bonus_title_done();
-		break;
+		return d;
 	case -62:
-		d = b;
-		bonus_1_intro_pan(&ignored16, &y, &d, &carry);
-		break;
+		d_2 = step_offset;
+		bonus_1_intro_pan(&ignored16, &d_2, &carry);
+		return d_2;
 	case -60:
-		bonus_1_intro_set_up(&ignored16, &y, &d, &carry);
-		break;
+		bonus_1_intro_set_up(&ignored16, &d_2, &carry);
+		return d_2;
 	case -58:
-		bonus_1_intro_show_how(&ignored16, &y, &d, &carry);
-		break;
+		bonus_1_intro_show_how(&ignored16, &d_2, &carry);
+		return d_2;
 	case -56:
-		d = b;
-		bonus_1_contest_start(&ignored16, &y, &d, &carry);
-		break;
+		d_2 = step_offset;
+		bonus_1_contest_start(&ignored16, &d_2, &carry);
+		return d_2;
 	case -54:
-		bonus_1_contest_play(&ignored16, &y, &d, &carry);
-		break;
+		bonus_1_contest_play(&ignored16, &d_2, &carry);
+		return d_2;
 	case -52:
-		d = b;
-		bonus_1_finish(&ignored16, &y, &d, &carry);
-		break;
+		d_2 = step_offset;
+		bonus_1_finish(&ignored16, &d_2, &carry);
+		return d_2;
 	case -50:
-		bonus_1_contest_set_up(&ignored16, &y, &d, &carry);
-		break;
+		bonus_1_contest_set_up(&ignored16, &d_2, &carry);
+		return d_2;
 	case -48:
-		bonus_1_contest_ready(&ignored16, &y, &d, &carry);
-		break;
+		bonus_1_contest_ready(&ignored16, &d_2, &carry);
+		return d_2;
 	case -46:
-		bonus_1_start_music(&d, &carry);
-		break;
+		bonus_1_start_music(&d_2, &carry);
+		return d_2;
 	case -44:
-		bonus_1_blow_until_done(&ignored16, &y, &d, &carry);
-		break;
+		bonus_1_blow_until_done(&ignored16, &d_2, &carry);
+		return d_2;
 	case -42:
-		bonus_1_finish_music(&d, &carry);
-		break;
+		bonus_1_finish_music(&d_2, &carry);
+		return d_2;
 	case -40:
-		d = b;
-		bonus_1_results(&ignored16, &y, &d, &carry);
-		break;
+		d_2 = step_offset;
+		bonus_1_results(&ignored16, &d_2, &carry);
+		return d_2;
 	case -38:
-		bonus_1_top_up_balloons(&ignored16, &y, &d, &carry);
-		break;
+		bonus_1_top_up_balloons(&ignored16, &d_2, &carry);
+		return d_2;
 	case -36:
-		d = b;
-		bonus_1_fly_away(&ignored16, &y, &d, &carry);
-		break;
+		d_2 = step_offset;
+		bonus_1_fly_away(&ignored16, &d_2, &carry);
+		return d_2;
 	case -34:
-		d |= b;
+		d |= step_offset;
 		bonus_1_end(&d, &carry);
-		break;
+		return d;
 	case -32:
-		d = b;
-		bonus_1_fly(&x, &y, &d, &carry);
-		break;
+		d_2 = step_offset;
+		bonus_1_fly(&step_table, &d_2, &carry);
+		return d_2;
 	case -30:
-		d = b;
-		bonus_1_popped(&x, &y, &d, &carry);
-		break;
+		d_2 = step_offset;
+		bonus_1_popped(&step_table, &d_2, &carry);
+		return d_2;
 	case -28:
-		bonus_1_take_off(x, &y, &d);
-		break;
+		return bonus_1_take_off(step_table);
 	case -26:
-		bonus_1_lift_off(x, &y, &d);
-		break;
+		return bonus_1_lift_off(step_table);
 	case -24:
-		bonus_1_speed_up(x, &y, &d, &carry);
-		break;
+		bonus_1_speed_up(step_table, &d_2, &carry);
+		return d_2;
 	case -22:
-		bonus_1_rise(x, &y, &d, &carry);
-		break;
+		bonus_1_rise(step_table, &d_2, &carry);
+		return d_2;
 	case -20:
-		bonus_1_pop(x, &d, &carry);
-		break;
+		bonus_1_pop(step_table, &d_2, &carry);
+		return d_2;
 	case -18:
-		bonus_1_fall(x, &d, &carry);
-		break;
+		bonus_1_fall(step_table, &d_2, &carry);
+		return d_2;
 	case -16:
-		d |= b;
-		bonus_1_lie(x);
-		break;
+		d |= step_offset;
+		bonus_1_lie(step_table);
+		return d;
 	case -14:
-		d |= b;
+		d |= step_offset;
 		bonus_1_fall_done();
-		break;
+		return d;
 	case -12:
-		bonus_pan_start(y, &d, &carry);
-		break;
+		bonus_pan_start(&d_2, &carry);
+		return d_2;
 	case -10:
-		bonus_pan_up(&ignored16, &d, &carry);
-		break;
+		bonus_pan_up(&ignored16, &d_2, &carry);
+		return d_2;
 	case -8:
 	case -4:
-		d |= b;
+		d |= step_offset;
 		carry = bonus_hide_hints();
-		break;
+		return d;
 	case -6:
-		bonus_show_hints_1(x, &y, &d, &carry);
-		break;
+		bonus_show_hints_1(step_table, &d_2, &carry);
+		return d_2;
 	case -2:
-		bonus_show_hints_2(x, &y, &d, &carry);
-		break;
+		bonus_show_hints_2(step_table, &d_2, &carry);
+		return d_2;
 	}
-	*p_y = y;
-	*p_d = d;
+	unreachable();
 }
 
 /* The bonuses' introduction: waits 192 frames before the title. */
 uint16_t bonus_title_wait(void)
 {
-	uint16_t d = 0;
-	uint8_t t1 = 0;
+	uint16_t title_frames = 0;
+	uint8_t title_step = 0;
 
-	d = 0xC0u;
+	title_frames = 0xC0u;
 	io_write16(0x18EFu, 0xC0u);
-	t1 = io_read8(0x18F1u);
-	io_write8(0x18F1u, t1 + 1u);
-	return d;
+	title_step = io_read8(0x18F1u);
+	io_write8(0x18F1u, title_step + 1u);
+	return title_frames;
 }
 
 /* The bonuses' introduction: puts the given bonus' title and plays its voice. */
-void bonus_title_show(uint16_t *p_x, uint16_t *p_object, uint16_t *p_d, uint32_t *p_carry)
+void bonus_title_show(uint16_t *p_x, uint16_t *p_d, uint32_t *p_carry)
 {
 	uint16_t x = (uint16_t)*p_x;
-	uint16_t object = (uint16_t)*p_object;
 	uint16_t d = (uint16_t)*p_d;
 	uint32_t carry = *p_carry;
 	uint8_t a = 0;
-	uint16_t d_2 = 0, record_number = 0;
+	uint16_t d_2 = 0, placed = 0, record_number = 0;
 	uint8_t stack = 0;
-	uint8_t t3 = 0;
-	uint16_t t1 = 0, t2 = 0;
+	uint8_t title_step = 0;
+	uint16_t title_frames_left = 0, intro_sound = 0;
 
 	a = (uint8_t)(d >> 8);
-	t1 = io_read16(0x18EFu);
-	carry = t1 == 0u;
-	io_write16(0x18EFu, t1 - 1u);
-	if (t1 == 1u)
+	title_frames_left = io_read16(0x18EFu);
+	carry = title_frames_left == 0u;
+	io_write16(0x18EFu, title_frames_left - 1u);
+	if (title_frames_left == 1u)
 	{
 		stack = a;
 		record_number = (uint32_t)(uint8_t)(a + 0x1Au) << 8;
-		bonus_put_placement(x, &object, &record_number, &carry);
-		OBJECT(object)->flags = 0x80u;
+		bonus_put_placement(x, &placed, &record_number, &carry);
+		leftover_y = placed;
+		OBJECT(leftover_y)->flags = 0x80u;
 		x = bonus_intro_sounds_ADDRESS;
-		t2 = bonus_intro_sounds[(int8_t)((uint8_t)((uint32_t)stack << 1)) / 2];
-		d = t2;
-		a = (uint8_t)(t2 >> 8);
+		intro_sound = bonus_intro_sounds[(int8_t)((uint8_t)((uint32_t)stack << 1)) / 2];
+		d = intro_sound;
+		a = (uint8_t)(intro_sound >> 8);
 		carry = vector_queue_sound(d);
-		t3 = io_read8(0x18F1u);
-		io_write8(0x18F1u, t3 + 1u);
+		title_step = io_read8(0x18F1u);
+		io_write8(0x18F1u, title_step + 1u);
 	}
 	d_2 = (d & 0xFFu) | ((uint32_t)a << 8);
 	*p_x = x;
-	*p_object = object;
 	*p_d = d_2;
 	*p_carry = carry;
 }
@@ -3461,7 +3395,7 @@ void bonus_reward_winners(uint16_t *p_d, uint32_t *p_carry)
 	uint8_t health = 0, look = 0, place = 0;
 	uint16_t box = 0, d_2 = 0, health_address = 0;
 	uint8_t stack = 0, stack_6 = 0;
-	uint8_t look_2 = 0, place_2 = 0, no_points = 0, t1 = 0;
+	uint8_t look_2 = 0, place_2 = 0, no_points = 0, boxes_left = 0;
 
 	stack = d >> 8;
 	box = OBJECT_ADDRESS(14);
@@ -3492,9 +3426,9 @@ void bonus_reward_winners(uint16_t *p_d, uint32_t *p_carry)
 		}
 		box += 0xC0u;
 		health_address += 8u;
-		t1 = stack_6;
-		stack_6 = t1 - 1u;
-	} while (t1 != 1u);
+		boxes_left = stack_6;
+		stack_6 = boxes_left - 1u;
+	} while (boxes_left != 1u);
 	d_2 = (uint32_t)stack << 8;
 	*p_d = (*p_d & 0xFFu) | d_2;
 	*p_carry = carry;

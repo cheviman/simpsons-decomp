@@ -3,7 +3,7 @@
  *    Description: stage 3's zombie that takes hold of the players (type 14, action 31)
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    10-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -13,15 +13,15 @@
 
 /* Sets the grabbing zombie up with its behaviour grabbing_zombie_behaviour, turned to its player: state
    0 joins the fight at once, the others stay hidden for their way out. */
-uint16_t grabbing_zombie_setup(uint16_t object)
+void grabbing_zombie_setup(uint16_t object)
 {
-	uint16_t setup = 0, u = 0, y = 0;
+	uint16_t nearest_player = 0, setup = 0;
 	uint8_t parameter = 0, state = 0;
 
 	setup = grabbing_zombie_object_setup_ADDRESS;
-	y = vector_object_setup(object, setup);
-	u = vector_choose_nearest_player(object);
-	vector_measure_target(object, u);
+	vector_object_setup(object, setup);
+	nearest_player = vector_choose_nearest_player(object);
+	vector_measure_target(object, nearest_player);
 	OBJECT(object)->grabbing_zombie.frame_sound = 0x5100u;
 	OBJECT(object)->grabbing_zombie.vanishes = 1u;
 	OBJECT(object)->behaviour = 0x7A88u;
@@ -31,12 +31,11 @@ uint16_t grabbing_zombie_setup(uint16_t object)
 	{
 		OBJECT(object)->parameter = 0u;
 		OBJECT(object)->state = 2u;
-		return y;
+		return;
 	}
 	OBJECT(object)->flags = 4u;
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
-	return y;
 }
 
 /* The grabbing zombie's way out of the ground, by field 29. */
@@ -63,14 +62,14 @@ void grabbing_zombie_come_out(uint16_t object)
 void grabbing_zombie_place(uint16_t object)
 {
 	uint8_t parameter = 0, action_step = 0;
-	uint16_t wait = 0, t1 = 0;
+	uint16_t wait = 0, start_x = 0;
 
 	OBJECT(object)->flags = 0x80u;
 	parameter = OBJECT(object)->parameter;
 	wait = (((uint32_t)TIMED_SPOT(kind_97_entrances_ADDRESS + (int8_t)((uint32_t)parameter << 1))->wait << 8u) | TIMED_SPOT(kind_97_entrances_ADDRESS + (int8_t)((uint32_t)parameter << 1))->x);
 	OBJECT(object)->timer = wait >> 8;
-	t1 = (wait & 0xFFu) << 4;
-	OBJECT(object)->x = t1;
+	start_x = (wait & 0xFFu) << 4;
+	OBJECT(object)->x = start_x;
 	OBJECT(object)->animation = 0x90u;
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step + 1u;
@@ -149,14 +148,13 @@ uint16_t zombie_grab_start(uint16_t object)
 /* Walks the zombie at its player; when it touches him on the ground, takes hold of him (the player's
    field 4B points to it), puts itself on his place and plays the hold for his character; gives up after
    its time. */
-void zombie_grab_reach(uint16_t object, uint16_t *p_hold_animations, uint16_t *p_target_player)
+uint16_t zombie_grab_reach(uint16_t object)
 {
-	uint16_t hold_animations = (uint16_t)*p_hold_animations;
-	uint8_t a = 0, b = 0;
+	uint8_t angle = 0, floor_high = 0, floor_low = 0;
 	uint16_t direction = 0, heading = 0, target_player = 0;
 	uint8_t stack = 0;
 	uint8_t state = 0, timer = 0, blink_frames = 0, hold_presses = 0, attributes = 0, attributes_2 = 0, shadow_player = 0, points = 0, shadow_player_2 = 0, action_step = 0;
-	uint16_t target = 0, hit_by = 0, target_dx = 0, target_dy = 0, floor_z = 0, z = 0, floor_z_2 = 0, t1 = 0, t2 = 0;
+	uint16_t target = 0, hit_by = 0, target_dx = 0, target_dy = 0, floor_z = 0, z = 0, floor_z_2 = 0, player_x = 0, player_y = 0;
 
 	target = OBJECT(object)->target;
 	target_player = target;
@@ -167,275 +165,226 @@ void zombie_grab_reach(uint16_t object, uint16_t *p_hold_animations, uint16_t *p
 		{
 			OBJECT(object)->state = 2u;
 			OBJECT(object)->timer = 0u;
+			return target_player;
 		}
-		else
+		timer = OBJECT(object)->timer;
+		OBJECT(object)->timer = timer - 1u;
+		if (timer == 1u)
 		{
-			timer = OBJECT(object)->timer;
-			OBJECT(object)->timer = timer - 1u;
-			if (timer != 1u)
-			{
-				direction = vector_direction_to(object, target_player);
-				a = (uint8_t)(direction >> 8);
-				heading = ((uint32_t)a << 8) | 0x30u;
-				vector_set_speed_by_direction(object, heading);
-				vector_choose_walk_animation(object);
-			}
-			else
-			{
-				OBJECT(object)->state = 2u;
-				OBJECT(object)->timer = 0u;
-			}
+			OBJECT(object)->state = 2u;
+			OBJECT(object)->timer = 0u;
+			return target_player;
 		}
+		direction = vector_direction_to(object, target_player);
+		angle = (uint8_t)(direction >> 8);
+		heading = ((uint32_t)angle << 8) | 0x30u;
+		vector_set_speed_by_direction(object, heading);
+		vector_choose_walk_animation(object);
+		return target_player;
 	}
-	else
+	blink_frames = OBJECT(target_player)->player.blink_frames;
+	if (blink_frames != 0u)
 	{
-		blink_frames = OBJECT(target_player)->player.blink_frames;
-		if (blink_frames != 0u)
+		state = OBJECT(target_player)->state;
+		if ((int8_t)state < 0)
 		{
-			state = OBJECT(target_player)->state;
-			if ((int8_t)state < 0)
-			{
-				OBJECT(object)->state = 2u;
-				OBJECT(object)->timer = 0u;
-			}
-			else
-			{
-				timer = OBJECT(object)->timer;
-				OBJECT(object)->timer = timer - 1u;
-				if (timer != 1u)
-				{
-					direction = vector_direction_to(object, target_player);
-					a = (uint8_t)(direction >> 8);
-					heading = ((uint32_t)a << 8) | 0x30u;
-					vector_set_speed_by_direction(object, heading);
-					vector_choose_walk_animation(object);
-				}
-				else
-				{
-					OBJECT(object)->state = 2u;
-					OBJECT(object)->timer = 0u;
-				}
-			}
+			OBJECT(object)->state = 2u;
+			OBJECT(object)->timer = 0u;
+			return target_player;
 		}
-		else
+		timer = OBJECT(object)->timer;
+		OBJECT(object)->timer = timer - 1u;
+		if (timer == 1u)
 		{
-			hold_presses = OBJECT(target_player)->player.hold_presses;
-			if (hold_presses != 0u)
-			{
-				state = OBJECT(target_player)->state;
-				if ((int8_t)state < 0)
-				{
-					OBJECT(object)->state = 2u;
-					OBJECT(object)->timer = 0u;
-				}
-				else
-				{
-					timer = OBJECT(object)->timer;
-					OBJECT(object)->timer = timer - 1u;
-					if (timer != 1u)
-					{
-						direction = vector_direction_to(object, target_player);
-						a = (uint8_t)(direction >> 8);
-						heading = ((uint32_t)a << 8) | 0x30u;
-						vector_set_speed_by_direction(object, heading);
-						vector_choose_walk_animation(object);
-					}
-					else
-					{
-						OBJECT(object)->state = 2u;
-						OBJECT(object)->timer = 0u;
-					}
-				}
-			}
-			else
-			{
-				hit_by = OBJECT(object)->hit_by;
-				if (target_player != hit_by)
-				{
-					state = OBJECT(target_player)->state;
-					if ((int8_t)state < 0)
-					{
-						OBJECT(object)->state = 2u;
-						OBJECT(object)->timer = 0u;
-					}
-					else
-					{
-						timer = OBJECT(object)->timer;
-						OBJECT(object)->timer = timer - 1u;
-						if (timer != 1u)
-						{
-							direction = vector_direction_to(object, target_player);
-							a = (uint8_t)(direction >> 8);
-							heading = ((uint32_t)a << 8) | 0x30u;
-							vector_set_speed_by_direction(object, heading);
-							vector_choose_walk_animation(object);
-						}
-						else
-						{
-							OBJECT(object)->state = 2u;
-							OBJECT(object)->timer = 0u;
-						}
-					}
-				}
-				else
-				{
-					target_dx = OBJECT(object)->target_dx;
-					if (target_dx >= 8u)
-					{
-						state = OBJECT(target_player)->state;
-						if ((int8_t)state < 0)
-						{
-							OBJECT(object)->state = 2u;
-							OBJECT(object)->timer = 0u;
-						}
-						else
-						{
-							timer = OBJECT(object)->timer;
-							OBJECT(object)->timer = timer - 1u;
-							if (timer != 1u)
-							{
-								direction = vector_direction_to(object, target_player);
-								a = (uint8_t)(direction >> 8);
-								heading = ((uint32_t)a << 8) | 0x30u;
-								vector_set_speed_by_direction(object, heading);
-								vector_choose_walk_animation(object);
-							}
-							else
-							{
-								OBJECT(object)->state = 2u;
-								OBJECT(object)->timer = 0u;
-							}
-						}
-					}
-					else
-					{
-						target_dy = OBJECT(object)->target_dy;
-						if (target_dy >= 4u)
-						{
-							state = OBJECT(target_player)->state;
-							if ((int8_t)state < 0)
-							{
-								OBJECT(object)->state = 2u;
-								OBJECT(object)->timer = 0u;
-							}
-							else
-							{
-								timer = OBJECT(object)->timer;
-								OBJECT(object)->timer = timer - 1u;
-								if (timer != 1u)
-								{
-									direction = vector_direction_to(object, target_player);
-									a = (uint8_t)(direction >> 8);
-									heading = ((uint32_t)a << 8) | 0x30u;
-									vector_set_speed_by_direction(object, heading);
-									vector_choose_walk_animation(object);
-								}
-								else
-								{
-									OBJECT(object)->state = 2u;
-									OBJECT(object)->timer = 0u;
-								}
-							}
-						}
-						else
-						{
-							floor_z = OBJECT(target_player)->floor_z;
-							a = (uint8_t)(floor_z >> 8);
-							b = (uint8_t)floor_z;
-							z = OBJECT(target_player)->z;
-							if ((uint16_t)(((uint32_t)a << 8) | b) != z)
-							{
-								state = OBJECT(target_player)->state;
-								if ((int8_t)state < 0)
-								{
-									OBJECT(object)->state = 2u;
-									OBJECT(object)->timer = 0u;
-								}
-								else
-								{
-									timer = OBJECT(object)->timer;
-									OBJECT(object)->timer = timer - 1u;
-									if (timer != 1u)
-									{
-										direction = vector_direction_to(object, target_player);
-										a = (uint8_t)(direction >> 8);
-										heading = ((uint32_t)a << 8) | 0x30u;
-										vector_set_speed_by_direction(object, heading);
-										vector_choose_walk_animation(object);
-									}
-									else
-									{
-										OBJECT(object)->state = 2u;
-										OBJECT(object)->timer = 0u;
-									}
-								}
-							}
-							else
-							{
-								floor_z_2 = OBJECT(object)->floor_z;
-								if ((uint16_t)(((uint32_t)a << 8) | b) != floor_z_2)
-								{
-									state = OBJECT(target_player)->state;
-									if ((int8_t)state < 0)
-									{
-										OBJECT(object)->state = 2u;
-										OBJECT(object)->timer = 0u;
-									}
-									else
-									{
-										timer = OBJECT(object)->timer;
-										OBJECT(object)->timer = timer - 1u;
-										if (timer != 1u)
-										{
-											direction = vector_direction_to(object, target_player);
-											a = (uint8_t)(direction >> 8);
-											heading = ((uint32_t)a << 8) | 0x30u;
-											vector_set_speed_by_direction(object, heading);
-											vector_choose_walk_animation(object);
-										}
-										else
-										{
-											OBJECT(object)->state = 2u;
-											OBJECT(object)->timer = 0u;
-										}
-									}
-								}
-								else
-								{
-									vector_enemy_leave_side(object, target_player);
-									OBJECT(target_player)->player.holder = object;
-									OBJECT(target_player)->player.hold_presses = 0xCu;
-									OBJECT(target_player)->flags |= 0x20u;
-									OBJECT(target_player)->hit = 3u;
-									OBJECT(object)->x_speed = 0;
-									OBJECT(object)->y_speed = 0;
-									t1 = OBJECT(target_player)->x;
-									OBJECT(object)->x = t1;
-									t2 = OBJECT(target_player)->y;
-									OBJECT(object)->y = t2;
-									attributes = OBJECT(target_player)->attributes;
-									grab_facing = attributes & 0x40u;
-									attributes_2 = OBJECT(object)->attributes;
-									OBJECT(object)->attributes = (attributes_2 & 0xBFu) | grab_facing;
-									shadow_player = OBJECT(target_player)->shadow_player;
-									stack = shadow_player & 0x70u;
-									points = OBJECT(object)->points;
-									OBJECT(object)->points = (points & 0x8Fu) | stack;
-									hold_animations = kind_97_hold_animations_ADDRESS;
-									shadow_player_2 = OBJECT(target_player)->shadow_player;
-									OBJECT(object)->animation = kind_97_hold_animations[(((shadow_player_2 >> 1) >> 1) >> 1) >> 1] | 0x80u;
-									action_step = OBJECT(object)->action_step;
-									OBJECT(object)->action_step = action_step + 1u;
-								}
-							}
-						}
-					}
-				}
-			}
+			OBJECT(object)->state = 2u;
+			OBJECT(object)->timer = 0u;
+			return target_player;
 		}
+		direction = vector_direction_to(object, target_player);
+		angle = (uint8_t)(direction >> 8);
+		heading = ((uint32_t)angle << 8) | 0x30u;
+		vector_set_speed_by_direction(object, heading);
+		vector_choose_walk_animation(object);
+		return target_player;
 	}
-	*p_hold_animations = hold_animations;
-	*p_target_player = target_player;
+	hold_presses = OBJECT(target_player)->player.hold_presses;
+	if (hold_presses != 0u)
+	{
+		state = OBJECT(target_player)->state;
+		if ((int8_t)state < 0)
+		{
+			OBJECT(object)->state = 2u;
+			OBJECT(object)->timer = 0u;
+			return target_player;
+		}
+		timer = OBJECT(object)->timer;
+		OBJECT(object)->timer = timer - 1u;
+		if (timer == 1u)
+		{
+			OBJECT(object)->state = 2u;
+			OBJECT(object)->timer = 0u;
+			return target_player;
+		}
+		direction = vector_direction_to(object, target_player);
+		angle = (uint8_t)(direction >> 8);
+		heading = ((uint32_t)angle << 8) | 0x30u;
+		vector_set_speed_by_direction(object, heading);
+		vector_choose_walk_animation(object);
+		return target_player;
+	}
+	hit_by = OBJECT(object)->hit_by;
+	if (target_player != hit_by)
+	{
+		state = OBJECT(target_player)->state;
+		if ((int8_t)state < 0)
+		{
+			OBJECT(object)->state = 2u;
+			OBJECT(object)->timer = 0u;
+			return target_player;
+		}
+		timer = OBJECT(object)->timer;
+		OBJECT(object)->timer = timer - 1u;
+		if (timer == 1u)
+		{
+			OBJECT(object)->state = 2u;
+			OBJECT(object)->timer = 0u;
+			return target_player;
+		}
+		direction = vector_direction_to(object, target_player);
+		angle = (uint8_t)(direction >> 8);
+		heading = ((uint32_t)angle << 8) | 0x30u;
+		vector_set_speed_by_direction(object, heading);
+		vector_choose_walk_animation(object);
+		return target_player;
+	}
+	target_dx = OBJECT(object)->target_dx;
+	if (target_dx >= 8u)
+	{
+		state = OBJECT(target_player)->state;
+		if ((int8_t)state < 0)
+		{
+			OBJECT(object)->state = 2u;
+			OBJECT(object)->timer = 0u;
+			return target_player;
+		}
+		timer = OBJECT(object)->timer;
+		OBJECT(object)->timer = timer - 1u;
+		if (timer == 1u)
+		{
+			OBJECT(object)->state = 2u;
+			OBJECT(object)->timer = 0u;
+			return target_player;
+		}
+		direction = vector_direction_to(object, target_player);
+		angle = (uint8_t)(direction >> 8);
+		heading = ((uint32_t)angle << 8) | 0x30u;
+		vector_set_speed_by_direction(object, heading);
+		vector_choose_walk_animation(object);
+		return target_player;
+	}
+	target_dy = OBJECT(object)->target_dy;
+	if (target_dy >= 4u)
+	{
+		state = OBJECT(target_player)->state;
+		if ((int8_t)state < 0)
+		{
+			OBJECT(object)->state = 2u;
+			OBJECT(object)->timer = 0u;
+			return target_player;
+		}
+		timer = OBJECT(object)->timer;
+		OBJECT(object)->timer = timer - 1u;
+		if (timer == 1u)
+		{
+			OBJECT(object)->state = 2u;
+			OBJECT(object)->timer = 0u;
+			return target_player;
+		}
+		direction = vector_direction_to(object, target_player);
+		angle = (uint8_t)(direction >> 8);
+		heading = ((uint32_t)angle << 8) | 0x30u;
+		vector_set_speed_by_direction(object, heading);
+		vector_choose_walk_animation(object);
+		return target_player;
+	}
+	floor_z = OBJECT(target_player)->floor_z;
+	floor_high = (uint8_t)(floor_z >> 8);
+	floor_low = (uint8_t)floor_z;
+	z = OBJECT(target_player)->z;
+	if ((uint16_t)(((uint32_t)floor_high << 8) | floor_low) != z)
+	{
+		state = OBJECT(target_player)->state;
+		if ((int8_t)state < 0)
+		{
+			OBJECT(object)->state = 2u;
+			OBJECT(object)->timer = 0u;
+			return target_player;
+		}
+		timer = OBJECT(object)->timer;
+		OBJECT(object)->timer = timer - 1u;
+		if (timer == 1u)
+		{
+			OBJECT(object)->state = 2u;
+			OBJECT(object)->timer = 0u;
+			return target_player;
+		}
+		direction = vector_direction_to(object, target_player);
+		angle = (uint8_t)(direction >> 8);
+		heading = ((uint32_t)angle << 8) | 0x30u;
+		vector_set_speed_by_direction(object, heading);
+		vector_choose_walk_animation(object);
+		return target_player;
+	}
+	floor_z_2 = OBJECT(object)->floor_z;
+	if ((uint16_t)(((uint32_t)floor_high << 8) | floor_low) != floor_z_2)
+	{
+		state = OBJECT(target_player)->state;
+		if ((int8_t)state < 0)
+		{
+			OBJECT(object)->state = 2u;
+			OBJECT(object)->timer = 0u;
+			return target_player;
+		}
+		timer = OBJECT(object)->timer;
+		OBJECT(object)->timer = timer - 1u;
+		if (timer == 1u)
+		{
+			OBJECT(object)->state = 2u;
+			OBJECT(object)->timer = 0u;
+			return target_player;
+		}
+		direction = vector_direction_to(object, target_player);
+		angle = (uint8_t)(direction >> 8);
+		heading = ((uint32_t)angle << 8) | 0x30u;
+		vector_set_speed_by_direction(object, heading);
+		vector_choose_walk_animation(object);
+		return target_player;
+	}
+	vector_enemy_leave_side(object, target_player);
+	OBJECT(target_player)->player.holder = object;
+	OBJECT(target_player)->player.hold_presses = 0xCu;
+	OBJECT(target_player)->flags |= 0x20u;
+	OBJECT(target_player)->hit = 3u;
+	OBJECT(object)->x_speed = 0;
+	OBJECT(object)->y_speed = 0;
+	player_x = OBJECT(target_player)->x;
+	OBJECT(object)->x = player_x;
+	player_y = OBJECT(target_player)->y;
+	OBJECT(object)->y = player_y;
+	attributes = OBJECT(target_player)->attributes;
+	grab_facing = attributes & 0x40u;
+	attributes_2 = OBJECT(object)->attributes;
+	OBJECT(object)->attributes = (attributes_2 & 0xBFu) | grab_facing;
+	shadow_player = OBJECT(target_player)->shadow_player;
+	stack = shadow_player & 0x70u;
+	points = OBJECT(object)->points;
+	OBJECT(object)->points = (points & 0x8Fu) | stack;
+	shadow_player_2 = OBJECT(target_player)->shadow_player;
+	OBJECT(object)->animation = kind_97_hold_animations[(((shadow_player_2 >> 1) >> 1) >> 1) >> 1] | 0x80u;
+	action_step = OBJECT(object)->action_step;
+	OBJECT(object)->action_step = action_step + 1u;
+	leftover_y = kind_97_hold_animations_ADDRESS;
+	return target_player;
 }
 
 /* Holds the player while he is held; when he breaks free the zombie loses 3 vitality and is thrown off

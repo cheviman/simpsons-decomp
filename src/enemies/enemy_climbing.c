@@ -3,7 +3,7 @@
  *    Description: climbing up and hopping down the floor's steps
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    10-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -12,9 +12,8 @@
 #include "game.h"
 
 /* Climbs a step toward the front: jumps up to it, moves forward until it lands, waits and thinks again. */
-void enemy_climb_up_front(uint16_t object, uint8_t step, uint16_t *p_y, uint16_t *p_step_handlers, uint32_t *p_left_caller)
+void enemy_climb_up_front(uint16_t object, uint8_t step, uint16_t *p_step_handlers, uint32_t *p_left_caller)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint8_t step_offset = 0;
 	uint16_t step_handlers = 0;
 
@@ -174,42 +173,41 @@ void enemy_climb_up_front(uint16_t object, uint8_t step, uint16_t *p_y, uint16_t
 			enemy_pace_end(object);
 			break;
 		case -24:
-			enemy_climb(object, &y, &step_handlers, p_left_caller);
+			enemy_climb(object, &step_handlers, p_left_caller);
 			break;
 		case -16:
 			continue;
 		case -14:
 			step = step_offset;
-			enemy_climb_up_back(object, step, &y, &step_handlers, p_left_caller);
+			enemy_climb_up_back(object, step, &step_handlers, p_left_caller);
 			break;
 		case -12:
 			step = step_offset;
-			enemy_climb_up_left(object, step, &y, &step_handlers, p_left_caller);
+			enemy_climb_up_left(object, step, &step_handlers, p_left_caller);
 			break;
 		case -10:
 			step = step_offset;
-			enemy_climb_up_right(object, step, &y, &step_handlers, p_left_caller);
+			enemy_climb_up_right(object, step, &step_handlers, p_left_caller);
 			break;
 		case -8:
 			step = step_offset;
-			enemy_hop_down_front(object, step, &y, &step_handlers, p_left_caller);
+			enemy_hop_down_front(object, step, &step_handlers, p_left_caller);
 			break;
 		case -6:
 			step = step_offset;
-			enemy_hop_down_back(object, step, &y, &step_handlers, p_left_caller);
+			enemy_hop_down_back(object, step, &step_handlers, p_left_caller);
 			break;
 		case -4:
 			step = step_offset;
-			enemy_hop_down_left(object, step, &y, &step_handlers, p_left_caller);
+			enemy_hop_down_left(object, step, &step_handlers, p_left_caller);
 			break;
 		case -2:
 			step = step_offset;
-			enemy_hop_down_right(object, step, &y, &step_handlers, p_left_caller);
+			enemy_hop_down_right(object, step, &step_handlers, p_left_caller);
 			break;
 		}
 		break;
 	}
-	*p_y = y;
 	*p_step_handlers = step_handlers;
 }
 
@@ -217,7 +215,7 @@ void enemy_climb_up_front(uint16_t object, uint8_t step, uint16_t *p_y, uint16_t
    stopped. */
 uint16_t enemy_climb_up_front_start(uint16_t object)
 {
-	uint16_t floor_level = 0, u = 0;
+	uint16_t floor_level = 0, speeds_table = 0;
 	uint8_t enemy_class = 0, step_level = 0, action_step = 0;
 
 	OBJECT(object)->flags = 0x80u;
@@ -226,11 +224,11 @@ uint16_t enemy_climb_up_front_start(uint16_t object)
 		OBJECT(object)->animation = 0x84u;
 	step_level = OBJECT(object)->enemy.step_level;
 	floor_level = (uint32_t)step_level << 8;
-	u = set_climb_speed(object, floor_level);
+	speeds_table = set_climb_speed(object, floor_level);
 	OBJECT(object)->x_speed = 0;
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step + 1u;
-	return u;
+	return speeds_table;
 }
 
 /* Moves toward the front while it falls until it lands. */
@@ -255,9 +253,8 @@ void enemy_back_to_thinking_after_wait(uint16_t object)
 }
 
 /* Climbs a step toward the back: jumps up to it, moves back until it lands, waits and thinks again. */
-void enemy_climb_up_back(uint16_t object, uint8_t step, uint16_t *p_y, uint16_t *p_step_handlers, uint32_t *p_left_caller)
+void enemy_climb_up_back(uint16_t object, uint8_t step, uint16_t *p_step_handlers, uint32_t *p_left_caller)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint8_t step_offset = 0;
 	uint16_t step_handlers = 0;
 
@@ -414,37 +411,37 @@ void enemy_climb_up_back(uint16_t object, uint8_t step, uint16_t *p_y, uint16_t 
 			enemy_pace_end(object);
 			break;
 		case -32:
-			enemy_hit_reaction(object, &y, &step_handlers, p_left_caller);
+			enemy_hit_reaction(object, &step_handlers, p_left_caller);
 			break;
 		case -22:
 			step = step_offset;
-			enemy_climb_up_front(object, step, &y, &step_handlers, p_left_caller);
+			enemy_climb_up_front(object, step, &step_handlers, p_left_caller);
 			break;
 		case -20:
 			continue;
 		case -18:
 			step = step_offset;
-			enemy_climb_up_left(object, step, &y, &step_handlers, p_left_caller);
+			enemy_climb_up_left(object, step, &step_handlers, p_left_caller);
 			break;
 		case -16:
 			step = step_offset;
-			enemy_climb_up_right(object, step, &y, &step_handlers, p_left_caller);
+			enemy_climb_up_right(object, step, &step_handlers, p_left_caller);
 			break;
 		case -14:
 			step = step_offset;
-			enemy_hop_down_front(object, step, &y, &step_handlers, p_left_caller);
+			enemy_hop_down_front(object, step, &step_handlers, p_left_caller);
 			break;
 		case -12:
 			step = step_offset;
-			enemy_hop_down_back(object, step, &y, &step_handlers, p_left_caller);
+			enemy_hop_down_back(object, step, &step_handlers, p_left_caller);
 			break;
 		case -10:
 			step = step_offset;
-			enemy_hop_down_left(object, step, &y, &step_handlers, p_left_caller);
+			enemy_hop_down_left(object, step, &step_handlers, p_left_caller);
 			break;
 		case -8:
 			step = step_offset;
-			enemy_hop_down_right(object, step, &y, &step_handlers, p_left_caller);
+			enemy_hop_down_right(object, step, &step_handlers, p_left_caller);
 			break;
 		case -6:
 			step_handlers = enemy_climb_up_front_start(object);
@@ -452,7 +449,6 @@ void enemy_climb_up_back(uint16_t object, uint8_t step, uint16_t *p_y, uint16_t 
 		}
 		break;
 	}
-	*p_y = y;
 	*p_step_handlers = step_handlers;
 }
 
@@ -460,7 +456,7 @@ void enemy_climb_up_back(uint16_t object, uint8_t step, uint16_t *p_y, uint16_t 
    x speed stopped. */
 uint16_t enemy_climb_up_back_start(uint16_t object)
 {
-	uint16_t floor_level = 0, u = 0;
+	uint16_t floor_level = 0, speeds_table = 0;
 	uint8_t enemy_class = 0, step_level = 0, action_step = 0;
 
 	OBJECT(object)->flags = 0x80u;
@@ -469,11 +465,11 @@ uint16_t enemy_climb_up_back_start(uint16_t object)
 		OBJECT(object)->animation = 0x85u;
 	step_level = OBJECT(object)->enemy.step_level;
 	floor_level = (uint32_t)step_level << 8;
-	u = set_climb_speed(object, floor_level);
+	speeds_table = set_climb_speed(object, floor_level);
 	OBJECT(object)->x_speed = 0;
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step + 1u;
-	return u;
+	return speeds_table;
 }
 
 /* Moves toward the back while it falls until it lands. */
@@ -484,9 +480,8 @@ void enemy_move_back_until_landed(uint16_t object)
 }
 
 /* Climbs a step to the left: jumps up to it, moves left until it lands, waits and thinks again. */
-void enemy_climb_up_left(uint16_t object, uint8_t step, uint16_t *p_y, uint16_t *p_step_handlers, uint32_t *p_left_caller)
+void enemy_climb_up_left(uint16_t object, uint8_t step, uint16_t *p_step_handlers, uint32_t *p_left_caller)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint8_t step_offset = 0;
 	uint16_t step_handlers = 0;
 
@@ -641,33 +636,33 @@ void enemy_climb_up_left(uint16_t object, uint8_t step, uint16_t *p_y, uint16_t 
 			break;
 		case -28:
 			step = step_offset;
-			enemy_climb_up_front(object, step, &y, &step_handlers, p_left_caller);
+			enemy_climb_up_front(object, step, &step_handlers, p_left_caller);
 			break;
 		case -26:
 			step = step_offset;
-			enemy_climb_up_back(object, step, &y, &step_handlers, p_left_caller);
+			enemy_climb_up_back(object, step, &step_handlers, p_left_caller);
 			break;
 		case -24:
 			continue;
 		case -22:
 			step = step_offset;
-			enemy_climb_up_right(object, step, &y, &step_handlers, p_left_caller);
+			enemy_climb_up_right(object, step, &step_handlers, p_left_caller);
 			break;
 		case -20:
 			step = step_offset;
-			enemy_hop_down_front(object, step, &y, &step_handlers, p_left_caller);
+			enemy_hop_down_front(object, step, &step_handlers, p_left_caller);
 			break;
 		case -18:
 			step = step_offset;
-			enemy_hop_down_back(object, step, &y, &step_handlers, p_left_caller);
+			enemy_hop_down_back(object, step, &step_handlers, p_left_caller);
 			break;
 		case -16:
 			step = step_offset;
-			enemy_hop_down_left(object, step, &y, &step_handlers, p_left_caller);
+			enemy_hop_down_left(object, step, &step_handlers, p_left_caller);
 			break;
 		case -14:
 			step = step_offset;
-			enemy_hop_down_right(object, step, &y, &step_handlers, p_left_caller);
+			enemy_hop_down_right(object, step, &step_handlers, p_left_caller);
 			break;
 		case -12:
 			step_handlers = enemy_climb_up_front_start(object);
@@ -678,7 +673,6 @@ void enemy_climb_up_left(uint16_t object, uint8_t step, uint16_t *p_y, uint16_t 
 		}
 		break;
 	}
-	*p_y = y;
 	*p_step_handlers = step_handlers;
 }
 
@@ -686,7 +680,7 @@ void enemy_climb_up_left(uint16_t object, uint8_t step, uint16_t *p_y, uint16_t 
    stopped. */
 uint16_t enemy_climb_up_left_start(uint16_t object)
 {
-	uint16_t floor_level = 0, u = 0;
+	uint16_t floor_level = 0, speeds_table = 0;
 	uint8_t enemy_class = 0, step_level = 0, action_step = 0;
 
 	OBJECT(object)->flags = 0x80u;
@@ -695,11 +689,11 @@ uint16_t enemy_climb_up_left_start(uint16_t object)
 		OBJECT(object)->animation = 0x84u;
 	step_level = OBJECT(object)->enemy.step_level;
 	floor_level = (uint32_t)step_level << 8;
-	u = set_climb_speed(object, floor_level);
+	speeds_table = set_climb_speed(object, floor_level);
 	OBJECT(object)->y_speed = 0;
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step + 1u;
-	return u;
+	return speeds_table;
 }
 
 /* Moves left while it falls until it lands. */
@@ -710,9 +704,8 @@ void enemy_move_left_until_landed(uint16_t object)
 }
 
 /* Climbs a step to the right: jumps up to it, moves right until it lands, waits and thinks again. */
-void enemy_climb_up_right(uint16_t object, uint8_t step, uint16_t *p_y, uint16_t *p_step_handlers, uint32_t *p_left_caller)
+void enemy_climb_up_right(uint16_t object, uint8_t step, uint16_t *p_step_handlers, uint32_t *p_left_caller)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint8_t step_offset = 0;
 	uint16_t step_handlers = 0;
 
@@ -863,37 +856,37 @@ void enemy_climb_up_right(uint16_t object, uint8_t step, uint16_t *p_y, uint16_t
 			enemy_pace_end(object);
 			break;
 		case -48:
-			enemy_think(object, &y, &step_handlers, p_left_caller);
+			enemy_think(object, &step_handlers, p_left_caller);
 			break;
 		case -34:
 			step = step_offset;
-			enemy_climb_up_front(object, step, &y, &step_handlers, p_left_caller);
+			enemy_climb_up_front(object, step, &step_handlers, p_left_caller);
 			break;
 		case -32:
 			step = step_offset;
-			enemy_climb_up_back(object, step, &y, &step_handlers, p_left_caller);
+			enemy_climb_up_back(object, step, &step_handlers, p_left_caller);
 			break;
 		case -30:
 			step = step_offset;
-			enemy_climb_up_left(object, step, &y, &step_handlers, p_left_caller);
+			enemy_climb_up_left(object, step, &step_handlers, p_left_caller);
 			break;
 		case -28:
 			continue;
 		case -26:
 			step = step_offset;
-			enemy_hop_down_front(object, step, &y, &step_handlers, p_left_caller);
+			enemy_hop_down_front(object, step, &step_handlers, p_left_caller);
 			break;
 		case -24:
 			step = step_offset;
-			enemy_hop_down_back(object, step, &y, &step_handlers, p_left_caller);
+			enemy_hop_down_back(object, step, &step_handlers, p_left_caller);
 			break;
 		case -22:
 			step = step_offset;
-			enemy_hop_down_left(object, step, &y, &step_handlers, p_left_caller);
+			enemy_hop_down_left(object, step, &step_handlers, p_left_caller);
 			break;
 		case -20:
 			step = step_offset;
-			enemy_hop_down_right(object, step, &y, &step_handlers, p_left_caller);
+			enemy_hop_down_right(object, step, &step_handlers, p_left_caller);
 			break;
 		case -18:
 			step_handlers = enemy_climb_up_front_start(object);
@@ -907,7 +900,6 @@ void enemy_climb_up_right(uint16_t object, uint8_t step, uint16_t *p_y, uint16_t
 		}
 		break;
 	}
-	*p_y = y;
 	*p_step_handlers = step_handlers;
 }
 
@@ -915,7 +907,7 @@ void enemy_climb_up_right(uint16_t object, uint8_t step, uint16_t *p_y, uint16_t
    (the same as the left climb's start). */
 uint16_t enemy_climb_up_right_start(uint16_t object)
 {
-	uint16_t floor_level = 0, u = 0;
+	uint16_t floor_level = 0, speeds_table = 0;
 	uint8_t enemy_class = 0, step_level = 0, action_step = 0;
 
 	OBJECT(object)->flags = 0x80u;
@@ -924,11 +916,11 @@ uint16_t enemy_climb_up_right_start(uint16_t object)
 		OBJECT(object)->animation = 0x84u;
 	step_level = OBJECT(object)->enemy.step_level;
 	floor_level = (uint32_t)step_level << 8;
-	u = set_climb_speed(object, floor_level);
+	speeds_table = set_climb_speed(object, floor_level);
 	OBJECT(object)->y_speed = 0;
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step + 1u;
-	return u;
+	return speeds_table;
 }
 
 /* Moves right while it falls until it lands. */
@@ -957,9 +949,8 @@ void enemy_fall_until_landed(uint16_t object)
 }
 
 /* Hops down a step toward the front: a hop, forward until it lands, waits and thinks again. */
-void enemy_hop_down_front(uint16_t object, uint8_t step, uint16_t *p_y, uint16_t *p_step_handlers, uint32_t *p_left_caller)
+void enemy_hop_down_front(uint16_t object, uint8_t step, uint16_t *p_step_handlers, uint32_t *p_left_caller)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint8_t step_offset = 0;
 	uint16_t step_handlers = 0;
 
@@ -1107,37 +1098,37 @@ void enemy_hop_down_front(uint16_t object, uint8_t step, uint16_t *p_y, uint16_t
 			enemy_pace_end(object);
 			break;
 		case -48:
-			enemy_climb(object, &y, &step_handlers, p_left_caller);
+			enemy_climb(object, &step_handlers, p_left_caller);
 			break;
 		case -40:
 			step = step_offset;
-			enemy_climb_up_front(object, step, &y, &step_handlers, p_left_caller);
+			enemy_climb_up_front(object, step, &step_handlers, p_left_caller);
 			break;
 		case -38:
 			step = step_offset;
-			enemy_climb_up_back(object, step, &y, &step_handlers, p_left_caller);
+			enemy_climb_up_back(object, step, &step_handlers, p_left_caller);
 			break;
 		case -36:
 			step = step_offset;
-			enemy_climb_up_left(object, step, &y, &step_handlers, p_left_caller);
+			enemy_climb_up_left(object, step, &step_handlers, p_left_caller);
 			break;
 		case -34:
 			step = step_offset;
-			enemy_climb_up_right(object, step, &y, &step_handlers, p_left_caller);
+			enemy_climb_up_right(object, step, &step_handlers, p_left_caller);
 			break;
 		case -32:
 			continue;
 		case -30:
 			step = step_offset;
-			enemy_hop_down_back(object, step, &y, &step_handlers, p_left_caller);
+			enemy_hop_down_back(object, step, &step_handlers, p_left_caller);
 			break;
 		case -28:
 			step = step_offset;
-			enemy_hop_down_left(object, step, &y, &step_handlers, p_left_caller);
+			enemy_hop_down_left(object, step, &step_handlers, p_left_caller);
 			break;
 		case -26:
 			step = step_offset;
-			enemy_hop_down_right(object, step, &y, &step_handlers, p_left_caller);
+			enemy_hop_down_right(object, step, &step_handlers, p_left_caller);
 			break;
 		case -24:
 			step_handlers = enemy_climb_up_front_start(object);
@@ -1154,7 +1145,6 @@ void enemy_hop_down_front(uint16_t object, uint8_t step, uint16_t *p_y, uint16_t
 		}
 		break;
 	}
-	*p_y = y;
 	*p_step_handlers = step_handlers;
 }
 
@@ -1173,9 +1163,8 @@ void enemy_hop_start(uint16_t object)
 }
 
 /* Hops down a step toward the back: a hop, back until it lands, waits and thinks again. */
-void enemy_hop_down_back(uint16_t object, uint8_t step, uint16_t *p_y, uint16_t *p_step_handlers, uint32_t *p_left_caller)
+void enemy_hop_down_back(uint16_t object, uint8_t step, uint16_t *p_step_handlers, uint32_t *p_left_caller)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint8_t step_offset = 0;
 	uint16_t step_handlers = 0;
 
@@ -1320,33 +1309,33 @@ void enemy_hop_down_back(uint16_t object, uint8_t step, uint16_t *p_y, uint16_t 
 			break;
 		case -46:
 			step = step_offset;
-			enemy_climb_up_front(object, step, &y, &step_handlers, p_left_caller);
+			enemy_climb_up_front(object, step, &step_handlers, p_left_caller);
 			break;
 		case -44:
 			step = step_offset;
-			enemy_climb_up_back(object, step, &y, &step_handlers, p_left_caller);
+			enemy_climb_up_back(object, step, &step_handlers, p_left_caller);
 			break;
 		case -42:
 			step = step_offset;
-			enemy_climb_up_left(object, step, &y, &step_handlers, p_left_caller);
+			enemy_climb_up_left(object, step, &step_handlers, p_left_caller);
 			break;
 		case -40:
 			step = step_offset;
-			enemy_climb_up_right(object, step, &y, &step_handlers, p_left_caller);
+			enemy_climb_up_right(object, step, &step_handlers, p_left_caller);
 			break;
 		case -38:
 			step = step_offset;
-			enemy_hop_down_front(object, step, &y, &step_handlers, p_left_caller);
+			enemy_hop_down_front(object, step, &step_handlers, p_left_caller);
 			break;
 		case -36:
 			continue;
 		case -34:
 			step = step_offset;
-			enemy_hop_down_left(object, step, &y, &step_handlers, p_left_caller);
+			enemy_hop_down_left(object, step, &step_handlers, p_left_caller);
 			break;
 		case -32:
 			step = step_offset;
-			enemy_hop_down_right(object, step, &y, &step_handlers, p_left_caller);
+			enemy_hop_down_right(object, step, &step_handlers, p_left_caller);
 			break;
 		case -30:
 			step_handlers = enemy_climb_up_front_start(object);
@@ -1367,7 +1356,6 @@ void enemy_hop_down_back(uint16_t object, uint8_t step, uint16_t *p_y, uint16_t 
 		}
 		break;
 	}
-	*p_y = y;
 	*p_step_handlers = step_handlers;
 }
 
@@ -1386,9 +1374,8 @@ void enemy_hop_back_start(uint16_t object)
 }
 
 /* Hops down a step to the left: a hop, left until it lands, waits and thinks again. */
-void enemy_hop_down_left(uint16_t object, uint8_t step, uint16_t *p_y, uint16_t *p_step_handlers, uint32_t *p_left_caller)
+void enemy_hop_down_left(uint16_t object, uint8_t step, uint16_t *p_step_handlers, uint32_t *p_left_caller)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint8_t step_offset = 0;
 	uint16_t step_handlers = 0;
 
@@ -1525,37 +1512,37 @@ void enemy_hop_down_left(uint16_t object, uint8_t step, uint16_t *p_y, uint16_t 
 			enemy_pace_end(object);
 			break;
 		case -64:
-			enemy_attack(object, &y, &step_handlers, p_left_caller);
+			enemy_attack(object, &step_handlers, p_left_caller);
 			break;
 		case -52:
 			step = step_offset;
-			enemy_climb_up_front(object, step, &y, &step_handlers, p_left_caller);
+			enemy_climb_up_front(object, step, &step_handlers, p_left_caller);
 			break;
 		case -50:
 			step = step_offset;
-			enemy_climb_up_back(object, step, &y, &step_handlers, p_left_caller);
+			enemy_climb_up_back(object, step, &step_handlers, p_left_caller);
 			break;
 		case -48:
 			step = step_offset;
-			enemy_climb_up_left(object, step, &y, &step_handlers, p_left_caller);
+			enemy_climb_up_left(object, step, &step_handlers, p_left_caller);
 			break;
 		case -46:
 			step = step_offset;
-			enemy_climb_up_right(object, step, &y, &step_handlers, p_left_caller);
+			enemy_climb_up_right(object, step, &step_handlers, p_left_caller);
 			break;
 		case -44:
 			step = step_offset;
-			enemy_hop_down_front(object, step, &y, &step_handlers, p_left_caller);
+			enemy_hop_down_front(object, step, &step_handlers, p_left_caller);
 			break;
 		case -42:
 			step = step_offset;
-			enemy_hop_down_back(object, step, &y, &step_handlers, p_left_caller);
+			enemy_hop_down_back(object, step, &step_handlers, p_left_caller);
 			break;
 		case -40:
 			continue;
 		case -38:
 			step = step_offset;
-			enemy_hop_down_right(object, step, &y, &step_handlers, p_left_caller);
+			enemy_hop_down_right(object, step, &step_handlers, p_left_caller);
 			break;
 		case -36:
 			step_handlers = enemy_climb_up_front_start(object);
@@ -1583,14 +1570,12 @@ void enemy_hop_down_left(uint16_t object, uint8_t step, uint16_t *p_y, uint16_t 
 		}
 		break;
 	}
-	*p_y = y;
 	*p_step_handlers = step_handlers;
 }
 
 /* Hops down a step to the right: a hop, right until it lands, waits and thinks again. */
-void enemy_hop_down_right(uint16_t object, uint8_t step, uint16_t *p_y, uint16_t *p_step_handlers, uint32_t *p_left_caller)
+void enemy_hop_down_right(uint16_t object, uint8_t step, uint16_t *p_step_handlers, uint32_t *p_left_caller)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint8_t step_offset = 0;
 	uint16_t step_handlers = 0;
 
@@ -1730,31 +1715,31 @@ void enemy_hop_down_right(uint16_t object, uint8_t step, uint16_t *p_y, uint16_t
 			break;
 		case -58:
 			step = step_offset;
-			enemy_climb_up_front(object, step, &y, &step_handlers, p_left_caller);
+			enemy_climb_up_front(object, step, &step_handlers, p_left_caller);
 			break;
 		case -56:
 			step = step_offset;
-			enemy_climb_up_back(object, step, &y, &step_handlers, p_left_caller);
+			enemy_climb_up_back(object, step, &step_handlers, p_left_caller);
 			break;
 		case -54:
 			step = step_offset;
-			enemy_climb_up_left(object, step, &y, &step_handlers, p_left_caller);
+			enemy_climb_up_left(object, step, &step_handlers, p_left_caller);
 			break;
 		case -52:
 			step = step_offset;
-			enemy_climb_up_right(object, step, &y, &step_handlers, p_left_caller);
+			enemy_climb_up_right(object, step, &step_handlers, p_left_caller);
 			break;
 		case -50:
 			step = step_offset;
-			enemy_hop_down_front(object, step, &y, &step_handlers, p_left_caller);
+			enemy_hop_down_front(object, step, &step_handlers, p_left_caller);
 			break;
 		case -48:
 			step = step_offset;
-			enemy_hop_down_back(object, step, &y, &step_handlers, p_left_caller);
+			enemy_hop_down_back(object, step, &step_handlers, p_left_caller);
 			break;
 		case -46:
 			step = step_offset;
-			enemy_hop_down_left(object, step, &y, &step_handlers, p_left_caller);
+			enemy_hop_down_left(object, step, &step_handlers, p_left_caller);
 			break;
 		case -44:
 			continue;
@@ -1788,6 +1773,5 @@ void enemy_hop_down_right(uint16_t object, uint8_t step, uint16_t *p_y, uint16_t
 		}
 		break;
 	}
-	*p_y = y;
 	*p_step_handlers = step_handlers;
 }

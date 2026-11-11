@@ -3,7 +3,7 @@
  *    Description: the attract's opening and the family's profiles
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    10-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -12,10 +12,10 @@
 #include "game.h"
 
 /* The attract's opening, by its substep */
-void attract_opening(uint16_t y, uint16_t u)
+void attract_opening(uint16_t u)
 {
 	uint8_t phase_offset = 0;
-	uint16_t move_number = 0, object = 0;
+	uint16_t move = 0, move_number = 0, object = 0;
 
 	for (;;)
 	{
@@ -135,8 +135,9 @@ void attract_opening(uint16_t y, uint16_t u)
 			attract_last_screen_wait(u);
 			return;
 		case 74:
+			move = (uint16_t)leftover_y;
 			move_number = (uint32_t)phase_offset << 8;
-			attract_profile_move_out(object, y, move_number);
+			attract_profile_move_out(object, move, move_number);
 			return;
 		case 76:
 		case 82:
@@ -147,32 +148,33 @@ void attract_opening(uint16_t y, uint16_t u)
 			attract_profile_move_pause(object, move_number);
 			return;
 		case 80:
-			attract_profile_move_back(object, y);
+			move = (uint16_t)leftover_y;
+			attract_profile_move_back(object, move);
 			return;
 		case 84:
 			break;
 		case -16:
 			continue;
 		case -14:
-			attract_opening_end(y, u);
+			attract_opening_end(u);
 			return;
 		case -12:
-			attract_bart(y, u);
+			attract_bart(u);
 			return;
 		case -10:
-			attract_homer(y, u);
+			attract_homer(u);
 			return;
 		case -8:
-			attract_lisa(y, u);
+			attract_lisa(u);
 			return;
 		case -6:
-			attract_marge(y, u);
+			attract_marge(u);
 			return;
 		case -4:
-			attract_leap(y, u);
+			attract_leap(u);
 			return;
 		case -2:
-			attract_last_screen(y, u);
+			attract_last_screen(u);
 			return;
 		}
 		break;
@@ -185,15 +187,15 @@ void attract_opening_start(uint16_t palette_job)
 {
 	uint32_t carry = 0;
 	uint8_t tile_code = 0;
-	uint16_t command = 0, ignored16 = 0, object = 0, picture = 0, request = 0, tile = 0;
-	uint16_t t1 = 0, t2 = 0;
+	uint16_t command = 0, object = 0, picture = 0, request = 0, tile = 0;
+	uint16_t layer_a_tile = 0, layer_b_tile = 0;
 
 	palette_request_kind = 3u;
 	request = 0x7A53u;
-	vector_palette_request(request, &ignored16, &palette_job);
+	palette_job = vector_palette_request(palette_job, request);
 	palette_request_kind = 1u;
 	request = 0xF02u;
-	vector_palette_request(request, &ignored16, &palette_job);
+	vector_palette_request(palette_job, request);
 	attract_reset_layers();
 	layer_a_scroll_x = 0x10u;
 	layer_b_scroll_x = 0x10u;
@@ -204,18 +206,18 @@ void attract_opening_start(uint16_t palette_job)
 	do
 	{
 		mem_write8(tile - 0x2000u, 0u);
-		t1 = tile;
-		tile = t1 + 1u;
-		mem_write8(t1, tile_code);
+		layer_a_tile = tile;
+		tile = layer_a_tile + 1u;
+		mem_write8(layer_a_tile, tile_code);
 	} while (tile != 0x3000u);
 	tile = 0x3000u;
 	tile_code = 0x10u;
 	do
 	{
 		mem_write8(tile - 0x2000u, 0u);
-		t2 = tile;
-		tile = t2 + 1u;
-		mem_write8(t2, tile_code);
+		layer_b_tile = tile;
+		tile = layer_b_tile + 1u;
+		mem_write8(layer_b_tile, tile_code);
 	} while (tile != 0x3800u);
 	attract_draw_layers();
 	command = 0x8000u;
@@ -239,38 +241,38 @@ void attract_opening_zoom(void)
 	uint32_t carry = 0;
 	uint8_t zoom = 0;
 	uint16_t object = 0;
-	uint8_t t7 = 0;
-	uint16_t action = 0, t1 = 0, t2 = 0, t3 = 0, t4 = 0, t5 = 0, t6 = 0;
+	uint8_t wait_left = 0;
+	uint16_t action = 0, new_zoom = 0, layer_a_x_low = 0, old_layer_a_x_low = 0, new_layer_a_x_low = 0, layer_b_x_low = 0, old_layer_b_x_low = 0;
 	uint32_t action_halfword = 0;
 
 	object = OBJECT_ADDRESS(14);
 	OBJECT(OBJECT_ADDRESS(14))->flags = 0x90u;
 	action = (((uint32_t)OBJECT(OBJECT_ADDRESS(14))->action << 8u) | OBJECT(OBJECT_ADDRESS(14))->action_step);
-	t1 = action - 0xC0u;
-	zoom = (uint8_t)(t1 >> 8);
-	action_halfword = ((uint32_t)zoom << 8) | (t1 & 0xFFu);
+	new_zoom = action - 0xC0u;
+	zoom = (uint8_t)(new_zoom >> 8);
+	action_halfword = ((uint32_t)zoom << 8) | (new_zoom & 0xFFu);
 	OBJECT(OBJECT_ADDRESS(14))->action = (uint8_t)(action_halfword >> 8u);
 	OBJECT(OBJECT_ADDRESS(14))->action_step = (uint8_t)action_halfword;
 	OBJECT(OBJECT_ADDRESS(14))->zoom_x = zoom;
 	OBJECT(OBJECT_ADDRESS(14))->zoom_y = zoom;
 	if (zoom <= 0x40u)
 		OBJECT(object)->attributes = 0x10u;
-	t2 = AT16(layer_a_scroll_x, -1);
-	t3 = t2;
-	t4 = t3 - 0x80u;
-	carry = t3 < 0x80u;
-	AT16(layer_a_scroll_x, -1) = t4;
+	layer_a_x_low = AT16(layer_a_scroll_x, -1);
+	old_layer_a_x_low = layer_a_x_low;
+	new_layer_a_x_low = old_layer_a_x_low - 0x80u;
+	carry = old_layer_a_x_low < 0x80u;
+	AT16(layer_a_scroll_x, -1) = new_layer_a_x_low;
 	layer_a_scroll_x = (layer_a_scroll_x & 0xFFu) | (((uint8_t)(layer_a_scroll_x >> 8u) - carry & 0xFFu) << 8u);
-	t5 = AT16(layer_b_scroll_x, -1);
-	t6 = t5;
-	carry = (uint16_t)(t6 + 0x80u) < t6;
-	AT16(layer_b_scroll_x, -1) = t6 + 0x80u;
+	layer_b_x_low = AT16(layer_b_scroll_x, -1);
+	old_layer_b_x_low = layer_b_x_low;
+	carry = (uint16_t)(old_layer_b_x_low + 0x80u) < old_layer_b_x_low;
+	AT16(layer_b_scroll_x, -1) = old_layer_b_x_low + 0x80u;
 	layer_b_scroll_x = (layer_b_scroll_x & 0xFFu) | (((uint8_t)(layer_b_scroll_x >> 8u) + carry & 0xFFu) << 8u);
 	if ((frame_count & 1u) == 0u)
 	{
-		t7 = (uint8_t)(step_timer >> 8u);
-		step_timer = (step_timer & 0xFFu) | ((t7 - 1u & 0xFFu) << 8u);
-		if (t7 == 1u)
+		wait_left = (uint8_t)(step_timer >> 8u);
+		step_timer = (step_timer & 0xFFu) | ((wait_left - 1u & 0xFFu) << 8u);
+		if (wait_left == 1u)
 		{
 			game_step++;
 			step_phase = 0u;
@@ -279,10 +281,10 @@ void attract_opening_zoom(void)
 }
 
 /* The opening's second part, by its substep */
-void attract_opening_end(uint16_t y, uint16_t u)
+void attract_opening_end(uint16_t u)
 {
 	uint8_t phase_offset = 0;
-	uint16_t move_number = 0, object = 0;
+	uint16_t move = 0, move_number = 0, object = 0;
 
 	for (;;)
 	{
@@ -396,8 +398,9 @@ void attract_opening_end(uint16_t y, uint16_t u)
 			attract_last_screen_wait(u);
 			return;
 		case 70:
+			move = (uint16_t)leftover_y;
 			move_number = (uint32_t)phase_offset << 8;
-			attract_profile_move_out(object, y, move_number);
+			attract_profile_move_out(object, move, move_number);
 			return;
 		case 72:
 		case 78:
@@ -408,32 +411,33 @@ void attract_opening_end(uint16_t y, uint16_t u)
 			attract_profile_move_pause(object, move_number);
 			return;
 		case 76:
-			attract_profile_move_back(object, y);
+			move = (uint16_t)leftover_y;
+			attract_profile_move_back(object, move);
 			return;
 		case 80:
 			break;
 		case -20:
-			attract_opening(y, u);
+			attract_opening(u);
 			return;
 		case -18:
 			continue;
 		case -16:
-			attract_bart(y, u);
+			attract_bart(u);
 			return;
 		case -14:
-			attract_homer(y, u);
+			attract_homer(u);
 			return;
 		case -12:
-			attract_lisa(y, u);
+			attract_lisa(u);
 			return;
 		case -10:
-			attract_marge(y, u);
+			attract_marge(u);
 			return;
 		case -8:
-			attract_leap(y, u);
+			attract_leap(u);
 			return;
 		case -6:
-			attract_last_screen(y, u);
+			attract_last_screen(u);
 			return;
 		case -4:
 			attract_opening_start(u);
@@ -451,15 +455,15 @@ void attract_opening_end(uint16_t y, uint16_t u)
 void attract_opening_end_start(void)
 {
 	uint8_t zoom = 0;
-	uint16_t ignored16 = 0, request = 0, u = 0;
-	uint16_t action = 0, t1 = 0;
+	uint16_t request = 0, u = 0;
+	uint16_t action = 0, new_zoom = 0;
 	uint32_t action_halfword = 0;
 
 	OBJECT(OBJECT_ADDRESS(14))->flags = 0x90u;
 	action = (((uint32_t)OBJECT(OBJECT_ADDRESS(14))->action << 8u) | OBJECT(OBJECT_ADDRESS(14))->action_step);
-	t1 = action - 0xC0u;
-	zoom = (uint8_t)(t1 >> 8);
-	action_halfword = ((uint32_t)zoom << 8) | (t1 & 0xFFu);
+	new_zoom = action - 0xC0u;
+	zoom = (uint8_t)(new_zoom >> 8);
+	action_halfword = ((uint32_t)zoom << 8) | (new_zoom & 0xFFu);
 	OBJECT(OBJECT_ADDRESS(14))->action = (uint8_t)(action_halfword >> 8u);
 	OBJECT(OBJECT_ADDRESS(14))->action_step = (uint8_t)action_halfword;
 	OBJECT(OBJECT_ADDRESS(14))->zoom_x = zoom;
@@ -471,7 +475,7 @@ void attract_opening_end_start(void)
 	layer_b_scroll_y = 0x20u;
 	palette_request_kind = 3u;
 	request = 0u;
-	vector_palette_request(request, &ignored16, &u);
+	vector_palette_request(u, request);
 	step_timer = (step_timer & 0xFFu) | 0x9000u;
 	step_phase++;
 }
@@ -482,8 +486,8 @@ void attract_opening_end_scroll(void)
 	uint32_t carry = 0;
 	uint8_t zoom = 0;
 	uint16_t ignored16 = 0, ignored16_2 = 0, object = 0;
-	uint8_t t2 = 0;
-	uint16_t action = 0, t1 = 0, t3 = 0, t4 = 0, t5 = 0, t6 = 0, t7 = 0;
+	uint8_t wait_left = 0;
+	uint16_t action = 0, new_zoom = 0, layer_a_y_low = 0, old_layer_a_y_low = 0, layer_b_y_low = 0, old_layer_b_y_low = 0, new_layer_b_y_low = 0;
 	uint32_t action_halfword = 0;
 
 	object = OBJECT_ADDRESS(14);
@@ -491,9 +495,9 @@ void attract_opening_end_scroll(void)
 	{
 		OBJECT(object)->flags = 0x90u;
 		action = (((uint32_t)OBJECT(object)->action << 8u) | OBJECT(object)->action_step);
-		t1 = action - 0xC0u;
-		zoom = (uint8_t)(t1 >> 8);
-		action_halfword = ((uint32_t)zoom << 8) | (t1 & 0xFFu);
+		new_zoom = action - 0xC0u;
+		zoom = (uint8_t)(new_zoom >> 8);
+		action_halfword = ((uint32_t)zoom << 8) | (new_zoom & 0xFFu);
 		OBJECT(object)->action = (uint8_t)(action_halfword >> 8u);
 		OBJECT(object)->action_step = (uint8_t)action_halfword;
 		OBJECT(object)->zoom_x = zoom;
@@ -501,36 +505,36 @@ void attract_opening_end_scroll(void)
 		if (zoom <= 0x10u)
 			vector_clear_objects(&ignored16, &ignored16_2);
 	}
-	t2 = (uint8_t)(step_timer >> 8u);
-	step_timer = (step_timer & 0xFFu) | ((t2 - 1u & 0xFFu) << 8u);
-	if (t2 == 1u)
+	wait_left = (uint8_t)(step_timer >> 8u);
+	step_timer = (step_timer & 0xFFu) | ((wait_left - 1u & 0xFFu) << 8u);
+	if (wait_left == 1u)
 	{
 		step_timer = (step_timer & 0xFFu) | 0x100u;
 		step_phase++;
 		return;
 	}
-	t3 = AT16(layer_a_scroll_y, -1);
-	t4 = t3;
-	carry = (uint16_t)(t4 + 0x18u) < t4;
-	AT16(layer_a_scroll_y, -1) = t4 + 0x18u;
+	layer_a_y_low = AT16(layer_a_scroll_y, -1);
+	old_layer_a_y_low = layer_a_y_low;
+	carry = (uint16_t)(old_layer_a_y_low + 0x18u) < old_layer_a_y_low;
+	AT16(layer_a_scroll_y, -1) = old_layer_a_y_low + 0x18u;
 	layer_a_scroll_y = (layer_a_scroll_y & 0xFFu) | (((uint8_t)(layer_a_scroll_y >> 8u) + carry & 0xFFu) << 8u);
-	t5 = (((uint32_t)(layer_b_scroll_y & 0xFFu) << 8u) | layer_b_scroll_y_fraction);
-	t6 = t5;
-	t7 = t6 - 0x30u;
-	carry = t6 < 0x30u;
-	layer_b_scroll_y = (layer_b_scroll_y & 0xFF00u) | ((t7 >> 8u) & 0xFFu);
-	layer_b_scroll_y_fraction = (uint8_t)t7;
+	layer_b_y_low = (((uint32_t)(layer_b_scroll_y & 0xFFu) << 8u) | layer_b_scroll_y_fraction);
+	old_layer_b_y_low = layer_b_y_low;
+	new_layer_b_y_low = old_layer_b_y_low - 0x30u;
+	carry = old_layer_b_y_low < 0x30u;
+	layer_b_scroll_y = (layer_b_scroll_y & 0xFF00u) | ((new_layer_b_y_low >> 8u) & 0xFFu);
+	layer_b_scroll_y_fraction = (uint8_t)new_layer_b_y_low;
 	layer_b_scroll_y = (layer_b_scroll_y & 0xFFu) | (((uint8_t)(layer_b_scroll_y >> 8u) - carry & 0xFFu) << 8u);
 }
 
 /* Clears the layers and goes on to Bart's part */
 void attract_opening_end_wait(void)
 {
-	uint8_t t1 = 0;
+	uint8_t wait_left = 0;
 
-	t1 = (uint8_t)(step_timer >> 8u);
-	step_timer = (step_timer & 0xFFu) | ((t1 - 1u & 0xFFu) << 8u);
-	if (t1 != 1u)
+	wait_left = (uint8_t)(step_timer >> 8u);
+	step_timer = (step_timer & 0xFFu) | ((wait_left - 1u & 0xFFu) << 8u);
+	if (wait_left != 1u)
 		return;
 	vector_clear_layer_b();
 	game_step++;
@@ -538,10 +542,10 @@ void attract_opening_end_wait(void)
 }
 
 /* Bart's part of the attract, by its substep */
-void attract_bart(uint16_t y, uint16_t u)
+void attract_bart(uint16_t u)
 {
 	uint8_t phase_offset = 0;
-	uint16_t move_number = 0, object = 0;
+	uint16_t move = 0, move_number = 0, object = 0;
 
 	for (;;)
 	{
@@ -646,8 +650,9 @@ void attract_bart(uint16_t y, uint16_t u)
 			attract_last_screen_wait(u);
 			return;
 		case 64:
+			move = (uint16_t)leftover_y;
 			move_number = (uint32_t)phase_offset << 8;
-			attract_profile_move_out(object, y, move_number);
+			attract_profile_move_out(object, move, move_number);
 			return;
 		case 66:
 		case 72:
@@ -658,32 +663,33 @@ void attract_bart(uint16_t y, uint16_t u)
 			attract_profile_move_pause(object, move_number);
 			return;
 		case 70:
-			attract_profile_move_back(object, y);
+			move = (uint16_t)leftover_y;
+			attract_profile_move_back(object, move);
 			return;
 		case 74:
 			break;
 		case -26:
-			attract_opening(y, u);
+			attract_opening(u);
 			return;
 		case -24:
-			attract_opening_end(y, u);
+			attract_opening_end(u);
 			return;
 		case -22:
 			continue;
 		case -20:
-			attract_homer(y, u);
+			attract_homer(u);
 			return;
 		case -18:
-			attract_lisa(y, u);
+			attract_lisa(u);
 			return;
 		case -16:
-			attract_marge(y, u);
+			attract_marge(u);
 			return;
 		case -14:
-			attract_leap(y, u);
+			attract_leap(u);
 			return;
 		case -12:
-			attract_last_screen(y, u);
+			attract_last_screen(u);
 			return;
 		case -10:
 			attract_opening_start(u);
@@ -709,7 +715,7 @@ void attract_bart(uint16_t y, uint16_t u)
 /* Starts Bart's scene: its layer and its object moving */
 void attract_bart_scene_start(void)
 {
-	uint16_t ignored16 = 0, ignored16_2 = 0, ignored16_3 = 0, layer_and_columns = 0, object = 0, picture = 0;
+	uint16_t ignored16 = 0, ignored16_2 = 0, layer_and_columns = 0, object = 0, picture = 0;
 
 	attract_reset_layers();
 	layer_a_scroll_x = 0x4D0u;
@@ -720,7 +726,7 @@ void attract_bart_scene_start(void)
 	io_write8(0x1FB9u, 0x3Fu);
 	io_write8(0x1FBAu, 0x36u);
 	layer_and_columns = 0x2Au;
-	vector_draw_layer_strips(layer_and_columns, &ignored16, &ignored16_2, &ignored16_3);
+	vector_draw_layer_strips(layer_and_columns, &ignored16, &ignored16_2);
 	io_write8(0x1FB9u, 0x13u);
 	io_write8(0x1FBAu, 0x2Cu);
 	object = OBJECT_ADDRESS(14);
@@ -737,13 +743,13 @@ void attract_bart_scene_move(void)
 {
 	uint32_t carry = 0;
 	uint16_t object = 0, scroll_x_low = 0;
-	uint8_t t1 = 0;
+	uint8_t wait_left = 0;
 	uint16_t z_speed = 0;
 
 	object = OBJECT_ADDRESS(14);
-	t1 = (uint8_t)(step_timer >> 8u);
-	step_timer = (step_timer & 0xFFu) | ((t1 - 1u & 0xFFu) << 8u);
-	if (t1 == 1u)
+	wait_left = (uint8_t)(step_timer >> 8u);
+	step_timer = (step_timer & 0xFFu) | ((wait_left - 1u & 0xFFu) << 8u);
+	if (wait_left == 1u)
 	{
 		OBJECT(object)->x_speed = -0x700;
 		step_timer = (step_timer & 0xFFu) | 0x100u;
@@ -761,11 +767,11 @@ void attract_bart_scene_move(void)
 /* Waits a frame, then Bart's profile */
 void attract_bart_scene_wait(void)
 {
-	uint8_t t1 = 0;
+	uint8_t wait_left = 0;
 
-	t1 = (uint8_t)(step_timer >> 8u);
-	step_timer = (step_timer & 0xFFu) | ((t1 - 1u & 0xFFu) << 8u);
-	if (t1 == 1u)
+	wait_left = (uint8_t)(step_timer >> 8u);
+	step_timer = (step_timer & 0xFFu) | ((wait_left - 1u & 0xFFu) << 8u);
+	if (wait_left == 1u)
 		step_phase++;
 }
 
@@ -790,7 +796,7 @@ void attract_bart_profile_start(void)
 void attract_bart_profile_type(void)
 {
 	uint16_t move_number = 0, object = 0, text_number = 0;
-	uint8_t t1 = 0;
+	uint8_t wait_left = 0;
 
 	text_number = 0u;
 	attract_type_profile_text(text_number);
@@ -799,31 +805,31 @@ void attract_bart_profile_type(void)
 	object = OBJECT_ADDRESS(14);
 	move_number = 0u;
 	attract_profile_move(object, move_number);
-	t1 = (uint8_t)(step_timer >> 8u);
-	step_timer = (step_timer & 0xFFu) | ((t1 - 1u & 0xFFu) << 8u);
-	if (t1 == 1u)
+	wait_left = (uint8_t)(step_timer >> 8u);
+	step_timer = (step_timer & 0xFFu) | ((wait_left - 1u & 0xFFu) << 8u);
+	if (wait_left == 1u)
 		step_phase++;
 }
 
 /* Ends Bart's profile: palette, objects and texts cleared */
 void attract_bart_profile_end(uint16_t palette_job)
 {
-	uint16_t ignored16 = 0, ignored16_2 = 0, ignored16_3 = 0, ignored16_4 = 0, request = 0;
+	uint16_t ignored16 = 0, ignored16_2 = 0, ignored16_3 = 0, request = 0;
 
 	palette_request_kind = 1u;
 	request = 0x203u;
-	vector_palette_request(request, &ignored16, &palette_job);
-	vector_clear_objects(&ignored16_2, &ignored16_3);
-	vector_clear_text_layer(&ignored16_2, &ignored16_4);
+	vector_palette_request(palette_job, request);
+	vector_clear_objects(&ignored16, &ignored16_2);
+	vector_clear_text_layer(&ignored16, &ignored16_3);
 	game_step++;
 	step_phase = 0u;
 }
 
 /* Homer's part of the attract, by its substep */
-void attract_homer(uint16_t y, uint16_t u)
+void attract_homer(uint16_t u)
 {
 	uint8_t phase_offset = 0;
-	uint16_t move_number = 0, object = 0;
+	uint16_t move = 0, move_number = 0, object = 0;
 
 	for (;;)
 	{
@@ -910,8 +916,9 @@ void attract_homer(uint16_t y, uint16_t u)
 			attract_last_screen_wait(u);
 			return;
 		case 52:
+			move = (uint16_t)leftover_y;
 			move_number = (uint32_t)phase_offset << 8;
-			attract_profile_move_out(object, y, move_number);
+			attract_profile_move_out(object, move, move_number);
 			return;
 		case 54:
 		case 60:
@@ -922,32 +929,33 @@ void attract_homer(uint16_t y, uint16_t u)
 			attract_profile_move_pause(object, move_number);
 			return;
 		case 58:
-			attract_profile_move_back(object, y);
+			move = (uint16_t)leftover_y;
+			attract_profile_move_back(object, move);
 			return;
 		case 62:
 			break;
 		case -38:
-			attract_opening(y, u);
+			attract_opening(u);
 			return;
 		case -36:
-			attract_opening_end(y, u);
+			attract_opening_end(u);
 			return;
 		case -34:
-			attract_bart(y, u);
+			attract_bart(u);
 			return;
 		case -32:
 			continue;
 		case -30:
-			attract_lisa(y, u);
+			attract_lisa(u);
 			return;
 		case -28:
-			attract_marge(y, u);
+			attract_marge(u);
 			return;
 		case -26:
-			attract_leap(y, u);
+			attract_leap(u);
 			return;
 		case -24:
-			attract_last_screen(y, u);
+			attract_last_screen(u);
 			return;
 		case -22:
 			attract_opening_start(u);
@@ -1013,12 +1021,12 @@ void attract_homer_scene_start(void)
 /* Holds the scene for its frames */
 void attract_homer_scene_wait(void)
 {
-	uint8_t t1 = 0;
+	uint8_t wait_left = 0;
 
 	OBJECT(OBJECT_ADDRESS(14))->animation_flags = 0x40u;
-	t1 = (uint8_t)(step_timer >> 8u);
-	step_timer = (step_timer & 0xFFu) | ((t1 - 1u & 0xFFu) << 8u);
-	if (t1 == 1u)
+	wait_left = (uint8_t)(step_timer >> 8u);
+	step_timer = (step_timer & 0xFFu) | ((wait_left - 1u & 0xFFu) << 8u);
+	if (wait_left == 1u)
 	{
 		step_timer = (step_timer & 0xFFu) | 0x8000u;
 		step_phase++;
@@ -1029,11 +1037,11 @@ void attract_homer_scene_wait(void)
 void attract_homer_scene_end(void)
 {
 	uint16_t ignored16 = 0, ignored16_2 = 0;
-	uint8_t t1 = 0;
+	uint8_t wait_left = 0;
 
-	t1 = (uint8_t)(step_timer >> 8u);
-	step_timer = (step_timer & 0xFFu) | ((t1 - 1u & 0xFFu) << 8u);
-	if (t1 != 1u)
+	wait_left = (uint8_t)(step_timer >> 8u);
+	step_timer = (step_timer & 0xFFu) | ((wait_left - 1u & 0xFFu) << 8u);
+	if (wait_left != 1u)
 		return;
 	vector_clear_objects(&ignored16, &ignored16_2);
 	vector_clear_layer_b();
@@ -1060,7 +1068,7 @@ void attract_homer_profile_start(void)
 void attract_homer_profile_type(void)
 {
 	uint16_t move_number = 0, object = 0, text_number = 0;
-	uint8_t t1 = 0;
+	uint8_t wait_left = 0;
 
 	text_number = 0x200u;
 	attract_type_profile_text(text_number);
@@ -1069,9 +1077,9 @@ void attract_homer_profile_type(void)
 	object = OBJECT_ADDRESS(14);
 	move_number = 0x100u;
 	attract_profile_move(object, move_number);
-	t1 = (uint8_t)(step_timer >> 8u);
-	step_timer = (step_timer & 0xFFu) | ((t1 - 1u & 0xFFu) << 8u);
-	if (t1 == 1u)
+	wait_left = (uint8_t)(step_timer >> 8u);
+	step_timer = (step_timer & 0xFFu) | ((wait_left - 1u & 0xFFu) << 8u);
+	if (wait_left == 1u)
 		step_phase++;
 }
 
@@ -1087,10 +1095,10 @@ void attract_homer_profile_end(void)
 }
 
 /* Lisa's part of the attract, by its substep */
-void attract_lisa(uint16_t y, uint16_t u)
+void attract_lisa(uint16_t u)
 {
 	uint8_t phase_offset = 0;
-	uint16_t move_number = 0, object = 0;
+	uint16_t move = 0, move_number = 0, object = 0;
 
 	for (;;)
 	{
@@ -1159,8 +1167,9 @@ void attract_lisa(uint16_t y, uint16_t u)
 			attract_last_screen_wait(u);
 			return;
 		case 40:
+			move = (uint16_t)leftover_y;
 			move_number = (uint32_t)phase_offset << 8;
-			attract_profile_move_out(object, y, move_number);
+			attract_profile_move_out(object, move, move_number);
 			return;
 		case 42:
 		case 48:
@@ -1171,32 +1180,33 @@ void attract_lisa(uint16_t y, uint16_t u)
 			attract_profile_move_pause(object, move_number);
 			return;
 		case 46:
-			attract_profile_move_back(object, y);
+			move = (uint16_t)leftover_y;
+			attract_profile_move_back(object, move);
 			return;
 		case 50:
 			break;
 		case -50:
-			attract_opening(y, u);
+			attract_opening(u);
 			return;
 		case -48:
-			attract_opening_end(y, u);
+			attract_opening_end(u);
 			return;
 		case -46:
-			attract_bart(y, u);
+			attract_bart(u);
 			return;
 		case -44:
-			attract_homer(y, u);
+			attract_homer(u);
 			return;
 		case -42:
 			continue;
 		case -40:
-			attract_marge(y, u);
+			attract_marge(u);
 			return;
 		case -38:
-			attract_leap(y, u);
+			attract_leap(u);
 			return;
 		case -36:
-			attract_last_screen(y, u);
+			attract_last_screen(u);
 			return;
 		case -34:
 			attract_opening_start(u);
@@ -1258,7 +1268,7 @@ void attract_lisa(uint16_t y, uint16_t u)
 /* Starts Lisa's scene: its layers and two objects */
 void attract_lisa_scene_start(void)
 {
-	uint16_t ignored16 = 0, ignored16_2 = 0, ignored16_3 = 0, layer_and_columns = 0, object = 0, picture = 0;
+	uint16_t ignored16 = 0, ignored16_2 = 0, layer_and_columns = 0, object = 0, picture = 0;
 
 	attract_reset_layers();
 	layer_a_scroll_x = 0x240u;
@@ -1266,7 +1276,7 @@ void attract_lisa_scene_start(void)
 	io_write8(0x1FB9u, 0x3Fu);
 	io_write8(0x1FBAu, 0x36u);
 	layer_and_columns = 0x40u;
-	vector_draw_layer_strips(layer_and_columns, &ignored16, &ignored16_2, &ignored16_3);
+	vector_draw_layer_strips(layer_and_columns, &ignored16, &ignored16_2);
 	layer_a_scroll_x = 0x2B0u;
 	io_write8(0x1FB9u, 0x13u);
 	io_write8(0x1FBAu, 0x2Cu);
@@ -1284,12 +1294,12 @@ void attract_lisa_scene_walk(void)
 {
 	uint32_t carry = 0;
 	uint16_t object = 0, scroll_x_low = 0;
-	uint8_t t1 = 0;
+	uint8_t wait_left = 0;
 
 	object = OBJECT_ADDRESS(14);
-	t1 = (uint8_t)(step_timer >> 8u);
-	step_timer = (step_timer & 0xFFu) | ((t1 - 1u & 0xFFu) << 8u);
-	if (t1 == 1u)
+	wait_left = (uint8_t)(step_timer >> 8u);
+	step_timer = (step_timer & 0xFFu) | ((wait_left - 1u & 0xFFu) << 8u);
+	if (wait_left == 1u)
 	{
 		OBJECT(object)->x_speed = 0;
 		OBJECT(object + 0x60u)->x_speed = 0;
@@ -1309,12 +1319,12 @@ void attract_lisa_scene_walk(void)
 void attract_lisa_scene_play(void)
 {
 	uint16_t ignored16 = 0, ignored16_2 = 0;
-	uint8_t t1 = 0;
+	uint8_t wait_left = 0;
 
 	attract_lisa_scene_animate();
-	t1 = (uint8_t)(step_timer >> 8u);
-	step_timer = (step_timer & 0xFFu) | ((t1 - 1u & 0xFFu) << 8u);
-	if (t1 != 1u)
+	wait_left = (uint8_t)(step_timer >> 8u);
+	step_timer = (step_timer & 0xFFu) | ((wait_left - 1u & 0xFFu) << 8u);
+	if (wait_left != 1u)
 		return;
 	vector_clear_objects(&ignored16, &ignored16_2);
 	step_phase++;
@@ -1340,7 +1350,7 @@ void attract_lisa_profile_start(void)
 void attract_lisa_profile_type(void)
 {
 	uint16_t move_number = 0, object = 0, text_number = 0;
-	uint8_t t1 = 0;
+	uint8_t wait_left = 0;
 
 	text_number = 0x400u;
 	attract_type_profile_text(text_number);
@@ -1349,22 +1359,22 @@ void attract_lisa_profile_type(void)
 	object = OBJECT_ADDRESS(14);
 	move_number = 0x200u;
 	attract_profile_move(object, move_number);
-	t1 = (uint8_t)(step_timer >> 8u);
-	step_timer = (step_timer & 0xFFu) | ((t1 - 1u & 0xFFu) << 8u);
-	if (t1 == 1u)
+	wait_left = (uint8_t)(step_timer >> 8u);
+	step_timer = (step_timer & 0xFFu) | ((wait_left - 1u & 0xFFu) << 8u);
+	if (wait_left == 1u)
 		step_phase++;
 }
 
 /* Ends Lisa's profile: palette, objects and texts cleared */
 void attract_lisa_profile_end(uint16_t palette_job)
 {
-	uint16_t ignored16 = 0, ignored16_2 = 0, ignored16_3 = 0, ignored16_4 = 0, request = 0;
+	uint16_t ignored16 = 0, ignored16_2 = 0, ignored16_3 = 0, request = 0;
 
 	palette_request_kind = 1u;
 	request = 0x204u;
-	vector_palette_request(request, &ignored16, &palette_job);
-	vector_clear_objects(&ignored16_2, &ignored16_3);
-	vector_clear_text_layer(&ignored16_2, &ignored16_4);
+	vector_palette_request(palette_job, request);
+	vector_clear_objects(&ignored16, &ignored16_2);
+	vector_clear_text_layer(&ignored16, &ignored16_3);
 	game_step++;
 	step_phase = 0u;
 }
@@ -1376,15 +1386,15 @@ void attract_lisa_scene_animate(void)
 	uint16_t object = 0;
 	uint8_t stack = 0;
 	uint8_t action = 0;
-	uint16_t t1 = 0;
+	uint16_t random_product = 0;
 
 	object = OBJECT_ADDRESS(14);
 	if ((frame_count & 0xFu) == 0u)
 	{
 		action = OBJECT(object)->action;
-		t1 = action * 0xDu;
-		OBJECT(object)->action = t1 + 7u;
-		pose = (t1 >> 8) & 1u;
+		random_product = action * 0xDu;
+		OBJECT(object)->action = random_product + 7u;
+		pose = (random_product >> 8) & 1u;
 		stack = pose;
 		OBJECT(object)->animation = (pose + 0x1Au) | 0x80u;
 		OBJECT(object + 0x60u)->animation = (stack + 0x1Cu) | 0x80u;
@@ -1392,10 +1402,10 @@ void attract_lisa_scene_animate(void)
 }
 
 /* Marge and Maggie's part of the attract, by its substep */
-void attract_marge(uint16_t y, uint16_t u)
+void attract_marge(uint16_t u)
 {
 	uint8_t phase_offset = 0;
-	uint16_t move_number = 0, object = 0;
+	uint16_t move = 0, move_number = 0, object = 0;
 
 	for (;;)
 	{
@@ -1446,8 +1456,9 @@ void attract_marge(uint16_t y, uint16_t u)
 			attract_last_screen_wait(u);
 			return;
 		case 28:
+			move = (uint16_t)leftover_y;
 			move_number = (uint32_t)phase_offset << 8;
-			attract_profile_move_out(object, y, move_number);
+			attract_profile_move_out(object, move, move_number);
 			return;
 		case 30:
 		case 36:
@@ -1458,32 +1469,33 @@ void attract_marge(uint16_t y, uint16_t u)
 			attract_profile_move_pause(object, move_number);
 			return;
 		case 34:
-			attract_profile_move_back(object, y);
+			move = (uint16_t)leftover_y;
+			attract_profile_move_back(object, move);
 			return;
 		case 38:
 			break;
 		case -62:
-			attract_opening(y, u);
+			attract_opening(u);
 			return;
 		case -60:
-			attract_opening_end(y, u);
+			attract_opening_end(u);
 			return;
 		case -58:
-			attract_bart(y, u);
+			attract_bart(u);
 			return;
 		case -56:
-			attract_homer(y, u);
+			attract_homer(u);
 			return;
 		case -54:
-			attract_lisa(y, u);
+			attract_lisa(u);
 			return;
 		case -52:
 			continue;
 		case -50:
-			attract_leap(y, u);
+			attract_leap(u);
 			return;
 		case -48:
-			attract_last_screen(y, u);
+			attract_last_screen(u);
 			return;
 		case -46:
 			attract_opening_start(u);
@@ -1563,7 +1575,7 @@ void attract_marge(uint16_t y, uint16_t u)
 /* Starts Marge's scene: its layers and objects */
 void attract_marge_scene_start(void)
 {
-	uint16_t ignored16 = 0, object = 0, picture = 0, request = 0, u = 0;
+	uint16_t moving_picture = 0, object = 0, picture = 0, request = 0;
 
 	attract_reset_layers();
 	layer_a_scroll_x = 0x510u;
@@ -1587,15 +1599,15 @@ void attract_marge_scene_start(void)
 	OBJECT(object)->z = 0x80u;
 	attract_put_picture(&object, &picture);
 	object = OBJECT_ADDRESS(18);
-	u = attract_marge_scene_moving_picture_ADDRESS;
+	moving_picture = attract_marge_scene_moving_picture_ADDRESS;
 	OBJECT(OBJECT_ADDRESS(18))->attributes = 0x30u;
 	OBJECT(OBJECT_ADDRESS(18))->x_speed = -0x600;
 	OBJECT(OBJECT_ADDRESS(18))->y_speed = 0x1C0;
-	attract_put_picture(&object, &u);
+	attract_put_picture(&object, &moving_picture);
 	OBJECT(object - 0x60u)->kind = 0xFu;
 	palette_request_kind = 3u;
 	request = 0x7A53u;
-	vector_palette_request(request, &ignored16, &u);
+	vector_palette_request(moving_picture, request);
 	step_timer = (step_timer & 0xFFu) | 0x5000u;
 	step_phase++;
 }
@@ -1603,13 +1615,13 @@ void attract_marge_scene_start(void)
 /* Runs the scene for its frames */
 void attract_marge_scene_wait(void)
 {
-	uint8_t t1 = 0;
+	uint8_t wait_left = 0;
 
 	OBJECT(OBJECT_ADDRESS(15))->animation_flags = 0x40u;
 	attract_marge_scene_wrap();
-	t1 = (uint8_t)(step_timer >> 8u);
-	step_timer = (step_timer & 0xFFu) | ((t1 - 1u & 0xFFu) << 8u);
-	if (t1 == 1u)
+	wait_left = (uint8_t)(step_timer >> 8u);
+	step_timer = (step_timer & 0xFFu) | ((wait_left - 1u & 0xFFu) << 8u);
+	if (wait_left == 1u)
 	{
 		step_timer = (step_timer & 0xFFu) | 0x1800u;
 		step_phase++;
@@ -1619,12 +1631,12 @@ void attract_marge_scene_wait(void)
 /* Puts its first object in its pose, then runs the scene */
 void attract_marge_scene_pose(void)
 {
-	uint8_t t1 = 0;
+	uint8_t wait_left = 0;
 
 	attract_marge_scene_wrap();
-	t1 = (uint8_t)(step_timer >> 8u);
-	step_timer = (step_timer & 0xFFu) | ((t1 - 1u & 0xFFu) << 8u);
-	if (t1 != 1u)
+	wait_left = (uint8_t)(step_timer >> 8u);
+	step_timer = (step_timer & 0xFFu) | ((wait_left - 1u & 0xFFu) << 8u);
+	if (wait_left != 1u)
 	{
 		attract_marge_scene_animate();
 		return;
@@ -1641,23 +1653,23 @@ void attract_marge_scene_pose(void)
 /* Ends Marge's scene: layer and objects cleared */
 void attract_marge_scene_end(void)
 {
-	uint16_t ignored16 = 0, ignored16_2 = 0, object = 0, request = 0, u = 0;
-	uint8_t t1 = 0;
+	uint16_t ignored16 = 0, object = 0, request = 0, u = 0;
+	uint8_t wait_left = 0;
 
 	object = attract_marge_scene_wrap();
-	t1 = (uint8_t)(step_timer >> 8u);
-	step_timer = (step_timer & 0xFFu) | ((t1 - 1u & 0xFFu) << 8u);
-	if (t1 != 1u)
+	wait_left = (uint8_t)(step_timer >> 8u);
+	step_timer = (step_timer & 0xFFu) | ((wait_left - 1u & 0xFFu) << 8u);
+	if (wait_left != 1u)
 	{
 		attract_marge_scene_animate();
 		return;
 	}
 	OBJECT(object)->action = 0u;
 	vector_clear_layer_b();
-	vector_clear_objects(&ignored16_2, &u);
+	vector_clear_objects(&ignored16, &u);
 	palette_request_kind = 3u;
 	request = 0u;
-	vector_palette_request(request, &ignored16, &u);
+	vector_palette_request(u, request);
 	step_phase++;
 }
 
@@ -1692,11 +1704,11 @@ void attract_marge_scene_animate(void)
 /* Starts Marge and Maggie's profiles: the layer and their pictures */
 void attract_marge_profile_start(uint16_t action_step)
 {
-	uint16_t ignored16 = 0, object = 0, picture = 0, request = 0;
+	uint16_t object = 0, picture = 0, request = 0;
 
 	palette_request_kind = 2u;
 	request = 1u;
-	vector_palette_request(request, &ignored16, &action_step);
+	action_step = vector_palette_request(action_step, request);
 	OBJECT(OBJECT_ADDRESS(14))->action_step = (uint8_t)(action_step >> 8u);
 	OBJECT(OBJECT_ADDRESS(14))->behaviour = (OBJECT(OBJECT_ADDRESS(14))->behaviour & 0xFFu) | ((action_step & 0xFFu) << 8u);
 	attract_reset_layers();
@@ -1720,7 +1732,7 @@ void attract_marge_profile_type(void)
 {
 	uint32_t carry = 0;
 	uint16_t command = 0, move_number = 0, object = 0, text_number = 0;
-	uint8_t t1 = 0;
+	uint8_t wait_left = 0;
 
 	text_number = 0x600u;
 	attract_type_profile_text(text_number);
@@ -1737,9 +1749,9 @@ void attract_marge_profile_type(void)
 	object = OBJECT_ADDRESS(16);
 	move_number = 0x400u;
 	attract_profile_move(object, move_number);
-	t1 = (uint8_t)(step_timer >> 8u);
-	step_timer = (step_timer & 0xFFu) | ((t1 - 1u & 0xFFu) << 8u);
-	if (t1 == 1u)
+	wait_left = (uint8_t)(step_timer >> 8u);
+	step_timer = (step_timer & 0xFFu) | ((wait_left - 1u & 0xFFu) << 8u);
+	if (wait_left == 1u)
 	{
 		mem_write8((((uint32_t)OBJECT(OBJECT_ADDRESS(14))->action_step << 8u) | (OBJECT(OBJECT_ADDRESS(14))->behaviour >> 8u)), 0u);
 		step_phase++;
@@ -1772,10 +1784,10 @@ uint16_t attract_marge_scene_wrap(void)
 }
 
 /* The attract's leap scene, by its substep */
-void attract_leap(uint16_t y, uint16_t u)
+void attract_leap(uint16_t u)
 {
 	uint8_t phase_offset = 0;
-	uint16_t move_number = 0, object = 0;
+	uint16_t move = 0, move_number = 0, object = 0;
 
 	for (;;)
 	{
@@ -1805,8 +1817,9 @@ void attract_leap(uint16_t y, uint16_t u)
 			attract_last_screen_wait(u);
 			return;
 		case 14:
+			move = (uint16_t)leftover_y;
 			move_number = (uint32_t)phase_offset << 8;
-			attract_profile_move_out(object, y, move_number);
+			attract_profile_move_out(object, move, move_number);
 			return;
 		case 16:
 		case 22:
@@ -1817,32 +1830,33 @@ void attract_leap(uint16_t y, uint16_t u)
 			attract_profile_move_pause(object, move_number);
 			return;
 		case 20:
-			attract_profile_move_back(object, y);
+			move = (uint16_t)leftover_y;
+			attract_profile_move_back(object, move);
 			return;
 		case 24:
 			break;
 		case -76:
-			attract_opening(y, u);
+			attract_opening(u);
 			return;
 		case -74:
-			attract_opening_end(y, u);
+			attract_opening_end(u);
 			return;
 		case -72:
-			attract_bart(y, u);
+			attract_bart(u);
 			return;
 		case -70:
-			attract_homer(y, u);
+			attract_homer(u);
 			return;
 		case -68:
-			attract_lisa(y, u);
+			attract_lisa(u);
 			return;
 		case -66:
-			attract_marge(y, u);
+			attract_marge(u);
 			return;
 		case -64:
 			continue;
 		case -62:
-			attract_last_screen(y, u);
+			attract_last_screen(u);
 			return;
 		case -60:
 			attract_opening_start(u);
@@ -1970,13 +1984,13 @@ void attract_leap_start(void)
 void attract_leap_rise(void)
 {
 	uint16_t object = 0;
-	uint8_t t1 = 0;
+	uint8_t wait_left = 0;
 
 	object = OBJECT_ADDRESS(14);
 	OBJECT(OBJECT_ADDRESS(15))->animation_flags = 0x40u;
-	t1 = (uint8_t)(step_timer >> 8u);
-	step_timer = (step_timer & 0xFFu) | ((t1 - 1u & 0xFFu) << 8u);
-	if (t1 == 1u)
+	wait_left = (uint8_t)(step_timer >> 8u);
+	step_timer = (step_timer & 0xFFu) | ((wait_left - 1u & 0xFFu) << 8u);
+	if (wait_left == 1u)
 	{
 		step_timer = (step_timer & 0xFFu) | 0x3000u;
 		OBJECT(object)->z_speed = 0;
@@ -1989,13 +2003,13 @@ void attract_leap_rise(void)
 void attract_leap_fall(void)
 {
 	uint16_t object = 0;
-	uint8_t t1 = 0;
+	uint8_t wait_left = 0;
 
 	object = OBJECT_ADDRESS(14);
 	OBJECT(OBJECT_ADDRESS(15))->animation_flags = 0x40u;
-	t1 = (uint8_t)(step_timer >> 8u);
-	step_timer = (step_timer & 0xFFu) | ((t1 - 1u & 0xFFu) << 8u);
-	if (t1 == 1u)
+	wait_left = (uint8_t)(step_timer >> 8u);
+	step_timer = (step_timer & 0xFFu) | ((wait_left - 1u & 0xFFu) << 8u);
+	if (wait_left == 1u)
 	{
 		OBJECT(object)->x = 0xD8u;
 		OBJECT(object)->y = 0x100u;
@@ -2009,19 +2023,19 @@ void attract_leap_fall(void)
 void attract_leap_land(void)
 {
 	uint16_t object = 0;
-	uint8_t t1 = 0;
-	uint16_t t2 = 0, t3 = 0;
+	uint8_t wait_left = 0;
+	uint16_t partner_y = 0, new_partner_y = 0;
 
 	object = OBJECT_ADDRESS(14);
 	OBJECT(OBJECT_ADDRESS(15))->animation_flags = 0x40u;
-	t1 = (uint8_t)(step_timer >> 8u);
-	step_timer = (step_timer & 0xFFu) | ((t1 - 1u & 0xFFu) << 8u);
-	if (t1 == 1u)
+	wait_left = (uint8_t)(step_timer >> 8u);
+	step_timer = (step_timer & 0xFFu) | ((wait_left - 1u & 0xFFu) << 8u);
+	if (wait_left == 1u)
 	{
 		OBJECT(object)->flags = 0u;
-		t2 = OBJECT(object + 0x60u)->y;
-		t3 = t2 + 4u;
-		OBJECT(object + 0x60u)->y = t3;
+		partner_y = OBJECT(object + 0x60u)->y;
+		new_partner_y = partner_y + 4u;
+		OBJECT(object + 0x60u)->y = new_partner_y;
 		step_timer = (step_timer & 0xFFu) | 0x5000u;
 		step_phase++;
 	}
@@ -2031,12 +2045,12 @@ void attract_leap_land(void)
 void attract_leap_end(void)
 {
 	uint16_t ignored16 = 0, ignored16_2 = 0;
-	uint8_t t1 = 0;
+	uint8_t wait_left = 0;
 
 	OBJECT(OBJECT_ADDRESS(16))->flags = 0x80u;
-	t1 = (uint8_t)(step_timer >> 8u);
-	step_timer = (step_timer & 0xFFu) | ((t1 - 1u & 0xFFu) << 8u);
-	if (t1 != 1u)
+	wait_left = (uint8_t)(step_timer >> 8u);
+	step_timer = (step_timer & 0xFFu) | ((wait_left - 1u & 0xFFu) << 8u);
+	if (wait_left != 1u)
 		return;
 	vector_clear_objects(&ignored16, &ignored16_2);
 	step_phase = 0u;
@@ -2044,10 +2058,10 @@ void attract_leap_end(void)
 }
 
 /* The attract's last screen of this part, by its substep */
-void attract_last_screen(uint16_t y, uint16_t u)
+void attract_last_screen(uint16_t u)
 {
 	uint8_t phase_offset = 0;
-	uint16_t move_number = 0, object = 0;
+	uint16_t move = 0, move_number = 0, object = 0;
 
 	for (;;)
 	{
@@ -2062,8 +2076,9 @@ void attract_last_screen(uint16_t y, uint16_t u)
 			attract_last_screen_wait(u);
 			return;
 		case 4:
+			move = (uint16_t)leftover_y;
 			move_number = (uint32_t)phase_offset << 8;
-			attract_profile_move_out(object, y, move_number);
+			attract_profile_move_out(object, move, move_number);
 			return;
 		case 6:
 		case 12:
@@ -2074,30 +2089,31 @@ void attract_last_screen(uint16_t y, uint16_t u)
 			attract_profile_move_pause(object, move_number);
 			return;
 		case 10:
-			attract_profile_move_back(object, y);
+			move = (uint16_t)leftover_y;
+			attract_profile_move_back(object, move);
 			return;
 		case 14:
 			break;
 		case -86:
-			attract_opening(y, u);
+			attract_opening(u);
 			return;
 		case -84:
-			attract_opening_end(y, u);
+			attract_opening_end(u);
 			return;
 		case -82:
-			attract_bart(y, u);
+			attract_bart(u);
 			return;
 		case -80:
-			attract_homer(y, u);
+			attract_homer(u);
 			return;
 		case -78:
-			attract_lisa(y, u);
+			attract_lisa(u);
 			return;
 		case -76:
-			attract_marge(y, u);
+			attract_marge(u);
 			return;
 		case -74:
-			attract_leap(y, u);
+			attract_leap(u);
 			return;
 		case -72:
 			continue;
@@ -2215,17 +2231,17 @@ void attract_last_screen(uint16_t y, uint16_t u)
 /* Draws the two layers of the last screen and its palettes */
 void attract_last_screen_start(uint16_t palette_job)
 {
-	uint16_t ignored16 = 0, request = 0, u = 0;
+	uint16_t request = 0, u = 0;
 
 	attract_reset_layers();
 	layer_a_scroll_x = 0xFFF0u;
 	layer_b_scroll_x = 0xFFF0u;
 	palette_request_kind = 1u;
 	request = 0xD01u;
-	vector_palette_request(request, &ignored16, &palette_job);
+	palette_job = vector_palette_request(palette_job, request);
 	palette_request_kind = 1u;
 	request = 0x20Cu;
-	vector_palette_request(request, &ignored16, &palette_job);
+	vector_palette_request(palette_job, request);
 	map_scene = 0u;
 	map_area = 3u;
 	attract_draw_layer_a();
@@ -2234,7 +2250,7 @@ void attract_last_screen_start(uint16_t palette_job)
 	u = attract_draw_layer_b();
 	palette_request_kind = 3u;
 	request = 0x7FFFu;
-	vector_palette_request(request, &ignored16, &u);
+	vector_palette_request(u, request);
 	step_timer = (step_timer & 0xFFu) | 0x8000u;
 	profile_typed = 0u;
 	step_phase++;
@@ -2243,16 +2259,16 @@ void attract_last_screen_start(uint16_t palette_job)
 /* Waits, fades, and hands over to the attract's next part */
 void attract_last_screen_wait(uint16_t palette_job)
 {
-	uint16_t ignored16 = 0, request = 0;
-	uint8_t t1 = 0;
+	uint16_t request = 0;
+	uint8_t wait_left = 0;
 
-	t1 = (uint8_t)(step_timer >> 8u);
-	step_timer = (step_timer & 0xFFu) | ((t1 - 1u & 0xFFu) << 8u);
-	if (t1 != 1u)
+	wait_left = (uint8_t)(step_timer >> 8u);
+	step_timer = (step_timer & 0xFFu) | ((wait_left - 1u & 0xFFu) << 8u);
+	if (wait_left != 1u)
 		return;
 	palette_request_kind = 3u;
 	request = 0u;
-	vector_palette_request(request, &ignored16, &palette_job);
+	vector_palette_request(palette_job, request);
 	mode_phase++;
 }
 
@@ -2275,15 +2291,16 @@ uint16_t attract_profile_place(uint16_t object, uint16_t picture)
 void attract_profile_move(uint16_t object, uint16_t move_number)
 {
 	uint8_t b = 0;
-	uint16_t move = 0, u = 0;
+	uint16_t move = 0, move_steps = 0;
 	uint8_t move_step = 0;
 
-	u = attract_profile_move_steps_ADDRESS;
-	move = profile_moves[((move_number | b) >> 8) & 0x7Fu];
+	move_steps = attract_profile_move_steps_ADDRESS;
+	leftover_y = profile_moves[((move_number | b) >> 8) & 0x7Fu];
 	move_step = OBJECT(object)->attract_profile.move_step;
 	switch ((int8_t)(uint8_t)((uint32_t)move_step << 1))
 	{
 	case 0:
+		move = (uint16_t)leftover_y;
 		attract_profile_move_out(object, move, move_number);
 		return;
 	case 2:
@@ -2294,37 +2311,38 @@ void attract_profile_move(uint16_t object, uint16_t move_number)
 		attract_profile_move_pause(object, move_number);
 		return;
 	case 6:
+		move = (uint16_t)leftover_y;
 		attract_profile_move_back(object, move);
 		return;
 	case 10:
 		attract_profile_move_done();
 		return;
 	case -90:
-		attract_opening(move, u);
+		attract_opening(move_steps);
 		return;
 	case -88:
-		attract_opening_end(move, u);
+		attract_opening_end(move_steps);
 		return;
 	case -86:
-		attract_bart(move, u);
+		attract_bart(move_steps);
 		return;
 	case -84:
-		attract_homer(move, u);
+		attract_homer(move_steps);
 		return;
 	case -82:
-		attract_lisa(move, u);
+		attract_lisa(move_steps);
 		return;
 	case -80:
-		attract_marge(move, u);
+		attract_marge(move_steps);
 		return;
 	case -78:
-		attract_leap(move, u);
+		attract_leap(move_steps);
 		return;
 	case -76:
-		attract_last_screen(move, u);
+		attract_last_screen(move_steps);
 		return;
 	case -74:
-		attract_opening_start(u);
+		attract_opening_start(move_steps);
 		return;
 	case -72:
 		attract_opening_zoom();
@@ -2354,7 +2372,7 @@ void attract_profile_move(uint16_t object, uint16_t move_number)
 		attract_bart_profile_type();
 		return;
 	case -54:
-		attract_bart_profile_end(u);
+		attract_bart_profile_end(move_steps);
 		return;
 	case -52:
 		attract_homer_scene_start();
@@ -2390,7 +2408,7 @@ void attract_profile_move(uint16_t object, uint16_t move_number)
 		attract_lisa_profile_type();
 		return;
 	case -30:
-		attract_lisa_profile_end(u);
+		attract_lisa_profile_end(move_steps);
 		return;
 	case -28:
 		attract_marge_scene_start();
@@ -2405,7 +2423,7 @@ void attract_profile_move(uint16_t object, uint16_t move_number)
 		attract_marge_scene_end();
 		return;
 	case -20:
-		attract_marge_profile_start(u);
+		attract_marge_profile_start(move_steps);
 		return;
 	case -18:
 		attract_marge_profile_type();
@@ -2429,10 +2447,10 @@ void attract_profile_move(uint16_t object, uint16_t move_number)
 		attract_leap_end();
 		return;
 	case -4:
-		attract_last_screen_start(u);
+		attract_last_screen_start(move_steps);
 		return;
 	case -2:
-		attract_last_screen_wait(u);
+		attract_last_screen_wait(move_steps);
 		return;
 	}
 }
@@ -2443,20 +2461,20 @@ void attract_profile_move_out(uint16_t object, uint16_t move, uint16_t move_numb
 	uint16_t profile_move = 0, speed_x = 0, speed_y = 0;
 	uint8_t stack = 0;
 	uint8_t move_frames = 0, move_step = 0;
-	uint16_t t1 = 0, t2 = 0;
+	uint16_t speed_x_at = 0, speed_y_at = 0;
 
 	move_frames = OBJECT(object)->attract_profile.move_frames;
 	OBJECT(object)->attract_profile.move_frames = move_frames - 1u;
 	if (move_frames != 1u)
 		return;
 	stack = move_number >> 8;
-	t1 = move;
-	speed_x = PROFILE_MOVE(t1)->speed_x;
+	speed_x_at = move;
+	speed_x = PROFILE_MOVE(speed_x_at)->speed_x;
 	OBJECT(object)->x_speed = speed_x;
 	OBJECT(object + 0x60u)->x_speed = speed_x;
-	t2 = t1 + 2u;
-	profile_move = t2 + 2u;
-	speed_y = PROFILE_MOVE(t2 - 0x2u)->speed_y;
+	speed_y_at = speed_x_at + 2u;
+	profile_move = speed_y_at + 2u;
+	speed_y = PROFILE_MOVE(speed_y_at - 0x2u)->speed_y;
 	OBJECT(object)->y_speed = speed_y;
 	OBJECT(object + 0x60u)->y_speed = speed_y;
 	if ((uint16_t)((uint32_t)stack << 8) >> 8 == 4u)
@@ -2502,21 +2520,21 @@ void attract_profile_move_back(uint16_t object, uint16_t move)
 {
 	uint16_t frames = 0, x_speed = 0, y_speed = 0;
 	uint8_t move_frames = 0, move_step = 0;
-	uint16_t t1 = 0, t2 = 0;
+	uint16_t speed_x_at = 0, speed_y_at = 0;
 
 	move_frames = OBJECT(object)->attract_profile.move_frames;
 	OBJECT(object)->attract_profile.move_frames = move_frames - 1u;
 	if (move_frames == 1u)
 	{
-		t1 = move;
-		x_speed = 0u - PROFILE_MOVE(t1)->speed_x;
+		speed_x_at = move;
+		x_speed = 0u - PROFILE_MOVE(speed_x_at)->speed_x;
 		OBJECT(object)->x_speed = x_speed;
 		OBJECT(object + 0x60u)->x_speed = x_speed;
-		t2 = t1 + 2u;
-		y_speed = 0u - PROFILE_MOVE(t2 - 0x2u)->speed_y;
+		speed_y_at = speed_x_at + 2u;
+		y_speed = 0u - PROFILE_MOVE(speed_y_at - 0x2u)->speed_y;
 		OBJECT(object)->y_speed = y_speed;
 		OBJECT(object + 0x60u)->y_speed = y_speed;
-		frames = (uint32_t)PROFILE_MOVE(t2 - 0x2u)->frames << 8;
+		frames = (uint32_t)PROFILE_MOVE(speed_y_at - 0x2u)->frames << 8;
 		OBJECT(object)->attract_profile.move_frames = frames >> 8;
 		move_step = OBJECT(object)->attract_profile.move_step;
 		OBJECT(object)->attract_profile.move_step = move_step + 1u;
@@ -2533,19 +2551,19 @@ void attract_put_picture(uint16_t *p_object, uint16_t *p_picture)
 {
 	uint16_t object = (uint16_t)*p_object;
 	uint16_t picture = (uint16_t)*p_picture;
-	uint16_t t1 = 0, t2 = 0, t3 = 0, t4 = 0, t5 = 0;
+	uint16_t animation_at = 0, x_at = 0, picture_x = 0, y_at = 0, picture_y = 0;
 
 	OBJECT(object)->flags = 0x80u;
 	OBJECT(object)->kind = 0xEu;
-	t1 = picture;
-	OBJECT(object)->animation = mem_read8(t1) | 0x80u;
-	t2 = t1 + 1u;
-	t3 = mem_read16(t2);
-	OBJECT(object)->x = t3;
-	t4 = t2 + 2u;
-	picture = t4 + 2u;
-	t5 = mem_read16(t4);
-	OBJECT(object)->y = t5;
+	animation_at = picture;
+	OBJECT(object)->animation = ATTRACT_PICTURE(animation_at)->animation | 0x80u;
+	x_at = animation_at + 1u;
+	picture_x = ATTRACT_PICTURE(x_at - 0x1u)->x;
+	OBJECT(object)->x = picture_x;
+	y_at = x_at + 2u;
+	picture = y_at + 2u;
+	picture_y = ATTRACT_PICTURE(y_at - 0x3u)->y;
+	OBJECT(object)->y = picture_y;
 	object += 0x60u;
 	*p_object = object;
 	*p_picture = picture;
@@ -2556,29 +2574,29 @@ void attract_type_profile_text(uint16_t text_number)
 {
 	uint8_t letter = 0, letter_index = 0;
 	uint16_t place = 0, text = 0;
-	uint16_t t1 = 0, t2 = 0, t3 = 0, t4 = 0, t5 = 0, t6 = 0;
+	uint16_t profile_text = 0, counter_address = 0, letter_at = 0, place_at = 0, letter_after_place_at = 0, counter = 0;
 
-	t1 = profile_texts[(text_number >> 8) & 0x7Fu];
-	text = t1 + 2u;
-	t2 = mem_read16(t1);
-	profile_count_address = t2;
+	profile_text = profile_texts[(text_number >> 8) & 0x7Fu];
+	text = profile_text + 2u;
+	counter_address = mem_read16(profile_text);
+	profile_count_address = counter_address;
 	letter_index = 0u;
 	for (;;)
 	{
 		profile_letter_place++;
-		t3 = text;
-		text = t3 + 1u;
-		letter = mem_read8(t3);
+		letter_at = text;
+		text = letter_at + 1u;
+		letter = mem_read8(letter_at);
 		if (letter == 0xFFu)
 			return;
 		if (letter == 0xFEu)
 		{
-			t4 = text;
-			profile_letter_place = mem_read16(t4);
+			place_at = text;
+			profile_letter_place = mem_read16(place_at);
 			profile_letter_colour = 0u;
-			t5 = t4 + 2u;
-			text = t5 + 1u;
-			letter = mem_read8(t5);
+			letter_after_place_at = place_at + 2u;
+			text = letter_after_place_at + 1u;
+			letter = mem_read8(letter_after_place_at);
 		}
 		if (letter_index == mem_read8(profile_count_address))
 			break;
@@ -2587,8 +2605,8 @@ void attract_type_profile_text(uint16_t text_number)
 	place = profile_letter_place;
 	mem_write8(place, letter - 0x30u);
 	mem_write8(place - 0x2000u, profile_letter_colour);
-	t6 = profile_count_address;
-	mem_write8(t6, mem_read8(t6) + 1u);
+	counter = profile_count_address;
+	mem_write8(counter, mem_read8(counter) + 1u);
 }
 
 /* Draws both layers of the scene */
@@ -2604,12 +2622,12 @@ uint16_t attract_draw_layers(void)
 /* Draws layer A of the scene */
 void attract_draw_layer_a(void)
 {
-	uint16_t ignored16 = 0, ignored16_2 = 0, ignored16_3 = 0, layer_and_columns = 0;
+	uint16_t ignored16 = 0, ignored16_2 = 0, layer_and_columns = 0;
 
 	io_write8(0x1FB9u, 0x3Fu);
 	io_write8(0x1FBAu, 0x36u);
 	layer_and_columns = 0x26u;
-	vector_draw_layer_strips(layer_and_columns, &ignored16, &ignored16_2, &ignored16_3);
+	vector_draw_layer_strips(layer_and_columns, &ignored16, &ignored16_2);
 	io_write8(0x1FB9u, 0x13u);
 	io_write8(0x1FBAu, 0x2Cu);
 }
@@ -2617,12 +2635,12 @@ void attract_draw_layer_a(void)
 /* Draws layer B of the scene */
 uint16_t attract_draw_layer_b(void)
 {
-	uint16_t ignored16 = 0, ignored16_2 = 0, layer_and_columns = 0, u = 0;
+	uint16_t ignored16 = 0, layer_and_columns = 0, u = 0;
 
 	io_write8(0x1FB9u, 0x3Fu);
 	io_write8(0x1FBAu, 0x36u);
 	layer_and_columns = 0x126u;
-	vector_draw_layer_strips(layer_and_columns, &ignored16, &ignored16_2, &u);
+	vector_draw_layer_strips(layer_and_columns, &ignored16, &u);
 	io_write8(0x1FB9u, 0x13u);
 	io_write8(0x1FBAu, 0x2Cu);
 	return u;

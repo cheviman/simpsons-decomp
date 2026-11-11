@@ -3,7 +3,7 @@
  *    Description: stage 1, downtown Springfield
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    10-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -12,7 +12,7 @@
 #include "game.h"
 
 /* Step 2, stage 1 (downtown Springfield), by step_phase */
-uint32_t step_stage_1(uint16_t y, uint16_t u)
+uint32_t step_stage_1(uint16_t u)
 {
 	uint32_t left_caller = 0;
 
@@ -37,7 +37,7 @@ uint32_t step_stage_1(uint16_t y, uint16_t u)
 			return left_caller;
 		case 8:
 			left_caller = 0u;
-			return stage_1_play(y, left_caller);
+			return stage_1_play(left_caller);
 		case 10:
 			left_caller = 0u;
 			stage_1_over();
@@ -58,11 +58,11 @@ uint32_t step_stage_1(uint16_t y, uint16_t u)
 			return left_caller;
 		case 20:
 			left_caller = 0u;
-			bonus_1_intro_phase(y);
+			bonus_1_intro_phase();
 			return left_caller;
 		case 22:
 			left_caller = 0u;
-			bonus_1_run(y);
+			bonus_1_run();
 			return left_caller;
 		case 24:
 			left_caller = 0u;
@@ -85,7 +85,7 @@ uint32_t step_stage_1(uint16_t y, uint16_t u)
 			return left_caller;
 		case 34:
 			left_caller = 0u;
-			return stage_2_play(y, left_caller);
+			return stage_2_play(left_caller);
 		case 36:
 			left_caller = 0u;
 			stage_2_after_boss();
@@ -115,10 +115,10 @@ uint32_t step_stage_1(uint16_t y, uint16_t u)
 			return left_caller;
 		case 50:
 			left_caller = 0u;
-			return stage_3_forest_play(y, left_caller);
+			return stage_3_forest_play(left_caller);
 		case 52:
 			left_caller = 0u;
-			return stage_3_forest_cleared(y, left_caller);
+			return stage_3_forest_cleared(left_caller);
 		case 54:
 			left_caller = 0u;
 			stage_3_forest_over();
@@ -141,7 +141,7 @@ uint32_t step_stage_1(uint16_t y, uint16_t u)
 			return left_caller;
 		case 66:
 			left_caller = 0u;
-			return stage_3_cemetery_play(y, left_caller);
+			return stage_3_cemetery_play(left_caller);
 		case 68:
 			left_caller = 0u;
 			stage_3_cemetery_over();
@@ -169,7 +169,7 @@ uint32_t step_stage_1(uint16_t y, uint16_t u)
 			return left_caller;
 		case 82:
 			left_caller = 0u;
-			return stage_4_play(y, left_caller);
+			return stage_4_play(left_caller);
 		case 84:
 			left_caller = 0u;
 			stage_4_over();
@@ -197,7 +197,7 @@ uint32_t step_stage_1(uint16_t y, uint16_t u)
 			return left_caller;
 		case 98:
 			left_caller = 0u;
-			return stage_5_play(y, left_caller);
+			return stage_5_play(left_caller);
 		case 100:
 			left_caller = 0u;
 			stage_5_over();
@@ -230,7 +230,7 @@ uint32_t step_stage_1(uint16_t y, uint16_t u)
 			return left_caller;
 		case 116:
 			left_caller = 0u;
-			return stage_6_play(y, left_caller);
+			return stage_6_play(left_caller);
 		case 118:
 			left_caller = 0u;
 			stage_6_over();
@@ -249,19 +249,19 @@ uint32_t step_stage_1(uint16_t y, uint16_t u)
 		case 126:
 			break;
 		case -60:
-			return game_start_phase(y, u);
+			return game_start_phase(u);
 		case -58:
-			return game_run_step(y, u);
+			return game_run_step(u);
 		case -56:
 			left_caller = 0u;
 			game_continue_phase();
 			return left_caller;
 		case -54:
 			left_caller = 0u;
-			return game_over_phase(y, u, left_caller);
+			return game_over_phase(u, left_caller);
 		case -52:
 			left_caller = 0u;
-			return name_entry_phase(y, u, left_caller);
+			return name_entry_phase(u, left_caller);
 		case -50:
 			left_caller = 0u;
 			game_start_clear();
@@ -271,45 +271,45 @@ uint32_t step_stage_1(uint16_t y, uint16_t u)
 			game_start_palettes(u);
 			return left_caller;
 		case -46:
-			return step_portraits(y, u);
+			return step_portraits(u);
 		case -44:
-			return step_story_1(y, u);
+			return step_story_1(u);
 		case -42:
 			continue;
 		case -40:
-			return step_bonus_1(y, u);
+			return step_bonus_1(u);
 		case -38:
-			return step_stage_2(y, u);
+			return step_stage_2(u);
 		case -36:
 			left_caller = 0u;
 			step_story_2();
 			return left_caller;
 		case -34:
-			return step_stage_3_forest(y, u);
+			return step_stage_3_forest(u);
 		case -32:
-			return step_stage_3_cemetery(y, u);
+			return step_stage_3_cemetery(u);
 		case -30:
-			return step_stage_4(y, u);
+			return step_stage_4(u);
 		case -28:
-			return step_stage_5(y, u);
+			return step_stage_5(u);
 		case -26:
 			left_caller = 0u;
 			step_story_3();
 			return left_caller;
 		case -24:
-			return step_stage_6(y, u);
+			return step_stage_6(u);
 		case -22:
-			return step_bonus_2(y, u);
+			return step_bonus_2(u);
 		case -20:
-			return step_stage_7(y, u);
+			return step_stage_7(u);
 		case -18:
 			left_caller = 0u;
 			step_story_4();
 			return left_caller;
 		case -16:
-			return step_stage_8(y, u);
+			return step_stage_8(u);
 		case -14:
-			return step_ending(y, u);
+			return step_ending(u);
 		case -12:
 			left_caller = 0u;
 			portraits_start(u);
@@ -347,10 +347,10 @@ uint32_t step_stage_1(uint16_t y, uint16_t u)
 void stage_1_setup(void)
 {
 	uint32_t carry = 0;
-	uint16_t command = 0, ignored16 = 0, ignored16_2 = 0;
+	uint16_t command = 0;
 
 	gauges_shown = 0u;
-	clear_sprites(&ignored16, &ignored16_2);
+	clear_sprites();
 	reset_for_stage();
 	command = 0u;
 	carry = queue_sound(command);
@@ -374,11 +374,11 @@ void stage_1_title(uint16_t u)
    stage_players */
 uint32_t stage_1_begin(uint16_t palette_job, uint32_t left_caller)
 {
-	uint16_t ignored16 = 0, ignored16_2 = 0, ignored16_3 = 0, layer_and_columns = 0, request = 0, scroll_x = 0, scroll_y = 0, y = 0;
+	uint16_t ignored16 = 0, ignored16_2 = 0, layer_and_columns = 0, request = 0, scroll_x = 0, scroll_y = 0;
 
 	palette_request_kind = 1u;
 	request = 0xF81u;
-	palette_request(request, &ignored16, &palette_job);
+	palette_request(palette_job, request);
 	scroll_x = 0u;
 	set_scroll_x(scroll_x);
 	scroll_y = 0x10u;
@@ -390,13 +390,13 @@ uint32_t stage_1_begin(uint16_t palette_job, uint32_t left_caller)
 	map_area = 0u;
 	set_area_tile_banks();
 	layer_and_columns = 0x2Cu;
-	draw_layer_columns(layer_and_columns, &ignored16_2, &ignored16, &ignored16_3);
+	draw_layer_columns(layer_and_columns, &ignored16, &ignored16_2);
 	layer_and_columns = 0x12Cu;
-	draw_layer_columns_with_floor_map(layer_and_columns, &y, &ignored16_3);
-	left_caller = start_stage_objects(y, left_caller);
+	draw_layer_columns_with_floor_map(layer_and_columns);
+	left_caller = start_stage_objects(left_caller);
 	window_bank = 0x1Fu;
 	set_lines(window_bank);
-	scene_load_story_settings(&ignored16_2, &ignored16, &ignored16_3);
+	scene_load_story_settings(&ignored16, &ignored16_2);
 	io_write8(0x1FB9u, 0x13u);
 	io_write8(0x1FBAu, 0x2Cu);
 	players_present = players_playing;
@@ -411,11 +411,11 @@ void stage_1_opening(void)
 }
 
 /* A frame of stage 1's play; when boss_arrived is set the music moves to the stage's next part */
-uint32_t stage_1_play(uint16_t y, uint32_t left_caller)
+uint32_t stage_1_play(uint32_t left_caller)
 {
 	uint16_t ignored16 = 0;
 
-	stage_play_frame(y, &ignored16, &left_caller);
+	stage_play_frame(&ignored16, &left_caller);
 	if (boss_arrived != 0u)
 	{
 		boss_arrived = 0u;
@@ -446,9 +446,9 @@ uint32_t stage_1_exit(uint32_t left_caller)
 uint32_t stage_1_end_phase(uint16_t u, uint32_t left_caller)
 {
 	uint32_t carry = 0;
-	uint16_t command = 0, ignored16 = 0, ignored16_2 = 0, ignored16_3 = 0, ignored16_4 = 0, u_2 = 0;
+	uint16_t command = 0, ignored16 = 0, ignored16_2 = 0, ignored16_3 = 0, u_2 = 0;
 
-	run_list_1_objects(&ignored16, &u, &left_caller);
+	run_list_1_objects(&u, &left_caller);
 	u = run_child_objects(u);
 	window_bank = 0x1Fu;
 	set_lines(window_bank);
@@ -459,24 +459,24 @@ uint32_t stage_1_end_phase(uint16_t u, uint32_t left_caller)
 	stage_1_end(u);
 	if (scene_running != 0u)
 	{
-		check_collisions(&u_2, &ignored16_3);
+		check_collisions(&u_2, &ignored16_2);
 		window_bank = 0x13u;
 		set_lines(window_bank);
 		stage_scroll(u_2);
-		update_players(&ignored16_2, &ignored16, &ignored16_4, &ignored16_3, &carry);
+		update_players(&ignored16, &ignored16_3, &ignored16_2, &carry);
 		return left_caller;
 	}
 	command = 0u;
 	carry = queue_sound_always(command);
-	clear_sprites(&ignored16_2, &ignored16);
+	clear_sprites();
 	game_step++;
 	step_phase = 0u;
 	step_subphase = 0u;
 	step_countdown = 0u;
-	check_collisions(&u_2, &ignored16_3);
+	check_collisions(&u_2, &ignored16_2);
 	window_bank = 0x13u;
 	set_lines(window_bank);
 	stage_scroll(u_2);
-	update_players(&ignored16_2, &ignored16, &ignored16_4, &ignored16_3, &carry);
+	update_players(&ignored16, &ignored16_3, &ignored16_2, &carry);
 	return left_caller;
 }

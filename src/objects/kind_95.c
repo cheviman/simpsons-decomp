@@ -3,7 +3,7 @@
  *    Description: the kind 95 character of stage 2
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    10-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -26,9 +26,8 @@ void kind_95_beaten(uint16_t object)
 }
 
 /* Runs its reaction to a hit by its substep. */
-void kind_95_hit_steps(uint16_t object, uint16_t *p_y, uint16_t *p_step_handlers)
+uint16_t kind_95_hit_steps(uint16_t object)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint16_t step_handlers = 0;
 	uint8_t action_step = 0;
 
@@ -40,29 +39,27 @@ void kind_95_hit_steps(uint16_t object, uint16_t *p_y, uint16_t *p_step_handlers
 		{
 		case 0:
 			kind_95_hit(object);
-			break;
+			return step_handlers;
 		case 2:
-			kind_95_hit_end(object);
 			break;
 		case -10:
 			kind_95_wait();
-			break;
+			return step_handlers;
 		case -8:
 			kind_95_beaten(object);
-			break;
+			return step_handlers;
 		case -6:
 			continue;
 		case -4:
-			kind_95_start(object, &y, &step_handlers);
-			break;
+			return kind_95_start(object);
 		case -2:
 			kind_95_stand();
-			break;
+			return step_handlers;
 		}
 		break;
 	}
-	*p_y = y;
-	*p_step_handlers = step_handlers;
+	kind_95_hit_end(object);
+	return step_handlers;
 }
 
 /* Shows its hit animation for 64 frames. */
@@ -98,18 +95,17 @@ void kind_95_hit_end(uint16_t object)
 }
 
 /* Sets up the kind 95 character. */
-void kind_95_start(uint16_t object, uint16_t *p_box, uint16_t *p_setup)
+uint16_t kind_95_start(uint16_t object)
 {
-	uint16_t box = 0, setup = 0;
+	uint16_t setup = 0;
 	uint8_t state = 0;
 
 	setup = kind_95_setup_ADDRESS;
-	box = vector_object_setup(object, setup);
+	vector_object_setup(object, setup);
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
 	kind_95_stand();
-	*p_box = box;
-	*p_setup = setup;
+	return setup;
 }
 
 /* Does nothing while it stands. */

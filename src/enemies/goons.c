@@ -3,7 +3,7 @@
  *    Description: the goons: their set-ups and their entrances by type
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    10-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -12,118 +12,115 @@
 #include "game.h"
 
 /* A goon of kind B6 that throws bombs (type 3B; stages 2, 3 and 4): set up, then the enemies' states. */
-void bomb_goon(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_left_caller)
+uint32_t bomb_goon(uint16_t object, uint8_t state)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint8_t state_2 = 0;
 	uint16_t ignored16 = 0;
-	uint32_t ignored = 0;
+	uint32_t ignored = 0, left_caller = 0;
 
 	state_2 = (uint8_t)state;
 	switch ((int8_t)(uint8_t)((uint32_t)state_2 << 1))
 	{
 	case 0:
-		y = bomb_goon_start(object);
+		bomb_goon_start(object);
 		break;
 	case 4:
 	case 22:
 	case 40:
 	case 58:
-		vector_enemy_think(object, &y, &ignored16, &ignored);
+		vector_enemy_think(object, &ignored16, &ignored);
 		break;
 	case 6:
 	case 24:
 	case 42:
 	case 60:
-		vector_enemy_act(object, &y, &ignored16, &ignored);
+		vector_enemy_act(object, &ignored16, &ignored);
 		break;
 	case 8:
 	case 26:
 	case 44:
 	case 62:
-		vector_enemy_react(object, &y, &ignored16, &ignored);
+		vector_enemy_react(object, &ignored16, &ignored);
 		break;
 	case 10:
 	case 28:
 	case 46:
 	case 64:
-		vector_enemy_climb(object, &y, &ignored16, &ignored);
+		vector_enemy_climb(object, &ignored16, &ignored);
 		break;
 	}
-	vector_enemy_take_special_hit(object, &ignored16, p_left_caller);
+	vector_enemy_take_special_hit(object, &ignored16, &left_caller);
 	vector_remove_past_right_edge(object, ignored16);
-	*p_y = y;
+	return left_caller;
 }
 
 /* A goon that runs in, throws one bomb and then fights (type 2E; stage 3's forest). */
-void goon_bomb_run_in(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_left_caller)
+uint32_t goon_bomb_run_in(uint16_t object, uint8_t state)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint8_t state_2 = 0;
 	uint16_t ignored16 = 0;
-	uint32_t ignored = 0;
+	uint32_t ignored = 0, left_caller = 0;
 
 	state_2 = (uint8_t)state;
 	switch ((int8_t)(uint8_t)((uint32_t)state_2 << 1))
 	{
 	case 0:
-		y = goon_bomb_run_in_set_up(object);
+		goon_bomb_run_in_set_up(object);
 		break;
 	case 2:
-		y = goon_bomb_run_in_step(object, y);
+		goon_bomb_run_in_step(object);
 		break;
 	case 4:
 	case 44:
 	case 56:
 	case 76:
 	case 96:
-		vector_enemy_think(object, &y, &ignored16, &ignored);
+		vector_enemy_think(object, &ignored16, &ignored);
 		break;
 	case 6:
 	case 46:
 	case 58:
 	case 78:
 	case 98:
-		vector_enemy_act(object, &y, &ignored16, &ignored);
+		vector_enemy_act(object, &ignored16, &ignored);
 		break;
 	case 8:
-		vector_enemy_react(object, &y, &ignored16, &ignored);
+		vector_enemy_react(object, &ignored16, &ignored);
 		break;
 	case 10:
 	case 50:
 	case 62:
 	case 82:
 	case 102:
-		vector_enemy_climb(object, &y, &ignored16, &ignored);
+		vector_enemy_climb(object, &ignored16, &ignored);
 		break;
 	case 12:
 		goon_bomb_run_in_stop(object);
 		break;
 	case 14:
-		y = goon_bomb_run_in_throw(object, y);
+		goon_bomb_run_in_throw(object);
 		break;
 	case 16:
 		goon_bomb_run_in_end(object);
 		break;
 	}
-	vector_enemy_take_special_hit(object, &ignored16, p_left_caller);
+	vector_enemy_take_special_hit(object, &ignored16, &left_caller);
 	vector_remove_past_right_edge(object, ignored16);
-	*p_y = y;
+	return left_caller;
 }
 
 /* A goon whose behaviour (029808) grabs at close range most of the time (type 03; stages 1-3 and 5). */
-void goon_close_grabber(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_left_caller)
+uint32_t goon_close_grabber(uint16_t object, uint8_t state)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint8_t state_2 = 0;
 	uint16_t ignored16 = 0;
-	uint32_t ignored = 0;
+	uint32_t ignored = 0, left_caller = 0;
 
 	state_2 = (uint8_t)state;
 	switch ((int8_t)(uint8_t)((uint32_t)state_2 << 1))
 	{
 	case 0:
-		y = goon_close_grabber_start(object);
+		goon_close_grabber_start(object);
 		break;
 	case -44:
 	case -32:
@@ -132,7 +129,7 @@ void goon_close_grabber(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t 
 	case 4:
 	case 60:
 	case 116:
-		vector_enemy_think(object, &y, &ignored16, &ignored);
+		vector_enemy_think(object, &ignored16, &ignored);
 		break;
 	case -42:
 	case -30:
@@ -141,7 +138,7 @@ void goon_close_grabber(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t 
 	case 6:
 	case 62:
 	case 118:
-		vector_enemy_act(object, &y, &ignored16, &ignored);
+		vector_enemy_act(object, &ignored16, &ignored);
 		break;
 	case -40:
 	case -16:
@@ -149,7 +146,7 @@ void goon_close_grabber(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t 
 	case 8:
 	case 64:
 	case 120:
-		vector_enemy_react(object, &y, &ignored16, &ignored);
+		vector_enemy_react(object, &ignored16, &ignored);
 		break;
 	case -38:
 	case -26:
@@ -158,43 +155,42 @@ void goon_close_grabber(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t 
 	case 10:
 	case 66:
 	case 122:
-		vector_enemy_climb(object, &y, &ignored16, &ignored);
+		vector_enemy_climb(object, &ignored16, &ignored);
 		break;
 	case -48:
-		y = hat_goon_brawler_start(object);
+		hat_goon_brawler_start(object);
 		break;
 	case -36:
-		vector_goon_start(object, &y, &ignored16);
+		vector_goon_start(object);
 		break;
 	case -28:
-		y = enemy_react_with_walls(object, y);
+		enemy_react_with_walls(object);
 		break;
 	case -24:
-		y = goon_keeps_away_start(object);
+		goon_keeps_away_start(object);
 		break;
 	case -12:
-		y = goon_striker_start(object);
+		goon_striker_start(object);
 		break;
 	}
-	vector_enemy_take_special_hit(object, &ignored16, p_left_caller);
+	vector_enemy_take_special_hit(object, &ignored16, &left_caller);
 	vector_remove_past_right_edge(object, ignored16);
-	*p_y = y;
+	return left_caller;
 }
 
 /* A goon whose behaviour (029860) never grabs: strikes close, jumps or walks up to strike from afar
    (type 0C; most stages, and bank 15's timed lists). */
-void goon_striker(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_left_caller)
+uint32_t goon_striker(uint16_t object, uint8_t state)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint8_t state_2 = 0;
 	uint16_t ignored16 = 0;
-	uint32_t ignored = 0;
+	uint32_t ignored = 0, left_caller = 0;
 
 	state_2 = (uint8_t)state;
 	switch ((int8_t)(uint8_t)((uint32_t)state_2 << 1))
 	{
 	case 0:
-		y = goon_striker_start(object);
+		goon_striker_start(object);
 		break;
 	case -32:
 	case -20:
@@ -202,7 +198,7 @@ void goon_striker(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_lef
 	case 4:
 	case 16:
 	case 72:
-		vector_enemy_think(object, &y, &ignored16, &ignored);
+		vector_enemy_think(object, &ignored16, &ignored);
 		break;
 	case -30:
 	case -18:
@@ -210,14 +206,14 @@ void goon_striker(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_lef
 	case 6:
 	case 18:
 	case 74:
-		vector_enemy_act(object, &y, &ignored16, &ignored);
+		vector_enemy_act(object, &ignored16, &ignored);
 		break;
 	case -28:
 	case -4:
 	case 8:
 	case 20:
 	case 76:
-		vector_enemy_react(object, &y, &ignored16, &ignored);
+		vector_enemy_react(object, &ignored16, &ignored);
 		break;
 	case -26:
 	case -14:
@@ -225,42 +221,41 @@ void goon_striker(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_lef
 	case 10:
 	case 22:
 	case 78:
-		vector_enemy_climb(object, &y, &ignored16, &ignored);
+		vector_enemy_climb(object, &ignored16, &ignored);
 		break;
 	case 12:
-		y = goon_close_grabber_start(object);
+		goon_close_grabber_start(object);
 		break;
 	case -36:
-		y = hat_goon_brawler_start(object);
+		hat_goon_brawler_start(object);
 		break;
 	case -24:
-		vector_goon_start(object, &y, &ignored16);
+		vector_goon_start(object);
 		break;
 	case -16:
-		y = enemy_react_with_walls(object, y);
+		enemy_react_with_walls(object);
 		break;
 	case -12:
-		y = goon_keeps_away_start(object);
+		goon_keeps_away_start(object);
 		break;
 	}
-	vector_enemy_take_special_hit(object, &ignored16, p_left_caller);
+	vector_enemy_take_special_hit(object, &ignored16, &left_caller);
 	vector_remove_past_right_edge(object, ignored16);
-	*p_y = y;
+	return left_caller;
 }
 
 /* A plain goon with its own hit reaction (type 1C), which only bank 15's timed spawn lists put in. */
-void goon_from_timed_list(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_left_caller)
+uint32_t goon_from_timed_list(uint16_t object, uint8_t state)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint8_t state_2 = 0;
 	uint16_t ignored16 = 0;
-	uint32_t ignored = 0;
+	uint32_t ignored = 0, left_caller = 0;
 
 	state_2 = (uint8_t)state;
 	switch ((int8_t)(uint8_t)((uint32_t)state_2 << 1))
 	{
 	case 0:
-		vector_goon_start(object, &y, &ignored16);
+		vector_goon_start(object);
 		break;
 	case -8:
 	case 4:
@@ -268,7 +263,7 @@ void goon_from_timed_list(uint16_t object, uint8_t state, uint16_t *p_y, uint32_
 	case 28:
 	case 40:
 	case 96:
-		vector_enemy_think(object, &y, &ignored16, &ignored);
+		vector_enemy_think(object, &ignored16, &ignored);
 		break;
 	case -6:
 	case 6:
@@ -276,10 +271,10 @@ void goon_from_timed_list(uint16_t object, uint8_t state, uint16_t *p_y, uint32_
 	case 30:
 	case 42:
 	case 98:
-		vector_enemy_act(object, &y, &ignored16, &ignored);
+		vector_enemy_act(object, &ignored16, &ignored);
 		break;
 	case 8:
-		y = enemy_react_with_walls(object, y);
+		enemy_react_with_walls(object);
 		break;
 	case -2:
 	case 10:
@@ -287,50 +282,49 @@ void goon_from_timed_list(uint16_t object, uint8_t state, uint16_t *p_y, uint32_
 	case 34:
 	case 46:
 	case 102:
-		vector_enemy_climb(object, &y, &ignored16, &ignored);
+		vector_enemy_climb(object, &ignored16, &ignored);
 		break;
 	case 12:
-		y = goon_keeps_away_start(object);
+		goon_keeps_away_start(object);
 		break;
 	case -4:
 	case 20:
 	case 32:
 	case 44:
 	case 100:
-		vector_enemy_react(object, &y, &ignored16, &ignored);
+		vector_enemy_react(object, &ignored16, &ignored);
 		break;
 	case 24:
-		y = goon_striker_start(object);
+		goon_striker_start(object);
 		break;
 	case 36:
-		y = goon_close_grabber_start(object);
+		goon_close_grabber_start(object);
 		break;
 	case -12:
-		y = hat_goon_brawler_start(object);
+		hat_goon_brawler_start(object);
 		break;
 	}
-	*p_left_caller = enemy_take_special_hit_or_fall(object);
+	left_caller = enemy_take_special_hit_or_fall(object);
 	vector_remove_past_right_edge(object, ignored16);
-	*p_y = y;
+	return left_caller;
 }
 
 /* A goon that comes down hanging from a balloon (type 2B; stage 2, and bank 15's timed lists): set up,
    comes down, then fights. */
-void goon_descent(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_left_caller)
+uint32_t goon_descent(uint16_t object, uint8_t state)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint8_t state_2 = 0;
 	uint16_t ignored16 = 0;
-	uint32_t ignored = 0;
+	uint32_t ignored = 0, left_caller = 0;
 
 	state_2 = (uint8_t)state;
 	switch ((int8_t)(uint8_t)((uint32_t)state_2 << 1))
 	{
 	case 0:
-		goon_descent_set_up(object, &y, &ignored16);
+		goon_descent_set_up(object);
 		break;
 	case 2:
-		goon_descent_step(object, &y, &ignored16);
+		goon_descent_step(object);
 		break;
 	case -100:
 	case -88:
@@ -343,7 +337,7 @@ void goon_descent(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_lef
 	case 92:
 	case 108:
 	case 120:
-		vector_enemy_think(object, &y, &ignored16, &ignored);
+		vector_enemy_think(object, &ignored16, &ignored);
 		break;
 	case -98:
 	case -86:
@@ -356,7 +350,7 @@ void goon_descent(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_lef
 	case 94:
 	case 110:
 	case 122:
-		vector_enemy_act(object, &y, &ignored16, &ignored);
+		vector_enemy_act(object, &ignored16, &ignored);
 		break;
 	case -96:
 	case -72:
@@ -368,7 +362,7 @@ void goon_descent(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_lef
 	case 96:
 	case 112:
 	case 124:
-		vector_enemy_react(object, &y, &ignored16, &ignored);
+		vector_enemy_react(object, &ignored16, &ignored);
 		break;
 	case -94:
 	case -82:
@@ -381,7 +375,7 @@ void goon_descent(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_lef
 	case 98:
 	case 114:
 	case 126:
-		vector_enemy_climb(object, &y, &ignored16, &ignored);
+		vector_enemy_climb(object, &ignored16, &ignored);
 		break;
 	case 12:
 		goon_descent_float(object, 0u);
@@ -390,29 +384,28 @@ void goon_descent(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_lef
 		goon_descent_land(object, 0u);
 		break;
 	}
-	vector_enemy_take_special_hit(object, &ignored16, p_left_caller);
+	vector_enemy_take_special_hit(object, &ignored16, &left_caller);
 	vector_remove_past_right_edge(object, ignored16);
-	*p_y = y;
+	return left_caller;
 }
 
 /* A goon that runs in toward its target for the frames its spawn gives (type 25), then fights. */
-void goon_rush_in(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_left_caller)
+uint32_t goon_rush_in(uint16_t object, uint8_t state)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint8_t state_2 = 0;
 	uint16_t ignored16 = 0;
-	uint32_t ignored = 0;
+	uint32_t ignored = 0, left_caller = 0;
 
 	state_2 = (uint8_t)state;
 	switch ((int8_t)(uint8_t)((uint32_t)state_2 << 1))
 	{
 	case 0:
-		goon_rush_in_set_up(object, &y, &ignored16);
+		goon_rush_in_set_up(object);
 		break;
 	case -38:
 	case -10:
 	case 2:
-		goon_rush_in_step(object, &y, &ignored16);
+		goon_rush_in_step(object);
 		break;
 	case -112:
 	case -56:
@@ -424,7 +417,7 @@ void goon_rush_in(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_lef
 	case 46:
 	case 80:
 	case 122:
-		vector_enemy_think(object, &y, &ignored16, &ignored);
+		vector_enemy_think(object, &ignored16, &ignored);
 		break;
 	case -110:
 	case -54:
@@ -436,7 +429,7 @@ void goon_rush_in(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_lef
 	case 48:
 	case 82:
 	case 124:
-		vector_enemy_act(object, &y, &ignored16, &ignored);
+		vector_enemy_act(object, &ignored16, &ignored);
 		break;
 	case -108:
 	case -52:
@@ -448,7 +441,7 @@ void goon_rush_in(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_lef
 	case 50:
 	case 84:
 	case 126:
-		vector_enemy_react(object, &y, &ignored16, &ignored);
+		vector_enemy_react(object, &ignored16, &ignored);
 		break;
 	case -106:
 	case -50:
@@ -459,7 +452,7 @@ void goon_rush_in(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_lef
 	case 26:
 	case 52:
 	case 86:
-		vector_enemy_climb(object, &y, &ignored16, &ignored);
+		vector_enemy_climb(object, &ignored16, &ignored);
 		break;
 	case 12:
 		goon_rush_in_start(object);
@@ -468,10 +461,10 @@ void goon_rush_in(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_lef
 		goon_rush_in_run(object, 0u);
 		break;
 	case 16:
-		goon_from_back_set_up(object, &y, &ignored16);
+		goon_from_back_set_up(object);
 		break;
 	case 18:
-		goon_from_back_step(object, &y, &ignored16);
+		goon_from_back_step(object);
 		break;
 	case 28:
 		goon_from_back_place(object);
@@ -483,10 +476,10 @@ void goon_rush_in(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_lef
 		goon_from_back_wait(object, 0u);
 		break;
 	case -60:
-		hat_goon_run_across_set_up(object, &y, &ignored16);
+		hat_goon_run_across_set_up(object);
 		break;
 	case -58:
-		hat_goon_run_across_step(object, &y, &ignored16);
+		hat_goon_run_across_step(object);
 		break;
 	case -48:
 		hat_goon_run_across_pose(object);
@@ -501,45 +494,44 @@ void goon_rush_in(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_lef
 		hat_goon_run_across_running();
 		break;
 	case -40:
-		umbrella_goon_rush_in_set_up(object, &y, &ignored16);
+		umbrella_goon_rush_in_set_up(object);
 		break;
 	case -28:
-		shovel_goon_rush_in_set_up(object, &y, &ignored16);
+		shovel_goon_rush_in_set_up(object);
 		break;
 	case -26:
-		shovel_goon_rush_in_step(object, &y, &ignored16);
+		shovel_goon_rush_in_step(object);
 		break;
 	case -16:
 		shovel_goon_rush_in_start(object);
 		break;
 	case -14:
-		y = shovel_goon_rush_in_swing(object);
+		shovel_goon_rush_in_swing(object);
 		break;
 	case -12:
-		goon_striker_rush_in_set_up(object, &y, &ignored16);
+		goon_striker_rush_in_set_up(object);
 		break;
 	}
-	vector_enemy_take_special_hit(object, &ignored16, p_left_caller);
+	vector_enemy_take_special_hit(object, &ignored16, &left_caller);
 	vector_remove_past_right_edge(object, ignored16);
-	*p_y = y;
+	return left_caller;
 }
 
 /* A goon that comes from the back of the stage down to the floor (type 26). */
-void goon_from_back(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_left_caller)
+uint32_t goon_from_back(uint16_t object, uint8_t state)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint8_t state_2 = 0;
 	uint16_t ignored16 = 0;
-	uint32_t ignored = 0;
+	uint32_t ignored = 0, left_caller = 0;
 
 	state_2 = (uint8_t)state;
 	switch ((int8_t)(uint8_t)((uint32_t)state_2 << 1))
 	{
 	case 0:
-		goon_from_back_set_up(object, &y, &ignored16);
+		goon_from_back_set_up(object);
 		break;
 	case 2:
-		goon_from_back_step(object, &y, &ignored16);
+		goon_from_back_step(object);
 		break;
 	case -128:
 	case -72:
@@ -551,7 +543,7 @@ void goon_from_back(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_l
 	case 30:
 	case 64:
 	case 106:
-		vector_enemy_think(object, &y, &ignored16, &ignored);
+		vector_enemy_think(object, &ignored16, &ignored);
 		break;
 	case -126:
 	case -70:
@@ -563,7 +555,7 @@ void goon_from_back(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_l
 	case 32:
 	case 66:
 	case 108:
-		vector_enemy_act(object, &y, &ignored16, &ignored);
+		vector_enemy_act(object, &ignored16, &ignored);
 		break;
 	case -124:
 	case -68:
@@ -575,7 +567,7 @@ void goon_from_back(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_l
 	case 34:
 	case 68:
 	case 110:
-		vector_enemy_react(object, &y, &ignored16, &ignored);
+		vector_enemy_react(object, &ignored16, &ignored);
 		break;
 	case -122:
 	case -66:
@@ -587,7 +579,7 @@ void goon_from_back(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_l
 	case 36:
 	case 70:
 	case 112:
-		vector_enemy_climb(object, &y, &ignored16, &ignored);
+		vector_enemy_climb(object, &ignored16, &ignored);
 		break;
 	case 12:
 		goon_from_back_place(object);
@@ -599,10 +591,10 @@ void goon_from_back(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_l
 		goon_from_back_wait(object, 0u);
 		break;
 	case -76:
-		hat_goon_run_across_set_up(object, &y, &ignored16);
+		hat_goon_run_across_set_up(object);
 		break;
 	case -74:
-		hat_goon_run_across_step(object, &y, &ignored16);
+		hat_goon_run_across_step(object);
 		break;
 	case -64:
 		hat_goon_run_across_pose(object);
@@ -617,30 +609,30 @@ void goon_from_back(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_l
 		hat_goon_run_across_running();
 		break;
 	case -56:
-		umbrella_goon_rush_in_set_up(object, &y, &ignored16);
+		umbrella_goon_rush_in_set_up(object);
 		break;
 	case -54:
 	case -26:
 	case -14:
-		goon_rush_in_step(object, &y, &ignored16);
+		goon_rush_in_step(object);
 		break;
 	case -44:
-		shovel_goon_rush_in_set_up(object, &y, &ignored16);
+		shovel_goon_rush_in_set_up(object);
 		break;
 	case -42:
-		shovel_goon_rush_in_step(object, &y, &ignored16);
+		shovel_goon_rush_in_step(object);
 		break;
 	case -32:
 		shovel_goon_rush_in_start(object);
 		break;
 	case -30:
-		y = shovel_goon_rush_in_swing(object);
+		shovel_goon_rush_in_swing(object);
 		break;
 	case -28:
-		goon_striker_rush_in_set_up(object, &y, &ignored16);
+		goon_striker_rush_in_set_up(object);
 		break;
 	case -16:
-		goon_rush_in_set_up(object, &y, &ignored16);
+		goon_rush_in_set_up(object);
 		break;
 	case -4:
 		goon_rush_in_start(object);
@@ -649,34 +641,33 @@ void goon_from_back(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_l
 		goon_rush_in_run(object, 0u);
 		break;
 	}
-	vector_enemy_take_special_hit(object, &ignored16, p_left_caller);
+	vector_enemy_take_special_hit(object, &ignored16, &left_caller);
 	vector_remove_past_right_edge(object, ignored16);
-	*p_y = y;
+	return left_caller;
 }
 
 /* A goon with a hat that strikes its entrance pose and walks up onto the floor (type 3C). */
-void hat_goon_step_out(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_left_caller)
+uint32_t hat_goon_step_out(uint16_t object, uint8_t state)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint32_t zero = 0, negative = 0;
 	uint8_t state_2 = 0;
 	uint16_t ignored16 = 0, state_handlers = 0;
-	uint32_t ignored = 0;
-	uint8_t t1 = 0;
+	uint32_t ignored = 0, left_caller = 0;
+	uint8_t state_offset = 0;
 
 	state_2 = (uint8_t)state;
 	state_handlers = hat_goon_step_out_states_ADDRESS;
-	t1 = (uint32_t)state_2 << 1;
-	negative = t1 >> 7;
-	zero = t1 == 0u;
-	switch ((int8_t)t1)
+	state_offset = (uint32_t)state_2 << 1;
+	negative = state_offset >> 7;
+	zero = state_offset == 0u;
+	switch ((int8_t)state_offset)
 	{
 	case 0:
-		y = hat_goon_step_out_set_up(object);
+		hat_goon_step_out_set_up(object);
 		break;
 	case 2:
 	case 14:
-		y = goon_step_out_step(object, y);
+		goon_step_out_step(object);
 		break;
 	case -128:
 	case -94:
@@ -688,7 +679,7 @@ void hat_goon_step_out(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *
 	case 86:
 	case 98:
 	case 120:
-		vector_enemy_think(object, &y, &state_handlers, &ignored);
+		vector_enemy_think(object, &state_handlers, &ignored);
 		break;
 	case -126:
 	case -92:
@@ -700,7 +691,7 @@ void hat_goon_step_out(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *
 	case 88:
 	case 100:
 	case 122:
-		vector_enemy_act(object, &y, &state_handlers, &ignored);
+		vector_enemy_act(object, &state_handlers, &ignored);
 		break;
 	case -124:
 	case -90:
@@ -712,7 +703,7 @@ void hat_goon_step_out(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *
 	case 90:
 	case 102:
 	case 124:
-		vector_enemy_react(object, &y, &state_handlers, &ignored);
+		vector_enemy_react(object, &state_handlers, &ignored);
 		break;
 	case -122:
 	case -88:
@@ -724,11 +715,11 @@ void hat_goon_step_out(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *
 	case 92:
 	case 104:
 	case 126:
-		vector_enemy_climb(object, &y, &state_handlers, &ignored);
+		vector_enemy_climb(object, &state_handlers, &ignored);
 		break;
 	case 12:
 	case 62:
-		y = goon_step_out_set_up(object);
+		goon_step_out_set_up(object);
 		break;
 	case -102:
 	case -60:
@@ -754,10 +745,10 @@ void hat_goon_step_out(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *
 		goon_delayed_start(object);
 		break;
 	case -22:
-		y = shovel_goon_step_out_set_up(object);
+		shovel_goon_step_out_set_up(object);
 		break;
 	case -20:
-		y = shovel_goon_step_out_step(object, y);
+		shovel_goon_step_out_step(object);
 		break;
 	case -10:
 		shovel_goon_step_out_show(object);
@@ -772,109 +763,107 @@ void hat_goon_step_out(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *
 		shovel_goon_step_out_arm(object);
 		break;
 	}
-	vector_enemy_take_special_hit(object, &ignored16, p_left_caller);
+	vector_enemy_take_special_hit(object, &ignored16, &left_caller);
 	vector_remove_past_right_edge(object, ignored16);
-	*p_y = y;
+	return left_caller;
 }
 
 /* A goon that runs in from a side of the cemetery's moving ground and jumps up (type F3; stage 3's
    cemetery). */
-void goon_jump_in(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_left_caller)
+uint32_t goon_jump_in(uint16_t object, uint8_t state)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint8_t state_2 = 0;
 	uint16_t ignored16 = 0;
-	uint32_t ignored = 0;
+	uint32_t ignored = 0, left_caller = 0;
 
 	state_2 = (uint8_t)state;
 	switch ((int8_t)(uint8_t)((uint32_t)state_2 << 1))
 	{
 	case 0:
-		y = goon_jump_in_set_up(object);
+		goon_jump_in_set_up(object);
 		break;
 	case -10:
 	case 2:
-		y = goon_jump_in_step(object, y);
+		goon_jump_in_step(object);
 		break;
 	case -48:
 	case -8:
 	case 4:
 	case 24:
 	case 44:
-		vector_enemy_think(object, &y, &ignored16, &ignored);
+		vector_enemy_think(object, &ignored16, &ignored);
 		break;
 	case -46:
 	case -6:
 	case 6:
 	case 26:
 	case 46:
-		vector_enemy_act(object, &y, &ignored16, &ignored);
+		vector_enemy_act(object, &ignored16, &ignored);
 		break;
 	case -4:
 	case 8:
 	case 28:
 	case 48:
-		y = enemy_react_with_pits(object, y);
+		enemy_react_with_pits(object);
 		break;
 	case -42:
 	case -2:
 	case 10:
 	case 30:
 	case 50:
-		vector_enemy_climb(object, &y, &ignored16, &ignored);
+		vector_enemy_climb(object, &ignored16, &ignored);
 		break;
 	case -12:
-		y = goon_striker_jump_in_set_up(object);
+		goon_striker_jump_in_set_up(object);
 		break;
 	}
-	vector_enemy_take_special_hit(object, &ignored16, p_left_caller);
+	vector_enemy_take_special_hit(object, &ignored16, &left_caller);
 	vector_remove_past_right_edge(object, ignored16);
-	*p_y = y;
+	return left_caller;
 }
 
 /* A goon that comes up from below the cemetery's floor and jumps out (type F1; stage 3's cemetery). */
-void goon_from_below(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_left_caller)
+uint32_t goon_from_below(uint16_t object, uint8_t state)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint8_t state_2 = 0;
 	uint16_t ignored16 = 0;
-	uint32_t ignored = 0;
+	uint32_t ignored = 0, left_caller = 0;
 
 	state_2 = (uint8_t)state;
 	switch ((int8_t)(uint8_t)((uint32_t)state_2 << 1))
 	{
 	case 0:
-		y = goon_from_below_set_up(object);
+		goon_from_below_set_up(object);
 		break;
 	case 2:
-		y = goon_from_below_step(object, y);
+		goon_from_below_step(object);
 		break;
 	case -68:
 	case -28:
 	case -16:
 	case 4:
 	case 24:
-		vector_enemy_think(object, &y, &ignored16, &ignored);
+		vector_enemy_think(object, &ignored16, &ignored);
 		break;
 	case -66:
 	case -26:
 	case -14:
 	case 6:
 	case 26:
-		vector_enemy_act(object, &y, &ignored16, &ignored);
+		vector_enemy_act(object, &ignored16, &ignored);
 		break;
 	case -24:
 	case -12:
 	case 8:
 	case 28:
-		y = enemy_react_with_pits(object, y);
+		enemy_react_with_pits(object);
 		break;
 	case -62:
 	case -22:
 	case -10:
 	case 10:
 	case 30:
-		vector_enemy_climb(object, &y, &ignored16, &ignored);
+		vector_enemy_climb(object, &ignored16, &ignored);
 		break;
 	case -4:
 		goon_jump_in_leap(object);
@@ -883,83 +872,81 @@ void goon_from_below(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_
 		goon_jump_in_land(object);
 		break;
 	}
-	vector_enemy_take_special_hit(object, &ignored16, p_left_caller);
+	vector_enemy_take_special_hit(object, &ignored16, &left_caller);
 	vector_remove_past_right_edge(object, ignored16);
-	*p_y = y;
+	return left_caller;
 }
 
 /* A striker goon (no grabs) that runs in from a side of the cemetery's moving ground and jumps up (type
    EE). */
-void goon_striker_jump_in(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_left_caller)
+uint32_t goon_striker_jump_in(uint16_t object, uint8_t state)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint8_t state_2 = 0;
 	uint16_t ignored16 = 0;
-	uint32_t ignored = 0;
+	uint32_t ignored = 0, left_caller = 0;
 
 	state_2 = (uint8_t)state;
 	switch ((int8_t)(uint8_t)((uint32_t)state_2 << 1))
 	{
 	case 0:
-		y = goon_striker_jump_in_set_up(object);
+		goon_striker_jump_in_set_up(object);
 		break;
 	case 2:
 	case 14:
-		y = goon_jump_in_step(object, y);
+		goon_jump_in_step(object);
 		break;
 	case -36:
 	case 4:
 	case 16:
 	case 36:
 	case 56:
-		vector_enemy_think(object, &y, &ignored16, &ignored);
+		vector_enemy_think(object, &ignored16, &ignored);
 		break;
 	case -34:
 	case 6:
 	case 18:
 	case 38:
 	case 58:
-		vector_enemy_act(object, &y, &ignored16, &ignored);
+		vector_enemy_act(object, &ignored16, &ignored);
 		break;
 	case 8:
 	case 20:
 	case 40:
 	case 60:
-		y = enemy_react_with_pits(object, y);
+		enemy_react_with_pits(object);
 		break;
 	case -30:
 	case 10:
 	case 22:
 	case 42:
 	case 62:
-		vector_enemy_climb(object, &y, &ignored16, &ignored);
+		vector_enemy_climb(object, &ignored16, &ignored);
 		break;
 	case 12:
-		y = goon_jump_in_set_up(object);
+		goon_jump_in_set_up(object);
 		break;
 	}
-	vector_enemy_take_special_hit(object, &ignored16, p_left_caller);
+	vector_enemy_take_special_hit(object, &ignored16, &left_caller);
 	vector_remove_past_right_edge(object, ignored16);
-	*p_y = y;
+	return left_caller;
 }
 
 /* A goon that walks up onto the floor (type 39). */
-void goon_walk_up(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_left_caller)
+uint32_t goon_walk_up(uint16_t object, uint8_t state)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint8_t state_2 = 0;
 	uint16_t ignored16 = 0;
-	uint32_t ignored = 0;
+	uint32_t ignored = 0, left_caller = 0;
 
 	state_2 = (uint8_t)state;
 	switch ((int8_t)(uint8_t)((uint32_t)state_2 << 1))
 	{
 	case -50:
 	case 0:
-		y = goon_step_out_set_up(object);
+		goon_step_out_set_up(object);
 		break;
 	case 2:
-		y = goon_walk_up_step(object, y);
+		goon_walk_up_step(object);
 		break;
 	case -114:
 	case -80:
@@ -970,7 +957,7 @@ void goon_walk_up(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_lef
 	case 36:
 	case 58:
 	case 84:
-		vector_enemy_think(object, &y, &ignored16, &ignored);
+		vector_enemy_think(object, &ignored16, &ignored);
 		break;
 	case -112:
 	case -78:
@@ -981,7 +968,7 @@ void goon_walk_up(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_lef
 	case 38:
 	case 60:
 	case 86:
-		vector_enemy_act(object, &y, &ignored16, &ignored);
+		vector_enemy_act(object, &ignored16, &ignored);
 		break;
 	case -110:
 	case -76:
@@ -992,7 +979,7 @@ void goon_walk_up(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_lef
 	case 40:
 	case 62:
 	case 88:
-		vector_enemy_react(object, &y, &ignored16, &ignored);
+		vector_enemy_react(object, &ignored16, &ignored);
 		break;
 	case -108:
 	case -74:
@@ -1003,7 +990,7 @@ void goon_walk_up(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_lef
 	case 42:
 	case 64:
 	case 90:
-		vector_enemy_climb(object, &y, &ignored16, &ignored);
+		vector_enemy_climb(object, &ignored16, &ignored);
 		break;
 	case 12:
 		goon_walk_up_show(object);
@@ -1022,14 +1009,14 @@ void goon_walk_up(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_lef
 		goon_entrance_end(object);
 		break;
 	case 20:
-		y = goon_striker_from_side_set_up(object);
+		goon_striker_from_side_set_up(object);
 		break;
 	case 22:
 	case 34:
-		y = goon_from_side_step(object, y);
+		goon_from_side_step(object);
 		break;
 	case 32:
-		y = goon_from_side_set_up(object);
+		goon_from_side_set_up(object);
 		break;
 	case -122:
 	case -88:
@@ -1047,28 +1034,27 @@ void goon_walk_up(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_lef
 		goon_step_out_pose_end(object);
 		break;
 	}
-	vector_enemy_take_special_hit(object, &ignored16, p_left_caller);
+	vector_enemy_take_special_hit(object, &ignored16, &left_caller);
 	vector_remove_past_right_edge(object, ignored16);
-	*p_y = y;
+	return left_caller;
 }
 
 /* A goon that shows when the scroll brings it in, then walks in at a slant onto the floor (type 15; no
    scenario puts it in). */
-void goon_walk_in(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_left_caller)
+uint32_t goon_walk_in(uint16_t object, uint8_t state)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint8_t state_2 = 0;
 	uint16_t ignored16 = 0;
-	uint32_t ignored = 0;
+	uint32_t ignored = 0, left_caller = 0;
 
 	state_2 = (uint8_t)state;
 	switch ((int8_t)(uint8_t)((uint32_t)state_2 << 1))
 	{
 	case 0:
-		y = goon_walk_in_set_up(object);
+		goon_walk_in_set_up(object);
 		break;
 	case 2:
-		y = goon_walk_in_step(object, y);
+		goon_walk_in_step(object);
 		break;
 	case -112:
 	case -100:
@@ -1081,7 +1067,7 @@ void goon_walk_in(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_lef
 	case 80:
 	case 102:
 	case 114:
-		vector_enemy_think(object, &y, &ignored16, &ignored);
+		vector_enemy_think(object, &ignored16, &ignored);
 		break;
 	case -110:
 	case -98:
@@ -1094,7 +1080,7 @@ void goon_walk_in(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_lef
 	case 82:
 	case 104:
 	case 116:
-		vector_enemy_act(object, &y, &ignored16, &ignored);
+		vector_enemy_act(object, &ignored16, &ignored);
 		break;
 	case -128:
 	case -108:
@@ -1108,7 +1094,7 @@ void goon_walk_in(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_lef
 	case 84:
 	case 106:
 	case 118:
-		vector_enemy_react(object, &y, &ignored16, &ignored);
+		vector_enemy_react(object, &ignored16, &ignored);
 		break;
 	case -126:
 	case -106:
@@ -1122,7 +1108,7 @@ void goon_walk_in(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_lef
 	case 86:
 	case 108:
 	case 120:
-		vector_enemy_climb(object, &y, &ignored16, &ignored);
+		vector_enemy_climb(object, &ignored16, &ignored);
 		break;
 	case -4:
 	case 38:
@@ -1136,45 +1122,44 @@ void goon_walk_in(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_lef
 		goon_entrance_end(object);
 		break;
 	case -10:
-		y = hat_goon_waiting_show(object, y);
+		hat_goon_waiting_show(object);
 		break;
 	case -8:
 		hat_goon_waiting_for_scroll(object);
 		break;
 	case -6:
-		y = hat_goon_waiting_step_forward(object, y);
+		hat_goon_waiting_step_forward(object);
 		break;
 	}
-	vector_enemy_take_special_hit(object, &ignored16, p_left_caller);
+	vector_enemy_take_special_hit(object, &ignored16, &left_caller);
 	vector_remove_past_right_edge(object, ignored16);
-	*p_y = y;
+	return left_caller;
 }
 
 /* A goon that strikes its entrance pose (getting out of the police car when its spawn's bit 7 is set)
    and walks up onto the floor (type 16). */
-void goon_step_out(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_left_caller)
+uint32_t goon_step_out(uint16_t object, uint8_t state)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint32_t zero = 0, negative = 0;
 	uint8_t state_2 = 0;
 	uint16_t ignored16 = 0, state_handlers = 0;
-	uint32_t ignored = 0;
-	uint8_t t1 = 0;
+	uint32_t ignored = 0, left_caller = 0;
+	uint8_t state_offset = 0;
 
 	state_2 = (uint8_t)state;
 	state_handlers = goon_step_out_states_ADDRESS;
-	t1 = (uint32_t)state_2 << 1;
-	negative = t1 >> 7;
-	zero = t1 == 0u;
-	switch ((int8_t)t1)
+	state_offset = (uint32_t)state_2 << 1;
+	negative = state_offset >> 7;
+	zero = state_offset == 0u;
+	switch ((int8_t)state_offset)
 	{
 	case 0:
 	case 50:
-		y = goon_step_out_set_up(object);
+		goon_step_out_set_up(object);
 		break;
 	case -10:
 	case 2:
-		y = goon_step_out_step(object, y);
+		goon_step_out_step(object);
 		break;
 	case -106:
 	case -64:
@@ -1185,7 +1170,7 @@ void goon_step_out(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_le
 	case 74:
 	case 86:
 	case 108:
-		vector_enemy_think(object, &y, &state_handlers, &ignored);
+		vector_enemy_think(object, &state_handlers, &ignored);
 		break;
 	case -104:
 	case -62:
@@ -1196,7 +1181,7 @@ void goon_step_out(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_le
 	case 76:
 	case 88:
 	case 110:
-		vector_enemy_act(object, &y, &state_handlers, &ignored);
+		vector_enemy_act(object, &state_handlers, &ignored);
 		break;
 	case -102:
 	case -60:
@@ -1207,7 +1192,7 @@ void goon_step_out(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_le
 	case 78:
 	case 90:
 	case 112:
-		vector_enemy_react(object, &y, &state_handlers, &ignored);
+		vector_enemy_react(object, &state_handlers, &ignored);
 		break;
 	case -100:
 	case -58:
@@ -1218,7 +1203,7 @@ void goon_step_out(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_le
 	case 80:
 	case 92:
 	case 114:
-		vector_enemy_climb(object, &y, &state_handlers, &ignored);
+		vector_enemy_climb(object, &state_handlers, &ignored);
 		break;
 	case -114:
 	case -72:
@@ -1244,10 +1229,10 @@ void goon_step_out(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_le
 		goon_delayed_start(object);
 		break;
 	case -34:
-		y = shovel_goon_step_out_set_up(object);
+		shovel_goon_step_out_set_up(object);
 		break;
 	case -32:
-		y = shovel_goon_step_out_step(object, y);
+		shovel_goon_step_out_step(object);
 		break;
 	case -22:
 		shovel_goon_step_out_show(object);
@@ -1262,19 +1247,18 @@ void goon_step_out(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_le
 		shovel_goon_step_out_arm(object);
 		break;
 	case -12:
-		y = hat_goon_step_out_set_up(object);
+		hat_goon_step_out_set_up(object);
 		break;
 	}
-	vector_enemy_take_special_hit(object, &ignored16, p_left_caller);
+	vector_enemy_take_special_hit(object, &ignored16, &left_caller);
 	vector_remove_past_right_edge(object, ignored16);
-	*p_y = y;
+	return left_caller;
 }
 
 /* The balloon a descending goon hangs from (list 1 type 0D): runs its state (0 set up, 1 carried, 2 let
    go, 3 rising). */
-void goon_balloon(uint16_t object, uint8_t state, uint16_t *p_y, uint16_t *p_state_handlers)
+uint16_t goon_balloon(uint16_t object, uint8_t state)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint8_t state_2 = 0;
 	uint16_t state_handlers = 0;
 
@@ -1283,38 +1267,34 @@ void goon_balloon(uint16_t object, uint8_t state, uint16_t *p_y, uint16_t *p_sta
 	switch ((int8_t)(uint8_t)((uint32_t)state_2 << 1))
 	{
 	case 0:
-		goon_balloon_set_up(object, &y, &state_handlers);
-		break;
+		return goon_balloon_set_up(object);
 	case 2:
-		state_handlers = goon_balloon_carried(object);
-		break;
+		return goon_balloon_carried(object);
 	case 4:
 		goon_balloon_let_go(object);
-		break;
+		return state_handlers;
 	case 6:
 		goon_balloon_rise(object);
-		break;
+		return state_handlers;
 	}
-	*p_y = y;
-	*p_state_handlers = state_handlers;
+	unreachable();
 }
 
 /* A goon hidden until the scroll brings it in, that then runs in onto the floor (type 17; stage 4). */
-void goon_run_in(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_left_caller)
+uint32_t goon_run_in(uint16_t object, uint8_t state)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint8_t state_2 = 0;
 	uint16_t ignored16 = 0;
-	uint32_t ignored = 0;
+	uint32_t ignored = 0, left_caller = 0;
 
 	state_2 = (uint8_t)state;
 	switch ((int8_t)(uint8_t)((uint32_t)state_2 << 1))
 	{
 	case 0:
-		y = goon_run_in_set_up(object);
+		goon_run_in_set_up(object);
 		break;
 	case 2:
-		y = goon_run_in_step(object, y);
+		goon_run_in_step(object);
 		break;
 	case -112:
 	case -100:
@@ -1325,7 +1305,7 @@ void goon_run_in(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_left
 	case 30:
 	case 78:
 	case 102:
-		vector_enemy_think(object, &y, &ignored16, &ignored);
+		vector_enemy_think(object, &ignored16, &ignored);
 		break;
 	case -110:
 	case -98:
@@ -1336,7 +1316,7 @@ void goon_run_in(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_left
 	case 32:
 	case 80:
 	case 104:
-		vector_enemy_act(object, &y, &ignored16, &ignored);
+		vector_enemy_act(object, &ignored16, &ignored);
 		break;
 	case -108:
 	case -96:
@@ -1347,7 +1327,7 @@ void goon_run_in(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_left
 	case 34:
 	case 82:
 	case 106:
-		vector_enemy_react(object, &y, &ignored16, &ignored);
+		vector_enemy_react(object, &ignored16, &ignored);
 		break;
 	case -128:
 	case -106:
@@ -1359,7 +1339,7 @@ void goon_run_in(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_left
 	case 36:
 	case 84:
 	case 108:
-		vector_enemy_climb(object, &y, &ignored16, &ignored);
+		vector_enemy_climb(object, &ignored16, &ignored);
 		break;
 	case -4:
 	case 22:
@@ -1373,27 +1353,26 @@ void goon_run_in(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_left
 		goon_from_side_walk(object);
 		break;
 	}
-	vector_enemy_take_special_hit(object, &ignored16, p_left_caller);
+	vector_enemy_take_special_hit(object, &ignored16, &left_caller);
 	vector_remove_past_right_edge(object, ignored16);
-	*p_y = y;
+	return left_caller;
 }
 
 /* A goon with a hat that waits for the scroll and jumps in (type 18; stage 4). */
-void hat_goon_jump_in(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_left_caller)
+uint32_t hat_goon_jump_in(uint16_t object, uint8_t state)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint8_t state_2 = 0;
 	uint16_t ignored16 = 0;
-	uint32_t ignored = 0;
+	uint32_t ignored = 0, left_caller = 0;
 
 	state_2 = (uint8_t)state;
 	switch ((int8_t)(uint8_t)((uint32_t)state_2 << 1))
 	{
 	case 0:
-		y = hat_goon_jump_in_set_up(object);
+		hat_goon_jump_in_set_up(object);
 		break;
 	case 2:
-		y = hat_goon_jump_in_step(object, y);
+		hat_goon_jump_in_step(object);
 		break;
 	case -126:
 	case -76:
@@ -1403,7 +1382,7 @@ void hat_goon_jump_in(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p
 	case 4:
 	case 52:
 	case 76:
-		vector_enemy_think(object, &y, &ignored16, &ignored);
+		vector_enemy_think(object, &ignored16, &ignored);
 		break;
 	case -124:
 	case -74:
@@ -1413,7 +1392,7 @@ void hat_goon_jump_in(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p
 	case 6:
 	case 54:
 	case 78:
-		vector_enemy_act(object, &y, &ignored16, &ignored);
+		vector_enemy_act(object, &ignored16, &ignored);
 		break;
 	case -122:
 	case -72:
@@ -1423,7 +1402,7 @@ void hat_goon_jump_in(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p
 	case 8:
 	case 56:
 	case 80:
-		vector_enemy_react(object, &y, &ignored16, &ignored);
+		vector_enemy_react(object, &ignored16, &ignored);
 		break;
 	case -120:
 	case -70:
@@ -1433,7 +1412,7 @@ void hat_goon_jump_in(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p
 	case 10:
 	case 58:
 	case 82:
-		vector_enemy_climb(object, &y, &ignored16, &ignored);
+		vector_enemy_climb(object, &ignored16, &ignored);
 		break;
 	case -30:
 	case -4:
@@ -1447,27 +1426,26 @@ void hat_goon_jump_in(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p
 		goon_run_in_go(object);
 		break;
 	}
-	vector_enemy_take_special_hit(object, &ignored16, p_left_caller);
+	vector_enemy_take_special_hit(object, &ignored16, &left_caller);
 	vector_remove_past_right_edge(object, ignored16);
-	*p_y = y;
+	return left_caller;
 }
 
 /* A goon with a hat waiting where the scroll brings it in, that then steps forward (type 06; stage 4). */
-void hat_goon_waiting(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_left_caller)
+uint32_t hat_goon_waiting(uint16_t object, uint8_t state)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint8_t state_2 = 0;
 	uint16_t ignored16 = 0;
-	uint32_t ignored = 0;
+	uint32_t ignored = 0, left_caller = 0;
 
 	state_2 = (uint8_t)state;
 	switch ((int8_t)(uint8_t)((uint32_t)state_2 << 1))
 	{
 	case 0:
-		y = hat_goon_waiting_set_up(object);
+		hat_goon_waiting_set_up(object);
 		break;
 	case 2:
-		y = hat_goon_waiting_step(object, y);
+		hat_goon_waiting_step(object);
 		break;
 	case -98:
 	case -78:
@@ -1479,7 +1457,7 @@ void hat_goon_waiting(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p
 	case 38:
 	case 80:
 	case 114:
-		vector_enemy_think(object, &y, &ignored16, &ignored);
+		vector_enemy_think(object, &ignored16, &ignored);
 		break;
 	case -96:
 	case -76:
@@ -1491,7 +1469,7 @@ void hat_goon_waiting(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p
 	case 40:
 	case 82:
 	case 116:
-		vector_enemy_act(object, &y, &ignored16, &ignored);
+		vector_enemy_act(object, &ignored16, &ignored);
 		break;
 	case -94:
 	case -74:
@@ -1503,7 +1481,7 @@ void hat_goon_waiting(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p
 	case 42:
 	case 84:
 	case 118:
-		vector_enemy_react(object, &y, &ignored16, &ignored);
+		vector_enemy_react(object, &ignored16, &ignored);
 		break;
 	case -92:
 	case -72:
@@ -1515,30 +1493,29 @@ void hat_goon_waiting(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p
 	case 44:
 	case 86:
 	case 120:
-		vector_enemy_climb(object, &y, &ignored16, &ignored);
+		vector_enemy_climb(object, &ignored16, &ignored);
 		break;
 	}
-	vector_enemy_take_special_hit(object, &ignored16, p_left_caller);
+	vector_enemy_take_special_hit(object, &ignored16, &left_caller);
 	vector_remove_past_right_edge(object, ignored16);
-	*p_y = y;
+	return left_caller;
 }
 
 /* A goon hidden for a while that then comes in by a direction and a speed onto the floor (type 1D). */
-void goon_delayed(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_left_caller)
+uint32_t goon_delayed(uint16_t object, uint8_t state)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint8_t state_2 = 0;
 	uint16_t ignored16 = 0;
-	uint32_t ignored = 0;
+	uint32_t ignored = 0, left_caller = 0;
 
 	state_2 = (uint8_t)state;
 	switch ((int8_t)(uint8_t)((uint32_t)state_2 << 1))
 	{
 	case 0:
-		y = goon_delayed_set_up(object);
+		goon_delayed_set_up(object);
 		break;
 	case 2:
-		y = goon_delayed_step(object, y);
+		goon_delayed_step(object);
 		break;
 	case -126:
 	case -114:
@@ -1550,7 +1527,7 @@ void goon_delayed(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_lef
 	case 60:
 	case 72:
 	case 122:
-		vector_enemy_think(object, &y, &ignored16, &ignored);
+		vector_enemy_think(object, &ignored16, &ignored);
 		break;
 	case -124:
 	case -112:
@@ -1562,7 +1539,7 @@ void goon_delayed(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_lef
 	case 62:
 	case 74:
 	case 124:
-		vector_enemy_act(object, &y, &ignored16, &ignored);
+		vector_enemy_act(object, &ignored16, &ignored);
 		break;
 	case -122:
 	case -110:
@@ -1574,7 +1551,7 @@ void goon_delayed(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_lef
 	case 64:
 	case 76:
 	case 126:
-		vector_enemy_react(object, &y, &ignored16, &ignored);
+		vector_enemy_react(object, &ignored16, &ignored);
 		break;
 	case -120:
 	case -108:
@@ -1585,7 +1562,7 @@ void goon_delayed(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_lef
 	case 44:
 	case 66:
 	case 78:
-		vector_enemy_climb(object, &y, &ignored16, &ignored);
+		vector_enemy_climb(object, &ignored16, &ignored);
 		break;
 	case -46:
 	case -4:
@@ -1607,27 +1584,26 @@ void goon_delayed(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_lef
 		goon_walk_in_go(object);
 		break;
 	}
-	vector_enemy_take_special_hit(object, &ignored16, p_left_caller);
+	vector_enemy_take_special_hit(object, &ignored16, &left_caller);
 	vector_remove_past_right_edge(object, ignored16);
-	*p_y = y;
+	return left_caller;
 }
 
 /* A goon that waits for the scroll and drops down (type 1E; no scenario puts it in). */
-void goon_drop(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_left_caller)
+uint32_t goon_drop(uint16_t object, uint8_t state)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint8_t state_2 = 0;
 	uint16_t ignored16 = 0;
-	uint32_t ignored = 0;
+	uint32_t ignored = 0, left_caller = 0;
 
 	state_2 = (uint8_t)state;
 	switch ((int8_t)(uint8_t)((uint32_t)state_2 << 1))
 	{
 	case 0:
-		y = goon_drop_set_up(object);
+		goon_drop_set_up(object);
 		break;
 	case 2:
-		y = goon_drop_step(object, y);
+		goon_drop_step(object);
 		break;
 	case -124:
 	case -104:
@@ -1636,7 +1612,7 @@ void goon_drop(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_left_c
 	case -44:
 	case 4:
 	case 28:
-		vector_enemy_think(object, &y, &ignored16, &ignored);
+		vector_enemy_think(object, &ignored16, &ignored);
 		break;
 	case -122:
 	case -102:
@@ -1645,7 +1621,7 @@ void goon_drop(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_left_c
 	case -42:
 	case 6:
 	case 30:
-		vector_enemy_act(object, &y, &ignored16, &ignored);
+		vector_enemy_act(object, &ignored16, &ignored);
 		break;
 	case -120:
 	case -100:
@@ -1654,7 +1630,7 @@ void goon_drop(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_left_c
 	case -40:
 	case 8:
 	case 32:
-		vector_enemy_react(object, &y, &ignored16, &ignored);
+		vector_enemy_react(object, &ignored16, &ignored);
 		break;
 	case -118:
 	case -98:
@@ -1663,7 +1639,7 @@ void goon_drop(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_left_c
 	case -38:
 	case 10:
 	case 34:
-		vector_enemy_climb(object, &y, &ignored16, &ignored);
+		vector_enemy_climb(object, &ignored16, &ignored);
 		break;
 	case -12:
 	case 16:
@@ -1687,24 +1663,23 @@ void goon_drop(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_left_c
 		hat_goon_jump_in_fly(object);
 		break;
 	}
-	vector_enemy_take_special_hit(object, &ignored16, p_left_caller);
+	vector_enemy_take_special_hit(object, &ignored16, &left_caller);
 	vector_remove_past_right_edge(object, ignored16);
-	*p_y = y;
+	return left_caller;
 }
 
 /* A goon with an umbrella floating down into the cemetery (type ED; stage 3's cemetery). */
-void cemetery_umbrella_goon(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_left_caller)
+uint32_t cemetery_umbrella_goon(uint16_t object, uint8_t state)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint8_t state_2 = 0;
 	uint16_t ignored16 = 0;
-	uint32_t ignored = 0;
+	uint32_t ignored = 0, left_caller = 0;
 
 	state_2 = (uint8_t)state;
 	switch ((int8_t)(uint8_t)((uint32_t)state_2 << 1))
 	{
 	case 0:
-		y = cemetery_umbrella_goon_set_up(object);
+		cemetery_umbrella_goon_set_up(object);
 		break;
 	case 2:
 		cemetery_umbrella_goon_float_down(object);
@@ -1714,54 +1689,53 @@ void cemetery_umbrella_goon(uint16_t object, uint8_t state, uint16_t *p_y, uint3
 	case -36:
 	case -16:
 	case 4:
-		vector_enemy_think(object, &y, &ignored16, &ignored);
+		vector_enemy_think(object, &ignored16, &ignored);
 		break;
 	case -86:
 	case -46:
 	case -34:
 	case -14:
 	case 6:
-		vector_enemy_act(object, &y, &ignored16, &ignored);
+		vector_enemy_act(object, &ignored16, &ignored);
 		break;
 	case -44:
 	case -32:
 	case -12:
 	case 8:
-		y = enemy_react_with_pits(object, y);
+		enemy_react_with_pits(object);
 		break;
 	case -82:
 	case -42:
 	case -30:
 	case -10:
 	case 10:
-		vector_enemy_climb(object, &y, &ignored16, &ignored);
+		vector_enemy_climb(object, &ignored16, &ignored);
 		break;
 	case -4:
 		goon_from_below_leap(object);
 		break;
 	case -2:
-		y = goon_from_below_land(object, y);
+		goon_from_below_land(object);
 		break;
 	}
-	vector_enemy_take_special_hit(object, &ignored16, p_left_caller);
+	vector_enemy_take_special_hit(object, &ignored16, &left_caller);
 	vector_remove_past_right_edge(object, ignored16);
-	*p_y = y;
+	return left_caller;
 }
 
 /* A goon whose behaviour (0298B8) grabs close but mostly keeps its distance further off (type EB; most
    stages). */
-void goon_keeps_away(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_left_caller)
+uint32_t goon_keeps_away(uint16_t object, uint8_t state)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint8_t state_2 = 0;
 	uint16_t ignored16 = 0;
-	uint32_t ignored = 0;
+	uint32_t ignored = 0, left_caller = 0;
 
 	state_2 = (uint8_t)state;
 	switch ((int8_t)(uint8_t)((uint32_t)state_2 << 1))
 	{
 	case 0:
-		y = goon_keeps_away_start(object);
+		goon_keeps_away_start(object);
 		break;
 	case -20:
 	case -8:
@@ -1769,7 +1743,7 @@ void goon_keeps_away(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_
 	case 16:
 	case 28:
 	case 84:
-		vector_enemy_think(object, &y, &ignored16, &ignored);
+		vector_enemy_think(object, &ignored16, &ignored);
 		break;
 	case -18:
 	case -6:
@@ -1777,14 +1751,14 @@ void goon_keeps_away(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_
 	case 18:
 	case 30:
 	case 86:
-		vector_enemy_act(object, &y, &ignored16, &ignored);
+		vector_enemy_act(object, &ignored16, &ignored);
 		break;
 	case -16:
 	case 8:
 	case 20:
 	case 32:
 	case 88:
-		vector_enemy_react(object, &y, &ignored16, &ignored);
+		vector_enemy_react(object, &ignored16, &ignored);
 		break;
 	case -14:
 	case -2:
@@ -1792,42 +1766,41 @@ void goon_keeps_away(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_
 	case 22:
 	case 34:
 	case 90:
-		vector_enemy_climb(object, &y, &ignored16, &ignored);
+		vector_enemy_climb(object, &ignored16, &ignored);
 		break;
 	case 12:
-		y = goon_striker_start(object);
+		goon_striker_start(object);
 		break;
 	case 24:
-		y = goon_close_grabber_start(object);
+		goon_close_grabber_start(object);
 		break;
 	case -24:
-		y = hat_goon_brawler_start(object);
+		hat_goon_brawler_start(object);
 		break;
 	case -12:
-		vector_goon_start(object, &y, &ignored16);
+		vector_goon_start(object);
 		break;
 	case -4:
-		y = enemy_react_with_walls(object, y);
+		enemy_react_with_walls(object);
 		break;
 	}
-	vector_enemy_take_special_hit(object, &ignored16, p_left_caller);
+	vector_enemy_take_special_hit(object, &ignored16, &left_caller);
 	vector_remove_past_right_edge(object, ignored16);
-	*p_y = y;
+	return left_caller;
 }
 
 /* A goon with an umbrella floating down from above (type 08). */
-void umbrella_goon_float_down(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_left_caller)
+uint32_t umbrella_goon_float_down(uint16_t object, uint8_t state)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint8_t state_2 = 0;
 	uint16_t ignored16 = 0;
-	uint32_t ignored = 0;
+	uint32_t ignored = 0, left_caller = 0;
 
 	state_2 = (uint8_t)state;
 	switch ((int8_t)(uint8_t)((uint32_t)state_2 << 1))
 	{
 	case 0:
-		y = umbrella_goon_float_down_set_up(object);
+		umbrella_goon_float_down_set_up(object);
 		break;
 	case 2:
 		umbrella_goon_float_down_step(object);
@@ -1838,7 +1811,7 @@ void umbrella_goon_float_down(uint16_t object, uint8_t state, uint16_t *p_y, uin
 	case -68:
 	case -20:
 	case 4:
-		vector_enemy_think(object, &y, &ignored16, &ignored);
+		vector_enemy_think(object, &ignored16, &ignored);
 		break;
 	case -126:
 	case -114:
@@ -1846,7 +1819,7 @@ void umbrella_goon_float_down(uint16_t object, uint8_t state, uint16_t *p_y, uin
 	case -66:
 	case -18:
 	case 6:
-		vector_enemy_act(object, &y, &ignored16, &ignored);
+		vector_enemy_act(object, &ignored16, &ignored);
 		break;
 	case -124:
 	case -112:
@@ -1854,7 +1827,7 @@ void umbrella_goon_float_down(uint16_t object, uint8_t state, uint16_t *p_y, uin
 	case -64:
 	case -16:
 	case 8:
-		vector_enemy_react(object, &y, &ignored16, &ignored);
+		vector_enemy_react(object, &ignored16, &ignored);
 		break;
 	case -122:
 	case -110:
@@ -1862,7 +1835,7 @@ void umbrella_goon_float_down(uint16_t object, uint8_t state, uint16_t *p_y, uin
 	case -62:
 	case -14:
 	case 10:
-		vector_enemy_climb(object, &y, &ignored16, &ignored);
+		vector_enemy_climb(object, &ignored16, &ignored);
 		break;
 	case -36:
 	case -8:
@@ -1880,28 +1853,27 @@ void umbrella_goon_float_down(uint16_t object, uint8_t state, uint16_t *p_y, uin
 		goon_drop_show(object);
 		break;
 	}
-	vector_enemy_take_special_hit(object, &ignored16, p_left_caller);
+	vector_enemy_take_special_hit(object, &ignored16, &left_caller);
 	vector_remove_past_right_edge(object, ignored16);
-	*p_y = y;
+	return left_caller;
 }
 
 /* A goon with a hat that runs across the screen once the scroll brings it in (type 27; no scenario puts
    it in). */
-void hat_goon_run_across(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_left_caller)
+uint32_t hat_goon_run_across(uint16_t object, uint8_t state)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint8_t state_2 = 0;
 	uint16_t ignored16 = 0;
-	uint32_t ignored = 0;
+	uint32_t ignored = 0, left_caller = 0;
 
 	state_2 = (uint8_t)state;
 	switch ((int8_t)(uint8_t)((uint32_t)state_2 << 1))
 	{
 	case 0:
-		hat_goon_run_across_set_up(object, &y, &ignored16);
+		hat_goon_run_across_set_up(object);
 		break;
 	case 2:
-		hat_goon_run_across_step(object, &y, &ignored16);
+		hat_goon_run_across_step(object);
 		break;
 	case -120:
 	case -108:
@@ -1913,7 +1885,7 @@ void hat_goon_run_across(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t
 	case 64:
 	case 80:
 	case 106:
-		vector_enemy_think(object, &y, &ignored16, &ignored);
+		vector_enemy_think(object, &ignored16, &ignored);
 		break;
 	case -118:
 	case -106:
@@ -1925,7 +1897,7 @@ void hat_goon_run_across(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t
 	case 66:
 	case 82:
 	case 108:
-		vector_enemy_act(object, &y, &ignored16, &ignored);
+		vector_enemy_act(object, &ignored16, &ignored);
 		break;
 	case -128:
 	case -116:
@@ -1938,7 +1910,7 @@ void hat_goon_run_across(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t
 	case 68:
 	case 84:
 	case 110:
-		vector_enemy_react(object, &y, &ignored16, &ignored);
+		vector_enemy_react(object, &ignored16, &ignored);
 		break;
 	case -126:
 	case -114:
@@ -1951,7 +1923,7 @@ void hat_goon_run_across(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t
 	case 70:
 	case 86:
 	case 112:
-		vector_enemy_climb(object, &y, &ignored16, &ignored);
+		vector_enemy_climb(object, &ignored16, &ignored);
 		break;
 	case 12:
 		hat_goon_run_across_pose(object);
@@ -1966,30 +1938,30 @@ void hat_goon_run_across(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t
 		hat_goon_run_across_running();
 		break;
 	case 20:
-		umbrella_goon_rush_in_set_up(object, &y, &ignored16);
+		umbrella_goon_rush_in_set_up(object);
 		break;
 	case 22:
 	case 50:
 	case 62:
-		goon_rush_in_step(object, &y, &ignored16);
+		goon_rush_in_step(object);
 		break;
 	case 32:
-		shovel_goon_rush_in_set_up(object, &y, &ignored16);
+		shovel_goon_rush_in_set_up(object);
 		break;
 	case 34:
-		shovel_goon_rush_in_step(object, &y, &ignored16);
+		shovel_goon_rush_in_step(object);
 		break;
 	case 44:
 		shovel_goon_rush_in_start(object);
 		break;
 	case 46:
-		y = shovel_goon_rush_in_swing(object);
+		shovel_goon_rush_in_swing(object);
 		break;
 	case 48:
-		goon_striker_rush_in_set_up(object, &y, &ignored16);
+		goon_striker_rush_in_set_up(object);
 		break;
 	case 60:
-		goon_rush_in_set_up(object, &y, &ignored16);
+		goon_rush_in_set_up(object);
 		break;
 	case 72:
 		goon_rush_in_start(object);
@@ -1998,10 +1970,10 @@ void hat_goon_run_across(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t
 		goon_rush_in_run(object, 0u);
 		break;
 	case 76:
-		goon_from_back_set_up(object, &y, &ignored16);
+		goon_from_back_set_up(object);
 		break;
 	case 78:
-		goon_from_back_step(object, &y, &ignored16);
+		goon_from_back_step(object);
 		break;
 	case 88:
 		goon_from_back_place(object);
@@ -2013,33 +1985,32 @@ void hat_goon_run_across(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t
 		goon_from_back_wait(object, 0u);
 		break;
 	}
-	vector_enemy_take_special_hit(object, &ignored16, p_left_caller);
+	vector_enemy_take_special_hit(object, &ignored16, &left_caller);
 	vector_remove_past_right_edge(object, ignored16);
-	*p_y = y;
+	return left_caller;
 }
 
 /* A goon that strikes its entrance pose, steps onto the floor and takes up a shovel (type 1B). */
-void shovel_goon_step_out(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_left_caller)
+uint32_t shovel_goon_step_out(uint16_t object, uint8_t state)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint32_t zero = 0, negative = 0;
 	uint8_t state_2 = 0;
 	uint16_t ignored16 = 0, state_handlers = 0;
-	uint32_t ignored = 0;
-	uint8_t t1 = 0;
+	uint32_t ignored = 0, left_caller = 0;
+	uint8_t state_offset = 0;
 
 	state_2 = (uint8_t)state;
 	state_handlers = shovel_goon_step_out_states_ADDRESS;
-	t1 = (uint32_t)state_2 << 1;
-	negative = t1 >> 7;
-	zero = t1 == 0u;
-	switch ((int8_t)t1)
+	state_offset = (uint32_t)state_2 << 1;
+	negative = state_offset >> 7;
+	zero = state_offset == 0u;
+	switch ((int8_t)state_offset)
 	{
 	case 0:
-		y = shovel_goon_step_out_set_up(object);
+		shovel_goon_step_out_set_up(object);
 		break;
 	case 2:
-		y = shovel_goon_step_out_step(object, y);
+		shovel_goon_step_out_step(object);
 		break;
 	case -106:
 	case -72:
@@ -2050,7 +2021,7 @@ void shovel_goon_step_out(uint16_t object, uint8_t state, uint16_t *p_y, uint32_
 	case 88:
 	case 108:
 	case 120:
-		vector_enemy_think(object, &y, &state_handlers, &ignored);
+		vector_enemy_think(object, &state_handlers, &ignored);
 		break;
 	case -104:
 	case -70:
@@ -2061,7 +2032,7 @@ void shovel_goon_step_out(uint16_t object, uint8_t state, uint16_t *p_y, uint32_
 	case 90:
 	case 110:
 	case 122:
-		vector_enemy_act(object, &y, &state_handlers, &ignored);
+		vector_enemy_act(object, &state_handlers, &ignored);
 		break;
 	case -128:
 	case -102:
@@ -2073,7 +2044,7 @@ void shovel_goon_step_out(uint16_t object, uint8_t state, uint16_t *p_y, uint32_
 	case 92:
 	case 112:
 	case 124:
-		vector_enemy_react(object, &y, &state_handlers, &ignored);
+		vector_enemy_react(object, &state_handlers, &ignored);
 		break;
 	case -126:
 	case -100:
@@ -2085,7 +2056,7 @@ void shovel_goon_step_out(uint16_t object, uint8_t state, uint16_t *p_y, uint32_
 	case 94:
 	case 114:
 	case 126:
-		vector_enemy_climb(object, &y, &state_handlers, &ignored);
+		vector_enemy_climb(object, &state_handlers, &ignored);
 		break;
 	case 12:
 		shovel_goon_step_out_show(object);
@@ -2107,15 +2078,15 @@ void shovel_goon_step_out(uint16_t object, uint8_t state, uint16_t *p_y, uint32_
 		shovel_goon_step_out_arm(object);
 		break;
 	case 22:
-		y = hat_goon_step_out_set_up(object);
+		hat_goon_step_out_set_up(object);
 		break;
 	case 24:
 	case 36:
-		y = goon_step_out_step(object, y);
+		goon_step_out_step(object);
 		break;
 	case 34:
 	case 84:
-		y = goon_step_out_set_up(object);
+		goon_step_out_set_up(object);
 		break;
 	case -78:
 	case -36:
@@ -2134,30 +2105,29 @@ void shovel_goon_step_out(uint16_t object, uint8_t state, uint16_t *p_y, uint32_
 		goon_delayed_start(object);
 		break;
 	}
-	vector_enemy_take_special_hit(object, &ignored16, p_left_caller);
+	vector_enemy_take_special_hit(object, &ignored16, &left_caller);
 	vector_remove_past_right_edge(object, ignored16);
-	*p_y = y;
+	return left_caller;
 }
 
 /* A striker goon (no grabs) that runs in toward its target for the frames its spawn gives (type 34),
    then fights. */
-void goon_striker_rush_in(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_left_caller)
+uint32_t goon_striker_rush_in(uint16_t object, uint8_t state)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint8_t state_2 = 0;
 	uint16_t ignored16 = 0;
-	uint32_t ignored = 0;
+	uint32_t ignored = 0, left_caller = 0;
 
 	state_2 = (uint8_t)state;
 	switch ((int8_t)(uint8_t)((uint32_t)state_2 << 1))
 	{
 	case 0:
-		goon_striker_rush_in_set_up(object, &y, &ignored16);
+		goon_striker_rush_in_set_up(object);
 		break;
 	case -26:
 	case 2:
 	case 14:
-		goon_rush_in_step(object, &y, &ignored16);
+		goon_rush_in_step(object);
 		break;
 	case -100:
 	case -44:
@@ -2168,7 +2138,7 @@ void goon_striker_rush_in(uint16_t object, uint8_t state, uint16_t *p_y, uint32_
 	case 32:
 	case 58:
 	case 92:
-		vector_enemy_think(object, &y, &ignored16, &ignored);
+		vector_enemy_think(object, &ignored16, &ignored);
 		break;
 	case -98:
 	case -42:
@@ -2179,7 +2149,7 @@ void goon_striker_rush_in(uint16_t object, uint8_t state, uint16_t *p_y, uint32_
 	case 34:
 	case 60:
 	case 94:
-		vector_enemy_act(object, &y, &ignored16, &ignored);
+		vector_enemy_act(object, &ignored16, &ignored);
 		break;
 	case -96:
 	case -40:
@@ -2190,7 +2160,7 @@ void goon_striker_rush_in(uint16_t object, uint8_t state, uint16_t *p_y, uint32_
 	case 36:
 	case 62:
 	case 96:
-		vector_enemy_react(object, &y, &ignored16, &ignored);
+		vector_enemy_react(object, &ignored16, &ignored);
 		break;
 	case -94:
 	case -38:
@@ -2201,10 +2171,10 @@ void goon_striker_rush_in(uint16_t object, uint8_t state, uint16_t *p_y, uint32_
 	case 38:
 	case 64:
 	case 98:
-		vector_enemy_climb(object, &y, &ignored16, &ignored);
+		vector_enemy_climb(object, &ignored16, &ignored);
 		break;
 	case 12:
-		goon_rush_in_set_up(object, &y, &ignored16);
+		goon_rush_in_set_up(object);
 		break;
 	case 24:
 		goon_rush_in_start(object);
@@ -2213,10 +2183,10 @@ void goon_striker_rush_in(uint16_t object, uint8_t state, uint16_t *p_y, uint32_
 		goon_rush_in_run(object, 0u);
 		break;
 	case 28:
-		goon_from_back_set_up(object, &y, &ignored16);
+		goon_from_back_set_up(object);
 		break;
 	case 30:
-		goon_from_back_step(object, &y, &ignored16);
+		goon_from_back_step(object);
 		break;
 	case 40:
 		goon_from_back_place(object);
@@ -2228,10 +2198,10 @@ void goon_striker_rush_in(uint16_t object, uint8_t state, uint16_t *p_y, uint32_
 		goon_from_back_wait(object, 0u);
 		break;
 	case -48:
-		hat_goon_run_across_set_up(object, &y, &ignored16);
+		hat_goon_run_across_set_up(object);
 		break;
 	case -46:
-		hat_goon_run_across_step(object, &y, &ignored16);
+		hat_goon_run_across_step(object);
 		break;
 	case -36:
 		hat_goon_run_across_pose(object);
@@ -2246,172 +2216,168 @@ void goon_striker_rush_in(uint16_t object, uint8_t state, uint16_t *p_y, uint32_
 		hat_goon_run_across_running();
 		break;
 	case -28:
-		umbrella_goon_rush_in_set_up(object, &y, &ignored16);
+		umbrella_goon_rush_in_set_up(object);
 		break;
 	case -16:
-		shovel_goon_rush_in_set_up(object, &y, &ignored16);
+		shovel_goon_rush_in_set_up(object);
 		break;
 	case -14:
-		shovel_goon_rush_in_step(object, &y, &ignored16);
+		shovel_goon_rush_in_step(object);
 		break;
 	case -4:
 		shovel_goon_rush_in_start(object);
 		break;
 	case -2:
-		y = shovel_goon_rush_in_swing(object);
+		shovel_goon_rush_in_swing(object);
 		break;
 	}
-	vector_enemy_take_special_hit(object, &ignored16, p_left_caller);
+	vector_enemy_take_special_hit(object, &ignored16, &left_caller);
 	vector_remove_past_right_edge(object, ignored16);
-	*p_y = y;
+	return left_caller;
 }
 
 /* A goon with a hat (type 01): set up, then the enemies' states. */
-void hat_goon(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_left_caller)
+uint32_t hat_goon(uint16_t object, uint8_t state)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint8_t state_2 = 0;
 	uint16_t ignored16 = 0;
-	uint32_t ignored = 0;
+	uint32_t ignored = 0, left_caller = 0;
 
 	state_2 = (uint8_t)state;
 	switch ((int8_t)(uint8_t)((uint32_t)state_2 << 1))
 	{
 	case 0:
-		y = hat_goon_start(object);
+		hat_goon_start(object);
 		break;
 	case -14:
 	case 4:
 	case 22:
 	case 40:
-		vector_enemy_think(object, &y, &ignored16, &ignored);
+		vector_enemy_think(object, &ignored16, &ignored);
 		break;
 	case -12:
 	case 6:
 	case 24:
 	case 42:
-		vector_enemy_act(object, &y, &ignored16, &ignored);
+		vector_enemy_act(object, &ignored16, &ignored);
 		break;
 	case -10:
 	case 8:
 	case 26:
 	case 44:
-		vector_enemy_react(object, &y, &ignored16, &ignored);
+		vector_enemy_react(object, &ignored16, &ignored);
 		break;
 	case -8:
 	case 10:
 	case 28:
 	case 46:
-		vector_enemy_climb(object, &y, &ignored16, &ignored);
+		vector_enemy_climb(object, &ignored16, &ignored);
 		break;
 	}
-	vector_enemy_take_special_hit(object, &ignored16, p_left_caller);
+	vector_enemy_take_special_hit(object, &ignored16, &left_caller);
 	vector_remove_past_right_edge(object, ignored16);
-	*p_y = y;
+	return left_caller;
 }
 
 /* A goon with an umbrella (type 0A): set up, then the enemies' states. */
-void umbrella_goon(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_left_caller)
+uint32_t umbrella_goon(uint16_t object, uint8_t state)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint8_t state_2 = 0;
 	uint16_t ignored16 = 0;
-	uint32_t ignored = 0;
+	uint32_t ignored = 0, left_caller = 0;
 
 	state_2 = (uint8_t)state;
 	switch ((int8_t)(uint8_t)((uint32_t)state_2 << 1))
 	{
 	case 0:
-		y = umbrella_goon_start(object);
+		umbrella_goon_start(object);
 		break;
 	case -32:
 	case -14:
 	case 4:
 	case 22:
-		vector_enemy_think(object, &y, &ignored16, &ignored);
+		vector_enemy_think(object, &ignored16, &ignored);
 		break;
 	case -30:
 	case -12:
 	case 6:
 	case 24:
-		vector_enemy_act(object, &y, &ignored16, &ignored);
+		vector_enemy_act(object, &ignored16, &ignored);
 		break;
 	case -28:
 	case -10:
 	case 8:
 	case 26:
-		vector_enemy_react(object, &y, &ignored16, &ignored);
+		vector_enemy_react(object, &ignored16, &ignored);
 		break;
 	case -26:
 	case -8:
 	case 10:
 	case 28:
-		vector_enemy_climb(object, &y, &ignored16, &ignored);
+		vector_enemy_climb(object, &ignored16, &ignored);
 		break;
 	}
-	vector_enemy_take_special_hit(object, &ignored16, p_left_caller);
+	vector_enemy_take_special_hit(object, &ignored16, &left_caller);
 	vector_remove_past_right_edge(object, ignored16);
-	*p_y = y;
+	return left_caller;
 }
 
 /* A goon with a shovel (type 0D): set up, then the enemies' states. */
-void shovel_goon(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_left_caller)
+uint32_t shovel_goon(uint16_t object, uint8_t state)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint8_t state_2 = 0;
 	uint16_t ignored16 = 0;
-	uint32_t ignored = 0;
+	uint32_t ignored = 0, left_caller = 0;
 
 	state_2 = (uint8_t)state;
 	switch ((int8_t)(uint8_t)((uint32_t)state_2 << 1))
 	{
 	case 0:
-		y = shovel_goon_start(object);
+		shovel_goon_start(object);
 		break;
 	case -50:
 	case -32:
 	case -14:
 	case 4:
-		vector_enemy_think(object, &y, &ignored16, &ignored);
+		vector_enemy_think(object, &ignored16, &ignored);
 		break;
 	case -48:
 	case -30:
 	case -12:
 	case 6:
-		vector_enemy_act(object, &y, &ignored16, &ignored);
+		vector_enemy_act(object, &ignored16, &ignored);
 		break;
 	case -46:
 	case -28:
 	case -10:
 	case 8:
-		vector_enemy_react(object, &y, &ignored16, &ignored);
+		vector_enemy_react(object, &ignored16, &ignored);
 		break;
 	case -44:
 	case -26:
 	case -8:
 	case 10:
-		vector_enemy_climb(object, &y, &ignored16, &ignored);
+		vector_enemy_climb(object, &ignored16, &ignored);
 		break;
 	}
-	vector_enemy_take_special_hit(object, &ignored16, p_left_caller);
+	vector_enemy_take_special_hit(object, &ignored16, &left_caller);
 	vector_remove_past_right_edge(object, ignored16);
-	*p_y = y;
+	return left_caller;
 }
 
 /* A goon with a hat whose behaviour (029910) never throws the hat: backs off at mid range and walks up
    to strike from afar (type E7; stages 3 and 7). */
-void hat_goon_brawler(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_left_caller)
+uint32_t hat_goon_brawler(uint16_t object, uint8_t state)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint8_t state_2 = 0;
 	uint16_t ignored16 = 0;
-	uint32_t ignored = 0;
+	uint32_t ignored = 0, left_caller = 0;
 
 	state_2 = (uint8_t)state;
 	switch ((int8_t)(uint8_t)((uint32_t)state_2 << 1))
 	{
 	case 0:
-		y = hat_goon_brawler_start(object);
+		hat_goon_brawler_start(object);
 		break;
 	case 4:
 	case 16:
@@ -2419,7 +2385,7 @@ void hat_goon_brawler(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p
 	case 40:
 	case 52:
 	case 108:
-		vector_enemy_think(object, &y, &ignored16, &ignored);
+		vector_enemy_think(object, &ignored16, &ignored);
 		break;
 	case 6:
 	case 18:
@@ -2427,14 +2393,14 @@ void hat_goon_brawler(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p
 	case 42:
 	case 54:
 	case 110:
-		vector_enemy_act(object, &y, &ignored16, &ignored);
+		vector_enemy_act(object, &ignored16, &ignored);
 		break;
 	case 8:
 	case 32:
 	case 44:
 	case 56:
 	case 112:
-		vector_enemy_react(object, &y, &ignored16, &ignored);
+		vector_enemy_react(object, &ignored16, &ignored);
 		break;
 	case 10:
 	case 22:
@@ -2442,70 +2408,63 @@ void hat_goon_brawler(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p
 	case 46:
 	case 58:
 	case 114:
-		vector_enemy_climb(object, &y, &ignored16, &ignored);
+		vector_enemy_climb(object, &ignored16, &ignored);
 		break;
 	case 12:
-		vector_goon_start(object, &y, &ignored16);
+		vector_goon_start(object);
 		break;
 	case 20:
-		y = enemy_react_with_walls(object, y);
+		enemy_react_with_walls(object);
 		break;
 	case 24:
-		y = goon_keeps_away_start(object);
+		goon_keeps_away_start(object);
 		break;
 	case 36:
-		y = goon_striker_start(object);
+		goon_striker_start(object);
 		break;
 	case 48:
-		y = goon_close_grabber_start(object);
+		goon_close_grabber_start(object);
 		break;
 	}
-	vector_enemy_take_special_hit(object, &ignored16, p_left_caller);
+	vector_enemy_take_special_hit(object, &ignored16, &left_caller);
 	vector_remove_past_right_edge(object, ignored16);
-	*p_y = y;
+	return left_caller;
 }
 
 /* Unused: a slot of the goons' bank that jumps to hat_goon_set_up. */
 void unused_vector_hat_goon_set_up(uint16_t object)
 {
-	uint16_t ignored16 = 0, ignored16_2 = 0;
-
-	hat_goon_set_up(object, &ignored16, &ignored16_2);
+	hat_goon_set_up(object);
 }
 
 /* Unused: a slot of the goons' bank that jumps to umbrella_goon_set_up. */
 void unused_vector_umbrella_goon_set_up(uint16_t object)
 {
-	uint16_t ignored16 = 0, ignored16_2 = 0;
-
-	umbrella_goon_set_up(object, &ignored16, &ignored16_2);
+	umbrella_goon_set_up(object);
 }
 
 /* Unused: a slot of the goons' bank that jumps to shovel_goon_set_up. */
 void unused_vector_shovel_goon_set_up(uint16_t object)
 {
-	uint16_t ignored16 = 0, ignored16_2 = 0;
-
-	shovel_goon_set_up(object, &ignored16, &ignored16_2);
+	shovel_goon_set_up(object);
 }
 
 /* A goon that walks in from the left onto the floor and waits there (type 3F). */
-void goon_from_side(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_left_caller)
+uint32_t goon_from_side(uint16_t object, uint8_t state)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint8_t state_2 = 0;
 	uint16_t ignored16 = 0;
-	uint32_t ignored = 0;
+	uint32_t ignored = 0, left_caller = 0;
 
 	state_2 = (uint8_t)state;
 	switch ((int8_t)(uint8_t)((uint32_t)state_2 << 1))
 	{
 	case 0:
-		y = goon_from_side_set_up(object);
+		goon_from_side_set_up(object);
 		break;
 	case -10:
 	case 2:
-		y = goon_from_side_step(object, y);
+		goon_from_side_step(object);
 		break;
 	case -112:
 	case -90:
@@ -2517,7 +2476,7 @@ void goon_from_side(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_l
 	case 52:
 	case 100:
 	case 124:
-		vector_enemy_think(object, &y, &ignored16, &ignored);
+		vector_enemy_think(object, &ignored16, &ignored);
 		break;
 	case -110:
 	case -88:
@@ -2529,7 +2488,7 @@ void goon_from_side(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_l
 	case 54:
 	case 102:
 	case 126:
-		vector_enemy_act(object, &y, &ignored16, &ignored);
+		vector_enemy_act(object, &ignored16, &ignored);
 		break;
 	case -108:
 	case -86:
@@ -2540,7 +2499,7 @@ void goon_from_side(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_l
 	case 30:
 	case 56:
 	case 104:
-		vector_enemy_react(object, &y, &ignored16, &ignored);
+		vector_enemy_react(object, &ignored16, &ignored);
 		break;
 	case -106:
 	case -84:
@@ -2551,7 +2510,7 @@ void goon_from_side(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_l
 	case 32:
 	case 58:
 	case 106:
-		vector_enemy_climb(object, &y, &ignored16, &ignored);
+		vector_enemy_climb(object, &ignored16, &ignored);
 		break;
 	case -120:
 	case -100:
@@ -2565,7 +2524,7 @@ void goon_from_side(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_l
 		break;
 	case -82:
 	case -32:
-		y = goon_step_out_set_up(object);
+		goon_step_out_set_up(object);
 		break;
 	case -44:
 		goon_step_out_check(object);
@@ -2581,7 +2540,7 @@ void goon_from_side(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_l
 		goon_walk_up_start(object);
 		break;
 	case -30:
-		y = goon_walk_up_step(object, y);
+		goon_walk_up_step(object);
 		break;
 	case -20:
 		goon_walk_up_show(object);
@@ -2590,31 +2549,30 @@ void goon_from_side(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_l
 		goon_walk_up_reach_floor(object);
 		break;
 	case -12:
-		y = goon_striker_from_side_set_up(object);
+		goon_striker_from_side_set_up(object);
 		break;
 	}
-	vector_enemy_take_special_hit(object, &ignored16, p_left_caller);
+	vector_enemy_take_special_hit(object, &ignored16, &left_caller);
 	vector_remove_past_right_edge(object, ignored16);
-	*p_y = y;
+	return left_caller;
 }
 
 /* A goon with a shovel that charges in swinging it for the frames its spawn gives (type 29), then
    fights. */
-void shovel_goon_rush_in(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_left_caller)
+uint32_t shovel_goon_rush_in(uint16_t object, uint8_t state)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint8_t state_2 = 0;
 	uint16_t ignored16 = 0;
-	uint32_t ignored = 0;
+	uint32_t ignored = 0, left_caller = 0;
 
 	state_2 = (uint8_t)state;
 	switch ((int8_t)(uint8_t)((uint32_t)state_2 << 1))
 	{
 	case 0:
-		shovel_goon_rush_in_set_up(object, &y, &ignored16);
+		shovel_goon_rush_in_set_up(object);
 		break;
 	case 2:
-		shovel_goon_rush_in_step(object, &y, &ignored16);
+		shovel_goon_rush_in_step(object);
 		break;
 	case -84:
 	case -28:
@@ -2625,7 +2583,7 @@ void shovel_goon_rush_in(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t
 	case 48:
 	case 74:
 	case 108:
-		vector_enemy_think(object, &y, &ignored16, &ignored);
+		vector_enemy_think(object, &ignored16, &ignored);
 		break;
 	case -82:
 	case -26:
@@ -2636,7 +2594,7 @@ void shovel_goon_rush_in(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t
 	case 50:
 	case 76:
 	case 110:
-		vector_enemy_act(object, &y, &ignored16, &ignored);
+		vector_enemy_act(object, &ignored16, &ignored);
 		break;
 	case -80:
 	case -24:
@@ -2647,7 +2605,7 @@ void shovel_goon_rush_in(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t
 	case 52:
 	case 78:
 	case 112:
-		vector_enemy_react(object, &y, &ignored16, &ignored);
+		vector_enemy_react(object, &ignored16, &ignored);
 		break;
 	case -78:
 	case -22:
@@ -2658,24 +2616,24 @@ void shovel_goon_rush_in(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t
 	case 54:
 	case 80:
 	case 114:
-		vector_enemy_climb(object, &y, &ignored16, &ignored);
+		vector_enemy_climb(object, &ignored16, &ignored);
 		break;
 	case 12:
 		shovel_goon_rush_in_start(object);
 		break;
 	case 14:
-		y = shovel_goon_rush_in_swing(object);
+		shovel_goon_rush_in_swing(object);
 		break;
 	case 16:
-		goon_striker_rush_in_set_up(object, &y, &ignored16);
+		goon_striker_rush_in_set_up(object);
 		break;
 	case -10:
 	case 18:
 	case 30:
-		goon_rush_in_step(object, &y, &ignored16);
+		goon_rush_in_step(object);
 		break;
 	case 28:
-		goon_rush_in_set_up(object, &y, &ignored16);
+		goon_rush_in_set_up(object);
 		break;
 	case 40:
 		goon_rush_in_start(object);
@@ -2684,10 +2642,10 @@ void shovel_goon_rush_in(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t
 		goon_rush_in_run(object, 0u);
 		break;
 	case 44:
-		goon_from_back_set_up(object, &y, &ignored16);
+		goon_from_back_set_up(object);
 		break;
 	case 46:
-		goon_from_back_step(object, &y, &ignored16);
+		goon_from_back_step(object);
 		break;
 	case 56:
 		goon_from_back_place(object);
@@ -2699,10 +2657,10 @@ void shovel_goon_rush_in(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t
 		goon_from_back_wait(object, 0u);
 		break;
 	case -32:
-		hat_goon_run_across_set_up(object, &y, &ignored16);
+		hat_goon_run_across_set_up(object);
 		break;
 	case -30:
-		hat_goon_run_across_step(object, &y, &ignored16);
+		hat_goon_run_across_step(object);
 		break;
 	case -20:
 		hat_goon_run_across_pose(object);
@@ -2717,33 +2675,32 @@ void shovel_goon_rush_in(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t
 		hat_goon_run_across_running();
 		break;
 	case -12:
-		umbrella_goon_rush_in_set_up(object, &y, &ignored16);
+		umbrella_goon_rush_in_set_up(object);
 		break;
 	}
-	vector_enemy_take_special_hit(object, &ignored16, p_left_caller);
+	vector_enemy_take_special_hit(object, &ignored16, &left_caller);
 	vector_remove_past_right_edge(object, ignored16);
-	*p_y = y;
+	return left_caller;
 }
 
 /* A goon with an umbrella that runs in toward its target for the frames its spawn gives (type 2A), then
    fights. */
-void umbrella_goon_rush_in(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_left_caller)
+uint32_t umbrella_goon_rush_in(uint16_t object, uint8_t state)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint8_t state_2 = 0;
 	uint16_t ignored16 = 0;
-	uint32_t ignored = 0;
+	uint32_t ignored = 0, left_caller = 0;
 
 	state_2 = (uint8_t)state;
 	switch ((int8_t)(uint8_t)((uint32_t)state_2 << 1))
 	{
 	case 0:
-		umbrella_goon_rush_in_set_up(object, &y, &ignored16);
+		umbrella_goon_rush_in_set_up(object);
 		break;
 	case 2:
 	case 30:
 	case 42:
-		goon_rush_in_step(object, &y, &ignored16);
+		goon_rush_in_step(object);
 		break;
 	case -128:
 	case -72:
@@ -2755,7 +2712,7 @@ void umbrella_goon_rush_in(uint16_t object, uint8_t state, uint16_t *p_y, uint32
 	case 60:
 	case 86:
 	case 120:
-		vector_enemy_think(object, &y, &ignored16, &ignored);
+		vector_enemy_think(object, &ignored16, &ignored);
 		break;
 	case -126:
 	case -70:
@@ -2767,7 +2724,7 @@ void umbrella_goon_rush_in(uint16_t object, uint8_t state, uint16_t *p_y, uint32
 	case 62:
 	case 88:
 	case 122:
-		vector_enemy_act(object, &y, &ignored16, &ignored);
+		vector_enemy_act(object, &ignored16, &ignored);
 		break;
 	case -124:
 	case -68:
@@ -2779,7 +2736,7 @@ void umbrella_goon_rush_in(uint16_t object, uint8_t state, uint16_t *p_y, uint32
 	case 64:
 	case 90:
 	case 124:
-		vector_enemy_react(object, &y, &ignored16, &ignored);
+		vector_enemy_react(object, &ignored16, &ignored);
 		break;
 	case -122:
 	case -66:
@@ -2791,25 +2748,25 @@ void umbrella_goon_rush_in(uint16_t object, uint8_t state, uint16_t *p_y, uint32
 	case 66:
 	case 92:
 	case 126:
-		vector_enemy_climb(object, &y, &ignored16, &ignored);
+		vector_enemy_climb(object, &ignored16, &ignored);
 		break;
 	case 12:
-		shovel_goon_rush_in_set_up(object, &y, &ignored16);
+		shovel_goon_rush_in_set_up(object);
 		break;
 	case 14:
-		shovel_goon_rush_in_step(object, &y, &ignored16);
+		shovel_goon_rush_in_step(object);
 		break;
 	case 24:
 		shovel_goon_rush_in_start(object);
 		break;
 	case 26:
-		y = shovel_goon_rush_in_swing(object);
+		shovel_goon_rush_in_swing(object);
 		break;
 	case 28:
-		goon_striker_rush_in_set_up(object, &y, &ignored16);
+		goon_striker_rush_in_set_up(object);
 		break;
 	case 40:
-		goon_rush_in_set_up(object, &y, &ignored16);
+		goon_rush_in_set_up(object);
 		break;
 	case 52:
 		goon_rush_in_start(object);
@@ -2818,10 +2775,10 @@ void umbrella_goon_rush_in(uint16_t object, uint8_t state, uint16_t *p_y, uint32
 		goon_rush_in_run(object, 0u);
 		break;
 	case 56:
-		goon_from_back_set_up(object, &y, &ignored16);
+		goon_from_back_set_up(object);
 		break;
 	case 58:
-		goon_from_back_step(object, &y, &ignored16);
+		goon_from_back_step(object);
 		break;
 	case 68:
 		goon_from_back_place(object);
@@ -2833,10 +2790,10 @@ void umbrella_goon_rush_in(uint16_t object, uint8_t state, uint16_t *p_y, uint32
 		goon_from_back_wait(object, 0u);
 		break;
 	case -20:
-		hat_goon_run_across_set_up(object, &y, &ignored16);
+		hat_goon_run_across_set_up(object);
 		break;
 	case -18:
-		hat_goon_run_across_step(object, &y, &ignored16);
+		hat_goon_run_across_step(object);
 		break;
 	case -8:
 		hat_goon_run_across_pose(object);
@@ -2851,29 +2808,28 @@ void umbrella_goon_rush_in(uint16_t object, uint8_t state, uint16_t *p_y, uint32
 		hat_goon_run_across_running();
 		break;
 	}
-	vector_enemy_take_special_hit(object, &ignored16, p_left_caller);
+	vector_enemy_take_special_hit(object, &ignored16, &left_caller);
 	vector_remove_past_right_edge(object, ignored16);
-	*p_y = y;
+	return left_caller;
 }
 
 /* A striker goon (no grabs) that walks in from the left onto the floor (type F4; no scenario puts it
    in). */
-void goon_striker_from_side(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_left_caller)
+uint32_t goon_striker_from_side(uint16_t object, uint8_t state)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint8_t state_2 = 0;
 	uint16_t ignored16 = 0;
-	uint32_t ignored = 0;
+	uint32_t ignored = 0, left_caller = 0;
 
 	state_2 = (uint8_t)state;
 	switch ((int8_t)(uint8_t)((uint32_t)state_2 << 1))
 	{
 	case 0:
-		y = goon_striker_from_side_set_up(object);
+		goon_striker_from_side_set_up(object);
 		break;
 	case 2:
 	case 14:
-		y = goon_from_side_step(object, y);
+		goon_from_side_step(object);
 		break;
 	case -100:
 	case -78:
@@ -2884,7 +2840,7 @@ void goon_striker_from_side(uint16_t object, uint8_t state, uint16_t *p_y, uint3
 	case 38:
 	case 64:
 	case 112:
-		vector_enemy_think(object, &y, &ignored16, &ignored);
+		vector_enemy_think(object, &ignored16, &ignored);
 		break;
 	case -98:
 	case -76:
@@ -2895,7 +2851,7 @@ void goon_striker_from_side(uint16_t object, uint8_t state, uint16_t *p_y, uint3
 	case 40:
 	case 66:
 	case 114:
-		vector_enemy_act(object, &y, &ignored16, &ignored);
+		vector_enemy_act(object, &ignored16, &ignored);
 		break;
 	case -96:
 	case -74:
@@ -2906,7 +2862,7 @@ void goon_striker_from_side(uint16_t object, uint8_t state, uint16_t *p_y, uint3
 	case 42:
 	case 68:
 	case 116:
-		vector_enemy_react(object, &y, &ignored16, &ignored);
+		vector_enemy_react(object, &ignored16, &ignored);
 		break;
 	case -128:
 	case -94:
@@ -2918,10 +2874,10 @@ void goon_striker_from_side(uint16_t object, uint8_t state, uint16_t *p_y, uint3
 	case 44:
 	case 70:
 	case 118:
-		vector_enemy_climb(object, &y, &ignored16, &ignored);
+		vector_enemy_climb(object, &ignored16, &ignored);
 		break;
 	case 12:
-		y = goon_from_side_set_up(object);
+		goon_from_side_set_up(object);
 		break;
 	case -108:
 	case -88:
@@ -2935,7 +2891,7 @@ void goon_striker_from_side(uint16_t object, uint8_t state, uint16_t *p_y, uint3
 		break;
 	case -70:
 	case -20:
-		y = goon_step_out_set_up(object);
+		goon_step_out_set_up(object);
 		break;
 	case -32:
 		goon_step_out_check(object);
@@ -2951,7 +2907,7 @@ void goon_striker_from_side(uint16_t object, uint8_t state, uint16_t *p_y, uint3
 		goon_walk_up_start(object);
 		break;
 	case -18:
-		y = goon_walk_up_step(object, y);
+		goon_walk_up_step(object);
 		break;
 	case -8:
 		goon_walk_up_show(object);
@@ -2960,103 +2916,87 @@ void goon_striker_from_side(uint16_t object, uint8_t state, uint16_t *p_y, uint3
 		goon_walk_up_reach_floor(object);
 		break;
 	}
-	vector_enemy_take_special_hit(object, &ignored16, p_left_caller);
+	vector_enemy_take_special_hit(object, &ignored16, &left_caller);
 	vector_remove_past_right_edge(object, ignored16);
-	*p_y = y;
+	return left_caller;
 }
 
 /* Sets up a goon in the hat goon's set (kind 84) with behaviour 029910. */
-uint16_t hat_goon_brawler_set_up(uint16_t object)
+void hat_goon_brawler_set_up(uint16_t object)
 {
-	uint16_t y = 0;
 	uint8_t attributes = 0;
 
-	y = goon_base_set_up(object);
+	goon_base_set_up(object);
 	OBJECT(object)->kind = 0x84u;
 	OBJECT(object)->behaviour = 0x7910u;
 	attributes = OBJECT(object)->attributes;
 	OBJECT(object)->attributes = (attributes & ~0xFu) | 0x86u;
-	return y;
 }
 
 /* Its state 0: set up, weakened when its spawn says so, straight to choosing (state 2). */
-uint16_t hat_goon_brawler_start(uint16_t object)
+void hat_goon_brawler_start(uint16_t object)
 {
-	uint16_t y = 0;
-
-	y = hat_goon_brawler_set_up(object);
+	hat_goon_brawler_set_up(object);
 	goon_weaken_if_marked(object);
 	OBJECT(object)->parameter = 0u;
 	OBJECT(object)->state = 2u;
-	return y;
 }
 
 /* Sets up a goon (kind 80, setup 79B0): its retarget time, facing, counted among the stage's enemies
    (field 42), its nearest player and the distances to it. */
-uint16_t goon_base_set_up(uint16_t object)
+void goon_base_set_up(uint16_t object)
 {
-	uint16_t setup = 0, u = 0, y = 0;
+	uint16_t nearest_player = 0, setup = 0;
 	uint8_t attributes = 0;
 
 	setup = goon_base_object_setup_ADDRESS;
-	y = vector_object_setup(object, setup);
+	vector_object_setup(object, setup);
 	OBJECT(object)->retarget_time = 0x10u;
 	attributes = OBJECT(object)->attributes;
 	OBJECT(object)->attributes = attributes | 0x40u;
 	OBJECT(object)->enemy_class = 1;
-	u = vector_choose_nearest_player(object);
-	vector_measure_target(object, u);
-	return y;
+	nearest_player = vector_choose_nearest_player(object);
+	vector_measure_target(object, nearest_player);
 }
 
 /* Sets up a goon with behaviour 0298B8, standing (animation 86). */
-uint16_t goon_keeps_away_set_up(uint16_t object)
+void goon_keeps_away_set_up(uint16_t object)
 {
-	uint16_t y = 0;
-
-	y = goon_base_set_up(object);
+	goon_base_set_up(object);
 	OBJECT(object)->behaviour = 0x78B8u;
 	OBJECT(object)->animation = 0x86u;
-	return y;
 }
 
 /* Its state 0: set up, weakened when its spawn says so, straight to choosing. */
-uint16_t goon_keeps_away_start(uint16_t object)
+void goon_keeps_away_start(uint16_t object)
 {
-	uint16_t y = 0;
-
-	y = goon_keeps_away_set_up(object);
+	goon_keeps_away_set_up(object);
 	goon_weaken_if_marked(object);
 	OBJECT(object)->parameter = 0u;
 	OBJECT(object)->state = 2u;
-	return y;
 }
 
 /* Sets up a goon with behaviour 029860 (no grabs). */
-void goon_striker_set_up(uint16_t object, uint16_t *p_y, uint16_t *p_behaviour)
+uint16_t goon_striker_set_up(uint16_t object)
 {
-	uint16_t behaviour = 0, y = 0;
+	uint16_t behaviour = 0;
 	uint8_t attributes = 0;
 
-	y = goon_base_set_up(object);
+	goon_base_set_up(object);
 	behaviour = 0x7860u;
 	OBJECT(object)->behaviour = 0x7860u;
 	attributes = OBJECT(object)->attributes;
 	OBJECT(object)->attributes = (attributes & ~0xFu) | 0x86u;
-	*p_y = y;
-	*p_behaviour = behaviour;
+	return behaviour;
 }
 
 /* Its state 0: set up, weakened when its spawn says so, straight to choosing. */
-uint16_t goon_striker_start(uint16_t object)
+void goon_striker_start(uint16_t object)
 {
-	uint16_t ignored16 = 0, y = 0;
-
-	goon_striker_set_up(object, &y, &ignored16);
+	goon_striker_set_up(object);
 	goon_weaken_if_marked(object);
 	OBJECT(object)->parameter = 0u;
 	OBJECT(object)->state = 2u;
-	return y;
 }
 
 /* A goon whose spawn gave it a field 30 has 1 health. */
@@ -3070,58 +3010,51 @@ void goon_weaken_if_marked(uint16_t object)
 }
 
 /* Sets up a goon with behaviour 029808. */
-uint16_t goon_close_grabber_set_up(uint16_t object)
+void goon_close_grabber_set_up(uint16_t object)
 {
-	uint16_t y = 0;
-
-	y = goon_base_set_up(object);
+	goon_base_set_up(object);
 	OBJECT(object)->behaviour = 0x7808u;
-	return y;
 }
 
 /* Its state 0: set up, weakened when its spawn says so, straight to choosing. */
-uint16_t goon_close_grabber_start(uint16_t object)
+void goon_close_grabber_start(uint16_t object)
 {
-	uint16_t y = 0;
-
-	y = goon_close_grabber_set_up(object);
+	goon_close_grabber_set_up(object);
 	goon_weaken_if_marked(object);
 	OBJECT(object)->parameter = 0u;
 	OBJECT(object)->state = 2u;
-	return y;
 }
 
 /* Its state 0: shown with the goon's set's animation 36, at its goon's place 3C higher, moving with it. */
-void goon_balloon_set_up(uint16_t object, uint16_t *p_y, uint16_t *p_object_2)
+uint16_t goon_balloon_set_up(uint16_t object)
 {
-	uint16_t object_3 = 0, setup = 0, y = 0;
+	uint16_t object_2 = 0, setup = 0;
 	uint8_t attributes = 0, attributes_2 = 0, state = 0;
-	uint16_t parent = 0, x_speed = 0, z_speed = 0, t1 = 0, t2 = 0, z = 0, t3 = 0;
+	uint16_t parent = 0, x_speed = 0, z_speed = 0, goon_x = 0, goon_y = 0, z = 0, balloon_z = 0;
 
 	setup = goon_balloon_setup_ADDRESS;
-	y = vector_object_setup(object, setup);
+	vector_object_setup(object, setup);
 	OBJECT(object)->flags = 0x80u;
 	parent = OBJECT(object)->parent;
-	object_3 = parent;
-	attributes = OBJECT(object_3)->attributes;
+	object_2 = parent;
+	attributes = OBJECT(object_2)->attributes;
 	priority_bits = attributes & 0x30u;
 	attributes_2 = OBJECT(object)->attributes;
 	OBJECT(object)->attributes = (attributes_2 & 0xCFu) | priority_bits;
-	x_speed = OBJECT(object_3)->x_speed;
+	x_speed = OBJECT(object_2)->x_speed;
 	OBJECT(object)->x_speed = x_speed;
-	z_speed = OBJECT(object_3)->z_speed;
+	z_speed = OBJECT(object_2)->z_speed;
 	OBJECT(object)->z_speed = z_speed;
-	t1 = OBJECT(object_3)->x;
-	OBJECT(object)->x = t1;
-	t2 = OBJECT(object_3)->y;
-	OBJECT(object)->y = t2;
-	z = OBJECT(object_3)->z;
-	t3 = z + 0x3Cu;
-	OBJECT(object)->z = t3;
+	goon_x = OBJECT(object_2)->x;
+	OBJECT(object)->x = goon_x;
+	goon_y = OBJECT(object_2)->y;
+	OBJECT(object)->y = goon_y;
+	z = OBJECT(object_2)->z;
+	balloon_z = z + 0x3Cu;
+	OBJECT(object)->z = balloon_z;
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
-	*p_y = y;
-	*p_object_2 = object_3;
+	return object_2;
 }
 
 /* Carried (state 1): lets go when its goon is hurt (state 4); the goon also lets go of it on its own. */
@@ -3166,48 +3099,44 @@ void goon_balloon_rise(uint16_t object)
 
 /* Its state 0: a goon with its balloon (straight to choosing when there is no room for one), animation
    B0, at the x and x speed goon_descent_starts gives, coming down for 68 frames. */
-void goon_descent_set_up(uint16_t object, uint16_t *p_child_record, uint16_t *p_balloon)
+uint16_t goon_descent_set_up(uint16_t object)
 {
 	uint32_t carry = 0;
-	uint16_t balloon = 0, child_record = 0, ignored16 = 0, ignored16_2 = 0, ignored16_3 = 0;
+	uint16_t balloon = 0, descent_start = 0, ignored16 = 0, ignored16_3 = 0;
 	uint8_t parameter = 0, state = 0;
-	uint16_t t1 = 0, x_speed = 0;
+	uint16_t start_x = 0, x_speed = 0;
 
-	vector_goon_setup(object, &ignored16, &ignored16_2);
-	child_record = goon_descent_child_ADDRESS;
-	vector_spawn_child(object, child_record, &balloon, &ignored16_3, &carry);
-	if (carry)
-	{
-		OBJECT(object)->goon_descent.balloon = balloon;
-		OBJECT(object)->animation = 0xB0u;
-		OBJECT(object)->timer = 0x68u;
-		parameter = OBJECT(object)->parameter;
-		balloon = goon_descent_starts_ADDRESS + (int8_t)(((uint32_t)parameter << 1) << 1);
-		t1 = DESCENT_START(balloon)->x;
-		OBJECT(object)->x = t1;
-		x_speed = DESCENT_START(balloon)->x_speed;
-		OBJECT(object)->x_speed = x_speed;
-		OBJECT(object)->parameter = 0u;
-		OBJECT(object)->flags = 0xC8u;
-		OBJECT(object)->z_speed = -0x200;
-		OBJECT(object)->floor_z = 0u;
-		state = OBJECT(object)->state;
-		OBJECT(object)->state = state + 1u;
-	}
-	else
+	vector_goon_setup(object);
+	leftover_y = goon_descent_child_ADDRESS;
+	vector_spawn_child(object, &ignored16, &balloon, &ignored16_3, &carry);
+	if (carry == 0u)
 	{
 		OBJECT(object)->timer = 0u;
 		OBJECT(object)->parameter = 0u;
 		OBJECT(object)->state = 2u;
+		return balloon;
 	}
-	*p_child_record = child_record;
-	*p_balloon = balloon;
+	OBJECT(object)->goon_descent.balloon = balloon;
+	OBJECT(object)->animation = 0xB0u;
+	OBJECT(object)->timer = 0x68u;
+	parameter = OBJECT(object)->parameter;
+	descent_start = goon_descent_starts_ADDRESS + (int8_t)(((uint32_t)parameter << 1) << 1);
+	start_x = DESCENT_START(descent_start)->x;
+	OBJECT(object)->x = start_x;
+	x_speed = DESCENT_START(descent_start)->x_speed;
+	OBJECT(object)->x_speed = x_speed;
+	OBJECT(object)->parameter = 0u;
+	OBJECT(object)->flags = 0xC8u;
+	OBJECT(object)->z_speed = -0x200;
+	OBJECT(object)->floor_z = 0u;
+	state = OBJECT(object)->state;
+	OBJECT(object)->state = state + 1u;
+	return descent_start;
 }
 
 /* Its entrance (state 1): runs its step (field 29) and faces the way it moves. */
-void goon_descent_step(uint16_t object, uint16_t *p_y, uint16_t *p_step_handlers)
+uint16_t goon_descent_step(uint16_t object)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint16_t step_handlers = 0;
 	uint32_t ignored = 0;
 	uint8_t action_step = 0;
@@ -3234,7 +3163,7 @@ void goon_descent_step(uint16_t object, uint16_t *p_y, uint16_t *p_step_handlers
 	case 96:
 	case 108:
 	case 124:
-		vector_enemy_think(object, &y, &step_handlers, &ignored);
+		vector_enemy_think(object, &step_handlers, &ignored);
 		break;
 	case -110:
 	case -98:
@@ -3248,7 +3177,7 @@ void goon_descent_step(uint16_t object, uint16_t *p_y, uint16_t *p_step_handlers
 	case 98:
 	case 110:
 	case 126:
-		vector_enemy_act(object, &y, &step_handlers, &ignored);
+		vector_enemy_act(object, &step_handlers, &ignored);
 		break;
 	case -108:
 	case -84:
@@ -3260,7 +3189,7 @@ void goon_descent_step(uint16_t object, uint16_t *p_y, uint16_t *p_step_handlers
 	case 84:
 	case 100:
 	case 112:
-		vector_enemy_react(object, &y, &step_handlers, &ignored);
+		vector_enemy_react(object, &step_handlers, &ignored);
 		break;
 	case -106:
 	case -94:
@@ -3273,18 +3202,17 @@ void goon_descent_step(uint16_t object, uint16_t *p_y, uint16_t *p_step_handlers
 	case 86:
 	case 102:
 	case 114:
-		vector_enemy_climb(object, &y, &step_handlers, &ignored);
+		vector_enemy_climb(object, &step_handlers, &ignored);
 		break;
 	case -12:
-		goon_descent_set_up(object, &y, &step_handlers);
+		step_handlers = goon_descent_set_up(object);
 		break;
 	case -10:
-		goon_descent_step(object, &y, &step_handlers);
+		step_handlers = goon_descent_step(object);
 		break;
 	}
 	vector_face_direction(object);
-	*p_y = y;
-	*p_step_handlers = step_handlers;
+	return step_handlers;
 }
 
 /* Comes down with the floor's height under it kept; after its time lets go of the balloon (animation
@@ -3338,25 +3266,23 @@ uint16_t goon_descent_land(uint16_t object, uint16_t u)
 }
 
 /* Its state 0: a goon with a hat with hit box 79BE. */
-void hat_goon_run_across_set_up(uint16_t object, uint16_t *p_y, uint16_t *p_u)
+uint16_t hat_goon_run_across_set_up(uint16_t object)
 {
-	uint16_t box = 0, ignored16 = 0, u = 0;
+	uint16_t behaviour_address = 0;
 	uint8_t state = 0;
 
-	hat_goon_set_up(object, &ignored16, &u);
+	behaviour_address = hat_goon_set_up(object);
 	OBJECT(object)->parameter = 0u;
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
-	box = hat_goon_entrance_box_ADDRESS;
-	vector_set_hit_box(object, box);
-	*p_y = box;
-	*p_u = u;
+	leftover_y = hat_goon_entrance_box_ADDRESS;
+	vector_set_hit_box(object);
+	return behaviour_address;
 }
 
 /* Its entrance (state 1): runs its step and takes the floor's priority and height under it. */
-void hat_goon_run_across_step(uint16_t object, uint16_t *p_y, uint16_t *p_step_handlers)
+uint16_t hat_goon_run_across_step(uint16_t object)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint16_t step_handlers = 0;
 	uint32_t ignored = 0;
 	uint8_t action_step = 0;
@@ -3378,12 +3304,12 @@ void hat_goon_run_across_step(uint16_t object, uint16_t *p_y, uint16_t *p_step_h
 		hat_goon_run_across_running();
 		break;
 	case 8:
-		umbrella_goon_rush_in_set_up(object, &y, &step_handlers);
+		step_handlers = umbrella_goon_rush_in_set_up(object);
 		break;
 	case 10:
 	case 38:
 	case 50:
-		goon_rush_in_step(object, &y, &step_handlers);
+		step_handlers = goon_rush_in_step(object);
 		break;
 	case -120:
 	case -64:
@@ -3394,7 +3320,7 @@ void hat_goon_run_across_step(uint16_t object, uint16_t *p_y, uint16_t *p_step_h
 	case 52:
 	case 68:
 	case 94:
-		vector_enemy_think(object, &y, &step_handlers, &ignored);
+		vector_enemy_think(object, &step_handlers, &ignored);
 		break;
 	case -118:
 	case -62:
@@ -3405,7 +3331,7 @@ void hat_goon_run_across_step(uint16_t object, uint16_t *p_y, uint16_t *p_step_h
 	case 54:
 	case 70:
 	case 96:
-		vector_enemy_act(object, &y, &step_handlers, &ignored);
+		vector_enemy_act(object, &step_handlers, &ignored);
 		break;
 	case -128:
 	case -116:
@@ -3417,7 +3343,7 @@ void hat_goon_run_across_step(uint16_t object, uint16_t *p_y, uint16_t *p_step_h
 	case 56:
 	case 72:
 	case 98:
-		vector_enemy_react(object, &y, &step_handlers, &ignored);
+		vector_enemy_react(object, &step_handlers, &ignored);
 		break;
 	case -126:
 	case -114:
@@ -3429,25 +3355,25 @@ void hat_goon_run_across_step(uint16_t object, uint16_t *p_y, uint16_t *p_step_h
 	case 58:
 	case 74:
 	case 100:
-		vector_enemy_climb(object, &y, &step_handlers, &ignored);
+		vector_enemy_climb(object, &step_handlers, &ignored);
 		break;
 	case 20:
-		shovel_goon_rush_in_set_up(object, &y, &step_handlers);
+		step_handlers = shovel_goon_rush_in_set_up(object);
 		break;
 	case 22:
-		shovel_goon_rush_in_step(object, &y, &step_handlers);
+		step_handlers = shovel_goon_rush_in_step(object);
 		break;
 	case 32:
 		shovel_goon_rush_in_start(object);
 		break;
 	case 34:
-		y = shovel_goon_rush_in_swing(object);
+		shovel_goon_rush_in_swing(object);
 		break;
 	case 36:
-		goon_striker_rush_in_set_up(object, &y, &step_handlers);
+		step_handlers = goon_striker_rush_in_set_up(object);
 		break;
 	case 48:
-		goon_rush_in_set_up(object, &y, &step_handlers);
+		step_handlers = goon_rush_in_set_up(object);
 		break;
 	case 60:
 		goon_rush_in_start(object);
@@ -3456,10 +3382,10 @@ void hat_goon_run_across_step(uint16_t object, uint16_t *p_y, uint16_t *p_step_h
 		step_handlers = goon_rush_in_run(object, step_handlers);
 		break;
 	case 64:
-		goon_from_back_set_up(object, &y, &step_handlers);
+		step_handlers = goon_from_back_set_up(object);
 		break;
 	case 66:
-		goon_from_back_step(object, &y, &step_handlers);
+		step_handlers = goon_from_back_step(object);
 		break;
 	case 76:
 		step_handlers = goon_from_back_place(object);
@@ -3471,15 +3397,14 @@ void hat_goon_run_across_step(uint16_t object, uint16_t *p_y, uint16_t *p_step_h
 		step_handlers = goon_from_back_wait(object, step_handlers);
 		break;
 	case -12:
-		hat_goon_run_across_set_up(object, &y, &step_handlers);
+		step_handlers = hat_goon_run_across_set_up(object);
 		break;
 	case -10:
-		hat_goon_run_across_step(object, &y, &step_handlers);
+		step_handlers = hat_goon_run_across_step(object);
 		break;
 	}
 	goon_follow_floor(object);
-	*p_y = y;
-	*p_step_handlers = step_handlers;
+	return step_handlers;
 }
 
 /* Step 0: animation A2. */
@@ -3496,12 +3421,12 @@ void hat_goon_run_across_pose(uint16_t object)
 void hat_goon_run_across_wait(uint16_t object)
 {
 	uint8_t animation = 0, action_step = 0;
-	uint16_t t1 = 0;
+	uint16_t goon_x = 0;
 
 	animation = OBJECT(object)->animation;
 	OBJECT(object)->animation = animation | 0x80u;
-	t1 = OBJECT(object)->x;
-	if (t1 < 0x100u)
+	goon_x = OBJECT(object)->x;
+	if (goon_x < 0x100u)
 	{
 		action_step = OBJECT(object)->action_step;
 		OBJECT(object)->action_step = action_step + 1u;
@@ -3532,42 +3457,39 @@ void hat_goon_run_across_running(void)
 }
 
 /* Its state 0: a goon with an umbrella that will run the frames its spawn gives. */
-void umbrella_goon_rush_in_set_up(uint16_t object, uint16_t *p_y, uint16_t *p_u)
+uint16_t umbrella_goon_rush_in_set_up(uint16_t object)
 {
-	uint16_t u = 0, y = 0;
+	uint16_t behaviour_address = 0;
 	uint8_t parameter = 0, state = 0;
 
-	umbrella_goon_set_up(object, &y, &u);
+	behaviour_address = umbrella_goon_set_up(object);
 	parameter = OBJECT(object)->parameter;
 	OBJECT(object)->timer = parameter;
 	OBJECT(object)->parameter = 0u;
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
-	*p_y = y;
-	*p_u = u;
+	return behaviour_address;
 }
 
 /* Its state 0: a goon with a shovel (animation A4) that will charge the frames its spawn gives. */
-void shovel_goon_rush_in_set_up(uint16_t object, uint16_t *p_y, uint16_t *p_u)
+uint16_t shovel_goon_rush_in_set_up(uint16_t object)
 {
-	uint16_t u = 0, y = 0;
+	uint16_t behaviour_address = 0;
 	uint8_t parameter = 0, state = 0;
 
-	shovel_goon_set_up(object, &y, &u);
+	behaviour_address = shovel_goon_set_up(object);
 	OBJECT(object)->animation = 0xA4u;
 	parameter = OBJECT(object)->parameter;
 	OBJECT(object)->timer = parameter;
 	OBJECT(object)->parameter = 0u;
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
-	*p_y = y;
-	*p_u = u;
+	return behaviour_address;
 }
 
 /* Its entrance (state 1): runs its step and takes the floor's priority and height under it. */
-void shovel_goon_rush_in_step(uint16_t object, uint16_t *p_y, uint16_t *p_step_handlers)
+uint16_t shovel_goon_rush_in_step(uint16_t object)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint16_t step_handlers = 0;
 	uint32_t ignored = 0;
 	uint8_t action_step = 0;
@@ -3580,15 +3502,15 @@ void shovel_goon_rush_in_step(uint16_t object, uint16_t *p_y, uint16_t *p_step_h
 		shovel_goon_rush_in_start(object);
 		break;
 	case 2:
-		y = shovel_goon_rush_in_swing(object);
+		shovel_goon_rush_in_swing(object);
 		break;
 	case 4:
-		goon_striker_rush_in_set_up(object, &y, &step_handlers);
+		step_handlers = goon_striker_rush_in_set_up(object);
 		break;
 	case -22:
 	case 6:
 	case 18:
-		goon_rush_in_step(object, &y, &step_handlers);
+		step_handlers = goon_rush_in_step(object);
 		break;
 	case -96:
 	case -40:
@@ -3599,7 +3521,7 @@ void shovel_goon_rush_in_step(uint16_t object, uint16_t *p_y, uint16_t *p_step_h
 	case 36:
 	case 62:
 	case 96:
-		vector_enemy_think(object, &y, &step_handlers, &ignored);
+		vector_enemy_think(object, &step_handlers, &ignored);
 		break;
 	case -94:
 	case -38:
@@ -3610,7 +3532,7 @@ void shovel_goon_rush_in_step(uint16_t object, uint16_t *p_y, uint16_t *p_step_h
 	case 38:
 	case 64:
 	case 98:
-		vector_enemy_act(object, &y, &step_handlers, &ignored);
+		vector_enemy_act(object, &step_handlers, &ignored);
 		break;
 	case -92:
 	case -36:
@@ -3621,7 +3543,7 @@ void shovel_goon_rush_in_step(uint16_t object, uint16_t *p_y, uint16_t *p_step_h
 	case 40:
 	case 66:
 	case 100:
-		vector_enemy_react(object, &y, &step_handlers, &ignored);
+		vector_enemy_react(object, &step_handlers, &ignored);
 		break;
 	case -90:
 	case -34:
@@ -3632,10 +3554,10 @@ void shovel_goon_rush_in_step(uint16_t object, uint16_t *p_y, uint16_t *p_step_h
 	case 42:
 	case 68:
 	case 102:
-		vector_enemy_climb(object, &y, &step_handlers, &ignored);
+		vector_enemy_climb(object, &step_handlers, &ignored);
 		break;
 	case 16:
-		goon_rush_in_set_up(object, &y, &step_handlers);
+		step_handlers = goon_rush_in_set_up(object);
 		break;
 	case 28:
 		goon_rush_in_start(object);
@@ -3644,10 +3566,10 @@ void shovel_goon_rush_in_step(uint16_t object, uint16_t *p_y, uint16_t *p_step_h
 		step_handlers = goon_rush_in_run(object, step_handlers);
 		break;
 	case 32:
-		goon_from_back_set_up(object, &y, &step_handlers);
+		step_handlers = goon_from_back_set_up(object);
 		break;
 	case 34:
-		goon_from_back_step(object, &y, &step_handlers);
+		step_handlers = goon_from_back_step(object);
 		break;
 	case 44:
 		step_handlers = goon_from_back_place(object);
@@ -3659,10 +3581,10 @@ void shovel_goon_rush_in_step(uint16_t object, uint16_t *p_y, uint16_t *p_step_h
 		step_handlers = goon_from_back_wait(object, step_handlers);
 		break;
 	case -44:
-		hat_goon_run_across_set_up(object, &y, &step_handlers);
+		step_handlers = hat_goon_run_across_set_up(object);
 		break;
 	case -42:
-		hat_goon_run_across_step(object, &y, &step_handlers);
+		step_handlers = hat_goon_run_across_step(object);
 		break;
 	case -32:
 		hat_goon_run_across_pose(object);
@@ -3677,18 +3599,17 @@ void shovel_goon_rush_in_step(uint16_t object, uint16_t *p_y, uint16_t *p_step_h
 		hat_goon_run_across_running();
 		break;
 	case -24:
-		umbrella_goon_rush_in_set_up(object, &y, &step_handlers);
+		step_handlers = umbrella_goon_rush_in_set_up(object);
 		break;
 	case -12:
-		shovel_goon_rush_in_set_up(object, &y, &step_handlers);
+		step_handlers = shovel_goon_rush_in_set_up(object);
 		break;
 	case -10:
-		shovel_goon_rush_in_step(object, &y, &step_handlers);
+		step_handlers = shovel_goon_rush_in_step(object);
 		break;
 	}
 	goon_follow_floor(object);
-	*p_y = y;
-	*p_step_handlers = step_handlers;
+	return step_handlers;
 }
 
 /* Step 0: runs toward its target. */
@@ -3711,9 +3632,8 @@ void shovel_goon_rush_in_start(uint16_t object)
 
 /* Step 1: runs with its shovel's hit box (79C6) on one frame in four; after its time takes its body's
    hit box and goes to choosing. */
-uint16_t shovel_goon_rush_in_swing(uint16_t object)
+void shovel_goon_rush_in_swing(uint16_t object)
 {
-	uint16_t box = 0;
 	uint8_t timer = 0, timer_2 = 0;
 
 	timer = OBJECT(object)->timer;
@@ -3723,57 +3643,53 @@ uint16_t shovel_goon_rush_in_swing(uint16_t object)
 		timer_2 = OBJECT(object)->timer;
 		if ((timer_2 & 3u) != 0u)
 		{
-			box = goon_entrance_body_box_ADDRESS;
-			vector_set_hit_box(object, box);
-			return box;
+			leftover_y = goon_entrance_body_box_ADDRESS;
+			vector_set_hit_box(object);
+			return;
 		}
-		box = shovel_goon_rush_in_swing_box_ADDRESS;
-		vector_set_hit_box(object, box);
-		return box;
+		leftover_y = shovel_goon_rush_in_swing_box_ADDRESS;
+		vector_set_hit_box(object);
+		return;
 	}
-	box = goon_entrance_body_box_ADDRESS;
-	vector_set_hit_box(object, box);
+	leftover_y = goon_entrance_body_box_ADDRESS;
+	vector_set_hit_box(object);
 	OBJECT(object)->state = 2u;
 	OBJECT(object)->timer = 0u;
-	return box;
 }
 
 /* Its state 0: a striker goon that will run the frames its spawn gives. */
-void goon_striker_rush_in_set_up(uint16_t object, uint16_t *p_y, uint16_t *p_behaviour)
+uint16_t goon_striker_rush_in_set_up(uint16_t object)
 {
-	uint16_t behaviour = 0, y = 0;
+	uint16_t u = 0;
 	uint8_t parameter = 0, state = 0;
 
-	goon_striker_set_up(object, &y, &behaviour);
+	u = goon_striker_set_up(object);
 	parameter = OBJECT(object)->parameter;
 	OBJECT(object)->timer = parameter;
 	OBJECT(object)->parameter = 0u;
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
-	*p_y = y;
-	*p_behaviour = behaviour;
+	return u;
 }
 
 /* Its state 0: a goon that will run the frames its spawn gives. */
-void goon_rush_in_set_up(uint16_t object, uint16_t *p_y, uint16_t *p_u)
+uint16_t goon_rush_in_set_up(uint16_t object)
 {
-	uint16_t u = 0, y = 0;
+	uint16_t behaviour_address = 0;
 	uint8_t parameter = 0, state = 0;
 
-	vector_goon_setup(object, &y, &u);
+	behaviour_address = vector_goon_setup(object);
 	parameter = OBJECT(object)->parameter;
 	OBJECT(object)->timer = parameter;
 	OBJECT(object)->parameter = 0u;
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
-	*p_y = y;
-	*p_u = u;
+	return behaviour_address;
 }
 
 /* The rush in (state 1): runs its step and takes the floor's priority and height under it. */
-void goon_rush_in_step(uint16_t object, uint16_t *p_y, uint16_t *p_step_handlers)
+uint16_t goon_rush_in_step(uint16_t object)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint16_t step_handlers = 0;
 	uint32_t ignored = 0;
 	uint8_t action_step = 0;
@@ -3789,10 +3705,10 @@ void goon_rush_in_step(uint16_t object, uint16_t *p_y, uint16_t *p_step_handlers
 		step_handlers = goon_rush_in_run(object, step_handlers);
 		break;
 	case 4:
-		goon_from_back_set_up(object, &y, &step_handlers);
+		step_handlers = goon_from_back_set_up(object);
 		break;
 	case 6:
-		goon_from_back_step(object, &y, &step_handlers);
+		step_handlers = goon_from_back_step(object);
 		break;
 	case -124:
 	case -68:
@@ -3804,7 +3720,7 @@ void goon_rush_in_step(uint16_t object, uint16_t *p_y, uint16_t *p_step_handlers
 	case 34:
 	case 68:
 	case 110:
-		vector_enemy_think(object, &y, &step_handlers, &ignored);
+		vector_enemy_think(object, &step_handlers, &ignored);
 		break;
 	case -122:
 	case -66:
@@ -3816,7 +3732,7 @@ void goon_rush_in_step(uint16_t object, uint16_t *p_y, uint16_t *p_step_handlers
 	case 36:
 	case 70:
 	case 112:
-		vector_enemy_act(object, &y, &step_handlers, &ignored);
+		vector_enemy_act(object, &step_handlers, &ignored);
 		break;
 	case -120:
 	case -64:
@@ -3828,7 +3744,7 @@ void goon_rush_in_step(uint16_t object, uint16_t *p_y, uint16_t *p_step_handlers
 	case 38:
 	case 72:
 	case 114:
-		vector_enemy_react(object, &y, &step_handlers, &ignored);
+		vector_enemy_react(object, &step_handlers, &ignored);
 		break;
 	case -118:
 	case -62:
@@ -3840,7 +3756,7 @@ void goon_rush_in_step(uint16_t object, uint16_t *p_y, uint16_t *p_step_handlers
 	case 40:
 	case 74:
 	case 116:
-		vector_enemy_climb(object, &y, &step_handlers, &ignored);
+		vector_enemy_climb(object, &step_handlers, &ignored);
 		break;
 	case 16:
 		step_handlers = goon_from_back_place(object);
@@ -3852,10 +3768,10 @@ void goon_rush_in_step(uint16_t object, uint16_t *p_y, uint16_t *p_step_handlers
 		step_handlers = goon_from_back_wait(object, step_handlers);
 		break;
 	case -72:
-		hat_goon_run_across_set_up(object, &y, &step_handlers);
+		step_handlers = hat_goon_run_across_set_up(object);
 		break;
 	case -70:
-		hat_goon_run_across_step(object, &y, &step_handlers);
+		step_handlers = hat_goon_run_across_step(object);
 		break;
 	case -60:
 		hat_goon_run_across_pose(object);
@@ -3870,35 +3786,34 @@ void goon_rush_in_step(uint16_t object, uint16_t *p_y, uint16_t *p_step_handlers
 		hat_goon_run_across_running();
 		break;
 	case -52:
-		umbrella_goon_rush_in_set_up(object, &y, &step_handlers);
+		step_handlers = umbrella_goon_rush_in_set_up(object);
 		break;
 	case -50:
 	case -22:
 	case -10:
-		goon_rush_in_step(object, &y, &step_handlers);
+		step_handlers = goon_rush_in_step(object);
 		break;
 	case -40:
-		shovel_goon_rush_in_set_up(object, &y, &step_handlers);
+		step_handlers = shovel_goon_rush_in_set_up(object);
 		break;
 	case -38:
-		shovel_goon_rush_in_step(object, &y, &step_handlers);
+		step_handlers = shovel_goon_rush_in_step(object);
 		break;
 	case -28:
 		shovel_goon_rush_in_start(object);
 		break;
 	case -26:
-		y = shovel_goon_rush_in_swing(object);
+		shovel_goon_rush_in_swing(object);
 		break;
 	case -24:
-		goon_striker_rush_in_set_up(object, &y, &step_handlers);
+		step_handlers = goon_striker_rush_in_set_up(object);
 		break;
 	case -12:
-		goon_rush_in_set_up(object, &y, &step_handlers);
+		step_handlers = goon_rush_in_set_up(object);
 		break;
 	}
 	goon_follow_floor(object);
-	*p_y = y;
-	*p_step_handlers = step_handlers;
+	return step_handlers;
 }
 
 /* Step 0: runs (animation 90) toward its target. */
@@ -3943,30 +3858,28 @@ uint16_t goon_rush_in_run(uint16_t object, uint16_t u)
 
 /* Its state 0: a goon (animation 83), shown but not to be hit, behind the layers' front (priority 10),
    facing its nearest player. */
-void goon_from_back_set_up(uint16_t object, uint16_t *p_y, uint16_t *p_u)
+uint16_t goon_from_back_set_up(uint16_t object)
 {
-	uint16_t ignored16 = 0, u = 0, y = 0;
+	uint16_t nearest_player = 0;
 	uint8_t state = 0, attributes = 0;
 
-	vector_goon_setup(object, &y, &ignored16);
+	vector_goon_setup(object);
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
 	OBJECT(object)->animation = 0x83u;
 	OBJECT(object)->flags = 0x80u;
 	attributes = OBJECT(object)->attributes;
 	OBJECT(object)->attributes = (attributes & 0xCFu) | 0x10u;
-	u = vector_choose_nearest_player(object);
-	vector_measure_target(object, u);
+	nearest_player = vector_choose_nearest_player(object);
+	vector_measure_target(object, nearest_player);
 	vector_face_direction(object);
-	*p_y = y;
-	*p_u = u;
+	return nearest_player;
 }
 
 /* Its entrance (state 1): runs its step. */
-void goon_from_back_step(uint16_t object, uint16_t *p_y, uint16_t *p_step_handlers)
+uint16_t goon_from_back_step(uint16_t object)
 {
-	uint16_t y = (uint16_t)*p_y;
-	uint16_t step_handlers = 0;
+	uint16_t step_handlers = 0, u = 0;
 	uint32_t ignored = 0;
 	uint8_t action_step = 0;
 
@@ -3977,13 +3890,10 @@ void goon_from_back_step(uint16_t object, uint16_t *p_y, uint16_t *p_step_handle
 		switch ((int8_t)(uint8_t)((uint32_t)action_step << 1))
 		{
 		case 0:
-			step_handlers = goon_from_back_place(object);
-			break;
+			return goon_from_back_place(object);
 		case 2:
-			step_handlers = goon_from_back_reach_floor(object, step_handlers);
-			break;
+			return goon_from_back_reach_floor(object, step_handlers);
 		case 4:
-			step_handlers = goon_from_back_wait(object, step_handlers);
 			break;
 		case -84:
 		case -64:
@@ -3994,8 +3904,8 @@ void goon_from_back_step(uint16_t object, uint16_t *p_y, uint16_t *p_step_handle
 		case 18:
 		case 52:
 		case 94:
-			vector_enemy_think(object, &y, &step_handlers, &ignored);
-			break;
+			vector_enemy_think(object, &u, &ignored);
+			return u;
 		case -82:
 		case -62:
 		case -50:
@@ -4005,8 +3915,8 @@ void goon_from_back_step(uint16_t object, uint16_t *p_y, uint16_t *p_step_handle
 		case 20:
 		case 54:
 		case 96:
-			vector_enemy_act(object, &y, &step_handlers, &ignored);
-			break;
+			vector_enemy_act(object, &u, &ignored);
+			return u;
 		case -80:
 		case -60:
 		case -48:
@@ -4016,8 +3926,8 @@ void goon_from_back_step(uint16_t object, uint16_t *p_y, uint16_t *p_step_handle
 		case 22:
 		case 56:
 		case 98:
-			vector_enemy_react(object, &y, &step_handlers, &ignored);
-			break;
+			vector_enemy_react(object, &u, &ignored);
+			return u;
 		case -78:
 		case -58:
 		case -46:
@@ -4027,68 +3937,57 @@ void goon_from_back_step(uint16_t object, uint16_t *p_y, uint16_t *p_step_handle
 		case 24:
 		case 58:
 		case 100:
-			vector_enemy_climb(object, &y, &step_handlers, &ignored);
-			break;
+			vector_enemy_climb(object, &u, &ignored);
+			return u;
 		case -88:
-			hat_goon_run_across_set_up(object, &y, &step_handlers);
-			break;
+			return hat_goon_run_across_set_up(object);
 		case -86:
-			hat_goon_run_across_step(object, &y, &step_handlers);
-			break;
+			return hat_goon_run_across_step(object);
 		case -76:
 			hat_goon_run_across_pose(object);
-			break;
+			return step_handlers;
 		case -74:
 			hat_goon_run_across_wait(object);
-			break;
+			return step_handlers;
 		case -72:
 			hat_goon_run_across_run(object);
-			break;
+			return step_handlers;
 		case -70:
 			hat_goon_run_across_running();
-			break;
+			return step_handlers;
 		case -68:
-			umbrella_goon_rush_in_set_up(object, &y, &step_handlers);
-			break;
+			return umbrella_goon_rush_in_set_up(object);
 		case -66:
 		case -38:
 		case -26:
-			goon_rush_in_step(object, &y, &step_handlers);
-			break;
+			return goon_rush_in_step(object);
 		case -56:
-			shovel_goon_rush_in_set_up(object, &y, &step_handlers);
-			break;
+			return shovel_goon_rush_in_set_up(object);
 		case -54:
-			shovel_goon_rush_in_step(object, &y, &step_handlers);
-			break;
+			return shovel_goon_rush_in_step(object);
 		case -44:
 			shovel_goon_rush_in_start(object);
-			break;
+			return step_handlers;
 		case -42:
-			y = shovel_goon_rush_in_swing(object);
-			break;
+			shovel_goon_rush_in_swing(object);
+			return step_handlers;
 		case -40:
-			goon_striker_rush_in_set_up(object, &y, &step_handlers);
-			break;
+			return goon_striker_rush_in_set_up(object);
 		case -28:
-			goon_rush_in_set_up(object, &y, &step_handlers);
-			break;
+			return goon_rush_in_set_up(object);
 		case -16:
 			goon_rush_in_start(object);
-			break;
+			return step_handlers;
 		case -14:
-			step_handlers = goon_rush_in_run(object, step_handlers);
-			break;
+			return goon_rush_in_run(object, step_handlers);
 		case -12:
-			goon_from_back_set_up(object, &y, &step_handlers);
-			break;
+			return goon_from_back_set_up(object);
 		case -10:
 			continue;
 		}
 		break;
 	}
-	*p_y = y;
-	*p_step_handlers = step_handlers;
+	return goon_from_back_wait(object, step_handlers);
 }
 
 /* Step 0: at the x goon_from_back_xs gives, at the back (y 50), coming forward. */
@@ -4096,12 +3995,12 @@ uint16_t goon_from_back_place(uint16_t object)
 {
 	uint16_t start_xs = 0;
 	uint8_t parameter = 0, action_step = 0;
-	uint16_t t1 = 0;
+	uint16_t start_x = 0;
 
 	start_xs = goon_from_back_xs_ADDRESS;
 	parameter = OBJECT(object)->parameter;
-	t1 = goon_from_back_xs[(int8_t)((uint8_t)((uint32_t)parameter << 1)) / 2];
-	OBJECT(object)->x = t1;
+	start_x = goon_from_back_xs[(int8_t)((uint8_t)((uint32_t)parameter << 1)) / 2];
+	OBJECT(object)->x = start_x;
 	OBJECT(object)->y = 0x50u;
 	OBJECT(object)->y_speed = 0x100;
 	OBJECT(object)->parameter = 0u;
@@ -4166,13 +4065,13 @@ uint16_t goon_from_back_wait(uint16_t object, uint16_t u)
 
 /* Its state 0: a goon with a hat (animation B7) with the x the scroll must bring it in at, its
    attributes and its flags from waiting_hat_goon_starts. */
-uint16_t hat_goon_waiting_set_up(uint16_t object)
+void hat_goon_waiting_set_up(uint16_t object)
 {
-	uint16_t ignored16 = 0, waiting_hat_goon_start = 0, y = 0;
+	uint16_t waiting_hat_goon_start = 0;
 	uint8_t parameter = 0, attributes = 0, parameter_2 = 0, flags = 0, state = 0;
 	uint16_t trigger_x = 0;
 
-	hat_goon_set_up(object, &y, &ignored16);
+	hat_goon_set_up(object);
 	OBJECT(object)->animation = 0xB7u;
 	parameter = OBJECT(object)->parameter;
 	waiting_hat_goon_start = waiting_hat_goon_starts_ADDRESS + (int8_t)(((uint32_t)parameter << 1) << 1);
@@ -4186,11 +4085,10 @@ uint16_t hat_goon_waiting_set_up(uint16_t object)
 	OBJECT(object)->parameter = 0u;
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
-	return y;
 }
 
 /* Its entrance (state 1): runs its step. */
-uint16_t hat_goon_waiting_step(uint16_t object, uint16_t y)
+void hat_goon_waiting_step(uint16_t object)
 {
 	uint16_t ignored16 = 0;
 	uint32_t ignored = 0;
@@ -4200,27 +4098,31 @@ uint16_t hat_goon_waiting_step(uint16_t object, uint16_t y)
 	switch ((int8_t)(uint8_t)((uint32_t)action_step << 1))
 	{
 	case 0:
-		return hat_goon_waiting_show(object, y);
+		hat_goon_waiting_show(object);
+		return;
 	case 2:
 		hat_goon_waiting_for_scroll(object);
-		return y;
+		return;
 	case 4:
-		return hat_goon_waiting_step_forward(object, y);
+		hat_goon_waiting_step_forward(object);
+		return;
 	case 6:
 	case 48:
 	case 82:
 	case 102:
 		goon_reach_floor_level(object);
-		return y;
+		return;
 	case 8:
 	case 50:
 	case 84:
 		goon_entrance_end(object);
-		return y;
+		return;
 	case 10:
-		return goon_walk_in_set_up(object);
+		goon_walk_in_set_up(object);
+		return;
 	case 12:
-		return goon_walk_in_step(object, y);
+		goon_walk_in_step(object);
+		return;
 	case -122:
 	case -102:
 	case -90:
@@ -4233,8 +4135,8 @@ uint16_t hat_goon_waiting_step(uint16_t object, uint16_t y)
 	case 90:
 	case 112:
 	case 124:
-		vector_enemy_think(object, &y, &ignored16, &ignored);
-		return y;
+		vector_enemy_think(object, &ignored16, &ignored);
+		return;
 	case -120:
 	case -100:
 	case -88:
@@ -4247,8 +4149,8 @@ uint16_t hat_goon_waiting_step(uint16_t object, uint16_t y)
 	case 92:
 	case 114:
 	case 126:
-		vector_enemy_act(object, &y, &ignored16, &ignored);
-		return y;
+		vector_enemy_act(object, &ignored16, &ignored);
+		return;
 	case -118:
 	case -98:
 	case -86:
@@ -4260,8 +4162,8 @@ uint16_t hat_goon_waiting_step(uint16_t object, uint16_t y)
 	case 60:
 	case 94:
 	case 116:
-		vector_enemy_react(object, &y, &ignored16, &ignored);
-		return y;
+		vector_enemy_react(object, &ignored16, &ignored);
+		return;
 	case -116:
 	case -96:
 	case -84:
@@ -4273,14 +4175,13 @@ uint16_t hat_goon_waiting_step(uint16_t object, uint16_t y)
 	case 62:
 	case 96:
 	case 118:
-		vector_enemy_climb(object, &y, &ignored16, &ignored);
-		return y;
+		vector_enemy_climb(object, &ignored16, &ignored);
+		return;
 	}
-	unreachable();
 }
 
 /* Step 0: shown at once when its flags' bit 7 says so; without bit 0, hit box 79BE and animation A2. */
-uint16_t hat_goon_waiting_show(uint16_t object, uint16_t box)
+void hat_goon_waiting_show(uint16_t object)
 {
 	uint8_t entrance_flags = 0;
 	uint8_t start_flags = 0, action_step = 0;
@@ -4293,14 +4194,13 @@ uint16_t hat_goon_waiting_show(uint16_t object, uint16_t box)
 	{
 		action_step = OBJECT(object)->action_step;
 		OBJECT(object)->action_step = action_step + 1u;
-		return box;
+		return;
 	}
-	box = hat_goon_entrance_box_ADDRESS;
-	vector_set_hit_box(object, box);
+	leftover_y = hat_goon_entrance_box_ADDRESS;
+	vector_set_hit_box(object);
 	OBJECT(object)->animation = 0xA2u;
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step + 1u;
-	return box;
 }
 
 /* Step 1: waits until the scroll brings it left of its x; hit meanwhile, takes animation A0 and steps
@@ -4308,7 +4208,7 @@ uint16_t hat_goon_waiting_show(uint16_t object, uint16_t box)
 void hat_goon_waiting_for_scroll(uint16_t object)
 {
 	uint8_t start_flags = 0, animation = 0, action_step = 0;
-	uint16_t t1 = 0, trigger_x = 0;
+	uint16_t goon_x = 0, trigger_x = 0;
 
 	start_flags = OBJECT(object)->hat_goon_waiting.start_flags;
 	if ((start_flags & 1u) == 0u)
@@ -4316,9 +4216,9 @@ void hat_goon_waiting_for_scroll(uint16_t object)
 		animation = OBJECT(object)->animation;
 		OBJECT(object)->animation = animation | 0x80u;
 	}
-	t1 = OBJECT(object)->x;
+	goon_x = OBJECT(object)->x;
 	trigger_x = OBJECT(object)->hat_goon_waiting.trigger_x;
-	if (t1 < trigger_x)
+	if (goon_x < trigger_x)
 	{
 		action_step = OBJECT(object)->action_step;
 		OBJECT(object)->action_step = action_step + 1u;
@@ -4332,35 +4232,34 @@ void hat_goon_waiting_for_scroll(uint16_t object)
 
 /* Step 2: at the animation's end takes its body's hit box and walks (animation 91) right and up toward
    the floor. */
-uint16_t hat_goon_waiting_step_forward(uint16_t object, uint16_t box)
+void hat_goon_waiting_step_forward(uint16_t object)
 {
 	uint8_t animation_flags = 0, action_step = 0;
 
 	animation_flags = OBJECT(object)->animation_flags;
 	if ((animation_flags & 1u) == 0u)
-		return box;
-	box = goon_entrance_body_box_ADDRESS;
-	vector_set_hit_box(object, box);
+		return;
+	leftover_y = goon_entrance_body_box_ADDRESS;
+	vector_set_hit_box(object);
 	OBJECT(object)->animation = 0x91u;
 	OBJECT(object)->x_speed = 0x100;
 	OBJECT(object)->y_speed = -0x100;
 	OBJECT(object)->timer = 8u;
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step + 1u;
-	return box;
 }
 
 /* Its state 0: a hidden goon (animation 02) with its priority, the way it will walk, the x the scroll
    must bring it in at and its two waits from goon_walk_in_starts. */
-uint16_t goon_walk_in_set_up(uint16_t object)
+void goon_walk_in_set_up(uint16_t object)
 {
 	uint8_t attributes = 0, trigger_x_high = 0, trigger_x_low = 0;
-	uint16_t goon_walk_in_start = 0, setup = 0, y = 0;
+	uint16_t goon_walk_in_start = 0, setup = 0;
 	uint8_t parameter = 0, attributes_2 = 0, attributes_3 = 0, attributes_4 = 0, state = 0;
-	uint16_t flags = 0, t1 = 0, wait = 0;
+	uint16_t flags = 0, scaled_trigger_x = 0, wait = 0;
 
 	setup = goon_walk_in_setup_ADDRESS;
-	y = vector_object_setup(object, setup);
+	vector_object_setup(object, setup);
 	OBJECT(object)->flags = 8u;
 	OBJECT(object)->enemy_class = 1;
 	parameter = OBJECT(object)->parameter;
@@ -4370,9 +4269,9 @@ uint16_t goon_walk_in_set_up(uint16_t object)
 	OBJECT(object)->attributes = (attributes_2 & 0xCFu) | priority_bits;
 	flags = (((uint32_t)GOON_WALK_IN_START(goon_walk_in_start)->flags << 8u) | GOON_WALK_IN_START(goon_walk_in_start)->trigger_x);
 	OBJECT(object)->retarget_time = (flags >> 8) & 0x80u;
-	t1 = (flags & 0xFFu) << 4;
-	trigger_x_low = (uint8_t)t1;
-	trigger_x_high = (uint8_t)(t1 >> 8);
+	scaled_trigger_x = (flags & 0xFFu) << 4;
+	trigger_x_low = (uint8_t)scaled_trigger_x;
+	trigger_x_high = (uint8_t)(scaled_trigger_x >> 8);
 	OBJECT(object)->goon.trigger_x = ((uint32_t)trigger_x_high << 8) | (trigger_x_low & 0xFFu);
 	if ((uint16_t)(((uint32_t)trigger_x_high << 8) | (trigger_x_low & 0xFFu)) >= 0x100u)
 	{
@@ -4391,11 +4290,10 @@ uint16_t goon_walk_in_set_up(uint16_t object)
 	OBJECT(object)->parameter = 0u;
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
-	return y;
 }
 
 /* Its entrance (state 1): runs its step. */
-uint16_t goon_walk_in_step(uint16_t object, uint16_t y)
+void goon_walk_in_step(uint16_t object)
 {
 	uint16_t ignored16 = 0;
 	uint32_t ignored = 0;
@@ -4406,27 +4304,29 @@ uint16_t goon_walk_in_step(uint16_t object, uint16_t y)
 	{
 	case 0:
 		goon_walk_in_wait_for_scroll(object);
-		return y;
+		return;
 	case 2:
 		goon_walk_in_go(object);
-		return y;
+		return;
 	case -38:
 	case 4:
 	case 38:
 	case 58:
 	case 122:
 		goon_reach_floor_level(object);
-		return y;
+		return;
 	case -36:
 	case 6:
 	case 40:
 	case 124:
 		goon_entrance_end(object);
-		return y;
+		return;
 	case 8:
-		return goon_delayed_set_up(object);
+		goon_delayed_set_up(object);
+		return;
 	case 10:
-		return goon_delayed_step(object, y);
+		goon_delayed_step(object);
+		return;
 	case -118:
 	case -106:
 	case -90:
@@ -4436,8 +4336,8 @@ uint16_t goon_walk_in_step(uint16_t object, uint16_t y)
 	case 46:
 	case 68:
 	case 80:
-		vector_enemy_think(object, &y, &ignored16, &ignored);
-		return y;
+		vector_enemy_think(object, &ignored16, &ignored);
+		return;
 	case -116:
 	case -104:
 	case -88:
@@ -4447,8 +4347,8 @@ uint16_t goon_walk_in_step(uint16_t object, uint16_t y)
 	case 48:
 	case 70:
 	case 82:
-		vector_enemy_act(object, &y, &ignored16, &ignored);
-		return y;
+		vector_enemy_act(object, &ignored16, &ignored);
+		return;
 	case -114:
 	case -102:
 	case -86:
@@ -4458,8 +4358,8 @@ uint16_t goon_walk_in_step(uint16_t object, uint16_t y)
 	case 50:
 	case 72:
 	case 84:
-		vector_enemy_react(object, &y, &ignored16, &ignored);
-		return y;
+		vector_enemy_react(object, &ignored16, &ignored);
+		return;
 	case -128:
 	case -112:
 	case -100:
@@ -4470,21 +4370,20 @@ uint16_t goon_walk_in_step(uint16_t object, uint16_t y)
 	case 52:
 	case 74:
 	case 86:
-		vector_enemy_climb(object, &y, &ignored16, &ignored);
-		return y;
+		vector_enemy_climb(object, &ignored16, &ignored);
+		return;
 	}
-	unreachable();
 }
 
 /* Step 0: shown once the scroll brings it left of its x. */
 void goon_walk_in_wait_for_scroll(uint16_t object)
 {
 	uint8_t action_step = 0;
-	uint16_t t1 = 0, trigger_x = 0;
+	uint16_t goon_x = 0, trigger_x = 0;
 
-	t1 = OBJECT(object)->x;
+	goon_x = OBJECT(object)->x;
 	trigger_x = OBJECT(object)->goon.trigger_x;
-	if (t1 < trigger_x)
+	if (goon_x < trigger_x)
 	{
 		OBJECT(object)->flags = 0x80u;
 		action_step = OBJECT(object)->action_step;
@@ -4561,13 +4460,13 @@ void goon_entrance_end(uint16_t object)
 
 /* Its state 0: a hidden goon (animation 82) with its wait, its wait on the floor, and the direction and
    speed it will come in by from delayed_goon_starts. */
-uint16_t goon_delayed_set_up(uint16_t object)
+void goon_delayed_set_up(uint16_t object)
 {
-	uint16_t delayed_start = 0, ignored16 = 0, y = 0;
+	uint16_t delayed_start = 0;
 	uint8_t state = 0, attributes = 0, parameter = 0;
 	uint16_t wait = 0, direction = 0;
 
-	vector_goon_setup(object, &y, &ignored16);
+	vector_goon_setup(object);
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
 	OBJECT(object)->animation = 0x82u;
@@ -4582,45 +4481,46 @@ uint16_t goon_delayed_set_up(uint16_t object)
 	direction = (((uint32_t)DELAYED_START(delayed_start)->direction << 8u) | DELAYED_START(delayed_start)->speed);
 	OBJECT(object)->goon_delayed.heading = direction;
 	OBJECT(object)->parameter = 0u;
-	return y;
 }
 
 /* Its entrance (state 1): runs its step. */
-uint16_t goon_delayed_step(uint16_t object, uint16_t y)
+void goon_delayed_step(uint16_t object)
 {
 	uint32_t zero = 0, negative = 0;
 	uint16_t hitter = 0, ignored16 = 0;
 	uint32_t ignored = 0;
-	uint8_t action_step = 0, t1 = 0;
+	uint8_t action_step = 0, step_offset = 0;
 
 	hitter = goon_delayed_steps_ADDRESS;
 	action_step = OBJECT(object)->action_step;
-	t1 = (uint32_t)action_step << 1;
-	negative = t1 >> 7;
-	zero = t1 == 0u;
-	switch ((int8_t)t1)
+	step_offset = (uint32_t)action_step << 1;
+	negative = step_offset >> 7;
+	zero = step_offset == 0u;
+	switch ((int8_t)step_offset)
 	{
 	case 0:
 		goon_delayed_start(object);
-		return y;
+		return;
 	case -74:
 	case -32:
 	case 2:
 	case 22:
 	case 86:
 		goon_reach_floor_level(object);
-		return y;
+		return;
 	case -72:
 	case -30:
 	case 4:
 	case 88:
 	case 108:
 		goon_entrance_end(object);
-		return y;
+		return;
 	case 6:
-		return shovel_goon_step_out_set_up(object);
+		shovel_goon_step_out_set_up(object);
+		return;
 	case 8:
-		return shovel_goon_step_out_step(object, y);
+		shovel_goon_step_out_step(object);
+		return;
 	case -126:
 	case -100:
 	case -66:
@@ -4631,8 +4531,8 @@ uint16_t goon_delayed_step(uint16_t object, uint16_t y)
 	case 94:
 	case 114:
 	case 126:
-		vector_enemy_think(object, &y, &ignored16, &ignored);
-		return y;
+		vector_enemy_think(object, &ignored16, &ignored);
+		return;
 	case -124:
 	case -98:
 	case -64:
@@ -4642,8 +4542,8 @@ uint16_t goon_delayed_step(uint16_t object, uint16_t y)
 	case 46:
 	case 96:
 	case 116:
-		vector_enemy_act(object, &y, &ignored16, &ignored);
-		return y;
+		vector_enemy_act(object, &ignored16, &ignored);
+		return;
 	case -122:
 	case -96:
 	case -62:
@@ -4653,8 +4553,8 @@ uint16_t goon_delayed_step(uint16_t object, uint16_t y)
 	case 48:
 	case 98:
 	case 118:
-		vector_enemy_react(object, &y, &ignored16, &ignored);
-		return y;
+		vector_enemy_react(object, &ignored16, &ignored);
+		return;
 	case -120:
 	case -94:
 	case -60:
@@ -4664,36 +4564,38 @@ uint16_t goon_delayed_step(uint16_t object, uint16_t y)
 	case 50:
 	case 100:
 	case 120:
-		vector_enemy_climb(object, &y, &ignored16, &ignored);
-		return y;
+		vector_enemy_climb(object, &ignored16, &ignored);
+		return;
 	case 18:
 		shovel_goon_step_out_show(object);
-		return y;
+		return;
 	case 20:
 		shovel_goon_step_out_walk(object);
-		return y;
+		return;
 	case 24:
 		shovel_goon_step_out_pause(object);
-		return y;
+		return;
 	case 26:
 		shovel_goon_step_out_arm(object);
-		return y;
+		return;
 	case 28:
-		return hat_goon_step_out_set_up(object);
+		hat_goon_step_out_set_up(object);
+		return;
 	case 30:
 	case 42:
-		return goon_step_out_step(object, y);
+		goon_step_out_step(object);
+		return;
 	case 40:
 	case 90:
-		return goon_step_out_set_up(object);
+		goon_step_out_set_up(object);
+		return;
 	case -14:
 	case -10:
 	case -6:
 	case -2:
 		enemy_set_knock_direction(object, hitter, zero, negative);
-		return y;
+		return;
 	}
-	unreachable();
 }
 
 /* Step 0: after its wait shown, moving by its direction and speed. */
@@ -4717,13 +4619,12 @@ void goon_delayed_start(uint16_t object)
 
 /* Its state 0: set up as a goon with a shovel but shown in the plain goon's set (animation A2), hidden,
    with its entrance pose's wait and attributes from goon_entrances. */
-uint16_t shovel_goon_step_out_set_up(uint16_t object)
+void shovel_goon_step_out_set_up(uint16_t object)
 {
-	uint16_t ignored16 = 0, y = 0;
 	uint8_t enemy_class = 0, parameter = 0, state = 0;
 	uint16_t wait = 0;
 
-	shovel_goon_set_up(object, &y, &ignored16);
+	shovel_goon_set_up(object);
 	OBJECT(object)->kind = 0x80u;
 	OBJECT(object)->animation = 0xA2u;
 	OBJECT(object)->flags = 8u;
@@ -4737,50 +4638,51 @@ uint16_t shovel_goon_step_out_set_up(uint16_t object)
 	OBJECT(object)->parameter = 0u;
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
-	return y;
 }
 
 /* Its entrance (state 1): runs its step. */
-uint16_t shovel_goon_step_out_step(uint16_t object, uint16_t y)
+void shovel_goon_step_out_step(uint16_t object)
 {
 	uint32_t zero = 0, negative = 0;
 	uint16_t hitter = 0, ignored16 = 0;
 	uint32_t ignored = 0;
-	uint8_t action_step = 0, t1 = 0;
+	uint8_t action_step = 0, step_offset = 0;
 
 	for (;;)
 	{
 		hitter = shovel_goon_step_out_steps_ADDRESS;
 		action_step = OBJECT(object)->action_step;
-		t1 = (uint32_t)action_step << 1;
-		negative = t1 >> 7;
-		zero = t1 == 0u;
-		switch ((int8_t)t1)
+		step_offset = (uint32_t)action_step << 1;
+		negative = step_offset >> 7;
+		zero = step_offset == 0u;
+		switch ((int8_t)step_offset)
 		{
 		case 0:
 			shovel_goon_step_out_show(object);
-			return y;
+			return;
 		case 2:
 			shovel_goon_step_out_walk(object);
-			return y;
+			return;
 		case -92:
 		case -50:
 		case -16:
 		case 4:
 		case 68:
 			goon_reach_floor_level(object);
-			return y;
+			return;
 		case 6:
 			shovel_goon_step_out_pause(object);
-			return y;
+			return;
 		case 8:
 			shovel_goon_step_out_arm(object);
-			return y;
+			return;
 		case 10:
-			return hat_goon_step_out_set_up(object);
+			hat_goon_step_out_set_up(object);
+			return;
 		case 12:
 		case 24:
-			return goon_step_out_step(object, y);
+			goon_step_out_step(object);
+			return;
 		case -118:
 		case -84:
 		case -42:
@@ -4790,8 +4692,8 @@ uint16_t shovel_goon_step_out_step(uint16_t object, uint16_t y)
 		case 76:
 		case 96:
 		case 108:
-			vector_enemy_think(object, &y, &ignored16, &ignored);
-			return y;
+			vector_enemy_think(object, &ignored16, &ignored);
+			return;
 		case -116:
 		case -82:
 		case -40:
@@ -4801,8 +4703,8 @@ uint16_t shovel_goon_step_out_step(uint16_t object, uint16_t y)
 		case 78:
 		case 98:
 		case 110:
-			vector_enemy_act(object, &y, &ignored16, &ignored);
-			return y;
+			vector_enemy_act(object, &ignored16, &ignored);
+			return;
 		case -114:
 		case -80:
 		case -38:
@@ -4812,8 +4714,8 @@ uint16_t shovel_goon_step_out_step(uint16_t object, uint16_t y)
 		case 80:
 		case 100:
 		case 112:
-			vector_enemy_react(object, &y, &ignored16, &ignored);
-			return y;
+			vector_enemy_react(object, &ignored16, &ignored);
+			return;
 		case -112:
 		case -78:
 		case -36:
@@ -4823,8 +4725,8 @@ uint16_t shovel_goon_step_out_step(uint16_t object, uint16_t y)
 		case 82:
 		case 102:
 		case 114:
-			vector_enemy_climb(object, &y, &ignored16, &ignored);
-			return y;
+			vector_enemy_climb(object, &ignored16, &ignored);
+			return;
 		case 22:
 		case 72:
 			break;
@@ -4834,24 +4736,25 @@ uint16_t shovel_goon_step_out_step(uint16_t object, uint16_t y)
 		case 70:
 		case 90:
 			goon_entrance_end(object);
-			return y;
+			return;
 		case -32:
 		case -28:
 		case -24:
 		case -20:
 			enemy_set_knock_direction(object, hitter, zero, negative);
-			return y;
+			return;
 		case -18:
 			goon_delayed_start(object);
-			return y;
+			return;
 		case -12:
-			return shovel_goon_step_out_set_up(object);
+			shovel_goon_step_out_set_up(object);
+			return;
 		case -10:
 			continue;
 		}
 		break;
 	}
-	return goon_step_out_set_up(object);
+	goon_step_out_set_up(object);
 }
 
 /* Step 0: takes its nearest player and is shown, its animation started again. */
@@ -4912,23 +4815,17 @@ void shovel_goon_step_out_arm(uint16_t object)
 }
 
 /* Its state 0: a goon with a hat in its entrance pose. */
-uint16_t hat_goon_step_out_set_up(uint16_t object)
+void hat_goon_step_out_set_up(uint16_t object)
 {
-	uint16_t ignored16 = 0, y = 0;
-
-	hat_goon_set_up(object, &y, &ignored16);
+	hat_goon_set_up(object);
 	goon_take_entrance_pose(object);
-	return y;
 }
 
 /* Its state 0: a goon in its entrance pose. */
-uint16_t goon_step_out_set_up(uint16_t object)
+void goon_step_out_set_up(uint16_t object)
 {
-	uint16_t ignored16 = 0, y = 0;
-
-	vector_goon_setup(object, &y, &ignored16);
+	vector_goon_setup(object);
 	goon_take_entrance_pose(object);
-	return y;
 }
 
 /* Shown (animation 91) with the wait and sprite attributes goon_entrances gives by its spawn's field 30,
@@ -4971,7 +4868,7 @@ void goon_follow_floor(uint16_t object)
 }
 
 /* Its entrance (state 1): runs its step. */
-uint16_t goon_step_out_step(uint16_t object, uint16_t y)
+void goon_step_out_step(uint16_t object)
 {
 	uint16_t ignored16 = 0;
 	uint32_t ignored = 0;
@@ -4982,34 +4879,36 @@ uint16_t goon_step_out_step(uint16_t object, uint16_t y)
 	{
 	case 0:
 		goon_step_out_check(object);
-		return y;
+		return;
 	case 2:
 		goon_step_out_pose(object);
-		return y;
+		return;
 	case 4:
 		goon_step_out_pose_end(object);
-		return y;
+		return;
 	case 6:
 	case 26:
 		goon_walk_up_start(object);
-		return y;
+		return;
 	case -110:
 	case -76:
 	case -56:
 	case 8:
 		goon_reach_floor_level(object);
-		return y;
+		return;
 	case -108:
 	case -74:
 	case 10:
 	case 30:
 		goon_entrance_end(object);
-		return y;
+		return;
 	case -38:
 	case 12:
-		return goon_step_out_set_up(object);
+		goon_step_out_set_up(object);
+		return;
 	case 14:
-		return goon_walk_up_step(object, y);
+		goon_walk_up_step(object);
+		return;
 	case -102:
 	case -68:
 	case -46:
@@ -5019,8 +4918,8 @@ uint16_t goon_step_out_step(uint16_t object, uint16_t y)
 	case 48:
 	case 70:
 	case 96:
-		vector_enemy_think(object, &y, &ignored16, &ignored);
-		return y;
+		vector_enemy_think(object, &ignored16, &ignored);
+		return;
 	case -100:
 	case -66:
 	case -44:
@@ -5030,8 +4929,8 @@ uint16_t goon_step_out_step(uint16_t object, uint16_t y)
 	case 50:
 	case 72:
 	case 98:
-		vector_enemy_act(object, &y, &ignored16, &ignored);
-		return y;
+		vector_enemy_act(object, &ignored16, &ignored);
+		return;
 	case -98:
 	case -64:
 	case -42:
@@ -5041,8 +4940,8 @@ uint16_t goon_step_out_step(uint16_t object, uint16_t y)
 	case 52:
 	case 74:
 	case 100:
-		vector_enemy_react(object, &y, &ignored16, &ignored);
-		return y;
+		vector_enemy_react(object, &ignored16, &ignored);
+		return;
 	case -96:
 	case -62:
 	case -40:
@@ -5052,23 +4951,25 @@ uint16_t goon_step_out_step(uint16_t object, uint16_t y)
 	case 54:
 	case 76:
 	case 102:
-		vector_enemy_climb(object, &y, &ignored16, &ignored);
-		return y;
+		vector_enemy_climb(object, &ignored16, &ignored);
+		return;
 	case 24:
 		goon_walk_up_show(object);
-		return y;
+		return;
 	case 28:
 		goon_walk_up_reach_floor(object);
-		return y;
+		return;
 	case 32:
-		return goon_striker_from_side_set_up(object);
+		goon_striker_from_side_set_up(object);
+		return;
 	case 34:
 	case 46:
-		return goon_from_side_step(object, y);
+		goon_from_side_step(object);
+		return;
 	case 44:
-		return goon_from_side_set_up(object);
+		goon_from_side_set_up(object);
+		return;
 	}
-	unreachable();
 }
 
 /* Step 0: with its spawn's bit 7 (the police car's doors) it strikes the pose, else it walks up at once. */
@@ -5133,7 +5034,7 @@ void goon_walk_up_start(uint16_t object)
 }
 
 /* Its entrance (state 1): runs its step. */
-uint16_t goon_walk_up_step(uint16_t object, uint16_t y)
+void goon_walk_up_step(uint16_t object)
 {
 	uint16_t ignored16 = 0;
 	uint32_t ignored = 0;
@@ -5146,24 +5047,26 @@ uint16_t goon_walk_up_step(uint16_t object, uint16_t y)
 		{
 		case 0:
 			goon_walk_up_show(object);
-			return y;
+			return;
 		case -18:
 		case 2:
 			goon_walk_up_start(object);
-			return y;
+			return;
 		case 4:
 			goon_walk_up_reach_floor(object);
-			return y;
+			return;
 		case -98:
 		case -14:
 		case 6:
 			goon_entrance_end(object);
-			return y;
+			return;
 		case 8:
-			return goon_striker_from_side_set_up(object);
+			goon_striker_from_side_set_up(object);
+			return;
 		case 10:
 		case 22:
-			return goon_from_side_step(object, y);
+			goon_from_side_step(object);
+			return;
 		case -126:
 		case -92:
 		case -70:
@@ -5174,8 +5077,8 @@ uint16_t goon_walk_up_step(uint16_t object, uint16_t y)
 		case 46:
 		case 72:
 		case 120:
-			vector_enemy_think(object, &y, &ignored16, &ignored);
-			return y;
+			vector_enemy_think(object, &ignored16, &ignored);
+			return;
 		case -124:
 		case -90:
 		case -68:
@@ -5186,8 +5089,8 @@ uint16_t goon_walk_up_step(uint16_t object, uint16_t y)
 		case 48:
 		case 74:
 		case 122:
-			vector_enemy_act(object, &y, &ignored16, &ignored);
-			return y;
+			vector_enemy_act(object, &ignored16, &ignored);
+			return;
 		case -122:
 		case -88:
 		case -66:
@@ -5198,8 +5101,8 @@ uint16_t goon_walk_up_step(uint16_t object, uint16_t y)
 		case 50:
 		case 76:
 		case 124:
-			vector_enemy_react(object, &y, &ignored16, &ignored);
-			return y;
+			vector_enemy_react(object, &ignored16, &ignored);
+			return;
 		case -120:
 		case -86:
 		case -64:
@@ -5210,33 +5113,34 @@ uint16_t goon_walk_up_step(uint16_t object, uint16_t y)
 		case 52:
 		case 78:
 		case 126:
-			vector_enemy_climb(object, &y, &ignored16, &ignored);
-			return y;
+			vector_enemy_climb(object, &ignored16, &ignored);
+			return;
 		case 20:
 			break;
 		case -100:
 		case -80:
 		case -16:
 			goon_reach_floor_level(object);
-			return y;
+			return;
 		case -62:
 		case -12:
-			return goon_step_out_set_up(object);
+			goon_step_out_set_up(object);
+			return;
 		case -24:
 			goon_step_out_check(object);
-			return y;
+			return;
 		case -22:
 			goon_step_out_pose(object);
-			return y;
+			return;
 		case -20:
 			goon_step_out_pose_end(object);
-			return y;
+			return;
 		case -10:
 			continue;
 		}
 		break;
 	}
-	return goon_from_side_set_up(object);
+	goon_from_side_set_up(object);
 }
 
 /* Step 0: shown, behind the layers' front (priority 10). */
@@ -5275,23 +5179,17 @@ void goon_walk_up_reach_floor(uint16_t object)
 }
 
 /* Its state 0: a striker goon entering from the side. */
-uint16_t goon_striker_from_side_set_up(uint16_t object)
+void goon_striker_from_side_set_up(uint16_t object)
 {
-	uint16_t ignored16 = 0, y = 0;
-
-	goon_striker_set_up(object, &y, &ignored16);
+	goon_striker_set_up(object);
 	goon_from_side_place(object);
-	return y;
 }
 
 /* Its state 0: a goon entering from the side. */
-uint16_t goon_from_side_set_up(uint16_t object)
+void goon_from_side_set_up(uint16_t object)
 {
-	uint16_t ignored16 = 0, y = 0;
-
-	vector_goon_setup(object, &y, &ignored16);
+	vector_goon_setup(object);
 	goon_from_side_place(object);
-	return y;
 }
 
 /* Shown with the attributes and the wait on the floor goon_side_entries gives, 1 health with its spawn's
@@ -5319,7 +5217,7 @@ void goon_from_side_place(uint16_t object)
 }
 
 /* Its entrance (state 1): runs its step. */
-uint16_t goon_from_side_step(uint16_t object, uint16_t y)
+void goon_from_side_step(uint16_t object)
 {
 	uint16_t ignored16 = 0;
 	uint32_t ignored = 0;
@@ -5330,19 +5228,21 @@ uint16_t goon_from_side_step(uint16_t object, uint16_t y)
 	{
 	case 0:
 		goon_from_side_walk(object);
-		return y;
+		return;
 	case 2:
 	case 28:
 		goon_reach_floor(object);
-		return y;
+		return;
 	case 4:
 	case 30:
 		goon_wait_on_floor(object);
-		return y;
+		return;
 	case 6:
-		return goon_run_in_set_up(object);
+		goon_run_in_set_up(object);
+		return;
 	case 8:
-		return goon_run_in_step(object, y);
+		goon_run_in_step(object);
+		return;
 	case -128:
 	case -106:
 	case -94:
@@ -5353,8 +5253,8 @@ uint16_t goon_from_side_step(uint16_t object, uint16_t y)
 	case 36:
 	case 84:
 	case 108:
-		vector_enemy_think(object, &y, &ignored16, &ignored);
-		return y;
+		vector_enemy_think(object, &ignored16, &ignored);
+		return;
 	case -126:
 	case -104:
 	case -92:
@@ -5365,8 +5265,8 @@ uint16_t goon_from_side_step(uint16_t object, uint16_t y)
 	case 38:
 	case 86:
 	case 110:
-		vector_enemy_act(object, &y, &ignored16, &ignored);
-		return y;
+		vector_enemy_act(object, &ignored16, &ignored);
+		return;
 	case -124:
 	case -102:
 	case -90:
@@ -5377,8 +5277,8 @@ uint16_t goon_from_side_step(uint16_t object, uint16_t y)
 	case 40:
 	case 88:
 	case 112:
-		vector_enemy_react(object, &y, &ignored16, &ignored);
-		return y;
+		vector_enemy_react(object, &ignored16, &ignored);
+		return;
 	case -122:
 	case -100:
 	case -88:
@@ -5389,10 +5289,9 @@ uint16_t goon_from_side_step(uint16_t object, uint16_t y)
 	case 42:
 	case 90:
 	case 114:
-		vector_enemy_climb(object, &y, &ignored16, &ignored);
-		return y;
+		vector_enemy_climb(object, &ignored16, &ignored);
+		return;
 	}
-	unreachable();
 }
 
 /* Step 0: walks right (animation 81). */
@@ -5409,13 +5308,13 @@ void goon_from_side_walk(uint16_t object)
 
 /* Its state 0: a hidden goon, not counted among the stage's enemies yet, with the x the scroll must
    bring it in at and its wait on the floor from goon_run_in_starts. */
-uint16_t goon_run_in_set_up(uint16_t object)
+void goon_run_in_set_up(uint16_t object)
 {
-	uint16_t goon_run_in_start = 0, ignored16 = 0, y = 0;
+	uint16_t goon_run_in_start = 0;
 	uint8_t parameter = 0, parameter_2 = 0, floor_wait = 0, attributes = 0, state = 0;
-	uint16_t t1 = 0;
+	uint16_t scaled_trigger_x = 0;
 
-	vector_goon_setup(object, &y, &ignored16);
+	vector_goon_setup(object);
 	OBJECT(object)->flags = 4u;
 	OBJECT(object)->floor_z = 0u;
 	parameter = OBJECT(object)->parameter;
@@ -5423,8 +5322,8 @@ uint16_t goon_run_in_set_up(uint16_t object)
 		OBJECT(object)->vitality = 1u;
 	parameter_2 = OBJECT(object)->parameter;
 	goon_run_in_start = goon_run_in_starts_ADDRESS + (int8_t)((uint32_t)parameter_2 << 1);
-	t1 = (uint32_t)GOON_RUN_IN_START(goon_run_in_start)->trigger_x << 4;
-	OBJECT(object)->goon.trigger_x = t1;
+	scaled_trigger_x = (uint32_t)GOON_RUN_IN_START(goon_run_in_start)->trigger_x << 4;
+	OBJECT(object)->goon.trigger_x = scaled_trigger_x;
 	floor_wait = GOON_RUN_IN_START(goon_run_in_start)->floor_wait;
 	OBJECT(object)->timer = floor_wait;
 	attributes = OBJECT(object)->attributes;
@@ -5434,11 +5333,10 @@ uint16_t goon_run_in_set_up(uint16_t object)
 	OBJECT(object)->parameter = 0u;
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
-	return y;
 }
 
 /* Its entrance (state 1): runs its step. */
-uint16_t goon_run_in_step(uint16_t object, uint16_t y)
+void goon_run_in_step(uint16_t object)
 {
 	uint16_t ignored16 = 0;
 	uint32_t ignored = 0;
@@ -5449,19 +5347,21 @@ uint16_t goon_run_in_step(uint16_t object, uint16_t y)
 	{
 	case 0:
 		goon_run_in_go(object);
-		return y;
+		return;
 	case -24:
 	case 2:
 		goon_reach_floor(object);
-		return y;
+		return;
 	case -22:
 	case 4:
 		goon_wait_on_floor(object);
-		return y;
+		return;
 	case 6:
-		return hat_goon_jump_in_set_up(object);
+		hat_goon_jump_in_set_up(object);
+		return;
 	case 8:
-		return hat_goon_jump_in_step(object, y);
+		hat_goon_jump_in_step(object);
+		return;
 	case -120:
 	case -70:
 	case -50:
@@ -5470,8 +5370,8 @@ uint16_t goon_run_in_step(uint16_t object, uint16_t y)
 	case 10:
 	case 58:
 	case 82:
-		vector_enemy_think(object, &y, &ignored16, &ignored);
-		return y;
+		vector_enemy_think(object, &ignored16, &ignored);
+		return;
 	case -118:
 	case -68:
 	case -48:
@@ -5480,8 +5380,8 @@ uint16_t goon_run_in_step(uint16_t object, uint16_t y)
 	case 12:
 	case 60:
 	case 84:
-		vector_enemy_act(object, &y, &ignored16, &ignored);
-		return y;
+		vector_enemy_act(object, &ignored16, &ignored);
+		return;
 	case -128:
 	case -116:
 	case -66:
@@ -5491,8 +5391,8 @@ uint16_t goon_run_in_step(uint16_t object, uint16_t y)
 	case 14:
 	case 62:
 	case 86:
-		vector_enemy_react(object, &y, &ignored16, &ignored);
-		return y;
+		vector_enemy_react(object, &ignored16, &ignored);
+		return;
 	case -126:
 	case -114:
 	case -64:
@@ -5502,10 +5402,9 @@ uint16_t goon_run_in_step(uint16_t object, uint16_t y)
 	case 16:
 	case 64:
 	case 88:
-		vector_enemy_climb(object, &y, &ignored16, &ignored);
-		return y;
+		vector_enemy_climb(object, &ignored16, &ignored);
+		return;
 	}
-	unreachable();
 }
 
 /* Step 0: once the scroll brings it left of its x, counted among the enemies, shown and running right
@@ -5513,11 +5412,11 @@ uint16_t goon_run_in_step(uint16_t object, uint16_t y)
 void goon_run_in_go(uint16_t object)
 {
 	uint8_t action_step = 0;
-	uint16_t t1 = 0, trigger_x = 0;
+	uint16_t goon_x = 0, trigger_x = 0;
 
-	t1 = OBJECT(object)->x;
+	goon_x = OBJECT(object)->x;
 	trigger_x = OBJECT(object)->goon.trigger_x;
-	if (trigger_x <= t1)
+	if (trigger_x <= goon_x)
 		return;
 	OBJECT(object)->enemy_class = 1;
 	OBJECT(object)->entrance_pending = 0u;
@@ -5567,13 +5466,13 @@ void goon_wait_on_floor(uint16_t object)
 
 /* Its state 0: a hidden goon with a hat (animation A2) with the x the scroll must bring it in at and its
    wait from hat_goon_jump_in_starts. */
-uint16_t hat_goon_jump_in_set_up(uint16_t object)
+void hat_goon_jump_in_set_up(uint16_t object)
 {
-	uint16_t hat_goon_jump_in_start = 0, ignored16 = 0, y = 0;
+	uint16_t hat_goon_jump_in_start = 0;
 	uint8_t attributes = 0, entrance_pending = 0, enemy_class = 0, parameter = 0, state = 0;
 	uint16_t trigger_x = 0, wait = 0;
 
-	hat_goon_set_up(object, &y, &ignored16);
+	hat_goon_set_up(object);
 	OBJECT(object)->animation = 0xA2u;
 	attributes = OBJECT(object)->attributes;
 	OBJECT(object)->attributes = (attributes & 0xCFu) | 0x20u;
@@ -5591,11 +5490,10 @@ uint16_t hat_goon_jump_in_set_up(uint16_t object)
 	OBJECT(object)->parameter = 0u;
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
-	return y;
 }
 
 /* Its entrance (state 1): runs its step. */
-uint16_t hat_goon_jump_in_step(uint16_t object, uint16_t y)
+void hat_goon_jump_in_step(uint16_t object)
 {
 	uint16_t ignored16 = 0;
 	uint32_t ignored = 0;
@@ -5607,28 +5505,30 @@ uint16_t hat_goon_jump_in_step(uint16_t object, uint16_t y)
 	case 0:
 	case 28:
 		goon_wait_for_scroll(object);
-		return y;
+		return;
 	case 2:
 		hat_goon_jump_in_show(object);
-		return y;
+		return;
 	case 4:
 		hat_goon_jump_in_leap(object);
-		return y;
+		return;
 	case 6:
 		hat_goon_jump_in_fly(object);
-		return y;
+		return;
 	case 8:
 	case 32:
 		goon_stop_and_fall(object);
-		return y;
+		return;
 	case 10:
 	case 34:
 		goon_fall_to_floor(object);
-		return y;
+		return;
 	case 12:
-		return goon_drop_set_up(object);
+		goon_drop_set_up(object);
+		return;
 	case 14:
-		return goon_drop_step(object, y);
+		goon_drop_step(object);
+		return;
 	case -112:
 	case -92:
 	case -80:
@@ -5636,8 +5536,8 @@ uint16_t hat_goon_jump_in_step(uint16_t object, uint16_t y)
 	case -32:
 	case 16:
 	case 40:
-		vector_enemy_think(object, &y, &ignored16, &ignored);
-		return y;
+		vector_enemy_think(object, &ignored16, &ignored);
+		return;
 	case -110:
 	case -90:
 	case -78:
@@ -5645,8 +5545,8 @@ uint16_t hat_goon_jump_in_step(uint16_t object, uint16_t y)
 	case -30:
 	case 18:
 	case 42:
-		vector_enemy_act(object, &y, &ignored16, &ignored);
-		return y;
+		vector_enemy_act(object, &ignored16, &ignored);
+		return;
 	case -108:
 	case -88:
 	case -76:
@@ -5654,8 +5554,8 @@ uint16_t hat_goon_jump_in_step(uint16_t object, uint16_t y)
 	case -28:
 	case 20:
 	case 44:
-		vector_enemy_react(object, &y, &ignored16, &ignored);
-		return y;
+		vector_enemy_react(object, &ignored16, &ignored);
+		return;
 	case -106:
 	case -86:
 	case -74:
@@ -5663,21 +5563,20 @@ uint16_t hat_goon_jump_in_step(uint16_t object, uint16_t y)
 	case -26:
 	case 22:
 	case 46:
-		vector_enemy_climb(object, &y, &ignored16, &ignored);
-		return y;
+		vector_enemy_climb(object, &ignored16, &ignored);
+		return;
 	}
-	unreachable();
 }
 
 /* An entrance's step: waits until the scroll brings it left of its x. */
 void goon_wait_for_scroll(uint16_t object)
 {
 	uint8_t action_step = 0;
-	uint16_t t1 = 0, trigger_x = 0;
+	uint16_t goon_x = 0, trigger_x = 0;
 
-	t1 = OBJECT(object)->x;
+	goon_x = OBJECT(object)->x;
 	trigger_x = OBJECT(object)->goon.trigger_x;
-	if (t1 < trigger_x)
+	if (goon_x < trigger_x)
 	{
 		action_step = OBJECT(object)->action_step;
 		OBJECT(object)->action_step = action_step + 1u;
@@ -5704,7 +5603,7 @@ void hat_goon_jump_in_show(uint16_t object)
 /* Step 2: at the animation's end leaps high (animation 84) toward its nearest player. */
 void hat_goon_jump_in_leap(uint16_t object)
 {
-	uint16_t u = 0;
+	uint16_t nearest_player = 0;
 	uint8_t animation_flags = 0, action_step = 0;
 
 	animation_flags = OBJECT(object)->animation_flags;
@@ -5712,8 +5611,8 @@ void hat_goon_jump_in_leap(uint16_t object)
 		return;
 	OBJECT(object)->z_speed = 0x900;
 	OBJECT(object)->animation = 0x84u;
-	u = vector_choose_nearest_player(object);
-	vector_measure_target(object, u);
+	nearest_player = vector_choose_nearest_player(object);
+	vector_measure_target(object, nearest_player);
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step + 1u;
 }
@@ -5778,34 +5677,33 @@ void goon_fall_to_floor(uint16_t object)
 
 /* Its state 0: a goon with the floor's height under it and the x the scroll must bring it in at from
    goon_drop_xs. */
-uint16_t goon_drop_set_up(uint16_t object)
+void goon_drop_set_up(uint16_t object)
 {
 	uint32_t negative = 0;
 	uint8_t floor_value = 0;
-	uint16_t floor_cell = 0, ignored16 = 0, y = 0;
+	uint16_t floor_cell = 0;
 	uint8_t enemy_class = 0, parameter = 0, state = 0;
-	uint16_t t1 = 0, t2 = 0;
+	uint16_t floor_height = 0, drop_x = 0;
 
-	vector_goon_setup(object, &y, &ignored16);
+	vector_goon_setup(object);
 	floor_cell = 0u;
 	vector_floor_at_offset(object, &floor_cell, &negative);
 	floor_value = (uint8_t)(floor_cell >> 8);
-	t1 = (floor_value & 0xFu) << 3;
-	OBJECT(object)->floor_z = t1;
+	floor_height = (floor_value & 0xFu) << 3;
+	OBJECT(object)->floor_z = floor_height;
 	OBJECT(object)->flags = 0x80u;
 	enemy_class = OBJECT(object)->enemy_class;
 	OBJECT(object)->enemy_class = enemy_class + 1u;
 	parameter = OBJECT(object)->parameter;
-	t2 = goon_drop_xs[(int8_t)((uint8_t)((uint32_t)parameter << 1)) / 2];
-	OBJECT(object)->goon.trigger_x = t2;
+	drop_x = goon_drop_xs[(int8_t)((uint8_t)((uint32_t)parameter << 1)) / 2];
+	OBJECT(object)->goon.trigger_x = drop_x;
 	OBJECT(object)->parameter = 0u;
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
-	return y;
 }
 
 /* Its entrance (state 1): runs its step. */
-uint16_t goon_drop_step(uint16_t object, uint16_t y)
+void goon_drop_step(uint16_t object)
 {
 	uint16_t ignored16 = 0;
 	uint32_t ignored = 0;
@@ -5817,102 +5715,101 @@ uint16_t goon_drop_step(uint16_t object, uint16_t y)
 	case -28:
 	case 0:
 		goon_wait_for_scroll(object);
-		return y;
+		return;
 	case 2:
 		goon_drop_show(object);
-		return y;
+		return;
 	case -20:
 	case 4:
 		goon_stop_and_fall(object);
-		return y;
+		return;
 	case -18:
 	case 6:
 		goon_fall_to_floor(object);
-		return y;
+		return;
 	case 8:
-		return umbrella_goon_float_down_set_up(object);
+		umbrella_goon_float_down_set_up(object);
+		return;
 	case 10:
 		umbrella_goon_float_down_step(object);
-		return y;
+		return;
 	case -120:
 	case -108:
 	case -86:
 	case -60:
 	case -12:
 	case 12:
-		vector_enemy_think(object, &y, &ignored16, &ignored);
-		return y;
+		vector_enemy_think(object, &ignored16, &ignored);
+		return;
 	case -118:
 	case -106:
 	case -84:
 	case -58:
 	case -10:
 	case 14:
-		vector_enemy_act(object, &y, &ignored16, &ignored);
-		return y;
+		vector_enemy_act(object, &ignored16, &ignored);
+		return;
 	case -116:
 	case -104:
 	case -82:
 	case -56:
 	case -8:
 	case 16:
-		vector_enemy_react(object, &y, &ignored16, &ignored);
-		return y;
+		vector_enemy_react(object, &ignored16, &ignored);
+		return;
 	case -114:
 	case -102:
 	case -80:
 	case -54:
 	case -6:
 	case 18:
-		vector_enemy_climb(object, &y, &ignored16, &ignored);
-		return y;
+		vector_enemy_climb(object, &ignored16, &ignored);
+		return;
 	}
-	unreachable();
 }
 
 /* Step 1: shown, facing its nearest player, then falls. */
 void goon_drop_show(uint16_t object)
 {
-	uint16_t u = 0;
+	uint16_t nearest_player = 0;
 	uint8_t action_step = 0;
 
 	OBJECT(object)->flags = 0xC8u;
-	u = vector_choose_nearest_player(object);
-	vector_measure_target(object, u);
+	nearest_player = vector_choose_nearest_player(object);
+	vector_measure_target(object, nearest_player);
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step + 1u;
 }
 
 /* Its state 0: a goon with an umbrella (animation A1) at the x umbrella_goon_xs gives, with the floor's
    height and priority under it. */
-uint16_t umbrella_goon_float_down_set_up(uint16_t object)
+void umbrella_goon_float_down_set_up(uint16_t object)
 {
 	uint32_t negative = 0;
 	uint8_t floor_value = 0;
-	uint16_t floor_cell = 0, ignored16 = 0, y = 0;
+	uint16_t floor_cell = 0;
 	uint8_t parameter = 0, attributes = 0, state = 0;
-	uint16_t t1 = 0, t2 = 0;
+	uint16_t start_x = 0, floor_height = 0;
 
-	umbrella_goon_set_up(object, &y, &ignored16);
+	umbrella_goon_set_up(object);
 	OBJECT(object)->animation = 0xA1u;
 	OBJECT(object)->flags = 0xC8u;
 	OBJECT(object)->enemy_class = 1;
 	parameter = OBJECT(object)->parameter;
-	t1 = umbrella_goon_xs[(int8_t)((uint8_t)((uint32_t)parameter << 1)) / 2];
-	OBJECT(object)->x = t1;
+	start_x = umbrella_goon_xs[(int8_t)((uint8_t)((uint32_t)parameter << 1)) / 2];
+	OBJECT(object)->x = start_x;
 	floor_cell = 0u;
 	vector_floor_at_offset(object, &floor_cell, &negative);
 	floor_value = (uint8_t)(floor_cell >> 8);
 	priority_bits = floor_value & 0x30u;
-	t2 = (floor_value & 0xFu) << 3;
-	OBJECT(object)->floor_z = t2;
+	floor_height = (floor_value & 0xFu) << 3;
+	OBJECT(object)->floor_z = floor_height;
 	attributes = OBJECT(object)->attributes;
 	OBJECT(object)->attributes = (attributes & 0xCFu) | priority_bits;
 	OBJECT(object)->timer = 1u;
 	OBJECT(object)->parameter = 0u;
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
-	return y;
 }
 
 /* Its entrance (state 1): runs its step. */
@@ -5938,7 +5835,7 @@ void umbrella_goon_float_down_step(uint16_t object)
 /* Step 0: after a frame faces its nearest player. */
 void umbrella_goon_float_down_face(uint16_t object)
 {
-	uint16_t u = 0;
+	uint16_t nearest_player = 0;
 	uint8_t timer = 0, action_step = 0;
 
 	timer = OBJECT(object)->timer;
@@ -5947,8 +5844,8 @@ void umbrella_goon_float_down_face(uint16_t object)
 		return;
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step + 1u;
-	u = vector_choose_nearest_player(object);
-	vector_measure_target(object, u);
+	nearest_player = vector_choose_nearest_player(object);
+	vector_measure_target(object, nearest_player);
 	vector_face_direction(object);
 }
 
@@ -5980,71 +5877,65 @@ void umbrella_goon_float_down_land(uint16_t object)
 }
 
 /* Sets up a goon of kind B6 with behaviour 029CDF, its nearest player and the distances to it. */
-uint16_t bomb_goon_set_up(uint16_t object)
+void bomb_goon_set_up(uint16_t object)
 {
-	uint16_t setup = 0, u = 0, y = 0;
+	uint16_t nearest_player = 0, setup = 0;
 	uint8_t attributes = 0;
 
 	setup = bomb_goon_setup_ADDRESS;
-	y = vector_object_setup(object, setup);
+	vector_object_setup(object, setup);
 	attributes = OBJECT(object)->attributes;
 	OBJECT(object)->attributes = attributes | 0x40u;
 	OBJECT(object)->enemy_class = 1;
-	u = vector_choose_nearest_player(object);
-	vector_measure_target(object, u);
+	nearest_player = vector_choose_nearest_player(object);
+	vector_measure_target(object, nearest_player);
 	OBJECT(object)->behaviour = 0x7CDFu;
 	OBJECT(object)->retarget_time = 0x10u;
-	return y;
 }
 
 /* Its state 0: set up, weakened when its spawn says so, straight to choosing. */
-uint16_t bomb_goon_start(uint16_t object)
+void bomb_goon_start(uint16_t object)
 {
-	uint16_t y = 0;
 	uint8_t parameter = 0;
 
-	y = bomb_goon_set_up(object);
+	bomb_goon_set_up(object);
 	parameter = OBJECT(object)->parameter;
 	if (parameter != 0u)
 		OBJECT(object)->vitality = 1u;
 	OBJECT(object)->parameter = 0u;
 	OBJECT(object)->state = 2u;
-	return y;
 }
 
 /* Sets up a goon with a hat (kind 84, behaviour 029D37: it throws its hat from afar). */
-void hat_goon_set_up(uint16_t object, uint16_t *p_y, uint16_t *p_u)
+uint16_t hat_goon_set_up(uint16_t object)
 {
-	uint16_t setup = 0, u = 0, y = 0;
+	uint16_t behaviour_address = 0, nearest_player = 0, setup = 0;
 	uint8_t attributes = 0;
 
 	setup = hat_goon_setup_ADDRESS;
-	y = vector_object_setup(object, setup);
+	vector_object_setup(object, setup);
 	attributes = OBJECT(object)->attributes;
 	OBJECT(object)->attributes = attributes | 0x40u;
 	OBJECT(object)->enemy_class = 1;
-	u = vector_choose_nearest_player(object);
-	vector_measure_target(object, u);
-	u = 0x7D37u;
+	nearest_player = vector_choose_nearest_player(object);
+	vector_measure_target(object, nearest_player);
+	behaviour_address = 0x7D37u;
 	OBJECT(object)->behaviour = 0x7D37u;
 	OBJECT(object)->retarget_time = 0x10u;
-	*p_y = y;
-	*p_u = u;
+	return behaviour_address;
 }
 
 /* Its state 0: set up, weakened when its spawn says so, straight to choosing. */
-uint16_t hat_goon_start(uint16_t object)
+void hat_goon_start(uint16_t object)
 {
-	uint16_t ignored16 = 0, y = 0;
 	uint8_t parameter = 0;
 
-	hat_goon_set_up(object, &y, &ignored16);
+	hat_goon_set_up(object);
 	parameter = OBJECT(object)->parameter;
 	if (parameter != 0u)
 		OBJECT(object)->vitality = 1u;
 	OBJECT(object)->parameter = 0u;
 	OBJECT(object)->state = 2u;
-	return y;
 }
 
 /* Sets the sprite attributes of the goons with an umbrella or a shovel: bit 7 and 6 in the low nibble,
@@ -6058,86 +5949,79 @@ void goon_set_armed_attributes(uint16_t object)
 }
 
 /* Sets up a goon with an umbrella (kind 82, behaviour 029D8F). */
-void umbrella_goon_set_up(uint16_t object, uint16_t *p_y, uint16_t *p_u)
+uint16_t umbrella_goon_set_up(uint16_t object)
 {
-	uint16_t setup = 0, u = 0, y = 0;
+	uint16_t behaviour_address = 0, nearest_player = 0, setup = 0;
 	uint8_t attributes = 0;
 
 	setup = umbrella_goon_setup_ADDRESS;
-	y = vector_object_setup(object, setup);
+	vector_object_setup(object, setup);
 	goon_set_armed_attributes(object);
 	attributes = OBJECT(object)->attributes;
 	OBJECT(object)->attributes = attributes | 0x40u;
 	OBJECT(object)->enemy_class = 1;
-	u = vector_choose_nearest_player(object);
-	vector_measure_target(object, u);
-	u = 0x7D8Fu;
+	nearest_player = vector_choose_nearest_player(object);
+	vector_measure_target(object, nearest_player);
+	behaviour_address = 0x7D8Fu;
 	OBJECT(object)->behaviour = 0x7D8Fu;
 	OBJECT(object)->retarget_time = 0x10u;
-	*p_y = y;
-	*p_u = u;
+	return behaviour_address;
 }
 
 /* Its state 0: set up, weakened when its spawn says so, straight to choosing. */
-uint16_t umbrella_goon_start(uint16_t object)
+void umbrella_goon_start(uint16_t object)
 {
-	uint16_t ignored16 = 0, y = 0;
 	uint8_t parameter = 0;
 
-	umbrella_goon_set_up(object, &y, &ignored16);
+	umbrella_goon_set_up(object);
 	parameter = OBJECT(object)->parameter;
 	if (parameter != 0u)
 		OBJECT(object)->vitality = 1u;
 	OBJECT(object)->parameter = 0u;
 	OBJECT(object)->state = 2u;
-	return y;
 }
 
 /* Sets up a goon with a shovel (kind 83, behaviour 029DE7). */
-void shovel_goon_set_up(uint16_t object, uint16_t *p_y, uint16_t *p_u)
+uint16_t shovel_goon_set_up(uint16_t object)
 {
-	uint16_t setup = 0, u = 0, y = 0;
+	uint16_t behaviour_address = 0, nearest_player = 0, setup = 0;
 	uint8_t attributes = 0;
 
 	setup = shovel_goon_setup_ADDRESS;
-	y = vector_object_setup(object, setup);
+	vector_object_setup(object, setup);
 	goon_set_armed_attributes(object);
 	attributes = OBJECT(object)->attributes;
 	OBJECT(object)->attributes = attributes | 0x40u;
 	OBJECT(object)->enemy_class = 1;
-	u = vector_choose_nearest_player(object);
-	vector_measure_target(object, u);
-	u = 0x7DE7u;
+	nearest_player = vector_choose_nearest_player(object);
+	vector_measure_target(object, nearest_player);
+	behaviour_address = 0x7DE7u;
 	OBJECT(object)->behaviour = 0x7DE7u;
 	OBJECT(object)->retarget_time = 0x10u;
-	*p_y = y;
-	*p_u = u;
+	return behaviour_address;
 }
 
 /* Its state 0: set up, weakened when its spawn says so, straight to choosing. */
-uint16_t shovel_goon_start(uint16_t object)
+void shovel_goon_start(uint16_t object)
 {
-	uint16_t ignored16 = 0, y = 0;
 	uint8_t parameter = 0;
 
-	shovel_goon_set_up(object, &y, &ignored16);
+	shovel_goon_set_up(object);
 	parameter = OBJECT(object)->parameter;
 	if (parameter != 0u)
 		OBJECT(object)->vitality = 1u;
 	OBJECT(object)->parameter = 0u;
 	OBJECT(object)->state = 2u;
-	return y;
 }
 
 /* Its state 0: a goon with 1 health (animation B3) running in toward the middle for the frames its spawn
    gives. */
-uint16_t goon_bomb_run_in_set_up(uint16_t object)
+void goon_bomb_run_in_set_up(uint16_t object)
 {
-	uint16_t ignored16 = 0, y = 0;
 	uint8_t parameter = 0, state = 0;
-	uint16_t t1 = 0, x_speed = 0;
+	uint16_t goon_x = 0, x_speed = 0;
 
-	vector_goon_setup(object, &y, &ignored16);
+	vector_goon_setup(object);
 	OBJECT(object)->vitality = 1u;
 	OBJECT(object)->animation = 0xB3u;
 	parameter = OBJECT(object)->parameter;
@@ -6147,18 +6031,17 @@ uint16_t goon_bomb_run_in_set_up(uint16_t object)
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
 	OBJECT(object)->x_speed = 0x200;
-	t1 = OBJECT(object)->x;
-	if (t1 >= 0xE0u)
+	goon_x = OBJECT(object)->x;
+	if (goon_x >= 0xE0u)
 	{
 		x_speed = OBJECT(object)->x_speed;
 		OBJECT(object)->x_speed = 0u - x_speed;
 	}
 	face_movement(object);
-	return y;
 }
 
 /* Its entrance (state 1): runs its step. */
-uint16_t goon_bomb_run_in_step(uint16_t object, uint16_t y)
+void goon_bomb_run_in_step(uint16_t object)
 {
 	uint16_t ignored16 = 0;
 	uint32_t ignored = 0;
@@ -6171,9 +6054,10 @@ uint16_t goon_bomb_run_in_step(uint16_t object, uint16_t y)
 		{
 		case 0:
 			goon_bomb_run_in_stop(object);
-			return y;
+			return;
 		case 2:
-			return goon_bomb_run_in_throw(object, y);
+			goon_bomb_run_in_throw(object);
+			return;
 		case 4:
 			break;
 		case -8:
@@ -6181,40 +6065,40 @@ uint16_t goon_bomb_run_in_step(uint16_t object, uint16_t y)
 		case 44:
 		case 64:
 		case 84:
-			vector_enemy_think(object, &y, &ignored16, &ignored);
-			return y;
+			vector_enemy_think(object, &ignored16, &ignored);
+			return;
 		case -6:
 		case 34:
 		case 46:
 		case 66:
 		case 86:
-			vector_enemy_act(object, &y, &ignored16, &ignored);
-			return y;
+			vector_enemy_act(object, &ignored16, &ignored);
+			return;
 		case -2:
 		case 38:
 		case 50:
 		case 70:
 		case 90:
-			vector_enemy_climb(object, &y, &ignored16, &ignored);
-			return y;
+			vector_enemy_climb(object, &ignored16, &ignored);
+			return;
 		case -12:
-			return goon_bomb_run_in_set_up(object);
+			goon_bomb_run_in_set_up(object);
+			return;
 		case -10:
 			continue;
 		case -4:
-			vector_enemy_react(object, &y, &ignored16, &ignored);
-			return y;
+			vector_enemy_react(object, &ignored16, &ignored);
+			return;
 		}
 		break;
 	}
 	goon_bomb_run_in_end(object);
-	return y;
 }
 
 /* Step 0: after its run stops (animation A9) facing its nearest player. */
 void goon_bomb_run_in_stop(uint16_t object)
 {
-	uint16_t u = 0;
+	uint16_t nearest_player = 0;
 	uint8_t timer = 0, action_step = 0;
 
 	timer = OBJECT(object)->timer;
@@ -6225,26 +6109,26 @@ void goon_bomb_run_in_stop(uint16_t object)
 	OBJECT(object)->animation = 0xA9u;
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step + 1u;
-	u = vector_choose_nearest_player(object);
-	vector_measure_target(object, u);
+	nearest_player = vector_choose_nearest_player(object);
+	vector_measure_target(object, nearest_player);
 	face_target(object);
 }
 
 /* Step 1: at the animation's event throws a bomb. */
-uint16_t goon_bomb_run_in_throw(uint16_t object, uint16_t child_record)
+void goon_bomb_run_in_throw(uint16_t object)
 {
 	uint32_t carry = 0;
-	uint16_t ignored16 = 0;
+	uint16_t child_object = 0, ignored16 = 0;
 	uint8_t animation_flags = 0, action_step = 0;
 
 	animation_flags = OBJECT(object)->animation_flags;
 	if ((animation_flags & 2u) == 0u)
-		return child_record;
-	child_record = goon_bomb_run_in_throw_child_ADDRESS;
-	spawn_list_2_child(object, child_record, &ignored16, &carry);
+		return;
+	leftover_y = goon_bomb_run_in_throw_child_ADDRESS;
+	child_object = goon_bomb_run_in_throw_child_ADDRESS;
+	spawn_list_2_child(object, child_object, &ignored16, &carry);
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step + 1u;
-	return child_record;
 }
 
 /* Step 2: at the animation's end goes to choosing. */
@@ -6261,25 +6145,22 @@ void goon_bomb_run_in_end(uint16_t object)
 }
 
 /* Its state 0: a striker goon at its place, running in. */
-uint16_t goon_striker_jump_in_set_up(uint16_t object)
+void goon_striker_jump_in_set_up(uint16_t object)
 {
-	uint16_t ignored16 = 0, y = 0;
-
 	goon_jump_in_place(object);
-	goon_striker_set_up(object, &y, &ignored16);
+	goon_striker_set_up(object);
 	goon_jump_in_run(object);
-	return y;
 }
 
 /* Puts it at the x goon_jump_in_xs gives (by its spawn's field 30), with 1 health when its bit 7 is set. */
 void goon_jump_in_place(uint16_t object)
 {
 	uint8_t parameter = 0, parameter_2 = 0;
-	uint16_t t1 = 0;
+	uint16_t start_x = 0;
 
 	parameter = OBJECT(object)->parameter;
-	t1 = goon_jump_in_xs[(int8_t)((uint8_t)((uint32_t)parameter << 1)) / 2];
-	OBJECT(object)->x = t1;
+	start_x = goon_jump_in_xs[(int8_t)((uint8_t)((uint32_t)parameter << 1)) / 2];
+	OBJECT(object)->x = start_x;
 	parameter_2 = OBJECT(object)->parameter;
 	if ((int8_t)parameter_2 < 0)
 		OBJECT(object)->vitality = 1u;
@@ -6287,14 +6168,11 @@ void goon_jump_in_place(uint16_t object)
 }
 
 /* Its state 0: a goon at its place, running in. */
-uint16_t goon_jump_in_set_up(uint16_t object)
+void goon_jump_in_set_up(uint16_t object)
 {
-	uint16_t ignored16 = 0, y = 0;
-
 	goon_jump_in_place(object);
-	vector_goon_setup(object, &y, &ignored16);
+	vector_goon_setup(object);
 	goon_jump_in_run(object);
-	return y;
 }
 
 /* Shown running (animation 90) toward the middle, riding the cemetery's ground (z speed the scroll's
@@ -6302,15 +6180,15 @@ uint16_t goon_jump_in_set_up(uint16_t object)
 void goon_jump_in_run(uint16_t object)
 {
 	uint8_t attributes = 0, state = 0;
-	uint16_t t1 = 0, x_speed = 0, t2 = 0;
+	uint16_t goon_x = 0, x_speed = 0, ground_speed = 0;
 
 	OBJECT(object)->flags = 0x80u;
 	attributes = OBJECT(object)->attributes;
 	OBJECT(object)->attributes = (attributes & 0xCFu) | 0x20u;
 	OBJECT(object)->animation = 0x90u;
 	OBJECT(object)->x_speed = 0x200;
-	t1 = OBJECT(object)->x;
-	if (t1 >= 0xE0u)
+	goon_x = OBJECT(object)->x;
+	if (goon_x >= 0xE0u)
 	{
 		x_speed = OBJECT(object)->x_speed;
 		OBJECT(object)->x_speed = 0u - x_speed;
@@ -6318,12 +6196,12 @@ void goon_jump_in_run(uint16_t object)
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
 	face_movement(object);
-	t2 = cemetery_scroll_speed;
-	OBJECT(object)->z_speed = t2;
+	ground_speed = cemetery_scroll_speed;
+	OBJECT(object)->z_speed = ground_speed;
 }
 
 /* Its entrance (state 1): runs its step. */
-uint16_t goon_jump_in_step(uint16_t object, uint16_t y)
+void goon_jump_in_step(uint16_t object)
 {
 	uint16_t ignored16 = 0;
 	uint32_t ignored = 0;
@@ -6334,42 +6212,44 @@ uint16_t goon_jump_in_step(uint16_t object, uint16_t y)
 	{
 	case 0:
 		goon_jump_in_leap(object);
-		return y;
+		return;
 	case 2:
 		goon_jump_in_land(object);
-		return y;
+		return;
 	case 4:
-		return goon_from_below_set_up(object);
+		goon_from_below_set_up(object);
+		return;
 	case 6:
-		return goon_from_below_step(object, y);
+		goon_from_below_step(object);
+		return;
 	case -64:
 	case -24:
 	case -12:
 	case 8:
 	case 28:
-		vector_enemy_think(object, &y, &ignored16, &ignored);
-		return y;
+		vector_enemy_think(object, &ignored16, &ignored);
+		return;
 	case -62:
 	case -22:
 	case -10:
 	case 10:
 	case 30:
-		vector_enemy_act(object, &y, &ignored16, &ignored);
-		return y;
+		vector_enemy_act(object, &ignored16, &ignored);
+		return;
 	case -20:
 	case -8:
 	case 12:
 	case 32:
-		return enemy_react_with_pits(object, y);
+		enemy_react_with_pits(object);
+		return;
 	case -58:
 	case -18:
 	case -6:
 	case 14:
 	case 34:
-		vector_enemy_climb(object, &y, &ignored16, &ignored);
-		return y;
+		vector_enemy_climb(object, &ignored16, &ignored);
+		return;
 	}
-	unreachable();
 }
 
 /* Step 0: rides the ground until there is floor in front of it, then leaps up (animation 84) onto it. */
@@ -6379,15 +6259,15 @@ void goon_jump_in_leap(uint16_t object)
 	uint8_t floor_value = 0;
 	uint16_t floor_cell = 0;
 	uint8_t attributes = 0, action_step = 0;
-	uint16_t t1 = 0;
+	uint16_t ground_speed = 0;
 
 	vector_floor_ahead_x(object, &floor_cell, &negative);
 	floor_value = (uint8_t)(floor_cell >> 8);
 	OBJECT(object)->floor_cell = floor_value;
 	if ((int8_t)floor_value < 0)
 	{
-		t1 = cemetery_scroll_speed;
-		OBJECT(object)->z_speed = t1;
+		ground_speed = cemetery_scroll_speed;
+		OBJECT(object)->z_speed = ground_speed;
 		return;
 	}
 	OBJECT(object)->floor_z = (OBJECT(object)->floor_z & 0xFF00u) | ((((floor_value & 0xFu) << 1) << 1) << 1 & 0xFFu);
@@ -6416,38 +6296,36 @@ void goon_jump_in_land(uint16_t object)
 
 /* Its state 0: a goon (hit box 7F7B, animation 86) at the x goon_from_below_xs gives, 80 under the
    floor, riding the cemetery's ground. */
-uint16_t goon_from_below_set_up(uint16_t object)
+void goon_from_below_set_up(uint16_t object)
 {
-	uint16_t box = 0, ignored16 = 0, ignored16_2 = 0;
 	uint8_t parameter = 0, attributes = 0, state = 0;
-	uint16_t t1 = 0, t2 = 0, t3 = 0;
+	uint16_t start_x = 0, goon_x = 0, ground_speed = 0;
 
 	parameter = OBJECT(object)->parameter;
-	t1 = goon_from_below_xs[(int8_t)((uint8_t)((uint32_t)parameter << 1)) / 2];
-	OBJECT(object)->x = t1;
+	start_x = goon_from_below_xs[(int8_t)((uint8_t)((uint32_t)parameter << 1)) / 2];
+	OBJECT(object)->x = start_x;
 	OBJECT(object)->parameter = 0u;
 	OBJECT(object)->z = 0xFF80u;
-	vector_goon_setup(object, &ignored16, &ignored16_2);
-	box = goon_from_below_entrance_box_ADDRESS;
-	vector_set_hit_box(object, box);
+	vector_goon_setup(object);
+	leftover_y = goon_from_below_entrance_box_ADDRESS;
+	vector_set_hit_box(object);
 	OBJECT(object)->attributes = 0x20u;
 	OBJECT(object)->animation = 0x86u;
 	OBJECT(object)->floor_z = 0u;
-	t2 = OBJECT(object)->x;
-	if (t2 >= 0xE0u)
+	goon_x = OBJECT(object)->x;
+	if (goon_x >= 0xE0u)
 	{
 		attributes = OBJECT(object)->attributes;
 		OBJECT(object)->attributes = attributes | 0x40u;
 	}
-	t3 = cemetery_scroll_speed;
-	OBJECT(object)->z_speed = t3;
+	ground_speed = cemetery_scroll_speed;
+	OBJECT(object)->z_speed = ground_speed;
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
-	return box;
 }
 
 /* Its entrance (state 1): runs its step. */
-uint16_t goon_from_below_step(uint16_t object, uint16_t y)
+void goon_from_below_step(uint16_t object)
 {
 	uint16_t ignored16 = 0;
 	uint32_t ignored = 0;
@@ -6458,58 +6336,60 @@ uint16_t goon_from_below_step(uint16_t object, uint16_t y)
 	{
 	case 0:
 		goon_from_below_leap(object);
-		return y;
+		return;
 	case 2:
-		return goon_from_below_land(object, y);
+		goon_from_below_land(object);
+		return;
 	case 4:
-		return cemetery_umbrella_goon_set_up(object);
+		cemetery_umbrella_goon_set_up(object);
+		return;
 	case 6:
 		cemetery_umbrella_goon_float_down(object);
-		return y;
+		return;
 	case -84:
 	case -44:
 	case -32:
 	case -12:
 	case 8:
-		vector_enemy_think(object, &y, &ignored16, &ignored);
-		return y;
+		vector_enemy_think(object, &ignored16, &ignored);
+		return;
 	case -82:
 	case -42:
 	case -30:
 	case -10:
 	case 10:
-		vector_enemy_act(object, &y, &ignored16, &ignored);
-		return y;
+		vector_enemy_act(object, &ignored16, &ignored);
+		return;
 	case -40:
 	case -28:
 	case -8:
 	case 12:
-		return enemy_react_with_pits(object, y);
+		enemy_react_with_pits(object);
+		return;
 	case -78:
 	case -38:
 	case -26:
 	case -6:
 	case 14:
-		vector_enemy_climb(object, &y, &ignored16, &ignored);
-		return y;
+		vector_enemy_climb(object, &ignored16, &ignored);
+		return;
 	}
-	unreachable();
 }
 
 /* Step 0: rides the ground until it is up through the floor, then leaps out (animation 84) forward. */
 void goon_from_below_leap(uint16_t object)
 {
-	uint8_t a = 0, d = 0;
+	uint8_t z_high = 0, z_low = 0;
 	uint8_t attributes = 0, attributes_2 = 0, action_step = 0;
-	uint16_t z = 0, t1 = 0, x_speed = 0;
+	uint16_t z = 0, ground_speed = 0, x_speed = 0;
 
 	z = OBJECT(object)->z;
-	d = (uint8_t)z;
-	a = (uint8_t)(z >> 8);
-	if ((int16_t)z < 0 || (uint16_t)(((uint32_t)a << 8) | (d & 0xFFu)) < 0u)
+	z_low = (uint8_t)z;
+	z_high = (uint8_t)(z >> 8);
+	if ((int16_t)z < 0 || (uint16_t)(((uint32_t)z_high << 8) | (z_low & 0xFFu)) < 0u)
 	{
-		t1 = cemetery_scroll_speed;
-		OBJECT(object)->z_speed = t1;
+		ground_speed = cemetery_scroll_speed;
+		OBJECT(object)->z_speed = ground_speed;
 		return;
 	}
 	attributes = OBJECT(object)->attributes;
@@ -6530,34 +6410,33 @@ void goon_from_below_leap(uint16_t object)
 
 /* Step 1: falls with gravity; landing, can be hit with its body's hit box, takes its nearest player and
    goes to choosing. */
-uint16_t goon_from_below_land(uint16_t object, uint16_t box)
+void goon_from_below_land(uint16_t object)
 {
 	uint32_t carry = 0;
 	uint16_t ignored16 = 0;
 
 	vector_apply_gravity(object, &ignored16, &carry);
 	if (carry == 0u)
-		return box;
+		return;
 	OBJECT(object)->flags = 0xC0u;
-	box = goon_from_below_body_box_ADDRESS;
-	vector_set_hit_box(object, box);
+	leftover_y = goon_from_below_body_box_ADDRESS;
+	vector_set_hit_box(object);
 	vector_choose_nearest_player(object);
 	OBJECT(object)->state = 2u;
-	return box;
 }
 
 /* Its state 0: a goon with an umbrella (animation A1) at the x cemetery_umbrella_goon_xs gives, 1 health
    with its spawn's bit 7, facing its target. */
-uint16_t cemetery_umbrella_goon_set_up(uint16_t object)
+void cemetery_umbrella_goon_set_up(uint16_t object)
 {
-	uint16_t ignored16 = 0, target = 0, y = 0;
+	uint16_t target = 0;
 	uint8_t parameter = 0, parameter_2 = 0, state = 0;
-	uint16_t t1 = 0, target_2 = 0;
+	uint16_t start_x = 0, target_2 = 0;
 
 	parameter = OBJECT(object)->parameter;
-	t1 = cemetery_umbrella_goon_xs[(int8_t)((uint8_t)((uint32_t)parameter << 1)) / 2];
-	OBJECT(object)->x = t1;
-	umbrella_goon_set_up(object, &y, &ignored16);
+	start_x = cemetery_umbrella_goon_xs[(int8_t)((uint8_t)((uint32_t)parameter << 1)) / 2];
+	OBJECT(object)->x = start_x;
+	umbrella_goon_set_up(object);
 	OBJECT(object)->flags = 0x88u;
 	OBJECT(object)->floor_z = 0u;
 	OBJECT(object)->animation = 0xA1u;
@@ -6572,7 +6451,6 @@ uint16_t cemetery_umbrella_goon_set_up(uint16_t object)
 	target = target_2;
 	vector_measure_target(object, target);
 	vector_face_direction(object);
-	return y;
 }
 
 /* Its entrance (state 1): floats down (a sixth of the gravity); landing, can be hit, animation A2, and
@@ -6581,11 +6459,11 @@ void cemetery_umbrella_goon_float_down(uint16_t object)
 {
 	uint32_t carry = 0;
 	uint8_t state = 0;
-	uint16_t z_speed = 0, t1 = 0;
+	uint16_t z_speed = 0, falling_z_speed = 0;
 
 	z_speed = OBJECT(object)->z_speed;
-	t1 = z_speed - 0x10u;
-	OBJECT(object)->z_speed = t1;
+	falling_z_speed = z_speed - 0x10u;
+	OBJECT(object)->z_speed = falling_z_speed;
 	carry = vector_check_landing(object);
 	if (carry)
 	{

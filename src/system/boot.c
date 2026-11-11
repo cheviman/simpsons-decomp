@@ -3,7 +3,7 @@
  *    Description: the reset: the board set up, the RAM and ROM checks, the main loop that runs the jobs
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    10-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -18,17 +18,17 @@
 void boot(void)
 {
 	uint32_t zero = 0;
-	uint8_t a = 0, b = 0, control = 0, delay = 0, job_argument = 0, job_argument_2 = 0, job_kind = 0, letters_left = 0, pattern = 0, screen_flip = 0, sprite_control = 0, table_bytes_left = 0;
+	uint8_t control = 0, delay = 0, eeprom_bad = 0, free_mark_high = 0, free_mark_low = 0, job_argument = 0, job_argument_2 = 0, job_kind = 0, letters_left = 0, pattern = 0, screen_flip = 0, sprite_control = 0, table_bytes_left = 0;
 	uint16_t bytes_left = 0, clear_from = 0, clear_to = 0, count = 0, d = 0, default_entries = 0, destination = 0, high_score_place = 0, ignored16 = 0, ignored16_2 = 0, job_place = 0, letters = 0, palette_count = 0, place = 0, queue_place = 0, source = 0, test_place = 0, text_number = 0, wait_left = 0;
-	uint8_t t1 = 0, t2 = 0, t3 = 0, t4 = 0, t7 = 0, t11 = 0, t13 = 0, t14 = 0, t16 = 0, t19 = 0, t20 = 0, t21 = 0, t22 = 0, t23 = 0, t24 = 0, t25 = 0, t26 = 0, t28 = 0, t29 = 0, t34 = 0, t35 = 0, t36 = 0;
-	uint16_t t5 = 0, t6 = 0, t8 = 0, t9 = 0, t10 = 0, t12 = 0, t15 = 0, t17 = 0, t18 = 0, t27 = 0, t30 = 0, t31 = 0, t32 = 0, t33 = 0, t37 = 0, t38 = 0;
+	uint8_t power_on_count = 0, old_scroll_control = 0, sound_irq_read = 0, old_flip = 0, watchdog_read = 0, letters_left_was = 0, watchdog_read_10 = 0, delay_was = 0, watchdog_read_2 = 0, watchdog_read_3 = 0, dma_still_pending = 0, test_inputs = 0, watchdog_read_4 = 0, test_inputs_2 = 0, old_flip_2 = 0, watchdog_read_5 = 0, watchdog_read_6 = 0, watchdog_read_7 = 0, delay_was_2 = 0, table_bytes_left_was = 0, watchdog_read_8 = 0, watchdog_read_9 = 0;
+	uint16_t pattern_place = 0, remaining_bytes = 0, checked_place = 0, letter_place = 0, tile_place = 0, remaining_wait = 0, remaining_bytes_2 = 0, cleared_place = 0, remaining_bytes_3 = 0, remaining_wait_2 = 0, job_slot_place = 0, sound_slot_place = 0, default_byte_place = 0, high_score_byte_place = 0, job_word = 0, taken_job_place = 0;
 
 	delay = 0u;
 	do
 	{
-		t1 = delay + 1u;
-		delay = t1;
-	} while (t1 != 0u);
+		power_on_count = delay + 1u;
+		delay = power_on_count;
+	} while (power_on_count != 0u);
 	mem_write8(0x7C00u, 0x13u);
 	io_write8(0x1D00u, 0xFBu);
 	io_write8(0x1FC2u, 0u);
@@ -36,11 +36,11 @@ void boot(void)
 	io_write8(0x1FC0u, 0x30u);
 	io_write8(0x1D80u, 0x10u);
 	io_write8(0x1F00u, 0x32u);
-	t2 = io_read8(0x1C80u);
+	old_scroll_control = io_read8(0x1C80u);
 	io_write8(0x1C80u, 0u);
 	io_write16(0x1FC6u, 0u);
-	t3 = io_read8(0x1FC4u);
-	t4 = io_read8(0x1E80u);
+	sound_irq_read = io_read8(0x1FC4u);
+	old_flip = io_read8(0x1E80u);
 	io_write8(0x1E80u, 0u);
 	io_write16(0x1FA0u, 0u);
 	io_write16(0x1FA2u, 0u);
@@ -62,20 +62,20 @@ void boot(void)
 		bytes_left = 0x300u;
 		do
 		{
-			t5 = test_place;
-			test_place = t5 + 1u;
-			mem_write8(t5, pattern);
-			t6 = bytes_left - 1u;
-			bytes_left = t6;
-		} while (t6 != 0u);
-		t7 = io_read8(0x1FCAu);
+			pattern_place = test_place;
+			test_place = pattern_place + 1u;
+			mem_write8(pattern_place, pattern);
+			remaining_bytes = bytes_left - 1u;
+			bytes_left = remaining_bytes;
+		} while (remaining_bytes != 0u);
+		watchdog_read = io_read8(0x1FCAu);
 		test_place = ram_test_start_ADDRESS;
 		bytes_left = 0x300u;
 		do
 		{
-			t8 = test_place;
-			test_place = t8 + 1u;
-			if (pattern != mem_read8(t8))
+			checked_place = test_place;
+			test_place = checked_place + 1u;
+			if (pattern != mem_read8(checked_place))
 			{
 				letters_left = 0x1Bu;
 				letters = ram_check_bad_texts_ADDRESS;
@@ -83,47 +83,47 @@ void boot(void)
 				do
 				{
 					mem_write8(place - 0x2000u, 0u);
-					t9 = letters;
-					letters = t9 + 1u;
-					t10 = place;
-					place = t10 + 1u;
-					mem_write8(t10, mem_read8(t9) - 0x30u);
-					t11 = letters_left;
-					letters_left = t11 - 1u;
-				} while (t11 != 1u);
+					letter_place = letters;
+					letters = letter_place + 1u;
+					tile_place = place;
+					place = tile_place + 1u;
+					mem_write8(tile_place, mem_read8(letter_place) - 0x30u);
+					letters_left_was = letters_left;
+					letters_left = letters_left_was - 1u;
+				} while (letters_left_was != 1u);
 				delay = 8u;
 				do
 				{
 					wait_left = 0u;
 					do
 					{
-						t12 = wait_left - 1u;
-						wait_left = t12;
-					} while (t12 != 0u);
-					t13 = io_read8(0x1FCAu);
-					t14 = delay;
-					delay = t14 - 1u;
-				} while (t14 != 1u);
+						remaining_wait = wait_left - 1u;
+						wait_left = remaining_wait;
+					} while (remaining_wait != 0u);
+					watchdog_read_10 = io_read8(0x1FCAu);
+					delay_was = delay;
+					delay = delay_was - 1u;
+				} while (delay_was != 1u);
 				reset_sound();
 				boot();
 				return;
 			}
-			t15 = bytes_left - 1u;
-			bytes_left = t15;
-		} while (t15 != 0u);
-		t16 = io_read8(0x1FCAu);
+			remaining_bytes_2 = bytes_left - 1u;
+			bytes_left = remaining_bytes_2;
+		} while (remaining_bytes_2 != 0u);
+		watchdog_read_2 = io_read8(0x1FCAu);
 		pattern += 0x55u;
 	} while (pattern != 0x54u);
 	test_place = ram_test_start_ADDRESS;
 	bytes_left = 0x300u;
 	do
 	{
-		t17 = test_place;
-		test_place = t17 + 1u;
-		mem_write8(t17, 0u);
-		t18 = bytes_left - 1u;
-		bytes_left = t18;
-	} while (t18 != 0u);
+		cleared_place = test_place;
+		test_place = cleared_place + 1u;
+		mem_write8(cleared_place, 0u);
+		remaining_bytes_3 = bytes_left - 1u;
+		bytes_left = remaining_bytes_3;
+	} while (remaining_bytes_3 != 0u);
 	zero = check_work_ram();
 	if (zero == 0u)
 	{
@@ -133,27 +133,27 @@ void boot(void)
 		do
 		{
 			mem_write8(place - 0x2000u, 0u);
-			t9 = letters;
-			letters = t9 + 1u;
-			t10 = place;
-			place = t10 + 1u;
-			mem_write8(t10, mem_read8(t9) - 0x30u);
-			t11 = letters_left;
-			letters_left = t11 - 1u;
-		} while (t11 != 1u);
+			letter_place = letters;
+			letters = letter_place + 1u;
+			tile_place = place;
+			place = tile_place + 1u;
+			mem_write8(tile_place, mem_read8(letter_place) - 0x30u);
+			letters_left_was = letters_left;
+			letters_left = letters_left_was - 1u;
+		} while (letters_left_was != 1u);
 		delay = 8u;
 		do
 		{
 			wait_left = 0u;
 			do
 			{
-				t12 = wait_left - 1u;
-				wait_left = t12;
-			} while (t12 != 0u);
-			t13 = io_read8(0x1FCAu);
-			t14 = delay;
-			delay = t14 - 1u;
-		} while (t14 != 1u);
+				remaining_wait = wait_left - 1u;
+				wait_left = remaining_wait;
+			} while (remaining_wait != 0u);
+			watchdog_read_10 = io_read8(0x1FCAu);
+			delay_was = delay;
+			delay = delay_was - 1u;
+		} while (delay_was != 1u);
 		reset_sound();
 		boot();
 		return;
@@ -228,8 +228,9 @@ void boot(void)
 		count--;
 	}
 	io_write8(0x1FC2u, 1u);
-	t19 = io_read8(0x1FCAu);
+	watchdog_read_3 = io_read8(0x1FCAu);
 	enable_firq();
+	leftover_y = clear_from;
 	take_interrupts();
 	board_control = 4u;
 	io_write8(0x1FC2u, 4u);
@@ -238,26 +239,28 @@ void boot(void)
 	dma_pending = 1u;
 	do
 	{
-		t20 = dma_pending;
+		dma_still_pending = dma_pending;
+		leftover_y = clear_from;
 		frame_wait(SIMPSONS_BOOT_WAIT);
+		leftover_y = clear_from;
 		take_interrupts();
-	} while (t20 != 0u);
-	t21 = io_read8(0x1F81u);
-	if ((t21 & 1u) == 0u)
+	} while (dma_still_pending != 0u);
+	test_inputs = io_read8(0x1F81u);
+	if ((test_inputs & 1u) == 0u)
 	{
 		set_check_colours();
 		control = board_control & ~3u;
 		board_control = control;
 		io_write8(0x1FC2u, control);
 		clear_tile_layers();
-		t22 = io_read8(0x1FCAu);
+		watchdog_read_4 = io_read8(0x1FCAu);
 		text_number = 6u;
 		print_game_text(text_number);
 		window_bank = 0x2Fu;
 		set_lines(window_bank);
 		d = eeprom_test();
-		a = (uint8_t)(d >> 8);
-		if (a != 0u)
+		eeprom_bad = (uint8_t)(d >> 8);
+		if (eeprom_bad != 0u)
 		{
 			text_number = 8u;
 			print_game_text(text_number);
@@ -276,10 +279,10 @@ void boot(void)
 		print_game_text(d);
 		do
 		{
-			t23 = io_read8(0x1F81u);
+			test_inputs_2 = io_read8(0x1F81u);
 			frame_wait(SIMPSONS_SWITCH_WAIT);
 			take_interrupts();
-		} while ((t23 & 1u) == 0u);
+		} while ((test_inputs_2 & 1u) == 0u);
 	}
 	window_bank = 0x2Fu;
 	set_lines(window_bank);
@@ -290,7 +293,7 @@ void boot(void)
 		io_write8(0x1E80u, 1u);
 	else
 	{
-		t24 = io_read8(0x1E80u);
+		old_flip_2 = io_read8(0x1E80u);
 		io_write8(0x1E80u, 0u);
 	}
 	ram_rom_check();
@@ -317,9 +320,9 @@ void boot(void)
 	palette_count = (d & 0xFFu) | 0x300u;
 	load_palettes(destination, source, palette_count);
 	clear_tile_layers();
-	t25 = io_read8(0x1FCAu);
+	watchdog_read_5 = io_read8(0x1FCAu);
 	clear_tile_layers();
-	t26 = io_read8(0x1FCAu);
+	watchdog_read_6 = io_read8(0x1FCAu);
 	dma_pending = 1u;
 	draw_boot_pattern();
 	delay = 3u;
@@ -328,57 +331,57 @@ void boot(void)
 		wait_left = 0u;
 		do
 		{
-			t27 = wait_left - 1u;
-			wait_left = t27;
-		} while (t27 != 0u);
-		t28 = io_read8(0x1FCAu);
-		t29 = delay;
-		delay = t29 - 1u;
-	} while (t29 != 1u);
+			remaining_wait_2 = wait_left - 1u;
+			wait_left = remaining_wait_2;
+		} while (remaining_wait_2 != 0u);
+		watchdog_read_7 = io_read8(0x1FCAu);
+		delay_was_2 = delay;
+		delay = delay_was_2 - 1u;
+	} while (delay_was_2 != 1u);
 	queue_place = job_queue_ADDRESS;
 	job_queue_write = job_queue_ADDRESS;
 	job_queue_read = job_queue_ADDRESS;
-	a = 0xFFu;
-	b = 0xFFu;
+	free_mark_high = 0xFFu;
+	free_mark_low = 0xFFu;
 	do
 	{
-		t30 = queue_place;
-		queue_place = t30 + 2u;
-		mem_write16(t30, ((uint32_t)a << 8) | b);
+		job_slot_place = queue_place;
+		queue_place = job_slot_place + 2u;
+		QUEUED_JOB(job_slot_place)->job = ((uint32_t)free_mark_high << 8) | free_mark_low;
 	} while (queue_place != high_scores_ADDRESS);
 	queue_place = sound_queue_ADDRESS;
 	sound_queue_write = sound_queue_ADDRESS;
 	sound_queue_read = sound_queue_ADDRESS;
-	a = 0xFFu;
-	b = 0xFFu;
+	free_mark_high = 0xFFu;
+	free_mark_low = 0xFFu;
 	do
 	{
-		t31 = queue_place;
-		queue_place = t31 + 2u;
-		mem_write16(t31, ((uint32_t)a << 8) | b);
+		sound_slot_place = queue_place;
+		queue_place = sound_slot_place + 2u;
+		mem_write16(sound_slot_place, ((uint32_t)free_mark_high << 8) | free_mark_low);
 	} while (queue_place != job_queue_write_ADDRESS);
 	high_score_place = high_scores_ADDRESS;
 	default_entries = default_high_scores_ADDRESS;
 	table_bytes_left = 0x50u;
 	do
 	{
-		t32 = default_entries;
-		default_entries = t32 + 1u;
-		t33 = high_score_place;
-		high_score_place = t33 + 1u;
-		mem_write8(t33, mem_read8(t32));
-		t34 = table_bytes_left;
-		table_bytes_left = t34 - 1u;
-	} while (t34 != 1u);
+		default_byte_place = default_entries;
+		default_entries = default_byte_place + 1u;
+		high_score_byte_place = high_score_place;
+		high_score_place = high_score_byte_place + 1u;
+		mem_write8(high_score_byte_place, mem_read8(default_byte_place));
+		table_bytes_left_was = table_bytes_left;
+		table_bytes_left = table_bytes_left_was - 1u;
+	} while (table_bytes_left_was != 1u);
 	clear_objects(&ignored16_2, &ignored16);
-	t35 = io_read8(0x1FCAu);
+	watchdog_read_8 = io_read8(0x1FCAu);
 	window_bank = 0x2Fu;
 	set_lines(window_bank);
 	eeprom_load_settings();
 	apply_settings();
 	game_mode = 1u;
 	io_write8(0x1FC0u, board_output);
-	t36 = io_read8(0x1FCAu);
+	watchdog_read_9 = io_read8(0x1FCAu);
 	irq_busy = 0u;
 	dma_pending = 1u;
 	control = board_control & ~3u;
@@ -401,16 +404,16 @@ void boot(void)
 		set_lines(window_bank);
 		gauges_draw();
 		job_place = job_queue_read;
-		t37 = mem_read16(job_place);
-		job_kind = (uint8_t)(t37 >> 8);
-		job_argument = (uint8_t)t37;
+		job_word = QUEUED_JOB(job_place)->job;
+		job_kind = (uint8_t)(job_word >> 8);
+		job_argument = (uint8_t)job_word;
 		frame_wait(SIMPSONS_FRAME_WAIT);
 		take_interrupts();
-		if ((int16_t)t37 < 0)
+		if ((int16_t)job_word < 0)
 			continue;
-		t38 = job_place;
-		job_place = t38 + 2u;
-		mem_write16(t38, 0xFFFFu);
+		taken_job_place = job_place;
+		job_place = taken_job_place + 2u;
+		QUEUED_JOB(taken_job_place)->job = 0xFFFFu;
 		if (job_place >= job_queue_ADDRESS + 0x3Bu)
 			job_place = job_queue_ADDRESS;
 		job_queue_read = job_place;
@@ -467,7 +470,7 @@ void apply_settings(void)
 	uint8_t coinage = 0, coinage_coins = 0, output = 0, sprite_control = 0;
 	uint16_t settings = 0;
 	uint8_t stack = 0;
-	uint8_t t1 = 0, t2 = 0, t3 = 0, t4 = 0, t5 = 0, t6 = 0;
+	uint8_t lives_chosen = 0, difficulty_chosen = 0, attract_sound_chosen = 0, flip_chosen = 0, stereo_chosen = 0, extra_coins_chosen = 0;
 
 	settings = coin_setting_ADDRESS;
 	coinage = coinages[(int8_t)coin_setting];
@@ -488,14 +491,14 @@ void apply_settings(void)
 		separate_coin_slots = 0u;
 		four_coin_slots = 0u;
 	}
-	t1 = mem_read8(settings + 4u);
-	lives_per_credit = t1 + 1u;
-	t2 = mem_read8(settings + 3u);
-	difficulty_setting = t2;
-	t3 = mem_read8(settings + 5u);
-	attract_sound = t3;
-	t4 = mem_read8(settings + 6u);
-	if (t4 != 0u)
+	lives_chosen = lives_option;
+	lives_per_credit = lives_chosen + 1u;
+	difficulty_chosen = difficulty_option;
+	difficulty_setting = difficulty_chosen;
+	attract_sound_chosen = attract_sound_option;
+	attract_sound = attract_sound_chosen;
+	flip_chosen = screen_flip_option;
+	if (flip_chosen != 0u)
 	{
 		io_write8(0x1E80u, 1u);
 		sprite_control = sprite_chip_control | 3u;
@@ -522,12 +525,12 @@ void apply_settings(void)
 	sprite_scroll_x_pad = 0u;
 	sprite_scroll_y_pad = 0u;
 	output = 0x30u;
-	t5 = mem_read8(settings + 8u);
-	if (t5 != 0u)
+	stereo_chosen = sound_output_option;
+	if (stereo_chosen != 0u)
 		output |= 4u;
 	board_output = output;
-	t6 = mem_read8(settings + 9u);
-	first_credit_extra_coins = t6;
+	extra_coins_chosen = first_credit_coins_option;
+	first_credit_extra_coins = extra_coins_chosen;
 }
 
 /* Fills the text layer's middle, 36 tiles by 32 rows, with a pattern of tiles 2E 2F over 2C 2D. */
@@ -535,8 +538,8 @@ void draw_boot_pattern(void)
 {
 	uint8_t control = 0, pairs_left = 0, rows_left = 0;
 	uint16_t place = 0, tile_pair = 0;
-	uint8_t t2 = 0, t4 = 0, t5 = 0;
-	uint16_t t1 = 0, t3 = 0;
+	uint8_t pairs_left_was = 0, pairs_left_was_2 = 0, rows_left_was = 0;
+	uint16_t pair_place = 0, pair_place_2 = 0;
 
 	control = board_control & ~3u;
 	board_control = control;
@@ -549,39 +552,39 @@ void draw_boot_pattern(void)
 		tile_pair = 0x2F2Eu;
 		do
 		{
-			t1 = place;
-			place = t1 + 2u;
-			mem_write16(t1, tile_pair);
-			t2 = pairs_left;
-			pairs_left = t2 - 1u;
-		} while (t2 != 1u);
+			pair_place = place;
+			place = pair_place + 2u;
+			mem_write16(pair_place, tile_pair);
+			pairs_left_was = pairs_left;
+			pairs_left = pairs_left_was - 1u;
+		} while (pairs_left_was != 1u);
 		place += 0x1Cu;
 		pairs_left = 0x12u;
 		tile_pair = 0x2D2Cu;
 		do
 		{
-			t3 = place;
-			place = t3 + 2u;
-			mem_write16(t3, tile_pair);
-			t4 = pairs_left;
-			pairs_left = t4 - 1u;
-		} while (t4 != 1u);
+			pair_place_2 = place;
+			place = pair_place_2 + 2u;
+			mem_write16(pair_place_2, tile_pair);
+			pairs_left_was_2 = pairs_left;
+			pairs_left = pairs_left_was_2 - 1u;
+		} while (pairs_left_was_2 != 1u);
 		place += 0x1Cu;
-		t5 = rows_left;
-		rows_left = t5 - 1u;
-	} while (t5 != 1u);
+		rows_left_was = rows_left;
+		rows_left = rows_left_was - 1u;
+	} while (rows_left_was != 1u);
 }
 
 /* Tests the work RAM 4000-5CFF word by word; Z when it is good. */
 uint32_t check_work_ram(void)
 {
 	uint32_t zero = 0;
-	uint16_t count = 0, d = 0, start = 0;
+	uint16_t count = 0, start = 0, test_result = 0;
 
 	start = floor_map_ADDRESS;
 	count = 0xE80u;
-	d = test_ram_words(count, start);
-	zero = (uint8_t)d == 0u;
+	test_result = test_ram_words(count, start);
+	zero = (uint8_t)test_result == 0u;
 	return zero;
 }
 
@@ -591,10 +594,10 @@ uint32_t check_work_ram(void)
 void ram_rom_check(void)
 {
 	uint8_t answer_bits = 0, check_result = 0, sum_high = 0, sum_low = 0, wait_high = 0, wait_low = 0;
-	uint16_t answer = 0, bad = 0, count = 0, count_2 = 0, d = 0, ignored16 = 0, ignored16_3 = 0, place = 0, place_2 = 0, start = 0, start_2 = 0, text_number = 0;
+	uint16_t answer = 0, bad = 0, check_word = 0, count = 0, count_2 = 0, ignored16 = 0, ignored16_3 = 0, place = 0, place_2 = 0, start = 0, start_2 = 0, text_number = 0;
 	uint8_t stack = 0;
-	uint8_t t1 = 0, t8 = 0, t9 = 0;
-	uint16_t t2 = 0, t3 = 0, t4 = 0, t5 = 0, t6 = 0, t7 = 0;
+	uint8_t watchdog_read = 0, watchdog_read_2 = 0, wait_loops_was = 0;
+	uint16_t sum_13c = 0, sum_15c = 0, sum_16c = 0, sum_17c = 0, wait_count = 0, wait_count_left = 0;
 
 	check_failed = 0u;
 	check_11f = 0u;
@@ -604,54 +607,54 @@ void ram_rom_check(void)
 	io_write8(0x1FC2u, 6u);
 	start = 0x2000u;
 	count_2 = 0x1000u;
-	d = test_ram_words(count_2, start);
-	check_result = (uint8_t)d;
+	check_word = test_ram_words(count_2, start);
+	check_result = (uint8_t)check_word;
 	check_1j = check_result;
 	io_write8(0x1FC2u, 4u);
 	start = 0x2000u;
 	count_2 = 0xC00u;
-	d = test_ram_words(count_2, start);
-	check_result = (uint8_t)d;
+	check_word = test_ram_words(count_2, start);
+	check_result = (uint8_t)check_word;
 	check_16g = check_result;
 	start = 0x1840u;
 	count_2 = 0xE0u;
-	d = test_ram_words(count_2, start);
-	check_result = (uint8_t)d;
+	check_word = test_ram_words(count_2, start);
+	check_result = (uint8_t)check_word;
 	check_16g |= check_result;
 	start = 0u;
 	count_2 = 0xC00u;
-	d = test_ram_words(count_2, start);
-	check_result = (uint8_t)d;
+	check_word = test_ram_words(count_2, start);
+	check_result = (uint8_t)check_word;
 	check_16f = check_result;
 	start = 0x3840u;
 	count_2 = 0xE0u;
-	d = test_ram_words(count_2, start);
-	check_result = (uint8_t)d;
+	check_word = test_ram_words(count_2, start);
+	check_result = (uint8_t)check_word;
 	check_16f |= check_result;
 	start = 0x3C00u;
 	count_2 = 0x200u;
-	d = test_ram_words(count_2, start);
-	check_result = (uint8_t)d;
+	check_word = test_ram_words(count_2, start);
+	check_result = (uint8_t)check_word;
 	check_16f |= check_result;
 	io_write8(0x1FC2u, 5u);
 	start = 1u;
 	count_2 = 0x800u;
-	d = test_ram_bytes(count_2, start);
-	check_result = (uint8_t)d;
+	check_word = test_ram_bytes(count_2, start);
+	check_result = (uint8_t)check_word;
 	check_9g = check_result;
 	io_write8(0x1FC2u, 5u);
 	start = 0u;
 	count_2 = 0x800u;
-	d = test_ram_bytes(count_2, start);
-	check_result = (uint8_t)d;
+	check_word = test_ram_bytes(count_2, start);
+	check_result = (uint8_t)check_word;
 	check_8g = check_result;
 	window_bank = 0x2Fu;
 	set_lines(window_bank);
-	d = eeprom_verify();
-	check_result = (uint8_t)d;
+	check_word = eeprom_verify();
+	check_result = (uint8_t)check_word;
 	check_12c = check_result;
 	clear_tile_layers();
-	t1 = io_read8(0x1FCAu);
+	watchdog_read = io_read8(0x1FCAu);
 	text_number = 0xBu;
 	print_game_text(text_number);
 	place = 0x2122u;
@@ -685,8 +688,8 @@ void ram_rom_check(void)
 		add_bank_bytes();
 		stack = stack + 1u;
 	} while (stack != 0x30u);
-	t2 = rom_sum;
-	if (t2 != rom_13c_sum[0])
+	sum_13c = rom_sum;
+	if (sum_13c != rom_13c_sum[0])
 		check_result = 3u;
 	else
 		check_result = 0u;
@@ -707,8 +710,8 @@ void ram_rom_check(void)
 		add_bank_bytes();
 		stack = stack + 1u;
 	} while (stack != 0x3Cu);
-	t3 = rom_sum;
-	if (t3 != rom_15c_sum[0])
+	sum_15c = rom_sum;
+	if (sum_15c != rom_15c_sum[0])
 		check_result = 3u;
 	else
 		check_result = 0u;
@@ -726,8 +729,8 @@ void ram_rom_check(void)
 		add_bank_bytes();
 		stack = stack + 1u;
 	} while (stack != 0x10u);
-	t4 = rom_sum;
-	if (t4 != rom_16c_sum[0])
+	sum_16c = rom_sum;
+	if (sum_16c != rom_16c_sum[0])
 		check_result = 3u;
 	else
 		check_result = 0u;
@@ -745,8 +748,8 @@ void ram_rom_check(void)
 		add_bank_bytes();
 		stack = stack + 1u;
 	} while (stack != 0x20u);
-	t5 = rom_sum;
-	if (t5 != rom_17c_sum[0])
+	sum_17c = rom_sum;
+	if (sum_17c != rom_17c_sum[0])
 		check_result = 3u;
 	else
 		check_result = 0u;
@@ -759,9 +762,9 @@ void ram_rom_check(void)
 	answer_bits = (uint8_t)(answer >> 8);
 	if ((int8_t)answer_bits >= 0)
 	{
-		d = read_sound_rom_sum();
-		sum_high = (uint8_t)(d >> 8);
-		sum_low = (uint8_t)d;
+		check_word = read_sound_rom_sum();
+		sum_high = (uint8_t)(check_word >> 8);
+		sum_low = (uint8_t)check_word;
 		rom_sum = ((uint32_t)sum_high << 8) | sum_low;
 		ask_sound_cpu_check(&ignored16, &answer);
 		answer_bits = (uint8_t)(answer >> 8);
@@ -799,15 +802,15 @@ void ram_rom_check(void)
 		wait_low = 0u;
 		do
 		{
-			t6 = ((uint32_t)wait_high << 8) | wait_low;
-			t7 = t6 - 1u;
-			wait_high = (uint8_t)(t7 >> 8);
-			wait_low = (uint8_t)t7;
-		} while (t6 != 1u);
-		t8 = io_read8(0x1FCAu);
-		t9 = check_wait_loops;
-		check_wait_loops = t9 - 1u;
-	} while (t9 != 1u);
+			wait_count = ((uint32_t)wait_high << 8) | wait_low;
+			wait_count_left = wait_count - 1u;
+			wait_high = (uint8_t)(wait_count_left >> 8);
+			wait_low = (uint8_t)wait_count_left;
+		} while (wait_count != 1u);
+		watchdog_read_2 = io_read8(0x1FCAu);
+		wait_loops_was = check_wait_loops;
+		check_wait_loops = wait_loops_was - 1u;
+	} while (wait_loops_was != 1u);
 	if (check_failed != 0u)
 	{
 		boot();
@@ -823,8 +826,8 @@ void set_check_colours(void)
 	uint8_t colour_high = 0, colour_low = 0;
 	uint16_t colour_place = 0;
 	uint8_t stack = 0;
-	uint8_t t2 = 0, t4 = 0;
-	uint16_t t1 = 0, t3 = 0;
+	uint8_t colours_left_was = 0, colours_left_was_2 = 0;
+	uint16_t written_colour_place = 0, written_colour_place_2 = 0;
 
 	io_write8(0x1FC2u, 5u);
 	colour_place = 0x400u;
@@ -833,12 +836,12 @@ void set_check_colours(void)
 	colour_high = 0xFFu;
 	do
 	{
-		t1 = colour_place;
-		colour_place = t1 + 2u;
-		mem_write16(t1, ((uint32_t)colour_high << 8) | (colour_low & 0xFFu));
-		t2 = stack;
-		stack = t2 - 1u;
-	} while (t2 != 1u);
+		written_colour_place = colour_place;
+		colour_place = written_colour_place + 2u;
+		mem_write16(written_colour_place, ((uint32_t)colour_high << 8) | (colour_low & 0xFFu));
+		colours_left_was = stack;
+		stack = colours_left_was - 1u;
+	} while (colours_left_was != 1u);
 	mem_write16(colour_place, 0u);
 	colour_place = 0x420u;
 	stack = 0x10u;
@@ -846,12 +849,12 @@ void set_check_colours(void)
 	colour_high = 0u;
 	do
 	{
-		t3 = colour_place;
-		colour_place = t3 + 2u;
-		mem_write16(t3, ((uint32_t)colour_high << 8) | colour_low);
-		t4 = stack;
-		stack = t4 - 1u;
-	} while (t4 != 1u);
+		written_colour_place_2 = colour_place;
+		colour_place = written_colour_place_2 + 2u;
+		mem_write16(written_colour_place_2, ((uint32_t)colour_high << 8) | colour_low);
+		colours_left_was_2 = stack;
+		stack = colours_left_was_2 - 1u;
+	} while (colours_left_was_2 != 1u);
 }
 
 /* Prints the sum the check added up (48FA) as four hex digits at X, in red when B is not 0. */
@@ -875,8 +878,8 @@ uint16_t test_ram_words(uint16_t count, uint16_t start)
 {
 	uint16_t bad = 0, pattern = 0, wait_left = 0, word_place = 0, words_left = 0;
 	uint16_t stack = 0;
-	uint8_t t2 = 0, t4 = 0, t6 = 0;
-	uint16_t t1 = 0, t3 = 0, t5 = 0, t7 = 0, t8 = 0;
+	uint8_t watchdog_read = 0, watchdog_read_2 = 0, watchdog_read_3 = 0;
+	uint16_t written_word_place = 0, words_left_was = 0, wait_left_was = 0, checked_word_place = 0, words_left_was_2 = 0;
 
 	pattern = 0xFFFFu;
 	ram_test_start = start;
@@ -887,36 +890,36 @@ uint16_t test_ram_words(uint16_t count, uint16_t start)
 		word_place = ram_test_start;
 		do
 		{
-			t1 = word_place;
-			word_place = t1 + 2u;
-			mem_write16(t1, pattern);
-			t2 = io_read8(0x1FCAu);
-			t3 = words_left;
-			words_left = t3 - 1u;
-		} while (t3 != 1u);
+			written_word_place = word_place;
+			word_place = written_word_place + 2u;
+			mem_write16(written_word_place, pattern);
+			watchdog_read = io_read8(0x1FCAu);
+			words_left_was = words_left;
+			words_left = words_left_was - 1u;
+		} while (words_left_was != 1u);
 		wait_left = 0x1000u;
 		do
 		{
-			t4 = io_read8(0x1FCAu);
-			t5 = wait_left;
-			wait_left = t5 - 1u;
-		} while (t5 != 1u);
+			watchdog_read_2 = io_read8(0x1FCAu);
+			wait_left_was = wait_left;
+			wait_left = wait_left_was - 1u;
+		} while (wait_left_was != 1u);
 		stack = count;
 		words_left = stack;
 		word_place = ram_test_start;
 		do
 		{
-			t6 = io_read8(0x1FCAu);
-			t7 = word_place;
-			word_place = t7 + 2u;
-			if (pattern != mem_read16(t7))
+			watchdog_read_3 = io_read8(0x1FCAu);
+			checked_word_place = word_place;
+			word_place = checked_word_place + 2u;
+			if (pattern != mem_read16(checked_word_place))
 			{
 				bad = (words_left & ~0xFFu) | 3u;
 				return bad;
 			}
-			t8 = words_left;
-			words_left = t8 - 1u;
-		} while (t8 != 1u);
+			words_left_was_2 = words_left;
+			words_left = words_left_was_2 - 1u;
+		} while (words_left_was_2 != 1u);
 		pattern -= 0x5555u;
 	} while (pattern != 0xAAABu);
 	words_left &= ~0xFFu;
@@ -929,8 +932,8 @@ uint16_t test_ram_bytes(uint16_t count, uint16_t start)
 {
 	uint8_t pattern = 0;
 	uint16_t bad = 0, byte_place = 0, bytes_left = 0, wait_left = 0;
-	uint8_t t2 = 0, t4 = 0, t6 = 0;
-	uint16_t t1 = 0, t3 = 0, t5 = 0, t7 = 0, t8 = 0;
+	uint8_t watchdog_read = 0, watchdog_read_2 = 0, watchdog_read_3 = 0;
+	uint16_t written_byte_place = 0, bytes_still_left = 0, wait_still_left = 0, checked_byte_place = 0, bytes_still_left_2 = 0;
 
 	pattern = 0xFFu;
 	ram_test_start = start;
@@ -940,35 +943,35 @@ uint16_t test_ram_bytes(uint16_t count, uint16_t start)
 		byte_place = ram_test_start;
 		do
 		{
-			t1 = byte_place;
-			byte_place = t1 + 2u;
-			mem_write8(t1, pattern);
-			t2 = io_read8(0x1FCAu);
-			t3 = bytes_left - 1u;
-			bytes_left = t3;
-		} while (t3 != 0u);
+			written_byte_place = byte_place;
+			byte_place = written_byte_place + 2u;
+			mem_write8(written_byte_place, pattern);
+			watchdog_read = io_read8(0x1FCAu);
+			bytes_still_left = bytes_left - 1u;
+			bytes_left = bytes_still_left;
+		} while (bytes_still_left != 0u);
 		wait_left = 0x1000u;
 		do
 		{
-			t4 = io_read8(0x1FCAu);
-			t5 = wait_left - 1u;
-			wait_left = t5;
-		} while (t5 != 0u);
+			watchdog_read_2 = io_read8(0x1FCAu);
+			wait_still_left = wait_left - 1u;
+			wait_left = wait_still_left;
+		} while (wait_still_left != 0u);
 		bytes_left = count;
 		byte_place = ram_test_start;
 		do
 		{
-			t6 = io_read8(0x1FCAu);
-			t7 = byte_place;
-			byte_place = t7 + 2u;
-			if (pattern != mem_read8(t7))
+			watchdog_read_3 = io_read8(0x1FCAu);
+			checked_byte_place = byte_place;
+			byte_place = checked_byte_place + 2u;
+			if (pattern != mem_read8(checked_byte_place))
 			{
 				bad = ((uint32_t)pattern << 8) | 3u;
 				return bad;
 			}
-			t8 = bytes_left - 1u;
-			bytes_left = t8;
-		} while (t8 != 0u);
+			bytes_still_left_2 = bytes_left - 1u;
+			bytes_left = bytes_still_left_2;
+		} while (bytes_still_left_2 != 0u);
 		pattern -= 0x55u;
 	} while (pattern != 0xABu);
 	bad = (uint32_t)pattern << 8;
@@ -1016,15 +1019,15 @@ void BOARD_ORIGINAL(add_rom_bytes)(uint16_t start, uint16_t count)
 /* Prints OK, or BAD in red when B is not 0 (and marks the check as failed), at the tile RAM's U. */
 uint16_t print_check_result(uint16_t place, uint8_t bad)
 {
-	uint8_t b = 0, colour = 0, tile = 0;
-	uint16_t d = 0, letters = 0;
+	uint8_t colour = 0, result_code = 0, tile = 0;
+	uint16_t letters = 0, tile_and_result = 0;
 	uint8_t stack = 0;
-	uint8_t t3 = 0;
-	uint16_t t1 = 0, t2 = 0;
+	uint8_t letters_left_was = 0;
+	uint16_t letter_place = 0, tile_place = 0;
 
-	b = (uint8_t)bad;
-	stack = b;
-	check_failed |= b;
+	result_code = (uint8_t)bad;
+	stack = result_code;
+	check_failed |= result_code;
 	colour = stack;
 	io_write8(0x1FC2u, 4u);
 	letters = check_result_texts_ADDRESS;
@@ -1037,17 +1040,17 @@ uint16_t print_check_result(uint16_t place, uint8_t bad)
 	do
 	{
 		mem_write8(place - 0x2000u, colour);
-		t1 = letters;
-		letters = t1 + 1u;
-		tile = mem_read8(t1) - 0x30u;
-		t2 = place;
-		place = t2 + 1u;
-		mem_write8(t2, tile);
-		t3 = result_letters_left;
-		result_letters_left = t3 - 1u;
-	} while (t3 != 1u);
-	d = ((uint32_t)tile << 8) | stack;
-	return d;
+		letter_place = letters;
+		letters = letter_place + 1u;
+		tile = mem_read8(letter_place) - 0x30u;
+		tile_place = place;
+		place = tile_place + 1u;
+		mem_write8(tile_place, tile);
+		letters_left_was = result_letters_left;
+		result_letters_left = letters_left_was - 1u;
+	} while (letters_left_was != 1u);
+	tile_and_result = ((uint32_t)tile << 8) | stack;
+	return tile_and_result;
 }
 
 /* Asks the Z80 for its checks (command F181) and returns its answer in D, or 8F00 when it does not
@@ -1056,27 +1059,27 @@ void ask_sound_cpu_check(uint16_t *p_wait_left, uint16_t *p_answer)
 {
 	uint8_t command = 0;
 	uint16_t answer = 0, wait_left = 0;
-	uint8_t t1 = 0, t3 = 0;
-	uint16_t t2 = 0, t4 = 0;
+	uint8_t sound_irq_read = 0, sound_echo = 0;
+	uint16_t wait_still_left = 0, sound_answer = 0;
 
 	command = 0x81u;
 	io_write16(0x1FC6u, 0xF181u);
-	t1 = io_read8(0x1FC4u);
+	sound_irq_read = io_read8(0x1FC4u);
 	wait_left = 0x2000u;
 	for (;;)
 	{
-		t2 = wait_left - 1u;
-		wait_left = t2;
-		if (t2 == 0u)
+		wait_still_left = wait_left - 1u;
+		wait_left = wait_still_left;
+		if (wait_still_left == 0u)
 		{
 			answer = 0x8F00u;
 			break;
 		}
-		t3 = io_read8(0x1FC7u);
-		if ((uint8_t)command == t3)
+		sound_echo = io_read8(0x1FC7u);
+		if ((uint8_t)command == sound_echo)
 		{
-			t4 = io_read16(0x1FC6u);
-			answer = t4;
+			sound_answer = io_read16(0x1FC6u);
+			answer = sound_answer;
 			break;
 		}
 	}
@@ -1088,16 +1091,16 @@ void ask_sound_cpu_check(uint16_t *p_wait_left, uint16_t *p_answer)
 uint16_t read_sound_rom_sum(void)
 {
 	uint8_t sum_high = 0, sum_low = 0;
-	uint16_t d = 0, sum = 0;
+	uint16_t sound_exchange = 0, sum = 0;
 	uint8_t stack = 0;
 
-	d = 0xF383u;
-	d = send_sound_command_and_wait(d);
-	sum_high = (uint8_t)(d >> 8);
+	sound_exchange = 0xF383u;
+	sound_exchange = send_sound_command_and_wait(sound_exchange);
+	sum_high = (uint8_t)(sound_exchange >> 8);
 	stack = sum_high;
-	d = 0xF282u;
-	d = send_sound_command_and_wait(d);
-	sum_low = (uint8_t)(d >> 8);
+	sound_exchange = 0xF282u;
+	sound_exchange = send_sound_command_and_wait(sound_exchange);
+	sum_low = (uint8_t)(sound_exchange >> 8);
 	sum = ((uint32_t)stack << 8) | sum_low;
 	return sum;
 }
@@ -1105,26 +1108,26 @@ uint16_t read_sound_rom_sum(void)
 /* Sends the Z80 the command FF00, without waiting. */
 void reset_sound(void)
 {
-	uint8_t t1 = 0;
+	uint8_t sound_irq_read = 0;
 
 	io_write16(0x1FC6u, 0xFF00u);
-	t1 = io_read8(0x1FC4u);
+	sound_irq_read = io_read8(0x1FC4u);
 }
 
 /* Sends the Z80 the command in D and waits until it echoes the command's low byte; returns its answer in
    D. */
 uint16_t send_sound_command_and_wait(uint16_t command)
 {
-	uint8_t t1 = 0, t2 = 0;
-	uint16_t t3 = 0;
+	uint8_t sound_irq_read = 0, sound_echo = 0;
+	uint16_t sound_answer = 0;
 
 	io_write16(0x1FC6u, command);
-	t1 = io_read8(0x1FC4u);
+	sound_irq_read = io_read8(0x1FC4u);
 	do
 	{
-		t2 = io_read8(0x1FC7u);
-	} while ((uint8_t)command != t2);
-	t3 = io_read16(0x1FC6u);
-	command = t3;
+		sound_echo = io_read8(0x1FC7u);
+	} while ((uint8_t)command != sound_echo);
+	sound_answer = io_read16(0x1FC6u);
+	command = sound_answer;
 	return command;
 }

@@ -3,7 +3,7 @@
  *    Description: stage 3: the forest, then the Springfield Discount Cemetery
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    10-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -12,7 +12,7 @@
 #include "game.h"
 
 /* Step 6, stage 3's first part (the forest, map scene 86), by step_phase */
-uint32_t step_stage_3_forest(uint16_t y, uint16_t u)
+uint32_t step_stage_3_forest(uint16_t u)
 {
 	uint32_t left_caller = 0;
 
@@ -35,10 +35,10 @@ uint32_t step_stage_3_forest(uint16_t y, uint16_t u)
 		return left_caller;
 	case 8:
 		left_caller = 0u;
-		return stage_3_forest_play(y, left_caller);
+		return stage_3_forest_play(left_caller);
 	case 10:
 		left_caller = 0u;
-		return stage_3_forest_cleared(y, left_caller);
+		return stage_3_forest_cleared(left_caller);
 	case 12:
 		left_caller = 0u;
 		stage_3_forest_over();
@@ -61,7 +61,7 @@ uint32_t step_stage_3_forest(uint16_t y, uint16_t u)
 		return left_caller;
 	case 24:
 		left_caller = 0u;
-		return stage_3_cemetery_play(y, left_caller);
+		return stage_3_cemetery_play(left_caller);
 	case 26:
 		left_caller = 0u;
 		stage_3_cemetery_over();
@@ -89,7 +89,7 @@ uint32_t step_stage_3_forest(uint16_t y, uint16_t u)
 		return left_caller;
 	case 40:
 		left_caller = 0u;
-		return stage_4_play(y, left_caller);
+		return stage_4_play(left_caller);
 	case 42:
 		left_caller = 0u;
 		stage_4_over();
@@ -117,7 +117,7 @@ uint32_t step_stage_3_forest(uint16_t y, uint16_t u)
 		return left_caller;
 	case 56:
 		left_caller = 0u;
-		return stage_5_play(y, left_caller);
+		return stage_5_play(left_caller);
 	case 58:
 		left_caller = 0u;
 		stage_5_over();
@@ -150,7 +150,7 @@ uint32_t step_stage_3_forest(uint16_t y, uint16_t u)
 		return left_caller;
 	case 74:
 		left_caller = 0u;
-		return stage_6_play(y, left_caller);
+		return stage_6_play(left_caller);
 	case 76:
 		left_caller = 0u;
 		stage_6_over();
@@ -176,11 +176,11 @@ uint32_t step_stage_3_forest(uint16_t y, uint16_t u)
 		return left_caller;
 	case 88:
 		left_caller = 0u;
-		bonus_2_intro_phase(y);
+		bonus_2_intro_phase();
 		return left_caller;
 	case 90:
 		left_caller = 0u;
-		bonus_2_run(y);
+		bonus_2_run();
 		return left_caller;
 	case 92:
 		left_caller = 0u;
@@ -207,7 +207,7 @@ uint32_t step_stage_3_forest(uint16_t y, uint16_t u)
 		return left_caller;
 	case 104:
 		left_caller = 0u;
-		return stage_7_play(y, left_caller);
+		return stage_7_play(left_caller);
 	case 106:
 		left_caller = 0u;
 		stage_7_over();
@@ -242,7 +242,7 @@ uint32_t step_stage_3_forest(uint16_t y, uint16_t u)
 		return left_caller;
 	case 124:
 		left_caller = 0u;
-		return stage_8_play(y, left_caller);
+		return stage_8_play(left_caller);
 	case 126:
 		left_caller = 0u;
 		return stage_8_first_part_exit(left_caller);
@@ -267,10 +267,10 @@ uint32_t step_stage_3_forest(uint16_t y, uint16_t u)
 void stage_3_forest_setup(void)
 {
 	uint32_t carry = 0;
-	uint16_t command = 0, ignored16 = 0, ignored16_2 = 0;
+	uint16_t command = 0;
 
 	gauges_shown = 0u;
-	clear_sprites(&ignored16, &ignored16_2);
+	clear_sprites();
 	clear_tile_layers();
 	reset_for_stage();
 	command = 0u;
@@ -294,7 +294,7 @@ void stage_3_forest_title(uint16_t u)
    its spawns and objects, stage_players */
 uint32_t stage_3_forest_begin(uint16_t palette_job, uint32_t left_caller)
 {
-	uint16_t ignored16 = 0, ignored16_2 = 0, ignored16_3 = 0, layer_and_columns = 0, request = 0, scroll_x = 0, scroll_y = 0, y = 0;
+	uint16_t ignored16 = 0, ignored16_2 = 0, layer_and_columns = 0, request = 0, scroll_x = 0, scroll_y = 0;
 
 	scroll_x = 0u;
 	set_scroll_x(scroll_x);
@@ -302,10 +302,10 @@ uint32_t stage_3_forest_begin(uint16_t palette_job, uint32_t left_caller)
 	set_scroll_y(scroll_y);
 	palette_request_kind = 1u;
 	request = 0xF85u;
-	palette_request(request, &ignored16, &palette_job);
+	palette_job = palette_request(palette_job, request);
 	palette_request_kind = 2u;
 	request = 0u;
-	palette_request(request, &ignored16, &palette_job);
+	palette_request(palette_job, request);
 	play_stage_music();
 	io_write8(0x1FB9u, 0x3Fu);
 	io_write8(0x1FBAu, 0x36u);
@@ -313,13 +313,13 @@ uint32_t stage_3_forest_begin(uint16_t palette_job, uint32_t left_caller)
 	map_area = 0u;
 	set_area_tile_banks();
 	layer_and_columns = 0x2Cu;
-	draw_layer_columns(layer_and_columns, &ignored16_2, &ignored16, &ignored16_3);
+	draw_layer_columns(layer_and_columns, &ignored16, &ignored16_2);
 	layer_and_columns = 0x12Cu;
-	draw_layer_columns_with_floor_map(layer_and_columns, &y, &ignored16_3);
-	left_caller = start_stage_objects(y, left_caller);
+	draw_layer_columns_with_floor_map(layer_and_columns);
+	left_caller = start_stage_objects(left_caller);
 	window_bank = 0x1Fu;
 	set_lines(window_bank);
-	scene_load_story_settings(&ignored16_2, &ignored16, &ignored16_3);
+	scene_load_story_settings(&ignored16, &ignored16_2);
 	io_write8(0x1FB9u, 0x13u);
 	io_write8(0x1FBAu, 0x2Cu);
 	players_present = players_playing;
@@ -335,19 +335,19 @@ void stage_3_forest_opening(void)
 
 /* A frame of the forest's play; on stage_cue a white flash with a tile picture, the second object list
    cleared and the next phase */
-uint32_t stage_3_forest_play(uint16_t y, uint32_t left_caller)
+uint32_t stage_3_forest_play(uint32_t left_caller)
 {
-	uint16_t d = 0, u = 0;
+	uint16_t effect_then_picture = 0, u = 0;
 
-	stage_play_frame(y, &u, &left_caller);
+	stage_play_frame(&u, &left_caller);
 	if (stage_cue == 0u)
 		return left_caller;
 	stage_cue_timer = 8u;
 	palette_request_kind = 6u;
-	d = 0xE08u;
-	palette_request(d, &y, &u);
-	d &= 0xFFu;
-	draw_tile_picture(d);
+	effect_then_picture = 0xE08u;
+	palette_request(u, effect_then_picture);
+	effect_then_picture &= 0xFFu;
+	draw_tile_picture(effect_then_picture);
 	clear_list_1_objects();
 	step_phase++;
 	return left_caller;
@@ -355,25 +355,25 @@ uint32_t stage_3_forest_play(uint16_t y, uint32_t left_caller)
 
 /* A frame of the forest's play after the flash: the picture erased after stage_cue_timer's frames; with
    boss_beaten the stage is over and the next phase starts */
-uint32_t stage_3_forest_cleared(uint16_t y, uint32_t left_caller)
+uint32_t stage_3_forest_cleared(uint32_t left_caller)
 {
 	uint32_t carry = 0;
-	uint16_t ignored16 = 0, ignored16_2 = 0, ignored16_3 = 0, ignored16_4 = 0, picture_number = 0;
-	uint8_t t1 = 0;
+	uint16_t ignored16 = 0, ignored16_2 = 0, ignored16_3 = 0, picture_number = 0;
+	uint8_t cue_wait = 0;
 
-	stage_play_frame(y, &ignored16, &left_caller);
+	stage_play_frame(&ignored16, &left_caller);
 	if (stage_cue != 0u)
 	{
-		t1 = stage_cue_timer;
-		stage_cue_timer = t1 - 1u;
-		if (t1 != 1u)
+		cue_wait = stage_cue_timer;
+		stage_cue_timer = cue_wait - 1u;
+		if (cue_wait != 1u)
 		{
 			if (boss_beaten != 0u)
 			{
 				io_write8(0x184Bu, 1u);
 				step_phase++;
 			}
-			update_players(&ignored16_2, &ignored16_3, &ignored16, &ignored16_4, &carry);
+			update_players(&ignored16_2, &ignored16, &ignored16_3, &carry);
 			return left_caller;
 		}
 		picture_number = 0x8000u;
@@ -385,7 +385,7 @@ uint32_t stage_3_forest_cleared(uint16_t y, uint32_t left_caller)
 		io_write8(0x184Bu, 1u);
 		step_phase++;
 	}
-	update_players(&ignored16_2, &ignored16_3, &ignored16, &ignored16_4, &carry);
+	update_players(&ignored16_2, &ignored16, &ignored16_3, &carry);
 	return left_caller;
 }
 
@@ -393,24 +393,24 @@ uint32_t stage_3_forest_cleared(uint16_t y, uint32_t left_caller)
 void stage_3_forest_over(void)
 {
 	uint32_t carry = 0;
-	uint16_t command = 0, ignored16 = 0, ignored16_2 = 0, ignored16_3 = 0, ignored16_4 = 0;
+	uint16_t command = 0, ignored16 = 0, ignored16_2 = 0, ignored16_3 = 0;
 
 	command = 0x9400u;
 	carry = queue_sound_unless_attract(command);
 	clear_enemy_objects();
 	step_phase++;
-	update_players(&ignored16, &ignored16_2, &ignored16_3, &ignored16_4, &carry);
+	update_players(&ignored16, &ignored16_2, &ignored16_3, &carry);
 }
 
 /* The forest's players leaving, with the hits */
 uint32_t stage_3_forest_exit(uint32_t left_caller)
 {
 	uint32_t carry = 0;
-	uint16_t ignored16 = 0, ignored16_2 = 0, ignored16_3 = 0, ignored16_4 = 0;
+	uint16_t ignored16 = 0, ignored16_2 = 0, ignored16_3 = 0;
 
 	stage_players_exit(&ignored16, &left_caller, &carry);
 	check_collisions(&ignored16, &ignored16_2);
-	update_players(&ignored16_3, &ignored16_4, &ignored16, &ignored16_2, &carry);
+	update_players(&ignored16_3, &ignored16, &ignored16_2, &carry);
 	return left_caller;
 }
 
@@ -419,51 +419,50 @@ uint32_t stage_3_forest_exit(uint32_t left_caller)
 uint32_t stage_3_forest_end_phase(void)
 {
 	uint32_t carry = 0;
-	uint16_t command = 0, d = 0, ignored16 = 0, ignored16_2 = 0, ignored16_3 = 0, ignored16_4 = 0;
+	uint16_t cleared_steps = 0, command = 0, ignored16 = 0, ignored16_2 = 0, ignored16_3 = 0;
 	uint32_t ignored = 0, left_caller = 0;
 
 	scene_running = 1u;
-	run_list_1_objects(&ignored16, &ignored16_2, &ignored);
-	run_child_objects(ignored16_2);
+	run_list_1_objects(&ignored16, &ignored);
+	run_child_objects(ignored16);
 	run_stage_event();
 	if (scene_running != 0u)
 	{
-		check_collisions(&ignored16_2, &ignored16_4);
-		update_players(&ignored16_3, &ignored16, &ignored16_2, &ignored16_4, &carry);
+		check_collisions(&ignored16, &ignored16_3);
+		update_players(&ignored16_2, &ignored16, &ignored16_3, &carry);
 		left_caller = 0u;
 		return left_caller;
 	}
 	command = 0u;
 	carry = queue_sound_always(command);
-	clear_sprites(&ignored16_3, &ignored16);
+	clear_sprites();
 	game_step++;
-	d = 0u;
+	cleared_steps = 0u;
 	step_phase = 0u;
-	stage_3_forest_end_phase_tail(&ignored16_3, &ignored16, &ignored16_2, &d, &left_caller, &carry);
+	stage_3_forest_end_phase_tail(&ignored16_2, &ignored16, &cleared_steps, &left_caller, &carry);
 	return left_caller;
 }
 
 /* The end of stage_3_forest_end_phase: step_subphase cleared, the hits and the players' handling */
-void stage_3_forest_end_phase_tail(uint16_t *p_player, uint16_t *p_status_handlers, uint16_t *p_slot, uint16_t *p_d, uint32_t *p_left_caller, uint32_t *p_carry)
+void stage_3_forest_end_phase_tail(uint16_t *p_player, uint16_t *p_slot, uint16_t *p_d, uint32_t *p_left_caller, uint32_t *p_carry)
 {
 	uint16_t d = (uint16_t)*p_d;
 	uint32_t carry = *p_carry;
-	uint16_t d_2 = 0, ignored16 = 0, player = 0, slot = 0, status_handlers = 0;
+	uint16_t d_2 = 0, ignored16 = 0, player = 0, slot = 0;
 
 	step_subphase = (uint8_t)(d >> 8u);
 	step_countdown = (uint8_t)d;
 	check_collisions(&ignored16, &d_2);
 	*p_player = player;
-	*p_status_handlers = status_handlers;
 	*p_slot = slot;
 	*p_d = d_2;
-	update_players(p_player, p_status_handlers, p_slot, p_d, &carry);
+	update_players(p_player, p_slot, p_d, &carry);
 	*p_left_caller = 1u;
 	*p_carry = carry;
 }
 
 /* Step 7, stage 3's second part (the Springfield Discount Cemetery, map scene 87), by step_phase */
-uint32_t step_stage_3_cemetery(uint16_t y, uint16_t u)
+uint32_t step_stage_3_cemetery(uint16_t u)
 {
 	uint32_t left_caller = 0;
 
@@ -482,7 +481,7 @@ uint32_t step_stage_3_cemetery(uint16_t y, uint16_t u)
 		return left_caller;
 	case 6:
 		left_caller = 0u;
-		return stage_3_cemetery_play(y, left_caller);
+		return stage_3_cemetery_play(left_caller);
 	case 8:
 		left_caller = 0u;
 		stage_3_cemetery_over();
@@ -510,7 +509,7 @@ uint32_t step_stage_3_cemetery(uint16_t y, uint16_t u)
 		return left_caller;
 	case 22:
 		left_caller = 0u;
-		return stage_4_play(y, left_caller);
+		return stage_4_play(left_caller);
 	case 24:
 		left_caller = 0u;
 		stage_4_over();
@@ -538,7 +537,7 @@ uint32_t step_stage_3_cemetery(uint16_t y, uint16_t u)
 		return left_caller;
 	case 38:
 		left_caller = 0u;
-		return stage_5_play(y, left_caller);
+		return stage_5_play(left_caller);
 	case 40:
 		left_caller = 0u;
 		stage_5_over();
@@ -571,7 +570,7 @@ uint32_t step_stage_3_cemetery(uint16_t y, uint16_t u)
 		return left_caller;
 	case 56:
 		left_caller = 0u;
-		return stage_6_play(y, left_caller);
+		return stage_6_play(left_caller);
 	case 58:
 		left_caller = 0u;
 		stage_6_over();
@@ -597,11 +596,11 @@ uint32_t step_stage_3_cemetery(uint16_t y, uint16_t u)
 		return left_caller;
 	case 70:
 		left_caller = 0u;
-		bonus_2_intro_phase(y);
+		bonus_2_intro_phase();
 		return left_caller;
 	case 72:
 		left_caller = 0u;
-		bonus_2_run(y);
+		bonus_2_run();
 		return left_caller;
 	case 74:
 		left_caller = 0u;
@@ -628,7 +627,7 @@ uint32_t step_stage_3_cemetery(uint16_t y, uint16_t u)
 		return left_caller;
 	case 86:
 		left_caller = 0u;
-		return stage_7_play(y, left_caller);
+		return stage_7_play(left_caller);
 	case 88:
 		left_caller = 0u;
 		stage_7_over();
@@ -663,7 +662,7 @@ uint32_t step_stage_3_cemetery(uint16_t y, uint16_t u)
 		return left_caller;
 	case 106:
 		left_caller = 0u;
-		return stage_8_play(y, left_caller);
+		return stage_8_play(left_caller);
 	case 108:
 		left_caller = 0u;
 		return stage_8_first_part_exit(left_caller);
@@ -672,10 +671,10 @@ uint32_t step_stage_3_cemetery(uint16_t y, uint16_t u)
 		return stage_8_story(u, left_caller);
 	case 112:
 		left_caller = 0u;
-		return stage_8_robot_entrance(y, left_caller);
+		return stage_8_robot_entrance(left_caller);
 	case 114:
 		left_caller = 0u;
-		return stage_8_final_fight(y, left_caller);
+		return stage_8_final_fight(left_caller);
 	case 116:
 		left_caller = 0u;
 		stage_8_over();
@@ -725,10 +724,10 @@ uint32_t step_stage_3_cemetery(uint16_t y, uint16_t u)
 		return left_caller;
 	case -10:
 		left_caller = 0u;
-		return stage_3_forest_play(y, left_caller);
+		return stage_3_forest_play(left_caller);
 	case -8:
 		left_caller = 0u;
-		return stage_3_forest_cleared(y, left_caller);
+		return stage_3_forest_cleared(left_caller);
 	case -6:
 		left_caller = 0u;
 		stage_3_forest_over();
@@ -747,9 +746,9 @@ uint32_t step_stage_3_cemetery(uint16_t y, uint16_t u)
 void stage_3_cemetery_setup(void)
 {
 	uint32_t carry = 0;
-	uint16_t command = 0, ignored16 = 0, ignored16_2 = 0;
+	uint16_t command = 0;
 
-	clear_sprites(&ignored16, &ignored16_2);
+	clear_sprites();
 	clear_tile_layers();
 	reset_for_stage();
 	command = 0u;
@@ -765,7 +764,7 @@ void stage_3_cemetery_setup(void)
    87 on both layers, in_cemetery set, its spawns and objects, stage_players */
 uint32_t stage_3_cemetery_begin(uint16_t palette_job, uint32_t left_caller)
 {
-	uint16_t count = 0, fill_from = 0, fill_to = 0, ignored16 = 0, ignored16_2 = 0, ignored16_3 = 0, layer_and_columns = 0, request = 0, scroll_x = 0, scroll_y = 0, y = 0;
+	uint16_t count = 0, fill_from = 0, fill_to = 0, ignored16 = 0, ignored16_2 = 0, layer_and_columns = 0, request = 0, scroll_x = 0, scroll_y = 0;
 
 	scroll_x = 0x10u;
 	set_scroll_x(scroll_x);
@@ -773,16 +772,16 @@ uint32_t stage_3_cemetery_begin(uint16_t palette_job, uint32_t left_caller)
 	set_scroll_y(scroll_y);
 	palette_request_kind = 1u;
 	request = 0x880u;
-	palette_request(request, &ignored16, &palette_job);
+	palette_job = palette_request(palette_job, request);
 	palette_request_kind = 1u;
 	request = 0xF86u;
-	palette_request(request, &ignored16, &palette_job);
+	palette_job = palette_request(palette_job, request);
 	palette_request_kind = 2u;
 	request = 0x15u;
-	palette_request(request, &ignored16, &palette_job);
+	palette_job = palette_request(palette_job, request);
 	palette_request_kind = 2u;
 	request = 0x3Bu;
-	palette_request(request, &ignored16, &palette_job);
+	palette_job = palette_request(palette_job, request);
 	window_bank = 0x13u;
 	set_lines(window_bank);
 	stage_start_colour_cycles(palette_job);
@@ -804,14 +803,14 @@ uint32_t stage_3_cemetery_begin(uint16_t palette_job, uint32_t left_caller)
 	map_area = 0u;
 	set_area_tile_banks();
 	layer_and_columns = 0x26u;
-	draw_layer_columns(layer_and_columns, &ignored16_2, &ignored16, &ignored16_3);
+	draw_layer_columns(layer_and_columns, &ignored16, &ignored16_2);
 	layer_and_columns = 0x126u;
-	draw_layer_columns_with_floor_map(layer_and_columns, &y, &ignored16_3);
+	draw_layer_columns_with_floor_map(layer_and_columns);
 	in_cemetery = 1u;
-	left_caller = start_stage_objects(y, left_caller);
+	left_caller = start_stage_objects(left_caller);
 	window_bank = 0x1Fu;
 	set_lines(window_bank);
-	scene_load_story_settings(&ignored16_2, &ignored16, &ignored16_3);
+	scene_load_story_settings(&ignored16, &ignored16_2);
 	io_write8(0x1FB9u, 0x13u);
 	io_write8(0x1FBAu, 0x2Cu);
 	players_present = players_playing;
@@ -826,11 +825,11 @@ void stage_3_cemetery_opening(void)
 }
 
 /* A frame of the cemetery's play; when boss_arrived is set the music moves to the stage's next part */
-uint32_t stage_3_cemetery_play(uint16_t y, uint32_t left_caller)
+uint32_t stage_3_cemetery_play(uint32_t left_caller)
 {
 	uint16_t ignored16 = 0;
 
-	stage_play_frame(y, &ignored16, &left_caller);
+	stage_play_frame(&ignored16, &left_caller);
 	if (boss_arrived != 0u)
 	{
 		boss_arrived = 0u;
@@ -861,10 +860,10 @@ uint32_t stage_3_cemetery_exit(uint32_t left_caller)
 uint32_t stage_3_cemetery_end_phase(uint16_t u, uint32_t left_caller)
 {
 	uint32_t carry = 0;
-	uint16_t command = 0, ignored16 = 0, ignored16_2 = 0, ignored16_3 = 0, ignored16_4 = 0;
+	uint16_t command = 0, ignored16 = 0, ignored16_2 = 0, ignored16_3 = 0;
 
 	scene_running = 1u;
-	run_list_1_objects(&ignored16, &u, &left_caller);
+	run_list_1_objects(&u, &left_caller);
 	u = run_child_objects(u);
 	window_bank = 0x1Fu;
 	set_lines(window_bank);
@@ -874,7 +873,7 @@ uint32_t stage_3_cemetery_end_phase(uint16_t u, uint32_t left_caller)
 		window_bank = 0x13u;
 		set_lines(window_bank);
 		stage_scroll(u);
-		update_players(&ignored16_2, &ignored16, &ignored16_3, &ignored16_4, &carry);
+		update_players(&ignored16, &ignored16_2, &ignored16_3, &carry);
 		return left_caller;
 	}
 	command = 0u;
@@ -886,6 +885,6 @@ uint32_t stage_3_cemetery_end_phase(uint16_t u, uint32_t left_caller)
 	window_bank = 0x13u;
 	set_lines(window_bank);
 	stage_scroll(u);
-	update_players(&ignored16_2, &ignored16, &ignored16_3, &ignored16_4, &carry);
+	update_players(&ignored16, &ignored16_2, &ignored16_3, &carry);
 	return left_caller;
 }

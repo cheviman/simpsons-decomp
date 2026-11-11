@@ -3,7 +3,7 @@
  *    Description: bank 18's jump table: its object types' and enemy actions' handlers
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    10-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -13,7 +13,7 @@
 
 /* Runs stage 4's kind 8C bystander by its step: it stands changing poses, walks off when the scroll gets
    far enough or when hit; it can be hit and is removed off screen. */
-uint16_t kind_8c_bystander_update(uint16_t object, uint16_t y, uint8_t state)
+void kind_8c_bystander_update(uint16_t object, uint8_t state)
 {
 	uint32_t carry = 0;
 	uint8_t state_2 = 0;
@@ -22,7 +22,7 @@ uint16_t kind_8c_bystander_update(uint16_t object, uint16_t y, uint8_t state)
 	switch ((int8_t)(uint8_t)((uint32_t)state_2 << 1))
 	{
 	case 0:
-		y = kind_8c_bystander_setup(object);
+		kind_8c_bystander_setup(object);
 		break;
 	case 2:
 		kind_8c_bystander_pose(object);
@@ -42,16 +42,15 @@ uint16_t kind_8c_bystander_update(uint16_t object, uint16_t y, uint8_t state)
 		kind_8c_bystander_reel(object);
 		break;
 	case -6:
-		y = kind_8c_bystander_leave(object, y);
+		kind_8c_bystander_leave(object);
 		break;
 	case -4:
 	case -2:
-		y = kind_8c_bystander_hurt(object, y);
+		kind_8c_bystander_hurt(object);
 		break;
 	}
 	object_take_special_hit(object, 0u);
 	carry = remove_off_screen(object, carry);
-	return y;
 }
 
 /* Action 19 of the enemies: does nothing. */
@@ -61,7 +60,7 @@ void empty_action_19(void)
 
 /* Runs stage 4's kind 8A object by its step: it brings in a goon on its back, sets it down and runs off;
    it can be hit and is removed off screen. */
-uint16_t kind_8a_carrier_update(uint16_t object, uint16_t y, uint8_t state)
+void kind_8a_carrier_update(uint16_t object, uint8_t state)
 {
 	uint8_t state_2 = 0;
 	uint16_t ignored16 = 0;
@@ -70,10 +69,10 @@ uint16_t kind_8a_carrier_update(uint16_t object, uint16_t y, uint8_t state)
 	switch ((int8_t)(uint8_t)((uint32_t)state_2 << 1))
 	{
 	case 0:
-		y = kind_8a_carrier_setup(object);
+		kind_8a_carrier_setup(object);
 		break;
 	case 2:
-		y = kind_8a_carrier_pick_up(object);
+		kind_8a_carrier_pick_up(object);
 		break;
 	case 4:
 		kind_8a_carrier_carry(object);
@@ -95,53 +94,51 @@ uint16_t kind_8a_carrier_update(uint16_t object, uint16_t y, uint8_t state)
 		break;
 	case -4:
 	case -2:
-		y = kind_8a_carrier_hurt(object, y);
+		kind_8a_carrier_hurt(object);
 		break;
 	}
 	object_take_special_hit(object, 0u);
 	vector_remove_past_right_edge(object, ignored16);
-	return y;
 }
 
 /* Runs a zombie (stage 3) by its step: its setup, its way out of the ground, then the shared enemy steps
    (choosing and running an action, the hit reaction); checks its hits and removes it off screen. */
-void zombie_update(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_left_caller)
+uint32_t zombie_update(uint16_t object, uint8_t state)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint8_t state_2 = 0;
 	uint16_t ignored16 = 0;
-	uint32_t ignored = 0;
+	uint32_t ignored = 0, left_caller = 0;
 
 	state_2 = (uint8_t)state;
 	switch ((int8_t)(uint8_t)((uint32_t)state_2 << 1))
 	{
 	case 0:
-		y = zombie_setup(object);
+		zombie_setup(object);
 		break;
 	case 2:
-		y = zombie_come_out(object, y);
+		zombie_come_out(object);
 		break;
 	case 4:
-		vector_enemy_think(object, &y, &ignored16, &ignored);
+		vector_enemy_think(object, &ignored16, &ignored);
 		break;
 	case 6:
-		vector_enemy_act(object, &y, &ignored16, &ignored);
+		vector_enemy_act(object, &ignored16, &ignored);
 		break;
 	case 8:
-		enemy_hurt(object, &y, &ignored16);
+		enemy_hurt(object);
 		break;
 	case 10:
-		vector_enemy_climb(object, &y, &ignored16, &ignored);
+		vector_enemy_climb(object, &ignored16, &ignored);
 		break;
 	}
-	vector_enemy_take_special_hit(object, &ignored16, p_left_caller);
+	vector_enemy_take_special_hit(object, &ignored16, &left_caller);
 	vector_remove_past_right_edge(object, ignored16);
-	*p_y = y;
+	return left_caller;
 }
 
 /* Runs stage 3's kind 9A object by its step: it hangs out of sight, drops on a player who comes near and
    climbs back up; when hit it falls; removed off screen. */
-uint16_t kind_9a_dropper_update(uint16_t object, uint16_t y, uint8_t state)
+void kind_9a_dropper_update(uint16_t object, uint8_t state)
 {
 	uint8_t state_2 = 0;
 	uint16_t ignored16 = 0;
@@ -150,7 +147,7 @@ uint16_t kind_9a_dropper_update(uint16_t object, uint16_t y, uint8_t state)
 	switch ((int8_t)(uint8_t)((uint32_t)state_2 << 1))
 	{
 	case 0:
-		kind_9a_dropper_setup(object, &y, &ignored16);
+		kind_9a_dropper_setup(object);
 		break;
 	case 2:
 		kind_9a_dropper_wait_mode(object);
@@ -159,10 +156,10 @@ uint16_t kind_9a_dropper_update(uint16_t object, uint16_t y, uint8_t state)
 		kind_9a_dropper_watch(object, 0u);
 		break;
 	case 6:
-		kind_9a_dropper_drop(object, &y, &ignored16);
+		kind_9a_dropper_drop(object, 0u);
 		break;
 	case 8:
-		y = kind_9a_dropper_hang(object, y);
+		kind_9a_dropper_hang(object);
 		break;
 	case 10:
 		kind_9a_dropper_climb(object);
@@ -207,10 +204,10 @@ uint16_t kind_9a_dropper_update(uint16_t object, uint16_t y, uint8_t state)
 		zombie_leap_take_off(object);
 		break;
 	case -22:
-		y = zombie_leap_rise(object, y);
+		zombie_leap_rise(object);
 		break;
 	case -20:
-		y = zombie_leap_fall(object, y);
+		zombie_leap_fall(object);
 		break;
 	case -18:
 		zombie_leap_turn(object);
@@ -222,10 +219,10 @@ uint16_t kind_9a_dropper_update(uint16_t object, uint16_t y, uint8_t state)
 		zombie_swipe_start(object);
 		break;
 	case -12:
-		y = zombie_swipe_hit(object, y);
+		zombie_swipe_hit(object);
 		break;
 	case -10:
-		y = zombie_swipe_recover(object);
+		zombie_swipe_recover(object);
 		break;
 	case -8:
 		zombie_swipe_step_back(object);
@@ -234,22 +231,20 @@ uint16_t kind_9a_dropper_update(uint16_t object, uint16_t y, uint8_t state)
 		zombie_swipe_end(object);
 		break;
 	case -4:
-		kind_9a_dropper_fall(object, &y, &ignored16);
+		kind_9a_dropper_fall(object, 0u);
 		break;
 	case -2:
-		kind_9a_dropper_hurt(object, &y, &ignored16);
+		kind_9a_dropper_hurt(object);
 		break;
 	}
 	object_take_special_hit(object, ignored16);
 	vector_remove_past_right_edge(object, ignored16);
-	return y;
 }
 
 /* Runs a zombie of the list at 5280 by its step: it waits, rises out of the ground and drifts in the
    direction of the object kept at work RAM 1854. */
-void rising_zombie_update(uint16_t object, uint8_t state, uint16_t *p_y, uint16_t *p_states)
+uint16_t rising_zombie_update(uint16_t object, uint8_t state)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint8_t state_2 = 0;
 	uint16_t states = 0;
 
@@ -258,49 +253,46 @@ void rising_zombie_update(uint16_t object, uint8_t state, uint16_t *p_y, uint16_
 	switch ((int8_t)(uint8_t)((uint32_t)state_2 << 1))
 	{
 	case 0:
-		rising_zombie_setup(object, &y, &states);
-		break;
+		return rising_zombie_setup(object);
 	case 2:
 	case 20:
 		rising_zombie_wait(object);
-		break;
+		return states;
 	case 4:
 	case 22:
 		rising_zombie_climb_out(object);
-		break;
+		return states;
 	case 6:
-		states = rising_zombie_aim(object, states);
-		break;
+		return rising_zombie_aim(object, states);
 	case 8:
 		rising_zombie_stand(object);
-		break;
+		return states;
 	case 10:
 		rising_zombie_rise_up(object);
-		break;
+		return states;
 	case 12:
 		rising_zombie_set_off(object);
-		break;
+		return states;
 	case 14:
 		rising_zombie_drift(object);
-		break;
+		return states;
 	case 16:
 		rising_zombie_count_down(object);
-		break;
+		return states;
 	case 18:
 		rising_zombie_slow_down(object);
-		break;
+		return states;
 	case 24:
 		rising_zombie_climb_out_again(object);
-		break;
+		return states;
 	case 26:
 		rising_zombie_stand_again(object);
-		break;
+		return states;
 	case 28:
 		rising_zombie_walk_off(object);
-		break;
+		return states;
 	}
-	*p_y = y;
-	*p_states = states;
+	unreachable();
 }
 
 /* The handler of type 19 in the list at 5280: does nothing. */
@@ -309,9 +301,8 @@ void empty_object_type_19(void)
 }
 
 /* The zombies' close attack (action 1A) by its step: a swipe at the player, then a step back. */
-void zombie_swipe_action(uint16_t object, uint8_t step, uint16_t *p_y, uint16_t *p_steps)
+uint16_t zombie_swipe_action(uint16_t object, uint8_t step)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint8_t step_2 = 0;
 	uint16_t steps = 0;
 
@@ -321,104 +312,96 @@ void zombie_swipe_action(uint16_t object, uint8_t step, uint16_t *p_y, uint16_t 
 	{
 	case 0:
 		zombie_swipe_start(object);
-		break;
+		return steps;
 	case 2:
-		y = zombie_swipe_hit(object, y);
-		break;
+		zombie_swipe_hit(object);
+		return steps;
 	case 4:
-		y = zombie_swipe_recover(object);
-		break;
+		zombie_swipe_recover(object);
+		return steps;
 	case 6:
 		zombie_swipe_step_back(object);
-		break;
+		return steps;
 	case 8:
 		zombie_swipe_end(object);
-		break;
+		return steps;
 	case 10:
-		kind_9a_dropper_fall(object, &y, &steps);
-		break;
+		return kind_9a_dropper_fall(object, steps);
 	case 12:
-		kind_9a_dropper_hurt(object, &y, &steps);
-		break;
+		return kind_9a_dropper_hurt(object);
 	case 14:
-		kind_9a_dropper_setup(object, &y, &steps);
-		break;
+		return kind_9a_dropper_setup(object);
 	case 16:
 		kind_9a_dropper_wait_mode(object);
-		break;
+		return steps;
 	case 18:
-		steps = kind_9a_dropper_watch(object, steps);
-		break;
+		return kind_9a_dropper_watch(object, steps);
 	case 20:
-		kind_9a_dropper_drop(object, &y, &steps);
-		break;
+		return kind_9a_dropper_drop(object, steps);
 	case 22:
-		y = kind_9a_dropper_hang(object, y);
-		break;
+		kind_9a_dropper_hang(object);
+		return steps;
 	case 24:
 		kind_9a_dropper_climb(object);
-		break;
+		return steps;
 	case 26:
 		kind_9a_dropper_hurt_start(object);
-		break;
+		return steps;
 	case 28:
 		kind_9a_dropper_hurt_flash(object);
-		break;
+		return steps;
 	case -30:
-		steps = zombie_start_coming_out(object);
-		break;
+		return zombie_start_coming_out(object);
 	case -28:
 		zombie_finish_rising(object);
-		break;
+		return steps;
 	case -26:
 		zombie_finish_climbing(object);
-		break;
+		return steps;
 	case -24:
 		zombie_remove_when_sunk(object);
-		break;
+		return steps;
 	case -22:
 		zombie_walk_in(object);
-		break;
+		return steps;
 	case -20:
 		zombie_burrow_start(object);
-		break;
+		return steps;
 	case -18:
 		zombie_burrow_move(object);
-		break;
+		return steps;
 	case -16:
 		zombie_burrow_surface(object);
-		break;
+		return steps;
 	case -14:
 		zombie_burrow_end(object);
-		break;
+		return steps;
 	case -12:
 		zombie_leap_start(object);
-		break;
+		return steps;
 	case -10:
 		zombie_leap_take_off(object);
-		break;
+		return steps;
 	case -8:
-		y = zombie_leap_rise(object, y);
-		break;
+		zombie_leap_rise(object);
+		return steps;
 	case -6:
-		y = zombie_leap_fall(object, y);
-		break;
+		zombie_leap_fall(object);
+		return steps;
 	case -4:
 		zombie_leap_turn(object);
-		break;
+		return steps;
 	case -2:
 		zombie_leap_end(object);
-		break;
+		return steps;
 	}
-	*p_y = y;
-	*p_steps = steps;
+	unreachable();
 }
 
 /* Runs stage 4's kind 87 figure by its step: it waits for the scroll, walks up into the street, turns
    and walks off; removed off screen. */
-void walking_kind_87_update(uint16_t object, uint8_t state, uint16_t *p_y, uint16_t *p_states)
+uint16_t walking_kind_87_update(uint16_t object, uint8_t state)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint32_t carry = 0;
 	uint8_t state_2 = 0;
 	uint16_t states = 0;
@@ -428,7 +411,7 @@ void walking_kind_87_update(uint16_t object, uint8_t state, uint16_t *p_y, uint1
 	switch ((int8_t)(uint8_t)((uint32_t)state_2 << 1))
 	{
 	case 0:
-		walking_kind_87_setup(object, &y, &states);
+		states = walking_kind_87_setup(object);
 		break;
 	case 2:
 		walking_kind_87_wait(object);
@@ -450,15 +433,13 @@ void walking_kind_87_update(uint16_t object, uint8_t state, uint16_t *p_y, uint1
 		break;
 	}
 	carry = remove_off_screen(object, carry);
-	*p_y = y;
-	*p_states = states;
+	return states;
 }
 
 /* Runs the kind 8E figure of stages 4 and 5 that stands in a pose by its step; the one of state 0 can be
    hit once work RAM 187F is set; removed off screen. */
-void kind_8e_watcher_update(uint16_t object, uint8_t state, uint16_t *p_y, uint16_t *p_states)
+uint16_t kind_8e_watcher_update(uint16_t object, uint8_t state)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint32_t carry = 0;
 	uint8_t state_2 = 0;
 	uint16_t states = 0;
@@ -468,7 +449,7 @@ void kind_8e_watcher_update(uint16_t object, uint8_t state, uint16_t *p_y, uint1
 	switch ((int8_t)(uint8_t)((uint32_t)state_2 << 1))
 	{
 	case 0:
-		kind_8e_watcher_setup(object, &y, &states);
+		states = kind_8e_watcher_setup(object);
 		break;
 	case 2:
 		kind_8e_watcher_stand();
@@ -481,16 +462,14 @@ void kind_8e_watcher_update(uint16_t object, uint8_t state, uint16_t *p_y, uint1
 		break;
 	}
 	carry = remove_off_screen(object, carry);
-	*p_y = y;
-	*p_states = states;
+	return states;
 }
 
 /* Runs the kind 9E figure bank 15's object lets out (stage 4) by its step: it walks in, hides the object
    that let it out while it stands, shows it again, walks to and fro until the scroll moves on and
    leaves; removed off screen. */
-void kind_9e_update(uint16_t object, uint8_t state, uint16_t *p_y, uint16_t *p_states)
+uint16_t kind_9e_update(uint16_t object, uint8_t state)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint32_t carry = 0;
 	uint8_t state_2 = 0;
 	uint16_t states = 0;
@@ -500,7 +479,7 @@ void kind_9e_update(uint16_t object, uint8_t state, uint16_t *p_y, uint16_t *p_s
 	switch ((int8_t)(uint8_t)((uint32_t)state_2 << 1))
 	{
 	case 0:
-		kind_9e_setup(object, &y, &states);
+		states = kind_9e_setup(object);
 		break;
 	case 2:
 		states = kind_9e_stop(object, states);
@@ -531,13 +510,12 @@ void kind_9e_update(uint16_t object, uint8_t state, uint16_t *p_y, uint16_t *p_s
 		break;
 	}
 	carry = remove_off_screen(object, carry);
-	*p_y = y;
-	*p_states = states;
+	return states;
 }
 
 /* Runs a kind 97 zombie that rises after a wait, walks one way for a while and sinks back, by its step;
    when hit it sinks at once. */
-uint16_t wandering_zombie_update(uint16_t object, uint16_t y, uint8_t state)
+void wandering_zombie_update(uint16_t object, uint8_t state)
 {
 	uint8_t state_2 = 0;
 	uint16_t ignored16 = 0;
@@ -546,7 +524,7 @@ uint16_t wandering_zombie_update(uint16_t object, uint16_t y, uint8_t state)
 	switch ((int8_t)(uint8_t)((uint32_t)state_2 << 1))
 	{
 	case 0:
-		y = wandering_zombie_setup(object);
+		wandering_zombie_setup(object);
 		break;
 	case 2:
 		wandering_zombie_wait(object);
@@ -568,19 +546,17 @@ uint16_t wandering_zombie_update(uint16_t object, uint16_t y, uint8_t state)
 		break;
 	case -4:
 	case -2:
-		y = wandering_zombie_hit(object, y);
+		wandering_zombie_hit(object);
 		break;
 	}
 	object_take_special_hit(object, 0u);
 	vector_remove_past_right_edge(object, ignored16);
-	return y;
 }
 
 /* The zombies' action 1D by its step: it sinks into the ground, moves under it and comes up again
    elsewhere. */
-void zombie_burrow_action(uint16_t object, uint8_t step, uint16_t *p_y, uint16_t *p_steps)
+uint16_t zombie_burrow_action(uint16_t object, uint8_t step)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint8_t step_2 = 0;
 	uint16_t steps = 0;
 
@@ -590,102 +566,95 @@ void zombie_burrow_action(uint16_t object, uint8_t step, uint16_t *p_y, uint16_t
 	{
 	case 0:
 		zombie_burrow_start(object);
-		break;
+		return steps;
 	case 2:
 		zombie_burrow_move(object);
-		break;
+		return steps;
 	case 4:
 		zombie_burrow_surface(object);
-		break;
+		return steps;
 	case 6:
 		zombie_burrow_end(object);
-		break;
+		return steps;
 	case 8:
 		zombie_leap_start(object);
-		break;
+		return steps;
 	case 10:
 		zombie_leap_take_off(object);
-		break;
+		return steps;
 	case 12:
-		y = zombie_leap_rise(object, y);
-		break;
+		zombie_leap_rise(object);
+		return steps;
 	case 14:
-		y = zombie_leap_fall(object, y);
-		break;
+		zombie_leap_fall(object);
+		return steps;
 	case 16:
 		zombie_leap_turn(object);
-		break;
+		return steps;
 	case 18:
 		zombie_leap_end(object);
-		break;
+		return steps;
 	case 20:
 		zombie_swipe_start(object);
-		break;
+		return steps;
 	case 22:
-		y = zombie_swipe_hit(object, y);
-		break;
+		zombie_swipe_hit(object);
+		return steps;
 	case 24:
-		y = zombie_swipe_recover(object);
-		break;
+		zombie_swipe_recover(object);
+		return steps;
 	case 26:
 		zombie_swipe_step_back(object);
-		break;
+		return steps;
 	case 28:
 		zombie_swipe_end(object);
-		break;
+		return steps;
 	case 30:
-		kind_9a_dropper_fall(object, &y, &steps);
-		break;
+		return kind_9a_dropper_fall(object, steps);
 	case 32:
-		kind_9a_dropper_hurt(object, &y, &steps);
-		break;
+		return kind_9a_dropper_hurt(object);
 	case 34:
-		kind_9a_dropper_setup(object, &y, &steps);
-		break;
+		return kind_9a_dropper_setup(object);
 	case 36:
 		kind_9a_dropper_wait_mode(object);
-		break;
+		return steps;
 	case 38:
-		steps = kind_9a_dropper_watch(object, steps);
-		break;
+		return kind_9a_dropper_watch(object, steps);
 	case 40:
-		kind_9a_dropper_drop(object, &y, &steps);
-		break;
+		return kind_9a_dropper_drop(object, steps);
 	case 42:
-		y = kind_9a_dropper_hang(object, y);
-		break;
+		kind_9a_dropper_hang(object);
+		return steps;
 	case 44:
 		kind_9a_dropper_climb(object);
-		break;
+		return steps;
 	case 46:
 		kind_9a_dropper_hurt_start(object);
-		break;
+		return steps;
 	case 48:
 		kind_9a_dropper_hurt_flash(object);
-		break;
+		return steps;
 	case -10:
-		steps = zombie_start_coming_out(object);
-		break;
+		return zombie_start_coming_out(object);
 	case -8:
 		zombie_finish_rising(object);
-		break;
+		return steps;
 	case -6:
 		zombie_finish_climbing(object);
-		break;
+		return steps;
 	case -4:
 		zombie_remove_when_sunk(object);
-		break;
+		return steps;
 	case -2:
 		zombie_walk_in(object);
-		break;
+		return steps;
 	}
-	*p_y = y;
-	*p_steps = steps;
+	unreachable();
 }
 
 /* Runs a kind 8E figure that waits for the screen, throws a shot again and again and runs off when hit,
    by its step; removed off screen. */
-uint16_t kind_8e_thrower_update(uint16_t object, uint16_t y, uint8_t state)
+void kind_8e_thrower_update(uint16_t object, uint8_t state)
 {
 	uint32_t carry = 0;
 	uint8_t state_2 = 0;
@@ -694,7 +663,7 @@ uint16_t kind_8e_thrower_update(uint16_t object, uint16_t y, uint8_t state)
 	switch ((int8_t)(uint8_t)((uint32_t)state_2 << 1))
 	{
 	case 0:
-		y = kind_8e_thrower_setup(object);
+		kind_8e_thrower_setup(object);
 		break;
 	case 2:
 		kind_8e_thrower_wait(object);
@@ -703,7 +672,7 @@ uint16_t kind_8e_thrower_update(uint16_t object, uint16_t y, uint8_t state)
 		kind_8e_thrower_wind_up(object);
 		break;
 	case 6:
-		y = kind_8e_thrower_throw(object, y);
+		kind_8e_thrower_throw(object);
 		break;
 	case 8:
 		kind_8e_thrower_follow_through(object);
@@ -724,12 +693,11 @@ uint16_t kind_8e_thrower_update(uint16_t object, uint16_t y, uint8_t state)
 		kind_8e_thrower_recover(object);
 		break;
 	case -2:
-		y = kind_8e_thrower_hurt(object, y);
+		kind_8e_thrower_hurt(object);
 		break;
 	}
 	kind_8e_thrower_check_hit(object);
 	carry = remove_off_screen(object, carry);
-	return y;
 }
 
 /* Runs the shot a kind 8E figure throws by its step: it flies left; when it hits something it bursts and
@@ -771,9 +739,8 @@ uint16_t spark_shot_update(uint16_t object, uint8_t state)
 }
 
 /* The zombies' far attack (action 21) by its step: a leap at the player. */
-void zombie_leap_action(uint16_t object, uint8_t step, uint16_t *p_y, uint16_t *p_steps)
+uint16_t zombie_leap_action(uint16_t object, uint8_t step)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint8_t step_2 = 0;
 	uint16_t steps = 0;
 
@@ -783,139 +750,130 @@ void zombie_leap_action(uint16_t object, uint8_t step, uint16_t *p_y, uint16_t *
 	{
 	case 0:
 		zombie_leap_start(object);
-		break;
+		return steps;
 	case 2:
 		zombie_leap_take_off(object);
-		break;
+		return steps;
 	case 4:
-		y = zombie_leap_rise(object, y);
-		break;
+		zombie_leap_rise(object);
+		return steps;
 	case 6:
-		y = zombie_leap_fall(object, y);
-		break;
+		zombie_leap_fall(object);
+		return steps;
 	case 8:
 		zombie_leap_turn(object);
-		break;
+		return steps;
 	case 10:
 		zombie_leap_end(object);
-		break;
+		return steps;
 	case 12:
 		zombie_swipe_start(object);
-		break;
+		return steps;
 	case 14:
-		y = zombie_swipe_hit(object, y);
-		break;
+		zombie_swipe_hit(object);
+		return steps;
 	case 16:
-		y = zombie_swipe_recover(object);
-		break;
+		zombie_swipe_recover(object);
+		return steps;
 	case 18:
 		zombie_swipe_step_back(object);
-		break;
+		return steps;
 	case 20:
 		zombie_swipe_end(object);
-		break;
+		return steps;
 	case 22:
-		kind_9a_dropper_fall(object, &y, &steps);
-		break;
+		return kind_9a_dropper_fall(object, steps);
 	case 24:
-		kind_9a_dropper_hurt(object, &y, &steps);
-		break;
+		return kind_9a_dropper_hurt(object);
 	case 26:
-		kind_9a_dropper_setup(object, &y, &steps);
-		break;
+		return kind_9a_dropper_setup(object);
 	case 28:
 		kind_9a_dropper_wait_mode(object);
-		break;
+		return steps;
 	case 30:
-		steps = kind_9a_dropper_watch(object, steps);
-		break;
+		return kind_9a_dropper_watch(object, steps);
 	case 32:
-		kind_9a_dropper_drop(object, &y, &steps);
-		break;
+		return kind_9a_dropper_drop(object, steps);
 	case 34:
-		y = kind_9a_dropper_hang(object, y);
-		break;
+		kind_9a_dropper_hang(object);
+		return steps;
 	case 36:
 		kind_9a_dropper_climb(object);
-		break;
+		return steps;
 	case 38:
 		kind_9a_dropper_hurt_start(object);
-		break;
+		return steps;
 	case 40:
 		kind_9a_dropper_hurt_flash(object);
-		break;
+		return steps;
 	case -18:
-		steps = zombie_start_coming_out(object);
-		break;
+		return zombie_start_coming_out(object);
 	case -16:
 		zombie_finish_rising(object);
-		break;
+		return steps;
 	case -14:
 		zombie_finish_climbing(object);
-		break;
+		return steps;
 	case -12:
 		zombie_remove_when_sunk(object);
-		break;
+		return steps;
 	case -10:
 		zombie_walk_in(object);
-		break;
+		return steps;
 	case -8:
 		zombie_burrow_start(object);
-		break;
+		return steps;
 	case -6:
 		zombie_burrow_move(object);
-		break;
+		return steps;
 	case -4:
 		zombie_burrow_surface(object);
-		break;
+		return steps;
 	case -2:
 		zombie_burrow_end(object);
-		break;
+		return steps;
 	}
-	*p_y = y;
-	*p_steps = steps;
+	unreachable();
 }
 
 /* Runs a lumberjack (stage 5) by its step: its setup, its jump in, then the shared enemy steps; checks
    its hits and removes it off screen. */
-void lumberjack_update(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_left_caller)
+uint32_t lumberjack_update(uint16_t object, uint8_t state)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint8_t state_2 = 0;
 	uint16_t ignored16 = 0;
-	uint32_t ignored = 0;
+	uint32_t ignored = 0, left_caller = 0;
 
 	state_2 = (uint8_t)state;
 	switch ((int8_t)(uint8_t)((uint32_t)state_2 << 1))
 	{
 	case 0:
-		y = lumberjack_setup(object);
+		lumberjack_setup(object);
 		break;
 	case 2:
-		y = lumberjack_jump_in(object, y);
+		lumberjack_jump_in(object);
 		break;
 	case 4:
-		vector_enemy_think(object, &y, &ignored16, &ignored);
+		vector_enemy_think(object, &ignored16, &ignored);
 		break;
 	case 6:
-		vector_enemy_act(object, &y, &ignored16, &ignored);
+		vector_enemy_act(object, &ignored16, &ignored);
 		break;
 	case 8:
-		enemy_hurt(object, &y, &ignored16);
+		enemy_hurt(object);
 		break;
 	case 10:
-		vector_enemy_climb(object, &y, &ignored16, &ignored);
+		vector_enemy_climb(object, &ignored16, &ignored);
 		break;
 	}
-	vector_enemy_take_special_hit(object, &ignored16, p_left_caller);
+	vector_enemy_take_special_hit(object, &ignored16, &left_caller);
 	vector_remove_past_right_edge(object, ignored16);
-	*p_y = y;
+	return left_caller;
 }
 
 /* The lumberjack's attack (action 22) by its step: swings of the axe, then a pause. */
-void lumberjack_axe_action(uint16_t object, uint8_t step, uint16_t *p_y, uint16_t *p_steps)
+uint16_t lumberjack_axe_action(uint16_t object, uint8_t step)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint8_t step_2 = 0;
 	uint16_t steps = 0;
 
@@ -925,79 +883,74 @@ void lumberjack_axe_action(uint16_t object, uint8_t step, uint16_t *p_y, uint16_
 	{
 	case 0:
 		lumberjack_axe_start(object);
-		break;
+		return steps;
 	case 2:
-		y = lumberjack_axe_swing(object, y);
-		break;
+		lumberjack_axe_swing(object);
+		return steps;
 	case 4:
-		y = lumberjack_axe_recover(object);
-		break;
+		lumberjack_axe_recover(object);
+		return steps;
 	case 6:
 		enemy_end_action_with_animation(object);
-		break;
+		return steps;
 	case 8:
-		lumberjack_axe_rest(object, &y, &steps);
-		break;
+		return lumberjack_axe_rest(object, steps);
 	case 10:
-		steps = lumberjack_axe_pause(object, steps);
-		break;
+		return lumberjack_axe_pause(object, steps);
 	case 12:
 		lumberjack_axe_wait(object);
-		break;
+		return steps;
 	case -6:
 		lumberjack_walk_in(object);
-		break;
+		return steps;
 	case -4:
 		lumberjack_jump_down(object);
-		break;
+		return steps;
 	case -2:
 		lumberjack_land(object);
-		break;
+		return steps;
 	}
-	*p_y = y;
-	*p_steps = steps;
+	unreachable();
 }
 
 /* Runs a gorilla (stage 5) by its step: its setup, its way in, then the shared enemy steps; checks its
    hits and removes it off screen. */
-void gorilla_update(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_left_caller)
+uint32_t gorilla_update(uint16_t object, uint8_t state)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint8_t state_2 = 0;
 	uint16_t ignored16 = 0;
-	uint32_t ignored = 0;
+	uint32_t ignored = 0, left_caller = 0;
 
 	state_2 = (uint8_t)state;
 	switch ((int8_t)(uint8_t)((uint32_t)state_2 << 1))
 	{
 	case 0:
-		y = gorilla_setup(object);
+		gorilla_setup(object);
 		break;
 	case 2:
 		gorilla_come_in(object);
 		break;
 	case 4:
-		vector_enemy_think(object, &y, &ignored16, &ignored);
+		vector_enemy_think(object, &ignored16, &ignored);
 		break;
 	case 6:
-		vector_enemy_act(object, &y, &ignored16, &ignored);
+		vector_enemy_act(object, &ignored16, &ignored);
 		break;
 	case 8:
-		enemy_hurt(object, &y, &ignored16);
+		enemy_hurt(object);
 		break;
 	case 10:
-		vector_enemy_climb(object, &y, &ignored16, &ignored);
+		vector_enemy_climb(object, &ignored16, &ignored);
 		break;
 	}
-	vector_enemy_take_special_hit(object, &ignored16, p_left_caller);
+	vector_enemy_take_special_hit(object, &ignored16, &left_caller);
 	vector_remove_past_right_edge(object, ignored16);
-	*p_y = y;
+	return left_caller;
 }
 
 /* The gorilla's close attack (action 26) by its step: a blow on the animation's marked frame. */
-void gorilla_punch_action(uint16_t object, uint8_t step, uint16_t *p_y, uint16_t *p_steps)
+uint16_t gorilla_punch_action(uint16_t object, uint8_t step)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint8_t step_2 = 0;
 	uint16_t steps = 0;
 
@@ -1007,99 +960,88 @@ void gorilla_punch_action(uint16_t object, uint8_t step, uint16_t *p_y, uint16_t
 	{
 	case 0:
 		gorilla_punch_start(object);
-		break;
+		return steps;
 	case 2:
-		y = gorilla_punch_hit(object, y);
-		break;
+		gorilla_punch_hit(object);
+		return steps;
 	case 4:
-		y = gorilla_punch_end(object);
-		break;
+		gorilla_punch_end(object);
+		return steps;
 	case 6:
 		enemy_end_action_with_animation(object);
-		break;
+		return steps;
 	case 8:
-		steps = gorilla_leap_take_off(object);
-		break;
+		return gorilla_leap_take_off(object);
 	case 10:
-		y = gorilla_leap_rise(object, y);
-		break;
+		gorilla_leap_rise(object);
+		return steps;
 	case 12:
-		y = gorilla_leap_fall(object, y);
-		break;
+		gorilla_leap_fall(object);
+		return steps;
 	}
-	*p_y = y;
-	*p_steps = steps;
+	unreachable();
 }
 
 /* Runs a zombie that comes out of the ground and takes hold of the players (stage 3) by its step; checks
    its hits and removes it off screen. */
-void grabbing_zombie_update(uint16_t object, uint8_t state, uint16_t *p_y, uint32_t *p_left_caller)
+uint32_t grabbing_zombie_update(uint16_t object, uint8_t state)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint8_t state_2 = 0;
 	uint16_t ignored16 = 0;
-	uint32_t ignored = 0;
+	uint32_t ignored = 0, left_caller = 0;
 
 	state_2 = (uint8_t)state;
 	switch ((int8_t)(uint8_t)((uint32_t)state_2 << 1))
 	{
 	case 0:
-		y = grabbing_zombie_setup(object);
+		grabbing_zombie_setup(object);
 		break;
 	case 2:
 		grabbing_zombie_come_out(object);
 		break;
 	case 4:
-		vector_enemy_think(object, &y, &ignored16, &ignored);
+		vector_enemy_think(object, &ignored16, &ignored);
 		break;
 	case 6:
-		vector_enemy_act(object, &y, &ignored16, &ignored);
+		vector_enemy_act(object, &ignored16, &ignored);
 		break;
 	case 8:
-		enemy_hurt(object, &y, &ignored16);
+		enemy_hurt(object);
 		break;
 	case 10:
-		vector_enemy_climb(object, &y, &ignored16, &ignored);
+		vector_enemy_climb(object, &ignored16, &ignored);
 		break;
 	}
-	vector_enemy_take_special_hit(object, &ignored16, p_left_caller);
+	vector_enemy_take_special_hit(object, &ignored16, &left_caller);
 	vector_remove_past_right_edge(object, ignored16);
-	*p_y = y;
+	return left_caller;
 }
 
 /* The grabbing zombie's action 31 by its step: it walks at its player, takes hold of him and holds on
    until he shakes it off. */
-void zombie_grab_action(uint16_t object, uint8_t step, uint16_t *p_y, uint16_t *p_u)
+uint16_t zombie_grab_action(uint16_t object, uint8_t step)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint8_t step_2 = 0;
-	uint16_t u = 0;
 
 	step_2 = (uint8_t)step;
 	switch ((int8_t)(uint8_t)((uint32_t)step_2 << 1))
 	{
 	case 0:
-		u = zombie_grab_start(object);
-		break;
+		return zombie_grab_start(object);
 	case 2:
-		zombie_grab_reach(object, &y, &u);
-		break;
+		return zombie_grab_reach(object);
 	case 4:
-		u = zombie_grab_hold(object);
-		break;
+		return zombie_grab_hold(object);
 	case 6:
-		u = zombie_grab_hold_loop(object);
-		break;
+		return zombie_grab_hold_loop(object);
 	}
-	*p_y = y;
-	*p_u = u;
+	unreachable();
 }
 
 /* The gorilla's action 2C by its step: a leap at the player (gorilla_leap_speeds by the stage's
    difficulty). */
-void gorilla_leap_action(uint16_t object, uint8_t step, uint16_t *p_y, uint16_t *p_steps)
+uint16_t gorilla_leap_action(uint16_t object, uint8_t step)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint8_t step_2 = 0;
 	uint16_t steps = 0;
 
@@ -1108,29 +1050,27 @@ void gorilla_leap_action(uint16_t object, uint8_t step, uint16_t *p_y, uint16_t 
 	switch ((int8_t)(uint8_t)((uint32_t)step_2 << 1))
 	{
 	case 0:
-		steps = gorilla_leap_take_off(object);
-		break;
+		return gorilla_leap_take_off(object);
 	case 2:
-		y = gorilla_leap_rise(object, y);
-		break;
+		gorilla_leap_rise(object);
+		return steps;
 	case 4:
-		y = gorilla_leap_fall(object, y);
-		break;
+		gorilla_leap_fall(object);
+		return steps;
 	case -8:
 		gorilla_punch_start(object);
-		break;
+		return steps;
 	case -6:
-		y = gorilla_punch_hit(object, y);
-		break;
+		gorilla_punch_hit(object);
+		return steps;
 	case -4:
-		y = gorilla_punch_end(object);
-		break;
+		gorilla_punch_end(object);
+		return steps;
 	case -2:
 		enemy_end_action_with_animation(object);
-		break;
+		return steps;
 	}
-	*p_y = y;
-	*p_steps = steps;
+	unreachable();
 }
 
 /* The gorilla's action 35 by its step: it backs away from the player for 32 frames. */
@@ -1155,87 +1095,80 @@ uint16_t gorilla_back_off_action(uint16_t object, uint8_t step)
 
 /* Runs a knight (stage 6) by its step: its setup, its way in, the shared enemy steps, its fall from the
    first form; beaten in its first form (field 44 set) it falls instead of dying. */
-void knight_update(uint16_t object, uint8_t state, uint16_t *p_box, uint32_t *p_left_caller)
+uint32_t knight_update(uint16_t object, uint8_t state, uint32_t left_caller)
 {
-	uint16_t box = (uint16_t)*p_box;
 	uint32_t carry = 0;
 	uint8_t state_2 = 0;
 	uint16_t command = 0, ignored16 = 0;
+	uint32_t left_caller_2 = 0;
 	uint8_t first_form = 0, vitality = 0, state_3 = 0;
 
 	state_2 = (uint8_t)state;
 	switch ((int8_t)(uint8_t)((uint32_t)state_2 << 1))
 	{
 	case 0:
-		box = knight_setup(object);
+		knight_setup(object);
 		break;
 	case 2:
 		knight_come_in(object);
 		break;
 	case 4:
-		vector_enemy_think(object, &box, &ignored16, p_left_caller);
+		vector_enemy_think(object, &ignored16, &left_caller);
 		break;
 	case 6:
-		vector_enemy_act(object, &box, &ignored16, p_left_caller);
+		vector_enemy_act(object, &ignored16, &left_caller);
 		break;
 	case 8:
-		enemy_hurt(object, &box, &ignored16);
+		enemy_hurt(object);
 		break;
 	case 10:
-		vector_enemy_climb(object, &box, &ignored16, p_left_caller);
+		vector_enemy_climb(object, &ignored16, &left_caller);
 		break;
 	case 12:
-		box = knight_fall(object, box);
+		knight_fall(object);
 		break;
 	case 14:
 		knight_get_up(object);
 		break;
 	case -2:
-		knight_lose_first_form(object, &box, p_left_caller);
+		left_caller = knight_lose_first_form(object, left_caller);
 		break;
 	}
 	first_form = OBJECT(object)->knight.first_form;
 	if (first_form == 0u)
 	{
-		vector_enemy_take_special_hit(object, &ignored16, p_left_caller);
+		vector_enemy_take_special_hit(object, &ignored16, &left_caller_2);
 		vector_remove_past_right_edge(object, ignored16);
+		return left_caller_2;
 	}
-	else
+	vitality = OBJECT(object)->vitality;
+	if (vitality != 0u)
 	{
-		vitality = OBJECT(object)->vitality;
-		if (vitality != 0u)
-		{
-			vector_enemy_take_special_hit(object, &ignored16, p_left_caller);
-			vector_remove_past_right_edge(object, ignored16);
-		}
-		else
-		{
-			state_3 = OBJECT(object)->state;
-			if ((int8_t)state_3 >= 0)
-			{
-				box = knight_body_box_ADDRESS;
-				vector_set_hit_box(object, box);
-				command = 0x6300u;
-				carry = vector_queue_sound(command);
-				OBJECT(object)->flags = 0x80u;
-				OBJECT(object)->state = 0xFFu;
-				OBJECT(object)->action_step = 0u;
-				vector_remove_past_right_edge(object, ignored16);
-			}
-			else
-			{
-				vector_enemy_take_special_hit(object, &ignored16, p_left_caller);
-				vector_remove_past_right_edge(object, ignored16);
-			}
-		}
+		vector_enemy_take_special_hit(object, &ignored16, &left_caller_2);
+		vector_remove_past_right_edge(object, ignored16);
+		return left_caller_2;
 	}
-	*p_box = box;
+	state_3 = OBJECT(object)->state;
+	if ((int8_t)state_3 >= 0)
+	{
+		leftover_y = knight_body_box_ADDRESS;
+		vector_set_hit_box(object);
+		command = 0x6300u;
+		carry = vector_queue_sound(command);
+		OBJECT(object)->flags = 0x80u;
+		OBJECT(object)->state = 0xFFu;
+		OBJECT(object)->action_step = 0u;
+		vector_remove_past_right_edge(object, ignored16);
+		return left_caller;
+	}
+	vector_enemy_take_special_hit(object, &ignored16, &left_caller_2);
+	vector_remove_past_right_edge(object, ignored16);
+	return left_caller_2;
 }
 
 /* The knight's attack (action 3C) by its step: a blow on the animation's marked frame. */
-void knight_strike_action(uint16_t object, uint8_t step, uint16_t *p_y, uint16_t *p_steps)
+uint16_t knight_strike_action(uint16_t object, uint8_t step)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint8_t step_2 = 0;
 	uint16_t steps = 0;
 
@@ -1245,21 +1178,20 @@ void knight_strike_action(uint16_t object, uint8_t step, uint16_t *p_y, uint16_t
 	{
 	case 0:
 		knight_strike_start(object);
-		break;
+		return steps;
 	case 2:
-		y = knight_strike_hit(object, y);
-		break;
+		knight_strike_hit(object);
+		return steps;
 	case 4:
-		y = knight_strike_end(object, y);
-		break;
+		knight_strike_end(object);
+		return steps;
 	}
-	*p_y = y;
-	*p_steps = steps;
+	unreachable();
 }
 
 /* Runs the devil on a cloud (stage 6) by its step: it comes down, circles a player, stops to drop
    lightning and flies off when its time is up; checks its hits. */
-uint16_t cloud_devil_update(uint16_t object, uint16_t y, uint8_t state)
+void cloud_devil_update(uint16_t object, uint8_t state)
 {
 	uint8_t state_2 = 0;
 
@@ -1267,7 +1199,7 @@ uint16_t cloud_devil_update(uint16_t object, uint16_t y, uint8_t state)
 	switch ((int8_t)(uint8_t)((uint32_t)state_2 << 1))
 	{
 	case 0:
-		y = cloud_devil_setup(object);
+		cloud_devil_setup(object);
 		break;
 	case 2:
 		cloud_devil_come_in(object);
@@ -1279,7 +1211,7 @@ uint16_t cloud_devil_update(uint16_t object, uint16_t y, uint8_t state)
 		cloud_devil_stop_to_shoot(object);
 		break;
 	case 8:
-		y = cloud_devil_drop_bolt(object, y);
+		cloud_devil_drop_bolt(object);
 		break;
 	case 10:
 		cloud_devil_resume(object);
@@ -1292,7 +1224,6 @@ uint16_t cloud_devil_update(uint16_t object, uint16_t y, uint8_t state)
 		break;
 	}
 	object_take_special_hit(object, 0u);
-	return y;
 }
 
 /* Runs the devil's lightning bolt by its step: it strikes below the cloud with a sound and goes when its

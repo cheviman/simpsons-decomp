@@ -3,7 +3,7 @@
  *    Description: what the beaten robot leaves on the floor (5280 type F5)
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    10-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -25,9 +25,8 @@ void robot_scrap_check_hit(uint16_t object)
 }
 
 /* The scrap's burst (steps FE, FF), by field 28. */
-void robot_scrap_burst(uint16_t object, uint16_t *p_y, uint16_t *p_action_handlers)
+uint16_t robot_scrap_burst(uint16_t object)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint16_t action_handlers = 0;
 	uint8_t action = 0;
 
@@ -39,40 +38,38 @@ void robot_scrap_burst(uint16_t object, uint16_t *p_y, uint16_t *p_action_handle
 		{
 		case 0:
 			robot_scrap_burst_start(object);
-			break;
+			return action_handlers;
 		case 2:
-			robot_scrap_remove(object);
 			break;
 		case -20:
 		case -18:
 			continue;
 		case -16:
-			robot_scrap_setup(object, &y, &action_handlers);
-			break;
+			return robot_scrap_setup(object);
 		case -14:
 		case -12:
 			robot_scrap_lie();
-			break;
+			return action_handlers;
 		case -10:
 			robot_scrap_pick_up(object);
-			break;
+			return action_handlers;
 		case -8:
-			y = robot_scrap_throw(object);
-			break;
+			robot_scrap_throw(object);
+			return action_handlers;
 		case -6:
 			robot_scrap_fly(object);
-			break;
+			return action_handlers;
 		case -4:
 			robot_scrap_drop(object);
-			break;
+			return action_handlers;
 		case -2:
 			robot_scrap_drop_land(object);
-			break;
+			return action_handlers;
 		}
 		break;
 	}
-	*p_y = y;
-	*p_action_handlers = action_handlers;
+	robot_scrap_remove(object);
+	return action_handlers;
 }
 
 /* Stops the scrap, pops it up a little and plays its burst. */
@@ -99,21 +96,20 @@ void robot_scrap_remove(uint16_t object)
 }
 
 /* Sets the scrap up with its animation from its state, held where it lies (field 31). */
-void robot_scrap_setup(uint16_t object, uint16_t *p_box, uint16_t *p_setup)
+uint16_t robot_scrap_setup(uint16_t object)
 {
-	uint16_t box = 0, setup = 0;
+	uint16_t setup = 0;
 	uint8_t parameter = 0, lying = 0, state = 0;
 
 	setup = robot_piece_object_setup_ADDRESS;
-	box = vector_object_setup(object, setup);
+	vector_object_setup(object, setup);
 	parameter = OBJECT(object)->parameter;
 	OBJECT(object)->animation = parameter | 0x80u;
 	lying = OBJECT(object)->robot_scrap.lying;
 	OBJECT(object)->robot_scrap.lying = lying + 1u;
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
-	*p_box = box;
-	*p_setup = setup;
+	return setup;
 }
 
 /* The scrap lying or carried: nothing to do here. */
@@ -134,22 +130,20 @@ void robot_scrap_pick_up(uint16_t object)
 }
 
 /* Lets the thrown scrap fly with its hit box, facing the way it goes. */
-uint16_t robot_scrap_throw(uint16_t object)
+void robot_scrap_throw(uint16_t object)
 {
-	uint16_t box = 0;
 	uint8_t animation = 0, state = 0;
 
 	OBJECT(object)->flags = 0x80u;
 	OBJECT(object)->robot_scrap.carried = 0u;
 	animation = OBJECT(object)->animation;
 	OBJECT(object)->animation = (animation + 1u) | 0x80u;
-	box = robot_scrap_throw_box_ADDRESS;
-	vector_set_hit_box(object, box);
+	leftover_y = robot_scrap_throw_box_ADDRESS;
+	vector_set_hit_box(object);
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
 	face_movement(object);
 	robot_scrap_fly(object);
-	return box;
 }
 
 /* The scrap flying: nothing to do, it moves by its speed. */
@@ -200,7 +194,7 @@ uint16_t robot_scrap_keep_on_floor(uint16_t object, uint16_t states)
 	uint8_t flags = 0, floor_value = 0, value_ahead = 0;
 	uint16_t floor_cell = 0, object_2 = 0;
 	uint8_t lying = 0, carried = 0, attributes = 0, attributes_2 = 0, attributes_3 = 0;
-	uint16_t parent = 0, z = 0, floor_z = 0, t1 = 0, z_2 = 0;
+	uint16_t parent = 0, z = 0, floor_z = 0, height_ahead = 0, z_2 = 0;
 
 	lying = OBJECT(object)->robot_scrap.lying;
 	if (lying != 0u)
@@ -242,9 +236,9 @@ uint16_t robot_scrap_keep_on_floor(uint16_t object, uint16_t states)
 		return states;
 	if ((int8_t)value_ahead >= 0)
 	{
-		t1 = (thrown_cell_ahead & 0xFu) << 3;
+		height_ahead = (thrown_cell_ahead & 0xFu) << 3;
 		z_2 = OBJECT(object)->z;
-		if (t1 < z_2)
+		if (height_ahead < z_2)
 		{
 			thrown_cell_priority = thrown_cell_ahead & 0x30u;
 			attributes_3 = OBJECT(object)->attributes;

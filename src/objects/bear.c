@@ -3,7 +3,7 @@
  *    Description: stage 5's boss (type 20, kind A2) and its cage's parts
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    10-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -12,9 +12,8 @@
 #include "game.h"
 
 /* Runs the bear, stage 5's boss: shows its gauge and runs its state */
-void bear(uint16_t enemy_handlers, uint16_t *p_object, uint16_t *p_states)
+uint16_t bear(uint16_t object, uint16_t enemy_handlers)
 {
-	uint16_t object = (uint16_t)*p_object;
 	uint8_t gauge_number = 0;
 	uint16_t piece_health_by_players = 0, states = 0;
 	uint8_t phase = 0;
@@ -27,143 +26,150 @@ void bear(uint16_t enemy_handlers, uint16_t *p_object, uint16_t *p_states)
 	switch ((int8_t)(uint8_t)((uint32_t)phase << 1))
 	{
 	case 0:
-		states = bear_start(object);
-		break;
+		bear_start(object);
+		return object;
 	case 2:
-		states = bear_wait_entrance(object, states);
-		break;
+		leftover_y = states;
+		bear_wait_entrance(object);
+		return object;
 	case 4:
-		states = bear_stir(object, states);
-		break;
+		leftover_y = states;
+		bear_stir(object);
+		return object;
 	case 6:
-		bear_break_out(&object, &states);
-		break;
+		leftover_y = states;
+		return bear_break_out(object);
 	case 8:
-		states = bear_step_out(object, states);
-		break;
+		leftover_y = states;
+		bear_step_out(object);
+		return object;
 	case 10:
-		states = bear_roar(object, enemy_handlers);
-		break;
+		bear_roar(object, enemy_handlers);
+		return object;
 	case 12:
-		states = bear_choose_target(object, enemy_handlers);
-		break;
+		bear_choose_target(object, enemy_handlers);
+		return object;
 	case 14:
-		states = bear_walk(object);
-		break;
+		bear_walk(object);
+		return object;
 	case 16:
-		states = bear_swipe(object, enemy_handlers);
-		break;
+		bear_swipe(object, enemy_handlers);
+		return object;
 	case 18:
-		states = bear_start_charge(object, enemy_handlers);
-		break;
+		bear_start_charge(object, enemy_handlers);
+		return object;
 	case 20:
-		states = bear_charge(object);
-		break;
+		bear_charge(object);
+		return object;
 	case 22:
 	case 36:
-		states = bear_recover(object);
-		break;
+		bear_recover(object);
+		return object;
 	case 24:
-		states = bear_knocked_down(object, states);
-		break;
+		leftover_y = states;
+		bear_knocked_down(object);
+		return object;
 	case 26:
-		states = bear_change(object, states);
-		break;
+		leftover_y = states;
+		bear_change(object);
+		return object;
 	case 28:
+		leftover_y = states;
 		bear_changed(object);
-		break;
+		return object;
 	case 30:
-		states = bear_long_get_up(object, states);
-		break;
+		leftover_y = states;
+		bear_long_get_up(object);
+		return object;
 	case 32:
-		states = bear_get_up(object, enemy_handlers);
-		break;
+		bear_get_up(object, enemy_handlers);
+		return object;
 	case 34:
-		states = bear_attack_wait(object, enemy_handlers);
-		break;
+		bear_attack_wait(object, enemy_handlers);
+		return object;
 	case 38:
+		leftover_y = states;
 		bear_defeated(object);
-		break;
+		return object;
 	}
-	*p_object = object;
-	*p_states = states;
+	unreachable();
 }
 
 /* A part of the bear's cage: shakes while the bear stirs, flies off as it breaks out */
-uint16_t bear_part(uint16_t object, uint16_t part_flight)
+void bear_part(uint16_t object)
 {
-	uint8_t a = 0, d = 0, phase = 0;
-	uint8_t phase_2 = 0, z = 0, t5 = 0, number = 0, number_2 = 0;
-	uint16_t z_speed = 0, t1 = 0, t2 = 0, t3 = 0, t4 = 0, t6 = 0, speed_x = 0, t7 = 0, rest_height = 0;
+	uint8_t phase = 0, z_speed_high = 0, z_speed_low = 0;
+	uint16_t part_flight = 0, z = 0;
+	uint8_t phase_2 = 0, z_2 = 0, parts_phase = 0, number = 0, number_2 = 0;
+	uint16_t z_speed = 0, rebound_speed = 0, halved_rebound = 0, next_z_speed = 0, part_y = 0, flight_record = 0, speed_x = 0, flight_rest = 0, rest_height = 0;
 
 	if (OBJECT(object)->flags == 4u)
 	{
 		OBJECT(object)->flags = 0x80u;
 		OBJECT(object)->kind = 0x10u;
 		OBJECT(object)->animation = 0x91u;
-		return part_flight;
+		return;
 	}
 	phase_2 = OBJECT(object)->bear_part.phase;
 	if (phase_2 != 0u)
 	{
 		z_speed = OBJECT(object)->z_speed;
-		d = (uint8_t)z_speed;
-		a = (uint8_t)(z_speed >> 8);
-		z = (uint8_t)(OBJECT(object)->z >> 8u);
-		if ((int8_t)z < 0)
+		z_speed_low = (uint8_t)z_speed;
+		z_speed_high = (uint8_t)(z_speed >> 8);
+		z_2 = (uint8_t)(OBJECT(object)->z >> 8u);
+		if ((int8_t)z_2 < 0)
 		{
 			OBJECT(object)->z = 0u;
-			t1 = 0u - (((uint32_t)a << 8) | (d & 0xFFu));
-			t2 = (int16_t)t1 >> 1;
-			d = (uint8_t)t2;
-			a = (uint8_t)(t2 >> 8);
+			rebound_speed = 0u - (((uint32_t)z_speed_high << 8) | (z_speed_low & 0xFFu));
+			halved_rebound = (int16_t)rebound_speed >> 1;
+			z_speed_low = (uint8_t)halved_rebound;
+			z_speed_high = (uint8_t)(halved_rebound >> 8);
 		}
-		t3 = (((uint32_t)a << 8) | (d & 0xFFu)) - 0x60u;
-		OBJECT(object)->z_speed = t3;
-		t4 = OBJECT(object)->y;
-		if ((int16_t)t4 <= 0x76)
+		next_z_speed = (((uint32_t)z_speed_high << 8) | (z_speed_low & 0xFFu)) - 0x60u;
+		OBJECT(object)->z_speed = next_z_speed;
+		part_y = OBJECT(object)->y;
+		if ((int16_t)part_y <= 0x76)
 			OBJECT(object)->flags = 0u;
-		return part_flight;
+		return;
 	}
-	t5 = io_read8(0x184Au);
-	phase = t5;
-	if (t5 == 0u)
-		return part_flight;
+	parts_phase = io_read8(0x184Au);
+	phase = parts_phase;
+	if (parts_phase == 0u)
+		return;
 	if (phase != 1u)
 	{
 		OBJECT(object)->bear_part.phase = phase;
 		number = OBJECT(object)->bear_part.number;
-		t6 = bear_part_flights_ADDRESS + (int8_t)(((uint32_t)number << 1) << 1);
-		speed_x = PART_FLIGHT(t6)->speed_x;
+		flight_record = bear_part_flights_ADDRESS + (int8_t)(((uint32_t)number << 1) << 1);
+		speed_x = PART_FLIGHT(flight_record)->speed_x;
 		OBJECT(object)->x_speed = speed_x;
-		t7 = t6 + 2u;
-		part_flight = t7 + 1u;
-		OBJECT(object)->y_speed = (OBJECT(object)->y_speed & 0xFFu) | ((PART_FLIGHT(t7 - 0x2u)->speed_y & 0xFFu) << 8u);
+		flight_rest = flight_record + 2u;
+		part_flight = flight_rest + 1u;
+		leftover_y = part_flight;
+		OBJECT(object)->y_speed = (OBJECT(object)->y_speed & 0xFFu) | ((PART_FLIGHT(flight_rest - 0x2u)->speed_y & 0xFFu) << 8u);
 		OBJECT(object)->z_speed = (OBJECT(object)->z_speed & 0xFFu) | ((PART_FLIGHT(part_flight - 0x3u)->speed_z & 0xFFu) << 8u);
 		OBJECT(object)->flags = 0x88u;
-		return part_flight;
+		return;
 	}
 	number_2 = OBJECT(object)->bear_part.number;
 	rest_height = OBJECT(object)->bear_part.rest_height;
-	part_flight = rest_height;
+	z = rest_height;
 	if ((((uint8_t)frame_count + number_2) & 4u) != 0u)
-		part_flight += 2u;
-	OBJECT(object)->z = part_flight;
+		z += 2u;
+	OBJECT(object)->z = z;
 	OBJECT(object)->animation_flags = 0x80u;
-	return part_flight;
+	leftover_y = z;
 }
 
 /* A boulder the bear's stomp brings down: falls, bounces and hurts while the bear stands */
-void bear_boulder(uint16_t object, uint16_t *p_object_2, uint16_t *p_damage)
+uint16_t bear_boulder(uint16_t object, uint16_t damage)
 {
-	uint16_t object_2 = (uint16_t)*p_object_2;
-	uint16_t damage = (uint16_t)*p_damage;
 	uint32_t carry = 0;
-	uint8_t a = 0, b = 0, flags = 0;
-	uint16_t command = 0;
+	uint8_t flags = 0, word_high = 0, word_low = 0;
+	uint16_t command = 0, object_2 = 0;
 	uint8_t stack = 0, stack_10002 = 0;
-	uint8_t landed = 0, animation_flags = 0, z = 0, vitality = 0, vitality_2 = 0, landed_2 = 0, parameter = 0;
-	uint16_t z_speed = 0, t1 = 0, parent = 0, parent_2 = 0, t2 = 0, t3 = 0, t4 = 0, t5 = 0, t6 = 0, t7 = 0, t8 = 0, t9 = 0, t10 = 0;
+	uint8_t landed = 0, animation_flags = 0, z = 0, landed_2 = 0, vitality = 0, vitality_2 = 0, parameter = 0;
+	uint16_t z_speed = 0, rebound_speed = 0, rebound_twice = 0, rebound_thrice = 0, bounce_back_speed = 0, floor_y = 0, boulder_y = 0, landing_y = 0, next_z_speed = 0, parent = 0, parent_2 = 0, first_x = 0, first_y = 0;
 	uint32_t box_width_halfword = 0;
 
 	if (OBJECT(object)->flags != 4u)
@@ -174,185 +180,128 @@ void bear_boulder(uint16_t object, uint16_t *p_object_2, uint16_t *p_damage)
 			animation_flags = OBJECT(object)->animation_flags;
 			if ((animation_flags & 1u) != 0u)
 				OBJECT(object)->flags = 0u;
+			return damage;
+		}
+		z_speed = OBJECT(object)->z_speed;
+		word_high = (uint8_t)(z_speed >> 8);
+		word_low = (uint8_t)z_speed;
+		z = (uint8_t)(OBJECT(object)->z >> 8u);
+		if ((int8_t)z < 0)
+		{
+			if ((int16_t)(((uint32_t)word_high << 8) | word_low) < -0x110)
+			{
+				stack = word_high;
+				stack_10002 = word_low;
+				command = 0x6500u;
+				carry = vector_queue_sound(command);
+				word_high = stack;
+				word_low = stack_10002;
+				leftover_y = 0xFE80u;
+				OBJECT(object)->y_speed = -0x180;
+			}
+			OBJECT(object)->z = 0u;
+			rebound_speed = 0u - (((uint32_t)word_high << 8) | word_low);
+			word_high = (uint8_t)(rebound_speed >> 8);
+			word_low = (uint8_t)rebound_speed;
+			boulder_bounce_speed = ((uint32_t)word_high << 8) | word_low;
+			rebound_twice = (((uint32_t)word_high << 8) | word_low) + boulder_bounce_speed;
+			rebound_thrice = rebound_twice + boulder_bounce_speed;
+			bounce_back_speed = (int16_t)rebound_thrice >> 2;
+			stack = bounce_back_speed >> 8;
+			stack_10002 = bounce_back_speed;
+			floor_y = 0x98u + camera_y;
+			boulder_y = OBJECT(object)->y;
+			landing_y = floor_y;
+			word_high = stack;
+			word_low = stack_10002;
+			if ((int16_t)boulder_y <= (int16_t)landing_y)
+			{
+				OBJECT(object)->z_speed = 0;
+				OBJECT(object)->y_speed = 0;
+				OBJECT(object)->kind = 5u;
+				OBJECT(object)->animation = 0x80u;
+				landed_2 = OBJECT(object)->bear_boulder.landed;
+				OBJECT(object)->bear_boulder.landed = landed_2 + 1u;
+				return damage;
+			}
+		}
+		next_z_speed = (((uint32_t)word_high << 8) | word_low) - 0x60u;
+		OBJECT(object)->z_speed = next_z_speed;
+		if ((frame_count & 1u) == 0u)
+		{
+			parent = OBJECT(object)->parent;
+			object_2 = parent;
+			flags = 0xC8u;
+			damage = 0x401u;
+			vitality = OBJECT(object_2)->vitality;
+			if (vitality == 0u)
+			{
+				flags = 0x88u;
+				damage = 0u;
+			}
+			OBJECT(object)->flags = flags;
+			OBJECT(object)->damage = (uint8_t)(damage >> 8u);
+			OBJECT(object)->attack = (uint8_t)damage;
 		}
 		else
 		{
-			z_speed = OBJECT(object)->z_speed;
-			a = (uint8_t)(z_speed >> 8);
-			b = (uint8_t)z_speed;
-			z = (uint8_t)(OBJECT(object)->z >> 8u);
-			if ((int8_t)z >= 0)
+			OBJECT(object)->flags = 0x88u;
+			parent_2 = OBJECT(object)->parent;
+			vitality_2 = OBJECT(parent_2)->vitality;
+			if (vitality_2 <= 0x48u)
 			{
-				t1 = (((uint32_t)a << 8) | b) - 0x60u;
-				OBJECT(object)->z_speed = t1;
-				if ((frame_count & 1u) == 0u)
+				parent = OBJECT(object)->parent;
+				object_2 = parent;
+				flags = 0xC8u;
+				damage = 0x401u;
+				vitality = OBJECT(object_2)->vitality;
+				if (vitality == 0u)
 				{
-					parent = OBJECT(object)->parent;
-					object_2 = parent;
-					flags = 0xC8u;
-					damage = 0x401u;
-					vitality = OBJECT(object_2)->vitality;
-					if (vitality == 0u)
-					{
-						flags = 0x88u;
-						damage = 0u;
-					}
-					OBJECT(object)->flags = flags;
-					OBJECT(object)->damage = (uint8_t)(damage >> 8u);
-					OBJECT(object)->attack = (uint8_t)damage;
+					flags = 0x88u;
+					damage = 0u;
 				}
-				else
-				{
-					OBJECT(object)->flags = 0x88u;
-					parent_2 = OBJECT(object)->parent;
-					vitality_2 = OBJECT(parent_2)->vitality;
-					if (vitality_2 <= 0x48u)
-					{
-						parent = OBJECT(object)->parent;
-						object_2 = parent;
-						flags = 0xC8u;
-						damage = 0x401u;
-						vitality = OBJECT(object_2)->vitality;
-						if (vitality == 0u)
-						{
-							flags = 0x88u;
-							damage = 0u;
-						}
-						OBJECT(object)->flags = flags;
-						OBJECT(object)->damage = (uint8_t)(damage >> 8u);
-						OBJECT(object)->attack = (uint8_t)damage;
-					}
-					else
-					{
-						object_2 = 0x111u;
-						OBJECT(object)->damage = 1u;
-						OBJECT(object)->attack = 0x11u;
-						check_hits_with_enemies(object);
-					}
-				}
+				OBJECT(object)->flags = flags;
+				OBJECT(object)->damage = (uint8_t)(damage >> 8u);
+				OBJECT(object)->attack = (uint8_t)damage;
+				leftover_y = object_2;
+				return damage;
 			}
-			else
-			{
-				if ((int16_t)(((uint32_t)a << 8) | b) < -0x110)
-				{
-					stack = a;
-					stack_10002 = b;
-					command = 0x6500u;
-					carry = vector_queue_sound(command);
-					a = stack;
-					b = stack_10002;
-					object_2 = 0xFE80u;
-					OBJECT(object)->y_speed = -0x180;
-				}
-				OBJECT(object)->z = 0u;
-				t2 = 0u - (((uint32_t)a << 8) | b);
-				a = (uint8_t)(t2 >> 8);
-				b = (uint8_t)t2;
-				boulder_bounce_speed = ((uint32_t)a << 8) | b;
-				t3 = (((uint32_t)a << 8) | b) + boulder_bounce_speed;
-				t4 = t3 + boulder_bounce_speed;
-				t5 = (int16_t)t4 >> 2;
-				stack = t5 >> 8;
-				stack_10002 = t5;
-				t6 = 0x98u + camera_y;
-				t7 = OBJECT(object)->y;
-				t8 = t6;
-				a = stack;
-				b = stack_10002;
-				if ((int16_t)t7 <= (int16_t)t8)
-				{
-					OBJECT(object)->z_speed = 0;
-					OBJECT(object)->y_speed = 0;
-					OBJECT(object)->kind = 5u;
-					OBJECT(object)->animation = 0x80u;
-					landed_2 = OBJECT(object)->bear_boulder.landed;
-					OBJECT(object)->bear_boulder.landed = landed_2 + 1u;
-				}
-				else
-				{
-					t1 = (((uint32_t)a << 8) | b) - 0x60u;
-					OBJECT(object)->z_speed = t1;
-					if ((frame_count & 1u) == 0u)
-					{
-						parent = OBJECT(object)->parent;
-						object_2 = parent;
-						flags = 0xC8u;
-						damage = 0x401u;
-						vitality = OBJECT(object_2)->vitality;
-						if (vitality == 0u)
-						{
-							flags = 0x88u;
-							damage = 0u;
-						}
-						OBJECT(object)->flags = flags;
-						OBJECT(object)->damage = (uint8_t)(damage >> 8u);
-						OBJECT(object)->attack = (uint8_t)damage;
-					}
-					else
-					{
-						OBJECT(object)->flags = 0x88u;
-						parent_2 = OBJECT(object)->parent;
-						vitality_2 = OBJECT(parent_2)->vitality;
-						if (vitality_2 <= 0x48u)
-						{
-							parent = OBJECT(object)->parent;
-							object_2 = parent;
-							flags = 0xC8u;
-							damage = 0x401u;
-							vitality = OBJECT(object_2)->vitality;
-							if (vitality == 0u)
-							{
-								flags = 0x88u;
-								damage = 0u;
-							}
-							OBJECT(object)->flags = flags;
-							OBJECT(object)->damage = (uint8_t)(damage >> 8u);
-							OBJECT(object)->attack = (uint8_t)damage;
-						}
-						else
-						{
-							object_2 = 0x111u;
-							OBJECT(object)->damage = 1u;
-							OBJECT(object)->attack = 0x11u;
-							check_hits_with_enemies(object);
-						}
-					}
-				}
-			}
+			object_2 = 0x111u;
+			OBJECT(object)->damage = 1u;
+			OBJECT(object)->attack = 0x11u;
+			check_hits_with_enemies(object);
 		}
+		leftover_y = object_2;
+		return damage;
+	}
+	OBJECT(object)->flags = 0xC8u;
+	OBJECT(object)->shadow_player = 0x40u;
+	parameter = OBJECT(object)->parameter;
+	if (parameter != 0u)
+	{
+		OBJECT(object)->kind = 0xAFu;
+		OBJECT(object)->animation = 0x83u;
+		word_high = 0x10u;
+		word_low = 4u;
 	}
 	else
 	{
-		OBJECT(object)->flags = 0xC8u;
-		OBJECT(object)->shadow_player = 0x40u;
-		parameter = OBJECT(object)->parameter;
-		if (parameter != 0u)
-		{
-			OBJECT(object)->kind = 0xAFu;
-			OBJECT(object)->animation = 0x83u;
-			a = 0x10u;
-			b = 4u;
-		}
-		else
-		{
-			OBJECT(object)->kind = 0xAFu;
-			OBJECT(object)->animation = 0x83u;
-			a = 0x10u;
-			b = 4u;
-		}
-		box_width_halfword = ((uint32_t)a << 8) | b;
-		OBJECT(object)->box_width = (uint8_t)(box_width_halfword >> 8u);
-		OBJECT(object)->box_depth = (uint8_t)box_width_halfword;
-		OBJECT(object)->box_height = a;
-		OBJECT(object)->box_dz = a;
-		t9 = (uint8_t)((((random_number & 0x1Fu) << 1) << 1) << 1) + 0x60u;
-		OBJECT(object)->x = t9;
-		t10 = 0xF0u + camera_y;
-		OBJECT(object)->y = t10;
-		OBJECT(object)->z = 0x80u;
+		OBJECT(object)->kind = 0xAFu;
+		OBJECT(object)->animation = 0x83u;
+		word_high = 0x10u;
+		word_low = 4u;
 	}
-	*p_object_2 = object_2;
-	*p_damage = damage;
+	box_width_halfword = ((uint32_t)word_high << 8) | word_low;
+	OBJECT(object)->box_width = (uint8_t)(box_width_halfword >> 8u);
+	OBJECT(object)->box_depth = (uint8_t)box_width_halfword;
+	OBJECT(object)->box_height = word_high;
+	OBJECT(object)->box_dz = word_high;
+	first_x = (uint8_t)((((random_number & 0x1Fu) << 1) << 1) << 1) + 0x60u;
+	OBJECT(object)->x = first_x;
+	first_y = 0xF0u + camera_y;
+	OBJECT(object)->y = first_y;
+	OBJECT(object)->z = 0x80u;
+	return damage;
 }
 
 /* The effect shown as the beaten bear changes */
@@ -377,19 +326,18 @@ void bear_change_effect(uint16_t object)
 }
 
 /* Sets the bear up and puts in the parts of its cage */
-uint16_t bear_start(uint16_t object)
+void bear_start(uint16_t object)
 {
-	uint16_t record = 0;
-	uint8_t t3 = 0, phase = 0;
-	uint16_t t1 = 0, t2 = 0;
+	uint8_t old_parts_phase = 0, phase = 0;
+	uint16_t cage_x = 0, bear_x = 0;
 
 	OBJECT(object)->kind = 0xA2u;
 	OBJECT(object)->vitality = 0xE0u;
 	OBJECT(object)->bear.flinch_health = 0xE0u;
 	OBJECT(object)->bear.attack_health = 0xE0u;
-	t1 = OBJECT(object)->x;
-	t2 = t1 + 0x40u;
-	OBJECT(object)->x = t2;
+	cage_x = OBJECT(object)->x;
+	bear_x = cage_x + 0x40u;
+	OBJECT(object)->x = bear_x;
 	OBJECT(object)->enemy_class = -1;
 	OBJECT(object)->entrance_pending = 0xFFu;
 	OBJECT(object)->attributes = 0x40u;
@@ -397,100 +345,99 @@ uint16_t bear_start(uint16_t object)
 	cage_part_offsets = object_1e_part_offsets_ADDRESS;
 	cage_part_number = 0u;
 	cage_parts_left = 8u;
-	record = bear_start_child_2_ADDRESS;
-	bear_put_parts(object, record);
+	leftover_y = bear_start_child_2_ADDRESS;
+	bear_put_parts(object);
 	cage_parts_left = 0xAu;
-	record = bear_start_child_3_ADDRESS;
-	bear_put_parts(object, record);
+	leftover_y = bear_start_child_3_ADDRESS;
+	bear_put_parts(object);
 	cage_parts_left = 6u;
-	record = bear_start_child_1_ADDRESS;
-	bear_put_parts(object, record);
-	t3 = io_read8(0x184Au);
+	leftover_y = bear_start_child_1_ADDRESS;
+	bear_put_parts(object);
+	old_parts_phase = io_read8(0x184Au);
 	io_write8(0x184Au, 0u);
 	phase = OBJECT(object)->bear.phase;
 	OBJECT(object)->bear.phase = phase + 1u;
-	return record;
 }
 
 /* Puts in up to 11 cage parts from a child record, each at its offset */
-void bear_put_parts(uint16_t object, uint16_t y)
+void bear_put_parts(uint16_t object)
 {
 	uint32_t carry = 0;
-	uint8_t a = 0, b = 0;
-	uint16_t ignored16 = 0, part = 0;
-	uint16_t stack = 0;
-	uint8_t t12 = 0;
-	uint16_t t1 = 0, t2 = 0, t3 = 0, t4 = 0, t5 = 0, t6 = 0, t7 = 0, t8 = 0, t9 = 0, t10 = 0, z = 0, t11 = 0;
+	uint8_t place_high = 0, place_low = 0;
+	uint16_t ignored16 = 0, ignored16_2 = 0, part = 0;
+	uint16_t saved_leftover_y = 0;
+	uint8_t parts_left = 0;
+	uint16_t offset_record = 0, offset_dx = 0, part_x = 0, placed_x = 0, dy_at = 0, offset_dy = 0, part_y = 0, placed_y = 0, dz_at = 0, offset_dz = 0, z = 0, placed_z = 0;
 	uint32_t unk_50_halfword = 0, unk_52_halfword = 0;
 
 	do
 	{
 		if ((int8_t)cage_part_number >= 0xB)
 			break;
-		stack = y;
-		vector_spawn_child(object, y, &part, &ignored16, &carry);
+		saved_leftover_y = leftover_y;
+		vector_spawn_child(object, &ignored16, &part, &ignored16_2, &carry);
 		if (carry)
 		{
-			t1 = cage_part_offsets;
-			t2 = (int8_t)mem_read8(t1);
-			t3 = OBJECT(part)->x;
-			t4 = t2 + t3;
-			a = (uint8_t)(t4 >> 8);
-			b = (uint8_t)t4;
-			OBJECT(part)->x = ((uint32_t)a << 8) | b;
-			unk_50_halfword = ((uint32_t)a << 8) | b;
+			offset_record = cage_part_offsets;
+			offset_dx = (int8_t)mem_read8(offset_record);
+			part_x = OBJECT(part)->x;
+			placed_x = offset_dx + part_x;
+			place_high = (uint8_t)(placed_x >> 8);
+			place_low = (uint8_t)placed_x;
+			OBJECT(part)->x = ((uint32_t)place_high << 8) | place_low;
+			unk_50_halfword = ((uint32_t)place_high << 8) | place_low;
 			OBJECT(part)->unk_50 = (uint8_t)(unk_50_halfword >> 8u);
 			OBJECT(part)->unk_51 = (uint8_t)unk_50_halfword;
-			t5 = t1 + 1u;
-			t6 = (int8_t)mem_read8(t5);
-			t7 = OBJECT(part)->y;
-			t8 = t6 + t7;
-			a = (uint8_t)(t8 >> 8);
-			b = (uint8_t)t8;
-			OBJECT(part)->y = ((uint32_t)a << 8) | b;
-			unk_52_halfword = ((uint32_t)a << 8) | b;
+			dy_at = offset_record + 1u;
+			offset_dy = (int8_t)mem_read8(dy_at);
+			part_y = OBJECT(part)->y;
+			placed_y = offset_dy + part_y;
+			place_high = (uint8_t)(placed_y >> 8);
+			place_low = (uint8_t)placed_y;
+			OBJECT(part)->y = ((uint32_t)place_high << 8) | place_low;
+			unk_52_halfword = ((uint32_t)place_high << 8) | place_low;
 			OBJECT(part)->unk_52 = (uint8_t)(unk_52_halfword >> 8u);
 			OBJECT(part)->unk_53 = (uint8_t)unk_52_halfword;
-			t9 = t5 + 1u;
-			t10 = (int8_t)mem_read8(t9);
+			dz_at = dy_at + 1u;
+			offset_dz = (int8_t)mem_read8(dz_at);
 			z = OBJECT(part)->z;
-			t11 = t10 + z;
-			a = (uint8_t)(t11 >> 8);
-			b = (uint8_t)t11;
-			OBJECT(part)->z = ((uint32_t)a << 8) | b;
-			OBJECT(part)->bear_part.rest_height = ((uint32_t)a << 8) | b;
-			cage_part_offsets = t9 + 1u;
+			placed_z = offset_dz + z;
+			place_high = (uint8_t)(placed_z >> 8);
+			place_low = (uint8_t)placed_z;
+			OBJECT(part)->z = ((uint32_t)place_high << 8) | place_low;
+			OBJECT(part)->bear_part.rest_height = ((uint32_t)place_high << 8) | place_low;
+			cage_part_offsets = dz_at + 1u;
 			OBJECT(part)->enemy_class = -1;
 			OBJECT(part)->entrance_pending = 0xFFu;
 			OBJECT(part)->bear_part.number = cage_part_number;
 			cage_part_number++;
 		}
-		y = stack;
-		t12 = cage_parts_left;
-		cage_parts_left = t12 - 1u;
-	} while (t12 != 1u);
+		leftover_y = saved_leftover_y;
+		parts_left = cage_parts_left;
+		cage_parts_left = parts_left - 1u;
+	} while (parts_left != 1u);
 }
 
 /* Waits for the stage to let it in, then stirs */
-uint16_t bear_wait_entrance(uint16_t object, uint16_t states)
+void bear_wait_entrance(uint16_t object)
 {
 	uint32_t carry = 0;
 	uint16_t animation_number = 0, command = 0, state_wait = 0;
 
 	if (stage_scrolls_on != 0u)
-		return states;
+		return;
 	command = 0xFD00u;
 	carry = vector_queue_sound(command);
 	OBJECT(object)->enemy_class = 0;
 	OBJECT(object)->entrance_pending = 0u;
+	leftover_y = 0x23Cu;
 	state_wait = 0x23Cu;
 	animation_number = 0x8A00u;
 	stage_boss_set_state(object, state_wait, animation_number);
-	return state_wait;
 }
 
 /* Shakes its cage, then starts breaking out */
-uint16_t bear_stir(uint16_t object, uint16_t states)
+void bear_stir(uint16_t object)
 {
 	uint16_t animation_number = 0, state_wait = 0;
 	uint8_t wait = 0;
@@ -500,25 +447,23 @@ uint16_t bear_stir(uint16_t object, uint16_t states)
 	if (wait == 1u)
 	{
 		io_write8(0x184Au, 1u);
+		leftover_y = 0x3FAu;
 		state_wait = 0x3FAu;
 		animation_number = 0x8A00u;
 		stage_boss_set_state(object, state_wait, animation_number);
-		return state_wait;
+		return;
 	}
-	return states;
 }
 
 /* Breaks out of its cage: the parts shake, then fly; its tiles are cleared */
-void bear_break_out(uint16_t *p_object, uint16_t *p_y)
+uint16_t bear_break_out(uint16_t object)
 {
-	uint16_t object = (uint16_t)*p_object;
-	uint16_t y = (uint16_t)*p_y;
 	uint32_t carry = 0;
-	uint8_t a = 0, b = 0, control = 0, fill = 0, parts_phase = 0;
+	uint8_t control = 0, fill = 0, parts_phase = 0, row_start_low = 0, wait_then_row_high = 0;
 	uint16_t animation_number = 0, cell_place = 0, command = 0, count = 0, floor_row = 0, ignored16 = 0, state_wait = 0;
 	uint8_t stack = 0, stack_2 = 0, stack_3 = 0, stack_4 = 0;
-	uint8_t wait = 0, wait_2 = 0, t1 = 0;
-	uint16_t t2 = 0, t3 = 0;
+	uint8_t wait = 0, wait_2 = 0, row_mask = 0;
+	uint16_t bear_y = 0, lowered_y = 0;
 
 	wait = OBJECT(object)->bear.wait;
 	OBJECT(object)->bear.wait = wait - 1u;
@@ -528,66 +473,63 @@ void bear_break_out(uint16_t *p_object, uint16_t *p_y)
 		animation_number = 0x8000u;
 		stage_boss_set_state(object, state_wait, animation_number);
 		OBJECT(object)->x_speed = -0x100;
-		y = 0xFF00u;
 		OBJECT(object)->y_speed = -0x100;
+		leftover_y = 0xFF00u;
+		return object;
 	}
-	else
+	wait_2 = OBJECT(object)->bear.wait;
+	wait_then_row_high = wait_2;
+	if (wait_then_row_high == 0xDCu)
+		boss_arrived = 1u;
+	if ((int8_t)wait_then_row_high > 0x4B)
 	{
-		wait_2 = OBJECT(object)->bear.wait;
-		a = wait_2;
-		if (a == 0xDCu)
-			boss_arrived = 1u;
-		if ((int8_t)a > 0x4B)
-		{
-			parts_phase = 0u;
-			if ((a & 0x10u) == 0u)
-				parts_phase++;
-			io_write8(0x184Au, parts_phase);
-		}
-		else if ((int8_t)a >= 0x4B)
-		{
-			floor_cell_under(object, &cell_place, &ignored16);
-			control = board_control | 2u;
-			board_control = control;
-			io_write8(0x1FC2u, control);
-			stack_2 = cell_place >> 8;
-			stack = (uint8_t)cell_place;
-			a = stack_2;
-			t1 = io_read8(0xC0u);
-			b = stack & t1;
-			stack_2 = object >> 8;
-			stack = (uint8_t)object;
-			stack_3 = b;
-			stack_4 = a;
-			floor_row = ((uint32_t)stack_4 << 8) | stack_3;
-			count = 0x100u;
-			fill = 0u;
-			while (count != 0u)
-			{
-				mem_write8(floor_row, fill);
-				floor_row++;
-				count--;
-			}
-			object = ((uint32_t)stack_2 << 8) | stack;
-			control = board_control & ~3u;
-			board_control = control;
-			io_write8(0x1FC2u, control);
-			mem_write8(object, 0x80u);
-			t2 = io_read16(object + 0x11u);
-			t3 = t2 + 0x10u;
-			io_write16(object + 0x11u, t3);
-			command = 0x7000u;
-			carry = vector_queue_sound(command);
-			parts_phase = 2u;
-			io_write8(0x184Au, parts_phase);
-		}
+		parts_phase = 0u;
+		if ((wait_then_row_high & 0x10u) == 0u)
+			parts_phase++;
+		io_write8(0x184Au, parts_phase);
+		return object;
 	}
-	*p_object = object;
-	*p_y = y;
+	if ((int8_t)wait_then_row_high < 0x4B)
+		return object;
+	floor_cell_under(object, &cell_place, &ignored16);
+	control = board_control | 2u;
+	board_control = control;
+	io_write8(0x1FC2u, control);
+	stack_2 = cell_place >> 8;
+	stack = (uint8_t)cell_place;
+	wait_then_row_high = stack_2;
+	row_mask = io_read8(0xC0u);
+	row_start_low = stack & row_mask;
+	stack_2 = object >> 8;
+	stack = (uint8_t)object;
+	stack_3 = row_start_low;
+	stack_4 = wait_then_row_high;
+	floor_row = ((uint32_t)stack_4 << 8) | stack_3;
+	count = 0x100u;
+	fill = 0u;
+	while (count != 0u)
+	{
+		mem_write8(floor_row, fill);
+		floor_row++;
+		count--;
+	}
+	object = ((uint32_t)stack_2 << 8) | stack;
+	control = board_control & ~3u;
+	board_control = control;
+	io_write8(0x1FC2u, control);
+	OBJECT(object)->flags = 0x80u;
+	bear_y = OBJECT(object)->y;
+	lowered_y = bear_y + 0x10u;
+	OBJECT(object)->y = lowered_y;
+	command = 0x7000u;
+	carry = vector_queue_sound(command);
+	parts_phase = 2u;
+	io_write8(0x184Au, parts_phase);
+	return object;
 }
 
 /* Steps out with a roar and takes its hit box */
-uint16_t bear_step_out(uint16_t object, uint16_t states)
+void bear_step_out(uint16_t object)
 {
 	uint32_t carry = 0;
 	uint16_t animation_number = 0, box = 0, command = 0, state_wait = 0;
@@ -603,40 +545,43 @@ uint16_t bear_step_out(uint16_t object, uint16_t states)
 	wait_2 = OBJECT(object)->bear.wait;
 	OBJECT(object)->bear.wait = wait_2 - 1u;
 	if (wait_2 != 1u)
-		return states;
+		return;
 	box = bear_box_ADDRESS;
 	stage_boss_set_hit_box(object, box);
 	command = 0x7400u;
 	carry = vector_queue_sound(command);
+	leftover_y = 0x53Cu;
 	state_wait = 0x53Cu;
 	animation_number = 0x8900u;
 	stage_boss_set_state(object, state_wait, animation_number);
-	return state_wait;
 }
 
 /* Waits out its roar, then turns to a player */
-uint16_t bear_roar(uint16_t object, uint16_t object_2)
+void bear_roar(uint16_t object, uint16_t object_2)
 {
 	uint8_t wait = 0;
 
 	wait = OBJECT(object)->bear.wait;
 	OBJECT(object)->bear.wait = wait - 1u;
 	if (wait != 1u)
-		return bear_move(object, object_2);
-	return bear_turn_to_player(object);
+	{
+		bear_move(object, object_2);
+		return;
+	}
+	bear_turn_to_player(object);
 }
 
 /* Takes state 6 facing the nearest player */
-uint16_t bear_turn_to_player(uint16_t object)
+void bear_turn_to_player(uint16_t object)
 {
 	uint16_t state_wait = 0;
 
 	state_wait = 0x610u;
-	return bear_face_player(object, state_wait);
+	bear_face_player(object, state_wait);
 }
 
 /* Takes the state in Y facing the nearest player, hurtable */
-uint16_t bear_face_player(uint16_t object, uint16_t state_wait)
+void bear_face_player(uint16_t object, uint16_t state_wait)
 {
 	uint32_t carry = 0;
 	uint16_t animation_number = 0, box = 0, chase_target = 0, command = 0;
@@ -654,10 +599,16 @@ uint16_t bear_face_player(uint16_t object, uint16_t state_wait)
 	stage_boss_unshield(object);
 	charged = OBJECT(object)->bear.charged;
 	if (charged != 0u)
-		return bear_think(object, chase_target);
+	{
+		bear_think(object, chase_target);
+		return;
+	}
 	carry = stage_boss_any_player_down();
 	if (carry == 0u)
-		return bear_move(object, chase_target);
+	{
+		bear_move(object, chase_target);
+		return;
+	}
 	charged_2 = OBJECT(object)->bear.charged;
 	OBJECT(object)->bear.charged = charged_2 + 1u;
 	command = 0x7400u;
@@ -665,60 +616,64 @@ uint16_t bear_face_player(uint16_t object, uint16_t state_wait)
 	state_wait = 0x53Cu;
 	animation_number = 0x8A00u;
 	stage_boss_set_state(object, state_wait, animation_number);
-	return bear_check_hit(object, chase_target);
+	bear_check_hit(object, chase_target);
 }
 
 /* Picks its target, at random or the nearest player, and walks */
-uint16_t bear_choose_target(uint16_t object, uint16_t object_2)
+void bear_choose_target(uint16_t object, uint16_t object_2)
 {
-	uint8_t b = 0, roll = 0;
-	uint16_t chase_target = 0, d = 0, state_wait = 0;
+	uint8_t roll = 0, target_low = 0;
+	uint16_t animation_number = 0, chosen_target = 0, state_wait = 0;
 	uint8_t stack = 0, stack_10002 = 0;
 	uint8_t wait = 0;
-	uint16_t t1 = 0, t2 = 0;
+	uint16_t player_offset = 0, player_object = 0;
 
 	wait = OBJECT(object)->bear.wait;
 	OBJECT(object)->bear.wait = wait - 1u;
 	if (wait != 1u)
-		return bear_move(object, object_2);
+	{
+		bear_move(object, object_2);
+		return;
+	}
 	roll = random_number;
 	if ((roll & 8u) == 0u)
 	{
-		t1 = (roll & 3u) * 0xC0u;
-		t2 = t1 + OBJECT_ADDRESS(0);
-		b = (uint8_t)t2;
-		stack = t2 >> 8;
-		stack_10002 = b;
-		chase_target = ((uint32_t)stack << 8) | stack_10002;
-		if (mem_read8(chase_target) == 0u)
+		player_offset = (roll & 3u) * 0xC0u;
+		player_object = player_offset + OBJECT_ADDRESS(0);
+		target_low = (uint8_t)player_object;
+		stack = player_object >> 8;
+		stack_10002 = target_low;
+		chosen_target = ((uint32_t)stack << 8) | stack_10002;
+		if (OBJECT(chosen_target)->flags == 0u)
 		{
-			d = b;
-			chase_target = vector_choose_nearest_player(object);
+			animation_number = target_low;
+			chosen_target = vector_choose_nearest_player(object);
 		}
-		OBJECT(object)->bear.chase_target = chase_target;
+		OBJECT(object)->bear.chase_target = chosen_target;
 		state_wait = 0x700u;
-		d |= 0x8000u;
-		stage_boss_set_state(object, state_wait, d);
-		return bear_move(object, chase_target);
+		animation_number |= 0x8000u;
+		stage_boss_set_state(object, state_wait, animation_number);
+		bear_move(object, chosen_target);
+		return;
 	}
-	d = b;
-	chase_target = vector_choose_nearest_player(object);
-	OBJECT(object)->bear.chase_target = chase_target;
+	animation_number = target_low;
+	chosen_target = vector_choose_nearest_player(object);
+	OBJECT(object)->bear.chase_target = chosen_target;
 	state_wait = 0x700u;
-	d |= 0x8000u;
-	stage_boss_set_state(object, state_wait, d);
-	return bear_move(object, chase_target);
+	animation_number |= 0x8000u;
+	stage_boss_set_state(object, state_wait, animation_number);
+	bear_move(object, chosen_target);
 }
 
 /* Walks at its target, shaking the screen and dropping boulders, and swipes at a player in reach */
-uint16_t bear_walk(uint16_t object)
+void bear_walk(uint16_t object)
 {
 	uint32_t carry = 0;
 	uint8_t facing = 0, offset = 0;
-	uint16_t animation_number = 0, command = 0, d = 0, ignored16 = 0, ignored16_2 = 0, object_2 = 0, player = 0, playing_bits = 0, record = 0, speeds_by_rank = 0, state_wait = 0, target = 0;
+	uint16_t animation_number = 0, command = 0, direction_word = 0, ignored16 = 0, ignored16_2 = 0, ignored16_3 = 0, object_2 = 0, player = 0, playing_bits = 0, speeds_by_rank = 0, state_wait = 0, target = 0;
 	uint8_t stack = 0, stack_10002 = 0;
 	uint8_t animation_flags = 0, vitality = 0, attributes = 0, attributes_2 = 0, animation_flags_2 = 0, attributes_3 = 0, animation_flags_3 = 0, attack_health = 0, vitality_2 = 0, vitality_3 = 0;
-	uint16_t t1 = 0, chase_target = 0, t2 = 0, t3 = 0;
+	uint16_t boulder_roll = 0, chase_target = 0, bear_x = 0, target_x = 0;
 
 	animation_flags = OBJECT(object)->animation_flags;
 	if ((animation_flags & 2u) != 0u)
@@ -727,19 +682,19 @@ uint16_t bear_walk(uint16_t object)
 		screen_shake_kind = 2u;
 		command = 0x7500u;
 		carry = vector_queue_sound(command);
-		t1 = (uint32_t)(uint8_t)((((uint32_t)rank << 1) << 1) << 1) * random_number;
-		if (t1 >= 0x3000u)
+		boulder_roll = (uint32_t)(uint8_t)((((uint32_t)rank << 1) << 1) << 1) * random_number;
+		if (boulder_roll >= 0x3000u)
 		{
-			record = bear_boulder_child_1_ADDRESS;
+			leftover_y = bear_boulder_child_1_ADDRESS;
 			vitality = OBJECT(object)->vitality;
 			if ((int8_t)vitality < 0x20 && (random_number & 3u) == 0u)
-				record = bear_boulder_child_2_ADDRESS;
-			vector_spawn_child(object, record, &ignored16, &ignored16_2, &carry);
+				leftover_y = bear_boulder_child_2_ADDRESS;
+			vector_spawn_child(object, &ignored16, &ignored16_2, &ignored16_3, &carry);
 		}
 	}
 	reach_x = 0x30;
 	reach_y = 8;
-	stage_boss_find_near_player(object, &ignored16, &playing_bits, &carry);
+	stage_boss_find_near_player(object, &ignored16_2, &playing_bits, &carry);
 	offset = (uint8_t)playing_bits;
 	if (carry == 0u)
 	{
@@ -747,55 +702,60 @@ uint16_t bear_walk(uint16_t object)
 		target = chase_target;
 		if ((frame_count & 7u) != 0u)
 		{
-			d = offset;
-			d = vector_direction_to_offset(object, target, d);
+			direction_word = offset;
+			direction_word = vector_direction_to_offset(object, target, direction_word);
 			speeds_by_rank = bear_walk_speeds_ADDRESS;
-			stage_boss_walk_by_rank(object, speeds_by_rank, d);
-			return bear_move(object, target);
+			stage_boss_walk_by_rank(object, speeds_by_rank, direction_word);
+			bear_move(object, target);
+			return;
 		}
 		attributes = OBJECT(object)->attributes;
 		facing = attributes & 0x40u;
-		t2 = OBJECT(object)->x;
-		t3 = OBJECT(target)->x;
-		if ((int16_t)t3 <= (int16_t)t2)
+		bear_x = OBJECT(object)->x;
+		target_x = OBJECT(target)->x;
+		if ((int16_t)target_x <= (int16_t)bear_x)
 		{
 			offset = 0xDAu;
 			if (facing != 0u)
 			{
-				d = offset;
-				d = vector_direction_to_offset(object, target, d);
+				direction_word = offset;
+				direction_word = vector_direction_to_offset(object, target, direction_word);
 				speeds_by_rank = bear_walk_speeds_ADDRESS;
-				stage_boss_walk_by_rank(object, speeds_by_rank, d);
-				return bear_move(object, target);
+				stage_boss_walk_by_rank(object, speeds_by_rank, direction_word);
+				bear_move(object, target);
+				return;
 			}
 			attributes_2 = OBJECT(object)->attributes;
 			OBJECT(object)->attributes = attributes_2 | 0x40u;
 			animation_flags_2 = OBJECT(object)->animation_flags;
 			OBJECT(object)->animation_flags = animation_flags_2 | 0x80u;
-			d = offset;
-			d = vector_direction_to_offset(object, target, d);
+			direction_word = offset;
+			direction_word = vector_direction_to_offset(object, target, direction_word);
 			speeds_by_rank = bear_walk_speeds_ADDRESS;
-			stage_boss_walk_by_rank(object, speeds_by_rank, d);
-			return bear_move(object, target);
+			stage_boss_walk_by_rank(object, speeds_by_rank, direction_word);
+			bear_move(object, target);
+			return;
 		}
 		offset = 0x26u;
 		if (facing == 0u)
 		{
-			d = offset;
-			d = vector_direction_to_offset(object, target, d);
+			direction_word = offset;
+			direction_word = vector_direction_to_offset(object, target, direction_word);
 			speeds_by_rank = bear_walk_speeds_ADDRESS;
-			stage_boss_walk_by_rank(object, speeds_by_rank, d);
-			return bear_move(object, target);
+			stage_boss_walk_by_rank(object, speeds_by_rank, direction_word);
+			bear_move(object, target);
+			return;
 		}
 		attributes_3 = OBJECT(object)->attributes;
 		OBJECT(object)->attributes = attributes_3 & 0xBFu;
 		animation_flags_3 = OBJECT(object)->animation_flags;
 		OBJECT(object)->animation_flags = animation_flags_3 | 0x80u;
-		d = offset;
-		d = vector_direction_to_offset(object, target, d);
+		direction_word = offset;
+		direction_word = vector_direction_to_offset(object, target, direction_word);
 		speeds_by_rank = bear_walk_speeds_ADDRESS;
-		stage_boss_walk_by_rank(object, speeds_by_rank, d);
-		return bear_move(object, target);
+		stage_boss_walk_by_rank(object, speeds_by_rank, direction_word);
+		bear_move(object, target);
+		return;
 	}
 	command = 0x6A00u;
 	carry = vector_queue_sound(command);
@@ -811,7 +771,8 @@ uint16_t bear_walk(uint16_t object)
 			animation_number = 0x81FAu;
 			stage_boss_set_state(object, state_wait, animation_number);
 			stage_boss_shield(object);
-			return bear_swipe(object, player);
+			bear_swipe(object, player);
+			return;
 		}
 	}
 	attack_health = OBJECT(object)->bear.attack_health;
@@ -823,7 +784,8 @@ uint16_t bear_walk(uint16_t object)
 		state_wait = 0x1101u;
 		animation_number = 0x8AFAu;
 		stage_boss_set_state(object, state_wait, animation_number);
-		return bear_move(object, player);
+		bear_move(object, player);
+		return;
 	}
 	object_2 = 0x7E63u;
 	stack = 0x11u;
@@ -831,92 +793,101 @@ uint16_t bear_walk(uint16_t object)
 	state_wait = ((uint32_t)stack << 8) | stack_10002;
 	animation_number = 0x8AFAu;
 	stage_boss_set_state(object, state_wait, animation_number);
-	return bear_move(object, object_2);
+	bear_move(object, object_2);
 }
 
 /* After its wind-up, charges across the screen */
-uint16_t bear_start_charge(uint16_t object, uint16_t enemy_handlers)
+void bear_start_charge(uint16_t object, uint16_t enemy_handlers)
 {
-	uint8_t a = 0, d = 0;
+	uint8_t speed_high = 0, speed_low = 0;
 	uint16_t animation_number = 0, box = 0, state_wait = 0;
 	uint8_t stack = 0;
-	uint8_t animation_flags = 0, attributes = 0, t2 = 0;
-	uint16_t t1 = 0, t3 = 0;
+	uint8_t animation_flags = 0, attributes = 0, facing = 0;
+	uint16_t charge_speed = 0, reversed_speed = 0;
 
 	animation_flags = OBJECT(object)->animation_flags;
 	if ((animation_flags & 1u) == 0u)
-		return bear_charge_check_hit(object, enemy_handlers);
+	{
+		bear_charge_check_hit(object, enemy_handlers);
+		return;
+	}
 	OBJECT(object)->flags = 0xC0u;
 	state_wait = 0xA00u;
 	animation_number = 0x8C00u;
 	stage_boss_set_state(object, state_wait, animation_number);
-	t1 = bear_charge_speeds_by_rank[((rank >> 1) & ~1u) / 2u];
-	d = (uint8_t)t1;
-	stack = t1 >> 8;
+	charge_speed = bear_charge_speeds_by_rank[((rank >> 1) & ~1u) / 2u];
+	speed_low = (uint8_t)charge_speed;
+	stack = charge_speed >> 8;
 	attributes = OBJECT(object)->attributes;
-	t2 = attributes & 0x40u;
-	a = stack;
-	if (t2 != 0u)
+	facing = attributes & 0x40u;
+	speed_high = stack;
+	if (facing != 0u)
 	{
-		t3 = 0u - (((uint32_t)a << 8) | (d & 0xFFu));
-		d = (uint8_t)t3;
-		a = (uint8_t)(t3 >> 8);
+		reversed_speed = 0u - (((uint32_t)speed_high << 8) | (speed_low & 0xFFu));
+		speed_low = (uint8_t)reversed_speed;
+		speed_high = (uint8_t)(reversed_speed >> 8);
 	}
-	OBJECT(object)->x_speed = ((uint32_t)a << 8) | (d & 0xFFu);
+	OBJECT(object)->x_speed = ((uint32_t)speed_high << 8) | (speed_low & 0xFFu);
 	box = bear_charge_box_ADDRESS;
 	stage_boss_set_hit_box(object, box);
-	return bear_charge_check_hit(object, enemy_handlers);
+	bear_charge_check_hit(object, enemy_handlers);
 }
 
 /* Its hits while charging: flashes, or beaten */
-uint16_t bear_charge_check_hit(uint16_t object, uint16_t u)
+void bear_charge_check_hit(uint16_t object, uint16_t u)
 {
 	uint32_t zero = 0, negative = 0, carry = 0;
-	uint16_t request = 0, y = 0;
+	uint16_t health_limits = 0, request = 0;
 
-	y = bear_beaten_vitality_ADDRESS;
-	stage_boss_check_hit(object, y, &u, &zero, &negative);
+	leftover_y = bear_beaten_vitality_ADDRESS;
+	health_limits = bear_beaten_vitality_ADDRESS;
+	stage_boss_check_hit(object, health_limits, &u, &zero, &negative);
 	if (zero)
 	{
-		stage_boss_move_on_screen(object, &y, &carry);
-		return y;
+		carry = stage_boss_move_on_screen(object);
+		return;
 	}
 	if (negative)
-		return bear_beaten(object);
+	{
+		bear_beaten(object);
+		return;
+	}
 	palette_request_kind = 2u;
 	request = 0x27u;
-	vector_palette_request(request, &y, &u);
+	vector_palette_request(u, request);
 	OBJECT(object)->flags = 0xC4u;
-	stage_boss_move_on_screen(object, &y, &carry);
-	return y;
+	carry = stage_boss_move_on_screen(object);
 }
 
 /* Hurts while it charges; stops into a pose, then gets up */
-uint16_t bear_charge(uint16_t object)
+void bear_charge(uint16_t object)
 {
-	uint8_t d = 0;
-	uint16_t animation_number = 0, state_wait = 0, u = 0;
-	uint16_t t1 = 0, x_speed = 0;
+	uint8_t speed_low = 0;
+	uint16_t animation_number = 0, charge_x = 0, state_wait = 0;
+	uint16_t bear_x = 0, x_speed = 0;
 
 	OBJECT(object)->damage = 8u;
 	OBJECT(object)->attack = 9u;
-	t1 = OBJECT(object)->x;
-	u = t1;
+	bear_x = OBJECT(object)->x;
+	charge_x = bear_x;
 	x_speed = OBJECT(object)->x_speed;
-	d = (uint8_t)x_speed;
+	speed_low = (uint8_t)x_speed;
 	if (x_speed != 0u)
-		return bear_charge_check_hit(object, u);
+	{
+		bear_charge_check_hit(object, charge_x);
+		return;
+	}
 	OBJECT(object)->damage = 0u;
 	OBJECT(object)->attack = 0u;
 	OBJECT(object)->flags = 0xC0u;
 	state_wait = 0x1000u;
-	animation_number = (d & 0xFFu) | 0x8800u;
+	animation_number = (speed_low & 0xFFu) | 0x8800u;
 	stage_boss_set_state(object, state_wait, animation_number);
-	return bear_charge_check_hit(object, u);
+	bear_charge_check_hit(object, charge_x);
 }
 
 /* Gets up unhurtable, then turns to a player */
-uint16_t bear_get_up(uint16_t object, uint16_t object_2)
+void bear_get_up(uint16_t object, uint16_t object_2)
 {
 	uint16_t state_wait = 0;
 	uint8_t animation_flags = 0;
@@ -924,13 +895,16 @@ uint16_t bear_get_up(uint16_t object, uint16_t object_2)
 	stage_boss_shield(object);
 	animation_flags = OBJECT(object)->animation_flags;
 	if ((animation_flags & 1u) == 0u)
-		return bear_move(object, object_2);
+	{
+		bear_move(object, object_2);
+		return;
+	}
 	state_wait = 0x603u;
-	return bear_face_player(object, state_wait);
+	bear_face_player(object, state_wait);
 }
 
 /* Waits before its swipe, then swipes */
-uint16_t bear_attack_wait(uint16_t object, uint16_t object_2)
+void bear_attack_wait(uint16_t object, uint16_t object_2)
 {
 	uint16_t animation_number = 0, state_wait = 0;
 	uint8_t wait = 0;
@@ -938,16 +912,19 @@ uint16_t bear_attack_wait(uint16_t object, uint16_t object_2)
 	wait = OBJECT(object)->bear.wait;
 	OBJECT(object)->bear.wait = wait - 1u;
 	if (wait != 1u)
-		return bear_move(object, object_2);
+	{
+		bear_move(object, object_2);
+		return;
+	}
 	state_wait = 0x800u;
 	animation_number = 0x8100u;
 	stage_boss_set_state(object, state_wait, animation_number);
 	stage_boss_shield(object);
-	return bear_swipe(object, object_2);
+	bear_swipe(object, object_2);
 }
 
 /* Its swipe's damage on the attack frames */
-uint16_t bear_swipe(uint16_t object, uint16_t object_2)
+void bear_swipe(uint16_t object, uint16_t object_2)
 {
 	uint32_t carry = 0;
 	uint16_t damage = 0;
@@ -955,38 +932,47 @@ uint16_t bear_swipe(uint16_t object, uint16_t object_2)
 	damage = 0x80Au;
 	carry = stage_boss_attack_frame(object, damage);
 	if (carry)
-		return bear_turn_to_player(object);
-	return bear_check_hit(object, object_2);
+	{
+		bear_turn_to_player(object);
+		return;
+	}
+	bear_check_hit(object, object_2);
 }
 
 /* Moves until its animation ends, then turns to a player */
-uint16_t bear_recover(uint16_t object)
+void bear_recover(uint16_t object)
 {
 	uint32_t carry = 0;
-	uint16_t ignored16 = 0, y = 0;
+	uint16_t state_wait = 0;
 	uint8_t animation_flags = 0;
 
-	stage_boss_move_on_screen(object, &ignored16, &carry);
-	y = 0x601u;
+	carry = stage_boss_move_on_screen(object);
+	leftover_y = 0x601u;
 	animation_flags = OBJECT(object)->animation_flags;
 	if ((animation_flags & 1u) != 0u)
-		return bear_face_player(object, y);
-	return y;
+	{
+		state_wait = (uint16_t)leftover_y;
+		bear_face_player(object, state_wait);
+		return;
+	}
 }
 
 /* Knocked down: lands shaking the screen, maybe bringing boulders down */
-uint16_t bear_knocked_down(uint16_t object, uint16_t states)
+void bear_knocked_down(uint16_t object)
 {
 	uint32_t carry = 0;
-	uint16_t ignored16 = 0, ignored16_2 = 0, object_2 = 0, x_speed = 0;
+	uint16_t ignored16 = 0, ignored16_2 = 0, ignored16_3 = 0, object_2 = 0;
 	uint8_t wait = 0, wait_2 = 0;
 
-	stage_boss_move_on_screen(object, &states, &carry);
+	carry = stage_boss_move_on_screen(object);
 	if (carry == 0u)
-		return states;
+		return;
 	wait = OBJECT(object)->bear.wait;
 	if (wait == 0u)
-		return bear_land(object, states);
+	{
+		bear_land(object);
+		return;
+	}
 	wait_2 = OBJECT(object)->bear.wait;
 	OBJECT(object)->bear.wait = wait_2 - 1u;
 	if (wait_2 != 1u)
@@ -996,82 +982,91 @@ uint16_t bear_knocked_down(uint16_t object, uint16_t states)
 		if ((int8_t)rank <= 0xC)
 		{
 			if ((int8_t)random_number >= 0)
-				return bear_land(object, states);
-			x_speed = 0x280u;
+			{
+				bear_land(object);
+				return;
+			}
+			leftover_y = 0x280u;
 			object_2 = 0x400u;
-			stage_boss_knock_away(object, &x_speed, &object_2);
-			return x_speed;
+			stage_boss_knock_away(object, object_2);
+			return;
 		}
-		states = bear_boulder_child_1_ADDRESS;
-		vector_spawn_child(object, states, &ignored16, &ignored16_2, &carry);
+		leftover_y = bear_boulder_child_1_ADDRESS;
+		vector_spawn_child(object, &ignored16, &ignored16_2, &ignored16_3, &carry);
 		if ((int8_t)rank <= 0x14)
 		{
 			if ((int8_t)random_number >= 0)
-				return bear_land(object, states);
-			x_speed = 0x280u;
+			{
+				bear_land(object);
+				return;
+			}
+			leftover_y = 0x280u;
 			object_2 = 0x400u;
-			stage_boss_knock_away(object, &x_speed, &object_2);
-			return x_speed;
+			stage_boss_knock_away(object, object_2);
+			return;
 		}
-		states = bear_boulder_child_1_ADDRESS;
-		vector_spawn_child(object, states, &ignored16, &ignored16_2, &carry);
+		leftover_y = bear_boulder_child_1_ADDRESS;
+		vector_spawn_child(object, &ignored16, &ignored16_2, &ignored16_3, &carry);
 		if ((int8_t)random_number >= 0)
-			return bear_land(object, states);
-		x_speed = 0x280u;
+		{
+			bear_land(object);
+			return;
+		}
+		leftover_y = 0x280u;
 		object_2 = 0x400u;
-		stage_boss_knock_away(object, &x_speed, &object_2);
-		return x_speed;
+		stage_boss_knock_away(object, object_2);
+		return;
 	}
 	screen_shake_on = 1u;
 	screen_shake_kind = 1u;
 	if ((int8_t)rank <= 8)
-		return states;
-	states = bear_boulder_child_1_ADDRESS;
-	vector_spawn_child(object, states, &ignored16, &ignored16_2, &carry);
+		return;
+	leftover_y = bear_boulder_child_1_ADDRESS;
+	vector_spawn_child(object, &ignored16, &ignored16_2, &ignored16_3, &carry);
 	if ((int8_t)rank > 0xF)
 	{
-		states = bear_boulder_child_1_ADDRESS;
-		vector_spawn_child(object, states, &ignored16, &ignored16_2, &carry);
+		leftover_y = bear_boulder_child_1_ADDRESS;
+		vector_spawn_child(object, &ignored16, &ignored16_2, &ignored16_3, &carry);
 	}
-	return states;
 }
 
 /* Unused: lands the bear, stopping its x speed when it is outside the area it keeps to. */
-void unused_bear_land_in_area(uint16_t x)
+void unused_bear_land_in_area(uint16_t object)
 {
 	uint16_t place_x = 0;
-	uint16_t t1 = 0;
+	uint16_t current_x = 0;
 
-	t1 = mem_read16(x + 0xCu);
-	place_x = t1;
+	current_x = OBJECT(object)->x;
+	place_x = current_x;
 	if ((int16_t)place_x >= 0x70 || (int16_t)place_x <= 0x140)
 	{
-		bear_land(x, place_x);
+		bear_land(object);
 		return;
 	}
-	mem_write16(x + 0xFu, 0u);
-	bear_land(x, place_x);
+	OBJECT(object)->x_speed = 0;
+	bear_land(object);
 }
 
 /* Its landing after a knock-down: recovers (a longer animation every fourth time), or, beaten, starts
    its change */
-uint16_t bear_land(uint16_t object, uint16_t y)
+void bear_land(uint16_t object)
 {
-	uint16_t animation_number = 0, state_wait = 0, y_2 = 0;
+	uint16_t animation_number = 0, state_wait = 0;
 	uint8_t vitality = 0, bounces = 0, bounces_2 = 0, animation_flags = 0;
 
 	vitality = OBJECT(object)->vitality;
 	if (vitality == 0u)
 	{
-		y_2 = 0xDC8u;
+		leftover_y = 0xDC8u;
+		state_wait = 0xDC8u;
 		animation_number = 0x8600u;
-		stage_boss_set_state(object, y_2, animation_number);
+		stage_boss_set_state(object, state_wait, animation_number);
 		OBJECT(object)->flags = 0x80u;
 		OBJECT(object)->zoom_x = 0x40u;
 		OBJECT(object)->zoom_y = 0x40u;
 		OBJECT(object)->damage = 0u;
 		OBJECT(object)->attack = 0u;
-		return y_2;
+		return;
 	}
 	bounces = OBJECT(object)->bear.bounces;
 	OBJECT(object)->bear.bounces = bounces + 1u;
@@ -1079,22 +1074,23 @@ uint16_t bear_land(uint16_t object, uint16_t y)
 	if (bounces_2 > 3u)
 	{
 		OBJECT(object)->bear.bounces = 0u;
+		leftover_y = 0xF00u;
 		state_wait = 0xF00u;
 		animation_number = 0x8400u;
 		stage_boss_set_state(object, state_wait, animation_number);
-		return state_wait;
+		return;
 	}
 	animation_flags = OBJECT(object)->animation_flags;
 	if ((animation_flags & 1u) == 0u)
-		return y;
+		return;
+	leftover_y = 0x1200u;
 	state_wait = 0x1200u;
 	animation_number = 0x8800u;
 	stage_boss_set_state(object, state_wait, animation_number);
-	return state_wait;
 }
 
 /* Every fourth knock-down's longer animation, then it recovers */
-uint16_t bear_long_get_up(uint16_t object, uint16_t states)
+void bear_long_get_up(uint16_t object)
 {
 	uint16_t animation_number = 0, state_wait = 0;
 	uint8_t animation_flags = 0, animation_flags_2 = 0;
@@ -1105,41 +1101,41 @@ uint16_t bear_long_get_up(uint16_t object, uint16_t states)
 		animation_flags_2 = OBJECT(object)->animation_flags;
 		if ((animation_flags_2 & 1u) != 0u)
 		{
+			leftover_y = 0x1200u;
 			state_wait = 0x1200u;
 			animation_number = 0x8800u;
 			stage_boss_set_state(object, state_wait, animation_number);
-			return state_wait;
+			return;
 		}
 	}
-	return states;
 }
 
 /* Beaten, swells and changes into kind 81 (the fat goon's set) */
-uint16_t bear_change(uint16_t object, uint16_t states)
+void bear_change(uint16_t object)
 {
 	uint32_t carry = 0;
 	uint8_t wait = 0, zoom = 0;
-	uint16_t d = 0, ignored16 = 0;
-	uint8_t t1 = 0, t2 = 0, zoom_x = 0;
+	uint16_t child_z = 0, ignored16 = 0, ignored16_2 = 0;
+	uint8_t wait_before = 0, wait_left = 0, zoom_x = 0;
 
-	t1 = io_read8(0x2Fu);
-	io_write8(0x2Fu, t1 - 1u);
-	if (t1 == 1u)
+	wait_before = io_read8(0x2Fu);
+	io_write8(0x2Fu, wait_before - 1u);
+	if (wait_before == 1u)
 	{
 		OBJECT(object)->bear.phase = 0xEu;
 		OBJECT(object)->bear.wait = 0x78u;
 		OBJECT(object)->kind = 0x81u;
 		OBJECT(object)->animation = 0xBBu;
 		bear_changed(object);
-		return states;
+		return;
 	}
-	t2 = io_read8(0x2Fu);
-	wait = t2;
+	wait_left = io_read8(0x2Fu);
+	wait = wait_left;
 	if (wait == 0x11u)
 	{
-		states = bear_change_child_ADDRESS;
-		vector_spawn_child(object, states, &ignored16, &d, &carry);
-		wait = (uint8_t)(d >> 8);
+		leftover_y = bear_change_child_ADDRESS;
+		vector_spawn_child(object, &ignored16, &ignored16_2, &child_z, &carry);
+		wait = (uint8_t)(child_z >> 8);
 	}
 	if (wait <= 0x28u)
 	{
@@ -1149,7 +1145,6 @@ uint16_t bear_change(uint16_t object, uint16_t states)
 		OBJECT(object)->zoom_x = zoom;
 		OBJECT(object)->zoom_y = zoom;
 	}
-	return states;
 }
 
 /* Waits as its new self, then blinks out */
@@ -1185,41 +1180,46 @@ void bear_defeated(uint16_t object)
 }
 
 /* Moves it on the screen, then decides whether to charge */
-uint16_t bear_move(uint16_t object, uint16_t object_2)
+void bear_move(uint16_t object, uint16_t object_2)
 {
 	uint32_t carry = 0;
-	uint16_t ignored16 = 0;
 
-	stage_boss_move_on_screen(object, &ignored16, &carry);
+	carry = stage_boss_move_on_screen(object);
 	OBJECT(object)->bear.charged = 0u;
-	return bear_think(object, object_2);
+	bear_think(object, object_2);
 }
 
 /* Charges now and then (more often with more players), unless a lone player is down */
-uint16_t bear_think(uint16_t object, uint16_t object_2)
+void bear_think(uint16_t object, uint16_t object_2)
 {
 	uint32_t carry = 0;
 	uint16_t animation_number = 0, bear_x = 0, command = 0, state_wait = 0;
 	uint8_t stack = 0;
 	uint8_t charge_timer = 0;
-	uint16_t t1 = 0;
+	uint16_t x_now = 0;
 
 	OBJECT(object)->flags |= 0xC0u;
 	stack = ((((uint32_t)player_count << 1) << 1) << 1) << 1;
 	charge_timer = OBJECT(object)->bear.charge_timer;
 	if (charge_timer < (uint8_t)(0x96u - stack))
-		return bear_check_hit(object, object_2);
+	{
+		bear_check_hit(object, object_2);
+		return;
+	}
 	OBJECT(object)->bear.charge_timer = 0u;
 	if (player_count == 1u)
 	{
 		carry = stage_boss_any_player_down();
 		if (carry)
-			return bear_check_hit(object, object_2);
+		{
+			bear_check_hit(object, object_2);
+			return;
+		}
 	}
 	command = 0x7400u;
 	carry = vector_queue_sound(command);
-	t1 = OBJECT(object)->x;
-	bear_x = t1;
+	x_now = OBJECT(object)->x;
+	bear_x = x_now;
 	if ((int16_t)bear_x >= 0x58)
 	{
 		if ((int16_t)bear_x > 0x162)
@@ -1230,57 +1230,64 @@ uint16_t bear_think(uint16_t object, uint16_t object_2)
 	state_wait = 0x900u;
 	animation_number = 0x8B00u;
 	stage_boss_set_state(object, state_wait, animation_number);
-	return bear_check_hit(object, object_2);
+	bear_check_hit(object, object_2);
 }
 
 /* Its hits: flinches with a flash, is knocked down or beaten */
-uint16_t bear_check_hit(uint16_t object, uint16_t object_2)
+void bear_check_hit(uint16_t object, uint16_t object_2)
 {
 	uint32_t zero = 0, negative = 0, carry = 0;
 	uint8_t flinch_animation = 0;
-	uint16_t animation_number = 0, ignored16 = 0, request = 0, y = 0;
+	uint16_t animation_number = 0, health_limits = 0, request = 0, state_wait = 0;
 	uint8_t charge_timer = 0, charge_timer_2 = 0, attributes = 0, attributes_2 = 0, vitality = 0, flinch_health = 0, vitality_2 = 0;
 
-	stage_boss_move_on_screen(object, &ignored16, &carry);
+	carry = stage_boss_move_on_screen(object);
 	charge_timer = OBJECT(object)->bear.charge_timer;
 	if (charge_timer != 0xFFu)
 	{
 		charge_timer_2 = OBJECT(object)->bear.charge_timer;
 		OBJECT(object)->bear.charge_timer = charge_timer_2 + 1u;
 	}
-	y = bear_beaten_vitality_ADDRESS;
-	stage_boss_check_hit(object, y, &object_2, &zero, &negative);
+	leftover_y = bear_beaten_vitality_ADDRESS;
+	health_limits = bear_beaten_vitality_ADDRESS;
+	stage_boss_check_hit(object, health_limits, &object_2, &zero, &negative);
 	if (zero)
-		return y;
+		return;
 	attributes = OBJECT(object)->attributes;
 	attributes_2 = OBJECT(object_2)->attributes;
 	if ((attributes ^ attributes_2) == 0u)
 	{
-		y = 0xB00u;
+		leftover_y = 0xB00u;
 		flinch_animation = 0x83u;
 	}
 	else
 	{
-		y = 0xB00u;
+		leftover_y = 0xB00u;
 		flinch_animation = 0x82u;
 	}
+	state_wait = (uint16_t)leftover_y;
 	animation_number = (uint32_t)flinch_animation << 8;
-	stage_boss_set_state(object, y, animation_number);
+	stage_boss_set_state(object, state_wait, animation_number);
 	palette_request_kind = 2u;
 	request = 0x27u;
-	vector_palette_request(request, &y, &object_2);
+	vector_palette_request(object_2, request);
 	vitality = OBJECT(object)->vitality;
 	if (vitality == 0u)
-		return bear_beaten(object);
+	{
+		bear_beaten(object);
+		return;
+	}
 	flinch_health = OBJECT(object)->bear.flinch_health;
 	vitality_2 = OBJECT(object)->vitality;
 	if ((uint8_t)(flinch_health - vitality_2) > 0xCu)
-		return bear_knocked_away(object);
-	return y;
+	{
+		bear_knocked_away(object);
+		return;
+	}
 }
 
 /* Stops the sounds, plays boss_defeated and knocks it away */
-uint16_t bear_beaten(uint16_t object)
+void bear_beaten(uint16_t object)
 {
 	uint32_t carry = 0;
 	uint16_t command = 0;
@@ -1289,13 +1296,13 @@ uint16_t bear_beaten(uint16_t object)
 	carry = vector_queue_sound(command);
 	command = 0x9800u;
 	carry = vector_queue_sound_unless_attract(command);
-	return bear_knocked_away(object);
+	bear_knocked_away(object);
 }
 
 /* Knocked away, shaking the screen */
-uint16_t bear_knocked_away(uint16_t object)
+void bear_knocked_away(uint16_t object)
 {
-	uint16_t animation_number = 0, object_2 = 0, state_wait = 0, x_speed = 0;
+	uint16_t animation_number = 0, object_2 = 0, state_wait = 0;
 	uint8_t vitality = 0;
 
 	vitality = OBJECT(object)->vitality;
@@ -1306,7 +1313,6 @@ uint16_t bear_knocked_away(uint16_t object)
 	screen_shake_on = 1u;
 	screen_shake_kind = 1u;
 	object_2 = 0x500u;
-	x_speed = 0x380u;
-	stage_boss_knock_away(object, &x_speed, &object_2);
-	return x_speed;
+	leftover_y = 0x380u;
+	stage_boss_knock_away(object, object_2);
 }

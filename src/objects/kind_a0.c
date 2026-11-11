@@ -3,7 +3,7 @@
  *    Description: the small kind A0 creature that comes in or is launched from the shaking scenery
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    10-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -12,15 +12,15 @@
 #include "game.h"
 
 /* Sets the creature up by its spawn's state: coming in, sitting still, or hidden on the shaking scenery. */
-void kind_a0_start(uint16_t object, uint16_t *p_box, uint16_t *p_kind_a0_entry)
+uint16_t kind_a0_start(uint16_t object)
 {
 	uint8_t parameter_low = 0, spawn_parameter = 0;
-	uint16_t box = 0, kind_a0_entry = 0;
-	uint8_t attributes = 0, parameter = 0, parameter_2 = 0, frames = 0, state = 0, t2 = 0;
-	uint16_t z_speed = 0, x_speed = 0, t1 = 0;
+	uint16_t kind_a0_entry = 0, u = 0;
+	uint8_t attributes = 0, parameter = 0, parameter_2 = 0, frames = 0, state = 0, masked_parameter = 0;
+	uint16_t z_speed = 0, x_speed = 0, entry_x = 0;
 
-	kind_a0_entry = kind_a0_setup_ADDRESS;
-	box = vector_object_setup(object, kind_a0_entry);
+	u = kind_a0_setup_ADDRESS;
+	vector_object_setup(object, u);
 	OBJECT(object)->shadow_player = 2u;
 	attributes = OBJECT(object)->attributes;
 	OBJECT(object)->attributes = (attributes & 0xCFu) | 0x10u;
@@ -35,34 +35,29 @@ void kind_a0_start(uint16_t object, uint16_t *p_box, uint16_t *p_kind_a0_entry)
 		OBJECT(object)->z_speed = z_speed;
 		x_speed = KIND_A0_ENTRY(kind_a0_entry)->x_speed;
 		OBJECT(object)->x_speed = x_speed;
-		t1 = KIND_A0_ENTRY(kind_a0_entry)->x;
-		OBJECT(object)->x = t1;
+		entry_x = KIND_A0_ENTRY(kind_a0_entry)->x;
+		OBJECT(object)->x = entry_x;
 		frames = KIND_A0_ENTRY(kind_a0_entry)->frames;
 		OBJECT(object)->timer = frames;
 		kind_a0_take_floor(object);
 		state = OBJECT(object)->state;
 		OBJECT(object)->state = state + 1u;
 		face_movement(object);
+		return kind_a0_entry;
 	}
-	else
+	masked_parameter = spawn_parameter & 0x7Fu;
+	parameter_low = masked_parameter;
+	if (masked_parameter == 0u)
 	{
-		t2 = spawn_parameter & 0x7Fu;
-		parameter_low = t2;
-		if (t2 == 0u)
-		{
-			OBJECT(object)->animation = 0x83u;
-			OBJECT(object)->state = 3u;
-		}
-		else
-		{
-			OBJECT(object)->parameter = parameter_low - 1u;
-			OBJECT(object)->flags = 4u;
-			OBJECT(object)->animation = 0x82u;
-			OBJECT(object)->state = 8u;
-		}
+		OBJECT(object)->animation = 0x83u;
+		OBJECT(object)->state = 3u;
+		return u;
 	}
-	*p_box = box;
-	*p_kind_a0_entry = kind_a0_entry;
+	OBJECT(object)->parameter = parameter_low - 1u;
+	OBJECT(object)->flags = 4u;
+	OBJECT(object)->animation = 0x82u;
+	OBJECT(object)->state = 8u;
+	return u;
 }
 
 /* Moves in for its frames, then stops moving across. */
@@ -101,11 +96,11 @@ void kind_a0_take_floor(uint16_t object)
 void kind_a0_land(uint16_t object)
 {
 	uint32_t carry = 0;
-	uint16_t z_speed = 0, t1 = 0;
+	uint16_t z_speed = 0, new_z_speed = 0;
 
 	z_speed = OBJECT(object)->z_speed;
-	t1 = z_speed - 0x20u;
-	OBJECT(object)->z_speed = t1;
+	new_z_speed = z_speed - 0x20u;
+	OBJECT(object)->z_speed = new_z_speed;
 	carry = vector_check_landing(object);
 	if (carry)
 	{
@@ -120,12 +115,12 @@ void kind_a0_land(uint16_t object)
 void kind_a0_sit(uint16_t object)
 {
 	uint8_t animation = 0, attributes = 0;
-	uint16_t t1 = 0;
+	uint16_t screen_x = 0;
 
 	if ((OBJECT(object)->flags & 0x20u) == 0u)
 	{
-		t1 = OBJECT(object)->x;
-		if (t1 >= 0xE0u)
+		screen_x = OBJECT(object)->x;
+		if (screen_x >= 0xE0u)
 		{
 			if ((frame_count & 0x3Fu) == 0u)
 			{
@@ -227,12 +222,12 @@ uint16_t kind_a0_wait_launch(uint16_t object)
 {
 	uint16_t kind_a0_launch = 0, scenery = 0;
 	uint8_t parameter = 0, parameter_2 = 0, state = 0;
-	uint16_t parent = 0, t1 = 0, x_speed = 0, y_speed = 0, z_speed = 0, parent_x = 0;
+	uint16_t parent = 0, scenery_x = 0, x_speed = 0, y_speed = 0, z_speed = 0, parent_x = 0;
 
 	parent = OBJECT(object)->parent;
 	scenery = parent;
-	t1 = OBJECT(scenery)->x;
-	if (t1 >= 0x160u)
+	scenery_x = OBJECT(scenery)->x;
+	if (scenery_x >= 0x160u)
 		return scenery;
 	OBJECT(object)->flags = 0x88u;
 	parameter = OBJECT(object)->parameter;
@@ -263,10 +258,10 @@ uint16_t kind_a0_wait_launch(uint16_t object)
    from above. */
 uint16_t kind_a0_launch_fly(uint16_t object, uint16_t states)
 {
-	uint8_t a = 0;
+	uint8_t parameter_or_timer = 0;
 	uint16_t scenery = 0;
 	uint8_t timer = 0, parameter = 0, state = 0, parameter_2 = 0, timer_2 = 0;
-	uint16_t parent = 0, zoom_x = 0, t1 = 0;
+	uint16_t parent = 0, zoom_x = 0, new_zoom = 0;
 
 	timer = OBJECT(object)->timer;
 	OBJECT(object)->timer = timer - 1u;
@@ -289,25 +284,25 @@ uint16_t kind_a0_launch_fly(uint16_t object, uint16_t states)
 		return scenery;
 	}
 	parameter_2 = OBJECT(object)->parameter;
-	a = parameter_2;
-	if (a != 2u)
+	parameter_or_timer = parameter_2;
+	if (parameter_or_timer != 2u)
 	{
-		if (a == 8u)
+		if (parameter_or_timer == 8u)
 			OBJECT(object)->animation = 0x82u;
 		return states;
 	}
 	OBJECT(object)->flags = 0x98u;
 	timer_2 = OBJECT(object)->timer;
-	a = timer_2;
-	if (a >= 0x30u)
+	parameter_or_timer = timer_2;
+	if (parameter_or_timer >= 0x30u)
 	{
 		zoom_x = (((uint32_t)OBJECT(object)->zoom_x << 8u) | OBJECT(object)->zoom_y);
-		t1 = zoom_x + 0x303u;
-		OBJECT(object)->zoom_x = (uint8_t)(t1 >> 8u);
-		OBJECT(object)->zoom_y = (uint8_t)t1;
+		new_zoom = zoom_x + 0x303u;
+		OBJECT(object)->zoom_x = (uint8_t)(new_zoom >> 8u);
+		OBJECT(object)->zoom_y = (uint8_t)new_zoom;
 		return states;
 	}
-	if (a == 8u)
+	if (parameter_or_timer == 8u)
 		OBJECT(object)->animation = 0x82u;
 	return states;
 }
@@ -318,7 +313,7 @@ uint16_t kind_a0_sit_on_scenery(uint16_t object)
 {
 	uint16_t scenery = 0;
 	uint8_t parameter = 0, animation = 0, attributes = 0;
-	uint16_t parent = 0, t1 = 0, parent_x = 0;
+	uint16_t parent = 0, scenery_x = 0, parent_x = 0;
 
 	parameter = OBJECT(object)->parameter;
 	if (((random_number + parameter) & 0x3Fu) == 0u)
@@ -341,9 +336,9 @@ uint16_t kind_a0_sit_on_scenery(uint16_t object)
 	}
 	if ((OBJECT(object)->flags & 0x20u) == 0u)
 	{
-		t1 = OBJECT(scenery)->x;
+		scenery_x = OBJECT(scenery)->x;
 		parent_x = OBJECT(object)->kind_a0.parent_x;
-		if (parent_x <= t1)
+		if (parent_x <= scenery_x)
 			return scenery;
 	}
 	OBJECT(scenery)->state = 0xFDu;

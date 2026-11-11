@@ -3,7 +3,7 @@
  *    Description: the attract's export warning (skipped in this set)
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    10-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -12,7 +12,7 @@
 #include "game.h"
 
 /* The attract's export warning step, by mode_phase */
-void attract_warning(uint16_t y, uint16_t u)
+void attract_warning(uint16_t u)
 {
 	for (;;)
 	{
@@ -39,21 +39,21 @@ void attract_warning(uint16_t y, uint16_t u)
 		case 12:
 			break;
 		case -40:
-			attract_opening_scene(y, u);
+			attract_opening_scene(u);
 			return;
 		case -38:
-			attract_demo(y, u);
+			attract_demo(u);
 			return;
 		case -36:
-			attract_title(y, u);
+			attract_title(u);
 			return;
 		case -34:
-			attract_high_scores(y, u);
+			attract_high_scores(u);
 			return;
 		case -32:
 			continue;
 		case -30:
-			attract_coin_title(y, u);
+			attract_coin_title(u);
 			return;
 		case -28:
 			attract_clear_screen();
@@ -62,7 +62,7 @@ void attract_warning(uint16_t y, uint16_t u)
 			attract_wait_clear();
 			return;
 		case -24:
-			attract_opening_run(y, u);
+			attract_opening_run(u);
 			return;
 		case -22:
 			attract_next_scene();
@@ -112,11 +112,11 @@ void warning_skip(uint16_t palette_job)
 /* Unused: would start the export warning, with its palettes and the tile layers' clear */
 void warning_start(uint16_t palette_job)
 {
-	uint16_t ignored16 = 0, job = 0, request = 0;
+	uint16_t job = 0, request = 0;
 
 	palette_request_kind = 1u;
 	request = 0xF07u;
-	palette_request(request, &ignored16, &palette_job);
+	palette_request(palette_job, request);
 	job = 0u;
 	queue_job(job);
 	mode_phase++;
@@ -125,7 +125,7 @@ void warning_start(uint16_t palette_job)
 /* Never reached: prints WARNING and the first page of the export warning once the layers are clear */
 void warning_first_page(void)
 {
-	uint16_t ignored16 = 0, request = 0, text_number = 0, u = 0;
+	uint16_t request = 0, text_number = 0, u = 0;
 
 	if (layer_clear_pending != 0u)
 		return;
@@ -137,7 +137,7 @@ void warning_first_page(void)
 	u = print_game_text(text_number);
 	palette_request_kind = 3u;
 	request = 0x6D6Bu;
-	palette_request(request, &ignored16, &u);
+	palette_request(u, request);
 	attract_timer = 0u;
 	mode_phase++;
 }
@@ -146,11 +146,11 @@ void warning_first_page(void)
 void warning_second_page(void)
 {
 	uint16_t text_number = 0;
-	uint8_t t1 = 0;
+	uint8_t wait_left = 0;
 
-	t1 = attract_timer;
-	attract_timer = t1 - 1u;
-	if (t1 != 1u)
+	wait_left = attract_timer;
+	attract_timer = wait_left - 1u;
+	if (wait_left != 1u)
 		return;
 	text_number = 0x8Eu;
 	print_game_text(text_number);
@@ -162,11 +162,11 @@ void warning_second_page(void)
 /* Never reached: after attract_timer's frames, the warning ends and the attract starts over */
 void warning_end(uint16_t palette_job)
 {
-	uint8_t t1 = 0;
+	uint8_t wait_left = 0;
 
-	t1 = attract_timer;
-	attract_timer = t1 - 1u;
-	if (t1 != 1u)
+	wait_left = attract_timer;
+	attract_timer = wait_left - 1u;
+	if (wait_left != 1u)
 		return;
 	attract_restart(palette_job);
 }
@@ -174,11 +174,11 @@ void warning_end(uint16_t palette_job)
 /* Starts the attract over from its first step, the characters' profiles */
 void attract_restart(uint16_t palette_job)
 {
-	uint16_t ignored16 = 0, request = 0;
+	uint16_t request = 0;
 
 	palette_request_kind = 3u;
 	request = 0u;
-	palette_request(request, &ignored16, &palette_job);
+	palette_request(palette_job, request);
 	mode_step++;
 	mode_phase = 0u;
 	game_step = 0u;

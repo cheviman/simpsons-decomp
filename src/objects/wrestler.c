@@ -3,7 +3,7 @@
  *    Description: stage 1's boss, the wrestler
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    09-11-2026
+ *    Modified:    10-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -12,7 +12,7 @@
 #include "game.h"
 
 /* The wrestler beaten (state FD), by its step: a wait, then it blinks out. */
-uint16_t wrestler_beaten(uint16_t object, uint16_t y, uint8_t d)
+void wrestler_beaten(uint16_t object, uint8_t d)
 {
 	uint32_t carry = 0;
 	uint8_t action_index = 0;
@@ -28,99 +28,117 @@ uint16_t wrestler_beaten(uint16_t object, uint16_t y, uint8_t d)
 		switch ((int8_t)(uint8_t)((uint32_t)action_index << 1))
 		{
 		case 0:
-			return wrestler_beaten_wait(object, y, action_handlers);
+			wrestler_beaten_wait(object, action_handlers);
+			return;
 		case 2:
 			wrestler_blink_out(object, d, carry);
-			return y;
+			return;
 		case 4:
 			wrestler_fall(object);
-			return y;
+			return;
 		case 6:
 			wrestler_lie(object);
-			return y;
+			return;
 		case 8:
-			return wrestler_get_up(object, y);
+			wrestler_get_up(object);
+			return;
 		case 10:
 			wrestler_flinch_wait(object);
-			return y;
+			return;
 		case 12:
-			return wrestler_flinch_land(object, y);
+			wrestler_flinch_land(object);
+			return;
 		case 14:
-			return wrestler_put_in(object, y);
+			wrestler_put_in(object);
+			return;
 		case 16:
 			wrestler_entrance_drop(object);
-			return y;
+			return;
 		case 18:
-			return wrestler_entrance_pose(object, y, action_handlers);
+			wrestler_entrance_pose(object, action_handlers);
+			return;
 		case 20:
 			wrestler_entrance_step_out(object);
-			return y;
+			return;
 		case 22:
-			return wrestler_entrance_land(object, y, action_handlers);
+			wrestler_entrance_land(object, action_handlers);
+			return;
 		case 24:
 			wrestler_entrance_stand(object);
-			return y;
+			return;
 		case 26:
 			wrestler_entrance_shout(object);
-			return y;
+			return;
 		case 28:
 			wrestler_entrance_end(object);
-			return y;
+			return;
 		case 30:
 			wrestler_punch_wind_up(object);
-			return y;
+			return;
 		case 32:
 			wrestler_punch_strike(object);
-			return y;
+			return;
 		case 34:
-			return wrestler_punch_recover(object, y);
+			wrestler_punch_recover(object);
+			return;
 		case 36:
-			return wrestler_guarding(object, y);
+			wrestler_guarding(object);
+			return;
 		case 38:
 			wrestler_jump_rise(object);
-			return y;
+			return;
 		case 40:
 			wrestler_jump_land(object);
-			return y;
+			return;
 		case 42:
 			wrestler_jump_recover(object);
-			return y;
+			return;
 		case 44:
-			return wrestler_jump_end(object, y, action_handlers);
+			wrestler_jump_end(object, action_handlers);
+			return;
 		case 46:
 			wrestler_idle_look(object);
-			return y;
+			return;
 		case 48:
 			break;
 		case -22:
 			continue;
 		case -20:
-			return wrestler_knocked_down(object, y, d);
+			wrestler_knocked_down(object, d);
+			return;
 		case -18:
-			return wrestler_flinch(object, y, d);
+			wrestler_flinch(object, d);
+			return;
 		case -16:
-			return wrestler_entrance(object, y, d);
+			wrestler_entrance(object, d);
+			return;
 		case -14:
-			return wrestler_walk(object, y);
+			wrestler_walk(object);
+			return;
 		case -12:
-			return wrestler_punch(object, y, d);
+			wrestler_punch(object, d);
+			return;
 		case -10:
-			return wrestler_guard(object, y, d);
+			wrestler_guard(object, d);
+			return;
 		case -8:
 		case -6:
-			return wrestler_jump(object, y, d);
+			wrestler_jump(object, d);
+			return;
 		case -4:
-			return wrestler_idle(object, y, d);
+			wrestler_idle(object, d);
+			return;
 		case -2:
-			return wrestler_wait_target_up(object, y);
+			wrestler_wait_target_up(object);
+			return;
 		}
 		break;
 	}
-	return wrestler_idle_end(object, y, action_handlers);
+	wrestler_idle_end(object, action_handlers);
 }
 
 /* The wrestler beaten: waits, then a palette flash and a sound (6700). */
-uint16_t wrestler_beaten_wait(uint16_t object, uint16_t y, uint16_t palette_job)
+void wrestler_beaten_wait(uint16_t object, uint16_t palette_job)
 {
 	uint32_t carry = 0;
 	uint16_t command = 0, palette_effect_number = 0;
@@ -129,15 +147,14 @@ uint16_t wrestler_beaten_wait(uint16_t object, uint16_t y, uint16_t palette_job)
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step - 1u;
 	if (action_step != 1u)
-		return y;
+		return;
 	palette_request_kind = 2u;
 	palette_effect_number = 0x20u;
-	vector_palette_request(palette_effect_number, &y, &palette_job);
+	vector_palette_request(palette_job, palette_effect_number);
 	command = 0x6700u;
 	carry = vector_queue_sound(command);
 	action = OBJECT(object)->action;
 	OBJECT(object)->action = action + 1u;
-	return y;
 }
 
 /* The wrestler beaten: blinks for 64 frames, then it and its partner are gone, the boss counts as beaten
@@ -145,15 +162,16 @@ uint16_t wrestler_beaten_wait(uint16_t object, uint16_t y, uint16_t palette_job)
 void wrestler_blink_out(uint16_t object, uint8_t d, uint32_t carry)
 {
 	uint8_t frame_bit = 0;
-	uint8_t t1 = 0, action_step = 0, action_step_2 = 0, points = 0;
+	uint16_t partner_object = 0;
+	uint8_t rotated_once = 0, action_step = 0, action_step_2 = 0, points = 0;
 	uint16_t partner = 0;
 	uint32_t step_subphase_halfword = 0;
 
 	OBJECT(object)->flags &= 0x7Fu;
 	frame_bit = (uint8_t)frame_count & 1u;
-	t1 = (frame_bit >> 1) | (carry << 7);
+	rotated_once = (frame_bit >> 1) | (carry << 7);
 	carry = frame_bit;
-	OBJECT(object)->flags |= (t1 >> 1) | (carry << 7);
+	OBJECT(object)->flags |= (rotated_once >> 1) | (carry << 7);
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step + 1u;
 	action_step_2 = OBJECT(object)->action_step;
@@ -163,7 +181,8 @@ void wrestler_blink_out(uint16_t object, uint8_t d, uint32_t carry)
 		OBJECT(object)->points = points | 0x81u;
 		OBJECT(object)->flags = 0u;
 		partner = OBJECT(object)->wrestler.partner;
-		mem_write8(partner, 0u);
+		partner_object = partner;
+		OBJECT(partner_object)->flags = 0u;
 		boss_beaten = 1u;
 		step_phase++;
 		step_subphase_halfword = 0x100u | (d & 0xFFu);
@@ -173,7 +192,7 @@ void wrestler_blink_out(uint16_t object, uint8_t d, uint32_t carry)
 }
 
 /* The wrestler knocked down (state FE), by its step: falls, lies, gets up. */
-uint16_t wrestler_knocked_down(uint16_t object, uint16_t y, uint8_t d)
+void wrestler_knocked_down(uint16_t object, uint8_t d)
 {
 	uint32_t carry = 0;
 	uint8_t action_index = 0;
@@ -190,101 +209,119 @@ uint16_t wrestler_knocked_down(uint16_t object, uint16_t y, uint8_t d)
 		{
 		case 0:
 			wrestler_fall(object);
-			return y;
+			return;
 		case 2:
 			wrestler_lie(object);
-			return y;
+			return;
 		case 4:
-			return wrestler_get_up(object, y);
+			wrestler_get_up(object);
+			return;
 		case 6:
 			wrestler_flinch_wait(object);
-			return y;
+			return;
 		case 8:
-			return wrestler_flinch_land(object, y);
+			wrestler_flinch_land(object);
+			return;
 		case 10:
-			return wrestler_put_in(object, y);
+			wrestler_put_in(object);
+			return;
 		case 12:
 			wrestler_entrance_drop(object);
-			return y;
+			return;
 		case 14:
-			return wrestler_entrance_pose(object, y, action_handlers);
+			wrestler_entrance_pose(object, action_handlers);
+			return;
 		case 16:
 			wrestler_entrance_step_out(object);
-			return y;
+			return;
 		case 18:
-			return wrestler_entrance_land(object, y, action_handlers);
+			wrestler_entrance_land(object, action_handlers);
+			return;
 		case 20:
 			wrestler_entrance_stand(object);
-			return y;
+			return;
 		case 22:
 			wrestler_entrance_shout(object);
-			return y;
+			return;
 		case 24:
 			wrestler_entrance_end(object);
-			return y;
+			return;
 		case 26:
 			wrestler_punch_wind_up(object);
-			return y;
+			return;
 		case 28:
 			wrestler_punch_strike(object);
-			return y;
+			return;
 		case 30:
-			return wrestler_punch_recover(object, y);
+			wrestler_punch_recover(object);
+			return;
 		case 32:
-			return wrestler_guarding(object, y);
+			wrestler_guarding(object);
+			return;
 		case 34:
 			wrestler_jump_rise(object);
-			return y;
+			return;
 		case 36:
 			wrestler_jump_land(object);
-			return y;
+			return;
 		case 38:
 			wrestler_jump_recover(object);
-			return y;
+			return;
 		case 40:
-			return wrestler_jump_end(object, y, action_handlers);
+			wrestler_jump_end(object, action_handlers);
+			return;
 		case 42:
 			wrestler_idle_look(object);
-			return y;
+			return;
 		case 44:
 			break;
 		case -26:
-			return wrestler_beaten(object, y, d);
+			wrestler_beaten(object, d);
+			return;
 		case -24:
 			continue;
 		case -22:
-			return wrestler_flinch(object, y, d);
+			wrestler_flinch(object, d);
+			return;
 		case -20:
-			return wrestler_entrance(object, y, d);
+			wrestler_entrance(object, d);
+			return;
 		case -18:
-			return wrestler_walk(object, y);
+			wrestler_walk(object);
+			return;
 		case -16:
-			return wrestler_punch(object, y, d);
+			wrestler_punch(object, d);
+			return;
 		case -14:
-			return wrestler_guard(object, y, d);
+			wrestler_guard(object, d);
+			return;
 		case -12:
 		case -10:
-			return wrestler_jump(object, y, d);
+			wrestler_jump(object, d);
+			return;
 		case -8:
-			return wrestler_idle(object, y, d);
+			wrestler_idle(object, d);
+			return;
 		case -6:
-			return wrestler_wait_target_up(object, y);
+			wrestler_wait_target_up(object);
+			return;
 		case -4:
-			return wrestler_beaten_wait(object, y, action_handlers);
+			wrestler_beaten_wait(object, action_handlers);
+			return;
 		case -2:
 			wrestler_blink_out(object, d, carry);
-			return y;
+			return;
 		}
 		break;
 	}
-	return wrestler_idle_end(object, y, action_handlers);
+	wrestler_idle_end(object, action_handlers);
 }
 
 /* The wrestler knocked down: falls; landing with too little health it is beaten, else it lies. */
 void wrestler_fall(uint16_t object)
 {
 	uint32_t carry = 0;
-	uint16_t animation_number = 0, command = 0, ignored16 = 0;
+	uint16_t animation_number = 0, command = 0, ignored16 = 0, partner_object = 0;
 	uint8_t vitality = 0, shadow_player = 0, action = 0;
 	uint16_t partner = 0, hit_by = 0;
 
@@ -300,7 +337,8 @@ void wrestler_fall(uint16_t object)
 		carry = vector_queue_sound_unless_attract(command);
 		OBJECT(object)->flags = (OBJECT(object)->flags & 0xBFu) | 4u;
 		partner = OBJECT(object)->wrestler.partner;
-		mem_write16(partner + 0x19u, 0x100u);
+		partner_object = partner;
+		OBJECT(partner_object)->z_speed = 0x100;
 		animation_number = 0x600u;
 		wrestler_set_animation(object, &animation_number, &carry);
 		hit_by = OBJECT(object)->hit_by;
@@ -337,20 +375,20 @@ void wrestler_lie(uint16_t object)
 }
 
 /* The wrestler knocked down: once up, stands and picks its target again. */
-uint16_t wrestler_get_up(uint16_t object, uint16_t y)
+void wrestler_get_up(uint16_t object)
 {
-	uint16_t u = 0;
+	uint16_t box_end = 0;
 	uint8_t animation_flags = 0;
 
 	animation_flags = OBJECT(object)->animation_flags;
 	if ((animation_flags & 1u) == 0u)
-		return y;
-	u = wrestler_stand(object);
-	return wrestler_pick_target(object, y, u);
+		return;
+	box_end = wrestler_stand(object);
+	wrestler_pick_target(object, box_end);
 }
 
 /* The wrestler hit (state FF), by its step. */
-uint16_t wrestler_flinch(uint16_t object, uint16_t y, uint8_t d)
+void wrestler_flinch(uint16_t object, uint8_t d)
 {
 	uint32_t carry = 0;
 	uint8_t action_index = 0;
@@ -367,94 +405,112 @@ uint16_t wrestler_flinch(uint16_t object, uint16_t y, uint8_t d)
 		{
 		case 0:
 			wrestler_flinch_wait(object);
-			return y;
+			return;
 		case 2:
-			return wrestler_flinch_land(object, y);
+			wrestler_flinch_land(object);
+			return;
 		case 4:
-			return wrestler_put_in(object, y);
+			wrestler_put_in(object);
+			return;
 		case 6:
 			wrestler_entrance_drop(object);
-			return y;
+			return;
 		case 8:
-			return wrestler_entrance_pose(object, y, action_handlers);
+			wrestler_entrance_pose(object, action_handlers);
+			return;
 		case 10:
 			wrestler_entrance_step_out(object);
-			return y;
+			return;
 		case 12:
-			return wrestler_entrance_land(object, y, action_handlers);
+			wrestler_entrance_land(object, action_handlers);
+			return;
 		case 14:
 			wrestler_entrance_stand(object);
-			return y;
+			return;
 		case 16:
 			wrestler_entrance_shout(object);
-			return y;
+			return;
 		case 18:
 			wrestler_entrance_end(object);
-			return y;
+			return;
 		case 20:
 			wrestler_punch_wind_up(object);
-			return y;
+			return;
 		case 22:
 			wrestler_punch_strike(object);
-			return y;
+			return;
 		case 24:
-			return wrestler_punch_recover(object, y);
+			wrestler_punch_recover(object);
+			return;
 		case 26:
-			return wrestler_guarding(object, y);
+			wrestler_guarding(object);
+			return;
 		case 28:
 			wrestler_jump_rise(object);
-			return y;
+			return;
 		case 30:
 			wrestler_jump_land(object);
-			return y;
+			return;
 		case 32:
 			wrestler_jump_recover(object);
-			return y;
+			return;
 		case 34:
-			return wrestler_jump_end(object, y, action_handlers);
+			wrestler_jump_end(object, action_handlers);
+			return;
 		case 36:
 			wrestler_idle_look(object);
-			return y;
+			return;
 		case 38:
 			break;
 		case -32:
-			return wrestler_beaten(object, y, d);
+			wrestler_beaten(object, d);
+			return;
 		case -30:
-			return wrestler_knocked_down(object, y, d);
+			wrestler_knocked_down(object, d);
+			return;
 		case -28:
 			continue;
 		case -26:
-			return wrestler_entrance(object, y, d);
+			wrestler_entrance(object, d);
+			return;
 		case -24:
-			return wrestler_walk(object, y);
+			wrestler_walk(object);
+			return;
 		case -22:
-			return wrestler_punch(object, y, d);
+			wrestler_punch(object, d);
+			return;
 		case -20:
-			return wrestler_guard(object, y, d);
+			wrestler_guard(object, d);
+			return;
 		case -18:
 		case -16:
-			return wrestler_jump(object, y, d);
+			wrestler_jump(object, d);
+			return;
 		case -14:
-			return wrestler_idle(object, y, d);
+			wrestler_idle(object, d);
+			return;
 		case -12:
-			return wrestler_wait_target_up(object, y);
+			wrestler_wait_target_up(object);
+			return;
 		case -10:
-			return wrestler_beaten_wait(object, y, action_handlers);
+			wrestler_beaten_wait(object, action_handlers);
+			return;
 		case -8:
 			wrestler_blink_out(object, d, carry);
-			return y;
+			return;
 		case -6:
 			wrestler_fall(object);
-			return y;
+			return;
 		case -4:
 			wrestler_lie(object);
-			return y;
+			return;
 		case -2:
-			return wrestler_get_up(object, y);
+			wrestler_get_up(object);
+			return;
 		}
 		break;
 	}
-	return wrestler_idle_end(object, y, action_handlers);
+	wrestler_idle_end(object, action_handlers);
 }
 
 /* The wrestler hit: waits for its flinch's animation to end. */
@@ -471,21 +527,20 @@ void wrestler_flinch_wait(uint16_t object)
 }
 
 /* The wrestler hit: once back on the floor, stands and picks its target again. */
-uint16_t wrestler_flinch_land(uint16_t object, uint16_t y)
+void wrestler_flinch_land(uint16_t object)
 {
 	uint32_t carry = 0;
-	uint16_t ignored16 = 0, u = 0;
+	uint16_t box_end = 0, ignored16 = 0;
 
 	vector_apply_gravity(object, &ignored16, &carry);
 	if (carry == 0u)
-		return y;
-	u = wrestler_stand(object);
-	y = wrestler_pick_target(object, y, u);
-	return y;
+		return;
+	box_end = wrestler_stand(object);
+	wrestler_pick_target(object, box_end);
 }
 
 /* The wrestler's entrance (state 0), by its step. */
-uint16_t wrestler_entrance(uint16_t object, uint16_t y, uint8_t d)
+void wrestler_entrance(uint16_t object, uint8_t d)
 {
 	uint32_t carry = 0;
 	uint8_t action_index = 0;
@@ -501,173 +556,191 @@ uint16_t wrestler_entrance(uint16_t object, uint16_t y, uint8_t d)
 		switch ((int8_t)(uint8_t)((uint32_t)action_index << 1))
 		{
 		case 0:
-			return wrestler_put_in(object, y);
+			wrestler_put_in(object);
+			return;
 		case 2:
 			wrestler_entrance_drop(object);
-			return y;
+			return;
 		case 4:
-			return wrestler_entrance_pose(object, y, action_handlers);
+			wrestler_entrance_pose(object, action_handlers);
+			return;
 		case 6:
 			wrestler_entrance_step_out(object);
-			return y;
+			return;
 		case 8:
-			return wrestler_entrance_land(object, y, action_handlers);
+			wrestler_entrance_land(object, action_handlers);
+			return;
 		case 10:
 			wrestler_entrance_stand(object);
-			return y;
+			return;
 		case 12:
 			wrestler_entrance_shout(object);
-			return y;
+			return;
 		case 14:
 			wrestler_entrance_end(object);
-			return y;
+			return;
 		case 16:
 			wrestler_punch_wind_up(object);
-			return y;
+			return;
 		case 18:
 			wrestler_punch_strike(object);
-			return y;
+			return;
 		case 20:
-			return wrestler_punch_recover(object, y);
+			wrestler_punch_recover(object);
+			return;
 		case 22:
-			return wrestler_guarding(object, y);
+			wrestler_guarding(object);
+			return;
 		case 24:
 			wrestler_jump_rise(object);
-			return y;
+			return;
 		case 26:
 			wrestler_jump_land(object);
-			return y;
+			return;
 		case 28:
 			wrestler_jump_recover(object);
-			return y;
+			return;
 		case 30:
-			return wrestler_jump_end(object, y, action_handlers);
+			wrestler_jump_end(object, action_handlers);
+			return;
 		case 32:
 			wrestler_idle_look(object);
-			return y;
+			return;
 		case 34:
 			break;
 		case -36:
-			return wrestler_beaten(object, y, d);
+			wrestler_beaten(object, d);
+			return;
 		case -34:
-			return wrestler_knocked_down(object, y, d);
+			wrestler_knocked_down(object, d);
+			return;
 		case -32:
-			return wrestler_flinch(object, y, d);
+			wrestler_flinch(object, d);
+			return;
 		case -30:
 			continue;
 		case -28:
-			return wrestler_walk(object, y);
+			wrestler_walk(object);
+			return;
 		case -26:
-			return wrestler_punch(object, y, d);
+			wrestler_punch(object, d);
+			return;
 		case -24:
-			return wrestler_guard(object, y, d);
+			wrestler_guard(object, d);
+			return;
 		case -22:
 		case -20:
-			return wrestler_jump(object, y, d);
+			wrestler_jump(object, d);
+			return;
 		case -18:
-			return wrestler_idle(object, y, d);
+			wrestler_idle(object, d);
+			return;
 		case -16:
-			return wrestler_wait_target_up(object, y);
+			wrestler_wait_target_up(object);
+			return;
 		case -14:
-			return wrestler_beaten_wait(object, y, action_handlers);
+			wrestler_beaten_wait(object, action_handlers);
+			return;
 		case -12:
 			wrestler_blink_out(object, d, carry);
-			return y;
+			return;
 		case -10:
 			wrestler_fall(object);
-			return y;
+			return;
 		case -8:
 			wrestler_lie(object);
-			return y;
+			return;
 		case -6:
-			return wrestler_get_up(object, y);
+			wrestler_get_up(object);
+			return;
 		case -4:
 			wrestler_flinch_wait(object);
-			return y;
+			return;
 		case -2:
-			return wrestler_flinch_land(object, y);
+			wrestler_flinch_land(object);
+			return;
 		}
 		break;
 	}
-	return wrestler_idle_end(object, y, action_handlers);
+	wrestler_idle_end(object, action_handlers);
 }
 
 /* The wrestler's entrance: once the camera's flag from the stage record clears, drops it in from above
    with its partner object, sets its health and says a boss is in. */
-uint16_t wrestler_put_in(uint16_t object, uint16_t y)
+void wrestler_put_in(uint16_t object)
 {
 	uint32_t carry = 0;
 	uint8_t slot_list = 0;
-	uint16_t d = 0, palette_effect_number = 0, partner = 0;
+	uint16_t look_numbers = 0, palette_effect_number = 0, partner_object = 0;
 	uint8_t action = 0;
-	uint16_t t1 = 0, t2 = 0;
+	uint16_t entrance_z = 0, partner_z = 0;
 
 	OBJECT(object)->entrance_pending = 1u;
 	if (stage_scrolls_on != 0u)
-		return y;
+		return;
 	OBJECT(object)->flags = 0x88u;
 	OBJECT(object)->shadow_player = 1u;
-	d = 0xE00u;
-	wrestler_set_animation(object, &d, &carry);
-	d &= 0xFFu;
-	wrestler_set_hit_box(object, d);
+	look_numbers = 0xE00u;
+	wrestler_set_animation(object, &look_numbers, &carry);
+	look_numbers &= 0xFFu;
+	wrestler_set_hit_box(object, look_numbers);
 	OBJECT(object)->x = 0xE0u;
 	OBJECT(object)->y = 0x82u;
-	t1 = 0x100u - camera_y;
-	OBJECT(object)->z = t1;
+	entrance_z = 0x100u - camera_y;
+	OBJECT(object)->z = entrance_z;
 	OBJECT(object)->z_speed = -0x100;
 	OBJECT(object)->vitality = 0xC0u;
 	OBJECT(object)->wrestler.last_health = 0xC0u;
 	boss_arrived++;
 	slot_list = 2u;
-	vector_find_free_slot(slot_list, &partner, &carry);
-	mem_write8(partner, 0x80u);
-	mem_write8(partner + 6u, 0x80u);
-	mem_write8(partner + 1u, 0u);
-	mem_write16(partner + 4u, 0xF91u);
-	mem_write16(partner + 0xCu, 0xE0u);
-	mem_write16(partner + 0x11u, 0x80u);
-	t2 = 0x158u - camera_y;
-	mem_write16(partner + 0x16u, t2);
-	mem_write16(partner + 0x19u, 0xFF00u);
-	OBJECT(object)->wrestler.partner = partner;
+	vector_find_free_slot(slot_list, &partner_object, &carry);
+	OBJECT(partner_object)->flags = 0x80u;
+	OBJECT(partner_object)->animation_flags = 0x80u;
+	OBJECT(partner_object)->type = 0;
+	OBJECT(partner_object)->kind = 0xFu;
+	OBJECT(partner_object)->animation = 0x91u;
+	OBJECT(partner_object)->x = 0xE0u;
+	OBJECT(partner_object)->y = 0x80u;
+	partner_z = 0x158u - camera_y;
+	OBJECT(partner_object)->z = partner_z;
+	OBJECT(partner_object)->z_speed = -0x100;
+	OBJECT(object)->wrestler.partner = partner_object;
 	OBJECT(object)->entrance_pending = 0u;
 	palette_request_kind = 2u;
 	palette_effect_number = 0x16u;
-	vector_palette_request(palette_effect_number, &y, &partner);
+	partner_object = vector_palette_request(partner_object, palette_effect_number);
 	palette_request_kind = 2u;
 	palette_effect_number = 0x17u;
-	vector_palette_request(palette_effect_number, &y, &partner);
+	vector_palette_request(partner_object, palette_effect_number);
 	action = OBJECT(object)->action;
 	OBJECT(object)->action = action + 1u;
-	return y;
 }
 
 /* The wrestler's entrance: the two fall until the partner is down, then hold. */
 void wrestler_entrance_drop(uint16_t object)
 {
-	uint16_t u = 0;
+	uint16_t partner_object = 0;
 	uint8_t action = 0;
-	uint16_t partner = 0, t1 = 0, t2 = 0, t3 = 0;
+	uint16_t partner = 0, partner_z = 0, partner_y = 0, partner_y_2 = 0;
 
 	partner = OBJECT(object)->wrestler.partner;
-	u = partner;
-	t1 = mem_read16(u + 0x16u);
-	t2 = mem_read16(u + 0x11u);
-	if ((uint16_t)(t1 + t2 - camera_y) <= 0x130u)
+	partner_object = partner;
+	partner_z = OBJECT(partner_object)->z;
+	partner_y = OBJECT(partner_object)->y;
+	if ((uint16_t)(partner_z + partner_y - camera_y) <= 0x130u)
 	{
-		t3 = mem_read16(u + 0x11u);
-		mem_write16(u + 0x16u, 0x130u + camera_y - t3);
+		partner_y_2 = OBJECT(partner_object)->y;
+		OBJECT(partner_object)->z = 0x130u + camera_y - partner_y_2;
 		OBJECT(object)->action_step = 0x20u;
 		OBJECT(object)->z_speed = 0;
-		mem_write16(u + 0x19u, 0u);
+		OBJECT(partner_object)->z_speed = 0;
 		action = OBJECT(object)->action;
 		OBJECT(object)->action = action + 1u;
 	}
 }
 
 /* The wrestler's entrance: a palette flash, a sound (6700) and a pose. */
-uint16_t wrestler_entrance_pose(uint16_t object, uint16_t y, uint16_t palette_job)
+void wrestler_entrance_pose(uint16_t object, uint16_t palette_job)
 {
 	uint32_t carry = 0;
 	uint16_t animation_number = 0, command = 0, palette_effect_number = 0;
@@ -676,10 +749,10 @@ uint16_t wrestler_entrance_pose(uint16_t object, uint16_t y, uint16_t palette_jo
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step - 1u;
 	if (action_step != 1u)
-		return y;
+		return;
 	palette_request_kind = 2u;
 	palette_effect_number = 0xCu;
-	vector_palette_request(palette_effect_number, &y, &palette_job);
+	vector_palette_request(palette_job, palette_effect_number);
 	command = 0x6700u;
 	carry = vector_queue_sound(command);
 	animation_number = 0xF00u;
@@ -687,7 +760,6 @@ uint16_t wrestler_entrance_pose(uint16_t object, uint16_t y, uint16_t palette_jo
 	OBJECT(object)->action_step = 0x40u;
 	action = OBJECT(object)->action;
 	OBJECT(object)->action = action + 1u;
-	return y;
 }
 
 /* The wrestler's entrance: after the pose, steps out. */
@@ -709,7 +781,7 @@ void wrestler_entrance_step_out(uint16_t object)
 }
 
 /* The wrestler's entrance: lands shaking the screen, with a thud (6400). */
-uint16_t wrestler_entrance_land(uint16_t object, uint16_t y, uint16_t palette_job)
+void wrestler_entrance_land(uint16_t object, uint16_t palette_job)
 {
 	uint32_t carry = 0;
 	uint16_t animation_number = 0, command = 0, ignored16 = 0, palette_effect_number = 0;
@@ -717,13 +789,13 @@ uint16_t wrestler_entrance_land(uint16_t object, uint16_t y, uint16_t palette_jo
 
 	vector_apply_gravity(object, &ignored16, &carry);
 	if (carry == 0u)
-		return y;
+		return;
 	palette_request_kind = 2u;
 	palette_effect_number = 0x21u;
-	vector_palette_request(palette_effect_number, &y, &palette_job);
+	palette_job = vector_palette_request(palette_job, palette_effect_number);
 	palette_request_kind = 2u;
 	palette_effect_number = 0x26u;
-	vector_palette_request(palette_effect_number, &y, &palette_job);
+	vector_palette_request(palette_job, palette_effect_number);
 	screen_shake_on = 1u;
 	command = 0x6400u;
 	carry = vector_queue_sound(command);
@@ -733,7 +805,6 @@ uint16_t wrestler_entrance_land(uint16_t object, uint16_t y, uint16_t palette_jo
 	OBJECT(object)->action_step = 0x40u;
 	action = OBJECT(object)->action;
 	OBJECT(object)->action = action + 1u;
-	return y;
 }
 
 /* The wrestler's entrance: stands up. */
@@ -788,7 +859,7 @@ void wrestler_entrance_end(uint16_t object)
 }
 
 /* The wrestler walks toward its target at its speed by rank, until it reaches it. */
-uint16_t wrestler_walk(uint16_t object, uint16_t y)
+void wrestler_walk(uint16_t object)
 {
 	uint32_t carry = 0;
 	uint16_t animation_number = 0, heading = 0, u = 0;
@@ -796,8 +867,8 @@ uint16_t wrestler_walk(uint16_t object, uint16_t y)
 
 	wrestler_approach(object, &u, &carry);
 	if (carry)
-		return y;
-	wrestler_pick_target(object, y, u);
+		return;
+	wrestler_pick_target(object, u);
 	animation = OBJECT(object)->animation;
 	if (animation != 0u)
 	{
@@ -806,15 +877,14 @@ uint16_t wrestler_walk(uint16_t object, uint16_t y)
 	}
 	wrestler_aim(object);
 	side_direction = OBJECT(object)->wrestler.side_direction;
-	y = wrestler_speeds_by_rank_ADDRESS;
+	leftover_y = wrestler_speeds_by_rank_ADDRESS;
 	heading = ((uint32_t)side_direction << 8) | wrestler_speeds_by_rank[rank >> 1];
 	vector_set_speed_by_direction(object, heading);
 	wrestler_face_target(object);
-	return y;
 }
 
 /* The wrestler punches (state 2), by its step. */
-uint16_t wrestler_punch(uint16_t object, uint16_t y, uint8_t d)
+void wrestler_punch(uint16_t object, uint8_t d)
 {
 	uint32_t carry = 0;
 	uint8_t action_index = 0;
@@ -831,94 +901,112 @@ uint16_t wrestler_punch(uint16_t object, uint16_t y, uint8_t d)
 		{
 		case 0:
 			wrestler_punch_wind_up(object);
-			return y;
+			return;
 		case 2:
 			wrestler_punch_strike(object);
-			return y;
+			return;
 		case 4:
-			return wrestler_punch_recover(object, y);
+			wrestler_punch_recover(object);
+			return;
 		case 6:
-			return wrestler_guarding(object, y);
+			wrestler_guarding(object);
+			return;
 		case 8:
 			wrestler_jump_rise(object);
-			return y;
+			return;
 		case 10:
 			wrestler_jump_land(object);
-			return y;
+			return;
 		case 12:
 			wrestler_jump_recover(object);
-			return y;
+			return;
 		case 14:
-			return wrestler_jump_end(object, y, action_handlers);
+			wrestler_jump_end(object, action_handlers);
+			return;
 		case 16:
 			wrestler_idle_look(object);
-			return y;
+			return;
 		case 18:
 			break;
 		case -52:
-			return wrestler_beaten(object, y, d);
+			wrestler_beaten(object, d);
+			return;
 		case -50:
-			return wrestler_knocked_down(object, y, d);
+			wrestler_knocked_down(object, d);
+			return;
 		case -48:
-			return wrestler_flinch(object, y, d);
+			wrestler_flinch(object, d);
+			return;
 		case -46:
-			return wrestler_entrance(object, y, d);
+			wrestler_entrance(object, d);
+			return;
 		case -44:
-			return wrestler_walk(object, y);
+			wrestler_walk(object);
+			return;
 		case -42:
 			continue;
 		case -40:
-			return wrestler_guard(object, y, d);
+			wrestler_guard(object, d);
+			return;
 		case -38:
 		case -36:
-			return wrestler_jump(object, y, d);
+			wrestler_jump(object, d);
+			return;
 		case -34:
-			return wrestler_idle(object, y, d);
+			wrestler_idle(object, d);
+			return;
 		case -32:
-			return wrestler_wait_target_up(object, y);
+			wrestler_wait_target_up(object);
+			return;
 		case -30:
-			return wrestler_beaten_wait(object, y, action_handlers);
+			wrestler_beaten_wait(object, action_handlers);
+			return;
 		case -28:
 			wrestler_blink_out(object, d, carry);
-			return y;
+			return;
 		case -26:
 			wrestler_fall(object);
-			return y;
+			return;
 		case -24:
 			wrestler_lie(object);
-			return y;
+			return;
 		case -22:
-			return wrestler_get_up(object, y);
+			wrestler_get_up(object);
+			return;
 		case -20:
 			wrestler_flinch_wait(object);
-			return y;
+			return;
 		case -18:
-			return wrestler_flinch_land(object, y);
+			wrestler_flinch_land(object);
+			return;
 		case -16:
-			return wrestler_put_in(object, y);
+			wrestler_put_in(object);
+			return;
 		case -14:
 			wrestler_entrance_drop(object);
-			return y;
+			return;
 		case -12:
-			return wrestler_entrance_pose(object, y, action_handlers);
+			wrestler_entrance_pose(object, action_handlers);
+			return;
 		case -10:
 			wrestler_entrance_step_out(object);
-			return y;
+			return;
 		case -8:
-			return wrestler_entrance_land(object, y, action_handlers);
+			wrestler_entrance_land(object, action_handlers);
+			return;
 		case -6:
 			wrestler_entrance_stand(object);
-			return y;
+			return;
 		case -4:
 			wrestler_entrance_shout(object);
-			return y;
+			return;
 		case -2:
 			wrestler_entrance_end(object);
-			return y;
+			return;
 		}
 		break;
 	}
-	return wrestler_idle_end(object, y, action_handlers);
+	wrestler_idle_end(object, action_handlers);
 }
 
 /* The wrestler punches: after a wait, winds up, not to be hurt meanwhile. */
@@ -947,7 +1035,7 @@ void wrestler_punch_strike(uint16_t object)
 {
 	uint32_t carry = 0;
 	uint8_t own_box = 0;
-	uint16_t box_number = 0, d = 0;
+	uint16_t box_number = 0, look_numbers = 0;
 	uint8_t animation_flags = 0, animation_flags_2 = 0, action = 0;
 
 	own_box = 0u;
@@ -959,32 +1047,31 @@ void wrestler_punch_strike(uint16_t object)
 	animation_flags_2 = OBJECT(object)->animation_flags;
 	if ((animation_flags_2 & 1u) == 0u)
 		return;
-	d = 0u;
-	wrestler_set_animation(object, &d, &carry);
-	d &= 0xFFu;
-	wrestler_set_hit_box(object, d);
+	look_numbers = 0u;
+	wrestler_set_animation(object, &look_numbers, &carry);
+	look_numbers &= 0xFFu;
+	wrestler_set_hit_box(object, look_numbers);
 	OBJECT(object)->action_step = 0x10u;
 	action = OBJECT(object)->action;
 	OBJECT(object)->action = action + 1u;
 }
 
 /* The wrestler punches: after 16 frames, stands and picks its target again. */
-uint16_t wrestler_punch_recover(uint16_t object, uint16_t y)
+void wrestler_punch_recover(uint16_t object)
 {
-	uint16_t u = 0;
+	uint16_t box_end = 0;
 	uint8_t action_step = 0;
 
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step - 1u;
 	if (action_step != 1u)
-		return y;
-	u = wrestler_stand(object);
-	y = wrestler_pick_target(object, y, u);
-	return y;
+		return;
+	box_end = wrestler_stand(object);
+	wrestler_pick_target(object, box_end);
 }
 
 /* The wrestler guards (state 3). */
-uint16_t wrestler_guard(uint16_t object, uint16_t y, uint8_t d)
+void wrestler_guard(uint16_t object, uint8_t d)
 {
 	uint32_t carry = 0;
 	uint8_t action_index = 0;
@@ -1000,110 +1087,129 @@ uint16_t wrestler_guard(uint16_t object, uint16_t y, uint8_t d)
 		switch ((int8_t)(uint8_t)((uint32_t)action_index << 1))
 		{
 		case 0:
-			return wrestler_guarding(object, y);
+			wrestler_guarding(object);
+			return;
 		case 2:
 			wrestler_jump_rise(object);
-			return y;
+			return;
 		case 4:
 			wrestler_jump_land(object);
-			return y;
+			return;
 		case 6:
 			wrestler_jump_recover(object);
-			return y;
+			return;
 		case 8:
-			return wrestler_jump_end(object, y, action_handlers);
+			wrestler_jump_end(object, action_handlers);
+			return;
 		case 10:
 			wrestler_idle_look(object);
-			return y;
+			return;
 		case 12:
 			break;
 		case -58:
-			return wrestler_beaten(object, y, d);
+			wrestler_beaten(object, d);
+			return;
 		case -56:
-			return wrestler_knocked_down(object, y, d);
+			wrestler_knocked_down(object, d);
+			return;
 		case -54:
-			return wrestler_flinch(object, y, d);
+			wrestler_flinch(object, d);
+			return;
 		case -52:
-			return wrestler_entrance(object, y, d);
+			wrestler_entrance(object, d);
+			return;
 		case -50:
-			return wrestler_walk(object, y);
+			wrestler_walk(object);
+			return;
 		case -48:
-			return wrestler_punch(object, y, d);
+			wrestler_punch(object, d);
+			return;
 		case -46:
 			continue;
 		case -44:
 		case -42:
-			return wrestler_jump(object, y, d);
+			wrestler_jump(object, d);
+			return;
 		case -40:
-			return wrestler_idle(object, y, d);
+			wrestler_idle(object, d);
+			return;
 		case -38:
-			return wrestler_wait_target_up(object, y);
+			wrestler_wait_target_up(object);
+			return;
 		case -36:
-			return wrestler_beaten_wait(object, y, action_handlers);
+			wrestler_beaten_wait(object, action_handlers);
+			return;
 		case -34:
 			wrestler_blink_out(object, d, carry);
-			return y;
+			return;
 		case -32:
 			wrestler_fall(object);
-			return y;
+			return;
 		case -30:
 			wrestler_lie(object);
-			return y;
+			return;
 		case -28:
-			return wrestler_get_up(object, y);
+			wrestler_get_up(object);
+			return;
 		case -26:
 			wrestler_flinch_wait(object);
-			return y;
+			return;
 		case -24:
-			return wrestler_flinch_land(object, y);
+			wrestler_flinch_land(object);
+			return;
 		case -22:
-			return wrestler_put_in(object, y);
+			wrestler_put_in(object);
+			return;
 		case -20:
 			wrestler_entrance_drop(object);
-			return y;
+			return;
 		case -18:
-			return wrestler_entrance_pose(object, y, action_handlers);
+			wrestler_entrance_pose(object, action_handlers);
+			return;
 		case -16:
 			wrestler_entrance_step_out(object);
-			return y;
+			return;
 		case -14:
-			return wrestler_entrance_land(object, y, action_handlers);
+			wrestler_entrance_land(object, action_handlers);
+			return;
 		case -12:
 			wrestler_entrance_stand(object);
-			return y;
+			return;
 		case -10:
 			wrestler_entrance_shout(object);
-			return y;
+			return;
 		case -8:
 			wrestler_entrance_end(object);
-			return y;
+			return;
 		case -6:
 			wrestler_punch_wind_up(object);
-			return y;
+			return;
 		case -4:
 			wrestler_punch_strike(object);
-			return y;
+			return;
 		case -2:
-			return wrestler_punch_recover(object, y);
+			wrestler_punch_recover(object);
+			return;
 		}
 		break;
 	}
-	return wrestler_idle_end(object, y, action_handlers);
+	wrestler_idle_end(object, action_handlers);
 }
 
 /* The wrestler guards for 64 frames, hitting back on the marked frame, then stands. */
-uint16_t wrestler_guarding(uint16_t object, uint16_t y)
+void wrestler_guarding(uint16_t object)
 {
 	uint8_t own_box = 0;
-	uint16_t box_number = 0, u = 0;
+	uint16_t box_end = 0, box_number = 0;
 	uint8_t action_step = 0, animation_flags = 0;
 
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step - 1u;
 	if (action_step == 1u)
 	{
-		u = wrestler_stand(object);
-		return wrestler_pick_target(object, y, u);
+		box_end = wrestler_stand(object);
+		wrestler_pick_target(object, box_end);
+		return;
 	}
 	own_box = 0u;
 	animation_flags = OBJECT(object)->animation_flags;
@@ -1111,11 +1217,10 @@ uint16_t wrestler_guarding(uint16_t object, uint16_t y)
 		own_box = 2u;
 	box_number = (uint32_t)own_box << 8;
 	wrestler_set_hit_box(object, box_number);
-	return y;
 }
 
 /* The wrestler jumps at a player (states 4 and 5), by its step. */
-uint16_t wrestler_jump(uint16_t object, uint16_t y, uint8_t d)
+void wrestler_jump(uint16_t object, uint8_t d)
 {
 	uint32_t carry = 0;
 	uint8_t action_index = 0;
@@ -1132,94 +1237,112 @@ uint16_t wrestler_jump(uint16_t object, uint16_t y, uint8_t d)
 		{
 		case 0:
 			wrestler_jump_rise(object);
-			return y;
+			return;
 		case 2:
 			wrestler_jump_land(object);
-			return y;
+			return;
 		case 4:
 			wrestler_jump_recover(object);
-			return y;
+			return;
 		case 6:
-			return wrestler_jump_end(object, y, action_handlers);
+			wrestler_jump_end(object, action_handlers);
+			return;
 		case 8:
 			wrestler_idle_look(object);
-			return y;
+			return;
 		case 10:
 			break;
 		case -60:
-			return wrestler_beaten(object, y, d);
+			wrestler_beaten(object, d);
+			return;
 		case -58:
-			return wrestler_knocked_down(object, y, d);
+			wrestler_knocked_down(object, d);
+			return;
 		case -56:
-			return wrestler_flinch(object, y, d);
+			wrestler_flinch(object, d);
+			return;
 		case -54:
-			return wrestler_entrance(object, y, d);
+			wrestler_entrance(object, d);
+			return;
 		case -52:
-			return wrestler_walk(object, y);
+			wrestler_walk(object);
+			return;
 		case -50:
-			return wrestler_punch(object, y, d);
+			wrestler_punch(object, d);
+			return;
 		case -48:
-			return wrestler_guard(object, y, d);
+			wrestler_guard(object, d);
+			return;
 		case -46:
 		case -44:
 			continue;
 		case -42:
-			return wrestler_idle(object, y, d);
+			wrestler_idle(object, d);
+			return;
 		case -40:
-			return wrestler_wait_target_up(object, y);
+			wrestler_wait_target_up(object);
+			return;
 		case -38:
-			return wrestler_beaten_wait(object, y, action_handlers);
+			wrestler_beaten_wait(object, action_handlers);
+			return;
 		case -36:
 			wrestler_blink_out(object, d, carry);
-			return y;
+			return;
 		case -34:
 			wrestler_fall(object);
-			return y;
+			return;
 		case -32:
 			wrestler_lie(object);
-			return y;
+			return;
 		case -30:
-			return wrestler_get_up(object, y);
+			wrestler_get_up(object);
+			return;
 		case -28:
 			wrestler_flinch_wait(object);
-			return y;
+			return;
 		case -26:
-			return wrestler_flinch_land(object, y);
+			wrestler_flinch_land(object);
+			return;
 		case -24:
-			return wrestler_put_in(object, y);
+			wrestler_put_in(object);
+			return;
 		case -22:
 			wrestler_entrance_drop(object);
-			return y;
+			return;
 		case -20:
-			return wrestler_entrance_pose(object, y, action_handlers);
+			wrestler_entrance_pose(object, action_handlers);
+			return;
 		case -18:
 			wrestler_entrance_step_out(object);
-			return y;
+			return;
 		case -16:
-			return wrestler_entrance_land(object, y, action_handlers);
+			wrestler_entrance_land(object, action_handlers);
+			return;
 		case -14:
 			wrestler_entrance_stand(object);
-			return y;
+			return;
 		case -12:
 			wrestler_entrance_shout(object);
-			return y;
+			return;
 		case -10:
 			wrestler_entrance_end(object);
-			return y;
+			return;
 		case -8:
 			wrestler_punch_wind_up(object);
-			return y;
+			return;
 		case -6:
 			wrestler_punch_strike(object);
-			return y;
+			return;
 		case -4:
-			return wrestler_punch_recover(object, y);
+			wrestler_punch_recover(object);
+			return;
 		case -2:
-			return wrestler_guarding(object, y);
+			wrestler_guarding(object);
+			return;
 		}
 		break;
 	}
-	return wrestler_idle_end(object, y, action_handlers);
+	wrestler_idle_end(object, action_handlers);
 }
 
 /* The wrestler jumps: rises; at the top, turns to come down. */
@@ -1289,7 +1412,7 @@ void wrestler_jump_recover(uint16_t object)
 }
 
 /* The wrestler jumps: after 48 frames, walks again. */
-uint16_t wrestler_jump_end(uint16_t object, uint16_t y, uint16_t nearest)
+void wrestler_jump_end(uint16_t object, uint16_t nearest)
 {
 	uint8_t action_step = 0;
 
@@ -1300,13 +1423,12 @@ uint16_t wrestler_jump_end(uint16_t object, uint16_t y, uint16_t nearest)
 		OBJECT(object)->flags |= 0x40u;
 		OBJECT(object)->state = 1u;
 		OBJECT(object)->action = 0u;
-		y = wrestler_pick_target(object, y, nearest);
+		wrestler_pick_target(object, nearest);
 	}
-	return y;
 }
 
 /* The wrestler with no target (state 6), by its step. */
-uint16_t wrestler_idle(uint16_t object, uint16_t y, uint8_t d)
+void wrestler_idle(uint16_t object, uint8_t d)
 {
 	uint32_t carry = 0;
 	uint8_t action_index = 0;
@@ -1323,94 +1445,112 @@ uint16_t wrestler_idle(uint16_t object, uint16_t y, uint8_t d)
 		{
 		case 0:
 			wrestler_idle_look(object);
-			return y;
+			return;
 		case 2:
 			break;
 		case -68:
-			return wrestler_beaten(object, y, d);
+			wrestler_beaten(object, d);
+			return;
 		case -66:
-			return wrestler_knocked_down(object, y, d);
+			wrestler_knocked_down(object, d);
+			return;
 		case -64:
-			return wrestler_flinch(object, y, d);
+			wrestler_flinch(object, d);
+			return;
 		case -62:
-			return wrestler_entrance(object, y, d);
+			wrestler_entrance(object, d);
+			return;
 		case -60:
-			return wrestler_walk(object, y);
+			wrestler_walk(object);
+			return;
 		case -58:
-			return wrestler_punch(object, y, d);
+			wrestler_punch(object, d);
+			return;
 		case -56:
-			return wrestler_guard(object, y, d);
+			wrestler_guard(object, d);
+			return;
 		case -54:
 		case -52:
-			return wrestler_jump(object, y, d);
+			wrestler_jump(object, d);
+			return;
 		case -50:
 			continue;
 		case -48:
-			return wrestler_wait_target_up(object, y);
+			wrestler_wait_target_up(object);
+			return;
 		case -46:
-			return wrestler_beaten_wait(object, y, action_handlers);
+			wrestler_beaten_wait(object, action_handlers);
+			return;
 		case -44:
 			wrestler_blink_out(object, d, carry);
-			return y;
+			return;
 		case -42:
 			wrestler_fall(object);
-			return y;
+			return;
 		case -40:
 			wrestler_lie(object);
-			return y;
+			return;
 		case -38:
-			return wrestler_get_up(object, y);
+			wrestler_get_up(object);
+			return;
 		case -36:
 			wrestler_flinch_wait(object);
-			return y;
+			return;
 		case -34:
-			return wrestler_flinch_land(object, y);
+			wrestler_flinch_land(object);
+			return;
 		case -32:
-			return wrestler_put_in(object, y);
+			wrestler_put_in(object);
+			return;
 		case -30:
 			wrestler_entrance_drop(object);
-			return y;
+			return;
 		case -28:
-			return wrestler_entrance_pose(object, y, action_handlers);
+			wrestler_entrance_pose(object, action_handlers);
+			return;
 		case -26:
 			wrestler_entrance_step_out(object);
-			return y;
+			return;
 		case -24:
-			return wrestler_entrance_land(object, y, action_handlers);
+			wrestler_entrance_land(object, action_handlers);
+			return;
 		case -22:
 			wrestler_entrance_stand(object);
-			return y;
+			return;
 		case -20:
 			wrestler_entrance_shout(object);
-			return y;
+			return;
 		case -18:
 			wrestler_entrance_end(object);
-			return y;
+			return;
 		case -16:
 			wrestler_punch_wind_up(object);
-			return y;
+			return;
 		case -14:
 			wrestler_punch_strike(object);
-			return y;
+			return;
 		case -12:
-			return wrestler_punch_recover(object, y);
+			wrestler_punch_recover(object);
+			return;
 		case -10:
-			return wrestler_guarding(object, y);
+			wrestler_guarding(object);
+			return;
 		case -8:
 			wrestler_jump_rise(object);
-			return y;
+			return;
 		case -6:
 			wrestler_jump_land(object);
-			return y;
+			return;
 		case -4:
 			wrestler_jump_recover(object);
-			return y;
+			return;
 		case -2:
-			return wrestler_jump_end(object, y, action_handlers);
+			wrestler_jump_end(object, action_handlers);
+			return;
 		}
 		break;
 	}
-	return wrestler_idle_end(object, y, action_handlers);
+	wrestler_idle_end(object, action_handlers);
 }
 
 /* The wrestler with no target: waits for a player; one there, taunts. */
@@ -1434,7 +1574,7 @@ void wrestler_idle_look(uint16_t object)
 }
 
 /* The wrestler with no target: after the taunt, walks again. */
-uint16_t wrestler_idle_end(uint16_t object, uint16_t y, uint16_t nearest)
+void wrestler_idle_end(uint16_t object, uint16_t nearest)
 {
 	uint8_t action_step = 0;
 
@@ -1444,40 +1584,38 @@ uint16_t wrestler_idle_end(uint16_t object, uint16_t y, uint16_t nearest)
 	{
 		OBJECT(object)->state = 1u;
 		OBJECT(object)->action = 0u;
-		y = wrestler_pick_target(object, y, nearest);
+		wrestler_pick_target(object, nearest);
 	}
-	return y;
 }
 
 /* The wrestler waits while its target is down, then stands (no scenario reaches it). */
-uint16_t wrestler_wait_target_up(uint16_t object, uint16_t y)
+void wrestler_wait_target_up(uint16_t object)
 {
 	uint16_t target_player = 0;
 	uint8_t state = 0;
-	uint16_t t1 = 0;
+	uint16_t read_target = 0;
 
-	t1 = mem_read16(y + 0x2Bu);
-	target_player = t1;
+	read_target = mem_read16(leftover_y + 0x2Bu);
+	target_player = read_target;
 	state = OBJECT(target_player)->state;
 	if ((int8_t)state >= 0)
 	{
+		leftover_y = target_player;
 		wrestler_stand(object);
-		return target_player;
+		return;
 	}
-	return target_player;
+	leftover_y = target_player;
 }
 
 /* The wrestler: when hit, takes the hit. */
-void wrestler_check_hit(uint16_t object, uint16_t *p_y, uint16_t *p_d)
+uint16_t wrestler_check_hit(uint16_t object, uint8_t state)
 {
-	uint16_t y = (uint16_t)*p_y;
-	uint8_t d = (uint8_t)*p_d;
 	uint32_t negative = 0;
 	uint8_t a = 0, b = 0;
-	uint16_t d_2 = 0;
+	uint16_t d = 0, d_2 = 0;
 	uint8_t hit = 0;
 
-	b = (uint8_t)d;
+	b = (uint8_t)state;
 	a = OBJECT(object)->flags;
 	if ((a & 0x20u) != 0u)
 	{
@@ -1486,14 +1624,13 @@ void wrestler_check_hit(uint16_t object, uint16_t *p_y, uint16_t *p_d)
 		b = hit;
 		if (hit != 0u && negative == 0u)
 		{
-			wrestler_take_hit(object, &y, &d_2);
-			a = (uint8_t)(d_2 >> 8);
-			b = (uint8_t)d_2;
+			d = wrestler_take_hit(object);
+			a = (uint8_t)(d >> 8);
+			b = (uint8_t)d;
 		}
 	}
 	d_2 = ((uint32_t)a << 8) | b;
-	*p_y = y;
-	*p_d = d_2;
+	return d_2;
 }
 
 /* The wrestler walking: when facing its target and within reach, decides how to attack (carry: it did). */
@@ -1503,13 +1640,13 @@ void wrestler_approach(uint16_t object, uint16_t *p_object_2, uint32_t *p_carry)
 	uint8_t jump_chance = 0, leap_speed_high = 0, leap_speed_low = 0;
 	uint16_t animation_number = 0, chance_table = 0, target = 0;
 	uint8_t attributes = 0, attributes_2 = 0, state = 0, last_health = 0, vitality = 0, vitality_2 = 0, attributes_3 = 0;
-	uint16_t t1 = 0, t2 = 0, t3 = 0, t4 = 0;
+	uint16_t walk_target = 0, own_x = 0, target_x = 0, attack_target = 0;
 
-	t1 = (((uint32_t)(OBJECT(object)->behaviour & 0xFFu) << 8u) | (OBJECT(object)->target_dx >> 8u));
-	target = t1;
-	t2 = OBJECT(object)->x;
-	t3 = OBJECT(target)->x;
-	if ((int16_t)t2 < (int16_t)t3)
+	walk_target = OBJECT(object)->wrestler.target;
+	target = walk_target;
+	own_x = OBJECT(object)->x;
+	target_x = OBJECT(target)->x;
+	if ((int16_t)own_x < (int16_t)target_x)
 	{
 		attributes = OBJECT(object)->attributes;
 		if ((attributes & 0x40u) != 0u)
@@ -1539,8 +1676,8 @@ void wrestler_approach(uint16_t object, uint16_t *p_object_2, uint32_t *p_carry)
 		*p_carry = carry;
 		return;
 	}
-	t4 = (((uint32_t)(OBJECT(object)->behaviour & 0xFFu) << 8u) | (OBJECT(object)->target_dx >> 8u));
-	target = t4;
+	attack_target = OBJECT(object)->wrestler.target;
+	target = attack_target;
 	state = OBJECT(target)->state;
 	if ((int8_t)state < 0)
 	{
@@ -1628,21 +1765,21 @@ void wrestler_approach(uint16_t object, uint16_t *p_object_2, uint32_t *p_carry)
 }
 
 /* The wrestler: keeps its target a while, then takes the nearest player; with none present, goes idle. */
-uint16_t wrestler_pick_target(uint16_t object, uint16_t y, uint16_t nearest)
+void wrestler_pick_target(uint16_t object, uint16_t nearest)
 {
 	uint32_t carry = 0;
 	uint16_t ignored16 = 0, target_player = 0;
 	uint8_t state = 0, target_wait = 0, target_wait_2 = 0;
-	uint16_t t1 = 0;
+	uint16_t kept_target = 0;
 
 	find_nearest_player(object, &nearest, &ignored16, &carry);
 	if (carry == 0u)
 	{
 		carry = wrestler_go_idle(object);
-		return y;
+		return;
 	}
-	t1 = (((uint32_t)(OBJECT(object)->behaviour & 0xFFu) << 8u) | (OBJECT(object)->target_dx >> 8u));
-	target_player = t1;
+	kept_target = OBJECT(object)->wrestler.target;
+	target_player = kept_target;
 	if (OBJECT(target_player)->flags != 0u)
 	{
 		state = OBJECT(target_player)->state;
@@ -1653,14 +1790,14 @@ uint16_t wrestler_pick_target(uint16_t object, uint16_t y, uint16_t nearest)
 			{
 				target_wait_2 = OBJECT(object)->wrestler.target_wait;
 				OBJECT(object)->wrestler.target_wait = target_wait_2 - 1u;
-				return target_player;
+				leftover_y = target_player;
+				return;
 			}
 		}
 	}
 	OBJECT(object)->wrestler.target_wait = 0x40u;
-	OBJECT(object)->behaviour = (OBJECT(object)->behaviour & 0xFF00u) | ((nearest >> 8u) & 0xFFu);
-	OBJECT(object)->target_dx = (OBJECT(object)->target_dx & 0xFFu) | ((nearest & 0xFFu) << 8u);
-	return target_player;
+	OBJECT(object)->wrestler.target = nearest;
+	leftover_y = target_player;
 }
 
 /* The wrestler: the direction to the side of its target (field 2D) and to the target itself (2E). */
@@ -1668,13 +1805,13 @@ void wrestler_aim(uint16_t object)
 {
 	uint8_t side_offset = 0;
 	uint16_t aim_direction = 0, direction = 0, target_player = 0;
-	uint16_t t1 = 0, t2 = 0, t3 = 0;
+	uint16_t aim_target = 0, own_x = 0, target_x = 0;
 
-	t1 = (((uint32_t)(OBJECT(object)->behaviour & 0xFFu) << 8u) | (OBJECT(object)->target_dx >> 8u));
-	target_player = t1;
-	t2 = OBJECT(object)->x;
-	t3 = OBJECT(target_player)->x;
-	if ((int16_t)t3 < (int16_t)t2)
+	aim_target = OBJECT(object)->wrestler.target;
+	target_player = aim_target;
+	own_x = OBJECT(object)->x;
+	target_x = OBJECT(target_player)->x;
+	if ((int16_t)target_x < (int16_t)own_x)
 		side_offset = 0x20u;
 	else
 		side_offset = 0xE0u;
@@ -1706,16 +1843,16 @@ void wrestler_set_animation(uint16_t object, uint16_t *p_animation_number, uint3
 {
 	uint16_t animation_number = (uint16_t)*p_animation_number;
 	uint32_t carry = *p_carry;
-	uint8_t a = 0, new_animation = 0, new_kind = 0;
+	uint8_t animation_index = 0, new_animation = 0, new_kind = 0;
 	uint16_t kind_and_animation = 0;
-	uint16_t t1 = 0;
+	uint16_t kind_with_animation = 0;
 	uint32_t kind_halfword = 0;
 
-	a = (uint8_t)(animation_number >> 8);
-	carry = (int8_t)a < 0;
-	t1 = wrestler_animations[a & 0x7Fu];
-	new_kind = (uint8_t)(t1 >> 8);
-	new_animation = t1 | 0x80u;
+	animation_index = (uint8_t)(animation_number >> 8);
+	carry = (int8_t)animation_index < 0;
+	kind_with_animation = wrestler_animations[animation_index & 0x7Fu];
+	new_kind = (uint8_t)(kind_with_animation >> 8);
+	new_animation = kind_with_animation | 0x80u;
 	kind_halfword = ((uint32_t)new_kind << 8) | new_animation;
 	OBJECT(object)->kind = (uint8_t)(kind_halfword >> 8u);
 	OBJECT(object)->animation = (uint8_t)kind_halfword;
@@ -1728,23 +1865,23 @@ void wrestler_set_animation(uint16_t object, uint16_t *p_animation_number, uint3
 uint16_t wrestler_set_hit_box(uint16_t object, uint16_t box_number)
 {
 	uint16_t box_end = 0;
-	uint16_t t1 = 0, field_1c = 0, t2 = 0, field_1f = 0, t3 = 0, field = 0, t4 = 0, field_23 = 0;
+	uint16_t box_record = 0, field_1c = 0, box_cursor = 0, field_1f = 0, box_cursor_2 = 0, field = 0, box_cursor_3 = 0, field_23 = 0;
 
-	t1 = wrestler_hit_boxes_ADDRESS + (uint8_t)((((uint32_t)(box_number >> 8) << 1) << 1) << 1);
-	field_1c = HIT_BOX(t1)->field_1c;
+	box_record = wrestler_hit_boxes_ADDRESS + (uint8_t)((((uint32_t)(box_number >> 8) << 1) << 1) << 1);
+	field_1c = HIT_BOX(box_record)->field_1c;
 	OBJECT(object)->damage = (uint8_t)(field_1c >> 8u);
 	OBJECT(object)->attack = (uint8_t)field_1c;
-	t2 = t1 + 2u;
-	field_1f = HIT_BOX(t2 - 0x2u)->field_1f;
+	box_cursor = box_record + 2u;
+	field_1f = HIT_BOX(box_cursor - 0x2u)->field_1f;
 	OBJECT(object)->box_width = (uint8_t)(field_1f >> 8u);
 	OBJECT(object)->box_depth = (uint8_t)field_1f;
-	t3 = t2 + 2u;
-	field = HIT_BOX(t3 - 0x4u)->field_21;
+	box_cursor_2 = box_cursor + 2u;
+	field = HIT_BOX(box_cursor_2 - 0x4u)->field_21;
 	OBJECT(object)->box_height = (uint8_t)(field >> 8u);
 	OBJECT(object)->box_dx = (uint8_t)field;
-	t4 = t3 + 2u;
-	box_end = t4 + 2u;
-	field_23 = HIT_BOX(t4 - 0x6u)->field_23;
+	box_cursor_3 = box_cursor_2 + 2u;
+	box_end = box_cursor_3 + 2u;
+	field_23 = HIT_BOX(box_cursor_3 - 0x6u)->field_23;
 	OBJECT(object)->box_dy = (uint8_t)(field_23 >> 8u);
 	OBJECT(object)->box_dz = (uint8_t)field_23;
 	return box_end;
@@ -1755,21 +1892,21 @@ void wrestler_keep_in_area(uint16_t object)
 {
 	uint32_t carry = 0;
 	uint16_t next_stage_x = 0, next_x_and_fraction = 0, x_and_fraction = 0;
-	uint8_t x_speed_2 = 0, t2 = 0;
-	uint16_t t1 = 0, x_speed = 0, t3 = 0;
+	uint8_t x_speed_2 = 0, x_high = 0;
+	uint16_t x_low_and_fraction = 0, x_speed = 0, camera_x_low_and_fraction = 0;
 
-	t1 = (((uint32_t)(OBJECT(object)->x & 0xFFu) << 8u) | OBJECT(object)->x_fraction);
-	x_and_fraction = t1;
+	x_low_and_fraction = (((uint32_t)(OBJECT(object)->x & 0xFFu) << 8u) | OBJECT(object)->x_fraction);
+	x_and_fraction = x_low_and_fraction;
 	x_speed = OBJECT(object)->x_speed;
 	carry = (uint16_t)(x_and_fraction + x_speed) < x_and_fraction;
 	area_next_x = x_and_fraction + x_speed;
 	x_speed_2 = (uint8_t)(OBJECT(object)->x_speed >> 8u);
-	t2 = (uint8_t)(OBJECT(object)->x >> 8u);
-	area_next_x_high = (uint16_t)((uint32_t)(uint8_t)(((uint16_t)(int8_t)x_speed_2 >> 8) + t2 + carry) << 8) >> 8;
+	x_high = (uint8_t)(OBJECT(object)->x >> 8u);
+	area_next_x_high = (uint16_t)((uint32_t)(uint8_t)(((uint16_t)(int8_t)x_speed_2 >> 8) + x_high + carry) << 8) >> 8;
 	next_x_and_fraction = area_next_x;
-	t3 = (((uint32_t)(camera_x & 0xFFu) << 8u) | camera_x_fraction);
-	carry = (uint16_t)(next_x_and_fraction + t3) < next_x_and_fraction;
-	area_next_x = next_x_and_fraction + t3;
+	camera_x_low_and_fraction = (((uint32_t)(camera_x & 0xFFu) << 8u) | camera_x_fraction);
+	carry = (uint16_t)(next_x_and_fraction + camera_x_low_and_fraction) < next_x_and_fraction;
+	area_next_x = next_x_and_fraction + camera_x_low_and_fraction;
 	next_stage_x = ((uint32_t)(uint8_t)(((uint16_t)((uint32_t)(uint8_t)(camera_x >> 8u) << 8) >> 8) + area_next_x_high + carry) << 8) | area_next_x_pixels;
 	if ((int16_t)next_stage_x <= 0x57F || (int16_t)next_stage_x >= 0x69F)
 		OBJECT(object)->x_speed = 0;
@@ -1780,16 +1917,16 @@ uint32_t wrestler_within_reach(uint16_t object, uint16_t object_2)
 {
 	uint32_t carry = 0;
 	uint16_t distance = 0;
-	uint16_t t1 = 0, t2 = 0, t3 = 0, t4 = 0;
+	uint16_t own_x = 0, player_at_x = 0, own_y = 0, player_at_y = 0;
 
-	t1 = OBJECT(object)->x;
-	t2 = OBJECT(object_2)->x;
-	distance = t1 - t2;
+	own_x = OBJECT(object)->x;
+	player_at_x = OBJECT(object_2)->x;
+	distance = own_x - player_at_x;
 	if ((int16_t)(distance >> 15 ? 0u - distance : distance) <= 0x40)
 	{
-		t3 = OBJECT(object)->y;
-		t4 = OBJECT(object_2)->y;
-		distance = t3 - t4;
+		own_y = OBJECT(object)->y;
+		player_at_y = OBJECT(object_2)->y;
+		distance = own_y - player_at_y;
 		if ((int16_t)(distance >> 15 ? 0u - distance : distance) <= 4)
 		{
 			carry = 1u;
@@ -1807,7 +1944,7 @@ uint32_t wrestler_surrounded(uint16_t object)
 	uint32_t carry = 0;
 	uint16_t object_2 = 0;
 	uint8_t stack = 0, stack_2 = 0;
-	uint8_t state = 0, t1 = 0;
+	uint8_t state = 0, players_to_check = 0;
 
 	if (player_count == 1u)
 	{
@@ -1830,9 +1967,9 @@ uint32_t wrestler_surrounded(uint16_t object)
 			}
 		}
 		object_2 += 0xC0u;
-		t1 = stack_2;
-		stack_2 = t1 - 1u;
-	} while (t1 != 1u);
+		players_to_check = stack_2;
+		stack_2 = players_to_check - 1u;
+	} while (players_to_check != 1u);
 	if (stack < 2u)
 	{
 		carry = 0u;
@@ -1846,17 +1983,17 @@ uint32_t wrestler_surrounded(uint16_t object)
 uint16_t wrestler_stand(uint16_t object)
 {
 	uint32_t carry = 0;
-	uint16_t d = 0, u = 0;
+	uint16_t box_end = 0, look_numbers = 0;
 
-	d = 0x100u;
-	wrestler_set_animation(object, &d, &carry);
+	look_numbers = 0x100u;
+	wrestler_set_animation(object, &look_numbers, &carry);
 	OBJECT(object)->flags = (OBJECT(object)->flags | 0x40u) & ~4u;
-	d &= 0xFFu;
-	u = wrestler_set_hit_box(object, d);
+	look_numbers &= 0xFFu;
+	box_end = wrestler_set_hit_box(object, look_numbers);
 	OBJECT(object)->state = 1u;
 	OBJECT(object)->action = 0u;
 	OBJECT(object)->action_step = 0u;
-	return u;
+	return box_end;
 }
 
 /* The wrestler has no target left: laughs (6800) and waits. */
@@ -1877,12 +2014,11 @@ uint32_t wrestler_go_idle(uint16_t object)
 
 /* The wrestler takes a hit: flashes; with no health left or on a heavy hit (or every fifth) it is
    knocked down, else it flinches. */
-void wrestler_take_hit(uint16_t object, uint16_t *p_y, uint16_t *p_d)
+uint16_t wrestler_take_hit(uint16_t object)
 {
-	uint16_t y = (uint16_t)*p_y;
 	uint32_t carry = 0;
 	uint16_t animation_number = 0, box_number = 0, command = 0, d = 0, object_2 = 0, palette_effect_number = 0;
-	uint8_t vitality = 0, direction = 0, hit = 0, hits = 0, hits_2 = 0;
+	uint8_t vitality = 0, hit = 0, hits = 0, hits_2 = 0, direction = 0;
 	uint16_t hit_by = 0;
 
 	hit_by = OBJECT(object)->hit_by;
@@ -1895,7 +2031,7 @@ void wrestler_take_hit(uint16_t object, uint16_t *p_y, uint16_t *p_d)
 	OBJECT(object)->z_speed = 0;
 	palette_request_kind = 2u;
 	palette_effect_number = 2u;
-	vector_palette_request(palette_effect_number, &y, &object_2);
+	vector_palette_request(object_2, palette_effect_number);
 	command = 0x6600u;
 	carry = vector_queue_sound(command);
 	box_number = 0u;
@@ -1905,78 +2041,14 @@ void wrestler_take_hit(uint16_t object, uint16_t *p_y, uint16_t *p_d)
 	{
 		command = 0x6600u;
 		carry = vector_queue_sound_unless_attract(command);
-		OBJECT(object)->wrestler.hits = 0u;
-		animation_number = 0x400u;
-		wrestler_set_animation(object, &animation_number, &carry);
-		OBJECT(object)->state = 0xFEu;
-		OBJECT(object)->action = 0u;
-		OBJECT(object)->y_speed = 0;
-		OBJECT(object)->z_speed = 0x400;
-		direction = OBJECT(object)->wrestler.direction;
-		if ((uint8_t)(direction + 0x40u) < 0x80u)
-		{
-			d = 0xFD00u;
-			OBJECT(object)->x_speed = -0x300;
-		}
-		else
-		{
-			d = 0x300u;
-			OBJECT(object)->x_speed = 0x300;
-		}
 	}
 	else
 	{
 		hit = OBJECT(object)->hit;
-		if (hit == 0x13u)
-		{
-			command = 0x6900u;
-			carry = vector_queue_sound(command);
-			OBJECT(object)->wrestler.hits = 0u;
-			animation_number = 0x400u;
-			wrestler_set_animation(object, &animation_number, &carry);
-			OBJECT(object)->state = 0xFEu;
-			OBJECT(object)->action = 0u;
-			OBJECT(object)->y_speed = 0;
-			OBJECT(object)->z_speed = 0x400;
-			direction = OBJECT(object)->wrestler.direction;
-			if ((uint8_t)(direction + 0x40u) < 0x80u)
-			{
-				d = 0xFD00u;
-				OBJECT(object)->x_speed = -0x300;
-			}
-			else
-			{
-				d = 0x300u;
-				OBJECT(object)->x_speed = 0x300;
-			}
-		}
-		else
+		if (hit != 0x13u)
 		{
 			hits = OBJECT(object)->wrestler.hits;
-			if (hits == 4u)
-			{
-				command = 0x6900u;
-				carry = vector_queue_sound(command);
-				OBJECT(object)->wrestler.hits = 0u;
-				animation_number = 0x400u;
-				wrestler_set_animation(object, &animation_number, &carry);
-				OBJECT(object)->state = 0xFEu;
-				OBJECT(object)->action = 0u;
-				OBJECT(object)->y_speed = 0;
-				OBJECT(object)->z_speed = 0x400;
-				direction = OBJECT(object)->wrestler.direction;
-				if ((uint8_t)(direction + 0x40u) < 0x80u)
-				{
-					d = 0xFD00u;
-					OBJECT(object)->x_speed = -0x300;
-				}
-				else
-				{
-					d = 0x300u;
-					OBJECT(object)->x_speed = 0x300;
-				}
-			}
-			else
+			if (hits != 4u)
 			{
 				hits_2 = OBJECT(object)->wrestler.hits;
 				OBJECT(object)->wrestler.hits = hits_2 + 1u;
@@ -1985,9 +2057,27 @@ void wrestler_take_hit(uint16_t object, uint16_t *p_y, uint16_t *p_d)
 				OBJECT(object)->state = 0xFFu;
 				OBJECT(object)->action = 0u;
 				d = (d & 0xFFu) | 0xFF00u;
+				return d;
 			}
 		}
+		command = 0x6900u;
+		carry = vector_queue_sound(command);
 	}
-	*p_y = y;
-	*p_d = d;
+	OBJECT(object)->wrestler.hits = 0u;
+	animation_number = 0x400u;
+	wrestler_set_animation(object, &animation_number, &carry);
+	OBJECT(object)->state = 0xFEu;
+	OBJECT(object)->action = 0u;
+	OBJECT(object)->y_speed = 0;
+	OBJECT(object)->z_speed = 0x400;
+	direction = OBJECT(object)->wrestler.direction;
+	if ((uint8_t)(direction + 0x40u) < 0x80u)
+	{
+		d = 0xFD00u;
+		OBJECT(object)->x_speed = -0x300;
+		return d;
+	}
+	d = 0x300u;
+	OBJECT(object)->x_speed = 0x300;
+	return d;
 }
