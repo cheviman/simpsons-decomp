@@ -3,7 +3,7 @@
  *    Description: the police car that drives into stage 1 and stage 2
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -57,12 +57,11 @@ uint16_t police_car_hit_steps(uint16_t object)
 /* Plays sound 6300 and the car's hit animation. */
 void police_car_hit(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t action_step = 0;
 
 	command = 0x6300u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	OBJECT(object)->animation = 0x85u;
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step + 1u;
@@ -124,7 +123,7 @@ void police_car_drive_in(uint16_t object)
 	if (timer == 1u)
 	{
 		OBJECT(object)->flags = 0xC0u;
-		io_write8(0x1884u, 0xC0u);
+		io_write8(police_car_stop_signal, 0xC0u);
 		OBJECT(object)->x_speed = 0;
 		OBJECT(object)->animation = 0x89u;
 		state = OBJECT(object)->state;
@@ -247,7 +246,7 @@ uint16_t police_car_door_start(uint16_t object)
 	OBJECT(object)->attributes = (attributes & 0xCFu) | 0x10u;
 	parameter = OBJECT(object)->parameter;
 	police_car_door = police_car_doors_ADDRESS + (int8_t)(((uint32_t)parameter << 1) << 1);
-	players_now = io_read8(0x1874u);
+	players_now = io_read8(stage_player_count);
 	if (players_now < POLICE_CAR_DOOR(police_car_door)->players)
 	{
 		OBJECT(object)->state = 4u;
@@ -275,7 +274,7 @@ void police_car_door_wait_car(uint16_t object)
 {
 	uint8_t car_stopped = 0, state = 0;
 
-	car_stopped = io_read8(0x1884u);
+	car_stopped = io_read8(police_car_stop_signal);
 	if (car_stopped != 0u)
 	{
 		state = OBJECT(object)->state;
@@ -309,7 +308,7 @@ uint16_t police_car_door_open(uint16_t object, uint16_t states)
 		a = mem_read8(release_record);
 		if (a == 0x7Fu)
 			break;
-		players_now = io_read8(0x1874u);
+		players_now = io_read8(stage_player_count);
 		if (a < players_now)
 		{
 			leftover_y = release;
@@ -324,7 +323,6 @@ uint16_t police_car_door_open(uint16_t object, uint16_t states)
 /* When the door's animation ends, takes it away with sound 2200. */
 void police_car_door_vanish(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t animation_flags = 0;
 
@@ -333,5 +331,5 @@ void police_car_door_vanish(uint16_t object)
 		return;
 	OBJECT(object)->flags = 0u;
 	command = 0x2200u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 }

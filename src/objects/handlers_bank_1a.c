@@ -3,7 +3,7 @@
  *    Description: bank 1A's jump table: the Dreamland boss's objects' handlers
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -208,32 +208,32 @@ uint16_t boss_ball_trail_update(uint16_t object, uint8_t state)
    scroll (a debug display). */
 void unused_show_debug_values(void)
 {
-	uint16_t depth = 0, place = 0, state = 0, value = 0;
+	uint16_t place = 0, value = 0;
 	uint8_t object_1a_level_shown = 0;
 	uint16_t camera_x_now = 0, shown_scroll_x = 0, shown_cemetery_scroll = 0;
 
-	depth = (((uint32_t)unused_spawn_0356DD[0].depth << 8u) | unused_spawn_0356DD[0].flags);
+	place = unused_debug_tile_places[0];
 	value = (uint32_t)OBJECT(OBJECT_ADDRESS(14))->vitality << 8;
-	unused_vector_print_hex_byte(depth, value);
-	object_1a_level_shown = io_read8(0x188Cu);
-	state = (((uint32_t)unused_spawn_0356DD[0].state << 8u) | unused_spawn_0356DD[0].level);
+	unused_vector_print_hex_byte(place, value);
+	object_1a_level_shown = io_read8(dreamland_boss_phase_vitality);
+	place = unused_debug_tile_places[1];
 	value = (uint32_t)object_1a_level_shown << 8;
-	unused_vector_print_hex_byte(state, value);
+	unused_vector_print_hex_byte(place, value);
 	camera_x_now = camera_x;
 	shown_scroll_x = camera_x_now + 0x150u;
 	debug_value = shown_scroll_x;
-	place = AT16(unused_tile_places[7], -1);
+	place = unused_debug_tile_places[6];
 	value = (uint32_t)debug_value_high << 8;
 	unused_vector_print_hex_byte(place, value);
-	place = AT16(unused_tile_places[9], -1);
+	place = unused_debug_tile_places[7];
 	value = (uint32_t)debug_value_low << 8;
 	unused_vector_print_hex_byte(place, value);
 	shown_cemetery_scroll = cemetery_scroll;
 	debug_value = shown_cemetery_scroll;
-	place = AT16(unused_tile_places[11], -1);
+	place = unused_debug_tile_places[8];
 	value = (uint32_t)debug_value_high << 8;
 	unused_vector_print_hex_byte(place, value);
-	place = AT16(unused_tile_places[13], -1);
+	place = unused_debug_tile_places[9];
 	value = (uint32_t)debug_value_low << 8;
 	unused_vector_print_hex_byte(place, value);
 }

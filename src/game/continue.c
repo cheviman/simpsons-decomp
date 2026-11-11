@@ -3,7 +3,7 @@
  *    Description: the continue
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -71,7 +71,6 @@ void game_phase_check_none(void)
    and the game's continue phase */
 uint16_t check_players_out(uint8_t d)
 {
-	uint32_t carry = 0;
 	uint8_t play_status = 0;
 	uint16_t command = 0, play_status_word = 0;
 
@@ -91,9 +90,9 @@ uint16_t check_players_out(uint8_t d)
 					return play_status_word;
 				}
 				command = 0u;
-				carry = queue_sound_always(command);
+				queue_sound_always(command);
 				command = 0xA100u;
-				carry = queue_sound_always(command);
+				queue_sound_always(command);
 				if (hurry_up_out != 0u)
 				{
 					hurry_up_out = 0u;
@@ -180,11 +179,11 @@ void continue_screen(uint16_t *p_player, uint16_t *p_countdown_address, uint16_t
 				player_number++;
 			} while (player_number != 4u);
 			command = 0u;
-			carry = queue_sound_always(command);
+			queue_sound_always(command);
 			command = 0x7F00u;
-			carry = queue_sound_always(command);
+			queue_sound_always(command);
 			command = 0x9200u;
-			carry = queue_sound_always(command);
+			queue_sound_always(command);
 			continue_seconds = 0u;
 			continue_player = 0u;
 			mode_phase = 3u;
@@ -213,7 +212,7 @@ void continue_screen(uint16_t *p_player, uint16_t *p_countdown_address, uint16_t
 		}
 		b = 1u;
 		command = 0x501u;
-		carry = queue_sound_always(command);
+		queue_sound_always(command);
 		seconds = continue_seconds;
 		continue_seconds_heard = seconds;
 		d_2 = ((uint32_t)seconds << 8) | b;
@@ -253,11 +252,11 @@ void continue_screen(uint16_t *p_player, uint16_t *p_countdown_address, uint16_t
 			player_number++;
 		} while (player_number != 4u);
 		command = 0u;
-		carry = queue_sound_always(command);
+		queue_sound_always(command);
 		command = 0x7F00u;
-		carry = queue_sound_always(command);
+		queue_sound_always(command);
 		command = 0x9200u;
-		carry = queue_sound_always(command);
+		queue_sound_always(command);
 		continue_seconds = 0u;
 		continue_player = 0u;
 		mode_phase = 3u;
@@ -308,7 +307,7 @@ void continue_screen(uint16_t *p_player, uint16_t *p_countdown_address, uint16_t
 	}
 	b = 1u;
 	command = 0x501u;
-	carry = queue_sound_always(command);
+	queue_sound_always(command);
 	seconds = continue_seconds;
 	continue_seconds_heard = seconds;
 	d_2 = ((uint32_t)seconds << 8) | b;

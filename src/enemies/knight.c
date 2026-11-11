@@ -3,7 +3,7 @@
  *    Description: stage 6's knight (type F5) and its action 3C
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -205,7 +205,6 @@ void knight_choose_entrance(uint16_t object)
 /* After its wait, the knight jumps in from the front, big (zoom 8080), with a sound. */
 void knight_jump_in(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t timer = 0, action_step = 0;
 
@@ -214,7 +213,7 @@ void knight_jump_in(uint16_t object)
 	if (timer != 1u)
 		return;
 	command = 0x301u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	OBJECT(object)->flags = 0x98u;
 	OBJECT(object)->zoom_x = 0x80u;
 	OBJECT(object)->zoom_y = 0x80u;
@@ -261,7 +260,7 @@ void knight_jump_land(uint16_t object)
 	if (carry == 0u)
 		return;
 	command = 0x2000u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	OBJECT(object)->flags = 0xC0u;
 	OBJECT(object)->x_speed = 0;
 	OBJECT(object)->y_speed = 0;
@@ -337,7 +336,6 @@ void knight_walk_in_end(uint16_t object)
 /* After its wait, the knight jumps in from the front straight up, big, with a sound. */
 void knight_jump_in_straight(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t timer = 0, action_step = 0;
 
@@ -346,7 +344,7 @@ void knight_jump_in_straight(uint16_t object)
 	if (timer != 1u)
 		return;
 	command = 0x301u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	OBJECT(object)->flags = 0x98u;
 	OBJECT(object)->zoom_x = 0x80u;
 	OBJECT(object)->zoom_y = 0x80u;
@@ -359,7 +357,6 @@ void knight_jump_in_straight(uint16_t object)
 /* After its wait, the knight leaps in from the front fast across, big, with a sound. */
 void knight_leap_in(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t timer = 0, action_step = 0;
 
@@ -368,7 +365,7 @@ void knight_leap_in(uint16_t object)
 	if (timer != 1u)
 		return;
 	command = 0x301u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	OBJECT(object)->flags = 0x98u;
 	OBJECT(object)->zoom_x = 0x80u;
 	OBJECT(object)->zoom_y = 0x80u;
@@ -382,7 +379,6 @@ void knight_leap_in(uint16_t object)
 /* Shrinks the leaping knight and slows it; once it falls, moves it toward the front with a sound. */
 void knight_leap_rise(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0, z_speed = 0;
 	uint8_t action_step = 0;
 	uint16_t x_speed = 0, z_speed_2 = 0;
@@ -396,7 +392,7 @@ void knight_leap_rise(uint16_t object)
 	if ((int16_t)z_speed >= 0)
 		return;
 	command = 0x2000u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	OBJECT(object)->y_speed = -0x80;
 	OBJECT(object)->attributes = 0x10u;
 	action_step = OBJECT(object)->action_step;
@@ -422,7 +418,7 @@ void knight_leap_land(uint16_t object)
 	if (carry == 0u)
 		return;
 	command = 0x2000u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	OBJECT(object)->flags = 0xC0u;
 	OBJECT(object)->x_speed = 0;
 	OBJECT(object)->y_speed = 0;

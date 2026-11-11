@@ -3,7 +3,7 @@
  *    Description: the zombies of stage 3 and their actions: kinds 91 and 97 (types 10, 14, 23, 5280 18)
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -311,7 +311,6 @@ void zombie_come_out(uint16_t object)
    of the ground with its sound. */
 uint16_t zombie_start_coming_out(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint8_t start_parameter = 0;
 	uint16_t command = 0, nearest_player = 0;
 	uint8_t parameter = 0, parameter_2 = 0, action = 0;
@@ -346,7 +345,7 @@ uint16_t zombie_start_coming_out(uint16_t object)
 	action = OBJECT(object)->action;
 	OBJECT(object)->action = action + 1u;
 	command = 0x7B00u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	return nearest_player;
 }
 
@@ -417,7 +416,6 @@ void zombie_remove_when_sunk(uint16_t object)
    with its sound. */
 void zombie_walk_in(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t timer = 0;
 
@@ -430,7 +428,7 @@ void zombie_walk_in(uint16_t object)
 	OBJECT(object)->animation = 0x92u;
 	OBJECT(object)->action = 1u;
 	command = 0x7B00u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 }
 
 /* Starts the zombie sinking into the ground (animation 93). */
@@ -488,7 +486,6 @@ void zombie_burrow_move(uint16_t object)
    facing its player. */
 void zombie_burrow_surface(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t timer = 0, action_step = 0;
 
@@ -503,7 +500,7 @@ void zombie_burrow_surface(uint16_t object)
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step + 1u;
 	command = 0x7B00u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	vector_face_direction(object);
 }
 
@@ -539,7 +536,6 @@ void zombie_leap_start(uint16_t object)
 /* On the crouch's marked frame, sends the zombie leaping toward its player with a sound. */
 void zombie_leap_take_off(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t animation_flags = 0, target_direction = 0, action_step = 0;
 	uint16_t x_speed = 0;
@@ -548,7 +544,7 @@ void zombie_leap_take_off(uint16_t object)
 	if ((animation_flags & 2u) == 0u)
 		return;
 	command = 0x301u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	OBJECT(object)->x_speed = 0x100;
 	OBJECT(object)->z_speed = 0x400;
 	target_direction = OBJECT(object)->target_direction;
@@ -609,7 +605,7 @@ void zombie_leap_land(uint16_t object)
 	vector_set_hit_box(object);
 	OBJECT(object)->x_speed = 0;
 	command = 0x2000u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	OBJECT(object)->timer = 0x20u;
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step + 1u;

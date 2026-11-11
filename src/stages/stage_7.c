@@ -3,7 +3,7 @@
  *    Description: stage 7, Channel 6
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -327,7 +327,6 @@ uint32_t step_stage_7(uint16_t u)
    its stage entry and the step's scene */
 void stage_7_setup(void)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 
 	gauges_shown = 0u;
@@ -335,7 +334,7 @@ void stage_7_setup(void)
 	clear_tile_layers();
 	reset_for_stage();
 	command = 0u;
-	carry = queue_sound_always(command);
+	queue_sound_always(command);
 	window_bank = 0x13u;
 	set_lines(window_bank);
 	stage_record_entry = stage_slots[7].record;
@@ -378,8 +377,8 @@ void stage_7_begin_scene(uint16_t *p_copy_to, uint16_t *p_u, uint32_t *p_left_ca
 	request = 0x29u;
 	palette_request(u, request);
 	play_stage_music();
-	io_write8(0x1FB9u, 0x3Fu);
-	io_write8(0x1FBAu, 0x36u);
+	io_write8(colour_bases_back_sprites_fixed, 0x3Fu);
+	io_write8(colour_bases_layers_a_b, 0x36u);
 	map_scene = 0x8Cu;
 	map_area = 0u;
 	set_area_tile_banks();
@@ -391,8 +390,8 @@ void stage_7_begin_scene(uint16_t *p_copy_to, uint16_t *p_u, uint32_t *p_left_ca
 	window_bank = 0x1Fu;
 	set_lines(window_bank);
 	scene_load_story_settings(&copy_to, &u_2);
-	io_write8(0x1FB9u, 0x13u);
-	io_write8(0x1FBAu, 0x2Cu);
+	io_write8(colour_bases_back_sprites_fixed, 0x13u);
+	io_write8(colour_bases_layers_a_b, 0x2Cu);
 	players_present = players_playing;
 	step_phase++;
 	*p_copy_to = copy_to;

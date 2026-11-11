@@ -3,7 +3,7 @@
  *    Description: clearing the K052109's three tile layers and the sprite RAM
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -130,7 +130,7 @@ uint16_t clear_sprites(void)
 
 	control = board_control | 2u;
 	board_control = control;
-	io_write8(0x1FC2u, control);
+	io_write8(board_control_register, control);
 	place = 0x2000u;
 	bytes_left = 0x1000u;
 	do
@@ -149,7 +149,7 @@ uint16_t clear_sprites(void)
 	} while (remaining_bytes != 0u);
 	control = board_control & ~3u;
 	board_control = control;
-	io_write8(0x1FC2u, control);
+	io_write8(board_control_register, control);
 	leftover_y = bytes_left;
 	return place;
 }

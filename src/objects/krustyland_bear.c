@@ -3,7 +3,7 @@
  *    Description: Krustyland's bear and its kind B2 companions
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -43,7 +43,6 @@ void krustyland_bear_wait_camera(uint16_t object)
 /* After 32 frames wakes with sound 7400. */
 void krustyland_bear_wake(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t timer = 0, state = 0;
 
@@ -52,7 +51,7 @@ void krustyland_bear_wake(uint16_t object)
 	if (timer != 1u)
 		return;
 	command = 0x7400u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	OBJECT(object)->animation = 0x81u;
 	OBJECT(object)->timer = 0x40u;
 	state = OBJECT(object)->state;
@@ -62,7 +61,6 @@ void krustyland_bear_wake(uint16_t object)
 /* After 64 frames starts off up the screen with sound 7300 (its kind B2 companion leaps off now). */
 void krustyland_bear_start_off(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t timer = 0, state = 0;
 
@@ -71,7 +69,7 @@ void krustyland_bear_start_off(uint16_t object)
 	if (timer != 1u)
 		return;
 	command = 0x7300u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	OBJECT(object)->y_speed = -0x100;
 	OBJECT(object)->timer = 0x20u;
 	OBJECT(object)->animation = 0x80u;
@@ -123,7 +121,6 @@ uint16_t kind_b2_start(uint16_t object)
 /* Calls out (sound 6800) once on screen, switches between its two idle animations, until hit. */
 uint16_t kind_b2_idle(uint16_t object, uint16_t states)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t idle_frames = 0, state = 0, idle_frames_2 = 0, timer = 0, timer_2 = 0, idle_number = 0, idle_number_2 = 0;
 	uint16_t screen_x = 0, own_y = 0;
@@ -139,7 +136,7 @@ uint16_t kind_b2_idle(uint16_t object, uint16_t states)
 			{
 				OBJECT(object)->kind_b2.idle_frames = 0u;
 				command = 0x6800u;
-				carry = vector_queue_sound(command);
+				vector_queue_sound(command);
 			}
 		}
 	}
@@ -195,7 +192,6 @@ void kind_b2_hit_wait(uint16_t object)
 /* Calls out again (sound 6800) and gets up. */
 void kind_b2_recover(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t timer = 0, state = 0;
 
@@ -204,7 +200,7 @@ void kind_b2_recover(uint16_t object)
 	if (timer != 1u)
 		return;
 	command = 0x6800u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	OBJECT(object)->animation = 0x81u;
 	OBJECT(object)->timer = 0x60u;
 	state = OBJECT(object)->state;

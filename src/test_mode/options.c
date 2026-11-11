@@ -3,7 +3,7 @@
  *    Description: start buttons and the coin/game options
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -49,7 +49,7 @@ void test_options_page(uint16_t d)
 		test_menu_update(&ignored16, &carry);
 		return;
 	case test_rom_check_page_steps_ADDRESS:
-		carry = test_rom_check_open(page_steps);
+		test_rom_check_open(page_steps);
 		return;
 	case 0x60A3u:
 		test_rom_check_run(&ignored16, &carry);
@@ -67,7 +67,7 @@ void test_options_page(uint16_t d)
 		test_io_check_run(&ignored16, &carry);
 		return;
 	case test_music_page_steps_ADDRESS:
-		carry = test_music_open(page_steps);
+		test_music_open(page_steps);
 		return;
 	case 0x621Du:
 		test_music_first_choice(&ignored16, &carry);
@@ -79,7 +79,7 @@ void test_options_page(uint16_t d)
 		test_music_replay(&ignored16, &carry);
 		return;
 	case test_sound_page_steps_ADDRESS:
-		carry = test_sound_open(page_steps);
+		test_sound_open(page_steps);
 		return;
 	case 0x6279u:
 		test_sound_first_choice(&ignored16, &carry);
@@ -301,11 +301,10 @@ void test_open_coinage_page(uint16_t x, uint16_t d)
 /* Makes page A the current one, prints it and marks line B */
 uint16_t test_open_page_marked(uint16_t tiles, uint16_t page_and_line)
 {
-	uint32_t carry = 0;
 	uint16_t colour_and_line = 0;
 
 	test_page = page_and_line >> 8;
-	carry = test_open_page(tiles, page_and_line);
+	test_open_page(tiles, page_and_line);
 	colour_and_line = (page_and_line & 0xFFu) | 0x4000u;
 	return test_mark_line(colour_and_line);
 }
@@ -354,7 +353,7 @@ void test_screen_flip_page(void)
 	text_and_choice = 0xFu;
 	test_choose_setting(setting, &text_and_choice, &carry);
 	choice = (uint8_t)text_and_choice;
-	io_write8(0x1E80u, choice);
+	io_write8(tile_chip_flip, choice);
 }
 
 /* The 8-6 SOUND OUTPUT page (monaural or stereo) */
@@ -459,7 +458,7 @@ void test_choose_setting_open(uint16_t tiles, uint16_t setting, uint16_t *p_mark
 
 	stack = setting;
 	mark_colour_word |= (uint32_t)(uint16_t)(((uint32_t)a << 8) | mark_colour_word) << 8;
-	carry = test_open_page(tiles, mark_colour_word);
+	test_open_page(tiles, mark_colour_word);
 	setting = stack;
 	mark_colour_word = 0x4000u;
 	test_mark_setting(&setting, &mark_colour_word);
@@ -546,7 +545,7 @@ void test_factory_setting_page(uint16_t d)
 		test_menu_update(&ignored16, &carry);
 		return;
 	case test_rom_check_page_steps_ADDRESS:
-		carry = test_rom_check_open(page_steps);
+		test_rom_check_open(page_steps);
 		return;
 	case 0x60A3u:
 		test_rom_check_run(&ignored16, &carry);
@@ -564,7 +563,7 @@ void test_factory_setting_page(uint16_t d)
 		test_io_check_run(&ignored16, &carry);
 		return;
 	case test_music_page_steps_ADDRESS:
-		carry = test_music_open(page_steps);
+		test_music_open(page_steps);
 		return;
 	case 0x621Du:
 		test_music_first_choice(&ignored16, &carry);
@@ -576,7 +575,7 @@ void test_factory_setting_page(uint16_t d)
 		test_music_replay(&ignored16, &carry);
 		return;
 	case test_sound_page_steps_ADDRESS:
-		carry = test_sound_open(page_steps);
+		test_sound_open(page_steps);
 		return;
 	case 0x6279u:
 		test_sound_first_choice(&ignored16, &carry);

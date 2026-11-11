@@ -3,7 +3,7 @@
  *    Description: stage 5's gorge: the falling boulders and the rocks
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -103,7 +103,7 @@ void boulder_fall(uint16_t object)
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
 	command = 0x6500u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	parameter = OBJECT(object)->parameter;
 	if (parameter == 0u)
 	{
@@ -184,7 +184,7 @@ void boulder_bounce(uint16_t object)
 			return;
 		}
 		command = 0x6500u;
-		carry = vector_queue_sound(command);
+		vector_queue_sound(command);
 		OBJECT(object)->flags = 0u;
 		return;
 	}
@@ -200,7 +200,7 @@ void boulder_bounce(uint16_t object)
 		return;
 	}
 	command = 0x6500u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	OBJECT(object)->y_speed = -0x100;
 	OBJECT(object)->z_speed = 0x200;
 	boulder_hurt(object);
@@ -209,7 +209,6 @@ void boulder_bounce(uint16_t object)
 /* Falls past the floor growing bigger, as if towards the screen, and goes away with sound 6500. */
 void boulder_fall_in_front(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0, height = 0, z_speed = 0, zoom_x = 0;
 	uint8_t timer = 0, timer_2 = 0;
 	uint16_t z = 0, zoom_x_2 = 0, z_speed_2 = 0;
@@ -219,7 +218,7 @@ void boulder_fall_in_front(uint16_t object)
 	if ((int16_t)z < 0 && height < 0xFF80u)
 	{
 		command = 0x6500u;
-		carry = vector_queue_sound(command);
+		vector_queue_sound(command);
 		OBJECT(object)->flags = 0u;
 		return;
 	}
@@ -256,10 +255,10 @@ uint16_t gorge_rock_start(uint16_t object)
 	parameter = OBJECT(object)->parameter;
 	if (parameter == 0u)
 	{
-		OBJECT(OBJECT_ADDRESS(0))->unk_44 = 0x97u;
-		OBJECT(OBJECT_ADDRESS(2))->unk_44 = 0x97u;
-		OBJECT(OBJECT_ADDRESS(4))->unk_44 = 0x97u;
-		OBJECT(OBJECT_ADDRESS(6))->unk_44 = 0x97u;
+		OBJECT(OBJECT_ADDRESS(0))->player.pose_animation = 0x97u;
+		OBJECT(OBJECT_ADDRESS(2))->player.pose_animation = 0x97u;
+		OBJECT(OBJECT_ADDRESS(4))->player.pose_animation = 0x97u;
+		OBJECT(OBJECT_ADDRESS(6))->player.pose_animation = 0x97u;
 	}
 	attributes = OBJECT(object)->attributes;
 	OBJECT(object)->attributes = (attributes & 0xCFu) | 0x10u;

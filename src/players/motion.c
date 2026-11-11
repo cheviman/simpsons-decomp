@@ -3,7 +3,7 @@
  *    Description: a player's motion against walls, floors, the screen's edges and the scroll, and helpers on its speeds and partner
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -112,7 +112,7 @@ void player_check_motion(uint16_t player)
 			x_speed_3 = OBJECT(player)->x_speed;
 			OBJECT(mover)->x_speed = x_speed_3;
 			vitality_3 = OBJECT(player)->vitality;
-			t3 = io_read16(0x1848u);
+			t3 = io_read16(running_player_values);
 			player_vars = t3;
 			PLAYER_VALUES(player_vars)->kept_life = vitality_3;
 			return;
@@ -136,7 +136,7 @@ void player_check_motion(uint16_t player)
 			x_speed_3 = OBJECT(player)->x_speed;
 			OBJECT(mover)->x_speed = x_speed_3;
 			vitality_3 = OBJECT(player)->vitality;
-			t3 = io_read16(0x1848u);
+			t3 = io_read16(running_player_values);
 			player_vars = t3;
 			PLAYER_VALUES(player_vars)->kept_life = vitality_3;
 			return;
@@ -153,7 +153,7 @@ void player_check_motion(uint16_t player)
 		x_speed_3 = OBJECT(player)->x_speed;
 		OBJECT(mover)->x_speed = x_speed_3;
 		vitality_3 = OBJECT(player)->vitality;
-		t3 = io_read16(0x1848u);
+		t3 = io_read16(running_player_values);
 		player_vars = t3;
 		PLAYER_VALUES(player_vars)->kept_life = vitality_3;
 		return;
@@ -169,7 +169,7 @@ void player_check_motion(uint16_t player)
 		x_speed_3 = OBJECT(player)->x_speed;
 		OBJECT(mover)->x_speed = x_speed_3;
 		vitality_3 = OBJECT(player)->vitality;
-		t3 = io_read16(0x1848u);
+		t3 = io_read16(running_player_values);
 		player_vars = t3;
 		PLAYER_VALUES(player_vars)->kept_life = vitality_3;
 		return;
@@ -179,7 +179,7 @@ void player_check_motion(uint16_t player)
 	x_speed_3 = OBJECT(player)->x_speed;
 	OBJECT(mover)->x_speed = x_speed_3;
 	vitality_3 = OBJECT(player)->vitality;
-	t3 = io_read16(0x1848u);
+	t3 = io_read16(running_player_values);
 	player_vars = t3;
 	PLAYER_VALUES(player_vars)->kept_life = vitality_3;
 }
@@ -222,7 +222,7 @@ void player_keep_life(uint16_t player)
 	uint16_t t1 = 0;
 
 	vitality = OBJECT(player)->vitality;
-	t1 = io_read16(0x1848u);
+	t1 = io_read16(running_player_values);
 	player_vars = t1;
 	PLAYER_VALUES(player_vars)->kept_life = vitality;
 }
@@ -333,10 +333,10 @@ void player_request_scroll(uint16_t velocity, uint16_t player)
 		return;
 	if ((int16_t)(((uint32_t)y_speed_high << 8) | y_speed_low) < 0)
 	{
-		upper_scroll_line = io_read16(0x1842u);
+		upper_scroll_line = io_read16(bonus_results_state);
 		if ((int16_t)place_y < (int16_t)upper_scroll_line)
 		{
-			upper_others_line = io_read16(0x1844u);
+			upper_others_line = io_read16(results_last_result);
 			others_line_y = upper_others_line;
 			if ((OBJECT(OBJECT_ADDRESS(0))->flags == 0u || (int16_t)OBJECT(OBJECT_ADDRESS(0))->y < (int16_t)others_line_y) && (OBJECT(OBJECT_ADDRESS(2))->flags == 0u || (int16_t)OBJECT(OBJECT_ADDRESS(2))->y < (int16_t)others_line_y) && (OBJECT(OBJECT_ADDRESS(4))->flags == 0u || (int16_t)OBJECT(OBJECT_ADDRESS(4))->y < (int16_t)others_line_y) && (OBJECT(OBJECT_ADDRESS(6))->flags == 0u || (int16_t)OBJECT(OBJECT_ADDRESS(6))->y < (int16_t)others_line_y))
 			{
@@ -348,10 +348,10 @@ void player_request_scroll(uint16_t velocity, uint16_t player)
 	}
 	else
 	{
-		lower_scroll_line = io_read16(0x1840u);
+		lower_scroll_line = io_read16(bonus_2_state);
 		if ((int16_t)lower_scroll_line < (int16_t)place_y)
 		{
-			lower_others_line = io_read16(0x1846u);
+			lower_others_line = io_read16(results_place);
 			others_line_y = lower_others_line;
 			if ((OBJECT(OBJECT_ADDRESS(0))->flags == 0u || (int16_t)others_line_y < (int16_t)OBJECT(OBJECT_ADDRESS(0))->y) && (OBJECT(OBJECT_ADDRESS(2))->flags == 0u || (int16_t)others_line_y < (int16_t)OBJECT(OBJECT_ADDRESS(2))->y) && (OBJECT(OBJECT_ADDRESS(4))->flags == 0u || (int16_t)others_line_y < (int16_t)OBJECT(OBJECT_ADDRESS(4))->y) && (OBJECT(OBJECT_ADDRESS(6))->flags == 0u || (int16_t)others_line_y < (int16_t)OBJECT(OBJECT_ADDRESS(6))->y))
 			{

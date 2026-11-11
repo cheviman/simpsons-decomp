@@ -83,6 +83,14 @@ OBJECT_REGISTER = "x"
 # players' objects at 4A40 + C0 n are not always the player family's: the bonus games' objects are there too)
 INSTANCE_FAMILIES_BY_FUNCTION = {(0x5640, "story"): "story_actor", (0x5640, "stage_2_events"): "story_actor",
                                  (0x5640, "stage_8_events"): "story_actor"}
+# and the players' objects in the routines that reach them by their address (story_actor_drop_players_held, the
+# rock in the gorge and the stage 8 watcher waiting for a player's pose), the results' boxes in list 0's slots in
+# bonus_results_read_places (symbols.txt's batch 4 has the evidence of each, as "# instance" lines)
+INSTANCE_FAMILIES_BY_FUNCTION.update({(0x4A40 + 0xC0 * number, prefix): "player" for number in range(4)
+                                      for prefix in ("story_actor_drop_players_held", "gorge_rock_start",
+                                                     "kind_8e_watcher_wait_signal")})
+INSTANCE_FAMILIES_BY_FUNCTION.update({(0x4F80 + 0x60 * (2 * number), "bonus_results_read_places"): "bonus_results"
+                                      for number in range(4)})
 OWN_OBJECT_POINTERS = True     # (the object register is the family's object in the pointer analysis too)
 NESTED_FAMILIES = True         # (a family's view takes the fields of the families its name extends)
 # names by use, as TMNT's: a parameter or result takes the name of the structure read through it, or of the variable
@@ -105,7 +113,8 @@ CHOSEN_IN_ORDER = True
 # decompiler/carried.py) is in global variables: the object lists' runners hand each handler what the handler before
 # left in Y, which C would otherwise pass through hundreds of functions as a parameter and a result
 CARRIED_REGISTERS = True
-# (Y only: some functions keep U for themselves around the code that hands it on, 0214BA "PUSHS U")
+# (Y only: U carried too was a global the C used 3886 times as the pointer it is in most routines, with 65 more
+# reads through it untyped and 1800 more lines: worse to read)
 CARRIED_REGISTER_NAMES = ("y",)
 # a parameter a function reads for itself, or a result it works out, stays its own; the carried value crosses by a copy
 CARRIED_CUTS = True

@@ -3,7 +3,7 @@
  *    Description: the kind 87 character of stage 1 and its device
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -54,7 +54,6 @@ void kind_87_device_idle(void)
 /* Worked by its keeper: strikes (sound 6000), harder every other time. */
 void kind_87_device_strike(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t strike_frames = 0, strike_frames_2 = 0, state = 0;
 
@@ -66,7 +65,7 @@ void kind_87_device_strike(uint16_t object)
 	if (strike_frames_2 & 1u)
 		OBJECT(object)->attack = 8u;
 	command = 0x6000u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	OBJECT(object)->animation = 0x87u;
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;

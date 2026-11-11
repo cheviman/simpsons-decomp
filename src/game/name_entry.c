@@ -3,7 +3,7 @@
  *    Description: the name entry for a high score
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -199,11 +199,10 @@ uint32_t name_entry_phase(uint16_t u, uint32_t left_caller)
    drawn */
 void name_entry_start(uint16_t palette_job)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0, ignored16 = 0, ignored16_2 = 0, layer_and_columns = 0, request = 0, scroll_x = 0, scroll_y = 0;
 
 	command = 0x9000u;
-	carry = queue_sound_always(command);
+	queue_sound_always(command);
 	objects_frozen = 0u;
 	scroll_x = 0xFFF0u;
 	set_scroll_x(scroll_x);
@@ -224,12 +223,12 @@ void name_entry_start(uint16_t palette_job)
 	map_scene = 3u;
 	map_area = 0u;
 	set_area_tile_banks();
-	io_write8(0x1FB9u, 0x3Fu);
-	io_write8(0x1FBAu, 0x36u);
+	io_write8(colour_bases_back_sprites_fixed, 0x3Fu);
+	io_write8(colour_bases_layers_a_b, 0x36u);
 	layer_and_columns = 0x2Cu;
 	draw_layer_columns(layer_and_columns, &ignored16, &ignored16_2);
-	io_write8(0x1FB9u, 0x13u);
-	io_write8(0x1FBAu, 0x2Cu);
+	io_write8(colour_bases_back_sprites_fixed, 0x13u);
+	io_write8(colour_bases_layers_a_b, 0x2Cu);
 	game_step++;
 }
 
@@ -249,12 +248,11 @@ void name_entry_run(void)
    the high scores */
 void name_entry_end(void)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0, request = 0, u = 0;
 
 	clear_sprites();
 	command = 0u;
-	carry = queue_sound_always(command);
+	queue_sound_always(command);
 	u = end_game();
 	palette_request_kind = 3u;
 	request = 0u;

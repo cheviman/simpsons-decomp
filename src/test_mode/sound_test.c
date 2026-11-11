@@ -3,7 +3,7 @@
  *    Description: the music and sound checks
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -30,7 +30,7 @@ void test_music_page(uint16_t d)
 		test_menu_update(&ignored16, &carry);
 		return;
 	case test_rom_check_page_steps_ADDRESS:
-		carry = test_rom_check_open(page_steps);
+		test_rom_check_open(page_steps);
 		return;
 	case 0x60A3u:
 		test_rom_check_run(&ignored16, &carry);
@@ -48,7 +48,7 @@ void test_music_page(uint16_t d)
 		test_io_check_run(&ignored16, &carry);
 		return;
 	case test_music_page_steps_ADDRESS:
-		carry = test_music_open(page_steps);
+		test_music_open(page_steps);
 		return;
 	case 0x621Du:
 		test_music_first_choice(&ignored16, &carry);
@@ -60,7 +60,7 @@ void test_music_page(uint16_t d)
 		test_music_replay(&ignored16, &carry);
 		return;
 	case test_sound_page_steps_ADDRESS:
-		carry = test_sound_open(page_steps);
+		test_sound_open(page_steps);
 		return;
 	case 0x6279u:
 		test_sound_first_choice(&ignored16, &carry);
@@ -221,7 +221,7 @@ void test_sound_page(uint16_t d)
 		test_menu_update(&ignored16, &carry);
 		return;
 	case test_rom_check_page_steps_ADDRESS:
-		carry = test_rom_check_open(page_steps);
+		test_rom_check_open(page_steps);
 		return;
 	case 0x60A3u:
 		test_rom_check_run(&ignored16, &carry);
@@ -239,7 +239,7 @@ void test_sound_page(uint16_t d)
 		test_io_check_run(&ignored16, &carry);
 		return;
 	case test_music_page_steps_ADDRESS:
-		carry = test_music_open(page_steps);
+		test_music_open(page_steps);
 		return;
 	case 0x621Du:
 		test_music_first_choice(&ignored16, &carry);
@@ -251,7 +251,7 @@ void test_sound_page(uint16_t d)
 		test_music_replay(&ignored16, &carry);
 		return;
 	case test_sound_page_steps_ADDRESS:
-		carry = test_sound_open(page_steps);
+		test_sound_open(page_steps);
 		return;
 	case 0x6279u:
 		test_sound_first_choice(&ignored16, &carry);

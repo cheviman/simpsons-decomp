@@ -3,7 +3,7 @@
  *    Description: the camera, the stages' scrolling and the screen shake
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -158,14 +158,13 @@ uint16_t cemetery_scroll_update(uint16_t u)
    music, and goes on. */
 void cemetery_scroll_start(void)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 
 	layer_a_edges_on = 1u;
 	layer_rows_on = 1u;
 	camera_main_layer = 1u;
 	command = 0x5A00u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	stage_part++;
 	vector_play_scene_music();
 	stage_scroll_step++;
@@ -205,7 +204,6 @@ void cemetery_scroll_cruise(void)
    map and queues sound 5B00. */
 void cemetery_scroll_slow_down(void)
 {
-	uint32_t carry = 0;
 	uint8_t tile_code = 0;
 	uint16_t command = 0, tile = 0;
 	uint16_t stack = 0;
@@ -239,7 +237,7 @@ void cemetery_scroll_slow_down(void)
 		cemetery_floor_rows_left = rows_left - 1u;
 	} while (rows_left != 1u);
 	command = 0x5B00u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	stage_scroll_step++;
 }
 
@@ -252,7 +250,7 @@ uint16_t cemetery_put_in_boss(uint16_t object)
 	uint16_t new_object = 0;
 	uint8_t enemies_in_play = 0;
 
-	enemies_in_play = io_read8(0x1876u);
+	enemies_in_play = io_read8(enemies_present);
 	if (enemies_in_play > 2u)
 		return object;
 	list_number = 0u;
@@ -394,7 +392,6 @@ uint16_t stage_5_scroll(void)
    to the stage's next part and queues its sound command (7F01-7F07, then 7F00). */
 uint16_t stage_5_next_part(uint16_t part)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint16_t part_x_at = 0;
 
@@ -405,7 +402,7 @@ uint16_t stage_5_next_part(uint16_t part)
 		stage_scroll_step++;
 		stage_part++;
 		command = mem_read16(part);
-		carry = vector_queue_sound(command);
+		vector_queue_sound(command);
 	}
 	return part;
 }
@@ -550,7 +547,7 @@ uint16_t screen_shake_advance(uint16_t u)
 	sprite_scroll_x_high = (uint8_t)(new_sprite_scroll_x >> 8);
 	sprite_scroll_x_low = (uint8_t)new_sprite_scroll_x;
 	sprite_scroll_x = ((uint32_t)sprite_scroll_x_high << 8) | sprite_scroll_x_low;
-	io_write16(0x1FA0u, ((uint32_t)sprite_scroll_x_high << 8) | sprite_scroll_x_low);
+	io_write16(sprite_chip_scroll_x, ((uint32_t)sprite_scroll_x_high << 8) | sprite_scroll_x_low);
 	screen_shake_step++;
 	u = screen_shake_lengths_ADDRESS;
 	if (screen_shake_step != screen_shake_lengths[(int8_t)screen_shake_kind])
@@ -1372,9 +1369,9 @@ uint16_t dreamland_scroll(void)
 	}
 	stage_scroll_step++;
 	sprite_x_now = sprite_scroll_x;
-	io_write16(0x1FA0u, sprite_x_now);
+	io_write16(sprite_chip_scroll_x, sprite_x_now);
 	sprite_y_now = sprite_scroll_y;
-	io_write16(0x1FA2u, sprite_y_now);
+	io_write16(sprite_chip_scroll_y, sprite_y_now);
 	u = camera_update();
 	return u;
 }

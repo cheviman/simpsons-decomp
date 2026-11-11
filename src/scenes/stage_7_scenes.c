@@ -3,7 +3,7 @@
  *    Description: stage 7's two scripted scenes
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -44,14 +44,13 @@ uint16_t stage_7_scene_set_up(void)
 /* Stage 7's scene: waits for the scroll to reach them, then a sound (7A00). */
 void stage_7_scene_wait_scroll(void)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t old_scene_state = 0;
 
 	if ((int16_t)camera_x < 0x9B0)
 		return;
 	command = 0x7A00u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	old_scene_state = io_read8(scene_state);
 	io_write8(scene_state, old_scene_state + 1u);
 }
@@ -75,7 +74,7 @@ void stage_7_scene_wait_signal(void)
 
 	if (stage_cue != 0u)
 	{
-		io_write16(0x18E2u, 0xFFFFu);
+		io_write16(scene_wait, 0xFFFFu);
 		old_scene_state = io_read8(scene_state);
 		io_write8(scene_state, old_scene_state + 1u);
 	}
@@ -92,8 +91,8 @@ void stage_7_scene_lift(uint16_t *p_tile, uint16_t *p_u)
 	uint8_t speed_high = 0, items_left = 0, columns_left = 0;
 	uint16_t lift_frames_left = 0, lift_speed = 0, new_lift_speed = 0, layer_b_y_low = 0, speed_added = 0, old_layer_b_y_low = 0, new_layer_b_y_low = 0, item_speed = 0, z = 0, row_offset = 0, tile_place = 0;
 
-	lift_frames_left = io_read16(0x18E2u);
-	io_write16(0x18E2u, lift_frames_left - 1u);
+	lift_frames_left = io_read16(scene_wait);
+	io_write16(scene_wait, lift_frames_left - 1u);
 	if (lift_frames_left == 1u)
 	{
 		clear_from = scene_state;
@@ -113,23 +112,23 @@ void stage_7_scene_lift(uint16_t *p_tile, uint16_t *p_u)
 	}
 	else
 	{
-		lift_speed = io_read16(0x18EBu);
+		lift_speed = io_read16(scene_layer_b_speed);
 		new_lift_speed = lift_speed + 2u;
-		io_write16(0x18EBu, new_lift_speed);
+		io_write16(scene_layer_b_speed, new_lift_speed);
 		layer_b_y_low = (((uint32_t)(layer_b_scroll_y & 0xFFu) << 8u) | layer_b_scroll_y_fraction);
-		speed_added = io_read16(0x18EBu);
+		speed_added = io_read16(scene_layer_b_speed);
 		old_layer_b_y_low = layer_b_y_low;
 		new_layer_b_y_low = old_layer_b_y_low + speed_added;
 		carry = (uint16_t)(old_layer_b_y_low + speed_added) < old_layer_b_y_low;
 		layer_b_scroll_y = (layer_b_scroll_y & 0xFF00u) | ((new_layer_b_y_low >> 8u) & 0xFFu);
 		layer_b_scroll_y_fraction = (uint8_t)new_layer_b_y_low;
-		speed_high = io_read8(0x18EBu);
+		speed_high = io_read8(scene_layer_b_speed);
 		layer_b_scroll_y = (layer_b_scroll_y & 0xFFu) | ((((uint16_t)(int8_t)speed_high >> 8) + (uint8_t)(layer_b_scroll_y >> 8u) + carry & 0xFFu) << 8u);
 		object = OBJECT_ADDRESS(8);
 		lift_items_left = 4u;
 		do
 		{
-			item_speed = io_read16(0x18EBu);
+			item_speed = io_read16(scene_layer_b_speed);
 			OBJECT(object)->z_speed = item_speed;
 			object += 0x60u;
 			items_left = lift_items_left;
@@ -172,16 +171,15 @@ void stage_7_scene_wait_train(void)
 /* Stage 7's scene, second track: puts a chain of six linked pairs of objects and plays a sound (8300). */
 void stage_7_scene_put_chain(uint16_t *p_last_link, uint16_t *p_new_object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0, last_link = 0, link = 0, link_before = 0, new_object = 0, record_number = 0, upper_link = 0;
 	uint16_t stack = 0;
 	uint8_t links_left = 0, old_scene_substate = 0;
 	uint16_t first_link = 0;
 
-	io_write16(0x18EEu, 0x808u);
+	io_write16(bonus_1_intro_player, 0x808u);
 	new_object = stage_7_scene_new_object();
-	io_write16(0x18F0u, new_object);
-	io_write16(0x18F2u, new_object);
+	io_write16(chain_lead_link, new_object);
+	io_write16(chain_end_link, new_object);
 	chain_last_link = new_object;
 	chain_links_left = 6u;
 	do
@@ -203,10 +201,10 @@ void stage_7_scene_put_chain(uint16_t *p_last_link, uint16_t *p_new_object)
 		links_left = chain_links_left;
 		chain_links_left = links_left - 1u;
 	} while (links_left != 1u);
-	first_link = io_read16(0x18F0u);
+	first_link = io_read16(chain_lead_link);
 	OBJECT(last_link)->stage_7_link.next_link = first_link;
 	command = 0x8300u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	old_scene_substate = io_read8(scene_substate);
 	io_write8(scene_substate, old_scene_substate + 1u);
 	*p_last_link = last_link;
@@ -220,12 +218,12 @@ void stage_7_scene_move_chain(uint16_t *p_link, uint16_t *p_pair)
 	uint8_t links_left = 0, old_scene_substate = 0, old_links_moved = 0, links_moved = 0;
 	uint16_t end_link_place = 0, end_x = 0, first_link = 0, pair_2 = 0, next_link = 0, lead_link = 0, lead_x = 0, chain_spacing = 0, pair_3 = 0, next_link_2 = 0;
 
-	end_link_place = io_read16(0x18F2u);
+	end_link_place = io_read16(chain_end_link);
 	end_link = end_link_place;
 	end_x = OBJECT(end_link)->x;
 	if ((uint16_t)(end_x - 0x40u + camera_x) == 0x9E8u)
 	{
-		first_link = io_read16(0x18F0u);
+		first_link = io_read16(chain_lead_link);
 		link = first_link;
 		chain_links_left = 6u;
 		x_speed = 0u;
@@ -245,10 +243,10 @@ void stage_7_scene_move_chain(uint16_t *p_link, uint16_t *p_pair)
 	}
 	else
 	{
-		lead_link = io_read16(0x18F0u);
+		lead_link = io_read16(chain_lead_link);
 		link = lead_link;
 		lead_x = OBJECT(link)->x;
-		chain_spacing = io_read16(0x18EEu);
+		chain_spacing = io_read16(bonus_1_intro_player);
 		if ((uint16_t)(lead_x - 0x40u + camera_x - chain_spacing) != 0x60u)
 		{
 			OBJECT(link)->x_speed = 0x200;
@@ -258,12 +256,12 @@ void stage_7_scene_move_chain(uint16_t *p_link, uint16_t *p_pair)
 		}
 		else
 		{
-			old_links_moved = io_read8(0x18EDu);
-			io_write8(0x18EDu, old_links_moved + 1u);
-			links_moved = io_read8(0x18EDu);
+			old_links_moved = io_read8(dream_wave_size);
+			io_write8(dream_wave_size, old_links_moved + 1u);
+			links_moved = io_read8(dream_wave_size);
 			if ((uint16_t)((uint32_t)links_moved << 8) >> 8 == 6u)
 			{
-				first_link = io_read16(0x18F0u);
+				first_link = io_read16(chain_lead_link);
 				link = first_link;
 				chain_links_left = 6u;
 				x_speed = 0u;
@@ -285,7 +283,7 @@ void stage_7_scene_move_chain(uint16_t *p_link, uint16_t *p_pair)
 			{
 				next_link_2 = OBJECT(link)->stage_7_link.next_link;
 				link = next_link_2;
-				io_write16(0x18F0u, link);
+				io_write16(chain_lead_link, link);
 				OBJECT(link)->x_speed = 0x200;
 				pair_3 = OBJECT(link)->stage_7_link.pair;
 				pair = pair_3;
@@ -372,15 +370,15 @@ void stage_7_end_show(uint16_t *p_x, uint16_t *p_u)
 
 	if (layer_clear_pending != 0u)
 		return;
-	io_write8(0x1FB9u, 0x3Fu);
-	io_write8(0x1FBAu, 0x36u);
+	io_write8(colour_bases_back_sprites_fixed, 0x3Fu);
+	io_write8(colour_bases_layers_a_b, 0x36u);
 	map_scene = 0x8Cu;
 	map_area = 1u;
 	vector_set_layer_modes();
 	layer_and_columns = 0x126u;
 	vector_draw_layer_strips(layer_and_columns, &x_2, &u_2);
-	io_write8(0x1FB9u, 0x13u);
-	io_write8(0x1FBAu, 0x2Cu);
+	io_write8(colour_bases_back_sprites_fixed, 0x13u);
+	io_write8(colour_bases_layers_a_b, 0x2Cu);
 	palette_request_kind = 3u;
 	request = 0x7A53u;
 	u_2 = vector_palette_request(u_2, request);
@@ -426,7 +424,7 @@ void stage_7_end_board(uint16_t default_object)
 		riders_left = scene_riders_left;
 		scene_riders_left = riders_left - 1u;
 	} while (riders_left != 1u);
-	io_write16(0x18E2u, 0xF0u);
+	io_write16(scene_wait, 0xF0u);
 	old_scene_state = io_read8(scene_state);
 	io_write8(scene_state, old_scene_state + 1u);
 }
@@ -457,8 +455,8 @@ uint16_t stage_7_end_take_off(void)
 		}
 	}
 	default_object = stage_7_end_zoom_riders();
-	take_off_wait = io_read16(0x18E2u);
-	io_write16(0x18E2u, take_off_wait - 1u);
+	take_off_wait = io_read16(scene_wait);
+	io_write16(scene_wait, take_off_wait - 1u);
 	if (take_off_wait != 1u)
 		return stage_7_end_move_riders();
 	record_number = 0x1D00u;
@@ -520,7 +518,7 @@ void stage_7_end_slow_down(uint16_t *p_x, uint16_t *p_u)
 		x = stage_7_end_zoom_riders();
 	else
 	{
-		io_write16(0x18E2u, 0x100u);
+		io_write16(scene_wait, 0x100u);
 		old_scene_state = io_read8(scene_state);
 		io_write8(scene_state, old_scene_state + 1u);
 		stage_7_end_finish(&x, &u);
@@ -537,8 +535,8 @@ void stage_7_end_finish(uint16_t *p_x, uint16_t *p_u)
 	uint16_t finish_wait = 0;
 
 	OBJECT(OBJECT_ADDRESS(8))->z_speed--;
-	finish_wait = io_read16(0x18E2u);
-	io_write16(0x18E2u, finish_wait - 1u);
+	finish_wait = io_read16(scene_wait);
+	io_write16(scene_wait, finish_wait - 1u);
 	if (finish_wait != 1u)
 		x = stage_7_end_zoom_riders();
 	else

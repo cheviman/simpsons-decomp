@@ -3,7 +3,7 @@
  *    Description: the game's rank (direct page 61) and the HURRY UP's timer
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -104,7 +104,7 @@ void hurry_up_timer(void)
 	hurry_up_frames = new_hurry_frames;
 	if (hurry_up_out != 0u)
 		hurry_up_frames = 0u;
-	enemies_in_play = io_read8(0x1883u);
+	enemies_in_play = io_read8(enemies_entered);
 	if (enemies_in_play != 0u)
 		hurry_up_frames = 0u;
 	if (stage_scrolls_on == 0u)

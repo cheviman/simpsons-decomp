@@ -3,7 +3,7 @@
  *    Description: bank 17's object handlers by type, as the object lists' dispatchers reach them
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -64,7 +64,7 @@ uint16_t food_update(uint16_t object, uint8_t state)
 		food_eaten_vanish(object);
 		break;
 	}
-	carry = remove_off_screen(object, carry);
+	remove_off_screen(object, carry);
 	return states;
 }
 
@@ -107,7 +107,7 @@ uint16_t food_jump_out_update(uint16_t object, uint8_t state)
 		food_jump_out_vanish(object);
 		break;
 	}
-	carry = remove_off_screen(object, carry);
+	remove_off_screen(object, carry);
 	return states;
 }
 
@@ -289,7 +289,7 @@ uint16_t bystander_update(uint16_t object, uint8_t state)
 		bystander_gone();
 		break;
 	}
-	carry = remove_off_screen(object, carry);
+	remove_off_screen(object, carry);
 	return states;
 }
 
@@ -577,7 +577,7 @@ uint16_t clown_ball_update(uint16_t object, uint8_t state)
 		break;
 	}
 	states = object_take_special_hit(object, states);
-	carry = remove_off_screen(object, carry);
+	remove_off_screen(object, carry);
 	return states;
 }
 
@@ -618,7 +618,7 @@ uint16_t unused_homer_object_update(uint16_t object, uint8_t state)
 		break;
 	}
 	states = object_take_special_hit(object, states);
-	carry = remove_off_screen(object, carry);
+	remove_off_screen(object, carry);
 	return states;
 }
 
@@ -683,7 +683,7 @@ uint16_t random_pose_figure_update(uint16_t object, uint8_t state)
 		states = random_pose_figure_pose(object, states);
 		break;
 	}
-	carry = remove_off_screen(object, carry);
+	remove_off_screen(object, carry);
 	return states;
 }
 
@@ -797,7 +797,7 @@ uint16_t kind_88_ride_update(uint16_t object, uint8_t state)
 		camera_x_held--;
 	OBJECT(object)->kind_88_ride.too_many_out = 0u;
 	states = krustyland_child_limits_by_players_ADDRESS;
-	players_counted = io_read8(0x1874u);
+	players_counted = io_read8(stage_player_count);
 	riders_out = OBJECT(object)->kind_88_ride.riders_out;
 	if (krustyland_child_limits_by_players[(int8_t)players_counted] < riders_out)
 	{
@@ -1031,7 +1031,7 @@ uint16_t buzzing_chaser_update(uint16_t object, uint8_t state)
 		buzzing_chaser_idle();
 		break;
 	}
-	carry = remove_off_screen(object, carry);
+	remove_off_screen(object, carry);
 	return states;
 }
 
@@ -1170,7 +1170,7 @@ uint16_t kind_b2_update(uint16_t object, uint8_t state)
 		kind_b2_recover_end(object);
 		break;
 	}
-	carry = remove_off_screen(object, carry);
+	remove_off_screen(object, carry);
 	return states;
 }
 
@@ -1204,7 +1204,7 @@ uint16_t krustyland_bear_update(uint16_t object, uint8_t state)
 		krustyland_bear_idle();
 		break;
 	}
-	carry = remove_off_screen(object, carry);
+	remove_off_screen(object, carry);
 	return states;
 }
 
@@ -1230,7 +1230,7 @@ uint16_t item_update(uint16_t object, uint8_t state)
 		item_taken(object);
 		break;
 	}
-	carry = remove_off_screen(object, carry);
+	remove_off_screen(object, carry);
 	return states;
 }
 
@@ -1310,7 +1310,7 @@ uint16_t item_carrier_update(uint16_t object, uint8_t state)
 		item_carrier_pause_end(object);
 		break;
 	}
-	carry = remove_off_screen(object, carry);
+	remove_off_screen(object, carry);
 	return states;
 }
 
@@ -1469,7 +1469,7 @@ void unused_kind_b7_update(uint16_t object, uint8_t state)
 		unused_kind_b7_speed_up(object);
 		break;
 	}
-	carry = remove_off_screen(object, carry);
+	remove_off_screen(object, carry);
 }
 
 /* Runs the kind B3 object of stage 7 that takes six hits. */
@@ -1499,6 +1499,6 @@ uint16_t kind_b3_update(uint16_t object, uint8_t state)
 		kind_b3_broken();
 		break;
 	}
-	carry = remove_off_screen(object, carry);
+	remove_off_screen(object, carry);
 	return states;
 }

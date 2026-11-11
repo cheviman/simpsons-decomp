@@ -3,7 +3,7 @@
  *    Description: the stage 6 (Dreamland) boss (type F8): its forms, routines, hits and death
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -112,7 +112,7 @@ void dreamland_boss_hit(uint16_t object)
 	vector_set_hit_box(object);
 	phase = OBJECT(object)->dreamland_boss.phase;
 	object_1a_level = OBJECT_1A_LEVEL(object_1a_level_rows[(int8_t)((uint8_t)((uint32_t)phase << 1)) / 2] + (int8_t)player_count);
-	io_write8(0x188Cu, object_1a_level);
+	io_write8(dreamland_boss_phase_vitality, object_1a_level);
 	vitality = OBJECT(object)->vitality;
 	if (vitality <= object_1a_level)
 	{
@@ -128,7 +128,6 @@ void dreamland_boss_hit(uint16_t object)
    entrance. */
 void dreamland_boss_setup(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0, setup = 0;
 
 	setup = dreamland_boss_object_setup_ADDRESS;
@@ -141,7 +140,7 @@ void dreamland_boss_setup(uint16_t object)
 	OBJECT(object)->attributes = 0x10u;
 	OBJECT(object)->vitality = 0xFFu;
 	command = 0x6700u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	OBJECT(object)->dreamland_boss.phase = 0u;
 	OBJECT(object)->enemy_class = -1;
 	OBJECT(object)->entrance_pending = 0xFFu;
@@ -213,7 +212,6 @@ void dreamland_boss_entrance(uint16_t object)
 /* When direct page 92 is clear, shows the boss tiny, high over the stage, with a sound. */
 void dreamland_boss_appear(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t attributes = 0, routine_step = 0;
 
@@ -226,7 +224,7 @@ void dreamland_boss_appear(uint16_t object)
 	OBJECT(object)->zoom_y = 0x10u;
 	OBJECT(object)->animation = 0x80u;
 	command = 0xFD00u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	attributes = OBJECT(object)->attributes;
 	OBJECT(object)->attributes = attributes | 0x40u;
 	OBJECT(object)->x = 0x120u;
@@ -255,7 +253,7 @@ void dreamland_boss_drop_in(uint16_t object)
 	vector_set_hit_box(object);
 	OBJECT(object)->z_speed = 0x200;
 	command = 0x6400u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	routine_step = OBJECT(object)->dreamland_boss.routine_step;
 	OBJECT(object)->dreamland_boss.routine_step = routine_step + 1u;
 	camera_x_held--;
@@ -480,14 +478,13 @@ void dreamland_boss_flinch(uint16_t object)
 /* Flashes the boss for 8 frames with the hit sound. */
 void dreamland_boss_flinch_start(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t action_step = 0;
 
 	OBJECT(object)->flags = 0x88u;
 	dreamland_boss_flash_on(object);
 	command = 0x6600u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	OBJECT(object)->dreamland_boss.flash_time = 8u;
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step + 1u;
@@ -945,7 +942,7 @@ void dreamland_boss_second_change_flash(uint16_t object)
 	if (timer != 1u)
 		return;
 	command = 0x2000u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	OBJECT(object)->kind = 0xBBu;
 	OBJECT(object)->animation = 0x84u;
 	leftover_y = dreamland_boss_second_change_flash_child_ADDRESS;
@@ -1059,7 +1056,6 @@ void dreamland_boss_first_form_flash_end_charge(uint16_t object)
    player. */
 void dreamland_boss_first_form_hit_start(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0, target_player = 0;
 	uint8_t hit_count = 0, hit_count_2 = 0, action_step = 0, resume_step = 0;
 	uint16_t target = 0, player_x = 0, boss_x = 0, x_speed = 0;
@@ -1067,7 +1063,7 @@ void dreamland_boss_first_form_hit_start(uint16_t object)
 	OBJECT(object)->flags = 0x88u;
 	dreamland_boss_flash_on(object);
 	command = 0x6600u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	hit_count = OBJECT(object)->dreamland_boss.hit_count;
 	OBJECT(object)->dreamland_boss.hit_count = hit_count - 1u;
 	hit_count_2 = OBJECT(object)->dreamland_boss.hit_count;
@@ -1153,7 +1149,6 @@ void dreamland_boss_knocked_fall(uint16_t object)
 /* Bounces the landed boss up again with the next of object_1a_bounce_animations and a thud. */
 void dreamland_boss_knocked_bounce(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t retarget_time = 0, retarget_time_2 = 0;
 
@@ -1166,7 +1161,7 @@ void dreamland_boss_knocked_bounce(uint16_t object)
 	OBJECT(object)->y_speed = 0;
 	OBJECT(object)->z_speed = 0x400;
 	command = 0x6400u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	OBJECT(object)->action_step = 4u;
 	leftover_y = dreamland_boss_body_box_ADDRESS;
 	vector_set_hit_box(object);
@@ -1185,7 +1180,7 @@ void dreamland_boss_knocked_land(uint16_t object)
 	OBJECT(object)->flags = 0x88u;
 	OBJECT(object)->timer = 0x20u;
 	command = 0x6400u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step + 1u;
 }
@@ -1349,7 +1344,6 @@ void dreamland_boss_leap_crouch(uint16_t object)
    sound. */
 void dreamland_boss_leap_take_off(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint8_t angle = 0;
 	uint16_t command = 0, direction = 0, heading = 0, target_player = 0;
 	uint8_t animation_flags = 0, leap_distance = 0, leap_distance_2 = 0, routine_step = 0;
@@ -1359,7 +1353,7 @@ void dreamland_boss_leap_take_off(uint16_t object)
 	if ((animation_flags & 1u) == 0u)
 		return;
 	command = 0x3800u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	target_dx = OBJECT(object)->target_dx;
 	OBJECT(object)->dreamland_boss.leap_distance = (target_dx >> 4) & 0xFu;
 	target = OBJECT(object)->target;
@@ -1414,14 +1408,13 @@ void dreamland_boss_leap_fall(uint16_t object)
 /* The landed boss bounces up again with its attacking hit box and a thud. */
 void dreamland_boss_leap_bounce(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 
 	OBJECT(object)->flags = 0xC4u;
 	leftover_y = dreamland_boss_attack_box_ADDRESS;
 	vector_set_hit_box(object);
 	command = 0x6400u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	OBJECT(object)->animation = 0x84u;
 	OBJECT(object)->z_speed = 0x400;
 	OBJECT(object)->dreamland_boss.routine_step = 4u;
@@ -1542,7 +1535,6 @@ void dreamland_boss_second_form_flash_end(uint16_t object)
 /* Flashes the hit boss with the hit sound: while it acts (field 43) it only flashes, otherwise it reels. */
 void dreamland_boss_second_form_hit_start(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t keeps_acting = 0, action_step = 0;
 
@@ -1551,7 +1543,7 @@ void dreamland_boss_second_form_hit_start(uint16_t object)
 	OBJECT(object)->x_speed = 0;
 	OBJECT(object)->y_speed = 0;
 	command = 0x6600u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	keeps_acting = OBJECT(object)->dreamland_boss.keeps_acting;
 	if (keeps_acting == 0u)
 	{
@@ -1651,7 +1643,6 @@ void dreamland_boss_change_to_third_form(uint16_t object)
 /* Makes the boss unbeatable with the hit sound. */
 void dreamland_boss_third_change_start(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t change_step = 0;
 
@@ -1659,7 +1650,7 @@ void dreamland_boss_third_change_start(uint16_t object)
 	OBJECT(object)->dreamland_boss.resume_step = 0xAu;
 	OBJECT(object)->dreamland_boss.phase = 0u;
 	command = 0x6600u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	change_step = OBJECT(object)->dreamland_boss.change_step;
 	OBJECT(object)->dreamland_boss.change_step = change_step + 1u;
 	dreamland_boss_third_change_land(object);
@@ -2130,7 +2121,6 @@ void dreamland_boss_third_form_flash_end_spit(uint16_t object)
 /* Flashes the hit boss with the hit sound; every eighth hit makes it reel. */
 void dreamland_boss_third_form_hit_start(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t hit_count = 0, hit_count_2 = 0, action_step = 0, resume_step = 0;
 
@@ -2139,7 +2129,7 @@ void dreamland_boss_third_form_hit_start(uint16_t object)
 	OBJECT(object)->x_speed = 0;
 	OBJECT(object)->y_speed = 0;
 	command = 0x6600u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	hit_count = OBJECT(object)->dreamland_boss.hit_count;
 	OBJECT(object)->dreamland_boss.hit_count = hit_count - 1u;
 	hit_count_2 = OBJECT(object)->dreamland_boss.hit_count;
@@ -2520,7 +2510,7 @@ void dreamland_boss_put_out_chain(uint16_t object)
 	{
 		OBJECT(object_2)->target = object;
 		OBJECT(object)->dreamland_boss.chain = object_2;
-		io_write8(0x185Au, 1u);
+		io_write8(player_balloons_off, 1u);
 		OBJECT(object)->timer = 0x80u;
 		routine_step = OBJECT(object)->dreamland_boss.routine_step;
 		OBJECT(object)->dreamland_boss.routine_step = routine_step + 1u;
@@ -2586,7 +2576,6 @@ void dreamland_boss_creep_start(uint16_t object)
 /* Counts down, then stops the boss with a sound and sends it lashing (step 11). */
 void dreamland_boss_creep_end(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t timer = 0;
 
@@ -2595,7 +2584,7 @@ void dreamland_boss_creep_end(uint16_t object)
 	if (timer != 1u)
 		return;
 	command = 0x6700u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	OBJECT(object)->x_speed = 0;
 	OBJECT(object)->y_speed = 0;
 	OBJECT(object)->state = 0x11u;
@@ -2733,7 +2722,6 @@ void dreamland_boss_defeat(uint16_t object)
    screen. */
 void dreamland_boss_defeat_start(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t chain = 0, chain_head = 0, command = 0;
 	uint8_t action_step = 0;
 	uint16_t chain_2 = 0, parent = 0, boss_x = 0, x_speed = 0;
@@ -2746,7 +2734,7 @@ void dreamland_boss_defeat_start(uint16_t object)
 	OBJECT(chain_head)->state = 5u;
 	dreamland_boss_flash_off(object);
 	command = 0xFD00u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	OBJECT(object)->x_speed = 0x100;
 	boss_x = OBJECT(object)->x;
 	if (boss_x >= 0xE0u)
@@ -2802,7 +2790,6 @@ void dreamland_boss_defeat_pop_chain(uint16_t object)
 /* Counts down, then bursts the boss (kind D1) with its sounds, for 128 frames. */
 void dreamland_boss_defeat_burst(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t timer = 0, action_step = 0;
 
@@ -2813,9 +2800,9 @@ void dreamland_boss_defeat_burst(uint16_t object)
 	OBJECT(object)->x_speed = 0;
 	OBJECT(object)->y_speed = 0;
 	command = 0x9800u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	command = 0x7100u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	OBJECT(object)->z = 0x40u;
 	OBJECT(object)->kind = 0xD1u;
 	OBJECT(object)->animation = 0x88u;
@@ -2877,7 +2864,7 @@ void dreamland_boss_defeat_bounce(uint16_t object)
 	if (carry == 0u)
 		return;
 	command = 0x2000u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	OBJECT(object)->z_speed = 0x400;
 	OBJECT(object)->flags = 0x88u;
 	action_step = OBJECT(object)->action_step;
@@ -2896,7 +2883,7 @@ void dreamland_boss_defeat_land(uint16_t object)
 		return;
 	OBJECT(object)->flags = 0x88u;
 	command = 0x2000u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	OBJECT(object)->timer = 0x80u;
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step + 1u;
@@ -2906,7 +2893,6 @@ void dreamland_boss_defeat_land(uint16_t object)
    the step goes on (4804). */
 void dreamland_boss_defeat_vanish(uint16_t object, uint8_t step_offset)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t timer = 0, timer_2 = 0, timer_3 = 0;
 	uint32_t step_subphase_halfword = 0;
@@ -2930,6 +2916,6 @@ void dreamland_boss_defeat_vanish(uint16_t object, uint8_t step_offset)
 	if (timer_3 == 0x40u)
 	{
 		command = 0x9600u;
-		carry = vector_queue_sound(command);
+		vector_queue_sound(command);
 	}
 }

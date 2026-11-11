@@ -3,7 +3,7 @@
  *    Description: the Dreamland boss's balls, their trail, its shadow, its chain and the kind BB chain holder
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -14,7 +14,6 @@
 /* Stops the ball that has hit something and bursts it with a sound. */
 void boss_ball_burst(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t state = 0;
 
@@ -23,7 +22,7 @@ void boss_ball_burst(uint16_t object)
 	OBJECT(object)->y_speed = 0;
 	OBJECT(object)->z_speed = 0;
 	command = 0x6C00u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	OBJECT(object)->kind = 4u;
 	OBJECT(object)->animation = 0x80u;
 	state = OBJECT(object)->state;
@@ -34,7 +33,6 @@ void boss_ball_burst(uint16_t object)
    sound, aimed at the nearest player. */
 uint16_t boss_ball_setup(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0, nearest_player = 0, setup = 0, start = 0;
 	uint8_t attributes = 0, time = 0, attributes_2 = 0, state = 0;
 	uint16_t x_speed = 0;
@@ -59,7 +57,7 @@ uint16_t boss_ball_setup(uint16_t object)
 		OBJECT(object)->boss_ball.heading = 0x80u;
 	}
 	command = 0x1D00u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	nearest_player = vector_choose_nearest_player(object);
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
@@ -186,7 +184,7 @@ uint16_t boss_ball_land(uint16_t object, uint16_t u)
 			OBJECT(object)->y_speed = 0;
 			OBJECT(object)->z_speed = 0;
 			command = 0x6C00u;
-			carry = vector_queue_sound(command);
+			vector_queue_sound(command);
 			OBJECT(object)->kind = 4u;
 			OBJECT(object)->animation = 0x80u;
 			state = OBJECT(object)->state;
@@ -212,7 +210,7 @@ uint16_t boss_ball_land(uint16_t object, uint16_t u)
 	OBJECT(object)->y_speed = 0;
 	OBJECT(object)->z_speed = 0;
 	command = 0x6C00u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	OBJECT(object)->kind = 4u;
 	OBJECT(object)->animation = 0x80u;
 	state = OBJECT(object)->state;
@@ -414,12 +412,11 @@ void dreamland_boss_chain_pop(uint16_t object)
 /* Bursts the piece with a sound. */
 void dreamland_boss_chain_pop_start(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t action_step = 0;
 
 	command = 0x6C00u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	OBJECT(object)->flags = 0x80u;
 	OBJECT(object)->kind = 0xD1u;
 	OBJECT(object)->animation = 0x85u;
@@ -469,7 +466,7 @@ void dreamland_boss_chain_setup(uint16_t object)
 	uint8_t list = 0, piece_state = 0, piece_type = 0;
 	uint16_t holder = 0, piece = 0, previous_piece = 0, setup = 0;
 	uint8_t attributes = 0, state = 0, pieces_left = 0;
-	uint16_t target = 0, previous_x = 0, previous_y = 0, z = 0, target_2 = 0, head_link = 0, parameter_address = 0, target_dx = 0, last_head_link = 0;
+	uint16_t target = 0, previous_x = 0, previous_y = 0, z = 0, target_2 = 0, head_link = 0, parameter_address = 0, next_link = 0, last_head_link = 0;
 	uint32_t type_halfword = 0, type_halfword_2 = 0;
 
 	setup = dreamland_boss_chain_object_setup_ADDRESS;
@@ -487,7 +484,7 @@ void dreamland_boss_chain_setup(uint16_t object)
 	OBJECT(object)->target_direction = 2u;
 	OBJECT(object)->dreamland_boss_chain.lead_attributes = 2u;
 	OBJECT(object)->dreamland_boss_chain.direction = 2u;
-	OBJECT(object)->dreamland_boss_chain.legs_left = 0x10u;
+	OBJECT(object)->dreamland_boss_chain.path_wait = 0x10u;
 	target = OBJECT(object)->target;
 	holder = target;
 	OBJECT(object)->dreamland_boss_chain.previous_link = holder;
@@ -519,22 +516,20 @@ void dreamland_boss_chain_setup(uint16_t object)
 			OBJECT(piece)->y = previous_y;
 			z = OBJECT(previous_piece)->z;
 			OBJECT(piece)->z = z;
-			OBJECT(piece)->unk_3E = 0u;
-			OBJECT(piece)->unk_3F = 2u;
-			OBJECT(piece)->unk_35 = 0u;
+			OBJECT(piece)->dreamland_boss_chain.next_direction = 0u;
+			OBJECT(piece)->dreamland_boss_chain.next_distance = 2u;
+			OBJECT(piece)->dreamland_boss_chain.queued_direction = 0u;
 			OBJECT(piece)->target_direction = 2u;
-			OBJECT(piece)->unk_37 = 0u;
-			OBJECT(piece)->unk_3C = 0x10u;
+			OBJECT(piece)->dreamland_boss_chain.direction = 0u;
+			OBJECT(piece)->dreamland_boss_chain.path_wait = 0x10u;
 			target_2 = OBJECT(object)->target;
 			OBJECT(piece)->target = target_2;
-			OBJECT(piece)->behaviour = object;
-			OBJECT(piece)->target_dy = previous_piece;
-			OBJECT(previous_piece)->target_dx = piece;
-			OBJECT(piece)->unk_50 = 0u;
-			OBJECT(piece)->unk_51 = 0u;
-			OBJECT(piece)->unk_52 = 0u;
-			OBJECT(piece)->unk_53 = 0u;
-			OBJECT(piece)->unk_32 = chain_pieces_left;
+			OBJECT(piece)->dreamland_boss_chain.chain_base = object;
+			OBJECT(piece)->dreamland_boss_chain.previous_link = previous_piece;
+			OBJECT(previous_piece)->dreamland_boss_chain.next_link = piece;
+			OBJECT(piece)->dreamland_boss_chain.next_dx = 0;
+			OBJECT(piece)->dreamland_boss_chain.next_dz = 0;
+			OBJECT(piece)->dreamland_boss_chain.link_index = chain_pieces_left;
 			previous_piece = piece;
 		}
 		else
@@ -554,22 +549,20 @@ void dreamland_boss_chain_setup(uint16_t object)
 				OBJECT(piece)->y = previous_y;
 				z = OBJECT(previous_piece)->z;
 				OBJECT(piece)->z = z;
-				OBJECT(piece)->unk_3E = 0u;
-				OBJECT(piece)->unk_3F = 2u;
-				OBJECT(piece)->unk_35 = 0u;
+				OBJECT(piece)->dreamland_boss_chain.next_direction = 0u;
+				OBJECT(piece)->dreamland_boss_chain.next_distance = 2u;
+				OBJECT(piece)->dreamland_boss_chain.queued_direction = 0u;
 				OBJECT(piece)->target_direction = 2u;
-				OBJECT(piece)->unk_37 = 0u;
-				OBJECT(piece)->unk_3C = 0x10u;
+				OBJECT(piece)->dreamland_boss_chain.direction = 0u;
+				OBJECT(piece)->dreamland_boss_chain.path_wait = 0x10u;
 				target_2 = OBJECT(object)->target;
 				OBJECT(piece)->target = target_2;
-				OBJECT(piece)->behaviour = object;
-				OBJECT(piece)->target_dy = previous_piece;
-				OBJECT(previous_piece)->target_dx = piece;
-				OBJECT(piece)->unk_50 = 0u;
-				OBJECT(piece)->unk_51 = 0u;
-				OBJECT(piece)->unk_52 = 0u;
-				OBJECT(piece)->unk_53 = 0u;
-				OBJECT(piece)->unk_32 = chain_pieces_left;
+				OBJECT(piece)->dreamland_boss_chain.chain_base = object;
+				OBJECT(piece)->dreamland_boss_chain.previous_link = previous_piece;
+				OBJECT(previous_piece)->dreamland_boss_chain.next_link = piece;
+				OBJECT(piece)->dreamland_boss_chain.next_dx = 0;
+				OBJECT(piece)->dreamland_boss_chain.next_dz = 0;
+				OBJECT(piece)->dreamland_boss_chain.link_index = chain_pieces_left;
 				previous_piece = piece;
 			}
 		}
@@ -581,15 +574,15 @@ void dreamland_boss_chain_setup(uint16_t object)
 	do
 	{
 		head_link = chain_head_link;
-		OBJECT(previous_piece)->parent = head_link;
+		OBJECT(previous_piece)->dreamland_boss_chain.chain_head = head_link;
 		parameter_address = piece;
 		piece = parameter_address + 1u;
 		OBJECT(previous_piece)->parameter = OBJECT(parameter_address)->flags;
-		target_dx = OBJECT(previous_piece)->target_dx;
-		previous_piece = target_dx;
+		next_link = OBJECT(previous_piece)->dreamland_boss_chain.next_link;
+		previous_piece = next_link;
 	} while (previous_piece != chain_head_link);
 	last_head_link = chain_head_link;
-	OBJECT(previous_piece)->parent = last_head_link;
+	OBJECT(previous_piece)->dreamland_boss_chain.chain_head = last_head_link;
 	OBJECT(previous_piece)->parameter = OBJECT(piece)->flags;
 	leftover_y = previous_piece;
 }
@@ -644,7 +637,7 @@ void dreamland_boss_chain_shift_offset(uint16_t object)
 	uint8_t attributes = 0;
 	uint16_t chain_offset = 0, offset_left = 0;
 
-	chain_offset = io_read16(0x1888u);
+	chain_offset = io_read16(dreamland_chain_x_offset);
 	chain_offset_biased = chain_offset + 0x10u;
 	attributes = OBJECT(object)->attributes;
 	if ((((uint16_t)((uint32_t)attributes << 8) >> 8) & 0x40u) != 0u)
@@ -652,14 +645,14 @@ void dreamland_boss_chain_shift_offset(uint16_t object)
 		offset = chain_offset_biased + 1u;
 		if (offset >= 0x20u)
 			return;
-		io_write16(0x1888u, offset - 0x10u);
+		io_write16(dreamland_chain_x_offset, offset - 0x10u);
 		return;
 	}
 	offset_left = chain_offset_biased - 1u;
 	offset = offset_left;
 	if ((int16_t)offset_left < 0)
 		return;
-	io_write16(0x1888u, offset - 0x10u);
+	io_write16(dreamland_chain_x_offset, offset - 0x10u);
 }
 
 /* Sets the base's speeds to bring it to its holder's mouth: the holder's place plus the x offset, 48 up. */
@@ -672,7 +665,7 @@ void dreamland_boss_chain_stay_at_holder(uint16_t object)
 	holder = target;
 	dreamland_boss_chain_shift_offset(holder);
 	holder_x = OBJECT(holder)->x;
-	chain_offset = io_read16(0x1888u);
+	chain_offset = io_read16(dreamland_chain_x_offset);
 	base_x = OBJECT(object)->x;
 	OBJECT(object)->x_speed = (uint32_t)(uint8_t)(holder_x + chain_offset - base_x) << 8;
 	holder_y = OBJECT(holder)->y;
@@ -791,7 +784,7 @@ void dreamland_boss_chain_head_setup(uint16_t object)
 	parameter = OBJECT(object)->parameter;
 	box_y_offset = CHAIN_LINK(object_1a_chain_links_ADDRESS + (int8_t)((uint32_t)parameter << 1))->box_y_offset;
 	OBJECT(object)->box_dy = box_y_offset;
-	OBJECT(object)->dreamland_boss_chain_head.legs_left = 4u;
+	OBJECT(object)->dreamland_boss_chain_head.path_wait = 4u;
 	target = OBJECT(object)->target;
 	holder = target;
 	attributes_2 = OBJECT(holder)->attributes;
@@ -807,7 +800,7 @@ void dreamland_boss_chain_head_follow_path(uint16_t object)
 {
 	uint8_t direction = 0, distance = 0;
 	uint16_t chain_base = 0, holder = 0, loop_path = 0, path = 0;
-	uint8_t target_direction = 0, legs_left = 0, attributes = 0, path_loops = 0, next_loops = 0;
+	uint8_t target_direction = 0, path_wait = 0, attributes = 0, path_loops = 0, next_loops = 0;
 	uint16_t target = 0, path_2 = 0, step_address = 0, step_word = 0, target_2 = 0, chain_base_2 = 0, next_path = 0, loop_step_address = 0, loop_step_word = 0;
 	uint32_t next_direction_halfword = 0, next_direction_halfword_2 = 0;
 
@@ -816,11 +809,11 @@ void dreamland_boss_chain_head_follow_path(uint16_t object)
 	target_direction = OBJECT(holder)->target_direction;
 	if (target_direction == 0u)
 	{
-		legs_left = OBJECT(object)->dreamland_boss_chain_head.legs_left;
-		OBJECT(object)->dreamland_boss_chain_head.legs_left = legs_left - 1u;
-		if (legs_left != 1u)
+		path_wait = OBJECT(object)->dreamland_boss_chain_head.path_wait;
+		OBJECT(object)->dreamland_boss_chain_head.path_wait = path_wait - 1u;
+		if (path_wait != 1u)
 			return;
-		OBJECT(object)->dreamland_boss_chain_head.legs_left = 1u;
+		OBJECT(object)->dreamland_boss_chain_head.path_wait = 1u;
 	}
 	path_2 = OBJECT(object)->dreamland_boss_chain_head.path;
 	step_address = path_2;
@@ -910,7 +903,6 @@ void dreamland_boss_chain_head_choose_lash(uint16_t object)
 /* Counts the wait down, then makes the head able to hit and hurt, with a sound. */
 void dreamland_boss_chain_head_lash(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t timer = 0, attributes = 0, state = 0;
 
@@ -926,7 +918,7 @@ void dreamland_boss_chain_head_lash(uint16_t object)
 	OBJECT(object)->attributes = attributes | 0x83u;
 	OBJECT(object)->animation_flags = 0x80u;
 	command = 0x6700u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
 	dreamland_boss_chain_head_follow_path(object);
@@ -936,7 +928,6 @@ void dreamland_boss_chain_head_lash(uint16_t object)
    path. */
 void dreamland_boss_chain_head_withdraw(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t lash_time = 0, sound_time = 0, lash_time_2 = 0, attributes = 0;
 
@@ -945,7 +936,7 @@ void dreamland_boss_chain_head_withdraw(uint16_t object)
 	if (lash_time == sound_time)
 	{
 		command = 0x6A00u;
-		carry = vector_queue_sound(command);
+		vector_queue_sound(command);
 	}
 	lash_time_2 = OBJECT(object)->dreamland_boss_chain_head.lash_time;
 	OBJECT(object)->dreamland_boss_chain_head.lash_time = lash_time_2 - 1u;

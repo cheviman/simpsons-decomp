@@ -3,7 +3,7 @@
  *    Description: what the beaten robot leaves on the floor (5280 type F5)
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -123,7 +123,7 @@ void robot_scrap_pick_up(uint16_t object)
 	uint8_t state = 0;
 
 	OBJECT(object)->robot_scrap.lying = 0u;
-	OBJECT(object)->robot_scrap.carried = 1u;
+	OBJECT(object)->carried = 1u;
 	OBJECT(object)->flags = 0x80u;
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state - 1u;
@@ -135,7 +135,7 @@ void robot_scrap_throw(uint16_t object)
 	uint8_t animation = 0, state = 0;
 
 	OBJECT(object)->flags = 0x80u;
-	OBJECT(object)->robot_scrap.carried = 0u;
+	OBJECT(object)->carried = 0u;
 	animation = OBJECT(object)->animation;
 	OBJECT(object)->animation = (animation + 1u) | 0x80u;
 	leftover_y = robot_scrap_throw_box_ADDRESS;
@@ -199,7 +199,7 @@ uint16_t robot_scrap_keep_on_floor(uint16_t object, uint16_t states)
 	lying = OBJECT(object)->robot_scrap.lying;
 	if (lying != 0u)
 		return states;
-	carried = OBJECT(object)->robot_scrap.carried;
+	carried = OBJECT(object)->carried;
 	if (carried != 0u)
 	{
 		parent = OBJECT(object)->parent;

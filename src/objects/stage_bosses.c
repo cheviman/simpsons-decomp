@@ -3,7 +3,7 @@
  *    Description: what bank 1E's bosses share: states, hit checks, the floor, targets
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -613,7 +613,6 @@ void stage_boss_check_hit(uint16_t object, uint16_t health_limits, uint16_t *p_o
 	uint16_t object_2 = (uint16_t)*p_object_2;
 	uint32_t zero = *p_zero;
 	uint32_t negative = *p_negative;
-	uint32_t carry = 0;
 	uint8_t behaviour = 0, health = 0, players = 0;
 	uint16_t command = 0;
 	uint8_t hit = 0, vitality = 0, vitality_2 = 0;
@@ -658,14 +657,14 @@ void stage_boss_check_hit(uint16_t object, uint16_t health_limits, uint16_t *p_o
 				OBJECT(object)->vitality = 0u;
 				object_2 = stage_boss_note_beater(object);
 				command = 0x6600u;
-				carry = vector_queue_sound(command);
+				vector_queue_sound(command);
 				negative = 1u;
 				zero = 0xFFu == 0u;
 			}
 			else
 			{
 				command = 0x6600u;
-				carry = vector_queue_sound(command);
+				vector_queue_sound(command);
 				negative = 0u;
 				zero = 1u == 0u;
 			}

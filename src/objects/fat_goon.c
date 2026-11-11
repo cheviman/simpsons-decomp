@@ -3,7 +3,7 @@
  *    Description: the fat goons (kind 81): their setups, entrances and starts
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -1245,7 +1245,7 @@ uint16_t fat_goon_thrower_pick_up(uint16_t object)
 {
 	uint32_t carry = 0;
 	uint8_t x_speed_high = 0, x_speed_low = 0;
-	uint16_t ignored16 = 0, ignored16_2 = 0, object_2 = 0;
+	uint16_t carried = 0, ignored16 = 0, ignored16_2 = 0;
 	uint8_t target_direction = 0, carry_time = 0, action_step = 0;
 
 	OBJECT(object)->timer = 0x40u;
@@ -1262,21 +1262,21 @@ uint16_t fat_goon_thrower_pick_up(uint16_t object)
 	}
 	OBJECT(object)->x_speed = (uint32_t)x_speed_high << 8;
 	leftover_y = fat_goon_thrower_pick_up_child_ADDRESS;
-	vector_spawn_child(object, &ignored16, &object_2, &ignored16_2, &carry);
+	vector_spawn_child(object, &ignored16, &carried, &ignored16_2, &carry);
 	if (carry == 0u)
 	{
 		OBJECT(object)->state = 2u;
 		OBJECT(object)->timer = 0u;
-		return object_2;
+		return carried;
 	}
-	OBJECT(object)->fat_goon_thrower.carried_object = object_2;
+	OBJECT(object)->fat_goon_thrower.carried_object = carried;
 	carry_time = OBJECT(object)->fat_goon_thrower.carry_time;
-	OBJECT(object_2)->parameter = carry_time;
-	OBJECT(object_2)->unk_3D = 1u;
+	OBJECT(carried)->parameter = carry_time;
+	OBJECT(carried)->carried = 1u;
 	OBJECT(object)->fat_goon_thrower.carry_time = 8u;
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step + 1u;
-	return object_2;
+	return carried;
 }
 
 /* Walks with the obstacle on its head, and starts the throw when its steps run out or the target is
@@ -1289,7 +1289,7 @@ uint16_t fat_goon_thrower_carry(uint16_t object)
 
 	carried_object = OBJECT(object)->fat_goon_thrower.carried_object;
 	carried = carried_object;
-	OBJECT(carried)->carried_obstacle.carried = 1u;
+	OBJECT(carried)->carried = 1u;
 	state = OBJECT(carried)->state;
 	if ((int8_t)state < 0)
 	{
@@ -1687,7 +1687,7 @@ uint16_t fat_goon_descent_steps(uint16_t object)
 /* Grows the fat goon as it comes nearer, and after its time lets the balloon go. */
 uint16_t fat_goon_descent_fall(uint16_t object, uint16_t balloon)
 {
-	uint32_t negative = 0, carry = 0;
+	uint32_t negative = 0;
 	uint8_t cell = 0, new_zoom_x = 0, new_zoom_y = 0;
 	uint16_t floor_cell = 0;
 	uint8_t timer = 0, action_step = 0;
@@ -1723,7 +1723,7 @@ uint16_t fat_goon_descent_fall(uint16_t object, uint16_t balloon)
 		action_step = OBJECT(object)->action_step;
 		OBJECT(object)->action_step = action_step + 1u;
 	}
-	carry = vector_check_landing(object);
+	vector_check_landing(object);
 	return balloon;
 }
 

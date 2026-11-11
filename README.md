@@ -13,7 +13,7 @@ you build your own executable, which runs from the assets and opens no ROM.
 
 ## Status
 
-As of 09-11-2026:
+As of 11-11-2026:
 
 - [x] ROM set verification (MAME set `simpsons`, 4 Players World, set 1), by CRC32 and SHA-1 of every file
 - [x] A reference: the original programs on MAME's 053248 and Z80 cores, with MAME's K053260 and ymfm's YM2151,
@@ -64,9 +64,13 @@ As of 09-11-2026:
 - [x] What the 053248's routines leave in Y for later ones, which no call links to them, kept as a global
       (`leftover_y`, as TMNT's carried registers), not passed through hundreds of handlers; its temporaries named,
       and its work RAM's records (palette jobs, sprite entries, coin slots, the players' records) as structures
-- [ ] The 053248's C made fully readable: 82 object fields still named after their offset, about 850 parameters and
-      locals still named after a register (mostly what a dispatcher hands its handlers in U and D, and the cases of the
-      steps' switches that run on into the next table's)
+- [x] The board's memory the 053248 keeps variables in (the K052109's RAM at 1840-18FF and 3840-38FF: scene waits,
+      counts, signals) read and written by name, as are the board's registers
+- [x] Every object field the 053248's C reaches named, by the family that owns it (no `->unk_XX` left)
+- [ ] The 053248's C made fully readable: about 850 parameters and locals still named after a register (mostly what a
+      dispatcher hands its handlers in U and D, and the cases of the steps' switches that run on into the next
+      table's), and about 1,080 of the CPU's flags a routine hands another (the 6809's convention: a carry for "found"
+      or "done")
 - [x] The assets extracted by subject and checked byte for byte (`tools/extract_assets.py --check`): the sprites by
       the objects whose animations show them, the tiles by the stages whose maps show them, the K053260's samples
       as WAV files, the music as Standard MIDI Files (a song a file, as the Z80's driver plays it), and every other

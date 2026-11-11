@@ -3,7 +3,7 @@
  *    Description: the fixed program's entry points for the banks (an LBRA each, 078593-0786CB) and the routines the decompiler folded into them
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -168,9 +168,7 @@ void vector_stop_at_screen_edges(uint16_t object)
 /* Unused: jumps to enemy_on_screen. */
 void unused_vector_enemy_on_screen(void)
 {
-	uint32_t carry = 0;
-
-	carry = enemy_on_screen(0u);
+	enemy_on_screen(0u);
 }
 
 /* Jumps to print_game_text. */
@@ -522,8 +520,8 @@ uint16_t start_sample_rom_check(void)
 	uint8_t t1 = 0;
 
 	command = 0xFE88u;
-	io_write16(0x1FC6u, 0xFE88u);
-	t1 = io_read8(0x1FC4u);
+	io_write16(sound_command_port, 0xFE88u);
+	t1 = io_read8(sound_irq_port);
 	return command;
 }
 
@@ -556,7 +554,7 @@ void sample_rom_check_answered(uint16_t *p_sample_check_command, uint32_t *p_zer
 	uint16_t sample_check_command = 0;
 	uint8_t sound_echo = 0;
 
-	sound_echo = io_read8(0x1FC7u);
+	sound_echo = io_read8(sound_echo_port);
 	zero = (uint8_t)(0x88u - sound_echo) == 0u;
 	sample_check_command = 0x88u;
 	*p_sample_check_command = (*p_sample_check_command & 0xFF00u) | sample_check_command;
@@ -938,7 +936,7 @@ void find_nearest_player(uint16_t object, uint16_t *p_nearest, uint16_t *p_neare
 	uint8_t present_count = 0, state = 0, players_left_was = 0;
 	uint16_t own_x = 0, player_x = 0, x_difference = 0, own_y = 0, player_y = 0, y_difference = 0, nearest_found = 0;
 
-	present_count = io_read8(0x1874u);
+	present_count = io_read8(stage_player_count);
 	if (present_count != 0u)
 	{
 		stack = 4u;
@@ -969,7 +967,7 @@ void find_nearest_player(uint16_t object, uint16_t *p_nearest, uint16_t *p_neare
 					if (distance < nearest_player_distance)
 					{
 						nearest_player_distance = distance;
-						io_write16(0x1872u, object_2);
+						io_write16(nearest_player_found, object_2);
 					}
 				}
 			}
@@ -977,7 +975,7 @@ void find_nearest_player(uint16_t object, uint16_t *p_nearest, uint16_t *p_neare
 			players_left_was = stack;
 			stack = players_left_was - 1u;
 		} while (players_left_was != 1u);
-		nearest_found = io_read16(0x1872u);
+		nearest_found = io_read16(nearest_player_found);
 		nearest = nearest_found;
 		nearest_result = (distance & 0xFFu) | ((uint32_t)nearest_player_distance_high << 8);
 		carry = nearest_result >> 8 < 0x7Fu;
@@ -1045,9 +1043,7 @@ void vector_clear_text_layer(uint16_t *p_x, uint16_t *p_d)
 /* Jumps to queue_sound_always. */
 void vector_queue_sound_always(uint16_t command)
 {
-	uint32_t carry = 0;
-
-	carry = queue_sound_always(command);
+	queue_sound_always(command);
 }
 
 /* Jumps to insert_high_score. */
@@ -1146,7 +1142,7 @@ void reserve_objects_for_sprites(uint16_t object, uint16_t object_count)
 	stack = reserve_count;
 	control = board_control | 2u;
 	board_control = control;
-	io_write8(0x1FC2u, control);
+	io_write8(board_control_register, control);
 	order = 0xFFu;
 	do
 	{
@@ -1168,7 +1164,7 @@ void reserve_objects_for_sprites(uint16_t object, uint16_t object_count)
 	} while (objects_left_was != 1u);
 	control = board_control & ~3u;
 	board_control = control;
-	io_write8(0x1FC2u, control);
+	io_write8(board_control_register, control);
 }
 
 /* Jumps to erase_text. */

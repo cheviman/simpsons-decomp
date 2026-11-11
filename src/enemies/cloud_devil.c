@@ -3,7 +3,7 @@
  *    Description: stage 6's devil on a cloud (type F2) and its lightning bolt (4D40 type 28)
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -14,7 +14,6 @@
 /* Sets the lightning bolt up below the cloud with its sound. */
 uint16_t lightning_bolt_setup(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0, setup = 0;
 	uint8_t attributes = 0, state = 0;
 	uint16_t z = 0, bolt_z = 0;
@@ -27,7 +26,7 @@ uint16_t lightning_bolt_setup(uint16_t object)
 	bolt_z = z - 0x30u;
 	OBJECT(object)->z = bolt_z;
 	command = 0x4C00u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
 	return setup;
@@ -109,14 +108,13 @@ void cloud_devil_come_in(uint16_t object)
 /* Shows the devil appearing, bobbing, with a sound. */
 void cloud_devil_appear(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t action_step = 0;
 
 	cloud_devil_bob_in(object);
 	OBJECT(object)->flags = 0x88u;
 	command = 0x6C00u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	OBJECT(object)->animation = 0x84u;
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step + 1u;
@@ -125,7 +123,6 @@ void cloud_devil_appear(uint16_t object)
 /* When it has appeared, sets the devil flying at the nearest player with a wait before its first bolt. */
 void cloud_devil_start_flying(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t animation_flags = 0, parameter = 0, parameter_2 = 0, action_step = 0;
 
@@ -140,7 +137,7 @@ void cloud_devil_start_flying(uint16_t object)
 		if (parameter_2 == 2u)
 		{
 			command = 0x4B00u;
-			carry = vector_queue_sound(command);
+			vector_queue_sound(command);
 		}
 		cloud_devil_take_off(object);
 		return;
@@ -310,7 +307,6 @@ void cloud_devil_hurt(uint16_t object)
 /* Stops the hit devil, keeps its height and plays its hurt animation for 30 frames, with the hit sound. */
 void cloud_devil_hurt_start(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t action_step = 0;
 	uint16_t z = 0;
@@ -323,7 +319,7 @@ void cloud_devil_hurt_start(uint16_t object)
 	OBJECT(object)->cloud_devil.kept_height = z;
 	OBJECT(object)->timer = 0x1Eu;
 	command = 0x6300u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	OBJECT(object)->animation = 0x85u;
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step + 1u;
@@ -402,7 +398,6 @@ void cloud_devil_die(uint16_t object)
 /* Stops the beaten devil with the hit sound and its falling animation. */
 void cloud_devil_die_start(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t action_step = 0;
 
@@ -411,7 +406,7 @@ void cloud_devil_die_start(uint16_t object)
 	OBJECT(object)->y_speed = 0;
 	OBJECT(object)->z_speed = 0;
 	command = 0x6300u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	OBJECT(object)->animation = 0x86u;
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step + 1u;
@@ -430,7 +425,7 @@ void cloud_devil_die_fall(uint16_t object)
 	points = OBJECT(object)->points;
 	OBJECT(object)->points = points | 0x80u;
 	command = 0x4800u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	OBJECT(object)->animation = 0x88u;
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step + 1u;

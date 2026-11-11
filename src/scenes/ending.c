@@ -3,7 +3,7 @@
  *    Description: the ending: the family, the staff roll and the fade
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -34,8 +34,8 @@ void ending_set_up(uint16_t palette_job)
 	object = OBJECT_ADDRESS(14);
 	object_count = 0x800u;
 	reserve_objects_for_sprites(object, object_count);
-	discarded_read = io_read8(0x18E6u);
-	io_write8(0x18E6u, 0u);
+	discarded_read = io_read8(staff_roll_line);
+	io_write8(staff_roll_line, 0u);
 	old_scene_state = io_read8(scene_state);
 	io_write8(scene_state, old_scene_state + 1u);
 }
@@ -48,8 +48,8 @@ void ending_show_family(void)
 
 	if (layer_clear_pending != 0u)
 		return;
-	io_write8(0x1FB9u, 0x3Fu);
-	io_write8(0x1FBAu, 0x36u);
+	io_write8(colour_bases_back_sprites_fixed, 0x3Fu);
+	io_write8(colour_bases_layers_a_b, 0x36u);
 	map_scene = 0x8Eu;
 	map_area = 0u;
 	vector_set_layer_modes();
@@ -57,8 +57,8 @@ void ending_show_family(void)
 	vector_draw_layer_strips(layer_and_columns, &ignored16, &ignored16_2);
 	layer_then_placement = 0x126u;
 	vector_draw_layer_strips(layer_then_placement, &ignored16, &ignored16_2);
-	io_write8(0x1FB9u, 0x13u);
-	io_write8(0x1FBAu, 0x2Cu);
+	io_write8(colour_bases_back_sprites_fixed, 0x13u);
+	io_write8(colour_bases_layers_a_b, 0x2Cu);
 	layer_then_placement &= 0xFFu;
 	ending_put_placement(layer_then_placement);
 	layer_then_placement |= 0x100u;
@@ -91,7 +91,6 @@ void ending_roll_credits(void)
 /* The ending: on the family's cue something is tossed up, with a sound (0101). */
 void ending_toss(void)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0, object = 0, record_number = 0;
 	uint8_t old_scene_state = 0;
 	uint16_t tossed_y = 0, new_tossed_y = 0;
@@ -101,7 +100,7 @@ void ending_toss(void)
 	if ((OBJECT(OBJECT_ADDRESS(8))->animation_flags & 2u) == 0u)
 		return;
 	command = 0x101u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	record_number = 0x501u;
 	object = ending_put_placement(record_number);
 	tossed_y = OBJECT(object)->y;
@@ -118,11 +117,10 @@ void ending_toss(void)
 /* The ending: the tossed object rises while the family's pose plays out. */
 void ending_catch(void)
 {
-	uint32_t carry = 0;
 	uint8_t old_scene_state = 0;
 
 	ending_staff_roll(0u);
-	carry = ending_tossed_rise();
+	ending_tossed_rise();
 	OBJECT(OBJECT_ADDRESS(9))->animation_flags = 0x40u;
 	if ((OBJECT(OBJECT_ADDRESS(8))->animation_flags & 1u) == 0u)
 		return;
@@ -151,7 +149,7 @@ void ending_fade_start(uint16_t u)
 		palette_request_kind = 4u;
 		request = 0x220u;
 		vector_palette_request(u, request);
-		io_write16(0x18E2u, 0x180u);
+		io_write16(scene_wait, 0x180u);
 		old_scene_state = io_read8(scene_state);
 		io_write8(scene_state, old_scene_state + 1u);
 		return;
@@ -167,15 +165,15 @@ void ending_fade(uint16_t palette_job)
 
 	OBJECT(OBJECT_ADDRESS(9))->animation_flags = 0x40u;
 	ending_family_float();
-	fade_frames_left = io_read16(0x18E2u);
-	io_write16(0x18E2u, fade_frames_left - 1u);
+	fade_frames_left = io_read16(scene_wait);
+	io_write16(scene_wait, fade_frames_left - 1u);
 	if (fade_frames_left == 1u)
 	{
 		vector_clear_objects(&ignored16, &ignored16_2);
 		scene_running = 0u;
 		return;
 	}
-	fade_frames = io_read16(0x18E2u);
+	fade_frames = io_read16(scene_wait);
 	if (fade_frames == 0x80u)
 	{
 		palette_request_kind = 2u;
@@ -192,16 +190,16 @@ uint32_t ending_scroll_up(void)
 	uint8_t scroll_wait = 0, old_scroll_wait = 0, discarded_read = 0;
 	uint16_t layer_a_y = 0, new_layer_a_y = 0;
 
-	scroll_wait = io_read8(0x18EAu);
+	scroll_wait = io_read8(dream_wave_line);
 	if (scroll_wait != 0x68u)
 	{
-		old_scroll_wait = io_read8(0x18EAu);
-		io_write8(0x18EAu, old_scroll_wait + 1u);
+		old_scroll_wait = io_read8(dream_wave_line);
+		io_write8(dream_wave_line, old_scroll_wait + 1u);
 		carry = 0u;
 		return carry;
 	}
-	discarded_read = io_read8(0x18EAu);
-	io_write8(0x18EAu, 0u);
+	discarded_read = io_read8(dream_wave_line);
+	io_write8(dream_wave_line, 0u);
 	layer_a_y = layer_a_scroll_y;
 	scroll_y_low = (uint8_t)layer_a_y;
 	scroll_y_high = (uint8_t)(layer_a_y >> 8);
@@ -212,8 +210,8 @@ uint32_t ending_scroll_up(void)
 	}
 	new_layer_a_y = (((uint32_t)scroll_y_high << 8) | (scroll_y_low & 0xFFu)) + 1u;
 	layer_a_scroll_y = new_layer_a_y;
-	old_scroll_wait = io_read8(0x18EAu);
-	io_write8(0x18EAu, old_scroll_wait + 1u);
+	old_scroll_wait = io_read8(dream_wave_line);
+	io_write8(dream_wave_line, old_scroll_wait + 1u);
 	carry = 0u;
 	return carry;
 }
@@ -224,30 +222,30 @@ uint16_t ending_staff_roll(uint16_t u)
 	uint16_t colour = 0, ignored16 = 0, text = 0, title = 0;
 	uint8_t roll_wait = 0, old_roll_wait = 0, erased_name_line = 0, erased_title_line = 0, old_roll_line = 0, name_line = 0, title_line = 0;
 
-	roll_wait = io_read8(0x18E4u);
+	roll_wait = io_read8(scene_palette_effect);
 	if (roll_wait != 0u)
 	{
-		old_roll_wait = io_read8(0x18E4u);
-		io_write8(0x18E4u, old_roll_wait - 1u);
+		old_roll_wait = io_read8(scene_palette_effect);
+		io_write8(scene_palette_effect, old_roll_wait - 1u);
 		return u;
 	}
-	erased_name_line = io_read8(0x18E6u);
+	erased_name_line = io_read8(staff_roll_line);
 	text = staff_roll_names[(int8_t)((uint8_t)((uint32_t)erased_name_line << 1)) / 2];
 	erase_big_text(text);
-	erased_title_line = io_read8(0x18E6u);
+	erased_title_line = io_read8(staff_roll_line);
 	text = staff_roll_titles[(int8_t)((uint8_t)((uint32_t)erased_title_line << 1)) / 2];
 	vector_erase_text(text);
-	old_roll_line = io_read8(0x18E6u);
-	io_write8(0x18E6u, old_roll_line + 1u);
-	name_line = io_read8(0x18E6u);
+	old_roll_line = io_read8(staff_roll_line);
+	io_write8(staff_roll_line, old_roll_line + 1u);
+	name_line = io_read8(staff_roll_line);
 	text = staff_roll_names[(int8_t)((uint8_t)((uint32_t)name_line << 1)) / 2];
 	colour = 0x4000u;
 	print_big_text(text, colour);
-	title_line = io_read8(0x18E6u);
+	title_line = io_read8(staff_roll_line);
 	title = staff_roll_titles[(int8_t)((uint8_t)((uint32_t)title_line << 1)) / 2];
 	colour = 0u;
 	vector_print_text(colour, &ignored16, &title);
-	io_write8(0x18E4u, 0xA0u);
+	io_write8(scene_palette_effect, 0xA0u);
 	return title;
 }
 
@@ -259,26 +257,26 @@ void ending_family_animations(void)
 	uint8_t family_step = 0, old_family_step = 0;
 	uint16_t step_wait = 0, frames_waited = 0, old_frames_waited = 0;
 
-	family_step = io_read8(0x18E9u);
+	family_step = io_read8(ending_family_step);
 	step_wait = ending_family_waits[(int8_t)((uint8_t)((uint32_t)family_step << 1)) / 2];
 	wait_low = (uint8_t)step_wait;
 	wait_high = (uint8_t)(step_wait >> 8);
 	if ((uint16_t)(((uint32_t)wait_high << 8) | (wait_low & 0xFFu)) == 0xFFFFu)
 		return;
-	frames_waited = io_read16(0x18E7u);
+	frames_waited = io_read16(scene_second_wait);
 	if (frames_waited < (uint16_t)(((uint32_t)wait_high << 8) | (wait_low & 0xFFu)))
 	{
-		old_frames_waited = io_read16(0x18E7u);
-		io_write16(0x18E7u, old_frames_waited + 1u);
+		old_frames_waited = io_read16(scene_second_wait);
+		io_write16(scene_second_wait, old_frames_waited + 1u);
 		return;
 	}
 	if ((OBJECT(OBJECT_ADDRESS(8))->animation_flags & 1u) == 0u)
 		return;
 	record_number = (wait_low & 0xFFu) | 0x200u;
 	ending_put_placement(record_number);
-	io_write16(0x18E7u, 0u);
-	old_family_step = io_read8(0x18E9u);
-	io_write8(0x18E9u, old_family_step + 1u);
+	io_write16(scene_second_wait, 0u);
+	old_family_step = io_read8(ending_family_step);
+	io_write8(ending_family_step, old_family_step + 1u);
 }
 
 /* The ending: the tossed object flies up and comes closer, growing, through its animations until gone

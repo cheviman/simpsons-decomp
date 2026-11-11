@@ -3,7 +3,7 @@
  *    Description: bonus stage 1
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -398,18 +398,17 @@ void bonus_1_setup(void)
    384 frames */
 void bonus_1_draw(void)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0, ignored16 = 0, ignored16_2 = 0, layer_and_columns = 0;
 
 	if (layer_clear_pending != 0u)
 		return;
 	command = 0x8700u;
-	carry = queue_sound_unless_attract(command);
+	queue_sound_unless_attract(command);
 	map_scene = 0x83u;
 	map_area = 0u;
 	set_area_tile_banks();
-	io_write8(0x1FB9u, 0x3Fu);
-	io_write8(0x1FBAu, 0x36u);
+	io_write8(colour_bases_back_sprites_fixed, 0x3Fu);
+	io_write8(colour_bases_layers_a_b, 0x36u);
 	layer_and_columns = 0x26u;
 	draw_layer_columns(layer_and_columns, &ignored16, &ignored16_2);
 	layer_and_columns = 0x126u;
@@ -433,8 +432,8 @@ void bonus_1_intro_phase(void)
 	check_skip(wait, &ignored16, &carry);
 	if (carry == 0u)
 	{
-		io_write8(0x1FB9u, 0x13u);
-		io_write8(0x1FBAu, 0x2Cu);
+		io_write8(colour_bases_back_sprites_fixed, 0x13u);
+		io_write8(colour_bases_layers_a_b, 0x2Cu);
 		intro_wait = scene_timer;
 		scene_timer = intro_wait - 1u;
 		if (intro_wait != 1u)
@@ -447,8 +446,8 @@ void bonus_1_intro_phase(void)
 		}
 	}
 	clear_objects(&ignored16, &ignored16_2);
-	io_write8(0x1FB9u, 0x3Fu);
-	io_write8(0x1FBAu, 0x36u);
+	io_write8(colour_bases_back_sprites_fixed, 0x3Fu);
+	io_write8(colour_bases_layers_a_b, 0x36u);
 	clear_layer_b();
 	scroll_x = 0xFFF0u;
 	set_scroll_x(scroll_x);
@@ -458,12 +457,12 @@ void bonus_1_intro_phase(void)
 	set_area_tile_banks();
 	layer_and_columns = 0x26u;
 	draw_layer_columns(layer_and_columns, &ignored16, &ignored16_2);
-	io_write8(0x1FB9u, 0x13u);
-	io_write8(0x1FBAu, 0x2Cu);
+	io_write8(colour_bases_back_sprites_fixed, 0x13u);
+	io_write8(colour_bases_layers_a_b, 0x2Cu);
 	discarded_read = io_read8(scene_state);
 	io_write8(scene_state, 0u);
 	command = 0u;
-	carry = queue_sound_always(command);
+	queue_sound_always(command);
 	step_phase++;
 }
 

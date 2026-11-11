@@ -3,7 +3,7 @@
  *    Description: stage 3's two bosses (type 3E, kinds C4 and C3)
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -178,7 +178,6 @@ uint16_t stage_3_boss_start(uint16_t object, uint16_t object_2)
 /* When the stage lets it, comes in from the right and tells the story's object */
 void stage_3_boss_enter(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t animation_number = 0, command = 0, marker = 0, state_wait = 0, x_speed = 0;
 	uint8_t second = 0;
 	uint16_t stored_marker = 0;
@@ -200,11 +199,11 @@ void stage_3_boss_enter(uint16_t object)
 		x_speed = 0xFEE0u;
 	OBJECT(object)->x_speed = x_speed;
 	OBJECT(object)->y_speed = -0x20;
-	stored_marker = io_read16(0x1852u);
+	stored_marker = io_read16(stage_kept_object);
 	marker = stored_marker;
 	OBJECT(marker)->behaviour = (OBJECT(marker)->behaviour & 0xFFu) | 0x100u;
 	command = 0x6000u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	leftover_y = marker;
 }
 
@@ -223,11 +222,11 @@ uint16_t stage_3_boss_arrive(uint16_t object, uint16_t child)
 		wait_2 = OBJECT(object)->stage_3_boss.wait;
 		if (wait_2 != 0x14u)
 			return child;
-		stored_marker = io_read16(0x1852u);
+		stored_marker = io_read16(stage_kept_object);
 		y = stored_marker;
 		mem_write8(y + 0x2Au, 0u);
 		command = 0x6000u;
-		carry = vector_queue_sound(command);
+		vector_queue_sound(command);
 		leftover_y = y;
 		return child;
 	}
@@ -239,7 +238,7 @@ uint16_t stage_3_boss_arrive(uint16_t object, uint16_t child)
 	if (second != 0u)
 		return child;
 	command = 0x3F35u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	leftover_y = stage_3_boss_arrive_child_ADDRESS;
 	child_object = stage_3_boss_arrive_child_ADDRESS;
 	spawn_list_2_child(object, child_object, &child, &carry);
@@ -432,7 +431,6 @@ uint16_t stage_3_boss_attack_or_wait(uint16_t object, uint16_t target)
 /* Turns toward its target and moves on */
 uint16_t stage_3_boss_move(uint16_t object, uint16_t target)
 {
-	uint32_t carry = 0;
 	uint8_t direction = 0, facing = 0, turn_step = 0;
 	uint16_t direction_2 = 0;
 	uint8_t attributes = 0, attributes_2 = 0, animation_flags = 0, attributes_3 = 0, animation_flags_2 = 0, direction_3 = 0;
@@ -471,14 +469,13 @@ uint16_t stage_3_boss_move(uint16_t object, uint16_t target)
 	x_speed_2 = OBJECT(object)->x_speed;
 	doubled_x_speed = x_speed + x_speed_2;
 	OBJECT(object)->x_speed = doubled_x_speed;
-	carry = stage_boss_move_on_screen(object);
+	stage_boss_move_on_screen(object);
 	return stage_3_boss_taunt(object, target);
 }
 
 /* Picks its attack: a strike, a leap (the second, at a player down) or the carried one's */
 uint16_t stage_3_boss_attack(uint16_t object, uint16_t other_object)
 {
-	uint32_t carry = 0;
 	uint16_t animation_number = 0, box = 0, state_wait = 0, u = 0;
 	uint8_t wait = 0, together = 0, target_state = 0, second = 0, z_low = 0;
 	uint16_t partner = 0, chase_target = 0;
@@ -533,7 +530,7 @@ uint16_t stage_3_boss_attack(uint16_t object, uint16_t other_object)
 	z_low = (uint8_t)OBJECT(object)->z;
 	OBJECT(object)->z = (OBJECT(object)->z & 0xFF00u) | (z_low + 1u & 0xFFu);
 	u = stage_boss_knock_away(object, u);
-	carry = stage_boss_move_on_screen(object);
+	stage_boss_move_on_screen(object);
 	return u;
 }
 
@@ -654,9 +651,9 @@ uint16_t stage_3_boss_knocked(uint16_t object, uint16_t u)
 	if ((int8_t)partner_phase >= 0x13)
 	{
 		command = 0u;
-		carry = vector_queue_sound(command);
+		vector_queue_sound(command);
 		command = 0x9800u;
-		carry = vector_queue_sound_unless_attract(command);
+		vector_queue_sound_unless_attract(command);
 	}
 	leftover_y = 0x133Cu;
 	state_wait = 0x133Cu;
@@ -703,8 +700,8 @@ void stage_3_boss_defeated(uint16_t object)
 		return;
 	}
 	command = 0x6000u;
-	carry = vector_queue_sound(command);
-	stored_marker = io_read16(0x1852u);
+	vector_queue_sound(command);
+	stored_marker = io_read16(stage_kept_object);
 	other_object = stored_marker;
 	OBJECT(other_object)->behaviour = (OBJECT(other_object)->behaviour & 0xFFu) | 0x100u;
 	boss_beaten = 1u;
@@ -745,10 +742,10 @@ uint16_t stage_3_boss_update(uint16_t boss, uint16_t other_object)
 	uint8_t d = 0, ignored_low_byte = 0;
 	uint16_t animation_number = 0, health_limits = 0, hurt_animation = 0, object = 0, partner = 0, state_wait = 0, u = 0;
 	uint16_t stack = 0;
-	uint8_t join_wait = 0, together = 0, second = 0, apart_time = 0, retarget_time = 0, retarget_time_2 = 0, still_together = 0, vitality = 0, hit = 0;
+	uint8_t join_wait = 0, together = 0, second = 0, apart_time = 0, apart_time_2 = 0, apart_time_3 = 0, still_together = 0, vitality = 0, hit = 0;
 	uint16_t partner_2 = 0, partner_z = 0, partner_3 = 0, boss_x = 0, boss_y = 0, partner_address = 0;
 
-	carry = stage_boss_follow_floor(boss);
+	stage_boss_follow_floor(boss);
 	ignored_low_byte = (uint8_t)d;
 	join_wait = OBJECT(boss)->stage_3_boss.join_wait;
 	OBJECT(boss)->stage_3_boss.join_wait = join_wait - 1u;
@@ -794,11 +791,11 @@ uint16_t stage_3_boss_update(uint16_t boss, uint16_t other_object)
 			}
 		}
 	}
-	retarget_time = OBJECT(boss)->retarget_time;
-	if (retarget_time != 0xFFu)
+	apart_time_2 = OBJECT(boss)->stage_3_boss.apart_time;
+	if (apart_time_2 != 0xFFu)
 	{
-		retarget_time_2 = OBJECT(boss)->retarget_time;
-		OBJECT(boss)->retarget_time = retarget_time_2 + 1u;
+		apart_time_3 = OBJECT(boss)->stage_3_boss.apart_time;
+		OBJECT(boss)->stage_3_boss.apart_time = apart_time_3 + 1u;
 	}
 	leftover_y = stage_3_boss_beaten_vitality_ADDRESS;
 	health_limits = stage_3_boss_beaten_vitality_ADDRESS;
@@ -806,14 +803,14 @@ uint16_t stage_3_boss_update(uint16_t boss, uint16_t other_object)
 	stage_boss_check_hit(boss, health_limits, &other_object, &zero, &negative);
 	if (zero)
 		return other_object;
-	OBJECT(boss)->parent = (OBJECT(boss)->parent & 0xFFu) | 0x1000u;
-	still_together = OBJECT(boss)->unk_43;
+	OBJECT(boss)->stage_3_boss.join_wait = 0x10u;
+	still_together = OBJECT(boss)->stage_3_boss.together;
 	if (still_together != 0u)
 	{
 		boss_x = OBJECT(boss)->x;
 		boss_y = OBJECT(boss)->y;
 		stack = boss;
-		partner_address = (((uint32_t)(OBJECT(boss)->parent & 0xFFu) << 8u) | (uint8_t)OBJECT(boss)->enemy_class);
+		partner_address = OBJECT(boss)->stage_3_boss.partner;
 		partner = partner_address;
 		OBJECT(partner)->x = boss_x;
 		OBJECT(partner)->y = boss_y;
@@ -825,8 +822,8 @@ uint16_t stage_3_boss_update(uint16_t boss, uint16_t other_object)
 		object = 0x700u;
 		leftover_y = 0x200u;
 		stage_boss_knock_away(partner, object);
-		carry = stage_boss_move_on_screen(partner);
-		OBJECT(partner)->unk_43 = 0u;
+		stage_boss_move_on_screen(partner);
+		OBJECT(partner)->stage_3_boss.together = 0u;
 		boss = stack;
 		OBJECT(boss)->stage_3_boss.together = 0u;
 		state_wait = 0x1200u;
@@ -836,7 +833,7 @@ uint16_t stage_3_boss_update(uint16_t boss, uint16_t other_object)
 		leftover_y = 0x380u;
 		u = stage_boss_knock_away(boss, u);
 		OBJECT(boss)->z = (OBJECT(boss)->z & 0xFF00u) | 0x1u;
-		carry = stage_boss_move_on_screen(boss);
+		stage_boss_move_on_screen(boss);
 		return u;
 	}
 	vitality = OBJECT(boss)->vitality;
@@ -849,7 +846,7 @@ uint16_t stage_3_boss_update(uint16_t boss, uint16_t other_object)
 		leftover_y = 0x380u;
 		u = stage_boss_knock_away(boss, u);
 		OBJECT(boss)->z = (OBJECT(boss)->z & 0xFF00u) | 0x1u;
-		carry = stage_boss_move_on_screen(boss);
+		stage_boss_move_on_screen(boss);
 		return u;
 	}
 	hit = OBJECT(boss)->hit;
@@ -862,7 +859,7 @@ uint16_t stage_3_boss_update(uint16_t boss, uint16_t other_object)
 		leftover_y = 0x380u;
 		u = stage_boss_knock_away(boss, u);
 		OBJECT(boss)->z = (OBJECT(boss)->z & 0xFF00u) | 0x1u;
-		carry = stage_boss_move_on_screen(boss);
+		stage_boss_move_on_screen(boss);
 		return u;
 	}
 	leftover_y = 0x1100u;
@@ -944,9 +941,7 @@ uint16_t stage_3_boss_head_to_partner(uint16_t object)
 /* In the air jumping onto its partner */
 void stage_3_boss_jump_on(uint16_t object)
 {
-	uint32_t carry = 0;
-
-	carry = stage_boss_move_on_screen(object);
+	stage_boss_move_on_screen(object);
 }
 
 /* After its wait the two are one: the partner carried, a shared hit box */
@@ -962,14 +957,15 @@ uint16_t stage_3_boss_join(uint16_t object, uint16_t u)
 		return u;
 	partner_2 = OBJECT(object)->stage_3_boss.partner;
 	partner = partner_2;
-	OBJECT(partner)->target_dy = 0xD00u;
+	OBJECT(partner)->stage_3_boss.phase = 0xDu;
+	OBJECT(partner)->stage_3_boss.wait = 0u;
 	OBJECT(partner)->animation = 0x87u;
 	OBJECT(partner)->x_speed = 0;
 	OBJECT(partner)->y_speed = 0;
 	OBJECT(partner)->z_speed = 0;
 	OBJECT(partner)->flags = 0xC0u;
 	OBJECT(object)->stage_3_boss.together = 1u;
-	OBJECT(partner)->unk_43 = 1u;
+	OBJECT(partner)->stage_3_boss.together = 1u;
 	boxes = stage_3_bosses_joined_box_ADDRESS;
 	stage_boss_set_hit_box(object, boxes);
 	return stage_3_boss_start_together(object);
@@ -980,7 +976,7 @@ void stage_3_boss_partner_ready(uint16_t object, uint16_t *p_partner, uint32_t *
 {
 	uint32_t carry = *p_carry;
 	uint16_t partner = 0;
-	uint8_t type = 0, target_dy = 0;
+	uint8_t type = 0, phase = 0;
 	uint16_t partner_2 = 0;
 
 	partner_2 = OBJECT(object)->stage_3_boss.partner;
@@ -990,8 +986,8 @@ void stage_3_boss_partner_ready(uint16_t object, uint16_t *p_partner, uint32_t *
 		carry = 0u;
 	else
 	{
-		target_dy = (uint8_t)(OBJECT(partner)->target_dy >> 8u);
-		if ((int8_t)target_dy >= 0x13)
+		phase = OBJECT(partner)->stage_3_boss.phase;
+		if ((int8_t)phase >= 0x13)
 			carry = 0u;
 		else
 			carry = 1u;

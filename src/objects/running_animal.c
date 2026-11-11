@@ -3,7 +3,7 @@
  *    Description: the dogs and squirrels running across the stages
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -196,7 +196,7 @@ uint16_t running_animal_start(uint16_t object)
 	OBJECT(object)->running_animal.stop_frames = (uint8_t)(wait >> 8u);
 	OBJECT(object)->running_animal.fast = (uint8_t)wait;
 	OBJECT(object)->flags = 0x80u;
-	OBJECT(object)->running_animal.carried = 0u;
+	OBJECT(object)->carried = 0u;
 	OBJECT(object)->timer = 0x40u;
 	OBJECT(object)->running_animal.stops_left = 2u;
 	OBJECT(object)->x_speed = 0x100;
@@ -239,7 +239,7 @@ void running_animal_stop(uint16_t object)
 	uint8_t carried = 0, timer = 0, look_kind = 0, stops_left = 0, state = 0;
 	uint16_t run_speed = 0;
 
-	carried = OBJECT(object)->running_animal.carried;
+	carried = OBJECT(object)->carried;
 	if (carried != 0u)
 	{
 		running_animal_idle();
@@ -282,7 +282,7 @@ void running_animal_picked_up(uint16_t object)
 {
 	uint8_t look_animation = 0, state = 0;
 
-	OBJECT(object)->running_animal.carried = 1u;
+	OBJECT(object)->carried = 1u;
 	OBJECT(object)->flags = 0x80u;
 	OBJECT(object)->kind = 4u;
 	look_animation = (uint8_t)OBJECT(object)->running_animal.look;
@@ -294,7 +294,6 @@ void running_animal_picked_up(uint16_t object)
 /* Thrown: yelps (sound 5F00) unless quiet, at half speed unless fast, with its hit box. */
 void running_animal_thrown(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t quiet = 0, fast = 0, look_animation = 0, state = 0;
 	uint16_t x_speed = 0;
@@ -303,7 +302,7 @@ void running_animal_thrown(uint16_t object)
 	if (quiet == 0u)
 	{
 		command = 0x5F00u;
-		carry = vector_queue_sound(command);
+		vector_queue_sound(command);
 	}
 	fast = OBJECT(object)->running_animal.fast;
 	if (fast == 0u)
@@ -312,7 +311,7 @@ void running_animal_thrown(uint16_t object)
 		OBJECT(object)->x_speed = (int16_t)x_speed >> 1;
 	}
 	OBJECT(object)->flags = 0x88u;
-	OBJECT(object)->running_animal.carried = 0u;
+	OBJECT(object)->carried = 0u;
 	look_animation = (uint8_t)OBJECT(object)->running_animal.look;
 	OBJECT(object)->animation = look_animation + 1u;
 	leftover_y = running_animal_thrown_box_ADDRESS;

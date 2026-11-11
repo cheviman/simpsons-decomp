@@ -3,7 +3,7 @@
  *    Description: the four object lists' dispatchers and the share of attackers per player
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -26,14 +26,14 @@ uint32_t run_enemies(uint32_t left_caller)
 	set_lines(window_bank);
 	empty_object_handler_1a();
 	share_out_attackers();
-	enemies_last_frame = io_read8(0x1876u);
-	io_write8(0x1880u, enemies_last_frame);
-	old_enemy_count = io_read8(0x1876u);
-	io_write8(0x1876u, 0u);
-	old_entered_count = io_read8(0x1883u);
-	io_write8(0x1883u, 0u);
-	old_walk_delays = io_read8(0x1878u);
-	io_write8(0x1878u, 0u);
+	enemies_last_frame = io_read8(enemies_present);
+	io_write8(enemies_present_last_frame, enemies_last_frame);
+	old_enemy_count = io_read8(enemies_present);
+	io_write8(enemies_present, 0u);
+	old_entered_count = io_read8(enemies_entered);
+	io_write8(enemies_entered, 0u);
+	old_walk_delays = io_read8(walk_delay_turn);
+	io_write8(walk_delay_turn, 0u);
 	object = OBJECT_ADDRESS(14);
 	do
 	{
@@ -326,14 +326,14 @@ uint32_t run_enemies(uint32_t left_caller)
 			enemy_class = OBJECT(object)->enemy_class;
 			if ((int8_t)enemy_class >= 0)
 			{
-				enemies_so_far = io_read8(0x1876u);
-				io_write8(0x1876u, enemies_so_far + 1u);
+				enemies_so_far = io_read8(enemies_present);
+				io_write8(enemies_present, enemies_so_far + 1u);
 			}
 			entrance_pending = OBJECT(object)->entrance_pending;
 			if (entrance_pending == 0u)
 			{
-				entered_so_far = io_read8(0x1883u);
-				io_write8(0x1883u, entered_so_far + 1u);
+				entered_so_far = io_read8(enemies_entered);
+				io_write8(enemies_entered, entered_so_far + 1u);
 			}
 		}
 		object += 0x60u;
@@ -352,8 +352,8 @@ void run_list_1_objects(uint16_t *p_list_1_handlers, uint32_t *p_left_caller)
 	uint8_t old_list_1_count = 0, list_1_count = 0;
 	uint16_t type = 0;
 
-	old_list_1_count = io_read8(0x1879u);
-	io_write8(0x1879u, 0u);
+	old_list_1_count = io_read8(list_1_objects_in_play);
+	io_write8(list_1_objects_in_play, 0u);
 	object = OBJECT_ADDRESS(22);
 	do
 	{
@@ -665,8 +665,8 @@ void run_list_1_objects(uint16_t *p_list_1_handlers, uint32_t *p_left_caller)
 				list_1_handlers = dreamland_boss_chain_update(object, state);
 				break;
 			}
-			list_1_count = io_read8(0x1879u);
-			io_write8(0x1879u, list_1_count + 1u);
+			list_1_count = io_read8(list_1_objects_in_play);
+			io_write8(list_1_objects_in_play, list_1_count + 1u);
 		}
 		object += 0x60u;
 	} while (object < OBJECT_ADDRESS(32));
@@ -682,8 +682,8 @@ uint16_t run_child_objects(uint16_t child_handlers)
 	uint8_t old_child_count = 0, child_count = 0;
 	uint16_t type = 0;
 
-	old_child_count = io_read8(0x187Au);
-	io_write8(0x187Au, 0u);
+	old_child_count = io_read8(child_objects_in_play);
+	io_write8(child_objects_in_play, 0u);
 	object = OBJECT_ADDRESS(8);
 	do
 	{
@@ -826,8 +826,8 @@ uint16_t run_child_objects(uint16_t child_handlers)
 				child_handlers = dreamland_boss_chain_update(object, state);
 				break;
 			}
-			child_count = io_read8(0x187Au);
-			io_write8(0x187Au, child_count + 1u);
+			child_count = io_read8(child_objects_in_play);
+			io_write8(child_objects_in_play, child_count + 1u);
 		}
 		object += 0x60u;
 	} while (object < OBJECT_ADDRESS(14));
@@ -880,7 +880,7 @@ void run_stage_event(void)
 /* Unused: notes the number of players in a scene variable. */
 void unused_note_player_count(void)
 {
-	io_write8(0x1874u, player_count);
+	io_write8(stage_player_count, player_count);
 }
 
 /* Finds the player in play the fewest enemies go after (its attackers' count) and keeps it for
@@ -904,7 +904,7 @@ void find_least_attacked_player(void)
 			if (attackers < stack)
 			{
 				stack = attackers;
-				io_write16(0x1870u, player);
+				io_write16(least_attacked_player, player);
 			}
 		}
 		player += 0xC0u;
@@ -920,15 +920,15 @@ void share_out_attackers(void)
 	uint8_t enemies = 0, other_players = 0, players = 0;
 	uint8_t enemy_count = 0, enemies_now = 0, players_now = 0, players_counted = 0;
 
-	enemy_count = io_read8(0x1876u);
+	enemy_count = io_read8(enemies_present);
 	if (enemy_count >= 0x10u)
 	{
-		io_write8(0x1877u, 4u);
+		io_write8(attackers_per_player_limit, 4u);
 		return;
 	}
-	enemies_now = io_read8(0x1876u);
+	enemies_now = io_read8(enemies_present);
 	enemies = enemies_now;
-	players_now = io_read8(0x1874u);
+	players_now = io_read8(stage_player_count);
 	players = players_now;
 	if (players_now == 0u)
 		return;
@@ -936,10 +936,10 @@ void share_out_attackers(void)
 	other_players = players_counted - 1u;
 	if (players_counted != 1u)
 	{
-		io_write8(0x1877u, TABLE8(attackers_per_player, (uint16_t)((int8_t)(((((other_players - 1u) << 1) << 1) << 1) << 1) + (int8_t)enemies)));
+		io_write8(attackers_per_player_limit, TABLE8(attackers_per_player, (uint16_t)((int8_t)(((((other_players - 1u) << 1) << 1) << 1) << 1) + (int8_t)enemies)));
 		return;
 	}
-	io_write8(0x1877u, enemies);
+	io_write8(attackers_per_player_limit, enemies);
 }
 
 /* The handler of an object type that does nothing. */

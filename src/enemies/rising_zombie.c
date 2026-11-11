@@ -3,7 +3,7 @@
  *    Description: the zombie of the list at 5280 (type 18) that rises and drifts toward an object
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -22,7 +22,7 @@ uint16_t rising_zombie_setup(uint16_t object)
 	setup = rising_zombie_object_setup_ADDRESS;
 	vector_object_setup(object, setup);
 	OBJECT(object)->flags = 4u;
-	drift_object = io_read16(0x1854u);
+	drift_object = io_read16(stage_kept_object_2);
 	OBJECT(object)->rising_zombie.drift_target = drift_object;
 	parameter = OBJECT(object)->parameter;
 	start = kind_91_appearances_ADDRESS + (int8_t)(((uint32_t)parameter << 1) << 1);
@@ -37,7 +37,6 @@ uint16_t rising_zombie_setup(uint16_t object)
 /* Counts the zombie's wait down, then shows it rising out of the ground with its sound. */
 void rising_zombie_wait(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t timer = 0, state = 0;
 
@@ -50,7 +49,7 @@ void rising_zombie_wait(uint16_t object)
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
 	command = 0x7B00u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 }
 
 /* When the rising animation ends, plays the climbing-out one. */

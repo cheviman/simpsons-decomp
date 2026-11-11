@@ -3,7 +3,7 @@
  *    Description: the buzzing thing let out by the object falling off the shaking scenery
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -14,7 +14,6 @@
 /* Sets the chaser rising out with sound 7200, ready to spiral out four times. */
 uint16_t buzzing_chaser_start(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0, setup = 0;
 	uint8_t attributes = 0, state = 0;
 
@@ -29,7 +28,7 @@ uint16_t buzzing_chaser_start(uint16_t object)
 	OBJECT(object)->buzzing_chaser.speed = 0x40u;
 	OBJECT(object)->buzzing_chaser.chases_left = 4u;
 	command = 0x7200u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
 	return setup;
@@ -100,7 +99,6 @@ void buzzing_chaser_spiral_end(uint16_t object)
    four times. */
 uint16_t buzzing_chaser_chase(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint8_t direction = 0, z_speed_high = 0, z_speed_low = 0;
 	uint16_t command = 0, direction_to_target = 0, heading = 0, target = 0;
 	uint8_t timer = 0, state = 0, direction_2 = 0, timer_2 = 0, timer_3 = 0, chases_left = 0, state_2 = 0;
@@ -160,7 +158,7 @@ uint16_t buzzing_chaser_chase(uint16_t object)
 		return target;
 	}
 	command = 0x7200u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	OBJECT(object)->timer = 0x40u;
 	target = vector_choose_nearest_player(object);
 	chases_left = OBJECT(object)->buzzing_chaser.chases_left;

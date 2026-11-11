@@ -3,7 +3,7 @@
  *    Description: the game's variables, tables, board registers and structures
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -399,26 +399,34 @@
 #define bart_play_status RAM8(bart_play_status_ADDRESS)
 #define lisa_play_status_ADDRESS 0x49F3u
 #define lisa_play_status RAM8(lisa_play_status_ADDRESS)
-#define unused_marge_word_1_ADDRESS 0x4A02u
-#define unused_marge_word_1 RAM16(unused_marge_word_1_ADDRESS)
+#define marge_gauge_step_ADDRESS 0x4A02u
+#define marge_gauge_step RAM8(marge_gauge_step_ADDRESS)
+#define marge_gauge_delay_ADDRESS 0x4A03u
+#define marge_gauge_delay RAM8(marge_gauge_delay_ADDRESS)
 #define unused_marge_word_2_ADDRESS 0x4A04u
 #define unused_marge_word_2 RAM16(unused_marge_word_2_ADDRESS)
 #define unused_marge_byte_ADDRESS 0x4A06u
 #define unused_marge_byte RAM8(unused_marge_byte_ADDRESS)
-#define unused_homer_word_1_ADDRESS 0x4A09u
-#define unused_homer_word_1 RAM16(unused_homer_word_1_ADDRESS)
+#define homer_gauge_step_ADDRESS 0x4A09u
+#define homer_gauge_step RAM8(homer_gauge_step_ADDRESS)
+#define homer_gauge_delay_ADDRESS 0x4A0Au
+#define homer_gauge_delay RAM8(homer_gauge_delay_ADDRESS)
 #define unused_homer_word_2_ADDRESS 0x4A0Bu
 #define unused_homer_word_2 RAM16(unused_homer_word_2_ADDRESS)
 #define unused_homer_byte_ADDRESS 0x4A0Du
 #define unused_homer_byte RAM8(unused_homer_byte_ADDRESS)
-#define unused_bart_word_1_ADDRESS 0x4A10u
-#define unused_bart_word_1 RAM16(unused_bart_word_1_ADDRESS)
+#define bart_gauge_step_ADDRESS 0x4A10u
+#define bart_gauge_step RAM8(bart_gauge_step_ADDRESS)
+#define bart_gauge_delay_ADDRESS 0x4A11u
+#define bart_gauge_delay RAM8(bart_gauge_delay_ADDRESS)
 #define unused_bart_word_2_ADDRESS 0x4A12u
 #define unused_bart_word_2 RAM16(unused_bart_word_2_ADDRESS)
 #define unused_bart_byte_ADDRESS 0x4A14u
 #define unused_bart_byte RAM8(unused_bart_byte_ADDRESS)
-#define unused_lisa_word_1_ADDRESS 0x4A17u
-#define unused_lisa_word_1 RAM16(unused_lisa_word_1_ADDRESS)
+#define lisa_gauge_step_ADDRESS 0x4A17u
+#define lisa_gauge_step RAM8(lisa_gauge_step_ADDRESS)
+#define lisa_gauge_delay_ADDRESS 0x4A18u
+#define lisa_gauge_delay RAM8(lisa_gauge_delay_ADDRESS)
 #define unused_lisa_word_2_ADDRESS 0x4A19u
 #define unused_lisa_word_2 RAM16(unused_lisa_word_2_ADDRESS)
 #define unused_lisa_byte_ADDRESS 0x4A1Bu
@@ -1245,8 +1253,8 @@
 #define portrait_columns_left RAM8(portrait_columns_left_ADDRESS)
 #define portrait_rows_left_ADDRESS 0x48F2u
 #define portrait_rows_left RAM8(portrait_rows_left_ADDRESS)
-#define join_player_bit_ADDRESS 0x48F0u
-#define join_player_bit RAM8(join_player_bit_ADDRESS)
+#define join_bit_or_slots_ADDRESS 0x48F0u
+#define join_bit_or_slots RAM8(join_bit_or_slots_ADDRESS)
 #define join_slot_bit_ADDRESS 0x48F1u
 #define join_slot_bit RAM8(join_slot_bit_ADDRESS)
 #define portrait_player_bit_ADDRESS 0x48F0u
@@ -1667,8 +1675,8 @@
 #define reunion_standing_x RAM16(reunion_standing_x_ADDRESS)
 #define reunion_walker_x_ADDRESS 0x48FAu
 #define reunion_walker_x RAM16(reunion_walker_x_ADDRESS)
-#define reunion_walker_wait_ADDRESS 0x48FCu
-#define reunion_walker_wait RAM16(reunion_walker_wait_ADDRESS)
+#define reunion_walker_stop_offset_ADDRESS 0x48FCu
+#define reunion_walker_stop_offset RAM16(reunion_walker_stop_offset_ADDRESS)
 #define scene_objects_left_ADDRESS 0x48F0u
 #define scene_objects_left RAM8(scene_objects_left_ADDRESS)
 #define scene_riders_left_ADDRESS 0x48F0u
@@ -2051,15 +2059,15 @@ extern const void *fat_goon_jump_in_xs_data;
 #define fat_goon_from_below_xs_ADDRESS 0x79B9u    /* 02B9B9: bank 15 */
 extern const void *fat_goon_from_below_xs_data;
 #define fat_goon_from_below_xs ((const uint16_t *)fat_goon_from_below_xs_data)
-#define object_15_times_ADDRESS 0x79F1u    /* 02B9F1: bank 15 */
-extern const void *object_15_times_data;
-#define object_15_times ((const uint8_t *)object_15_times_data)
+#define enemy_waves_end_enemies_ADDRESS 0x79F1u    /* 02B9F1: bank 15 */
+extern const void *enemy_waves_end_enemies_data;
+#define enemy_waves_end_enemies ((const uint8_t *)enemy_waves_end_enemies_data)
 #define object_15_spawn_lists_ADDRESS 0x79FEu    /* 02B9FE: bank 15 */
 extern const void *object_15_spawn_lists_data;
 #define object_15_spawn_lists ((const uint16_t *)object_15_spawn_lists_data)
-#define object_15_next_kinds_ADDRESS 0x7A18u    /* 02BA18: bank 15 */
-extern const void *object_15_next_kinds_data;
-#define object_15_next_kinds ((const uint8_t *)object_15_next_kinds_data)
+#define enemy_waves_next_wave_enemies_ADDRESS 0x7A18u    /* 02BA18: bank 15 */
+extern const void *enemy_waves_next_wave_enemies_data;
+#define enemy_waves_next_wave_enemies ((const uint8_t *)enemy_waves_next_wave_enemies_data)
 #define krustyland_door_releases_ADDRESS 0x7DCEu    /* 02BDCE: bank 15 */
 extern const void *krustyland_door_releases_data;
 #define krustyland_door_releases ((const uint8_t *)krustyland_door_releases_data)
@@ -2240,9 +2248,12 @@ extern const void *kind_b8_shot_animations_data;
 #define kind_b8_shot_speeds_ADDRESS 0x7FE9u    /* 033FE9: bank 19 */
 extern const void *kind_b8_shot_speeds_data;
 #define kind_b8_shot_speeds ((const uint16_t *)kind_b8_shot_speeds_data)
-#define unused_tile_places_ADDRESS 0x76E5u    /* 0356E5: bank 1A */
-extern const void *unused_tile_places_data;
-#define unused_tile_places ((const uint8_t *)unused_tile_places_data)
+#define unused_spawn_tail_ADDRESS 0x76DDu    /* 0356DD: bank 1A */
+extern const void *unused_spawn_tail_data;
+#define unused_spawn_tail ((const uint8_t *)unused_spawn_tail_data)
+#define unused_debug_tile_places_ADDRESS 0x76E0u    /* 0356E0: bank 1A */
+extern const void *unused_debug_tile_places_data;
+#define unused_debug_tile_places ((const uint16_t *)unused_debug_tile_places_data)
 #define unused_text_0356FE_ADDRESS 0x76FEu    /* 0356FE: bank 1A */
 extern const void *unused_text_0356FE_data;
 #define unused_text_0356FE ((const uint8_t *)unused_text_0356FE_data)
@@ -2309,9 +2320,9 @@ extern const void *door_spawn_lists_data;
 #define door_spawns_end_ADDRESS 0x6473u    /* 036473: bank 1B */
 extern const void *door_spawns_end_data;
 #define door_spawns_end ((const uint8_t *)door_spawns_end_data)
-#define team_move_attack_lengths_ADDRESS 0x7DD5u    /* 039DD5: bank 1C */
-extern const void *team_move_attack_lengths_data;
-#define team_move_attack_lengths ((const uint8_t *)team_move_attack_lengths_data)
+#define team_move_attack_states_ADDRESS 0x7DD5u    /* 039DD5: bank 1C */
+extern const void *team_move_attack_states_data;
+#define team_move_attack_states ((const uint8_t *)team_move_attack_states_data)
 #define object_1c_move_steps_ADDRESS 0x7DEBu    /* 039DEB: bank 1C */
 extern const void *object_1c_move_steps_data;
 #define object_1c_move_steps ((const uint8_t *)object_1c_move_steps_data)
@@ -2738,116 +2749,127 @@ extern const void *reset_vector_data;
 #define VIDEO_00A0 0x00A0u
 #define VIDEO_00C0 0x00C0u
 #define VIDEO_0C00 0x0C00u
-#define VIDEO_180C 0x180Cu
-#define VIDEO_1840 0x1840u
-#define VIDEO_1841 0x1841u
-#define VIDEO_1842 0x1842u
-#define VIDEO_1844 0x1844u
-#define VIDEO_1845 0x1845u
-#define VIDEO_1846 0x1846u
-#define VIDEO_1848 0x1848u
-#define VIDEO_184A 0x184Au
-#define VIDEO_184B 0x184Bu
-#define VIDEO_184C 0x184Cu
-#define VIDEO_184D 0x184Du
-#define VIDEO_184E 0x184Eu
+#define tile_chip_layer_a_y 0x180Cu
+#define bonus_2_state 0x1840u
+#define bonus_2_timer 0x1841u
+#define bonus_results_state 0x1842u
+#define bonus_results_timer 0x1843u
+#define results_last_result 0x1844u
+#define results_boxes_placed 0x1845u
+#define results_place 0x1846u
+#define running_player_values 0x1848u
+#define object_group_count 0x184Au
+#define players_stop_request 0x184Bu
+#define players_idle_count 0x184Cu
+#define heavy_object_workers 0x184Du
+#define players_all_idle 0x184Eu
 #define VIDEO_1850 0x1850u
-#define VIDEO_1852 0x1852u
-#define VIDEO_1854 0x1854u
+#define stage_kept_object 0x1852u
+#define stage_kept_object_2 0x1854u
 #define VIDEO_1856 0x1856u
-#define VIDEO_1858 0x1858u
-#define VIDEO_185A 0x185Au
+#define player_drop_x 0x1858u
+#define player_balloons_off 0x185Au
 #define VIDEO_1860 0x1860u
-#define VIDEO_1870 0x1870u
-#define VIDEO_1872 0x1872u
-#define VIDEO_1874 0x1874u
-#define VIDEO_1876 0x1876u
-#define VIDEO_1877 0x1877u
-#define VIDEO_1878 0x1878u
-#define VIDEO_1879 0x1879u
-#define VIDEO_187A 0x187Au
-#define VIDEO_187B 0x187Bu
-#define VIDEO_187C 0x187Cu
-#define VIDEO_187D 0x187Du
-#define VIDEO_187E 0x187Eu
-#define VIDEO_187F 0x187Fu
-#define VIDEO_1880 0x1880u
+#define least_attacked_player 0x1870u
+#define nearest_player_found 0x1872u
+#define stage_player_count 0x1874u
+#define enemies_present 0x1876u
+#define attackers_per_player_limit 0x1877u
+#define walk_delay_turn 0x1878u
+#define list_1_objects_in_play 0x1879u
+#define child_objects_in_play 0x187Au
+#define knockdown_turn 0x187Bu
+#define kind_a5_drop_count 0x187Cu
+#define kind_a5_leave_count 0x187Du
+#define ninjas_dismissed 0x187Eu
+#define rising_scenery_cue 0x187Fu
+#define enemies_present_last_frame 0x1880u
 #define VIDEO_1881 0x1881u
-#define VIDEO_1883 0x1883u
-#define VIDEO_1884 0x1884u
-#define VIDEO_1885 0x1885u
-#define VIDEO_1886 0x1886u
-#define VIDEO_1888 0x1888u
-#define VIDEO_188B 0x188Bu
-#define VIDEO_188C 0x188Cu
-#define VIDEO_189C 0x189Cu
-#define VIDEO_189E 0x189Eu
+#define enemies_entered 0x1883u
+#define police_car_stop_signal 0x1884u
+#define enemies_allowed 0x1885u
+#define enemy_walk_speed 0x1886u
+#define dreamland_chain_x_offset 0x1888u
+#define floor_raise_height 0x188Bu
+#define dreamland_boss_phase_vitality 0x188Cu
+#define hold_both_scrolls 0x189Cu
+#define enemy_random_number 0x189Eu
 #define scene_state 0x18E0u
 #define scene_substate 0x18E1u
-#define VIDEO_18E2 0x18E2u
-#define VIDEO_18E4 0x18E4u
-#define VIDEO_18E6 0x18E6u
-#define VIDEO_18E7 0x18E7u
-#define VIDEO_18E9 0x18E9u
-#define VIDEO_18EA 0x18EAu
-#define VIDEO_18EB 0x18EBu
-#define VIDEO_18EC 0x18ECu
-#define VIDEO_18ED 0x18EDu
-#define VIDEO_18EE 0x18EEu
-#define VIDEO_18EF 0x18EFu
-#define VIDEO_18F1 0x18F1u
-#define VIDEO_18F2 0x18F2u
-#define VIDEO_18F4 0x18F4u
-#define VIDEO_18F6 0x18F6u
-#define VIDEO_18F8 0x18F8u
-#define VIDEO_18FA 0x18FAu
-#define VIDEO_18FC 0x18FCu
-#define VIDEO_1A00 0x1A00u
-#define VIDEO_1C80 0x1C80u
-#define VIDEO_1D00 0x1D00u
-#define VIDEO_1D80 0x1D80u
+#define scene_wait 0x18E2u
+#define scene_short_wait 0x18E3u
+#define scene_palette_effect 0x18E4u
+#define scene_layer_a_speed 0x18E5u
+#define staff_roll_line 0x18E6u
+#define scene_second_wait 0x18E7u
+#define bonus_1_presses 0x18E8u
+#define ending_family_step 0x18E9u
+#define dream_wave_line 0x18EAu
+#define scene_layer_b_speed 0x18EBu
+#define dream_wave_step 0x18ECu
+#define dream_wave_size 0x18EDu
+#define bonus_1_intro_player 0x18EEu
+#define bonus_title_frames 0x18EFu
+#define chain_lead_link 0x18F0u
+#define bonus_title_step 0x18F1u
+#define chain_end_link 0x18F2u
+#define dream_wave_hold_frames 0x18F3u
+#define reunion_spot_x 0x18F4u
+#define reunion_spot_y 0x18F6u
+#define reunion_camera_x 0x18F8u
+#define reunion_camera_y 0x18FAu
+#define maggie_rescuer 0x18FCu
+#define tile_chip_layer_a_x 0x1A00u
+#define tile_chip_scroll_control 0x1C80u
+#define tile_chip_irq_control 0x1D00u
+#define tile_chip_banks_0_1 0x1D80u
 #define VIDEO_1E00 0x1E00u
-#define VIDEO_1E80 0x1E80u
-#define VIDEO_1F00 0x1F00u
-#define IO_1F80 0x1F80u
-#define IO_1F81 0x1F81u
-#define IO_1F90 0x1F90u
-#define IO_1FA0 0x1FA0u
-#define IO_1FA2 0x1FA2u
-#define IO_1FA4 0x1FA4u
-#define IO_1FA5 0x1FA5u
-#define IO_1FA6 0x1FA6u
-#define IO_1FA7 0x1FA7u
-#define IO_1FB0 0x1FB0u
-#define IO_1FB2 0x1FB2u
-#define IO_1FB3 0x1FB3u
-#define IO_1FB4 0x1FB4u
+#define tile_chip_flip 0x1E80u
+#define tile_chip_banks_2_3 0x1F00u
+#define coin_switch_port 0x1F80u
+#define test_eeprom_port 0x1F81u
+#define player_1_input_port 0x1F90u
+#define player_2_input_port 0x1F91u
+#define player_3_input_port 0x1F92u
+#define player_4_input_port 0x1F93u
+#define sprite_chip_scroll_x 0x1FA0u
+#define sprite_chip_scroll_y 0x1FA2u
+#define sprite_chip_rom_bottom 0x1FA4u
+#define sprite_chip_control_register 0x1FA5u
+#define sprite_chip_rom_high 0x1FA6u
+#define sprite_chip_rom_middle 0x1FA7u
+#define background_priority 0x1FB0u
+#define fixed_layer_priority 0x1FB2u
+#define layer_a_priority 0x1FB3u
+#define layer_b_priority 0x1FB4u
 #define IO_1FB6 0x1FB6u
 #define IO_1FB7 0x1FB7u
 #define IO_1FB8 0x1FB8u
-#define IO_1FB9 0x1FB9u
-#define IO_1FBA 0x1FBAu
+#define colour_bases_back_sprites_fixed 0x1FB9u
+#define colour_bases_layers_a_b 0x1FBAu
 #define IO_1FBB 0x1FBBu
 #define IO_1FBC 0x1FBCu
-#define IO_1FC0 0x1FC0u
-#define IO_1FC2 0x1FC2u
-#define IO_1FC4 0x1FC4u
-#define IO_1FC6 0x1FC6u
-#define IO_1FC8 0x1FC8u
-#define IO_1FC9 0x1FC9u
-#define IO_1FCA 0x1FCAu
+#define board_output_register 0x1FC0u
+#define board_control_register 0x1FC2u
+#define sound_irq_port 0x1FC4u
+#define sound_command_port 0x1FC6u
+#define sound_echo_port 0x1FC7u
+#define sprite_chip_rom_first_byte 0x1FC8u
+#define sprite_chip_rom_second_byte 0x1FC9u
+#define watchdog_port 0x1FCAu
 #define VIDEO_2000 0x2000u
 #define VIDEO_24E2 0x24E2u
 #define VIDEO_26DD 0x26DDu
-#define VIDEO_380C 0x380Cu
-#define VIDEO_3840 0x3840u
-#define VIDEO_385E 0x385Eu
-#define VIDEO_3860 0x3860u
+#define tile_chip_layer_b_y 0x380Cu
+#define name_entry_state 0x3840u
+#define name_entry_records 0x3842u
+#define name_entry_time 0x385Eu
+#define name_entry_ranking 0x3860u
 #define VIDEO_3862 0x3862u
 #define VIDEO_3864 0x3864u
 #define VIDEO_3866 0x3866u
-#define VIDEO_3A00 0x3A00u
-#define VIDEO_3C00 0x3C00u
+#define tile_chip_layer_b_x 0x3A00u
+#define palette_jobs 0x3C00u
 
 /* data of the program symbols.txt and the assets label (their CPU addresses) */
 #define map_000000_ADDRESS 0x6000u    /* 000000 */
@@ -12990,10 +13012,10 @@ struct stage_slot
 
 struct hit_box
 {
-	uint16_t field_23;
-	uint16_t field_21;
-	uint16_t field_1f;
-	uint16_t field_1c;
+	uint16_t dy_dz;
+	uint16_t height_dx;
+	uint16_t width_depth;
+	uint16_t damage_attack;
 };
 
 struct part
@@ -13699,7 +13721,7 @@ struct object
 			uint16_t parent;
 			uint8_t unk_3F;
 			uint8_t unk_3E;
-			uint8_t unk_3D;
+			uint8_t carried;
 			uint8_t unk_3C;
 			uint8_t timer;
 			uint8_t retarget_time;
@@ -13798,7 +13820,9 @@ struct object
 		{
 			uint8_t pad_00[0xA];
 			uint16_t rest_height;
-			uint8_t pad_0C[0xC];
+			uint16_t rest_y;
+			uint16_t rest_x;
+			uint8_t pad_10[0x8];
 			uint8_t attack_health;
 			uint8_t flinch_health;
 			uint8_t pad_1A[0x6];
@@ -13842,7 +13866,11 @@ struct object
 		} bonus_1;
 		struct
 		{
-			uint8_t pad_00[0x20];
+			uint8_t pad_00[0x1A];
+			uint8_t result_place;
+			uint8_t pad_1B[0x1];
+			uint8_t sign_kept_animation;
+			uint8_t pad_1D[0x3];
 			uint8_t quiet_frames;
 			uint8_t pad_21[0xD];
 			uint8_t reaction_time;
@@ -14092,7 +14120,7 @@ struct object
 			uint8_t next_distance;
 			uint8_t next_direction;
 			uint8_t pad_22[0x1];
-			uint8_t legs_left;
+			uint8_t path_wait;
 			uint8_t pad_24[0x4];
 			uint8_t direction;
 			uint8_t pad_29[0x1];
@@ -14125,7 +14153,7 @@ struct object
 			uint8_t next_distance;
 			uint8_t next_direction;
 			uint8_t pad_22[0x1];
-			uint8_t legs_left;
+			uint8_t path_wait;
 			uint8_t pad_24[0x1];
 			uint8_t lash_time;
 			uint8_t pad_26[0x2];
@@ -14437,6 +14465,11 @@ struct object
 			uint8_t pad_1D[0x3];
 			uint16_t entrance_x;
 		} gorilla;
+		struct
+		{
+			uint8_t pad_00[0x7];
+			uint8_t squeeze_step;
+		} grabber;
 		struct
 		{
 			uint8_t pad_00[0x12];
@@ -14843,6 +14876,46 @@ struct object
 		} player;
 		struct
 		{
+			uint8_t pad_00[0xA];
+			uint8_t voice_timer;
+			uint16_t attack_gravity;
+			uint8_t last_life;
+			uint8_t pad_0E[0x1];
+			uint8_t quick_presses;
+			uint8_t frames_since_press;
+			uint8_t jump_attack;
+			uint8_t combo_step;
+			uint16_t holder;
+			uint16_t object_hit;
+			uint8_t pad_17[0x2];
+			uint8_t sides_taken;
+			uint8_t attackers;
+			uint8_t pose_animation;
+			uint16_t move_hit;
+			uint8_t heavy_object_presses;
+			uint16_t held;
+			uint8_t blink_frames;
+			uint8_t prompt_frames;
+			uint8_t attack_started;
+			uint8_t pad_24[0x2];
+			uint8_t teamed;
+			uint8_t state_frames;
+			uint8_t team_spare;
+			uint8_t team_direction;
+			uint8_t team_move_number;
+			uint8_t status;
+			uint16_t partner;
+			uint8_t state_timer;
+			uint8_t player_state;
+			uint8_t controls_pressed;
+			uint8_t controls;
+			uint8_t attack_facing;
+			uint8_t blows_taken;
+			uint8_t swings;
+			uint8_t blow_landed;
+		} player_second_sprite;
+		struct
+		{
 			uint8_t pad_00[0x20];
 			uint16_t trigger_x;
 		} police_car_door;
@@ -15078,13 +15151,25 @@ struct object
 		} stage_8_end;
 		struct
 		{
-			uint8_t pad_00[0x2D];
+			uint8_t pad_00[0x2C];
+			uint8_t legs_flown;
 			uint8_t jumper_player;
+			uint8_t jump_wait;
 		} stage_end_jumper;
 		struct
 		{
-			uint8_t pad_00[0x1B];
-			uint16_t child_actors;
+			uint8_t pad_00[0x7];
+			uint16_t child_actor_11;
+			uint16_t child_actor_10;
+			uint16_t child_actor_9;
+			uint16_t child_actor_8;
+			uint16_t child_actor_7;
+			uint16_t child_actor_6;
+			uint16_t child_actor_5;
+			uint16_t child_actor_4;
+			uint16_t child_actor_3;
+			uint16_t child_actor_2;
+			uint16_t child_actor_1;
 			uint8_t script_flags;
 			uint8_t pad_1E[0x2];
 			uint16_t x_wait;
@@ -15269,8 +15354,7 @@ struct attack_range
 {
 	uint8_t pad_00[0x3];
 	uint8_t action_chances;
-	uint8_t unk_07;
-	uint8_t pad_05[0x2];
+	uint8_t pad_04[0x3];
 	uint8_t actions;
 	uint8_t chance;
 	uint8_t most_dx;
@@ -15683,6 +15767,12 @@ _Static_assert(sizeof(struct camera_check) == 0x3, "struct camera_check has the 
 #define STORY_OBJECT_START(address) ((const struct story_object_start *)data_record((address), sizeof(struct story_object_start)))
 #define CAMERA_ENTRY(address) ((const struct camera_entry *)data_record((address), sizeof(struct camera_entry)))
 #define CAMERA_CHECK(address) ((const struct camera_check *)data_record((address), sizeof(struct camera_check)))
+#define BEHAVIOUR_CHANCE(address) (*(const uint8_t *)data_record((address), 1))
+#define BEHAVIOUR_CHANCE_16(address) (*(const uint16_t *)data_record((address), 2))
+#define BEHAVIOUR_CHANCE_32(address) (*(const uint32_t *)data_record((address), 4))
+#define BEHAVIOUR_ACTION(address) (*(const uint8_t *)data_record((address), 1))
+#define BEHAVIOUR_ACTION_16(address) (*(const uint16_t *)data_record((address), 2))
+#define BEHAVIOUR_ACTION_32(address) (*(const uint32_t *)data_record((address), 4))
 
 /* the program ROM's tables of records, by name: name[i].field */
 #define bonus_1_players_ADDRESS 0x7BD0u    /* 021BD0 */
@@ -15922,9 +16012,6 @@ extern const void *empty_vectors_034000_data;
 #define unused_spawn_list_0354C5_ADDRESS 0x74C5u    /* 0354C5 */
 extern const void *unused_spawn_list_0354C5_data;
 #define unused_spawn_list_0354C5 ((const struct spawn *)(unused_spawn_list_0354C5_data))
-#define unused_spawn_0356DD_ADDRESS 0x76DDu    /* 0356DD */
-extern const void *unused_spawn_0356DD_data;
-#define unused_spawn_0356DD ((const struct spawn *)(unused_spawn_0356DD_data))
 #define object_1a_launches_ADDRESS 0x7926u    /* 035926 */
 extern const void *object_1a_launches_data;
 #define object_1a_launches ((const struct launch *)(object_1a_launches_data))

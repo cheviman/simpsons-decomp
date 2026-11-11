@@ -3,7 +3,7 @@
  *    Description: the enemies' shared reactions: spun away, defeated and knocked into the distance, fallen into a pit
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -127,14 +127,13 @@ void enemy_spin_backward(uint16_t object, uint8_t step, uint16_t *p_step_handler
    it again after a wall) and a time of 20 frames. */
 void enemy_spin_backward_start(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t attributes = 0, action_step = 0;
 	uint16_t x_speed = 0, x_speed_2 = 0;
 
 	OBJECT(object)->timer = 0x20u;
 	command = 0x6300u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	OBJECT(object)->animation = 0x97u;
 	OBJECT(object)->x_speed = -0x200;
 	OBJECT(object)->y_speed = 0;
@@ -273,14 +272,13 @@ void enemy_defeated_forward_start(uint16_t object)
    00A0 from the camera's), across the way it was knocked. */
 void enemy_defeated_launch(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t attributes = 0, action_step = 0;
 	uint16_t enemy_y = 0, screen_y = 0, y_speed = 0, x_speed = 0;
 
 	OBJECT(object)->flags = 0x88u;
 	command = 0x6300u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	OBJECT(object)->z_speed = 0x200;
 	OBJECT(object)->y_speed = 0x100;
 	OBJECT(object)->timer = 0x68u;
@@ -348,7 +346,6 @@ void enemy_defeated_fly(uint16_t object)
 void enemy_defeated_shrink(uint16_t object, uint16_t *p_u, uint32_t *p_left_caller)
 {
 	uint16_t u = (uint16_t)*p_u;
-	uint32_t carry = 0;
 	uint16_t command = 0, z_speed = 0;
 	uint32_t left_caller = 0;
 	uint8_t timer = 0, timer_2 = 0, timer_3 = 0;
@@ -381,7 +378,7 @@ void enemy_defeated_shrink(uint16_t object, uint16_t *p_u, uint32_t *p_left_call
 		{
 			command = 0x301u;
 			left_caller = 0u;
-			carry = vector_queue_sound(command);
+			vector_queue_sound(command);
 		}
 	}
 	else
@@ -638,7 +635,6 @@ void enemy_pit_start(uint16_t object)
 void enemy_pit_fall(uint16_t object, uint16_t *p_target, uint32_t *p_left_caller)
 {
 	uint16_t target = (uint16_t)*p_target;
-	uint32_t carry = 0;
 	uint8_t z_speed_high = 0, z_speed_low = 0;
 	uint16_t command = 0;
 	uint8_t timer = 0, timer_2 = 0, attributes = 0;
@@ -652,7 +648,7 @@ void enemy_pit_fall(uint16_t object, uint16_t *p_target, uint32_t *p_left_caller
 		if (timer_2 == 0x38u)
 		{
 			command = 0x301u;
-			carry = vector_queue_sound(command);
+			vector_queue_sound(command);
 		}
 		z_speed = OBJECT(object)->z_speed;
 		falling_z_speed = z_speed - 0x40u;

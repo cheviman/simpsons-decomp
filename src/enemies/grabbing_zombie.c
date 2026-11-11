@@ -3,7 +3,7 @@
  *    Description: stage 3's zombie that takes hold of the players (type 14, action 31)
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -78,7 +78,6 @@ void grabbing_zombie_place(uint16_t object)
 /* Counts the wait down, then plays the zombie climbing out, with a sound. */
 void grabbing_zombie_rise(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t timer = 0, action_step = 0;
 
@@ -90,7 +89,7 @@ void grabbing_zombie_rise(uint16_t object)
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step + 1u;
 	command = 0x4800u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 }
 
 /* When the climbing-out animation ends, makes the zombie hittable and lets it join the fight. */

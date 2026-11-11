@@ -3,7 +3,7 @@
  *    Description: stage 7's robot (type 30), its actions, its pieces, sparks and launched part
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -170,7 +170,6 @@ void robot_spark_fade(uint16_t object)
    its player, fighting at once; sets direct page 80 and starts its music. */
 void robot_setup(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0, nearest_player = 0, setup = 0;
 	uint8_t attributes = 0;
 
@@ -190,13 +189,12 @@ void robot_setup(uint16_t object)
 	OBJECT(object)->state = 2u;
 	stage_part = 1u;
 	command = 0x9B00u;
-	carry = vector_queue_sound_unless_attract(command);
+	vector_queue_sound_unless_attract(command);
 }
 
 /* Plays the robot's wind-up for 64 frames, with a sound. */
 void robot_combo_wind_up(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t action_step = 0;
 
@@ -205,7 +203,7 @@ void robot_combo_wind_up(uint16_t object)
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step + 1u;
 	command = 0x2700u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 }
 
 /* Counts the wind-up down, then makes the robot hittable. */
@@ -226,7 +224,6 @@ void robot_combo_ready(uint16_t object)
 /* Plays the robot's wind-up again for 32 frames, with a sound. */
 void robot_combo_pause(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t action_step = 0;
 
@@ -235,7 +232,7 @@ void robot_combo_pause(uint16_t object)
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step + 1u;
 	command = 0x2700u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 }
 
 /* Turns the robot round. */
@@ -413,7 +410,7 @@ uint16_t robot_advance_shock_sparks(uint16_t object, uint16_t steps)
 	if (animation_frame == 6u || animation_frame == 0xEu)
 	{
 		command = 0x2300u;
-		carry = vector_queue_sound(command);
+		vector_queue_sound(command);
 	}
 	frame_2 = OBJECT(object)->frame;
 	spark_record = robot_sparks_by_frame_9d[(int8_t)((uint8_t)((uint32_t)frame_2 << 1)) / 2];
@@ -478,7 +475,7 @@ uint16_t robot_shock_92_sparks(uint16_t object, uint16_t steps)
 	if (frame == 6u)
 	{
 		command = 0x2300u;
-		carry = vector_queue_sound(command);
+		vector_queue_sound(command);
 	}
 	frame_2 = OBJECT(object)->frame;
 	spark_record = robot_sparks_by_frame_92[(int8_t)((uint8_t)((uint32_t)frame_2 << 1)) / 2];
@@ -543,7 +540,7 @@ uint16_t robot_shock_91_sparks(uint16_t object, uint16_t steps)
 	if (frame == 6u)
 	{
 		command = 0x2300u;
-		carry = vector_queue_sound(command);
+		vector_queue_sound(command);
 	}
 	frame_2 = OBJECT(object)->frame;
 	spark_record = robot_sparks_by_frame_91[(int8_t)((uint8_t)((uint32_t)frame_2 << 1)) / 2];
@@ -607,7 +604,7 @@ void robot_hit_land(uint16_t object)
 	leftover_y = hit_box;
 	vector_set_hit_box(object);
 	command = 0x6300u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	vector_apply_gravity(object, &ignored16, &carry);
 	if (carry == 0u)
 		return;
@@ -717,7 +714,7 @@ void robot_put_in_pieces(uint16_t object)
 	uint8_t pieces_before = 0;
 
 	command = 0x6E00u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	robot_pieces_left = 8u;
 	child_record = robot_piece_children_ADDRESS;
 	do
@@ -736,7 +733,6 @@ void robot_put_in_pieces(uint16_t object)
 /* Starts the robot's launch with a sound. */
 void robot_launch_part_start(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t action_step = 0;
 
@@ -744,7 +740,7 @@ void robot_launch_part_start(uint16_t object)
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step + 1u;
 	command = 0x2700u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 }
 
 /* When that animation ends, makes the robot hittable and sends off its part (4D40 type 17), then waits
@@ -771,7 +767,6 @@ uint16_t robot_launch_part_release(uint16_t object, uint16_t steps)
 /* Counts the wait down and goes on with a sound. */
 void robot_launch_part_wait(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t timer = 0, action_step = 0;
 
@@ -782,7 +777,7 @@ void robot_launch_part_wait(uint16_t object)
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step + 1u;
 	command = 0x2700u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 }
 
 /* Sets the launched part up, big, for 32 frames. */
@@ -805,7 +800,6 @@ uint16_t robot_part_setup(uint16_t object)
 /* Counts down, then sends the part off into the back with a sound. */
 void robot_part_launch(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t timer = 0, state = 0;
 
@@ -820,7 +814,7 @@ void robot_part_launch(uint16_t object)
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
 	command = 0x2300u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 }
 
 /* Shrinks the part by robot_part_zooms as it goes, stops it, and frees its slot at the end. */

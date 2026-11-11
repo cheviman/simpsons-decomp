@@ -3,7 +3,7 @@
  *    Description: the story actor and its script's operations
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -16,7 +16,7 @@ void story_actor_run(uint16_t *p_object, uint16_t *p_object_2)
 {
 	uint16_t object = (uint16_t)*p_object;
 	uint16_t object_2 = (uint16_t)*p_object_2;
-	uint32_t negative = 0, carry = 0;
+	uint32_t negative = 0;
 	uint8_t a = 0, attributes = 0, b = 0, margin = 0, script_number = 0, z = 0;
 	uint16_t awaited = 0, command = 0, d = 0, heading = 0, parent = 0, player_fields = 0, script = 0, u = 0;
 	uint8_t stack = 0, stack_2 = 0, stack_3 = 0;
@@ -56,7 +56,7 @@ void story_actor_run(uint16_t *p_object, uint16_t *p_object_2)
 			object = ((uint32_t)stack_2 << 8) | stack;
 			OBJECT(object)->story_actor.script_number = script_number;
 			OBJECT(object)->parent = parent;
-			OBJECT(object)->unk_58 = 0u;
+			OBJECT(object)->story_actor.child_actor_11 &= 0xFF00u;
 			OBJECT(object)->story_actor.wait = 1u;
 			OBJECT(object)->story_actor.script = story_scripts[script_number & 0x7Fu];
 		}
@@ -92,7 +92,7 @@ void story_actor_run(uint16_t *p_object, uint16_t *p_object_2)
 		object = ((uint32_t)stack_2 << 8) | stack;
 		OBJECT(object)->story_actor.script_number = script_number;
 		OBJECT(object)->parent = parent;
-		OBJECT(object)->unk_58 = 0u;
+		OBJECT(object)->story_actor.child_actor_11 &= 0xFF00u;
 		OBJECT(object)->story_actor.wait = 1u;
 		OBJECT(object)->story_actor.script = story_scripts[script_number & 0x7Fu];
 	}
@@ -202,7 +202,7 @@ void story_actor_run(uint16_t *p_object, uint16_t *p_object_2)
 	if ((sound_flags & 2u) != 0u && (frame_count & 0xFu) == 0u)
 	{
 		command = 0x4A00u;
-		carry = vector_queue_sound(command);
+		vector_queue_sound(command);
 	}
 	halt_flags = OBJECT(object)->story_actor.script_flags;
 	if ((halt_flags & 4u) != 0u)
@@ -236,7 +236,7 @@ void story_actor_run(uint16_t *p_object, uint16_t *p_object_2)
 	players_awaited = OBJECT(object)->action_step;
 	if (players_awaited != 0u)
 	{
-		players_signal = io_read8(0x184Eu);
+		players_signal = io_read8(players_all_idle);
 		if (players_signal == 0u)
 		{
 			object_2 = story_actor_finish_frame(object, object_2);
@@ -961,7 +961,6 @@ void story_actor_set_hit_box(uint16_t script, uint16_t *p_object, uint16_t *p_op
 void story_actor_play_sound_if_player(uint16_t script, uint16_t *p_object, uint16_t *p_sound)
 {
 	uint16_t object = (uint16_t)*p_object;
-	uint32_t carry = 0;
 	uint16_t command = 0, sound = 0;
 	uint8_t stack_10003 = 0, stack_10004 = 0;
 	uint16_t stack = 0;
@@ -985,7 +984,7 @@ void story_actor_play_sound_if_player(uint16_t script, uint16_t *p_object, uint1
 	{
 		stack = sound;
 		command = stack;
-		carry = vector_queue_sound(command);
+		vector_queue_sound(command);
 		story_actor_continue(script, &object, &sound);
 	}
 	*p_object = object;
@@ -997,7 +996,6 @@ void story_actor_play_kind_sound(uint16_t script, uint16_t *p_object, uint16_t *
 {
 	uint16_t object = (uint16_t)*p_object;
 	uint16_t operations = (uint16_t)*p_operations;
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t kind = 0;
 	uint16_t command_at = 0, kind_command = 0;
@@ -1007,7 +1005,7 @@ void story_actor_play_kind_sound(uint16_t script, uint16_t *p_object, uint16_t *
 	script = command_at + 2u;
 	kind_command = kind + mem_read16(command_at);
 	command = kind_command;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	*p_object = object;
 	*p_operations = operations;
 	story_actor_continue(script, p_object, p_operations);
@@ -1018,14 +1016,13 @@ void story_actor_play_sound(uint16_t script, uint16_t *p_object, uint16_t *p_ope
 {
 	uint16_t object = (uint16_t)*p_object;
 	uint16_t operations = (uint16_t)*p_operations;
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint16_t command_at = 0;
 
 	command_at = script;
 	script = command_at + 2u;
 	command = mem_read16(command_at);
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	*p_object = object;
 	*p_operations = operations;
 	story_actor_continue(script, p_object, p_operations);
@@ -1092,13 +1089,13 @@ void story_actor_wait_for_players(uint16_t script, uint16_t *p_object, uint16_t 
 	uint16_t u = (uint16_t)*p_u;
 	uint8_t players_signal = 0;
 
-	players_signal = io_read8(0x184Eu);
+	players_signal = io_read8(players_all_idle);
 	if (players_signal != 0u)
 		story_actor_continue(script, &object, &u);
 	else
 	{
 		OBJECT(object)->action_step = 1u;
-		io_write8(0x184Bu, 1u);
+		io_write8(players_stop_request, 1u);
 		OBJECT(object)->story_actor.script = script;
 		u = story_actor_finish_frame(object, u);
 	}
@@ -1203,7 +1200,7 @@ uint16_t story_actor_wait_for_height(uint16_t object, uint16_t script, uint16_t 
 	height_at = script;
 	landing_height = mem_read8(height_at) + 1u;
 	OBJECT(object)->story_actor.landing_height = landing_height;
-	io_write8(0x184Bu, landing_height);
+	io_write8(players_stop_request, landing_height);
 	OBJECT(object)->story_actor.script = height_at + 1u;
 	return story_actor_finish_frame(object, operations);
 }
@@ -1258,14 +1255,10 @@ void story_actor_drop_players_held(uint16_t script, uint16_t *p_object, uint16_t
 	uint16_t object = (uint16_t)*p_object;
 	uint16_t operations = (uint16_t)*p_operations;
 
-	OBJECT(OBJECT_ADDRESS(0))->unk_3F = 0u;
-	OBJECT(OBJECT_ADDRESS(0))->parent &= 0xFFu;
-	OBJECT(OBJECT_ADDRESS(2))->unk_3F = 0u;
-	OBJECT(OBJECT_ADDRESS(2))->parent &= 0xFFu;
-	OBJECT(OBJECT_ADDRESS(4))->unk_3F = 0u;
-	OBJECT(OBJECT_ADDRESS(4))->parent &= 0xFFu;
-	OBJECT(OBJECT_ADDRESS(6))->unk_3F = 0u;
-	OBJECT(OBJECT_ADDRESS(6))->parent &= 0xFFu;
+	OBJECT(OBJECT_ADDRESS(0))->player.held = 0u;
+	OBJECT(OBJECT_ADDRESS(2))->player.held = 0u;
+	OBJECT(OBJECT_ADDRESS(4))->player.held = 0u;
+	OBJECT(OBJECT_ADDRESS(6))->player.held = 0u;
 	*p_object = object;
 	*p_operations = operations;
 	story_actor_continue(script, p_object, p_operations);
@@ -1373,7 +1366,6 @@ void story_actor_player_speaks(uint16_t script, uint16_t *p_object, uint16_t *p_
 {
 	uint16_t object = (uint16_t)*p_object;
 	uint16_t operations = (uint16_t)*p_operations;
-	uint32_t carry = 0;
 	uint8_t parameter = 0, voice_high = 0, voice_low = 0;
 	uint16_t command = 0, player = 0;
 	uint8_t stack_10003 = 0, stack_10004 = 0;
@@ -1393,7 +1385,7 @@ void story_actor_player_speaks(uint16_t script, uint16_t *p_object, uint16_t *p_
 		if ((uint16_t)(((uint32_t)voice_high << 8) | voice_low) < 0x3F14u || (uint16_t)(((uint32_t)voice_high << 8) | voice_low) > 0x3F17u)
 		{
 			command = ((uint32_t)voice_high << 8) | voice_low;
-			carry = vector_queue_sound(command);
+			vector_queue_sound(command);
 			script += 8u;
 			object = stack;
 			*p_object = object;
@@ -1428,7 +1420,7 @@ void story_actor_player_speaks(uint16_t script, uint16_t *p_object, uint16_t *p_
 	voice_high = stack_10003;
 	voice_low = stack_10004;
 	command = ((uint32_t)voice_high << 8) | voice_low;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	script += 8u;
 	object = stack;
 	*p_object = object;
@@ -1543,7 +1535,7 @@ uint16_t story_actor_finish_frame(uint16_t object, uint16_t u)
 	}
 	if (object == OBJECT_ADDRESS(32))
 	{
-		players_signal = io_read8(0x184Eu);
+		players_signal = io_read8(players_all_idle);
 		if (players_signal != 0u)
 		{
 			stack = object;
@@ -1597,14 +1589,14 @@ uint16_t story_actor_remove(uint16_t object, uint16_t u)
 	if (object == OBJECT_ADDRESS(32))
 	{
 		scene_running = 0u;
-		discarded_read = io_read8(0x184Bu);
-		io_write8(0x184Bu, 0u);
-		discarded_read_2 = io_read8(0x184Eu);
-		io_write8(0x184Eu, 0u);
-		io_write16(0x1852u, 0u);
-		io_write16(0x1854u, 0u);
+		discarded_read = io_read8(players_stop_request);
+		io_write8(players_stop_request, 0u);
+		discarded_read_2 = io_read8(players_all_idle);
+		io_write8(players_all_idle, 0u);
+		io_write16(stage_kept_object, 0u);
+		io_write16(stage_kept_object_2, 0u);
 		io_write16(0x1856u, 0u);
-		io_write16(0x1858u, 0u);
+		io_write16(player_drop_x, 0u);
 		OBJECT(object)->flags = 0u;
 		stack = object;
 		player = story_first_player();
@@ -1612,8 +1604,8 @@ uint16_t story_actor_remove(uint16_t object, uint16_t u)
 		{
 			if (OBJECT(player)->flags != 0u)
 			{
-				OBJECT(player)->parameter = 0u;
-				OBJECT(player + 0x60u)->parameter = 0u;
+				OBJECT(player)->player.player_state = 0u;
+				OBJECT(player + 0x60u)->player.player_state = 0u;
 				OBJECT(player + 0x60u)->flags = 0u;
 				attributes = OBJECT(player)->attributes;
 				OBJECT(player)->attributes = attributes & 0xBFu;
@@ -1631,11 +1623,11 @@ uint16_t story_actor_remove(uint16_t object, uint16_t u)
 					count--;
 				}
 				player = stack_4;
-				old_bits = OBJECT(player)->unk_34;
-				OBJECT(player)->unk_34 = old_bits | 2u;
+				old_bits = OBJECT(player)->player.status;
+				OBJECT(player)->player.status = old_bits | 2u;
 			}
 			OBJECT(player + 0x60u)->flags = 0u;
-			OBJECT(player + 0x60u)->parameter = 0u;
+			OBJECT(player + 0x60u)->player.player_state = 0u;
 			OBJECT(player)->kind = 4u - story_players_left;
 			story_next_player(&player, &zero);
 		} while (zero == 0u);

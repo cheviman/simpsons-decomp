@@ -3,7 +3,7 @@
  *    Description: stage 1's bystanders
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -51,7 +51,7 @@ uint16_t bystander_wait_car(uint16_t object, uint16_t animations)
 	uint8_t car_stopped = 0, startled = 0, state = 0;
 	uint16_t animations_2 = 0;
 
-	car_stopped = io_read8(0x1884u);
+	car_stopped = io_read8(police_car_stop_signal);
 	if (car_stopped != 0u)
 	{
 		animations_2 = OBJECT(object)->bystander.animations;

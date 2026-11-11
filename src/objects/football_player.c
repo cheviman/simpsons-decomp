@@ -3,7 +3,7 @@
  *    Description: stage 4's boss (type 19, kind 92), its football and its charge's line
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -140,11 +140,11 @@ uint16_t football_line_piece(uint16_t object, uint16_t child)
 		{
 			step_before = (uint8_t)OBJECT(object)->target_dy;
 			OBJECT(object)->target_dy = (OBJECT(object)->target_dy & 0xFF00u) | (step_before + 1u & 0xFFu);
-			pieces_out = io_read8(0x184Au);
+			pieces_out = io_read8(object_group_count);
 			if ((int8_t)pieces_out < 7)
 			{
-				pieces_before = io_read8(0x184Au);
-				io_write8(0x184Au, pieces_before + 1u);
+				pieces_before = io_read8(object_group_count);
+				io_write8(object_group_count, pieces_before + 1u);
 				child_object = football_line_piece_child_ADDRESS;
 				spawn_list_2_child(object, child_object, &child, &carry);
 			}
@@ -161,12 +161,12 @@ uint16_t football_line_piece(uint16_t object, uint16_t child)
 		return child;
 	}
 	flags = 0x80u;
-	line_piece_number = io_read8(0x184Au);
+	line_piece_number = io_read8(object_group_count);
 	piece_number = line_piece_number;
 	if (line_piece_number != 0u && piece_number != 3u && piece_number != 6u)
 	{
 		OBJECT(object)->flags = flags;
-		piece_index = io_read8(0x184Au);
+		piece_index = io_read8(object_group_count);
 		piece_record = football_player_line_pieces_ADDRESS + (int8_t)((uint32_t)piece_index << 1);
 		kind_halfword = 0x9200u | LINE_PIECE(piece_record)->animation;
 		OBJECT(object)->kind = (uint8_t)(kind_halfword >> 8u);
@@ -189,7 +189,7 @@ uint16_t football_line_piece(uint16_t object, uint16_t child)
 	OBJECT(object)->attack = 5u;
 	flags = 0xC0u;
 	OBJECT(object)->flags = flags;
-	piece_index = io_read8(0x184Au);
+	piece_index = io_read8(object_group_count);
 	piece_record = football_player_line_pieces_ADDRESS + (int8_t)((uint32_t)piece_index << 1);
 	kind_halfword_2 = 0x9200u | LINE_PIECE(piece_record)->animation;
 	OBJECT(object)->kind = (uint8_t)(kind_halfword_2 >> 8u);
@@ -231,11 +231,11 @@ void football_player_start(uint16_t object)
 	OBJECT(object)->z = dropped_z;
 	OBJECT(object)->football_player.hurt_pose = 0x14u;
 	OBJECT(object)->entrance_pending = 0x14u;
-	old_line_cue = io_read8(0x184Au);
-	io_write8(0x184Au, 0u);
+	old_line_cue = io_read8(object_group_count);
+	io_write8(object_group_count, 0u);
 	leftover_y = football_player_child_ADDRESS;
 	vector_spawn_child(object, &ignored16, &marker, &ignored16_2, &carry);
-	io_write16(0x1852u, marker);
+	io_write16(stage_kept_object, marker);
 }
 
 /* Waits for the story to set the cue in 184A, then drops to the floor */
@@ -244,7 +244,7 @@ void football_player_wait_cue(uint16_t object)
 	uint8_t line_cue = 0;
 	uint16_t football_y = 0;
 
-	line_cue = io_read8(0x184Au);
+	line_cue = io_read8(object_group_count);
 	if (line_cue == 0u)
 		return;
 	OBJECT(object)->football_player.phase = 5u;
@@ -765,7 +765,7 @@ void football_player_tackle(uint16_t object, uint16_t u)
 	uint8_t charge_wait = 0, charge_wait_2 = 0, throw_wait_2 = 0, throw_wait_3 = 0, wait = 0, attack_health = 0, vitality = 0, vitality_2 = 0;
 
 	damage = 0xC0Au;
-	carry = stage_boss_attack_frame(object, damage);
+	stage_boss_attack_frame(object, damage);
 	throw_wait = 1u;
 	charge_wait = OBJECT(object)->football_player.charge_wait;
 	if (1u != charge_wait)
@@ -857,7 +857,7 @@ void football_player_throw(uint16_t object, uint16_t enemy_handlers)
 	record = football_player_throw_child_ADDRESS;
 	spawn_list_2_child(object, record, &ball, &carry);
 	command = 0x6D00u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	football_player_check_hit(object, ball);
 }
 
@@ -1016,10 +1016,10 @@ void football_player_charge(uint16_t object, uint16_t enemy_handlers)
 	}
 	record = football_player_charge_child_ADDRESS;
 	spawn_list_2_child(object, record, &piece, &carry);
-	old_line_pieces = io_read8(0x184Au);
-	io_write8(0x184Au, 0u);
+	old_line_pieces = io_read8(object_group_count);
+	io_write8(object_group_count, 0u);
 	command = 0x6200u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	football_player_check_hit(object, piece);
 }
 
@@ -1142,7 +1142,7 @@ void football_player_knocked_out(uint16_t object)
 			OBJECT(object)->football_player.phase = 0x12u;
 			OBJECT(object)->football_player.wait = 0x78u;
 			command = 0x3F3Au;
-			carry = vector_queue_sound(command);
+			vector_queue_sound(command);
 			leftover_y = state_wait;
 			return;
 		}
@@ -1162,7 +1162,7 @@ void football_player_defeated(uint16_t object)
 	old_stage_flag = io_read8(0x1850u);
 	io_write8(0x1850u, 0u);
 	command = 0x9600u;
-	carry = vector_queue_sound_unless_attract(command);
+	vector_queue_sound_unless_attract(command);
 	boss_beaten = 1u;
 	step_phase++;
 	step_subphase = 1u;
@@ -1172,7 +1172,7 @@ void football_player_defeated(uint16_t object)
 /* Its hits: a flinch, a knock back, or beaten (boss_defeated) and thrown */
 void football_player_check_hit(uint16_t object, uint16_t u)
 {
-	uint32_t zero = 0, negative = 0, carry = 0;
+	uint32_t zero = 0, negative = 0;
 	uint16_t animation_number = 0, command = 0, health_limits = 0, object_2 = 0, request = 0, state_wait = 0;
 	uint8_t flinch_health = 0, vitality = 0, vitality_2 = 0, z_low = 0;
 
@@ -1184,9 +1184,9 @@ void football_player_check_hit(uint16_t object, uint16_t u)
 	if (negative)
 	{
 		command = 0u;
-		carry = vector_queue_sound(command);
+		vector_queue_sound(command);
 		command = 0x9800u;
-		carry = vector_queue_sound_unless_attract(command);
+		vector_queue_sound_unless_attract(command);
 		state_wait = 0x1178u;
 		animation_number = 0x8F00u;
 		stage_boss_set_state(object, state_wait, animation_number);

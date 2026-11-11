@@ -3,7 +3,7 @@
  *    Description: the hit reaction of the enemies with their own hit animations, and the plain goon they turn into
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -33,14 +33,14 @@ uint16_t enemy_hurt_become_goon(uint16_t object)
    actions 0 and 1, else knocked up and away from the hitter; with no vitality left, the defeat. */
 uint16_t enemy_hurt_start(uint16_t object, uint16_t hurt_step_table)
 {
-	uint32_t zero = 0, carry = 0;
+	uint32_t zero = 0;
 	uint8_t reaction = 0;
 	uint16_t animations = 0, command = 0, hitter = 0;
 	uint8_t vitality = 0, action = 0, action_step = 0;
 	uint16_t hit_by = 0, x_speed = 0, hitter_x = 0, enemy_x = 0, x_speed_2 = 0;
 
 	command = 0x6300u;
-	carry = queue_sound(command);
+	queue_sound(command);
 	vitality = OBJECT(object)->vitality;
 	if (vitality == 0u)
 	{
@@ -132,7 +132,6 @@ void enemy_hurt_fall_defeated(uint16_t object)
    it gets up as a plain goon, or (field vanishes) it starts to blink out. */
 uint16_t enemy_hurt_lie_defeated(uint16_t object, uint16_t hurt_step_table)
 {
-	uint32_t carry = 0;
 	uint8_t sound_high = 0, sound_low = 0;
 	uint16_t command = 0;
 	uint8_t animation_flags = 0, animation_flags_2 = 0, vanishes = 0, action_step = 0;
@@ -150,7 +149,7 @@ uint16_t enemy_hurt_lie_defeated(uint16_t object, uint16_t hurt_step_table)
 			if (frame_sound != 0u)
 			{
 				command = (sound_low & 0xFFu) | ((uint32_t)sound_high << 8);
-				carry = queue_sound(command);
+				queue_sound(command);
 				return hurt_step_table;
 			}
 		}
@@ -174,7 +173,7 @@ uint16_t enemy_hurt_lie_defeated(uint16_t object, uint16_t hurt_step_table)
 		if (frame_sound != 0u)
 		{
 			command = (sound_low & 0xFFu) | ((uint32_t)sound_high << 8);
-			carry = queue_sound(command);
+			queue_sound(command);
 			return hurt_step_table;
 		}
 	}

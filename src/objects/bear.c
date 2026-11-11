@@ -3,7 +3,7 @@
  *    Description: stage 5's boss (type 20, kind A2) and its cage's parts
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -132,7 +132,7 @@ void bear_part(uint16_t object)
 			OBJECT(object)->flags = 0u;
 		return;
 	}
-	parts_phase = io_read8(0x184Au);
+	parts_phase = io_read8(object_group_count);
 	phase = parts_phase;
 	if (parts_phase == 0u)
 		return;
@@ -164,7 +164,6 @@ void bear_part(uint16_t object)
 /* A boulder the bear's stomp brings down: falls, bounces and hurts while the bear stands */
 uint16_t bear_boulder(uint16_t object, uint16_t damage)
 {
-	uint32_t carry = 0;
 	uint8_t flags = 0, word_high = 0, word_low = 0;
 	uint16_t command = 0, object_2 = 0;
 	uint8_t stack = 0, stack_10002 = 0;
@@ -193,7 +192,7 @@ uint16_t bear_boulder(uint16_t object, uint16_t damage)
 				stack = word_high;
 				stack_10002 = word_low;
 				command = 0x6500u;
-				carry = vector_queue_sound(command);
+				vector_queue_sound(command);
 				word_high = stack;
 				word_low = stack_10002;
 				leftover_y = 0xFE80u;
@@ -307,7 +306,6 @@ uint16_t bear_boulder(uint16_t object, uint16_t damage)
 /* The effect shown as the beaten bear changes */
 void bear_change_effect(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t animation_flags = 0;
 
@@ -317,7 +315,7 @@ void bear_change_effect(uint16_t object)
 		OBJECT(object)->kind = 0x90u;
 		OBJECT(object)->animation = 0x91u;
 		command = 0x6C00u;
-		carry = vector_queue_sound(command);
+		vector_queue_sound(command);
 		return;
 	}
 	animation_flags = OBJECT(object)->animation_flags;
@@ -353,8 +351,8 @@ void bear_start(uint16_t object)
 	cage_parts_left = 6u;
 	leftover_y = bear_start_child_1_ADDRESS;
 	bear_put_parts(object);
-	old_parts_phase = io_read8(0x184Au);
-	io_write8(0x184Au, 0u);
+	old_parts_phase = io_read8(object_group_count);
+	io_write8(object_group_count, 0u);
 	phase = OBJECT(object)->bear.phase;
 	OBJECT(object)->bear.phase = phase + 1u;
 }
@@ -368,7 +366,6 @@ void bear_put_parts(uint16_t object)
 	uint16_t saved_leftover_y = 0;
 	uint8_t parts_left = 0;
 	uint16_t offset_record = 0, offset_dx = 0, part_x = 0, placed_x = 0, dy_at = 0, offset_dy = 0, part_y = 0, placed_y = 0, dz_at = 0, offset_dz = 0, z = 0, placed_z = 0;
-	uint32_t unk_50_halfword = 0, unk_52_halfword = 0;
 
 	do
 	{
@@ -385,9 +382,7 @@ void bear_put_parts(uint16_t object)
 			place_high = (uint8_t)(placed_x >> 8);
 			place_low = (uint8_t)placed_x;
 			OBJECT(part)->x = ((uint32_t)place_high << 8) | place_low;
-			unk_50_halfword = ((uint32_t)place_high << 8) | place_low;
-			OBJECT(part)->unk_50 = (uint8_t)(unk_50_halfword >> 8u);
-			OBJECT(part)->unk_51 = (uint8_t)unk_50_halfword;
+			OBJECT(part)->bear_part.rest_x = ((uint32_t)place_high << 8) | place_low;
 			dy_at = offset_record + 1u;
 			offset_dy = (int8_t)mem_read8(dy_at);
 			part_y = OBJECT(part)->y;
@@ -395,9 +390,7 @@ void bear_put_parts(uint16_t object)
 			place_high = (uint8_t)(placed_y >> 8);
 			place_low = (uint8_t)placed_y;
 			OBJECT(part)->y = ((uint32_t)place_high << 8) | place_low;
-			unk_52_halfword = ((uint32_t)place_high << 8) | place_low;
-			OBJECT(part)->unk_52 = (uint8_t)(unk_52_halfword >> 8u);
-			OBJECT(part)->unk_53 = (uint8_t)unk_52_halfword;
+			OBJECT(part)->bear_part.rest_y = ((uint32_t)place_high << 8) | place_low;
 			dz_at = dy_at + 1u;
 			offset_dz = (int8_t)mem_read8(dz_at);
 			z = OBJECT(part)->z;
@@ -421,13 +414,12 @@ void bear_put_parts(uint16_t object)
 /* Waits for the stage to let it in, then stirs */
 void bear_wait_entrance(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t animation_number = 0, command = 0, state_wait = 0;
 
 	if (stage_scrolls_on != 0u)
 		return;
 	command = 0xFD00u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	OBJECT(object)->enemy_class = 0;
 	OBJECT(object)->entrance_pending = 0u;
 	leftover_y = 0x23Cu;
@@ -446,7 +438,7 @@ void bear_stir(uint16_t object)
 	OBJECT(object)->bear.wait = wait - 1u;
 	if (wait == 1u)
 	{
-		io_write8(0x184Au, 1u);
+		io_write8(object_group_count, 1u);
 		leftover_y = 0x3FAu;
 		state_wait = 0x3FAu;
 		animation_number = 0x8A00u;
@@ -458,7 +450,6 @@ void bear_stir(uint16_t object)
 /* Breaks out of its cage: the parts shake, then fly; its tiles are cleared */
 uint16_t bear_break_out(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint8_t control = 0, fill = 0, parts_phase = 0, row_start_low = 0, wait_then_row_high = 0;
 	uint16_t animation_number = 0, cell_place = 0, command = 0, count = 0, floor_row = 0, ignored16 = 0, state_wait = 0;
 	uint8_t stack = 0, stack_2 = 0, stack_3 = 0, stack_4 = 0;
@@ -486,7 +477,7 @@ uint16_t bear_break_out(uint16_t object)
 		parts_phase = 0u;
 		if ((wait_then_row_high & 0x10u) == 0u)
 			parts_phase++;
-		io_write8(0x184Au, parts_phase);
+		io_write8(object_group_count, parts_phase);
 		return object;
 	}
 	if ((int8_t)wait_then_row_high < 0x4B)
@@ -494,7 +485,7 @@ uint16_t bear_break_out(uint16_t object)
 	floor_cell_under(object, &cell_place, &ignored16);
 	control = board_control | 2u;
 	board_control = control;
-	io_write8(0x1FC2u, control);
+	io_write8(board_control_register, control);
 	stack_2 = cell_place >> 8;
 	stack = (uint8_t)cell_place;
 	wait_then_row_high = stack_2;
@@ -516,22 +507,21 @@ uint16_t bear_break_out(uint16_t object)
 	object = ((uint32_t)stack_2 << 8) | stack;
 	control = board_control & ~3u;
 	board_control = control;
-	io_write8(0x1FC2u, control);
+	io_write8(board_control_register, control);
 	OBJECT(object)->flags = 0x80u;
 	bear_y = OBJECT(object)->y;
 	lowered_y = bear_y + 0x10u;
 	OBJECT(object)->y = lowered_y;
 	command = 0x7000u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	parts_phase = 2u;
-	io_write8(0x184Au, parts_phase);
+	io_write8(object_group_count, parts_phase);
 	return object;
 }
 
 /* Steps out with a roar and takes its hit box */
 void bear_step_out(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t animation_number = 0, box = 0, command = 0, state_wait = 0;
 	uint8_t wait = 0, wait_2 = 0;
 
@@ -540,7 +530,7 @@ void bear_step_out(uint16_t object)
 	if (wait == 0x26u)
 	{
 		command = 0x3F37u;
-		carry = vector_queue_sound(command);
+		vector_queue_sound(command);
 	}
 	wait_2 = OBJECT(object)->bear.wait;
 	OBJECT(object)->bear.wait = wait_2 - 1u;
@@ -549,7 +539,7 @@ void bear_step_out(uint16_t object)
 	box = bear_box_ADDRESS;
 	stage_boss_set_hit_box(object, box);
 	command = 0x7400u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	leftover_y = 0x53Cu;
 	state_wait = 0x53Cu;
 	animation_number = 0x8900u;
@@ -612,7 +602,7 @@ void bear_face_player(uint16_t object, uint16_t state_wait)
 	charged_2 = OBJECT(object)->bear.charged;
 	OBJECT(object)->bear.charged = charged_2 + 1u;
 	command = 0x7400u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	state_wait = 0x53Cu;
 	animation_number = 0x8A00u;
 	stage_boss_set_state(object, state_wait, animation_number);
@@ -681,7 +671,7 @@ void bear_walk(uint16_t object)
 		screen_shake_on = 1u;
 		screen_shake_kind = 2u;
 		command = 0x7500u;
-		carry = vector_queue_sound(command);
+		vector_queue_sound(command);
 		boulder_roll = (uint32_t)(uint8_t)((((uint32_t)rank << 1) << 1) << 1) * random_number;
 		if (boulder_roll >= 0x3000u)
 		{
@@ -758,7 +748,7 @@ void bear_walk(uint16_t object)
 		return;
 	}
 	command = 0x6A00u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	OBJECT(object)->box_width = 0x28u;
 	OBJECT(object)->box_dx = -6;
 	player = stage_boss_face_nearest_player(object);
@@ -836,7 +826,7 @@ void bear_start_charge(uint16_t object, uint16_t enemy_handlers)
 /* Its hits while charging: flashes, or beaten */
 void bear_charge_check_hit(uint16_t object, uint16_t u)
 {
-	uint32_t zero = 0, negative = 0, carry = 0;
+	uint32_t zero = 0, negative = 0;
 	uint16_t health_limits = 0, request = 0;
 
 	leftover_y = bear_beaten_vitality_ADDRESS;
@@ -844,7 +834,7 @@ void bear_charge_check_hit(uint16_t object, uint16_t u)
 	stage_boss_check_hit(object, health_limits, &u, &zero, &negative);
 	if (zero)
 	{
-		carry = stage_boss_move_on_screen(object);
+		stage_boss_move_on_screen(object);
 		return;
 	}
 	if (negative)
@@ -856,7 +846,7 @@ void bear_charge_check_hit(uint16_t object, uint16_t u)
 	request = 0x27u;
 	vector_palette_request(u, request);
 	OBJECT(object)->flags = 0xC4u;
-	carry = stage_boss_move_on_screen(object);
+	stage_boss_move_on_screen(object);
 }
 
 /* Hurts while it charges; stops into a pose, then gets up */
@@ -942,11 +932,10 @@ void bear_swipe(uint16_t object, uint16_t object_2)
 /* Moves until its animation ends, then turns to a player */
 void bear_recover(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t state_wait = 0;
 	uint8_t animation_flags = 0;
 
-	carry = stage_boss_move_on_screen(object);
+	stage_boss_move_on_screen(object);
 	leftover_y = 0x601u;
 	animation_flags = OBJECT(object)->animation_flags;
 	if ((animation_flags & 1u) != 0u)
@@ -1172,7 +1161,7 @@ void bear_defeated(uint16_t object)
 	if (carry == 0u)
 		return;
 	command = 0x9600u;
-	carry = vector_queue_sound_unless_attract(command);
+	vector_queue_sound_unless_attract(command);
 	boss_beaten = 1u;
 	step_phase++;
 	step_subphase = 1u;
@@ -1182,9 +1171,7 @@ void bear_defeated(uint16_t object)
 /* Moves it on the screen, then decides whether to charge */
 void bear_move(uint16_t object, uint16_t object_2)
 {
-	uint32_t carry = 0;
-
-	carry = stage_boss_move_on_screen(object);
+	stage_boss_move_on_screen(object);
 	OBJECT(object)->bear.charged = 0u;
 	bear_think(object, object_2);
 }
@@ -1217,7 +1204,7 @@ void bear_think(uint16_t object, uint16_t object_2)
 		}
 	}
 	command = 0x7400u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	x_now = OBJECT(object)->x;
 	bear_x = x_now;
 	if ((int16_t)bear_x >= 0x58)
@@ -1236,12 +1223,12 @@ void bear_think(uint16_t object, uint16_t object_2)
 /* Its hits: flinches with a flash, is knocked down or beaten */
 void bear_check_hit(uint16_t object, uint16_t object_2)
 {
-	uint32_t zero = 0, negative = 0, carry = 0;
+	uint32_t zero = 0, negative = 0;
 	uint8_t flinch_animation = 0;
 	uint16_t animation_number = 0, health_limits = 0, request = 0, state_wait = 0;
 	uint8_t charge_timer = 0, charge_timer_2 = 0, attributes = 0, attributes_2 = 0, vitality = 0, flinch_health = 0, vitality_2 = 0;
 
-	carry = stage_boss_move_on_screen(object);
+	stage_boss_move_on_screen(object);
 	charge_timer = OBJECT(object)->bear.charge_timer;
 	if (charge_timer != 0xFFu)
 	{
@@ -1289,13 +1276,12 @@ void bear_check_hit(uint16_t object, uint16_t object_2)
 /* Stops the sounds, plays boss_defeated and knocks it away */
 void bear_beaten(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 
 	command = 0u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	command = 0x9800u;
-	carry = vector_queue_sound_unless_attract(command);
+	vector_queue_sound_unless_attract(command);
 	bear_knocked_away(object);
 }
 

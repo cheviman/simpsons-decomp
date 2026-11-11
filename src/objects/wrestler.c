@@ -3,7 +3,7 @@
  *    Description: stage 1's boss, the wrestler
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -140,7 +140,6 @@ void wrestler_beaten(uint16_t object, uint8_t d)
 /* The wrestler beaten: waits, then a palette flash and a sound (6700). */
 void wrestler_beaten_wait(uint16_t object, uint16_t palette_job)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0, palette_effect_number = 0;
 	uint8_t action_step = 0, action = 0;
 
@@ -152,7 +151,7 @@ void wrestler_beaten_wait(uint16_t object, uint16_t palette_job)
 	palette_effect_number = 0x20u;
 	vector_palette_request(palette_job, palette_effect_number);
 	command = 0x6700u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	action = OBJECT(object)->action;
 	OBJECT(object)->action = action + 1u;
 }
@@ -334,7 +333,7 @@ void wrestler_fall(uint16_t object)
 	if (vitality <= wrestler_beaten_health_by_players[(int8_t)((uint8_t)(player_count - 1u))])
 	{
 		command = 0x9800u;
-		carry = vector_queue_sound_unless_attract(command);
+		vector_queue_sound_unless_attract(command);
 		OBJECT(object)->flags = (OBJECT(object)->flags & 0xBFu) | 4u;
 		partner = OBJECT(object)->wrestler.partner;
 		partner_object = partner;
@@ -754,7 +753,7 @@ void wrestler_entrance_pose(uint16_t object, uint16_t palette_job)
 	palette_effect_number = 0xCu;
 	vector_palette_request(palette_job, palette_effect_number);
 	command = 0x6700u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	animation_number = 0xF00u;
 	wrestler_set_animation(object, &animation_number, &carry);
 	OBJECT(object)->action_step = 0x40u;
@@ -798,7 +797,7 @@ void wrestler_entrance_land(uint16_t object, uint16_t palette_job)
 	vector_palette_request(palette_job, palette_effect_number);
 	screen_shake_on = 1u;
 	command = 0x6400u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	OBJECT(object)->y_speed = 0;
 	animation_number = 0xB00u;
 	wrestler_set_animation(object, &animation_number, &carry);
@@ -835,7 +834,7 @@ void wrestler_entrance_shout(uint16_t object)
 	if ((animation_flags & 1u) == 0u)
 		return;
 	command = 0x3F2Du;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	OBJECT(object)->flags = 0xC0u;
 	animation_number = 0xA00u;
 	wrestler_set_animation(object, &animation_number, &carry);
@@ -1375,7 +1374,7 @@ void wrestler_jump_land(uint16_t object)
 	OBJECT(object)->flags |= 0x40u;
 	screen_shake_on = 1u;
 	command = 0x6400u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	OBJECT(object)->flags |= 0x40u;
 	box_number = 0x300u;
 	wrestler_set_hit_box(object, box_number);
@@ -1775,7 +1774,7 @@ void wrestler_pick_target(uint16_t object, uint16_t nearest)
 	find_nearest_player(object, &nearest, &ignored16, &carry);
 	if (carry == 0u)
 	{
-		carry = wrestler_go_idle(object);
+		wrestler_go_idle(object);
 		return;
 	}
 	kept_target = OBJECT(object)->wrestler.target;
@@ -1865,25 +1864,25 @@ void wrestler_set_animation(uint16_t object, uint16_t *p_animation_number, uint3
 uint16_t wrestler_set_hit_box(uint16_t object, uint16_t box_number)
 {
 	uint16_t box_end = 0;
-	uint16_t box_record = 0, field_1c = 0, box_cursor = 0, field_1f = 0, box_cursor_2 = 0, field = 0, box_cursor_3 = 0, field_23 = 0;
+	uint16_t box_record = 0, damage_attack = 0, box_cursor = 0, width_depth = 0, box_cursor_2 = 0, height_dx = 0, box_cursor_3 = 0, dy_dz = 0;
 
 	box_record = wrestler_hit_boxes_ADDRESS + (uint8_t)((((uint32_t)(box_number >> 8) << 1) << 1) << 1);
-	field_1c = HIT_BOX(box_record)->field_1c;
-	OBJECT(object)->damage = (uint8_t)(field_1c >> 8u);
-	OBJECT(object)->attack = (uint8_t)field_1c;
+	damage_attack = HIT_BOX(box_record)->damage_attack;
+	OBJECT(object)->damage = (uint8_t)(damage_attack >> 8u);
+	OBJECT(object)->attack = (uint8_t)damage_attack;
 	box_cursor = box_record + 2u;
-	field_1f = HIT_BOX(box_cursor - 0x2u)->field_1f;
-	OBJECT(object)->box_width = (uint8_t)(field_1f >> 8u);
-	OBJECT(object)->box_depth = (uint8_t)field_1f;
+	width_depth = HIT_BOX(box_cursor - 0x2u)->width_depth;
+	OBJECT(object)->box_width = (uint8_t)(width_depth >> 8u);
+	OBJECT(object)->box_depth = (uint8_t)width_depth;
 	box_cursor_2 = box_cursor + 2u;
-	field = HIT_BOX(box_cursor_2 - 0x4u)->field_21;
-	OBJECT(object)->box_height = (uint8_t)(field >> 8u);
-	OBJECT(object)->box_dx = (uint8_t)field;
+	height_dx = HIT_BOX(box_cursor_2 - 0x4u)->height_dx;
+	OBJECT(object)->box_height = (uint8_t)(height_dx >> 8u);
+	OBJECT(object)->box_dx = (uint8_t)height_dx;
 	box_cursor_3 = box_cursor_2 + 2u;
 	box_end = box_cursor_3 + 2u;
-	field_23 = HIT_BOX(box_cursor_3 - 0x6u)->field_23;
-	OBJECT(object)->box_dy = (uint8_t)(field_23 >> 8u);
-	OBJECT(object)->box_dz = (uint8_t)field_23;
+	dy_dz = HIT_BOX(box_cursor_3 - 0x6u)->dy_dz;
+	OBJECT(object)->box_dy = (uint8_t)(dy_dz >> 8u);
+	OBJECT(object)->box_dz = (uint8_t)dy_dz;
 	return box_end;
 }
 
@@ -2003,7 +2002,7 @@ uint32_t wrestler_go_idle(uint16_t object)
 	uint16_t animation_number = 0, command = 0;
 
 	command = 0x6800u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	OBJECT(object)->state = 6u;
 	OBJECT(object)->action = 0u;
 	animation_number = 0x100u;
@@ -2033,14 +2032,14 @@ uint16_t wrestler_take_hit(uint16_t object)
 	palette_effect_number = 2u;
 	vector_palette_request(object_2, palette_effect_number);
 	command = 0x6600u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	box_number = 0u;
 	wrestler_set_hit_box(object, box_number);
 	vitality = OBJECT(object)->vitality;
 	if (vitality == 0u)
 	{
 		command = 0x6600u;
-		carry = vector_queue_sound_unless_attract(command);
+		vector_queue_sound_unless_attract(command);
 	}
 	else
 	{
@@ -2061,7 +2060,7 @@ uint16_t wrestler_take_hit(uint16_t object)
 			}
 		}
 		command = 0x6900u;
-		carry = vector_queue_sound(command);
+		vector_queue_sound(command);
 	}
 	OBJECT(object)->wrestler.hits = 0u;
 	animation_number = 0x400u;

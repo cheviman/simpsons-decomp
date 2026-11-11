@@ -3,7 +3,7 @@
  *    Description: stage 3: the forest, then the Springfield Discount Cemetery
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -266,7 +266,6 @@ uint32_t step_stage_3_forest(uint16_t u)
    stopped, its stage entry and the step's scene */
 void stage_3_forest_setup(void)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 
 	gauges_shown = 0u;
@@ -274,7 +273,7 @@ void stage_3_forest_setup(void)
 	clear_tile_layers();
 	reset_for_stage();
 	command = 0u;
-	carry = queue_sound_always(command);
+	queue_sound_always(command);
 	window_bank = 0x13u;
 	set_lines(window_bank);
 	stage_record_entry = stage_slots[3].record;
@@ -307,8 +306,8 @@ uint32_t stage_3_forest_begin(uint16_t palette_job, uint32_t left_caller)
 	request = 0u;
 	palette_request(palette_job, request);
 	play_stage_music();
-	io_write8(0x1FB9u, 0x3Fu);
-	io_write8(0x1FBAu, 0x36u);
+	io_write8(colour_bases_back_sprites_fixed, 0x3Fu);
+	io_write8(colour_bases_layers_a_b, 0x36u);
 	map_scene = 0x86u;
 	map_area = 0u;
 	set_area_tile_banks();
@@ -320,8 +319,8 @@ uint32_t stage_3_forest_begin(uint16_t palette_job, uint32_t left_caller)
 	window_bank = 0x1Fu;
 	set_lines(window_bank);
 	scene_load_story_settings(&ignored16, &ignored16_2);
-	io_write8(0x1FB9u, 0x13u);
-	io_write8(0x1FBAu, 0x2Cu);
+	io_write8(colour_bases_back_sprites_fixed, 0x13u);
+	io_write8(colour_bases_layers_a_b, 0x2Cu);
 	players_present = players_playing;
 	step_phase++;
 	return left_caller;
@@ -370,7 +369,7 @@ uint32_t stage_3_forest_cleared(uint32_t left_caller)
 		{
 			if (boss_beaten != 0u)
 			{
-				io_write8(0x184Bu, 1u);
+				io_write8(players_stop_request, 1u);
 				step_phase++;
 			}
 			update_players(&ignored16_2, &ignored16, &ignored16_3, &carry);
@@ -382,7 +381,7 @@ uint32_t stage_3_forest_cleared(uint32_t left_caller)
 	}
 	if (boss_beaten != 0u)
 	{
-		io_write8(0x184Bu, 1u);
+		io_write8(players_stop_request, 1u);
 		step_phase++;
 	}
 	update_players(&ignored16_2, &ignored16, &ignored16_3, &carry);
@@ -396,7 +395,7 @@ void stage_3_forest_over(void)
 	uint16_t command = 0, ignored16 = 0, ignored16_2 = 0, ignored16_3 = 0;
 
 	command = 0x9400u;
-	carry = queue_sound_unless_attract(command);
+	queue_sound_unless_attract(command);
 	clear_enemy_objects();
 	step_phase++;
 	update_players(&ignored16, &ignored16_2, &ignored16_3, &carry);
@@ -434,7 +433,7 @@ uint32_t stage_3_forest_end_phase(void)
 		return left_caller;
 	}
 	command = 0u;
-	carry = queue_sound_always(command);
+	queue_sound_always(command);
 	clear_sprites();
 	game_step++;
 	cleared_steps = 0u;
@@ -745,14 +744,13 @@ uint32_t step_stage_3_cemetery(uint16_t u)
    and the step's scene (no title card) */
 void stage_3_cemetery_setup(void)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 
 	clear_sprites();
 	clear_tile_layers();
 	reset_for_stage();
 	command = 0u;
-	carry = queue_sound_always(command);
+	queue_sound_always(command);
 	window_bank = 0x13u;
 	set_lines(window_bank);
 	stage_record_entry = stage_slots[4].record;
@@ -797,8 +795,8 @@ uint32_t stage_3_cemetery_begin(uint16_t palette_job, uint32_t left_caller)
 		fill_to++;
 		count--;
 	}
-	io_write8(0x1FB9u, 0x3Fu);
-	io_write8(0x1FBAu, 0x36u);
+	io_write8(colour_bases_back_sprites_fixed, 0x3Fu);
+	io_write8(colour_bases_layers_a_b, 0x36u);
 	map_scene = 0x87u;
 	map_area = 0u;
 	set_area_tile_banks();
@@ -811,8 +809,8 @@ uint32_t stage_3_cemetery_begin(uint16_t palette_job, uint32_t left_caller)
 	window_bank = 0x1Fu;
 	set_lines(window_bank);
 	scene_load_story_settings(&ignored16, &ignored16_2);
-	io_write8(0x1FB9u, 0x13u);
-	io_write8(0x1FBAu, 0x2Cu);
+	io_write8(colour_bases_back_sprites_fixed, 0x13u);
+	io_write8(colour_bases_layers_a_b, 0x2Cu);
 	players_present = players_playing;
 	step_phase++;
 	return left_caller;
@@ -877,7 +875,7 @@ uint32_t stage_3_cemetery_end_phase(uint16_t u, uint32_t left_caller)
 		return left_caller;
 	}
 	command = 0u;
-	carry = queue_sound_always(command);
+	queue_sound_always(command);
 	game_step++;
 	step_phase = 0u;
 	step_subphase = 0u;

@@ -3,7 +3,7 @@
  *    Description: bank 1F's entries: the stages' story scenes and events, the story actors' types
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -17,7 +17,7 @@ uint16_t story_stage_1_end(uint16_t object_2)
 	uint16_t object = 0;
 
 	object = OBJECT_ADDRESS(32);
-	io_write16(0x1852u, OBJECT_ADDRESS(32));
+	io_write16(stage_kept_object, OBJECT_ADDRESS(32));
 	OBJECT(OBJECT_ADDRESS(32))->story_actor.script_number = 0x10u;
 	story_actor_run(&object, &object_2);
 	return object_2;
@@ -29,13 +29,13 @@ void stage_2_events(void)
 	uint8_t animation_flags = 0;
 	uint16_t actor = 0, child = 0, ignored16 = 0;
 	uint8_t animation_flags_2 = 0;
-	uint16_t next_floor_cell = 0, z = 0, child_actors = 0, second_child = 0;
+	uint16_t child_actor_3 = 0, z = 0, child_actor = 0, second_child = 0;
 
 	actor = OBJECT_ADDRESS(32);
 	OBJECT(OBJECT_ADDRESS(32))->story_actor.script_number = 0x14u;
 	story_actor_run(&actor, &ignored16);
-	next_floor_cell = (((uint32_t)OBJECT(actor)->next_floor_cell << 8u) | (OBJECT(actor)->hit_box >> 8u));
-	child = next_floor_cell;
+	child_actor_3 = OBJECT(actor)->story_actor.child_actor_3;
+	child = child_actor_3;
 	OBJECT(child)->shadow_player = 1u;
 	z = OBJECT(child)->z;
 	if ((int16_t)z < 0)
@@ -44,11 +44,11 @@ void stage_2_events(void)
 		animation_flags_2 = OBJECT(child)->animation_flags;
 		animation_flags = animation_flags_2 | 0x80u;
 		OBJECT(child)->animation_flags = animation_flags;
-		child_actors = OBJECT(actor)->story_actor.child_actors;
-		child = child_actors;
+		child_actor = OBJECT(actor)->story_actor.child_actor_1;
+		child = child_actor;
 		OBJECT(child)->z = 0u;
 		OBJECT(child)->animation_flags = animation_flags;
-		second_child = (((uint32_t)OBJECT(actor)->unk_45 << 8u) | OBJECT(actor)->floor_cell);
+		second_child = OBJECT(actor)->story_actor.child_actor_2;
 		child = second_child;
 		OBJECT(child)->z = 0u;
 		OBJECT(child)->animation_flags = animation_flags;
@@ -114,7 +114,7 @@ uint16_t stage_event_actor(uint16_t object)
 {
 	uint16_t ignored16 = 0;
 
-	io_write16(0x1852u, object);
+	io_write16(stage_kept_object, object);
 	OBJECT(object)->parameter = 0x20u;
 	story_actor_run(&object, &ignored16);
 	return object;
@@ -126,7 +126,7 @@ void story_noted_actor(uint16_t *p_x, uint16_t *p_object_2)
 	uint16_t x = (uint16_t)*p_x;
 	uint16_t object = (uint16_t)*p_object_2;
 
-	io_write16(0x1854u, x);
+	io_write16(stage_kept_object_2, x);
 	*p_x = x;
 	*p_object_2 = object;
 	story_actor_run(p_x, p_object_2);
@@ -149,11 +149,10 @@ void story_stage_4_end(void)
 	uint16_t noted_actor = 0;
 
 	object = OBJECT_ADDRESS(32);
-	io_write16(0x1854u, OBJECT_ADDRESS(32));
+	io_write16(stage_kept_object_2, OBJECT_ADDRESS(32));
 	OBJECT(OBJECT_ADDRESS(32))->story_actor.script_number = 0xCu;
-	noted_actor = io_read16(0x1852u);
-	OBJECT(OBJECT_ADDRESS(32))->unk_45 = (uint8_t)(noted_actor >> 8u);
-	OBJECT(OBJECT_ADDRESS(32))->floor_cell = (uint8_t)noted_actor;
+	noted_actor = io_read16(stage_kept_object);
+	OBJECT(OBJECT_ADDRESS(32))->story_actor.child_actor_2 = noted_actor;
 	story_actor_run(&object, &ignored16);
 }
 
@@ -178,7 +177,7 @@ void stage_5_events(void)
 {
 	uint16_t ignored16 = 0, object = 0;
 
-	io_write16(0x1852u, OBJECT_ADDRESS(1));
+	io_write16(stage_kept_object, OBJECT_ADDRESS(1));
 	object = OBJECT_ADDRESS(32);
 	story_actor_run(&object, &ignored16);
 }
@@ -199,7 +198,7 @@ void unused_events_actor_24(void)
 	uint16_t ignored16 = 0, object = 0;
 
 	object = OBJECT_ADDRESS(32);
-	io_write16(0x1854u, OBJECT_ADDRESS(32));
+	io_write16(stage_kept_object_2, OBJECT_ADDRESS(32));
 	OBJECT(OBJECT_ADDRESS(32))->parameter = 0x24u;
 	story_actor_run(&object, &ignored16);
 }
@@ -232,7 +231,7 @@ uint16_t story_stage_5_end(uint16_t object_2)
 	uint16_t object = 0;
 
 	object = OBJECT_ADDRESS(32);
-	io_write16(0x1854u, OBJECT_ADDRESS(32));
+	io_write16(stage_kept_object_2, OBJECT_ADDRESS(32));
 	OBJECT(OBJECT_ADDRESS(32))->story_actor.script_number = 0x24u;
 	story_actor_run(&object, &object_2);
 	return object_2;
@@ -254,7 +253,7 @@ uint16_t story_stage_7_end(uint16_t object_2)
 	uint16_t object = 0;
 
 	object = OBJECT_ADDRESS(32);
-	io_write16(0x1852u, OBJECT_ADDRESS(32));
+	io_write16(stage_kept_object, OBJECT_ADDRESS(32));
 	OBJECT(OBJECT_ADDRESS(32))->story_actor.script_number = 0x34u;
 	story_actor_run(&object, &object_2);
 	return object_2;
@@ -311,17 +310,17 @@ void stage_8_events(void)
 
 	object = OBJECT_ADDRESS(32);
 	OBJECT(OBJECT_ADDRESS(32))->story_actor.script_number = 0x5Cu;
-	noted_wait = io_read8(0x1854u);
+	noted_wait = io_read8(stage_kept_object_2);
 	wait = noted_wait;
 	if (noted_wait == 0u)
 	{
 		story_actor_run(&object, &ignored16);
 		return;
 	}
-	noted_actor = io_read16(0x1852u);
+	noted_actor = io_read16(stage_kept_object);
 	mem_write8(noted_actor + 0x2Au, wait - 1u);
-	discarded_read = io_read8(0x1854u);
-	io_write8(0x1854u, 0u);
+	discarded_read = io_read8(stage_kept_object_2);
+	io_write8(stage_kept_object_2, 0u);
 	story_actor_run(&object, &ignored16);
 }
 
@@ -337,7 +336,7 @@ uint16_t story_stage_8_end(void)
 
 	actor = OBJECT_ADDRESS(32);
 	OBJECT(OBJECT_ADDRESS(32))->story_actor.acceleration_x = 0;
-	noted_object = io_read16(0x1852u);
+	noted_object = io_read16(stage_kept_object);
 	noted_actor = noted_object;
 	noted_x = OBJECT(noted_actor)->x;
 	noted_x_high = (uint8_t)(noted_x >> 8);
@@ -367,7 +366,7 @@ uint16_t story_stage_8_end(void)
 			OBJECT(player)->flags = flags | 0x40u;
 			kind = OBJECT(player)->kind;
 			kind_offset = (int8_t)((((((uint32_t)kind << 1) << 1) << 1) << 1) << 1);
-			noted_again = io_read16(0x1852u);
+			noted_again = io_read16(stage_kept_object);
 			noted_actor = noted_again;
 			noted_x_again = OBJECT(noted_actor)->x;
 			partner_x = kind_offset + noted_x_again;
@@ -445,7 +444,7 @@ void scene_load_story_settings(uint16_t *p_copy_to, uint16_t *p_count)
 	uint8_t discarded_read = 0, discarded_read_2 = 0, discarded_read_3 = 0, discarded_read_4 = 0;
 
 	settings = story_scene_settings_ADDRESS + (int8_t)((((uint32_t)scene << 1) << 1) << 1);
-	copy_to = 0x1840u;
+	copy_to = bonus_2_state;
 	count = 8u;
 	while (count != 0u)
 	{
@@ -454,14 +453,14 @@ void scene_load_story_settings(uint16_t *p_copy_to, uint16_t *p_count)
 		copy_to++;
 		count--;
 	}
-	discarded_read = io_read8(0x184Bu);
-	io_write8(0x184Bu, 0u);
-	discarded_read_2 = io_read8(0x184Eu);
-	io_write8(0x184Eu, 0u);
+	discarded_read = io_read8(players_stop_request);
+	io_write8(players_stop_request, 0u);
+	discarded_read_2 = io_read8(players_all_idle);
+	io_write8(players_all_idle, 0u);
 	discarded_read_3 = io_read8(0x1850u);
 	io_write8(0x1850u, 0u);
-	discarded_read_4 = io_read8(0x185Au);
-	io_write8(0x185Au, 0u);
+	discarded_read_4 = io_read8(player_balloons_off);
+	io_write8(player_balloons_off, 0u);
 	leftover_y = settings;
 	*p_copy_to = copy_to;
 	*p_count = count;

@@ -3,7 +3,7 @@
  *    Description: what every stage shares: its opening, its frame, its end
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -42,7 +42,7 @@ uint16_t stage_opening(void)
 	case scene_routines_ADDRESS + 0x9u:
 	case scene_routines_ADDRESS + 0x1Du:
 	case scene_routines_ADDRESS + 0x29u:
-		carry = scene_routine_nothing();
+		scene_routine_nothing();
 		break;
 	case scene_routines_ADDRESS + 0xDu:
 		stage_3_forest_events();
@@ -142,7 +142,7 @@ uint16_t stage_over(void)
 	uint32_t carry = 0;
 	uint16_t ignored16 = 0, ignored16_2 = 0, u = 0;
 
-	io_write8(0x184Bu, 1u);
+	io_write8(players_stop_request, 1u);
 	clear_enemy_objects();
 	step_phase++;
 	update_players(&ignored16, &u, &ignored16_2, &carry);
@@ -164,7 +164,7 @@ void stage_players_exit(uint16_t *p_u, uint32_t *p_left_caller, uint32_t *p_carr
 	set_lines(window_bank);
 	player_run_all();
 	update_players(&ignored16_2, &u, &ignored16_3, &carry);
-	players_signal = io_read8(0x184Eu);
+	players_signal = io_read8(players_all_idle);
 	if (players_signal == 0u)
 		carry = scene_routine_nothing();
 	else
@@ -214,7 +214,6 @@ void resume_stage_music(void)
    boss_beaten */
 void play_scene_music(uint16_t music_by_scene)
 {
-	uint32_t carry = 0;
 	uint8_t part_offset = 0;
 	uint16_t command = 0, scene_music = 0;
 	uint16_t music_at = 0, music_command = 0, second_command = 0;
@@ -229,11 +228,11 @@ void play_scene_music(uint16_t music_by_scene)
 	scene_music = music_at + 2u;
 	music_command = mem_read16(music_at);
 	command = music_command;
-	carry = queue_sound_unless_attract(command);
+	queue_sound_unless_attract(command);
 	if (scene == 6u)
 	{
 		second_command = mem_read16(scene_music);
 		command = second_command;
-		carry = queue_sound_unless_attract(command);
+		queue_sound_unless_attract(command);
 	}
 }

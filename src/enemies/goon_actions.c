@@ -3,7 +3,7 @@
  *    Description: the enemy actions bank 14 holds: the goons' strikes, jumps, grabs and throws
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -1402,7 +1402,6 @@ void unused_goon_wait_by_rank(uint16_t object)
    more in y) gives up, else strikes with sound 4800. */
 void goon_approach_until_close(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t timer = 0, action_step = 0;
 	uint16_t target_dx = 0, target_dy = 0;
@@ -1424,7 +1423,7 @@ void goon_approach_until_close(uint16_t object)
 	}
 	OBJECT(object)->animation = 0xB9u;
 	command = 0x4800u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	OBJECT(object)->timer = 0x20u;
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step + 1u;
@@ -1580,7 +1579,7 @@ void goon_keep_distance_start(uint16_t object)
 {
 	uint8_t players_counted = 0, action_step = 0;
 
-	players_counted = io_read8(0x1874u);
+	players_counted = io_read8(stage_player_count);
 	if (players_counted >= 3u)
 	{
 		OBJECT(object)->state = 2u;

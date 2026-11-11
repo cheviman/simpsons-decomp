@@ -3,7 +3,7 @@
  *    Description: the IRQ's handler (the K052109's, at VBLANK: the inputs, the coin counters, the jobs) and the FIRQ's (the sprite DMA's)
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -25,15 +25,15 @@ void irq_handler(void)
 	uint16_t sound_slot_place = 0, sound_command = 0, layer_a_x = 0, layer_a_chip_x = 0, layer_a_x_swapped = 0, layer_b_x = 0, layer_b_chip_x = 0, layer_b_x_swapped = 0, kept_layer_a_x = 0, kept_layer_a_y = 0, kept_layer_b_x = 0, kept_layer_b_y = 0, camera_x_low = 0, camera_y_low = 0, cemetery_scroll_low = 0;
 
 	disable_irq();
-	io_write8(0x1D00u, 0xFBu);
+	io_write8(tile_chip_irq_control, 0xFBu);
 	enable_irq();
 	take_interrupts();
-	io_write8(0x1D00u, 0xFFu);
+	io_write8(tile_chip_irq_control, 0xFFu);
 	saved_board_control = board_control;
 	coins_inserted = 0u;
 	coin_inputs_before = coin_inputs_last;
 	coin_inputs_last = coin_inputs;
-	coin_port = io_read8(0x1F80u);
+	coin_port = io_read8(coin_switch_port);
 	coin_inputs = ~coin_port;
 	mode_before_firq = game_mode;
 	firq_point();
@@ -47,7 +47,7 @@ void irq_handler(void)
 				slot_1_counter_pulses--;
 				output = board_output | 1u;
 				board_output = output;
-				io_write8(0x1FC0u, output);
+				io_write8(board_output_register, output);
 				slot_1_counter_time = 8u;
 			}
 		}
@@ -58,7 +58,7 @@ void irq_handler(void)
 			{
 				output = board_output & ~1u;
 				board_output = output;
-				io_write8(0x1FC0u, output);
+				io_write8(board_output_register, output);
 			}
 		}
 		if (four_coin_slots == 0u)
@@ -70,7 +70,7 @@ void irq_handler(void)
 					slot_2_counter_pulses--;
 					output = board_output | 2u;
 					board_output = output;
-					io_write8(0x1FC0u, output);
+					io_write8(board_output_register, output);
 					slot_2_counter_time = 8u;
 				}
 			}
@@ -81,7 +81,7 @@ void irq_handler(void)
 				{
 					output = board_output & ~2u;
 					board_output = output;
-					io_write8(0x1FC0u, output);
+					io_write8(board_output_register, output);
 				}
 			}
 		}
@@ -120,7 +120,7 @@ void irq_handler(void)
 				b = (uint8_t)coin_bit;
 			}
 		}
-		test_inputs = io_read8(0x1F81u);
+		test_inputs = io_read8(test_eeprom_port);
 		if ((test_inputs & 1u) == 0u)
 		{
 			palette_request_kind = 3u;
@@ -141,8 +141,8 @@ void irq_handler(void)
 		queue_place = sound_slot_place + 2u;
 		sound_command = mem_read16(sound_slot_place);
 		b = (uint8_t)sound_command;
-		io_write16(0x1FC6u, ((uint32_t)(sound_command >> 8) << 8) | b);
-		sound_irq_read = io_read8(0x1FC4u);
+		io_write16(sound_command_port, ((uint32_t)(sound_command >> 8) << 8) | b);
+		sound_irq_read = io_read8(sound_irq_port);
 		if (queue_place > sound_queue_ADDRESS + 0x3Bu)
 			queue_place = sound_queue_ADDRESS;
 		sound_queue_read = queue_place;
@@ -151,41 +151,41 @@ void irq_handler(void)
 	{
 		control = saved_board_control;
 		board_control = control;
-		io_write8(0x1FC2u, control);
+		io_write8(board_control_register, control);
 		return;
 	}
 	frame_count++;
 	irq_busy = 1u;
-	watchdog_read = io_read8(0x1FCAu);
+	watchdog_read = io_read8(watchdog_port);
 	d = b;
 	run_palette_jobs(d);
-	port = 0x1F90u;
+	port = player_1_input_port;
 	controls = player_controls_ADDRESS;
 	read_controls(controls, port);
-	port = 0x1F91u;
+	port = player_2_input_port;
 	controls = player_controls_ADDRESS + 0x4u;
 	read_controls(controls, port);
-	port = 0x1F92u;
+	port = player_3_input_port;
 	controls = player_controls_ADDRESS + 0x8u;
 	read_controls(controls, port);
-	controls_port = 0x1F93u;
+	controls_port = player_4_input_port;
 	controls = player_controls_ADDRESS + 0xCu;
 	read_controls(controls, controls_port);
 	layer_a_x = layer_a_scroll_x;
 	layer_a_chip_x = layer_a_x - 0x5Au;
 	scroll_x_high = (layer_a_chip_x >> 8) & 1u;
 	layer_a_x_swapped = scroll_x_high | 0x1000u;
-	io_write16(0x1A00u, ((uint32_t)(uint8_t)layer_a_chip_x << 8) | (uint8_t)layer_a_x_swapped);
-	io_write8(0x180Cu, (uint8_t)layer_a_scroll_y - 0x10u);
+	io_write16(tile_chip_layer_a_x, ((uint32_t)(uint8_t)layer_a_chip_x << 8) | (uint8_t)layer_a_x_swapped);
+	io_write8(tile_chip_layer_a_y, (uint8_t)layer_a_scroll_y - 0x10u);
 	control = board_control & ~3u;
 	board_control = control;
-	io_write8(0x1FC2u, control);
+	io_write8(board_control_register, control);
 	layer_b_x = layer_b_scroll_x;
 	layer_b_chip_x = layer_b_x - 0x5Au;
 	scroll_x_high = (layer_b_chip_x >> 8) & 1u;
 	layer_b_x_swapped = scroll_x_high | 0x1000u;
-	io_write16(0x3A00u, ((uint32_t)(uint8_t)layer_b_chip_x << 8) | (uint8_t)layer_b_x_swapped);
-	io_write8(0x380Cu, (uint8_t)layer_b_scroll_y - 0x10u);
+	io_write16(tile_chip_layer_b_x, ((uint32_t)(uint8_t)layer_b_chip_x << 8) | (uint8_t)layer_b_x_swapped);
+	io_write8(tile_chip_layer_b_y, (uint8_t)layer_b_scroll_y - 0x10u);
 	kept_layer_a_x = layer_a_scroll_x;
 	layer_a_last_scroll_x = kept_layer_a_x;
 	kept_layer_a_y = layer_a_scroll_y;
@@ -231,15 +231,15 @@ void irq_handler(void)
 	update_sprites();
 	control = saved_board_control;
 	board_control = control;
-	io_write8(0x1FC2u, control);
+	io_write8(board_control_register, control);
 	enable_firq();
 	take_interrupts();
 	control = board_control | 4u;
 	board_control = control;
-	io_write8(0x1FC2u, control);
+	io_write8(board_control_register, control);
 	sprite_control = sprite_chip_control | 0x10u;
 	sprite_chip_control = sprite_control;
-	io_write8(0x1FA5u, sprite_control);
+	io_write8(sprite_chip_control_register, sprite_control);
 	window_bank = 0x20u;
 	set_lines(window_bank);
 	irq_busy = 0u;
@@ -315,9 +315,9 @@ void firq_handler(void)
 	disable_firq();
 	control = board_control & ~4u;
 	board_control = control;
-	io_write8(0x1FC2u, control);
+	io_write8(board_control_register, control);
 	sprite_control = sprite_chip_control & 0xEFu;
 	sprite_chip_control = sprite_control;
-	io_write8(0x1FA5u, sprite_control);
+	io_write8(sprite_chip_control_register, sprite_control);
 	dma_pending = 0u;
 }

@@ -3,7 +3,7 @@
  *    Description: bank 15's object handlers by type, as the object lists' dispatchers reach them
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -175,7 +175,7 @@ uint16_t police_car_update(uint16_t object, uint8_t state)
 		states = police_car_hit_steps(object);
 		break;
 	}
-	carry = remove_off_screen(object, carry);
+	remove_off_screen(object, carry);
 	return states;
 }
 
@@ -1239,7 +1239,7 @@ uint16_t kind_b2_leaper_update(uint16_t object, uint8_t state)
 		kind_b2_leaper_idle();
 		break;
 	}
-	carry = remove_off_screen(object, carry);
+	remove_off_screen(object, carry);
 	return states;
 }
 
@@ -1273,7 +1273,7 @@ uint16_t krustyland_door_update(uint16_t object, uint8_t state)
 		krustyland_door_closed(object);
 		break;
 	}
-	carry = remove_off_screen(object, carry);
+	remove_off_screen(object, carry);
 	return states;
 }
 
@@ -1399,7 +1399,7 @@ uint16_t kind_ab_update(uint16_t object, uint8_t state)
 		kind_ab_done();
 		break;
 	}
-	carry = remove_off_screen(object, carry);
+	remove_off_screen(object, carry);
 	return states;
 }
 
@@ -1427,7 +1427,7 @@ uint16_t kind_ac_update(uint16_t object, uint8_t state)
 		kind_ac_done();
 		break;
 	}
-	carry = remove_off_screen(object, carry);
+	remove_off_screen(object, carry);
 	return states;
 }
 
@@ -1921,7 +1921,7 @@ uint16_t kind_cb_update(uint16_t object, uint8_t state)
 		kind_cb_done();
 		break;
 	}
-	carry = remove_off_screen(object, carry);
+	remove_off_screen(object, carry);
 	return states;
 }
 
@@ -1966,7 +1966,7 @@ uint16_t floor_blocker_update(uint16_t object, uint8_t state)
 		floor_blocker_wait();
 		break;
 	}
-	carry = remove_off_screen(object, carry);
+	remove_off_screen(object, carry);
 	return states;
 }
 
@@ -2188,6 +2188,6 @@ uint16_t kind_9e_spawner_update(uint16_t object, uint8_t state)
 		kind_9e_spawner_wait();
 		break;
 	}
-	carry = remove_off_screen(object, carry);
+	remove_off_screen(object, carry);
 	return states;
 }

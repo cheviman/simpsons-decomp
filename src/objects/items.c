@@ -3,7 +3,7 @@
  *    Description: the items and the food lying in the stages, and who brings them
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -184,7 +184,6 @@ uint16_t food_set_hit_kind(uint16_t object)
 /* Eaten: pops up with sound 2401. */
 void food_eaten(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t attributes = 0, state = 0;
 
@@ -192,7 +191,7 @@ void food_eaten(uint16_t object)
 	OBJECT(object)->attributes = attributes & 0xBFu;
 	OBJECT(object)->flags = 0x80u;
 	command = 0x2401u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	OBJECT(object)->x_speed = 0;
 	OBJECT(object)->y_speed = -0x80;
 	OBJECT(object)->z_speed = 0x300;
@@ -269,16 +268,16 @@ uint16_t kind_a5_start(uint16_t object)
 	hit_kinds = food_set_hit_kind(object);
 	attributes = OBJECT(object)->attributes;
 	OBJECT(object)->attributes = (attributes & 0xCFu) | 0x10u;
-	old_food_drops = io_read8(0x187Cu);
-	io_write8(0x187Cu, 0u);
-	old_leavers = io_read8(0x187Du);
-	io_write8(0x187Du, 0u);
+	old_food_drops = io_read8(kind_a5_drop_count);
+	io_write8(kind_a5_drop_count, 0u);
+	old_leavers = io_read8(kind_a5_leave_count);
+	io_write8(kind_a5_leave_count, 0u);
 	OBJECT(object)->kind_a5.food_dropped = 0u;
 	parameter = OBJECT(object)->parameter;
 	partner_number = parameter;
 	if ((int8_t)parameter >= 0)
 	{
-		players_counted = io_read8(0x1874u);
+		players_counted = io_read8(stage_player_count);
 		if (players_counted > 2u)
 		{
 			leftover_y = kind_a5_partners[partner_number & 3u];
@@ -308,7 +307,7 @@ void kind_a5_walk_in(uint16_t object)
 		OBJECT(object)->state = 5u;
 		return;
 	}
-	food_drops = io_read8(0x187Cu);
+	food_drops = io_read8(kind_a5_drop_count);
 	if (food_drops != 0u)
 	{
 		state = OBJECT(object)->state;
@@ -331,8 +330,8 @@ uint16_t kind_a5_drop_food(uint16_t object, uint16_t states)
 		OBJECT(object)->state = 5u;
 		return states;
 	}
-	food_drops_before = io_read8(0x187Cu);
-	io_write8(0x187Cu, food_drops_before + 1u);
+	food_drops_before = io_read8(kind_a5_drop_count);
+	io_write8(kind_a5_drop_count, food_drops_before + 1u);
 	parameter = OBJECT(object)->parameter;
 	leftover_y = kind_a5_food_drops[(int8_t)((uint8_t)((uint32_t)parameter << 1)) / 2];
 	vector_spawn_child(object, &ignored16, &food, &ignored16_2, &carry);
@@ -373,9 +372,9 @@ void kind_a5_walk_off(uint16_t object)
 	uint16_t x_speed = 0, x_speed_2 = 0;
 
 	OBJECT(object)->x_speed = 0x180;
-	leavers_before = io_read8(0x187Du);
-	io_write8(0x187Du, leavers_before + 1u);
-	leavers = io_read8(0x187Du);
+	leavers_before = io_read8(kind_a5_leave_count);
+	io_write8(kind_a5_leave_count, leavers_before + 1u);
+	leavers = io_read8(kind_a5_leave_count);
 	if (leavers == 1u)
 	{
 		parameter = OBJECT(object)->parameter;
@@ -660,7 +659,6 @@ uint16_t carried_item_start(uint16_t object)
 /* Pops up with sound 2401, then shrinks and vanishes like eaten food. */
 void carried_item_pop(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t animation = 0, attributes = 0, state = 0;
 
@@ -670,7 +668,7 @@ void carried_item_pop(uint16_t object)
 	OBJECT(object)->attributes = attributes & 0xBFu;
 	OBJECT(object)->flags = 0x80u;
 	command = 0x2401u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	OBJECT(object)->x_speed = 0;
 	OBJECT(object)->y_speed = -0x80;
 	OBJECT(object)->z_speed = 0x100;

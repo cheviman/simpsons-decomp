@@ -3,7 +3,7 @@
  *    Description: an enemy taking a hit, the reaction it starts, letting go of its target
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -149,9 +149,9 @@ void enemy_react_to_hit(uint16_t object)
 	vitality = OBJECT(object)->vitality;
 	if (vitality == 0u)
 	{
-		knock_turn = io_read8(0x187Bu);
-		io_write8(0x187Bu, knock_turn - 1u);
-		next_knock_turn = io_read8(0x187Bu);
+		knock_turn = io_read8(knockdown_turn);
+		io_write8(knockdown_turn, knock_turn - 1u);
+		next_knock_turn = io_read8(knockdown_turn);
 		if ((next_knock_turn & 1u) == 0u)
 		{
 			enemy_react_knocked_down(object);
@@ -163,9 +163,9 @@ void enemy_react_to_hit(uint16_t object)
 	z_speed = OBJECT(object)->z_speed;
 	if (z_speed != 0u)
 	{
-		knock_turn = io_read8(0x187Bu);
-		io_write8(0x187Bu, knock_turn - 1u);
-		next_knock_turn = io_read8(0x187Bu);
+		knock_turn = io_read8(knockdown_turn);
+		io_write8(knockdown_turn, knock_turn - 1u);
+		next_knock_turn = io_read8(knockdown_turn);
 		if ((next_knock_turn & 1u) == 0u)
 		{
 			enemy_react_knocked_down(object);

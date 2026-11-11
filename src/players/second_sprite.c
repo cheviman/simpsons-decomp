@@ -3,7 +3,7 @@
  *    Description: each player's second sprite (balloons, thrown things)
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -26,7 +26,7 @@ uint16_t players_update_second_sprites(void)
 	player_second_sprite_run(object);
 	player = OBJECT_ADDRESS(6);
 	player_second_sprite_run(player);
-	heavy_workers = io_read8(0x184Du);
+	heavy_workers = io_read8(heavy_object_workers);
 	if ((int8_t)heavy_workers >= 2)
 	{
 		second_sprites_left = 4u;
@@ -307,87 +307,87 @@ void player_second_sprite_wait_animation(uint16_t object)
 }
 
 /* Starts the two-picture prompt over the player */
-void player_second_sprite_start_prompt(uint16_t object)
+void player_second_sprite_start_prompt(uint16_t player)
 {
-	player_second_sprite_follow(object);
-	OBJECT(object + 0x60u)->x_speed = 0;
-	OBJECT(object + 0x60u)->y_speed = 0;
-	OBJECT(object + 0x60u)->z_speed = 0;
-	OBJECT(object + 0x60u)->parameter = 4u;
-	OBJECT(object + 0x60u)->unk_3D = 1u;
-	player_second_sprite_prompt(object);
+	player_second_sprite_follow(player);
+	OBJECT(player + 0x60u)->x_speed = 0;
+	OBJECT(player + 0x60u)->y_speed = 0;
+	OBJECT(player + 0x60u)->z_speed = 0;
+	OBJECT(player + 0x60u)->player_second_sprite.player_state = 4u;
+	OBJECT(player + 0x60u)->player_second_sprite.prompt_frames = 1u;
+	player_second_sprite_prompt(player);
 }
 
 /* Alternates the balloon's first two pictures over the player every 30 frames */
-void player_second_sprite_prompt(uint16_t object)
+void player_second_sprite_prompt(uint16_t player)
 {
 	uint8_t prompt_animation = 0, prompt_kind = 0;
 	uint8_t prompt_time = 0, animation_flags = 0, prompt_time_now = 0;
 	uint32_t kind_halfword = 0, kind_halfword_2 = 0;
 
-	OBJECT(object + 0x60u)->attributes = 0u;
-	prompt_time = OBJECT(object + 0x60u)->unk_3D;
-	OBJECT(object + 0x60u)->unk_3D = prompt_time - 1u;
+	OBJECT(player + 0x60u)->attributes = 0u;
+	prompt_time = OBJECT(player + 0x60u)->player_second_sprite.prompt_frames;
+	OBJECT(player + 0x60u)->player_second_sprite.prompt_frames = prompt_time - 1u;
 	if (prompt_time == 1u)
 	{
-		OBJECT(object + 0x60u)->unk_3D = 0x3Cu;
+		OBJECT(player + 0x60u)->player_second_sprite.prompt_frames = 0x3Cu;
 		prompt_animation = 0x80u;
 		prompt_kind = 0xB1u;
 		kind_halfword = ((uint32_t)prompt_kind << 8) | (prompt_animation & 0xFFu);
-		OBJECT(object + 0x60u)->kind = (uint8_t)(kind_halfword >> 8u);
-		OBJECT(object + 0x60u)->animation = (uint8_t)kind_halfword;
-		animation_flags = OBJECT(object)->animation_flags;
-		OBJECT(object)->animation_flags = animation_flags & ~2u;
-		player_update_class(object);
+		OBJECT(player + 0x60u)->kind = (uint8_t)(kind_halfword >> 8u);
+		OBJECT(player + 0x60u)->animation = (uint8_t)kind_halfword;
+		animation_flags = OBJECT(player)->animation_flags;
+		OBJECT(player)->animation_flags = animation_flags & ~2u;
+		player_update_class(player);
 		return;
 	}
-	prompt_time_now = OBJECT(object + 0x60u)->unk_3D;
+	prompt_time_now = OBJECT(player + 0x60u)->player_second_sprite.prompt_frames;
 	if (prompt_time_now != 0x1Eu)
 	{
-		player_update_class(object);
+		player_update_class(player);
 		return;
 	}
 	prompt_animation = 0x81u;
 	prompt_kind = 0xB1u;
 	kind_halfword_2 = ((uint32_t)prompt_kind << 8) | (prompt_animation & 0xFFu);
-	OBJECT(object + 0x60u)->kind = (uint8_t)(kind_halfword_2 >> 8u);
-	OBJECT(object + 0x60u)->animation = (uint8_t)kind_halfword_2;
-	animation_flags = OBJECT(object)->animation_flags;
-	OBJECT(object)->animation_flags = animation_flags & ~2u;
-	player_update_class(object);
+	OBJECT(player + 0x60u)->kind = (uint8_t)(kind_halfword_2 >> 8u);
+	OBJECT(player + 0x60u)->animation = (uint8_t)kind_halfword_2;
+	animation_flags = OBJECT(player)->animation_flags;
+	OBJECT(player)->animation_flags = animation_flags & ~2u;
+	player_update_class(player);
 }
 
 /* Follows the player blinking until its time runs out */
-void player_second_sprite_blink(uint16_t object)
+void player_second_sprite_blink(uint16_t player)
 {
 	uint8_t blink_time = 0;
 	uint8_t blink_time_before = 0, blink_time_now = 0, blink_phase = 0;
 
-	player_second_sprite_follow(object);
-	player_second_sprite_match_speeds(object);
-	blink_time_before = OBJECT(object + 0x60u)->unk_3E;
-	OBJECT(object + 0x60u)->unk_3E = blink_time_before - 1u;
+	player_second_sprite_follow(player);
+	player_second_sprite_match_speeds(player);
+	blink_time_before = OBJECT(player + 0x60u)->player_second_sprite.blink_frames;
+	OBJECT(player + 0x60u)->player_second_sprite.blink_frames = blink_time_before - 1u;
 	if (blink_time_before == 1u)
 	{
-		player_second_sprite_off(object);
+		player_second_sprite_off(player);
 		return;
 	}
-	blink_time_now = OBJECT(object + 0x60u)->unk_3E;
+	blink_time_now = OBJECT(player + 0x60u)->player_second_sprite.blink_frames;
 	blink_phase = blink_time_now & 0x3Fu;
 	blink_time = blink_phase;
 	if (blink_phase == 0u)
 	{
-		OBJECT(object + 0x60u)->flags = 0x80u;
-		player_update_class(object);
+		OBJECT(player + 0x60u)->flags = 0x80u;
+		player_update_class(player);
 		return;
 	}
 	if (blink_time != 0x10u)
 	{
-		player_update_class(object);
+		player_update_class(player);
 		return;
 	}
-	OBJECT(object + 0x60u)->flags = 4u;
-	player_update_class(object);
+	OBJECT(player + 0x60u)->flags = 4u;
+	player_update_class(player);
 }
 
 /* Shows a speech balloon over the player (or over the pair's speaker) */
@@ -399,7 +399,7 @@ void player_second_sprite_start_balloon(uint16_t player)
 	uint16_t partner_2 = 0;
 	uint32_t kind_halfword = 0;
 
-	balloons_off = io_read8(0x185Au);
+	balloons_off = io_read8(player_balloons_off);
 	if (balloons_off != 0u)
 	{
 		player_second_sprite_off(player);

@@ -3,7 +3,7 @@
  *    Description: the EEPROM's test and reset (bank 2F's entries)
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -131,7 +131,7 @@ uint16_t eeprom_write(uint16_t cell)
 	eeprom_deselect();
 	eeprom_wait_ready();
 	x = eeprom_send_lock();
-	io_write8(0x1FC2u, board_control);
+	io_write8(board_control_register, board_control);
 	return x;
 }
 
@@ -149,7 +149,7 @@ uint16_t eeprom_read(uint16_t cell)
 	eeprom_receive_data();
 	eeprom_deselect();
 	data = eeprom_read_data;
-	io_write8(0x1FC2u, board_control);
+	io_write8(board_control_register, board_control);
 	cell = ((uint32_t)stack << 8) | data;
 	return cell;
 }
@@ -167,7 +167,7 @@ void eeprom_send_unlock(void)
 		signal_place = signals;
 		signals = signal_place + 1u;
 		signal = mem_read8(signal_place);
-		io_write8(0x1FC2u, signal);
+		io_write8(board_control_register, signal);
 		eeprom_delay();
 	} while (signal != 0xFFu);
 }
@@ -185,7 +185,7 @@ void eeprom_send_write(void)
 		signal_place = signals;
 		signals = signal_place + 1u;
 		signal = mem_read8(signal_place);
-		io_write8(0x1FC2u, signal);
+		io_write8(board_control_register, signal);
 		eeprom_delay();
 	} while (signal != 0xFFu);
 }
@@ -204,11 +204,11 @@ void eeprom_send_address(void)
 	{
 		if ((address_bits & 0x40u) != 0u)
 			signal |= 0x80u;
-		io_write8(0x1FC2u, signal);
+		io_write8(board_control_register, signal);
 		eeprom_delay();
 		clock_place = signals;
 		signals = clock_place + 1u;
-		io_write8(0x1FC2u, signal | mem_read8(clock_place));
+		io_write8(board_control_register, signal | mem_read8(clock_place));
 		eeprom_delay();
 		address_bits = (uint32_t)address_bits << 1;
 		signal_place = signals;
@@ -231,11 +231,11 @@ void eeprom_send_data(void)
 	{
 		if ((data_bits & 0x80u) != 0u)
 			signal |= 0x80u;
-		io_write8(0x1FC2u, signal);
+		io_write8(board_control_register, signal);
 		eeprom_delay();
 		clock_place = signals;
 		signals = clock_place + 1u;
-		io_write8(0x1FC2u, signal | mem_read8(clock_place));
+		io_write8(board_control_register, signal | mem_read8(clock_place));
 		eeprom_delay();
 		data_bits = (uint32_t)data_bits << 1;
 		signal_place = signals;
@@ -257,7 +257,7 @@ void eeprom_deselect(void)
 		signal_place = signals;
 		signals = signal_place + 1u;
 		signal = mem_read8(signal_place);
-		io_write8(0x1FC2u, signal);
+		io_write8(board_control_register, signal);
 		eeprom_delay();
 	} while (signal != 0xFFu);
 }
@@ -269,8 +269,8 @@ void eeprom_wait_ready(void)
 
 	do
 	{
-		io_write8(0x1FC2u, eeprom_wait_signal[0]);
-		status_port = io_read8(0x1F81u);
+		io_write8(board_control_register, eeprom_wait_signal[0]);
+		status_port = io_read8(test_eeprom_port);
 	} while ((status_port & 0x20u) == 0u);
 }
 
@@ -287,7 +287,7 @@ uint16_t eeprom_send_lock(void)
 		signal_place = signals;
 		signals = signal_place + 1u;
 		signal = mem_read8(signal_place);
-		io_write8(0x1FC2u, signal);
+		io_write8(board_control_register, signal);
 		eeprom_delay();
 	} while (signal != 0xFFu);
 	return signals;
@@ -306,7 +306,7 @@ void eeprom_send_read(void)
 		signal_place = signals;
 		signals = signal_place + 1u;
 		signal = mem_read8(signal_place);
-		io_write8(0x1FC2u, signal);
+		io_write8(board_control_register, signal);
 		eeprom_delay();
 	} while (signal != 0xFFu);
 }
@@ -329,13 +329,13 @@ void eeprom_receive_data(void)
 	{
 		signal_place = signals;
 		signals = signal_place + 1u;
-		io_write8(0x1FC2u, mem_read8(signal_place));
+		io_write8(board_control_register, mem_read8(signal_place));
 		eeprom_delay();
 		clock_place = signals;
 		signals = clock_place + 1u;
-		io_write8(0x1FC2u, mem_read8(clock_place));
+		io_write8(board_control_register, mem_read8(clock_place));
 		eeprom_delay();
-		status_port = io_read8(0x1F81u);
+		status_port = io_read8(test_eeprom_port);
 		data_line = status_port & 0x10u;
 		data_bit = data_line;
 		if (data_line != 0u)
@@ -363,7 +363,7 @@ void unused_eeprom_send_ones(void)
 		signal_place = signals;
 		signals = signal_place + 1u;
 		signal = mem_read8(signal_place);
-		io_write8(0x1FC2u, signal);
+		io_write8(board_control_register, signal);
 		eeprom_delay();
 	} while (signal != 0xFFu);
 }
@@ -373,7 +373,7 @@ void eeprom_delay(void)
 {
 	uint8_t watchdog_read = 0;
 
-	watchdog_read = io_read8(0x1FCAu);
+	watchdog_read = io_read8(watchdog_port);
 }
 
 /* Writes the factory settings from 68 on, then the sum */

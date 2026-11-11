@@ -3,7 +3,7 @@
  *    Description: the figures of stages 4 and 5: kinds 87, 9E, 8E (5280 types 1D, 22, 20), 8C, 8A (4F80 22, 21)
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -363,13 +363,13 @@ void kind_8e_watcher_wait_signal(uint16_t object)
 {
 	uint8_t watch_signal = 0, state = 0;
 
-	watch_signal = io_read8(0x187Fu);
+	watch_signal = io_read8(rising_scenery_cue);
 	if (watch_signal != 0u)
 	{
-		OBJECT(OBJECT_ADDRESS(0))->unk_44 = 0x9Fu;
-		OBJECT(OBJECT_ADDRESS(2))->unk_44 = 0x9Fu;
-		OBJECT(OBJECT_ADDRESS(4))->unk_44 = 0x9Fu;
-		OBJECT(OBJECT_ADDRESS(6))->unk_44 = 0x9Fu;
+		OBJECT(OBJECT_ADDRESS(0))->player.pose_animation = 0x9Fu;
+		OBJECT(OBJECT_ADDRESS(2))->player.pose_animation = 0x9Fu;
+		OBJECT(OBJECT_ADDRESS(4))->player.pose_animation = 0x9Fu;
+		OBJECT(OBJECT_ADDRESS(6))->player.pose_animation = 0x9Fu;
 		OBJECT(object)->flags = 0xC0u;
 		state = OBJECT(object)->state;
 		OBJECT(object)->state = state + 1u;
@@ -488,12 +488,11 @@ void kind_8c_bystander_hurt(uint16_t object)
 /* Stops the hit bystander with the hit sound and its hurt animation. */
 void kind_8c_bystander_reel(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t action = 0;
 
 	command = 0x6300u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	OBJECT(object)->x_speed = 0;
 	OBJECT(object)->y_speed = 0;
 	OBJECT(object)->animation = 0x89u;

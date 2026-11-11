@@ -3,7 +3,7 @@
  *    Description: the door stage 3's boss comes out of
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -79,7 +79,7 @@ uint16_t boss_door_set_up(uint16_t object)
 	uint8_t state = 0;
 	uint16_t door_x = 0, other_half_x = 0, door_y = 0, other_half_y = 0;
 
-	io_write16(0x1852u, object);
+	io_write16(stage_kept_object, object);
 	list = 1u;
 	vector_find_free_slot(list, &other_half, &carry);
 	if (carry)
@@ -157,7 +157,7 @@ uint16_t boss_door_stage_8_set_up(uint16_t object)
 	uint8_t state = 0;
 	uint16_t door_x = 0, other_half_x = 0, door_y = 0, other_half_y = 0;
 
-	io_write16(0x1852u, object);
+	io_write16(stage_kept_object, object);
 	list = 2u;
 	vector_find_free_slot(list, &other_half, &carry);
 	if (carry)

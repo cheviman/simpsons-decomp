@@ -3,7 +3,7 @@
  *    Description: the code the board runs by itself (the reset's, the interrupts' handlers) and the tables the game loads by name
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -117,9 +117,9 @@ const void *fat_goon_strike_waits_by_players_data;
 const void *fat_goon_hold_animations_data;
 const void *fat_goon_jump_in_xs_data;
 const void *fat_goon_from_below_xs_data;
-const void *object_15_times_data;
+const void *enemy_waves_end_enemies_data;
 const void *object_15_spawn_lists_data;
-const void *object_15_next_kinds_data;
+const void *enemy_waves_next_wave_enemies_data;
 const void *cemetery_obstacle_xs_data;
 const void *cemetery_obstacle_food_data;
 const void *kind_10_floor_edge_flags_data;
@@ -188,8 +188,7 @@ const void *kind_b8_shot_waits_data;
 const void *kind_b8_velocities_data;
 const void *kind_b8_shot_animations_data;
 const void *kind_b8_shot_speeds_data;
-const void *unused_spawn_0356DD_data;
-const void *unused_tile_places_data;
+const void *unused_debug_tile_places_data;
 const void *object_1a_next_states_data;
 const void *object_1a_states_after_data;
 const void *object_1a_level_rows_data;
@@ -213,7 +212,7 @@ const void *door_spawns_data;
 const void *kind_12_door_openings_data;
 const void *kind_10_door_openings_data;
 const void *kind_0f_door_openings_data;
-const void *team_move_attack_lengths_data;
+const void *team_move_attack_states_data;
 const void *object_1c_move_steps_data;
 const void *object_1c_moves_data;
 const void *team_move_animation_offsets_data;
@@ -408,9 +407,9 @@ const game_table game_tables[] =
 	{ "fat_goon_hold_animations", 0x02B995u, &fat_goon_hold_animations_data, 1 },
 	{ "fat_goon_jump_in_xs", 0x02B9A5u, &fat_goon_jump_in_xs_data, 2 },
 	{ "fat_goon_from_below_xs", 0x02B9B9u, &fat_goon_from_below_xs_data, 2 },
-	{ "object_15_times", 0x02B9F1u, &object_15_times_data, 1 },
+	{ "enemy_waves_end_enemies", 0x02B9F1u, &enemy_waves_end_enemies_data, 1 },
 	{ "object_15_spawn_lists", 0x02B9FEu, &object_15_spawn_lists_data, 2 },
-	{ "object_15_next_kinds", 0x02BA18u, &object_15_next_kinds_data, 1 },
+	{ "enemy_waves_next_wave_enemies", 0x02BA18u, &enemy_waves_next_wave_enemies_data, 1 },
 	{ "cemetery_obstacle_xs", 0x02DB58u, &cemetery_obstacle_xs_data, 2 },
 	{ "cemetery_obstacle_food", 0x02DB68u, &cemetery_obstacle_food_data, 1 },
 	{ "kind_10_floor_edge_flags", 0x02DBF2u, &kind_10_floor_edge_flags_data, 1 },
@@ -479,8 +478,7 @@ const game_table game_tables[] =
 	{ "kind_b8_velocities", 0x033F55u, &kind_b8_velocities_data, 4 },
 	{ "kind_b8_shot_animations", 0x033FE3u, &kind_b8_shot_animations_data, 1 },
 	{ "kind_b8_shot_speeds", 0x033FE9u, &kind_b8_shot_speeds_data, 2 },
-	{ "unused_spawn_0356DD", 0x0356DDu, &unused_spawn_0356DD_data, 8 },
-	{ "unused_tile_places", 0x0356E5u, &unused_tile_places_data, 1 },
+	{ "unused_debug_tile_places", 0x0356E0u, &unused_debug_tile_places_data, 2 },
 	{ "object_1a_next_states", 0x0357BCu, &object_1a_next_states_data, 1 },
 	{ "object_1a_states_after", 0x0357C1u, &object_1a_states_after_data, 1 },
 	{ "object_1a_level_rows", 0x0357C6u, &object_1a_level_rows_data, 2 },
@@ -504,7 +502,7 @@ const game_table game_tables[] =
 	{ "kind_12_door_openings", 0x036488u, &kind_12_door_openings_data, 4 },
 	{ "kind_10_door_openings", 0x0364FEu, &kind_10_door_openings_data, 4 },
 	{ "kind_0f_door_openings", 0x03654Du, &kind_0f_door_openings_data, 4 },
-	{ "team_move_attack_lengths", 0x039DD5u, &team_move_attack_lengths_data, 1 },
+	{ "team_move_attack_states", 0x039DD5u, &team_move_attack_states_data, 1 },
 	{ "object_1c_move_steps", 0x039DEBu, &object_1c_move_steps_data, 1 },
 	{ "object_1c_moves", 0x039DF7u, &object_1c_moves_data, 4 },
 	{ "team_move_animation_offsets", 0x039E3Du, &team_move_animation_offsets_data, 1 },
@@ -616,4 +614,4 @@ const game_table game_tables[] =
 	{ "reset_vector", 0x07FFFEu, &reset_vector_data, 2 },
 };
 
-const size_t game_table_count = 286;
+const size_t game_table_count = 285;

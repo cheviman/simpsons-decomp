@@ -3,7 +3,7 @@
  *    Description: the HURRY UP that comes for idle players
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -115,7 +115,6 @@ uint16_t hurry_up(uint16_t object, uint16_t child_handlers)
 /* Comes in with its sound, keeping pace with the camera */
 void hurry_up_enter(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t animation_flags = 0, step = 0, animation = 0;
 	uint16_t camera_speed = 0, against_camera = 0, time = 0;
@@ -130,7 +129,7 @@ void hurry_up_enter(uint16_t object)
 	if (animation_flags == 2u)
 	{
 		command = 0x1F00u;
-		carry = vector_queue_sound(command);
+		vector_queue_sound(command);
 	}
 	time = OBJECT(object)->hurry_up.time;
 	OBJECT(object)->hurry_up.time = time - 1u;

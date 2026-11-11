@@ -3,7 +3,7 @@
  *    Description: the kind 95 character of stage 2
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -14,11 +14,10 @@
 /* Beaten: cries out (sound 6300) and runs off to the left. */
 void kind_95_beaten(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 
 	command = 0x6300u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	OBJECT(object)->x_speed = -0x200;
 	OBJECT(object)->animation = 0x81u;
 	OBJECT(object)->state = 0xFDu;

@@ -3,7 +3,7 @@
  *    Description: bank 1D: stage 8's first boss (4F80 type F6, kind 9C): its states and phases, the bombs it throws, its speech balloon
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -551,7 +551,6 @@ void stage_8_boss_take_hit(uint16_t boss, uint16_t limits, uint16_t *p_object, u
 	uint16_t object = (uint16_t)*p_object;
 	uint32_t zero = *p_zero;
 	uint32_t negative = *p_negative;
-	uint32_t carry = 0;
 	uint8_t behaviour = 0, health = 0, players = 0;
 	uint16_t command = 0;
 	uint8_t hit = 0, vitality = 0, vitality_2 = 0;
@@ -596,14 +595,14 @@ void stage_8_boss_take_hit(uint16_t boss, uint16_t limits, uint16_t *p_object, u
 				OBJECT(boss)->vitality = 0u;
 				object = stage_8_boss_credit_hitter(boss);
 				command = 0x6600u;
-				carry = vector_queue_sound(command);
+				vector_queue_sound(command);
 				negative = 1u;
 				zero = 0xFFu == 0u;
 			}
 			else
 			{
 				command = 0x6600u;
-				carry = vector_queue_sound(command);
+				vector_queue_sound(command);
 				negative = 0u;
 				zero = 1u == 0u;
 			}
@@ -792,7 +791,7 @@ void stage_8_boss_start(uint16_t boss)
 	OBJECT(boss)->stage_8_boss.phase = 1u;
 	OBJECT(boss)->stage_8_boss.run_speed = 2u;
 	random_word = AT16(random_number, -1);
-	io_write16(0x1852u, random_word);
+	io_write16(stage_kept_object, random_word);
 	OBJECT(boss)->stage_8_boss.phases_left = 2u;
 	OBJECT(boss)->x = 0x1A0u;
 }
@@ -817,12 +816,11 @@ void stage_8_boss_wait_to_enter(uint16_t boss)
    at the end of its time goes to the next state. */
 void stage_8_boss_timed_state(uint16_t boss)
 {
-	uint32_t carry = 0;
 	uint8_t state_timer = 0;
 
 	camera_x_held = 1u;
 	camera_y_held = 1u;
-	carry = stage_8_boss_move(boss);
+	stage_8_boss_move(boss);
 	state_timer = OBJECT(boss)->stage_8_boss.state_timer;
 	OBJECT(boss)->stage_8_boss.state_timer = state_timer - 1u;
 	if (state_timer == 1u)
@@ -835,7 +833,6 @@ void stage_8_boss_timed_state(uint16_t boss)
 /* Starts its next state (sound 47 after state 17). */
 void stage_8_boss_next_state(uint16_t boss)
 {
-	uint32_t carry = 0;
 	uint8_t new_phase = 0;
 	uint16_t command = 0;
 	uint8_t phase = 0, phase_2 = 0;
@@ -844,7 +841,7 @@ void stage_8_boss_next_state(uint16_t boss)
 	if (phase == 0x17u)
 	{
 		command = 0x4700u;
-		carry = vector_queue_sound(command);
+		vector_queue_sound(command);
 	}
 	phase_2 = OBJECT(boss)->stage_8_boss.phase;
 	new_phase = (uint8_t)(phase_2 + 1u);
@@ -883,7 +880,7 @@ void stage_8_boss_speak(uint16_t boss)
 		balloon_record = stage_8_boss_speak_child_ADDRESS;
 		spawn_list_2_child(boss, balloon_record, &ignored16, &carry);
 		command = 0x3F34u;
-		carry = vector_queue_sound(command);
+		vector_queue_sound(command);
 		stage_8_boss_next_state(boss);
 		return;
 	}
@@ -896,7 +893,7 @@ void stage_8_boss_speak(uint16_t boss)
 	balloon_record = stage_8_boss_speak_child_ADDRESS;
 	spawn_list_2_child(boss, balloon_record, &ignored16, &carry);
 	command = 0x3F34u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	stage_8_boss_next_state(boss);
 }
 
@@ -1009,7 +1006,7 @@ void stage_8_boss_phase_1(uint16_t boss, uint16_t target_player)
 			if (state_timer == 1u)
 			{
 				command = 0x7900u;
-				carry = vector_queue_sound(command);
+				vector_queue_sound(command);
 				new_phase = 0x13u;
 				stage_8_boss_stop_and_start_state(boss, new_phase);
 				phase_1_hits = OBJECT(boss)->stage_8_boss.phase_1_hits;
@@ -1033,7 +1030,7 @@ void stage_8_boss_phase_1(uint16_t boss, uint16_t target_player)
 				return;
 			}
 			command = 0x7900u;
-			carry = vector_queue_sound(command);
+			vector_queue_sound(command);
 			new_phase = 0x13u;
 			stage_8_boss_stop_and_start_state(boss, new_phase);
 			phase_1_hits = OBJECT(boss)->stage_8_boss.phase_1_hits;
@@ -1410,7 +1407,6 @@ void stage_8_boss_resume(uint16_t boss, uint16_t enemy_handlers)
 /* A close player: winds up, then turns to the nearest player and attacks (state 11), safe meanwhile. */
 void stage_8_boss_attack_wind_up(uint16_t boss, uint16_t enemy_handlers)
 {
-	uint32_t zero = 0;
 	uint8_t new_phase = 0;
 	uint16_t box = 0, target_player = 0;
 	uint8_t state_timer = 0;
@@ -1426,7 +1422,7 @@ void stage_8_boss_attack_wind_up(uint16_t boss, uint16_t enemy_handlers)
 	box = stage_8_boss_wind_up_box_ADDRESS;
 	stage_8_boss_set_box(boss, box);
 	target_player = stage_8_boss_face_nearest_player(boss);
-	zero = stage_8_boss_make_invulnerable(boss);
+	stage_8_boss_make_invulnerable(boss);
 	new_phase = 0x11u;
 	stage_8_boss_stop_and_start_state(boss, new_phase);
 	stage_8_boss_move_and_take_hits(boss, target_player);
@@ -1435,7 +1431,7 @@ void stage_8_boss_attack_wind_up(uint16_t boss, uint16_t enemy_handlers)
 /* Its close attack, hitting with 040A at its frames, then its second part (state 12). */
 void stage_8_boss_attack(uint16_t boss, uint16_t enemy_handlers)
 {
-	uint32_t zero = 0, carry = 0;
+	uint32_t carry = 0;
 	uint8_t new_phase = 0;
 	uint16_t damage = 0;
 
@@ -1446,7 +1442,7 @@ void stage_8_boss_attack(uint16_t boss, uint16_t enemy_handlers)
 		stage_8_boss_move_and_take_hits(boss, enemy_handlers);
 		return;
 	}
-	zero = stage_8_boss_make_invulnerable(boss);
+	stage_8_boss_make_invulnerable(boss);
 	new_phase = 0x12u;
 	stage_8_boss_stop_and_start_state(boss, new_phase);
 	stage_8_boss_move_and_take_hits(boss, enemy_handlers);
@@ -1533,9 +1529,7 @@ void unused_stage_8_boss_start_state_1d(uint16_t boss, uint16_t u)
 /* Moves it, then takes the players' blows. */
 void stage_8_boss_move_and_take_hits(uint16_t boss, uint16_t u)
 {
-	uint32_t carry = 0;
-
-	carry = stage_8_boss_move(boss);
+	stage_8_boss_move(boss);
 	stage_8_boss_take_hits(boss, u);
 }
 
@@ -1543,7 +1537,7 @@ void stage_8_boss_move_and_take_hits(uint16_t boss, uint16_t u)
    blow or in the air); beaten, it cries out and starts its defeat (state 17). */
 void stage_8_boss_take_hits(uint16_t boss, uint16_t u)
 {
-	uint32_t zero = 0, negative = 0, carry = 0;
+	uint32_t zero = 0, negative = 0;
 	uint8_t new_phase = 0;
 	uint16_t command = 0, limits = 0, object = 0, palette_effect_number = 0;
 	uint16_t stack = 0;
@@ -1558,7 +1552,7 @@ void stage_8_boss_take_hits(uint16_t boss, uint16_t u)
 	if (negative)
 	{
 		command = 0x7900u;
-		carry = vector_queue_sound(command);
+		vector_queue_sound(command);
 		new_phase = 0x17u;
 		stage_8_boss_stop_and_start_state(boss, new_phase);
 		return;
@@ -1611,11 +1605,11 @@ void stage_8_boss_take_hits(uint16_t boss, uint16_t u)
    can not be hurt for a while. */
 void stage_8_boss_reel(uint16_t boss, uint16_t enemy_handlers)
 {
-	uint32_t zero = 0, carry = 0;
+	uint32_t zero = 0;
 	uint8_t players = 0;
 	uint8_t animation_flags = 0, phases_left = 0, count = 0, count_2 = 0;
 
-	carry = stage_8_boss_move(boss);
+	stage_8_boss_move(boss);
 	animation_flags = OBJECT(boss)->animation_flags;
 	if ((animation_flags & 1u) == 0u)
 		return;
@@ -1649,11 +1643,10 @@ void stage_8_boss_reel(uint16_t boss, uint16_t enemy_handlers)
 /* Knocked down: when the animation ends, gets up (state 1E). */
 void stage_8_boss_fall_down(uint16_t boss)
 {
-	uint32_t carry = 0;
 	uint8_t new_phase = 0;
 	uint8_t animation_flags = 0;
 
-	carry = stage_8_boss_move(boss);
+	stage_8_boss_move(boss);
 	animation_flags = OBJECT(boss)->animation_flags;
 	if ((animation_flags & 1u) == 0u)
 		return;
@@ -1665,7 +1658,6 @@ void stage_8_boss_fall_down(uint16_t boss)
    with strength 05; then the next state. */
 void stage_8_boss_defeat_blast(uint16_t boss)
 {
-	uint32_t carry = 0;
 	uint8_t animation_bits = 0;
 	uint16_t command = 0;
 	uint8_t animation_flags = 0;
@@ -1685,7 +1677,7 @@ void stage_8_boss_defeat_blast(uint16_t boss)
 	if ((animation_bits & 2u) == 0u)
 		return;
 	command = 0x6F00u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	OBJECT(boss)->damage = 0u;
 	OBJECT(boss)->attack = 5u;
 	OBJECT(boss)->flags = 0xC0u;
@@ -1694,19 +1686,18 @@ void stage_8_boss_defeat_blast(uint16_t boss)
 /* Lies beaten until its timer runs out, then sends sound FD and goes on. */
 void stage_8_boss_defeat_wait(uint16_t boss)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t state_timer = 0;
 
 	camera_x_held = 1u;
 	camera_y_held = 1u;
-	carry = stage_8_boss_move(boss);
+	stage_8_boss_move(boss);
 	state_timer = OBJECT(boss)->stage_8_boss.state_timer;
 	OBJECT(boss)->stage_8_boss.state_timer = state_timer - 1u;
 	if (state_timer != 1u)
 		return;
 	command = 0xFD00u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	stage_8_boss_next_state(boss);
 }
 
@@ -1734,7 +1725,6 @@ void stage_8_boss_vanish(uint16_t boss, uint8_t countdown_value)
    number, high enough for the distance; a bomb dropped while the boss walks just bounces about. */
 uint16_t stage_8_boss_bomb_throw(uint16_t bomb)
 {
-	uint32_t carry = 0;
 	uint8_t angle = 0, reach_high = 0, reach_low = 0, throw_speed_high = 0, throw_speed_low = 0;
 	uint16_t command = 0, direction = 0, heading = 0, ignored16 = 0, object = 0, seed = 0, target_player = 0;
 	uint8_t spread_random = 0, state = 0, speed_random = 0, target_dy = 0, phase = 0;
@@ -1745,7 +1735,7 @@ uint16_t stage_8_boss_bomb_throw(uint16_t bomb)
 	OBJECT(bomb)->animation = 0x89u;
 	stage_8_boss_set_in_air(bomb);
 	OBJECT(bomb)->shadow_player = 2u;
-	spread_random = io_read8(0x1852u);
+	spread_random = io_read8(stage_kept_object);
 	bomb_spread = (spread_random & 7u) - 3u;
 	stage_8_boss_pick_player(&target_player, &ignored16);
 	state = OBJECT(target_player)->state;
@@ -1756,7 +1746,7 @@ uint16_t stage_8_boss_bomb_throw(uint16_t bomb)
 	}
 	else
 		angle = random_number;
-	speed_random = io_read8(0x1852u);
+	speed_random = io_read8(stage_kept_object);
 	heading = ((uint32_t)(uint8_t)(angle + bomb_spread) << 8) | (uint8_t)((((speed_random & 0x78u) >> 1) >> 1) + 0x1Au);
 	vector_set_speed_by_direction(bomb, heading);
 	x_speed = OBJECT(bomb)->x_speed;
@@ -1799,21 +1789,21 @@ uint16_t stage_8_boss_bomb_throw(uint16_t bomb)
 		if (z > 0x40u)
 		{
 			command = 0x301u;
-			carry = vector_queue_sound(command);
+			vector_queue_sound(command);
 		}
 		phase = OBJECT(bomb)->stage_8_boss_bomb.phase;
 		OBJECT(bomb)->stage_8_boss_bomb.phase = phase + 1u;
-		leftover_y = 0x1852u;
-		seed = 0x1852u;
+		leftover_y = stage_kept_object;
+		seed = stage_kept_object;
 		stage_8_boss_next_random(seed);
 		return target_player;
 	}
 	command = 0x301u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	phase = OBJECT(bomb)->stage_8_boss_bomb.phase;
 	OBJECT(bomb)->stage_8_boss_bomb.phase = phase + 1u;
-	leftover_y = 0x1852u;
-	seed = 0x1852u;
+	leftover_y = stage_kept_object;
+	seed = stage_kept_object;
 	stage_8_boss_next_random(seed);
 	return target_player;
 }
@@ -1894,9 +1884,9 @@ uint16_t stage_8_boss_bomb_fly(uint16_t bomb)
 		stage_8_boss_bomb_explode(bomb);
 		return u;
 	}
-	object = 0x1852u;
+	object = stage_kept_object;
 	stage_8_boss_next_random(object);
-	shared_random = io_read8(0x1852u);
+	shared_random = io_read8(stage_kept_object);
 	if ((int8_t)shared_random >= 0)
 	{
 		stage_8_boss_bomb_explode(bomb);
@@ -1921,7 +1911,6 @@ uint16_t stage_8_boss_bomb_fly(uint16_t bomb)
    box. */
 void stage_8_boss_bomb_explode(uint16_t bomb)
 {
-	uint32_t carry = 0;
 	uint16_t animation_number = 0, box = 0, command = 0, state_wait = 0;
 
 	OBJECT(bomb)->x_speed = 0;
@@ -1930,7 +1919,7 @@ void stage_8_boss_bomb_explode(uint16_t bomb)
 	OBJECT(bomb)->z = 0u;
 	OBJECT(bomb)->flags = 0xC0u;
 	command = 0x6F00u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	stage_8_boss_set_on_floor(bomb);
 	state_wait = 0x200u;
 	animation_number = 0x8A00u;

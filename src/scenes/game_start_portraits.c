@@ -3,7 +3,7 @@
  *    Description: the game start's four portraits
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -93,7 +93,7 @@ void game_start_join_players(void)
 	if (separate_coin_slots != 0u)
 	{
 		slot_credit = slot_credits_ADDRESS;
-		join_player_bit = 4u;
+		join_bit_or_slots = 4u;
 		join_slot_bit = 1u;
 		do
 		{
@@ -101,8 +101,8 @@ void game_start_join_players(void)
 				players_joined |= join_slot_bit;
 			slot_credit += 8u;
 			join_slot_bit = (uint32_t)join_slot_bit << 1;
-			slots_left = join_player_bit;
-			join_player_bit = slots_left - 1u;
+			slots_left = join_bit_or_slots;
+			join_bit_or_slots = slots_left - 1u;
 		} while (slots_left != 1u);
 		return;
 	}
@@ -110,13 +110,13 @@ void game_start_join_players(void)
 		return;
 	controls = player_controls_ADDRESS + 0x2u;
 	count = 4u;
-	join_player_bit = 1u;
+	join_bit_or_slots = 1u;
 	do
 	{
 		if ((mem_read8(controls) & 0xB0u) != 0u)
-			players_joined |= join_player_bit;
+			players_joined |= join_bit_or_slots;
 		controls += 4u;
-		join_player_bit = (uint32_t)join_player_bit << 1;
+		join_bit_or_slots = (uint32_t)join_bit_or_slots << 1;
 		players_left = count;
 		count = players_left - 1u;
 	} while (players_left != 1u);
@@ -130,8 +130,8 @@ void game_start_draw_portraits(uint16_t palette_job)
 	uint8_t columns_left = 0, rows_left = 0;
 	uint16_t area_record = 0;
 
-	io_write8(0x1FB9u, 0x3Fu);
-	io_write8(0x1FBAu, 0x36u);
+	io_write8(colour_bases_back_sprites_fixed, 0x3Fu);
+	io_write8(colour_bases_layers_a_b, 0x36u);
 	palette_request_kind = 1u;
 	request = 0x408u;
 	palette_job = vector_palette_request(palette_job, request);
@@ -176,8 +176,8 @@ void game_start_draw_portraits(uint16_t palette_job)
 		} while (rows_left != 1u);
 		portrait_number++;
 	} while (portrait_number != 4u);
-	io_write8(0x1FB9u, 0x13u);
-	io_write8(0x1FBAu, 0x2Cu);
+	io_write8(colour_bases_back_sprites_fixed, 0x13u);
+	io_write8(colour_bases_layers_a_b, 0x2Cu);
 	step_subphase++;
 }
 

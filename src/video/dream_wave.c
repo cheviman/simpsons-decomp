@@ -3,7 +3,7 @@
  *    Description: the dream's wave over layer A's line scroll (stage 6's start and end)
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -18,7 +18,7 @@ void dream_wave_straighten(uint16_t *p_line_scroll, uint16_t *p_count)
 
 	straight = 0x9601u;
 	count = 0x100u;
-	line_scroll = 0x1A00u;
+	line_scroll = tile_chip_layer_a_x;
 	while (count != 0u)
 	{
 		mem_write16(line_scroll, straight);
@@ -36,15 +36,15 @@ void dream_wave_start(uint16_t *p_line_scroll, uint16_t *p_count)
 	uint8_t previous_wave_size = 0, previous_wave_phase = 0, wave_step = 0;
 
 	dream_wave_straighten(&line_scroll, &count);
-	io_write16(0x18F1u, 0u);
-	io_write16(0x18EFu, 0u);
-	previous_wave_size = io_read8(0x18EDu);
-	io_write8(0x18EDu, 0u);
-	previous_wave_phase = io_read8(0x18EBu);
-	io_write8(0x18EBu, 0u);
-	io_write8(0x1C80u, 3u);
-	wave_step = io_read8(0x18ECu);
-	io_write8(0x18ECu, wave_step + 1u);
+	io_write16(bonus_title_step, 0u);
+	io_write16(bonus_title_frames, 0u);
+	previous_wave_size = io_read8(dream_wave_size);
+	io_write8(dream_wave_size, 0u);
+	previous_wave_phase = io_read8(scene_layer_b_speed);
+	io_write8(scene_layer_b_speed, 0u);
+	io_write8(tile_chip_scroll_control, 3u);
+	wave_step = io_read8(dream_wave_step);
+	io_write8(dream_wave_step, wave_step + 1u);
 	*p_line_scroll = line_scroll;
 	*p_count = count;
 }
@@ -56,16 +56,16 @@ uint16_t dream_wave_grow(void)
 	uint16_t x = 0;
 	uint8_t wave_size = 0, wave_size_before = 0, grown_size = 0, wave_step = 0;
 
-	wave_size = io_read8(0x18EDu);
+	wave_size = io_read8(dream_wave_size);
 	size = wave_size;
 	x = dream_wave_draw_lines(size);
-	wave_size_before = io_read8(0x18EDu);
-	io_write8(0x18EDu, wave_size_before + 8u);
-	grown_size = io_read8(0x18EDu);
+	wave_size_before = io_read8(dream_wave_size);
+	io_write8(dream_wave_size, wave_size_before + 8u);
+	grown_size = io_read8(dream_wave_size);
 	if (grown_size >= 0xC0u)
 	{
-		wave_step = io_read8(0x18ECu);
-		io_write8(0x18ECu, wave_step + 1u);
+		wave_step = io_read8(dream_wave_step);
+		io_write8(dream_wave_step, wave_step + 1u);
 	}
 	return x;
 }
@@ -77,7 +77,7 @@ uint16_t dream_wave_keep(void)
 	uint16_t x = 0;
 	uint8_t wave_size = 0;
 
-	wave_size = io_read8(0x18EDu);
+	wave_size = io_read8(dream_wave_size);
 	size = wave_size;
 	x = dream_wave_draw_lines(size);
 	return x;
@@ -90,7 +90,7 @@ uint16_t dream_wave_fade_out(void)
 	uint8_t wave_step = 0;
 
 	fade_out_step_table = dream_wave_fade_out_steps_ADDRESS;
-	wave_step = io_read8(0x18ECu);
+	wave_step = io_read8(dream_wave_step);
 	switch ((int8_t)(uint8_t)((uint32_t)wave_step << 1))
 	{
 	case 0:
@@ -123,13 +123,13 @@ void dream_wave_start_full(void)
 {
 	uint8_t previous_wave_phase = 0, wave_step = 0;
 
-	previous_wave_phase = io_read8(0x18EBu);
-	io_write8(0x18EBu, 0u);
-	io_write8(0x18EDu, 0xC0u);
-	io_write8(0x1C80u, 3u);
-	io_write8(0x18F3u, 0x40u);
-	wave_step = io_read8(0x18ECu);
-	io_write8(0x18ECu, wave_step + 1u);
+	previous_wave_phase = io_read8(scene_layer_b_speed);
+	io_write8(scene_layer_b_speed, 0u);
+	io_write8(dream_wave_size, 0xC0u);
+	io_write8(tile_chip_scroll_control, 3u);
+	io_write8(dream_wave_hold_frames, 0x40u);
+	wave_step = io_read8(dream_wave_step);
+	io_write8(dream_wave_step, wave_step + 1u);
 }
 
 /* The dream's wave: draws it at full size for 64 frames. */
@@ -139,15 +139,15 @@ uint16_t dream_wave_hold(void)
 	uint16_t x = 0;
 	uint8_t wave_size = 0, hold_frames_left = 0, wave_step = 0;
 
-	wave_size = io_read8(0x18EDu);
+	wave_size = io_read8(dream_wave_size);
 	size = wave_size;
 	x = dream_wave_draw_lines(size);
-	hold_frames_left = io_read8(0x18F3u);
-	io_write8(0x18F3u, hold_frames_left - 1u);
+	hold_frames_left = io_read8(dream_wave_hold_frames);
+	io_write8(dream_wave_hold_frames, hold_frames_left - 1u);
 	if (hold_frames_left == 1u)
 	{
-		wave_step = io_read8(0x18ECu);
-		io_write8(0x18ECu, wave_step + 1u);
+		wave_step = io_read8(dream_wave_step);
+		io_write8(dream_wave_step, wave_step + 1u);
 	}
 	return x;
 }
@@ -159,21 +159,21 @@ uint16_t dream_wave_shrink(void)
 	uint16_t x = 0;
 	uint8_t wave_size = 0, wave_size_before = 0, previous_line_scroll_mode = 0, wave_step = 0;
 
-	wave_size = io_read8(0x18EDu);
+	wave_size = io_read8(dream_wave_size);
 	size = wave_size;
 	x = dream_wave_draw_lines(size);
-	wave_size_before = io_read8(0x18EDu);
+	wave_size_before = io_read8(dream_wave_size);
 	size_2 = wave_size_before - 2u;
-	io_write8(0x18EDu, size_2);
+	io_write8(dream_wave_size, size_2);
 	if (size_2 != 0u)
 	{
 		dream_wave_done();
 		return x;
 	}
-	previous_line_scroll_mode = io_read8(0x1C80u);
-	io_write8(0x1C80u, 0u);
-	wave_step = io_read8(0x18ECu);
-	io_write8(0x18ECu, wave_step + 1u);
+	previous_line_scroll_mode = io_read8(tile_chip_scroll_control);
+	io_write8(tile_chip_scroll_control, 0u);
+	wave_step = io_read8(dream_wave_step);
+	io_write8(dream_wave_step, wave_step + 1u);
 	dream_wave_done();
 	return x;
 }
@@ -192,15 +192,15 @@ uint16_t dream_wave_draw_lines(uint8_t size)
 	uint8_t previous_line_count = 0, wave_line = 0, wave_phase = 0, line_wave_size = 0, lines_left_before = 0, wave_phase_before = 0;
 	uint16_t line_x_scroll = 0, swapped_scroll = 0, written_place = 0;
 
-	io_write8(0x18EEu, size);
-	previous_line_count = io_read8(0x18EAu);
-	io_write8(0x18EAu, 0u);
-	line_scroll = 0x1A00u;
+	io_write8(bonus_1_intro_player, size);
+	previous_line_count = io_read8(dream_wave_line);
+	io_write8(dream_wave_line, 0u);
+	line_scroll = tile_chip_layer_a_x;
 	do
 	{
-		wave_line = io_read8(0x18EAu);
-		wave_phase = io_read8(0x18EBu);
-		line_wave_size = io_read8(0x18EEu);
+		wave_line = io_read8(dream_wave_line);
+		wave_phase = io_read8(scene_layer_b_speed);
+		line_wave_size = io_read8(bonus_1_intro_player);
 		line_wave_offset = ((uint32_t)(uint8_t)((uint32_t)(wave_line + wave_phase) << 1) << 8) | line_wave_size;
 		line_wave_offset = wave_sine(line_wave_offset);
 		line_offset_high = (uint8_t)(line_wave_offset >> 8);
@@ -211,11 +211,11 @@ uint16_t dream_wave_draw_lines(uint8_t size)
 		written_place = line_scroll;
 		line_scroll = written_place + 2u;
 		mem_write16(written_place, ((uint32_t)(uint8_t)line_x_scroll << 8) | (uint8_t)swapped_scroll);
-		lines_left_before = io_read8(0x18EAu);
-		io_write8(0x18EAu, lines_left_before - 1u);
+		lines_left_before = io_read8(dream_wave_line);
+		io_write8(dream_wave_line, lines_left_before - 1u);
 	} while (lines_left_before != 1u);
-	wave_phase_before = io_read8(0x18EBu);
-	io_write8(0x18EBu, wave_phase_before - 2u);
+	wave_phase_before = io_read8(scene_layer_b_speed);
+	io_write8(scene_layer_b_speed, wave_phase_before - 2u);
 	return line_scroll;
 }
 

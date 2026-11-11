@@ -3,7 +3,7 @@
  *    Description: the stage events: holding the scroll, the waves of enemies
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -47,7 +47,7 @@ void cleared_wave_wait(uint16_t object)
 	uint16_t command = 0, ignored16 = 0, ignored16_2 = 0, ignored16_3 = 0;
 	uint8_t enemies_in_play = 0;
 
-	enemies_in_play = io_read8(0x1876u);
+	enemies_in_play = io_read8(enemies_present);
 	if (enemies_in_play != 0u)
 	{
 		camera_x_held--;
@@ -55,7 +55,7 @@ void cleared_wave_wait(uint16_t object)
 	}
 	stage_part = 2u;
 	command = 0x9300u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	OBJECT(object)->flags = 0u;
 	leftover_y = cleared_wave_child_3_ADDRESS;
 	vector_spawn_child(object, &ignored16, &ignored16_2, &ignored16_3, &carry);
@@ -78,7 +78,7 @@ void scroll_lock(uint16_t object)
 {
 	uint8_t enemies_in_play = 0, enemies_left = 0;
 
-	enemies_in_play = io_read8(0x1876u);
+	enemies_in_play = io_read8(enemies_present);
 	enemies_left = OBJECT(object)->scroll_lock.enemies_left;
 	if (enemies_left < enemies_in_play)
 	{
@@ -97,10 +97,10 @@ void enemy_waves_start(uint16_t object)
 
 	next_wave_enemies = OBJECT(object)->enemy_waves.next_wave_enemies;
 	wave = next_wave_enemies;
-	OBJECT(object)->enemy_waves.end_enemies = object_15_times[(int8_t)wave];
+	OBJECT(object)->enemy_waves.end_enemies = enemy_waves_end_enemies[(int8_t)wave];
 	wave = (uint32_t)wave << 1;
 	OBJECT(object)->enemy_waves.spawns = TABLE16(object_15_spawn_lists, (int8_t)wave);
-	OBJECT(object)->enemy_waves.next_wave_enemies = TABLE8(object_15_next_kinds, (uint16_t)((int8_t)((uint32_t)wave << 1) + ((player_count - 1u) & 3u)));
+	OBJECT(object)->enemy_waves.next_wave_enemies = TABLE8(enemy_waves_next_wave_enemies, (uint16_t)((int8_t)((uint32_t)wave << 1) + ((player_count - 1u) & 3u)));
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
 }
@@ -127,7 +127,7 @@ void enemy_waves_spawn(uint16_t object)
 		if (TIMED_SPAWN(spawn)->time != wave)
 			break;
 		players = TIMED_SPAWN(spawn)->players;
-		players_present_now = io_read8(0x1874u);
+		players_present_now = io_read8(stage_player_count);
 		if (players < players_present_now)
 		{
 			flags = TIMED_SPAWN(spawn)->flags;
@@ -163,7 +163,7 @@ void enemy_waves_next(uint16_t object)
 {
 	uint8_t enemies_in_play = 0, next_wave_enemies = 0, wave = 0, state = 0;
 
-	enemies_in_play = io_read8(0x1876u);
+	enemies_in_play = io_read8(enemies_present);
 	next_wave_enemies = OBJECT(object)->enemy_waves.next_wave_enemies;
 	if (enemies_in_play <= next_wave_enemies)
 	{
@@ -179,7 +179,7 @@ void enemy_waves_end(uint16_t object)
 {
 	uint8_t enemies_in_play = 0, end_enemies = 0;
 
-	enemies_in_play = io_read8(0x1876u);
+	enemies_in_play = io_read8(enemies_present);
 	end_enemies = OBJECT(object)->enemy_waves.end_enemies;
 	if (enemies_in_play <= end_enemies)
 		OBJECT(object)->flags = 0u;

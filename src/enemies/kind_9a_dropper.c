@@ -3,7 +3,7 @@
  *    Description: stage 3's kind 9A object that hangs above and drops on the players
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -116,7 +116,6 @@ uint16_t kind_9a_dropper_hurt(uint16_t object)
 /* Stops the hit object with the hit sound and a short wait. */
 void kind_9a_dropper_hurt_start(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t action_step = 0;
 
@@ -126,7 +125,7 @@ void kind_9a_dropper_hurt_start(uint16_t object)
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step + 1u;
 	command = 0x6300u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 }
 
 /* Flashes the hit object for 8 frames, then lets it fall (step FE). */
@@ -167,7 +166,7 @@ uint16_t kind_9a_dropper_fall(uint16_t object, uint16_t behaviour_address)
 	OBJECT(object)->enemy_class = 0;
 	nearest_player = vector_choose_nearest_player(object);
 	command = 0x6C00u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	vector_measure_target(object, nearest_player);
 	spawn_kind_90_effect(object);
 	behaviour_address = vector_enemy_hurt_become_goon(object);
@@ -230,7 +229,6 @@ void kind_9a_dropper_wait_mode(uint16_t object)
    from its place, with a sound. */
 uint16_t kind_9a_dropper_watch(uint16_t object, uint16_t u)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t state = 0;
 	uint16_t target_dx = 0, target_dy = 0, stage_x = 0, drop_x_offset = 0, drop_x_offset_2 = 0;
@@ -254,7 +252,7 @@ uint16_t kind_9a_dropper_watch(uint16_t object, uint16_t u)
 			OBJECT(object)->kind_9a_dropper.drop_x_offset = 0u - drop_x_offset_2;
 			OBJECT(object)->z_speed = -0x200;
 			command = 0x5000u;
-			carry = vector_queue_sound(command);
+			vector_queue_sound(command);
 			state = OBJECT(object)->state;
 			OBJECT(object)->state = state + 1u;
 			vector_face_direction(object);

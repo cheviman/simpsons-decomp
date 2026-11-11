@@ -3,7 +3,7 @@
  *    Description: bank 1B: the doors that open when the stage reaches them and let out enemies (kinds 0F, 10, 12), the car whose doors let enemies out, the kind-93 passer-by
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -44,7 +44,7 @@ uint16_t door_kind_0f_run(uint16_t object, uint8_t state)
 		door_idle();
 		break;
 	}
-	carry = remove_off_screen(object, carry);
+	remove_off_screen(object, carry);
 	return states;
 }
 
@@ -80,7 +80,7 @@ uint16_t door_kind_10_run(uint16_t object, uint8_t state)
 		door_idle();
 		break;
 	}
-	carry = remove_off_screen(object, carry);
+	remove_off_screen(object, carry);
 	return states;
 }
 
@@ -175,7 +175,7 @@ uint16_t kind_93_run(uint16_t object, uint8_t state)
 		kind_93_idle();
 		break;
 	}
-	carry = remove_off_screen(object, carry);
+	remove_off_screen(object, carry);
 	return states;
 }
 
@@ -449,13 +449,12 @@ void car_doors_wait(uint16_t object)
 /* Opens its doors (animation 8A, sound 60) and can be hit while they open, for 16 frames. */
 void car_doors_open(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t state = 0;
 
 	OBJECT(object)->flags = 0xC0u;
 	command = 0x6000u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	OBJECT(object)->animation = 0x8Au;
 	OBJECT(object)->timer = 0x10u;
 	state = OBJECT(object)->state;
@@ -538,7 +537,7 @@ uint16_t car_doors_let_out_enemies(uint16_t object)
 		players = DOOR_SPAWN(spawn_record)->players;
 		if (players == 0x7Fu)
 			break;
-		players_counted = io_read8(0x1874u);
+		players_counted = io_read8(stage_player_count);
 		if (players < players_counted)
 		{
 			spawned = OBJECT(object)->car_doors.spawned;
@@ -558,7 +557,6 @@ uint16_t car_doors_let_out_enemies(uint16_t object)
    (animation 8C, sound 60). */
 void car_doors_close(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t timer = 0, spawned = 0, state = 0;
 
@@ -570,7 +568,7 @@ void car_doors_close(uint16_t object)
 	spawned = OBJECT(object)->car_doors.spawned;
 	OBJECT(object)->timer = spawned;
 	command = 0x6000u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	OBJECT(object)->animation = 0x8Cu;
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
@@ -649,14 +647,13 @@ uint16_t door_kind_12_start(uint16_t object)
 /* Opens (animation 8A, sound 60), hitting what it touches with strength 08 (a player is knocked down). */
 void door_kind_12_open(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t state = 0;
 
 	OBJECT(object)->flags = 0xC0u;
 	OBJECT(object)->attack = 8u;
 	command = 0x6000u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	OBJECT(object)->animation = 0x8Au;
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
@@ -715,7 +712,6 @@ uint16_t door_kind_10_start(uint16_t object)
    08. */
 void door_kind_10_open(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t timer = 0, attributes = 0, state = 0;
 
@@ -726,7 +722,7 @@ void door_kind_10_open(uint16_t object)
 	OBJECT(object)->flags = 0xC0u;
 	OBJECT(object)->attack = 8u;
 	command = 0x6000u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	OBJECT(object)->kind = 0xFu;
 	OBJECT(object)->animation = 0x95u;
 	attributes = OBJECT(object)->attributes;
@@ -796,14 +792,13 @@ void door_wait_for_place(uint16_t object)
 /* Opens (animation 8F, sound 60), hitting what it touches with strength 08. */
 void door_kind_0f_open(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t state = 0;
 
 	OBJECT(object)->flags = 0xC0u;
 	OBJECT(object)->attack = 8u;
 	command = 0x6000u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	OBJECT(object)->animation = 0x8Fu;
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
@@ -857,7 +852,7 @@ uint16_t door_let_out_list(uint16_t object, uint16_t lists)
 	}
 	do
 	{
-		players_counted = io_read8(0x1874u);
+		players_counted = io_read8(stage_player_count);
 		if (fewest_players < players_counted)
 		{
 			spawned = OBJECT(object)->door.spawned;

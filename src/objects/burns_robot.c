@@ -3,7 +3,7 @@
  *    Description: Mr. Burns' robot (4F80 type EC, kinds CC-D4): its entrance, its forms and attacks, how each form breaks
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -450,7 +450,6 @@ void burns_robot_drop_maggie(uint16_t robot)
 /* Walks to Maggie's object, staggering; once there (or out of time) sound 6E and the next step. */
 void burns_robot_walk_to_maggie(uint16_t robot)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0, direction = 0, distance = 0, object = 0;
 	uint8_t wait_frames = 0, wait_frames_2 = 0, step = 0;
 	uint16_t maggie = 0, walk_frames = 0, robot_x = 0, maggie_x = 0, robot_y = 0, maggie_y = 0, x_speed = 0;
@@ -470,7 +469,7 @@ void burns_robot_walk_to_maggie(uint16_t robot)
 		if (walk_frames == 1u)
 		{
 			command = 0x6E00u;
-			carry = vector_queue_sound(command);
+			vector_queue_sound(command);
 			step = OBJECT(robot)->burns_robot.step;
 			OBJECT(robot)->burns_robot.step = step + 1u;
 			return;
@@ -486,7 +485,7 @@ void burns_robot_walk_to_maggie(uint16_t robot)
 			if ((int16_t)(distance >> 15 ? 0u - distance : distance) <= 0x20)
 			{
 				command = 0x6E00u;
-				carry = vector_queue_sound(command);
+				vector_queue_sound(command);
 				step = OBJECT(robot)->burns_robot.step;
 				OBJECT(robot)->burns_robot.step = step + 1u;
 				return;
@@ -731,7 +730,6 @@ void burns_robot_form_3_broken(uint16_t robot)
    that form's health, walking at a target. */
 void burns_robot_shed_form_3(uint16_t robot)
 {
-	uint32_t carry = 0;
 	uint8_t health = 0, piece_word_high = 0;
 	uint16_t piece = 0, piece_number = 0, piece_word = 0, u = 0;
 	uint8_t animation_flags = 0, form_extra = 0, form_base = 0, form_extra_2 = 0;
@@ -763,7 +761,7 @@ void burns_robot_shed_form_3(uint16_t robot)
 	OBJECT(robot)->burns_robot.health_mark = health;
 	burns_robot_reset_timers(robot);
 	u = burns_robot_start_walking(robot);
-	carry = burns_robot_choose_target(robot, u);
+	burns_robot_choose_target(robot, u);
 }
 
 /* Throws off piece A of object_1d_parts (in the 5280 list), up at 0500. */
@@ -964,7 +962,6 @@ void burns_robot_form_2_broken(uint16_t robot)
 /* Starts breaking: its breaking look for its form, sound 6E, slowed to a quarter. */
 void burns_robot_start_breaking(uint16_t robot)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0, look = 0;
 	uint8_t form_base = 0, form_extra = 0, step = 0;
 
@@ -973,7 +970,7 @@ void burns_robot_start_breaking(uint16_t robot)
 	look = (uint32_t)(uint8_t)(0xAu + form_base + form_extra) << 8;
 	burns_robot_set_look(robot, look);
 	command = 0x6E00u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	burns_robot_slow_down(robot);
 	step = OBJECT(robot)->burns_robot.step;
 	OBJECT(robot)->burns_robot.step = step + 1u;
@@ -983,7 +980,6 @@ void burns_robot_start_breaking(uint16_t robot)
    target. */
 void burns_robot_shed_form_2(uint16_t robot)
 {
-	uint32_t carry = 0;
 	uint8_t first_piece = 0, health = 0;
 	uint16_t piece = 0, piece_number = 0, u = 0;
 	uint8_t animation_flags = 0, shed_frame = 0, form_extra = 0, form_base = 0, form_extra_2 = 0;
@@ -1015,7 +1011,7 @@ void burns_robot_shed_form_2(uint16_t robot)
 	OBJECT(robot)->burns_robot.health_mark = health;
 	burns_robot_reset_timers(robot);
 	u = burns_robot_start_walking(robot);
-	carry = burns_robot_choose_target(robot, u);
+	burns_robot_choose_target(robot, u);
 }
 
 /* Throws off piece A, up at 0500 (as burns_robot_throw_piece). */
@@ -1466,7 +1462,6 @@ void burns_robot_broken_shake(uint16_t robot)
 /* After the shaking: the next music (but in form 1), sound 6E, its breaking look. */
 void burns_robot_broken_cry(uint16_t robot)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0, look = 0;
 	uint8_t wait_frames = 0, form_base = 0, form_base_2 = 0, form_extra = 0, step = 0;
 	uint16_t x_speed = 0;
@@ -1487,7 +1482,7 @@ void burns_robot_broken_cry(uint16_t robot)
 	if (form_base != 1u)
 		boss_arrived++;
 	command = 0x6E00u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	form_base_2 = OBJECT(robot)->burns_robot.form_base;
 	form_extra = OBJECT(robot)->burns_robot.form_extra;
 	look = (uint32_t)(uint8_t)(0xAu + form_base_2 + form_extra) << 8;
@@ -1571,7 +1566,6 @@ void burns_robot_lie_broken(uint16_t robot)
 /* When its animation ends, rises as its next form (field 30 one more), with Mr. Burns' voice (3F35). */
 void burns_robot_rise_as_next_form(uint16_t robot)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0, look = 0;
 	uint8_t animation_flags = 0, form_base = 0, form_base_2 = 0, step = 0;
 
@@ -1584,7 +1578,7 @@ void burns_robot_rise_as_next_form(uint16_t robot)
 	look = (uint32_t)form_base_2 << 8;
 	burns_robot_set_look(robot, look);
 	command = 0x3F35u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	OBJECT(robot)->burns_robot.wait_frames = 0x40u;
 	step = OBJECT(robot)->burns_robot.step;
 	OBJECT(robot)->burns_robot.step = step + 1u;
@@ -1593,7 +1587,6 @@ void burns_robot_rise_as_next_form(uint16_t robot)
 /* After 64 frames: its new form's health, its timers back to 0, walking at a target. */
 void burns_robot_start_form(uint16_t robot)
 {
-	uint32_t carry = 0;
 	uint8_t health = 0;
 	uint16_t u = 0;
 	uint8_t wait_frames = 0, form_base = 0, form_extra = 0;
@@ -1609,7 +1602,7 @@ void burns_robot_start_form(uint16_t robot)
 	OBJECT(robot)->burns_robot.health_mark = health;
 	burns_robot_reset_timers(robot);
 	u = burns_robot_start_walking(robot);
-	carry = burns_robot_choose_target(robot, u);
+	burns_robot_choose_target(robot, u);
 }
 
 /* Throws off piece A, up at 0500 (as burns_robot_throw_piece). */
@@ -1825,7 +1818,6 @@ void burns_robot_hurt_flash(uint16_t robot, uint16_t palette_job)
 /* When the 16 frames are up, walks at a target again. */
 void burns_robot_hurt_end(uint16_t robot)
 {
-	uint32_t carry = 0;
 	uint16_t u = 0;
 	uint8_t wait_frames = 0;
 
@@ -1834,7 +1826,7 @@ void burns_robot_hurt_end(uint16_t robot)
 	if (wait_frames != 1u)
 		return;
 	u = burns_robot_start_walking(robot);
-	carry = burns_robot_choose_target(robot, u);
+	burns_robot_choose_target(robot, u);
 }
 
 /* Its entrance, step by step until it can be fought. */
@@ -2017,7 +2009,7 @@ void burns_robot_place(uint16_t robot)
 	uint8_t step = 0;
 	uint16_t robot_x = 0, robot_y = 0;
 
-	io_write16(0x1854u, robot);
+	io_write16(stage_kept_object_2, robot);
 	OBJECT(robot)->shadow_player = 1u;
 	robot_x = 0x420u - camera_x;
 	OBJECT(robot)->x = robot_x;
@@ -2104,7 +2096,7 @@ void burns_robot_speak(uint16_t robot)
 		OBJECT(balloon)->behaviour = (OBJECT(balloon)->behaviour & 0xFFu) | ((robot & 0xFFu) << 8u);
 	}
 	command = 0x3F36u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	look = 0x3336u;
 	burns_robot_set_look(robot, look);
 	step = OBJECT(robot)->burns_robot.step;
@@ -2133,7 +2125,7 @@ void burns_robot_toss_part(uint16_t robot)
 		OBJECT(part)->zoom_y = 0x40u;
 		OBJECT(robot)->burns_robot.wait_frames = 0x40u;
 		command = 0x301u;
-		carry = vector_queue_sound(command);
+		vector_queue_sound(command);
 	}
 	step = OBJECT(robot)->burns_robot.step;
 	OBJECT(robot)->burns_robot.step = step + 1u;
@@ -2142,7 +2134,6 @@ void burns_robot_toss_part(uint16_t robot)
 /* After 64 frames: sound 14, the scene's next music, its fighting look, and the step moves on. */
 void burns_robot_start_fight(uint16_t robot)
 {
-	uint32_t carry = 0;
 	uint8_t look_kind = 0;
 	uint16_t command = 0, look_word = 0;
 	uint8_t wait_frames = 0, step = 0;
@@ -2153,7 +2144,7 @@ void burns_robot_start_fight(uint16_t robot)
 	if (wait_frames != 1u)
 		return;
 	command = 0x1400u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	boss_arrived = 1u;
 	look_word = 0x3400u;
 	look_word = burns_robot_set_look(robot, look_word);
@@ -2208,7 +2199,7 @@ void burns_robot_walk_form_0(uint16_t robot)
 	if ((animation_flags & 2u) != 0u)
 	{
 		command = 0x5A00u;
-		carry = vector_queue_sound(command);
+		vector_queue_sound(command);
 	}
 }
 
@@ -2230,7 +2221,7 @@ void burns_robot_walk_form_1(uint16_t robot)
 	if ((frame_count & 0x3Fu) == 0u)
 	{
 		command = 0x1300u;
-		carry = vector_queue_sound(command);
+		vector_queue_sound(command);
 	}
 	animation = OBJECT(robot)->animation;
 	if (animation != 0u)
@@ -2491,7 +2482,6 @@ void burns_robot_stop_and_wind_up(uint16_t robot)
    form and attack; it can not be hurt. */
 void burns_robot_wind_up(uint16_t robot)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0, look = 0;
 	uint8_t wait_frames = 0, wait_frames_2 = 0, form_base = 0, form_extra = 0, attack_choice = 0, step = 0;
 
@@ -2503,7 +2493,7 @@ void burns_robot_wind_up(uint16_t robot)
 		return;
 	}
 	command = 0x7D00u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	OBJECT(robot)->flags |= 4u;
 	form_base = OBJECT(robot)->burns_robot.form_base;
 	form_extra = OBJECT(robot)->burns_robot.form_extra;
@@ -2545,11 +2535,10 @@ void burns_robot_swing_hit(uint16_t robot)
 /* Walks at a target again. */
 void burns_robot_walk_on(uint16_t robot)
 {
-	uint32_t carry = 0;
 	uint16_t u = 0;
 
 	u = burns_robot_start_walking(robot);
-	carry = burns_robot_choose_target(robot, u);
+	burns_robot_choose_target(robot, u);
 }
 
 /* A volley of shots (form 1's second attack): winds up, fires shot after shot, walks on. */
@@ -2761,7 +2750,7 @@ void burns_robot_fire_shot(uint16_t robot)
 	part_code = 2u | ((turned_part | 5u) << 8);
 	burns_robot_place_part(robot, shot, part_code);
 	command = 0x1D00u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	shot_x_speed = shot_speed;
 	OBJECT(shot)->x_speed = shot_x_speed;
 	stack = robot;
@@ -2802,7 +2791,6 @@ void burns_robot_volley_next(uint16_t robot)
 /* When the animation ends, walks at a target again. */
 void burns_robot_volley_end(uint16_t robot)
 {
-	uint32_t carry = 0;
 	uint16_t u = 0;
 	uint8_t animation_flags = 0;
 
@@ -2810,7 +2798,7 @@ void burns_robot_volley_end(uint16_t robot)
 	if ((animation_flags & 1u) == 0u)
 		return;
 	u = burns_robot_start_walking(robot);
-	carry = burns_robot_choose_target(robot, u);
+	burns_robot_choose_target(robot, u);
 }
 
 /* A lunge (form 2's first attack): slows, winds up, hits, walks on. */
@@ -2942,7 +2930,6 @@ void burns_robot_part_attack_start(uint16_t robot)
 /* When its animation ends, sound 11 and its holding look. */
 void burns_robot_part_attack_raise(uint16_t robot)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0, look = 0;
 	uint8_t animation_flags = 0, form_extra = 0, step = 0;
 
@@ -2950,7 +2937,7 @@ void burns_robot_part_attack_raise(uint16_t robot)
 	if ((animation_flags & 1u) == 0u)
 		return;
 	command = 0x1100u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	form_extra = OBJECT(robot)->burns_robot.form_extra;
 	look = (uint32_t)(uint8_t)(0x30u + form_extra) << 8;
 	burns_robot_set_look(robot, look);
@@ -3013,7 +3000,6 @@ void burns_robot_part_attack_hold(uint16_t robot)
    target. */
 void burns_robot_part_attack_carry(uint16_t robot)
 {
-	uint32_t carry = 0;
 	uint16_t part = 0, u = 0;
 	uint8_t wait_frames = 0;
 	uint16_t held_part = 0, x_speed = 0, y_speed = 0;
@@ -3030,7 +3016,7 @@ void burns_robot_part_attack_carry(uint16_t robot)
 		return;
 	OBJECT(robot)->burns_robot.holding_part = 0u;
 	u = burns_robot_start_walking(robot);
-	carry = burns_robot_choose_target(robot, u);
+	burns_robot_choose_target(robot, u);
 }
 
 /* Lobs bombs (the tables' shots: 4D40 type 26): aims, throws, recovers; form 4 throws three. */
@@ -3169,7 +3155,6 @@ void burns_robot_lob_recover(uint16_t robot)
 /* When its animation ends, form 4 throws again up to three bombs; then walks at a target. */
 void burns_robot_lob_end(uint16_t robot)
 {
-	uint32_t carry = 0;
 	uint16_t u = 0;
 	uint8_t animation_flags = 0, form_base = 0, form_extra = 0, bombs_lobbed = 0, bombs_lobbed_2 = 0;
 
@@ -3190,7 +3175,7 @@ void burns_robot_lob_end(uint16_t robot)
 		}
 	}
 	u = burns_robot_start_walking(robot);
-	carry = burns_robot_choose_target(robot, u);
+	burns_robot_choose_target(robot, u);
 }
 
 /* Gloating with no target (a player down or none to go for): waits for a player, then walks on. */
@@ -3234,7 +3219,6 @@ void burns_robot_gloat_until_player(uint16_t robot)
 /* After 32 frames walks at a target. */
 void burns_robot_gloat_end(uint16_t robot)
 {
-	uint32_t carry = 0;
 	uint16_t u = 0;
 	uint8_t wait_frames = 0;
 
@@ -3243,7 +3227,7 @@ void burns_robot_gloat_end(uint16_t robot)
 	if (wait_frames != 1u)
 		return;
 	u = burns_robot_start_walking(robot);
-	carry = burns_robot_choose_target(robot, u);
+	burns_robot_choose_target(robot, u);
 }
 
 /* When a player's blow hits it, lets go of its held part and takes the blow. */
@@ -3661,25 +3645,25 @@ uint16_t burns_robot_set_look(uint16_t robot, uint16_t look)
 /* Takes box A of burns_robot_hit_boxes: its hit, sizes and offsets. */
 uint16_t burns_robot_set_box(uint16_t self, uint16_t box_number)
 {
-	uint16_t box_end = 0, field_1c = 0;
+	uint16_t box_end = 0, damage_attack = 0;
 	uint16_t box_record = 0, box_sizes = 0, box_heights = 0, box_offsets = 0;
 	uint32_t box_width_halfword = 0, box_height_halfword = 0, box_dy_halfword = 0;
 
 	box_record = TABLE16(burns_robot_hit_boxes, (int8_t)((uint16_t)((uint32_t)(uint8_t)((uint32_t)(box_number >> 8) << 1) << 8) >> 8));
-	field_1c = HIT_BOX(box_record)->field_1c;
-	OBJECT(self)->damage = (uint8_t)(field_1c >> 8u);
-	OBJECT(self)->attack = (uint8_t)field_1c;
+	damage_attack = HIT_BOX(box_record)->damage_attack;
+	OBJECT(self)->damage = (uint8_t)(damage_attack >> 8u);
+	OBJECT(self)->attack = (uint8_t)damage_attack;
 	box_sizes = box_record + 2u;
-	box_width_halfword = HIT_BOX(box_sizes - 0x2u)->field_1f;
+	box_width_halfword = HIT_BOX(box_sizes - 0x2u)->width_depth;
 	OBJECT(self)->box_width = (uint8_t)(box_width_halfword >> 8u);
 	OBJECT(self)->box_depth = (uint8_t)box_width_halfword;
 	box_heights = box_sizes + 2u;
-	box_height_halfword = HIT_BOX(box_heights - 0x4u)->field_21;
+	box_height_halfword = HIT_BOX(box_heights - 0x4u)->height_dx;
 	OBJECT(self)->box_height = (uint8_t)(box_height_halfword >> 8u);
 	OBJECT(self)->box_dx = (uint8_t)box_height_halfword;
 	box_offsets = box_heights + 2u;
 	box_end = box_offsets + 2u;
-	box_dy_halfword = HIT_BOX(box_offsets - 0x6u)->field_23;
+	box_dy_halfword = HIT_BOX(box_offsets - 0x6u)->dy_dz;
 	OBJECT(self)->box_dy = (uint8_t)(box_dy_halfword >> 8u);
 	OBJECT(self)->box_dz = (uint8_t)box_dy_halfword;
 	return box_end;
@@ -3767,7 +3751,7 @@ uint32_t burns_robot_start_gloating(uint16_t robot)
 	uint8_t form_base = 0, form_extra = 0;
 
 	command = 0x3F38u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	OBJECT(robot)->state = 0xDu;
 	OBJECT(robot)->burns_robot.step = 0u;
 	form_base = OBJECT(robot)->burns_robot.form_base;
@@ -3783,7 +3767,6 @@ uint32_t burns_robot_start_gloating(uint16_t robot)
    players in the game its form breaks, else it is hurt. */
 void burns_robot_take_hit(uint16_t robot)
 {
-	uint32_t carry = 0;
 	uint16_t box_number = 0, command = 0, object = 0;
 	uint8_t form_base = 0, form_base_2 = 0, form_extra = 0, vitality = 0, shadow_player = 0, form_base_3 = 0, form_extra_2 = 0;
 	uint16_t hit_by = 0, hit_by_2 = 0;
@@ -3797,7 +3780,7 @@ void burns_robot_take_hit(uint16_t robot)
 	if (form_base != 2u)
 		burns_robot_stop(robot);
 	command = 0x6600u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	box_number = 0u;
 	burns_robot_set_box(robot, box_number);
 	form_base_2 = OBJECT(robot)->burns_robot.form_base;

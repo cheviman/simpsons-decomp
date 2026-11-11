@@ -3,7 +3,7 @@
  *    Description: the goons: their set-ups and their entrances by type
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -3219,7 +3219,7 @@ uint16_t goon_descent_step(uint16_t object)
    A8). */
 uint16_t goon_descent_float(uint16_t object, uint16_t object_2)
 {
-	uint32_t negative = 0, carry = 0;
+	uint32_t negative = 0;
 	uint8_t floor_value = 0;
 	uint16_t floor_cell = 0;
 	uint8_t timer = 0, action_step = 0;
@@ -3240,7 +3240,7 @@ uint16_t goon_descent_float(uint16_t object, uint16_t object_2)
 		action_step = OBJECT(object)->action_step;
 		OBJECT(object)->action_step = action_step + 1u;
 	}
-	carry = vector_check_landing(object);
+	vector_check_landing(object);
 	return object_2;
 }
 

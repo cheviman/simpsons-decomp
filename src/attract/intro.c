@@ -3,7 +3,7 @@
  *    Description: the attract's opening and the family's profiles
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -185,7 +185,6 @@ void attract_opening(uint16_t u)
 /* Sets the opening up: palettes, the layers, the attract song and the big picture at full zoom */
 void attract_opening_start(uint16_t palette_job)
 {
-	uint32_t carry = 0;
 	uint8_t tile_code = 0;
 	uint16_t command = 0, object = 0, picture = 0, request = 0, tile = 0;
 	uint16_t layer_a_tile = 0, layer_b_tile = 0;
@@ -199,8 +198,8 @@ void attract_opening_start(uint16_t palette_job)
 	attract_reset_layers();
 	layer_a_scroll_x = 0x10u;
 	layer_b_scroll_x = 0x10u;
-	io_write8(0x1FB9u, 0x3Fu);
-	io_write8(0x1FBAu, 0x36u);
+	io_write8(colour_bases_back_sprites_fixed, 0x3Fu);
+	io_write8(colour_bases_layers_a_b, 0x36u);
 	tile = 0x2800u;
 	tile_code = 0x10u;
 	do
@@ -221,7 +220,7 @@ void attract_opening_start(uint16_t palette_job)
 	} while (tile != 0x3800u);
 	attract_draw_layers();
 	command = 0x8000u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	object = OBJECT_ADDRESS(14);
 	picture = attract_opening_picture_ADDRESS;
 	OBJECT(OBJECT_ADDRESS(14))->action = 0xFFu;
@@ -723,12 +722,12 @@ void attract_bart_scene_start(void)
 	layer_columns_on = 1u;
 	layer_a_edges_on = 1u;
 	draw_all_layer_edges = 1u;
-	io_write8(0x1FB9u, 0x3Fu);
-	io_write8(0x1FBAu, 0x36u);
+	io_write8(colour_bases_back_sprites_fixed, 0x3Fu);
+	io_write8(colour_bases_layers_a_b, 0x36u);
 	layer_and_columns = 0x2Au;
 	vector_draw_layer_strips(layer_and_columns, &ignored16, &ignored16_2);
-	io_write8(0x1FB9u, 0x13u);
-	io_write8(0x1FBAu, 0x2Cu);
+	io_write8(colour_bases_back_sprites_fixed, 0x13u);
+	io_write8(colour_bases_layers_a_b, 0x2Cu);
 	object = OBJECT_ADDRESS(14);
 	picture = attract_bart_scene_picture_ADDRESS;
 	OBJECT(OBJECT_ADDRESS(14))->x_speed = -0x100;
@@ -1273,13 +1272,13 @@ void attract_lisa_scene_start(void)
 	attract_reset_layers();
 	layer_a_scroll_x = 0x240u;
 	layer_b_scroll_x = 0x240u;
-	io_write8(0x1FB9u, 0x3Fu);
-	io_write8(0x1FBAu, 0x36u);
+	io_write8(colour_bases_back_sprites_fixed, 0x3Fu);
+	io_write8(colour_bases_layers_a_b, 0x36u);
 	layer_and_columns = 0x40u;
 	vector_draw_layer_strips(layer_and_columns, &ignored16, &ignored16_2);
 	layer_a_scroll_x = 0x2B0u;
-	io_write8(0x1FB9u, 0x13u);
-	io_write8(0x1FBAu, 0x2Cu);
+	io_write8(colour_bases_back_sprites_fixed, 0x13u);
+	io_write8(colour_bases_layers_a_b, 0x2Cu);
 	object = OBJECT_ADDRESS(14);
 	picture = attract_lisa_scene_picture_1_ADDRESS;
 	attract_put_picture(&object, &picture);
@@ -1676,7 +1675,6 @@ void attract_marge_scene_end(void)
 /* Its first object's two pictures in turn, with a sound */
 void attract_marge_scene_animate(void)
 {
-	uint32_t carry = 0;
 	uint8_t action = 0;
 	uint16_t command = 0, object = 0;
 
@@ -1689,7 +1687,7 @@ void attract_marge_scene_animate(void)
 		OBJECT(object)->x = 0x130u;
 		OBJECT(object)->y = 0x96u;
 		command = 0x4300u;
-		carry = vector_queue_sound(command);
+		vector_queue_sound(command);
 		return;
 	}
 	if (action == 0x1Eu)
@@ -1730,7 +1728,6 @@ void attract_marge_profile_start(uint16_t action_step)
 /* Types Marge's and Maggie's profiles while their pictures move, with a sound */
 void attract_marge_profile_type(void)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0, move_number = 0, object = 0, text_number = 0;
 	uint8_t wait_left = 0;
 
@@ -1741,7 +1738,7 @@ void attract_marge_profile_type(void)
 	if ((frame_count & 0xFu) == 0u)
 	{
 		command = 0x4500u;
-		carry = vector_queue_sound(command);
+		vector_queue_sound(command);
 	}
 	object = OBJECT_ADDRESS(14);
 	move_number = 0x300u;
@@ -1957,7 +1954,6 @@ void attract_leap(uint16_t u)
 /* Starts the scene: its layer, a sound and three objects, one leaping up */
 void attract_leap_start(void)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0, object = 0, picture = 0;
 
 	attract_reset_layers();
@@ -1965,7 +1961,7 @@ void attract_leap_start(void)
 	layer_b_scroll_x = 0x110u;
 	attract_draw_layer_a();
 	command = 0x4400u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	object = OBJECT_ADDRESS(14);
 	picture = attract_leap_picture_1_ADDRESS;
 	OBJECT(OBJECT_ADDRESS(14))->z_speed = 0xC00;
@@ -2624,12 +2620,12 @@ void attract_draw_layer_a(void)
 {
 	uint16_t ignored16 = 0, ignored16_2 = 0, layer_and_columns = 0;
 
-	io_write8(0x1FB9u, 0x3Fu);
-	io_write8(0x1FBAu, 0x36u);
+	io_write8(colour_bases_back_sprites_fixed, 0x3Fu);
+	io_write8(colour_bases_layers_a_b, 0x36u);
 	layer_and_columns = 0x26u;
 	vector_draw_layer_strips(layer_and_columns, &ignored16, &ignored16_2);
-	io_write8(0x1FB9u, 0x13u);
-	io_write8(0x1FBAu, 0x2Cu);
+	io_write8(colour_bases_back_sprites_fixed, 0x13u);
+	io_write8(colour_bases_layers_a_b, 0x2Cu);
 }
 
 /* Draws layer B of the scene */
@@ -2637,12 +2633,12 @@ uint16_t attract_draw_layer_b(void)
 {
 	uint16_t ignored16 = 0, layer_and_columns = 0, u = 0;
 
-	io_write8(0x1FB9u, 0x3Fu);
-	io_write8(0x1FBAu, 0x36u);
+	io_write8(colour_bases_back_sprites_fixed, 0x3Fu);
+	io_write8(colour_bases_layers_a_b, 0x36u);
 	layer_and_columns = 0x126u;
 	vector_draw_layer_strips(layer_and_columns, &ignored16, &u);
-	io_write8(0x1FB9u, 0x13u);
-	io_write8(0x1FBAu, 0x2Cu);
+	io_write8(colour_bases_back_sprites_fixed, 0x13u);
+	io_write8(colour_bases_layers_a_b, 0x2Cu);
 	return u;
 }
 

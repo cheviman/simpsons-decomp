@@ -3,7 +3,7 @@
  *    Description: bank 19's jump table: its object types' and enemy actions' handlers
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -15,7 +15,6 @@
    checks its hits, removes it off screen and plays its footsteps while it walks. */
 uint32_t robot_update(uint16_t object, uint8_t state)
 {
-	uint32_t carry = 0;
 	uint8_t animation_now = 0, state_2 = 0;
 	uint16_t command = 0, ignored16 = 0;
 	uint32_t ignored = 0, left_caller = 0;
@@ -53,13 +52,13 @@ uint32_t robot_update(uint16_t object, uint8_t state)
 	if (animation_now == 0x87u)
 	{
 		command = 0x2700u;
-		carry = vector_queue_sound(command);
+		vector_queue_sound(command);
 		return left_caller;
 	}
 	if (animation_now != 0x80u)
 		return left_caller;
 	command = 0x2700u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	return left_caller;
 }
 
@@ -353,7 +352,7 @@ uint32_t ninja_update(uint16_t object, uint8_t state)
 	}
 	vector_enemy_take_special_hit(object, &ignored16, &left_caller);
 	vector_remove_past_right_edge(object, ignored16);
-	ninjas_vanish = io_read8(0x187Eu);
+	ninjas_vanish = io_read8(ninjas_dismissed);
 	if (ninjas_vanish != 0u && OBJECT(object)->flags != 0u)
 	{
 		state_3 = OBJECT(object)->state;
@@ -528,7 +527,7 @@ uint16_t ninja_star_update(uint16_t object, uint8_t state)
 		ninja_star_fly();
 		break;
 	}
-	carry = remove_off_screen(object, carry);
+	remove_off_screen(object, carry);
 	flags = OBJECT(object)->flags;
 	flags_now = flags;
 	if (flags == 0u)
@@ -834,7 +833,7 @@ void goon_lift_update(uint8_t state, uint16_t *p_x, uint16_t *p_states, uint32_t
 		stage_7_begin_scene(&x, &states, p_left_caller);
 		break;
 	}
-	carry = remove_off_screen(x, carry);
+	remove_off_screen(x, carry);
 	*p_x = x;
 	*p_states = states;
 }
@@ -864,7 +863,7 @@ uint16_t goon_lift_part_update(uint16_t object, uint8_t state)
 		goon_lift_part_idle();
 		break;
 	}
-	carry = remove_off_screen(object, carry);
+	remove_off_screen(object, carry);
 	return states;
 }
 
@@ -978,7 +977,7 @@ uint16_t bouncing_prop_update(uint16_t object, uint8_t state)
 		break;
 	}
 	states = bouncing_prop_check_owner(object, states);
-	carry = remove_off_screen(object, carry);
+	remove_off_screen(object, carry);
 	return states;
 }
 
@@ -1058,7 +1057,7 @@ uint16_t robot_scrap_update(uint16_t object, uint8_t state)
 		}
 	}
 	states = robot_scrap_keep_on_floor(object, states);
-	carry = remove_off_screen(object, carry);
+	remove_off_screen(object, carry);
 	return states;
 }
 
@@ -1343,7 +1342,7 @@ uint16_t donut_shot_update(uint16_t object, uint8_t state)
 		donut_shot_fly();
 		break;
 	}
-	carry = remove_off_screen(object, carry);
+	remove_off_screen(object, carry);
 	return states;
 }
 

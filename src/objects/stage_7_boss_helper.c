@@ -3,7 +3,7 @@
  *    Description: the four helpers of stage 7's boss
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -150,12 +150,11 @@ uint16_t stage_7_boss_helper_attack(uint16_t object)
 /* Stage 7's boss' helper: throws (sound 6000). */
 void stage_7_boss_helper_throw_start(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t animation = 0, action = 0;
 
 	command = 0x6000u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	animation = OBJECT(object)->animation;
 	OBJECT(object)->animation = (animation - 3u) | 0x80u;
 	action = OBJECT(object)->action;

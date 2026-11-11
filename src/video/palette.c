@@ -3,7 +3,7 @@
  *    Description: the palette requests and the palette jobs that run them a frame at a time
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -214,7 +214,7 @@ uint16_t request_white_flash(uint16_t request)
 		return palette_job;
 	control = board_control | 1u;
 	board_control = control;
-	io_write8(0x1FC2u, control);
+	io_write8(board_control_register, control);
 	colour_place = 0xC00u;
 	words_left = 0x100u;
 	white_high = 0xFFu;
@@ -230,7 +230,7 @@ uint16_t request_white_flash(uint16_t request)
 	} while (words_after != 0u);
 	control = board_control & ~3u;
 	board_control = control;
-	io_write8(0x1FC2u, control);
+	io_write8(board_control_register, control);
 	white_flash_priorities = 0u;
 	priority = 0x10u;
 	layer_bits = palette_request_bits;
@@ -283,7 +283,7 @@ void run_palette_jobs(uint16_t d)
 	uint16_t stack = 0;
 	uint8_t slot_kind = 0, jobs_left_was = 0;
 
-	palette_job = 0x3C00u;
+	palette_job = palette_jobs;
 	palette_jobs_left = 0x40u;
 	do
 	{
@@ -402,7 +402,7 @@ uint16_t palette_job_effect(uint16_t palette_job, uint8_t d)
 	}
 	a = board_control | 1u;
 	board_control = a;
-	io_write8(0x1FC2u, a);
+	io_write8(board_control_register, a);
 	PALETTE_JOB(palette_job)->effect.frames_waited = 0u;
 	effect_step = PALETTE_JOB(palette_job)->effect.step;
 	step = effect_step;
@@ -424,7 +424,7 @@ uint16_t palette_job_effect(uint16_t palette_job, uint8_t d)
 			palette_effect_backward(palette_job, &step, &d_2, &carry);
 			break;
 		case 4:
-			carry = palette_effect_stop(palette_job);
+			palette_effect_stop(palette_job);
 			break;
 		case 6:
 			palette_effect_reverse(palette_job, &step, &carry);
@@ -457,7 +457,7 @@ uint16_t palette_job_effect(uint16_t palette_job, uint8_t d)
 		stack = a;
 		a = board_control & ~3u;
 		board_control = a;
-		io_write8(0x1FC2u, a);
+		io_write8(board_control_register, a);
 		d_2 = ((uint32_t)stack << 8) | b;
 		return d_2;
 	}
@@ -475,7 +475,7 @@ uint16_t palette_job_effect(uint16_t palette_job, uint8_t d)
 		stack = a;
 		a = board_control & ~3u;
 		board_control = a;
-		io_write8(0x1FC2u, a);
+		io_write8(board_control_register, a);
 		d_2 = ((uint32_t)stack << 8) | b;
 		return d_2;
 	}
@@ -493,7 +493,7 @@ uint16_t palette_job_effect(uint16_t palette_job, uint8_t d)
 		palette_effect_backward(palette_job, &step, &d_2, &carry);
 		break;
 	case 4:
-		carry = palette_effect_stop(palette_job);
+		palette_effect_stop(palette_job);
 		break;
 	case 6:
 		palette_effect_reverse(palette_job, &step, &carry);
@@ -526,7 +526,7 @@ uint16_t palette_job_effect(uint16_t palette_job, uint8_t d)
 	stack = a;
 	a = board_control & ~3u;
 	board_control = a;
-	io_write8(0x1FC2u, a);
+	io_write8(board_control_register, a);
 	d_2 = ((uint32_t)stack << 8) | b;
 	return d_2;
 }
@@ -562,7 +562,7 @@ void palette_effect_forward(uint16_t palette_job, uint16_t *p_step, uint16_t *p_
 	stack = colours_left;
 	control = board_control & ~3u;
 	board_control = control;
-	io_write8(0x1FC2u, control);
+	io_write8(board_control_register, control);
 	leftover_y = address;
 	d = (colour_low & 0xFFu) | ((uint32_t)stack << 8);
 	*p_step = step;
@@ -610,7 +610,7 @@ void palette_effect_backward(uint16_t palette_job, uint16_t *p_step, uint16_t *p
 	stack = step_mark;
 	control = board_control & ~3u;
 	board_control = control;
-	io_write8(0x1FC2u, control);
+	io_write8(board_control_register, control);
 	leftover_y = address;
 	d = (colour_low & 0xFFu) | ((uint32_t)stack << 8);
 	*p_step = step;
@@ -765,7 +765,7 @@ uint16_t palette_job_background_colour(uint16_t palette_job)
 
 	control = board_control | 1u;
 	board_control = control;
-	io_write8(0x1FC2u, control);
+	io_write8(board_control_register, control);
 	background_colour = PALETTE_JOB(palette_job)->background.colour;
 	colour_low = (uint8_t)background_colour;
 	colour_high = (uint8_t)(background_colour >> 8);
@@ -774,7 +774,7 @@ uint16_t palette_job_background_colour(uint16_t palette_job)
 	stack = colour_high;
 	control = board_control & ~3u;
 	board_control = control;
-	io_write8(0x1FC2u, control);
+	io_write8(board_control_register, control);
 	d = (colour_low & 0xFFu) | ((uint32_t)stack << 8);
 	return d;
 }
@@ -834,7 +834,7 @@ uint16_t palette_job_fade(uint16_t palette_job, uint16_t fade_mask)
 		stack = (uint8_t)palette_job;
 		control = board_control | 1u;
 		board_control = control;
-		io_write8(0x1FC2u, control);
+		io_write8(board_control_register, control);
 		range_index = PALETTE_JOB(palette_job)->fade.range;
 		range_record = fade_ranges_ADDRESS + (int8_t)(((uint32_t)range_index << 1) << 1);
 		fade_range = range_record + 1u;
@@ -869,7 +869,7 @@ uint16_t palette_job_fade(uint16_t palette_job, uint16_t fade_mask)
 				palette_effect_backward(colour_place, &fade_range, &fade_mask, &carry);
 				break;
 			case -6:
-				carry = palette_effect_stop(colour_place);
+				palette_effect_stop(colour_place);
 				break;
 			case -4:
 				palette_effect_reverse(colour_place, &fade_range, &carry);
@@ -894,7 +894,7 @@ uint16_t palette_job_fade(uint16_t palette_job, uint16_t fade_mask)
 	stack = step_bit;
 	control = board_control & ~3u;
 	board_control = control;
-	io_write8(0x1FC2u, control);
+	io_write8(board_control_register, control);
 	fade_mask = (fade_mask & 0xFFu) | ((uint32_t)stack << 8);
 	return fade_mask;
 }
@@ -915,23 +915,23 @@ uint16_t palette_job_white_flash(uint16_t palette_job, uint8_t d)
 		if ((frame_count & 1u) == 0u)
 		{
 			flash_k053251 = PALETTE_JOB(palette_job)->flash.k053251_9;
-			io_write8(0x1FB9u, flash_k053251);
+			io_write8(colour_bases_back_sprites_fixed, flash_k053251);
 			flash_k053251_10 = PALETTE_JOB(palette_job)->flash.k053251_10;
 			priority = flash_k053251_10;
-			io_write8(0x1FBAu, priority);
+			io_write8(colour_bases_layers_a_b, priority);
 		}
 		else
 		{
-			io_write8(0x1FB9u, 0x13u);
+			io_write8(colour_bases_back_sprites_fixed, 0x13u);
 			priority = 0x2Cu;
-			io_write8(0x1FBAu, 0x2Cu);
+			io_write8(colour_bases_layers_a_b, 0x2Cu);
 		}
 		d_2 = (d & 0xFFu) | ((uint32_t)priority << 8);
 		return d_2;
 	}
 	control = board_control | 1u;
 	board_control = control;
-	io_write8(0x1FC2u, control);
+	io_write8(board_control_register, control);
 	colour_place = 0xC00u;
 	words_left = 0x100u;
 	d = 0u;
@@ -947,11 +947,11 @@ uint16_t palette_job_white_flash(uint16_t palette_job, uint8_t d)
 	} while (cleared_words_after != 0u);
 	control = board_control & ~3u;
 	board_control = control;
-	io_write8(0x1FC2u, control);
+	io_write8(board_control_register, control);
 	PALETTE_JOB(palette_job)->kind = 0u;
-	io_write8(0x1FB9u, 0x13u);
+	io_write8(colour_bases_back_sprites_fixed, 0x13u);
 	priority = 0x2Cu;
-	io_write8(0x1FBAu, 0x2Cu);
+	io_write8(colour_bases_layers_a_b, 0x2Cu);
 	d_2 = (d & 0xFFu) | ((uint32_t)priority << 8);
 	return d_2;
 }
@@ -966,7 +966,7 @@ void palette_job_clear(uint16_t palette_job)
 
 	control = board_control | 1u;
 	board_control = control;
-	io_write8(0x1FC2u, control);
+	io_write8(board_control_register, control);
 	PALETTE_JOB(palette_job)->kind = 0u;
 	palette_clear_range = 0u;
 	clear_ranges = PALETTE_JOB(palette_job)->clearing.ranges;
@@ -997,7 +997,7 @@ void palette_job_clear(uint16_t palette_job)
 	} while (palette_clear_range != 4u);
 	control = board_control & ~3u;
 	board_control = control;
-	io_write8(0x1FC2u, control);
+	io_write8(board_control_register, control);
 }
 
 /* Finds a free palette job among the 64; carry when there is none */
@@ -1007,7 +1007,7 @@ void find_free_palette_job(uint16_t *p_palette_job, uint32_t *p_carry)
 	uint16_t palette_job = 0;
 	uint8_t jobs_left_was = 0;
 
-	palette_job = 0x3C00u;
+	palette_job = palette_jobs;
 	palette_jobs_left = 0x40u;
 	for (;;)
 	{
@@ -1040,7 +1040,7 @@ uint16_t load_palettes(uint16_t destination, uint16_t source, uint16_t palette_c
 	stack = palette_count >> 8;
 	control = board_control | 1u;
 	board_control = control;
-	io_write8(0x1FC2u, control);
+	io_write8(board_control_register, control);
 	window_bank = 0x2Du;
 	set_lines(window_bank);
 	palettes_to_load = stack;
@@ -1066,7 +1066,7 @@ uint16_t load_palettes(uint16_t destination, uint16_t source, uint16_t palette_c
 	stack = colour_high;
 	control = board_control & ~3u;
 	board_control = control;
-	io_write8(0x1FC2u, control);
+	io_write8(board_control_register, control);
 	palette_count = ((uint32_t)stack << 8) | colour_low;
 	return palette_count;
 }

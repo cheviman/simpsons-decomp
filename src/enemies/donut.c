@@ -3,7 +3,7 @@
  *    Description: stage 6's walking donut (type FD), its actions 3A and 3B and what it throws
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -104,7 +104,6 @@ void donut_fall_in_start(uint16_t object)
 /* Counts its wait down, then sends the donut flying across with a sound. */
 void donut_fly_across(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t timer = 0, action_step = 0;
 
@@ -117,7 +116,7 @@ void donut_fly_across(uint16_t object)
 	OBJECT(object)->x_speed = 0x400;
 	OBJECT(object)->timer = 0x30u;
 	command = 0x2600u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step + 1u;
 }
@@ -351,7 +350,6 @@ void donut_throw_end(uint16_t object)
 /* Sets the thrown small donut up flying fast the way it faces, with a sound. */
 uint16_t donut_shot_setup(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0, setup = 0;
 	uint8_t attributes = 0, state = 0;
 	uint16_t x_speed = 0;
@@ -367,7 +365,7 @@ uint16_t donut_shot_setup(uint16_t object)
 		OBJECT(object)->x_speed = 0u - x_speed;
 	}
 	command = 0x2600u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
 	donut_shot_fly();

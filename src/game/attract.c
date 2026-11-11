@@ -3,7 +3,7 @@
  *    Description: the attract mode: its scenes until a credit starts the game
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -557,13 +557,12 @@ void attract_opening_run(uint16_t u)
 /* Puts the layers back at 0, silences the sound and goes on to the attract's next scene. */
 void attract_next_scene(void)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 
 	layer_a_scroll_x = 0u;
 	layer_b_scroll_x = 0u;
 	command = 0u;
-	carry = queue_sound(command);
+	queue_sound(command);
 	mode_step++;
 	mode_phase = 0u;
 	game_step = 0u;
@@ -668,11 +667,10 @@ void attract_title(uint16_t u)
 /* Silences the sound, clears the objects and queues the clearing of the layers. */
 void attract_title_clear(void)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0, ignored16 = 0, ignored16_2 = 0, job = 0;
 
 	command = 0u;
-	carry = queue_sound(command);
+	queue_sound(command);
 	clear_objects(&ignored16, &ignored16_2);
 	job = 0u;
 	queue_job(job);
@@ -706,16 +704,16 @@ void attract_title_draw(uint16_t palette_job)
 	map_scene = 0u;
 	map_area = 0u;
 	set_area_tile_banks();
-	io_write8(0x1FB9u, 0x3Fu);
-	io_write8(0x1FBAu, 0x36u);
+	io_write8(colour_bases_back_sprites_fixed, 0x3Fu);
+	io_write8(colour_bases_layers_a_b, 0x36u);
 	layer_and_columns = 0x26u;
 	draw_layer_columns(layer_and_columns, &ignored16, &ignored16_2);
 	layer_and_columns = 0x126u;
 	draw_layer_columns(layer_and_columns, &ignored16, &ignored16_2);
 	layer_a_scroll_y = 0x20u;
 	layer_b_scroll_y = 0x20u;
-	io_write8(0x1FB9u, 0x13u);
-	io_write8(0x1FBAu, 0x2Cu);
+	io_write8(colour_bases_back_sprites_fixed, 0x13u);
+	io_write8(colour_bases_layers_a_b, 0x2Cu);
 	OBJECT(OBJECT_ADDRESS(14))->flags = 0x80u;
 	OBJECT(OBJECT_ADDRESS(14))->animation_flags = 0x80u;
 	OBJECT(OBJECT_ADDRESS(14))->kind = 0xEu;

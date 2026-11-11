@@ -3,7 +3,7 @@
  *    Description: the ROM check page
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -89,12 +89,12 @@ uint16_t test_rom_check_sum_tiles(void)
 
 	sum = 0u;
 	tile_rom_address = 0u;
-	io_write8(0x1D80u, 0x10u);
-	io_write8(0x1F00u, 0x32u);
+	io_write8(tile_chip_banks_0_1, 0x10u);
+	io_write8(tile_chip_banks_2_3, 0x32u);
 	test_sum_tile_rom(&sum, &ignored16);
 	tile_rom_address = 0u;
-	io_write8(0x1D80u, 0x54u);
-	io_write8(0x1F00u, 0x76u);
+	io_write8(tile_chip_banks_0_1, 0x54u);
+	io_write8(tile_chip_banks_2_3, 0x76u);
 	test_sum_tile_rom(&sum, &d);
 	chip_offset = (uint32_t)rom_check_chip << 1;
 	mem_write16(rom_check_tile_sums_ADDRESS + (int8_t)chip_offset, sum);
@@ -116,8 +116,8 @@ uint16_t test_rom_check_tiles_result(void)
 	tile_sum_4 = rom_check_tile_sums(3);
 	sum = rom_check_tile_sums(2) + tile_sum_4;
 	d = test_check_rom_sum(sum);
-	io_write8(0x1D80u, 0x10u);
-	io_write8(0x1F00u, 0x32u);
+	io_write8(tile_chip_banks_0_1, 0x10u);
+	io_write8(tile_chip_banks_2_3, 0x32u);
 	rom_check_chip = 0u;
 	rom_check_step++;
 	d = (d & 0xFFu) | 0x3200u;
@@ -133,7 +133,7 @@ uint16_t test_rom_check_sum_sprites(void)
 
 	sprite_control = sprite_chip_control & 0xEFu;
 	sprite_chip_control = sprite_control;
-	io_write8(0x1FA5u, sprite_control);
+	io_write8(sprite_chip_control_register, sprite_control);
 	sum = 0u;
 	sprite_rom_address = 0u;
 	sprite_rom_address_bottom = sprite_rom_read_banks[(int8_t)rom_check_chip];
@@ -160,7 +160,7 @@ uint16_t test_rom_check_6g(uint16_t d)
 
 	sprite_control = sprite_chip_control | 0x10u;
 	sprite_chip_control = sprite_control;
-	io_write8(0x1FA5u, sprite_control);
+	io_write8(sprite_chip_control_register, sprite_control);
 	sound_cpu_missing = rom_check_no_sound_cpu;
 	no_sound_cpu = sound_cpu_missing;
 	if (sound_cpu_missing != 0u)
@@ -240,11 +240,11 @@ void test_sum_tile_rom(uint16_t *p_sum, uint16_t *p_d)
 	uint16_t remaining_bytes = 0;
 
 	disable_irq();
-	io_write8(0x1D00u, 0xFBu);
+	io_write8(tile_chip_irq_control, 0xFBu);
 	disable_firq();
 	control = board_control & ~4u;
 	board_control = control;
-	io_write8(0x1FC2u, control);
+	io_write8(board_control_register, control);
 	tile_rom_pages_left = 0x40u;
 	do
 	{
@@ -253,10 +253,10 @@ void test_sum_tile_rom(uint16_t *p_sum, uint16_t *p_d)
 		bytes_left = 0x800u;
 		output = board_output | 8u;
 		board_output = output;
-		io_write8(0x1FC0u, output);
+		io_write8(board_output_register, output);
 		do
 		{
-			watchdog_read = io_read8(0x1FCAu);
+			watchdog_read = io_read8(watchdog_port);
 			rom_byte = mem_read8(rom_place);
 			sum += rom_byte;
 			rom_place += 4u;
@@ -265,7 +265,7 @@ void test_sum_tile_rom(uint16_t *p_sum, uint16_t *p_d)
 		} while (remaining_bytes != 0u);
 		output = board_output & ~8u;
 		board_output = output;
-		io_write8(0x1FC0u, output);
+		io_write8(board_output_register, output);
 		tile_rom_page++;
 		pages_to_go = tile_rom_pages_left;
 		tile_rom_pages_left = pages_to_go - 1u;
@@ -274,13 +274,13 @@ void test_sum_tile_rom(uint16_t *p_sum, uint16_t *p_d)
 	leftover_y = bytes_left;
 	take_interrupts();
 	stack = output;
-	io_write8(0x1D00u, 0xFFu);
+	io_write8(tile_chip_irq_control, 0xFFu);
 	enable_firq();
 	leftover_y = bytes_left;
 	take_interrupts();
 	control = board_control | 4u;
 	board_control = control;
-	io_write8(0x1FC2u, control);
+	io_write8(board_control_register, control);
 	d = ((uint32_t)stack << 8) | rom_byte;
 	*p_sum = sum;
 	*p_d = d;
@@ -297,44 +297,44 @@ uint16_t test_sum_sprite_rom(uint16_t sum)
 
 	reads_left = 0u;
 	disable_irq();
-	io_write8(0x1D00u, 0xFBu);
+	io_write8(tile_chip_irq_control, 0xFBu);
 	disable_firq();
 	control = board_control & ~4u;
 	board_control = control;
-	io_write8(0x1FC2u, control);
+	io_write8(board_control_register, control);
 	output = board_output & 0xDFu;
 	board_output = output;
-	io_write8(0x1FC0u, output);
+	io_write8(board_output_register, output);
 	do
 	{
-		io_write8(0x1FA6u, sprite_rom_address_high);
-		io_write8(0x1FA7u, sprite_rom_address_middle);
-		io_write8(0x1FA4u, sprite_rom_address_bottom);
-		first_byte = io_read8(0x1FC8u);
-		second_byte = io_read8(0x1FC9u);
+		io_write8(sprite_chip_rom_high, sprite_rom_address_high);
+		io_write8(sprite_chip_rom_middle, sprite_rom_address_middle);
+		io_write8(sprite_chip_rom_bottom, sprite_rom_address_bottom);
+		first_byte = io_read8(sprite_chip_rom_first_byte);
+		second_byte = io_read8(sprite_chip_rom_second_byte);
 		sum = sum + first_byte + second_byte;
 		old_address_low = sprite_rom_address_low;
 		address_low_before = old_address_low;
 		carry = (uint16_t)(address_low_before + 4u) < address_low_before;
 		sprite_rom_address_low = address_low_before + 4u;
 		sprite_rom_address_high += carry;
-		watchdog_read = io_read8(0x1FCAu);
+		watchdog_read = io_read8(watchdog_port);
 		remaining_reads = reads_left - 1u;
 		reads_left = remaining_reads;
 	} while (remaining_reads != 0u);
 	output = board_output | 0x20u;
 	board_output = output;
-	io_write8(0x1FC0u, output);
+	io_write8(board_output_register, output);
 	enable_irq();
 	leftover_y = reads_left;
 	take_interrupts();
-	io_write8(0x1D00u, 0xFFu);
+	io_write8(tile_chip_irq_control, 0xFFu);
 	enable_firq();
 	leftover_y = reads_left;
 	take_interrupts();
 	control = board_control | 4u;
 	board_control = control;
-	io_write8(0x1FC2u, control);
+	io_write8(board_control_register, control);
 	return sum;
 }
 

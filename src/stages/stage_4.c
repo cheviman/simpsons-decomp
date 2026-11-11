@@ -3,7 +3,7 @@
  *    Description: stage 4, Moe's Tavern
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -323,7 +323,6 @@ uint32_t step_stage_4(uint16_t u)
    its stage entry and the step's scene */
 void stage_4_setup(void)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 
 	gauges_shown = 0u;
@@ -331,7 +330,7 @@ void stage_4_setup(void)
 	clear_sprites();
 	reset_for_stage();
 	command = 0u;
-	carry = queue_sound_always(command);
+	queue_sound_always(command);
 	window_bank = 0x13u;
 	set_lines(window_bank);
 	stage_record_entry = stage_slots[5].record;
@@ -364,8 +363,8 @@ uint32_t stage_4_begin(uint16_t palette_job, uint32_t left_caller)
 	request = 0x3Cu;
 	palette_request(palette_job, request);
 	play_stage_music();
-	io_write8(0x1FB9u, 0x3Fu);
-	io_write8(0x1FBAu, 0x36u);
+	io_write8(colour_bases_back_sprites_fixed, 0x3Fu);
+	io_write8(colour_bases_layers_a_b, 0x36u);
 	map_scene = 0x88u;
 	map_area = 0u;
 	set_area_tile_banks();
@@ -377,8 +376,8 @@ uint32_t stage_4_begin(uint16_t palette_job, uint32_t left_caller)
 	window_bank = 0x1Fu;
 	set_lines(window_bank);
 	scene_load_story_settings(&ignored16, &ignored16_2);
-	io_write8(0x1FB9u, 0x13u);
-	io_write8(0x1FBAu, 0x2Cu);
+	io_write8(colour_bases_back_sprites_fixed, 0x13u);
+	io_write8(colour_bases_layers_a_b, 0x2Cu);
 	players_present = players_playing;
 	step_phase++;
 	return left_caller;
@@ -451,7 +450,7 @@ uint32_t stage_4_end_phase(uint32_t left_caller)
 		return left_caller;
 	}
 	command = 0u;
-	carry = queue_sound_always(command);
+	queue_sound_always(command);
 	clear_sprites();
 	game_step++;
 	step_phase = 0u;

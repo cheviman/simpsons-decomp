@@ -3,7 +3,7 @@
  *    Description: clearing the variables of a stage, of a game, and the scores
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -39,16 +39,16 @@ uint16_t reset_sprites_and_objects(void)
 
 	if (flip_screen != 0u)
 	{
-		io_write16(0x1FA0u, 0x255u);
+		io_write16(sprite_chip_scroll_x, 0x255u);
 		sprite_scroll_x = 0x255u;
-		io_write16(0x1FA2u, 0x71u);
+		io_write16(sprite_chip_scroll_y, 0x71u);
 		sprite_scroll_y = 0x71u;
 	}
 	else
 	{
-		io_write16(0x1FA0u, 0x15u);
+		io_write16(sprite_chip_scroll_x, 0x15u);
 		sprite_scroll_x = 0x15u;
-		io_write16(0x1FA2u, 0x261u);
+		io_write16(sprite_chip_scroll_y, 0x261u);
 		sprite_scroll_y = 0x261u;
 	}
 	sprite_scroll_x_pad = 0u;
@@ -76,9 +76,9 @@ uint16_t reset_sprites_and_objects(void)
 		clear_to++;
 		count--;
 	}
-	clear_from = 0x1840u;
-	clear_to = 0x1841u;
-	io_write8(0x1840u, 0u);
+	clear_from = bonus_2_state;
+	clear_to = bonus_2_timer;
+	io_write8(bonus_2_state, 0u);
 	count = 0x1Fu;
 	while (count != 0u)
 	{
@@ -88,9 +88,9 @@ uint16_t reset_sprites_and_objects(void)
 		count--;
 	}
 	clear_objects(&ignored16, &ignored16_2);
-	clear_from = 0x3C00u;
+	clear_from = palette_jobs;
 	clear_to = 0x3C01u;
-	io_write8(0x3C00u, 0u);
+	io_write8(palette_jobs, 0u);
 	count = 0x1FFu;
 	while (count != 0u)
 	{
@@ -133,9 +133,9 @@ uint16_t reset_for_play(void)
 		clear_to++;
 		count--;
 	}
-	clear_from = 0x3840u;
+	clear_from = name_entry_state;
 	clear_to = 0x3841u;
-	io_write8(0x3840u, 0u);
+	io_write8(name_entry_state, 0u);
 	count = 0x2Fu;
 	while (count != 0u)
 	{
@@ -148,16 +148,20 @@ uint16_t reset_for_play(void)
 	homer_grab_hints = 0u;
 	bart_grab_hints = 0u;
 	lisa_grab_hints = 0u;
-	unused_marge_word_1 = 0u;
+	marge_gauge_step = 0u;
+	marge_gauge_delay = 0u;
 	unused_marge_word_2 = 0u;
 	unused_marge_byte = 0u;
-	unused_homer_word_1 = 0u;
+	homer_gauge_step = 0u;
+	homer_gauge_delay = 0u;
 	unused_homer_word_2 = 0u;
 	unused_homer_byte = 0u;
-	unused_bart_word_1 = 0u;
+	bart_gauge_step = 0u;
+	bart_gauge_delay = 0u;
 	unused_bart_word_2 = 0u;
 	unused_bart_byte = 0u;
-	unused_lisa_word_1 = 0u;
+	lisa_gauge_step = 0u;
+	lisa_gauge_delay = 0u;
 	unused_lisa_word_2 = 0u;
 	unused_lisa_byte = 0u;
 	return reset_sprites_and_objects();

@@ -3,7 +3,7 @@
  *    Description: flinching, knocked down, getting up, dying (they go on in fixed_3F to 07E1CC)
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -14,11 +14,10 @@
 /* Unused: queues sound command 6300. */
 void unused_enemy_hit_sound(void)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 
 	command = 0x6300u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 }
 
 /* Reaction 0, a hit from behind: a hit sound and its flinch, then back to thinking. */
@@ -134,12 +133,11 @@ void enemy_flinch_from_behind(uint16_t object, uint8_t step, uint16_t *p_step_ha
 /* The hit sound, stopped, the flinch animation from behind. */
 void enemy_flinch_from_behind_start(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t action_step = 0;
 
 	command = 0x6300u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	OBJECT(object)->x_speed = 0;
 	OBJECT(object)->y_speed = 0;
 	OBJECT(object)->animation = 0x8Bu;
@@ -277,12 +275,11 @@ void enemy_flinch_kind_12(uint16_t object, uint8_t step, uint16_t *p_step_handle
 /* The hit sound, stopped, the flinch animation of a kind 12 hit. */
 void enemy_flinch_kind_12_start(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t action_step = 0;
 
 	command = 0x6300u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	OBJECT(object)->x_speed = 0;
 	OBJECT(object)->y_speed = 0;
 	OBJECT(object)->animation = 0x8Au;
@@ -403,12 +400,11 @@ void enemy_flinch_kind_11(uint16_t object, uint8_t step, uint16_t *p_step_handle
 /* The hit sound, stopped, the flinch animation of a kind 11 hit. */
 void enemy_flinch_kind_11_start(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t action_step = 0;
 
 	command = 0x6300u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	OBJECT(object)->x_speed = 0;
 	OBJECT(object)->y_speed = 0;
 	OBJECT(object)->animation = 0x89u;
@@ -515,13 +511,12 @@ void enemy_knocked_forward(uint16_t object, uint8_t step, uint16_t *p_step_handl
    floor. */
 void enemy_knocked_forward_start(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t attributes = 0, action_step = 0;
 	uint16_t z = 0, floor_z = 0, height_above_floor = 0, x_speed = 0;
 
 	command = 0x6300u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	OBJECT(object)->animation = 0x8Eu;
 	OBJECT(object)->x_speed = 0x200;
 	OBJECT(object)->y_speed = 0;
@@ -685,13 +680,12 @@ void enemy_knocked_back(uint16_t object, uint8_t step, uint16_t *p_step_handlers
 /* The hit sound, the knocked-back animation, 2 pixels a frame backward, thrown up when near its floor. */
 void enemy_knocked_back_start(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t attributes = 0, action_step = 0;
 	uint16_t z = 0, floor_z = 0, height_above_floor = 0, x_speed = 0;
 
 	command = 0x6300u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	OBJECT(object)->animation = 0x8Cu;
 	OBJECT(object)->x_speed = -0x200;
 	OBJECT(object)->y_speed = 0;
@@ -1263,14 +1257,13 @@ void enemy_sent_flying(uint16_t object, uint8_t step, uint16_t *p_step_handlers,
 /* The hit sound, the flying animation, 2 pixels a frame the way it faces for 32 frames, its speed kept. */
 void enemy_sent_flying_start(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t attributes = 0, action_step = 0;
 	uint16_t x_speed = 0, x_speed_2 = 0;
 
 	OBJECT(object)->timer = 0x20u;
 	command = 0x6300u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	OBJECT(object)->animation = 0x98u;
 	OBJECT(object)->x_speed = 0x200;
 	OBJECT(object)->y_speed = 0;
@@ -1289,7 +1282,6 @@ void enemy_sent_flying_start(uint16_t object)
 /* Flies with gravity for its 32 frames; when a step stops it, it is lifted a pixel and keeps its speed. */
 void enemy_sent_flying_step(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t blocked_flags = 0;
 	uint8_t timer = 0, action_step = 0, blocked = 0, z_low = 0;
 	uint16_t z_speed = 0, flight_x_speed = 0;
@@ -1303,7 +1295,7 @@ void enemy_sent_flying_step(uint16_t object)
 	}
 	z_speed = OBJECT(object)->z_speed;
 	OBJECT(object)->z_speed = z_speed - 0x20u;
-	carry = vector_check_landing(object);
+	vector_check_landing(object);
 	blocked = OBJECT(object)->blocked;
 	blocked_flags = (uint32_t)blocked << 8;
 	if (((blocked_flags >> 8) & 0x80u) != 0u && ((blocked_flags >> 8) & 8u) == 0u)

@@ -3,7 +3,7 @@
  *    Description: the top line: scores, lives, health gauges, credits, CONTINUE?, GAME OVER
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -180,7 +180,7 @@ void gauge_draw_player(uint16_t player_number)
 		continue_tiles = GAUGE_PLAYER(gauge_player)->continue_tiles;
 		tiles = continue_tiles;
 		counters = GAUGE_PLAYER(gauge_player)->counters;
-		count = (quarter_and_picture & 0xFFu) | ((uint32_t)mem_read8(counters) << 8);
+		count = (quarter_and_picture & 0xFFu) | ((uint32_t)PLAYER_COUNTERS(counters)->seconds << 8);
 		gauge_print_count(gauge_player, tiles, count);
 		number_3 = GAUGE_PLAYER(gauge_player)->number;
 		quarter_and_picture = ((uint32_t)number_3 << 8) | 2u;

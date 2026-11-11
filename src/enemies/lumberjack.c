@@ -3,7 +3,7 @@
  *    Description: stage 5's lumberjack (type 2F) and its axe (action 22)
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -148,7 +148,6 @@ void lumberjack_land(uint16_t object)
 /* Starts the lumberjack's swing with its sound, turned to its player. */
 void lumberjack_axe_start(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t action_step = 0;
 
@@ -156,7 +155,7 @@ void lumberjack_axe_start(uint16_t object)
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step + 1u;
 	command = 0x6A00u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	face_target(object);
 }
 
@@ -164,7 +163,6 @@ void lumberjack_axe_start(uint16_t object)
    the pause. */
 void lumberjack_axe_swing(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t animation_flags = 0, action_step = 0, swings = 0, swings_2 = 0;
 
@@ -174,7 +172,7 @@ void lumberjack_axe_swing(uint16_t object)
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step + 1u;
 	command = 0x6A00u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	leftover_y = lumberjack_axe_swing_box_ADDRESS;
 	vector_set_hit_box(object);
 	swings = OBJECT(object)->lumberjack.swings;

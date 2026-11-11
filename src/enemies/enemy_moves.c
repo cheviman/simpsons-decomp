@@ -3,7 +3,7 @@
  *    Description: the moves an enemy's behaviour picks while it thinks
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -50,7 +50,7 @@ void unused_enemy_move_aside(uint16_t object)
 
 	target_direction = OBJECT(object)->target_direction;
 	angle = target_direction;
-	other_way = OBJECT(object)->unk_3D;
+	other_way = OBJECT(object)->enemy.way_round;
 	if (other_way != 0u)
 		angle += 0x60u;
 	else
@@ -1138,9 +1138,9 @@ void enemy_walk_start_in_turn(uint16_t object)
 {
 	uint8_t delays_given = 0, walk_delay = 0, action_step = 0, enemy_class = 0;
 
-	delays_given = io_read8(0x1878u);
-	io_write8(0x1878u, delays_given + 1u);
-	walk_delay = io_read8(0x1878u);
+	delays_given = io_read8(walk_delay_turn);
+	io_write8(walk_delay_turn, delays_given + 1u);
+	walk_delay = io_read8(walk_delay_turn);
 	OBJECT(object)->timer = walk_delay;
 	OBJECT(object)->animation = 0x81u;
 	action_step = OBJECT(object)->action_step;
@@ -1437,7 +1437,7 @@ void enemy_line_up_in_depth(uint16_t object)
 	if (target_dx < 0x20u)
 	{
 		OBJECT(object)->y_speed = 0;
-		walk_speed_now = io_read16(0x1886u);
+		walk_speed_now = io_read16(enemy_walk_speed);
 		OBJECT(object)->x_speed = walk_speed_now;
 		side = OBJECT(object)->enemy.side;
 		if ((int8_t)side < 0)
@@ -1453,7 +1453,7 @@ void enemy_line_up_in_depth(uint16_t object)
 		if ((int8_t)(target_direction - 0x40u - side_2) < 0)
 		{
 			OBJECT(object)->y_speed = 0;
-			walk_speed_now = io_read16(0x1886u);
+			walk_speed_now = io_read16(enemy_walk_speed);
 			OBJECT(object)->x_speed = walk_speed_now;
 			side = OBJECT(object)->enemy.side;
 			if ((int8_t)side < 0)
@@ -1476,7 +1476,7 @@ void enemy_line_up_in_depth(uint16_t object)
 			return;
 		}
 		OBJECT(object)->x_speed = 0;
-		t1 = io_read16(0x1886u);
+		t1 = io_read16(enemy_walk_speed);
 		OBJECT(object)->y_speed = t1;
 		target_direction_2 = OBJECT(object)->target_direction;
 		if ((int8_t)target_direction_2 < 0)
@@ -1513,7 +1513,7 @@ uint16_t enemy_line_up_in_x(uint16_t object, uint16_t object_2)
 	if (target_dx >= 0x10u)
 	{
 		OBJECT(object)->y_speed = 0;
-		walk_speed_now = io_read16(0x1886u);
+		walk_speed_now = io_read16(enemy_walk_speed);
 		OBJECT(object)->x_speed = walk_speed_now;
 		target_direction = OBJECT(object)->target_direction;
 		if ((int8_t)(((uint16_t)((uint32_t)target_direction << 8) >> 8) - 0x40u) >= 0)

@@ -3,7 +3,7 @@
  *    Description: the attract's high score table
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -134,14 +134,14 @@ void high_scores_draw_background(void)
 	map_scene = 2u;
 	map_area = 0u;
 	set_area_tile_banks();
-	io_write8(0x1FB9u, 0x3Fu);
-	io_write8(0x1FBAu, 0x36u);
+	io_write8(colour_bases_back_sprites_fixed, 0x3Fu);
+	io_write8(colour_bases_layers_a_b, 0x36u);
 	layer_and_columns = 0x26u;
 	draw_layer_columns(layer_and_columns, &ignored16, &ignored16_2);
 	layer_and_columns = 0x126u;
 	draw_layer_columns(layer_and_columns, &ignored16, &u);
-	io_write8(0x1FB9u, 0x13u);
-	io_write8(0x1FBAu, 0x2Cu);
+	io_write8(colour_bases_back_sprites_fixed, 0x13u);
+	io_write8(colour_bases_layers_a_b, 0x2Cu);
 	palette_request_kind = 3u;
 	request = 0x7A53u;
 	palette_request(u, request);

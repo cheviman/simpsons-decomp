@@ -3,7 +3,7 @@
  *    Description: the nearest player, the direction and distance to it, the attack ranges, the random number
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -21,10 +21,10 @@ uint16_t enemy_target_nearest_player(uint16_t object)
 	uint8_t players_counted = 0, slots_before = 0;
 	uint16_t nearest_player = 0, enemy_x = 0, player_x = 0, dx = 0, enemy_y = 0, player_y = 0, dy = 0;
 
-	players_counted = io_read8(0x1874u);
+	players_counted = io_read8(stage_player_count);
 	if (players_counted == 0u)
 	{
-		nearest_player = io_read16(0x1872u);
+		nearest_player = io_read16(nearest_player_found);
 		target = nearest_player;
 		OBJECT(object)->target = target;
 		return target;
@@ -53,14 +53,14 @@ uint16_t enemy_target_nearest_player(uint16_t object)
 			if (distance < nearest_player_distance)
 			{
 				nearest_player_distance = distance;
-				io_write16(0x1872u, object_2);
+				io_write16(nearest_player_found, object_2);
 			}
 		}
 		object_2 += 0xC0u;
 		slots_before = stack;
 		stack = slots_before - 1u;
 	} while (slots_before != 1u);
-	nearest_player = io_read16(0x1872u);
+	nearest_player = io_read16(nearest_player_found);
 	target = nearest_player;
 	OBJECT(object)->target = target;
 	return target;
@@ -73,9 +73,9 @@ uint16_t enemy_random(uint8_t d)
 	uint16_t roll = 0;
 	uint8_t last_roll = 0;
 
-	last_roll = io_read8(0x189Eu);
+	last_roll = io_read8(enemy_random_number);
 	value = last_roll + random_number;
-	io_write8(0x189Eu, value);
+	io_write8(enemy_random_number, value);
 	roll = (d & 0xFFu) | ((uint32_t)value << 8);
 	return roll;
 }

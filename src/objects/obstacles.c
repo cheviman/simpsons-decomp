@@ -3,7 +3,7 @@
  *    Description: the obstacles: raising the floor, picked up, thrown and broken
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -65,7 +65,7 @@ uint16_t cemetery_obstacle_break(uint16_t object)
 	child_object = cemetery_obstacle_break_child_ADDRESS;
 	spawn_list_2_child(object, child_object, &ignored16, &carry);
 	command = 0x6C00u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	floor_place = obstacle_restore_floor(object);
 	holds_food = OBJECT(object)->cemetery_obstacle.holds_food;
 	if (holds_food == 0u)
@@ -308,12 +308,11 @@ void heavy_obstacle_hit_steps(uint16_t object, uint16_t *p_action_handlers, uint
 /* Turns the object into a smash (kind 9C, animation A2) with sound 6C00, hurting the enemies it touches. */
 void obstacle_smash(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t action = 0;
 
 	command = 0x6C00u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	OBJECT(object)->flags = 0x80u;
 	OBJECT(object)->x_speed = 0;
 	leftover_y = obstacle_smash_box_ADDRESS;
@@ -362,7 +361,7 @@ void timed_throwable_throw(uint16_t object)
 	uint8_t animation = 0, state = 0;
 
 	OBJECT(object)->flags = 0x80u;
-	OBJECT(object)->timed_throwable.carried = 0u;
+	OBJECT(object)->carried = 0u;
 	animation = OBJECT(object)->animation;
 	OBJECT(object)->animation = (animation + 1u) | 0x80u;
 	leftover_y = timed_throwable_throw_box_ADDRESS;
@@ -383,7 +382,7 @@ void timed_throwable_fall(uint16_t object)
 	if (carry == 0u)
 		return;
 	command = 0x6C00u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	OBJECT(object)->x_speed = 0;
 	OBJECT(object)->flags = 0xC0u;
 	leftover_y = obstacle_smash_box_ADDRESS;
@@ -437,7 +436,7 @@ void carried_obstacle_thrown(uint16_t object)
    priority. */
 void carried_obstacle_check_floor(uint16_t object)
 {
-	uint32_t negative = 0, carry = 0;
+	uint32_t negative = 0;
 	uint8_t flags = 0, floor_value = 0, value_ahead = 0;
 	uint16_t command = 0, floor_cell = 0;
 	uint8_t state = 0, attributes = 0;
@@ -460,7 +459,7 @@ void carried_obstacle_check_floor(uint16_t object)
 		OBJECT(object)->flags = 0x80u;
 		OBJECT(object)->action = 0u;
 		command = 0x6500u;
-		carry = vector_queue_sound(command);
+		vector_queue_sound(command);
 		return;
 	}
 	OBJECT(object)->floor_z = (OBJECT(object)->floor_z & 0xFF00u) | ((((floor_value & 0xFu) << 1) << 1) << 1 & 0xFFu);
@@ -484,7 +483,7 @@ void carried_obstacle_check_floor(uint16_t object)
 		OBJECT(object)->flags = 0x80u;
 		OBJECT(object)->action = 0u;
 		command = 0x6500u;
-		carry = vector_queue_sound(command);
+		vector_queue_sound(command);
 		return;
 	}
 	height_ahead = (thrown_cell_ahead & 0xFu) << 3;
@@ -502,7 +501,7 @@ void carried_obstacle_check_floor(uint16_t object)
 	OBJECT(object)->flags = 0x80u;
 	OBJECT(object)->action = 0u;
 	command = 0x6500u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 }
 
 /* Sets up the obstacle with the animation its spawn's state gives, facing as its carrier. */
@@ -675,7 +674,7 @@ void obstacle_fall_and_break(uint16_t object)
 	if (carry == 0u)
 		return;
 	command = 0x6500u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	action = OBJECT(object)->action;
 	OBJECT(object)->action = action + 1u;
 }
@@ -744,7 +743,7 @@ void carried_obstacle_bounce(uint16_t object)
 	OBJECT(object)->z_speed = 0x500;
 	OBJECT(object)->flags |= 8u;
 	command = 0x6500u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
 }
@@ -760,7 +759,7 @@ void carried_obstacle_land(uint16_t object)
 	if (carry == 0u)
 		return;
 	command = 0x6500u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
 }
@@ -911,7 +910,7 @@ void throwable_pick_up(uint16_t object)
 	uint8_t state = 0;
 
 	OBJECT(object)->blocked = 0u;
-	OBJECT(object)->throwable.carried = 1u;
+	OBJECT(object)->carried = 1u;
 	OBJECT(object)->flags = 0x80u;
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state - 1u;
@@ -923,7 +922,7 @@ void throwable_throw(uint16_t object)
 	uint8_t animation = 0, state = 0;
 
 	OBJECT(object)->flags = 0x80u;
-	OBJECT(object)->throwable.carried = 0u;
+	OBJECT(object)->carried = 0u;
 	animation = OBJECT(object)->animation;
 	OBJECT(object)->animation = (animation + 1u) | 0x80u;
 	leftover_y = throwable_throw_box_ADDRESS;
@@ -1010,7 +1009,7 @@ uint16_t throwable_follow_floor(uint16_t object, uint16_t states)
 	blocked = OBJECT(object)->blocked;
 	if (blocked != 0u)
 		return states;
-	carried = OBJECT(object)->throwable.carried;
+	carried = OBJECT(object)->carried;
 	if (carried != 0u)
 	{
 		parent = OBJECT(object)->parent;
@@ -1104,7 +1103,7 @@ void obstacle_start(uint16_t object, uint16_t *p_u, uint32_t *p_left_caller)
 		animation = parameter_2 | 0x80u;
 		OBJECT(object)->animation = animation;
 		OBJECT(object)->parameter = animation + 1u;
-		carried = OBJECT(object)->obstacle.carried;
+		carried = OBJECT(object)->carried;
 		if (carried != 0u)
 		{
 			state = OBJECT(object)->state;
@@ -1153,12 +1152,11 @@ uint16_t obstacle_smashed_steps(uint16_t object)
 /* Smashes the obstacle (sound 6C00), giving the floor back, and starts its breaking animation. */
 uint16_t obstacle_smashed(uint16_t object, uint16_t u)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t floor_raised = 0, action_step = 0;
 
 	command = 0x6C00u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	OBJECT(object)->x_speed = 0;
 	OBJECT(object)->y_speed = 0;
 	OBJECT(object)->z_speed = 0;
@@ -1266,13 +1264,13 @@ void obstacle_raise_floor(uint16_t object, uint16_t raise_steps, uint16_t *p_flo
 	uint8_t floor_column_2 = 0, floor_cell_2 = 0, cell_below = 0, floor_cell_3 = 0, columns_to_check = 0, floor_cell_4 = 0, raise_height = 0, columns_to_raise = 0, floor_raised = 0;
 	uint16_t floor_row = 0, floor_row_2 = 0;
 
-	io_write8(0x188Bu, raise_steps >> 8);
+	io_write8(floor_raise_height, raise_steps >> 8);
 	floor_cell_under(object, &floor_place, &floor_cell);
 	old_cell = (uint8_t)(floor_cell >> 8);
 	stack = old_cell;
 	control = board_control | 2u;
 	board_control = control;
-	io_write8(0x1FC2u, control);
+	io_write8(board_control_register, control);
 	OBJECT(object)->obstacle.floor_cell = stack;
 	stack_2 = floor_place >> 8;
 	stack = (uint8_t)floor_place;
@@ -1294,7 +1292,7 @@ void obstacle_raise_floor(uint16_t object, uint16_t raise_steps, uint16_t *p_flo
 			OBJECT(object)->state = 0xFEu;
 			control = board_control & ~3u;
 			board_control = control;
-			io_write8(0x1FC2u, control);
+			io_write8(board_control_register, control);
 			left_caller = 1u;
 			break;
 		}
@@ -1305,7 +1303,7 @@ void obstacle_raise_floor(uint16_t object, uint16_t raise_steps, uint16_t *p_flo
 			OBJECT(object)->state = 0xFEu;
 			control = board_control & ~3u;
 			board_control = control;
-			io_write8(0x1FC2u, control);
+			io_write8(board_control_register, control);
 			left_caller = 1u;
 			break;
 		}
@@ -1317,14 +1315,14 @@ void obstacle_raise_floor(uint16_t object, uint16_t raise_steps, uint16_t *p_flo
 		floor_columns_left = 3u;
 		column = floor_raise_steps;
 		floor_cell_4 = OBJECT(object)->obstacle.floor_cell;
-		raise_height = io_read8(0x188Bu);
+		raise_height = io_read8(floor_raise_height);
 		raised_cell = (floor_cell_4 & 0xFu) + raise_height;
 		if (raised_cell >= 0x10u)
 		{
 			OBJECT(object)->state = 0xFEu;
 			control = board_control & ~3u;
 			board_control = control;
-			io_write8(0x1FC2u, control);
+			io_write8(board_control_register, control);
 			left_caller = 1u;
 			break;
 		}
@@ -1340,7 +1338,7 @@ void obstacle_raise_floor(uint16_t object, uint16_t raise_steps, uint16_t *p_flo
 		} while (columns_to_raise != 1u);
 		control = board_control & ~3u;
 		board_control = control;
-		io_write8(0x1FC2u, control);
+		io_write8(board_control_register, control);
 		floor_raised = OBJECT(object)->obstacle.floor_raised;
 		OBJECT(object)->obstacle.floor_raised = floor_raised + 1u;
 		left_caller = 0u;
@@ -1360,7 +1358,7 @@ uint16_t obstacle_restore_floor(uint16_t object)
 
 	control = board_control | 2u;
 	board_control = control;
-	io_write8(0x1FC2u, control);
+	io_write8(board_control_register, control);
 	floor_column = OBJECT(object)->obstacle.floor_column;
 	column = floor_column - 1u;
 	floor_columns_left = 3u;
@@ -1379,7 +1377,7 @@ uint16_t obstacle_restore_floor(uint16_t object)
 	OBJECT(object)->obstacle.floor_raised = 0u;
 	control = board_control & ~3u;
 	board_control = control;
-	io_write8(0x1FC2u, control);
+	io_write8(board_control_register, control);
 	return floor_place;
 }
 
@@ -1390,7 +1388,7 @@ void obstacle_settle(uint16_t object, uint16_t *p_u, uint32_t *p_left_caller)
 	uint16_t raise_steps = 0;
 	uint8_t carried = 0, state = 0, action = 0;
 
-	carried = OBJECT(object)->obstacle.carried;
+	carried = OBJECT(object)->carried;
 	if (carried != 0u)
 	{
 		leftover_y = obstacle_settle_box_ADDRESS;
@@ -1468,7 +1466,7 @@ void obstacle_throw(uint16_t object)
 	}
 	leftover_y = obstacle_knocked_box_ADDRESS;
 	vector_set_hit_box(object);
-	OBJECT(object)->obstacle.carried = 0u;
+	OBJECT(object)->carried = 0u;
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
 	check_hits_with_enemies(object);
@@ -1501,7 +1499,7 @@ uint16_t obstacle_rebound(uint16_t object)
 	uint16_t parent = 0, x_speed = 0;
 
 	OBJECT(object)->flags = 0x80u;
-	OBJECT(object)->obstacle.carried = 0u;
+	OBJECT(object)->carried = 0u;
 	OBJECT(object)->z_speed = 0x600;
 	OBJECT(object)->x_speed = 0x100;
 	parent = OBJECT(object)->parent;
@@ -1573,7 +1571,7 @@ void unused_obstacle_fall(uint16_t object)
 	uint16_t ignored16 = 0;
 	uint8_t state = 0;
 
-	OBJECT(object)->unk_3D = 0u;
+	OBJECT(object)->carried = 0u;
 	vector_apply_gravity(object, &ignored16, &carry);
 	if (carry)
 	{
@@ -1645,7 +1643,7 @@ void bouncing_throwable_pick_up(uint16_t object)
 	uint8_t carrier_kind = 0, state = 0;
 
 	OBJECT(object)->blocked = 0u;
-	OBJECT(object)->bouncing_throwable.carried = 1u;
+	OBJECT(object)->carried = 1u;
 	OBJECT(object)->flags = 0x80u;
 	carrier_kind = OBJECT(object)->bouncing_throwable.carrier_kind;
 	if (carrier_kind == 2u)
@@ -1660,7 +1658,7 @@ void bouncing_throwable_throw(uint16_t object)
 	uint8_t animation = 0, state = 0;
 
 	OBJECT(object)->flags = 0x80u;
-	OBJECT(object)->bouncing_throwable.carried = 0u;
+	OBJECT(object)->carried = 0u;
 	animation = OBJECT(object)->animation;
 	OBJECT(object)->animation = (animation + 1u) | 0x80u;
 	leftover_y = bouncing_throwable_throw_box_ADDRESS;
@@ -1755,7 +1753,6 @@ uint16_t dreamland_obstacle_drop_steps(uint16_t object)
 /* After its wait, is thrown in with sound 0301. */
 void dreamland_obstacle_throw_in(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t timer = 0, action_step = 0;
 
@@ -1764,7 +1761,7 @@ void dreamland_obstacle_throw_in(uint16_t object)
 	if (timer != 1u)
 		return;
 	command = 0x301u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	OBJECT(object)->flags = 0xC8u;
 	OBJECT(object)->x_speed = 0x300;
 	OBJECT(object)->z_speed = -0x100;
@@ -1785,7 +1782,7 @@ void dreamland_obstacle_land(uint16_t object)
 	drop_animation = OBJECT(object)->dreamland_obstacle.drop_animation;
 	OBJECT(object)->animation = drop_animation + 1u;
 	command = 0x2000u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	OBJECT(object)->x_speed = 0;
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step + 1u;

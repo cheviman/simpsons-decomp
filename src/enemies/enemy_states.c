@@ -3,7 +3,7 @@
  *    Description: an enemy's states: thinking, attacking, the hit reactions, climbing
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -47,7 +47,7 @@ void enemy_think(uint16_t object, uint16_t *p_object_2, uint32_t *p_left_caller)
 	uint8_t action_offset = 0, attack_chance = 0, choice = 0, roll = 0, sides = 0, step = 0;
 	uint16_t action_handlers = 0, d = 0, range = 0, state_record = 0, target = 0, target_player = 0;
 	uint8_t stack = 0;
-	uint8_t retarget_time = 0, attackers = 0, attackers_left = 0, nearest_attackers = 0, attackers_limit = 0, old_attackers = 0, parameter = 0, parameter_2 = 0, parameter_3 = 0, taken_sides = 0, sides_taken = 0, target_direction = 0, sides_taken_2 = 0, sides_taken_3 = 0, side = 0, side_2 = 0, target_state = 0, parameter_4 = 0, timer = 0, timer_2 = 0, state = 0, action_chance = 0, remaining_roll = 0, choices_left = 0, parameter_5 = 0, t2 = 0, t3 = 0, t4 = 0;
+	uint8_t retarget_time = 0, attackers = 0, attackers_left = 0, nearest_attackers = 0, attackers_limit = 0, old_attackers = 0, parameter = 0, parameter_2 = 0, parameter_3 = 0, taken_sides = 0, sides_taken = 0, target_direction = 0, sides_taken_2 = 0, sides_taken_3 = 0, side = 0, side_2 = 0, target_state = 0, parameter_4 = 0, timer = 0, timer_2 = 0, state = 0, action_chance = 0, remaining_roll = 0, choices_left = 0, parameter_5 = 0, behaviour_chance = 0, t2 = 0, t3 = 0;
 	uint16_t target_2 = 0, least_attacked = 0, target_3 = 0, z = 0, floor_z = 0, target_dx = 0, target_dy = 0, target_dx_2 = 0, target_dy_2 = 0, action = 0, target_floor = 0, floor_z_2 = 0, floor_difference = 0, t1 = 0, floor_distance = 0, z_2 = 0, floor_z_3 = 0, behaviour = 0, behaviour_2 = 0;
 
 	target_2 = OBJECT(object)->target;
@@ -66,11 +66,11 @@ void enemy_think(uint16_t object, uint16_t *p_object_2, uint32_t *p_left_caller)
 			OBJECT(target_player)->player.attackers = 0u;
 		target_player = enemy_target_nearest_player(object);
 		nearest_attackers = OBJECT(target_player)->player.attackers;
-		attackers_limit = io_read8(0x1877u);
+		attackers_limit = io_read8(attackers_per_player_limit);
 		if (attackers_limit <= nearest_attackers)
 		{
 			find_least_attacked_player();
-			least_attacked = io_read16(0x1870u);
+			least_attacked = io_read16(least_attacked_player);
 			target_player = least_attacked;
 			OBJECT(object)->target = target_player;
 		}
@@ -295,13 +295,13 @@ void enemy_think(uint16_t object, uint16_t *p_object_2, uint32_t *p_left_caller)
 									range += 7u;
 									do
 									{
-										action_chance = ATTACK_RANGE(range + (int8_t)choice - 0x7u)->unk_07;
+										action_chance = BEHAVIOUR_CHANCE(range + (int8_t)choice);
 										remaining_roll = roll;
 										roll = remaining_roll - action_chance;
 										if (remaining_roll < action_chance)
 										{
 											range -= 4u;
-											OBJECT(object)->action = ATTACK_RANGE(range + (int8_t)choice - 0x3u)->chance;
+											OBJECT(object)->action = BEHAVIOUR_ACTION(range + (int8_t)choice);
 											OBJECT(object)->state = 3u;
 											OBJECT(object)->action_step = 0u;
 											OBJECT(object)->x_speed = 0;
@@ -387,18 +387,19 @@ void enemy_think(uint16_t object, uint16_t *p_object_2, uint32_t *p_left_caller)
 	state_record += 3u;
 	do
 	{
-		t2 = mem_read8(state_record + (int8_t)choice);
-		t3 = roll;
-		roll = t3 - t2;
-		if (t3 < t2)
+		behaviour_chance = BEHAVIOUR_CHANCE(state_record + (int8_t)choice);
+		t2 = roll;
+		roll = t2 - behaviour_chance;
+		if (t2 < behaviour_chance)
 		{
 			choice--;
 			break;
 		}
-		t4 = choice;
-		choice = t4 - 1u;
-	} while (t4 != 1u);
-	OBJECT(object)->action = mem_read8(state_record - 3u + (int8_t)choice);
+		t3 = choice;
+		choice = t3 - 1u;
+	} while (t3 != 1u);
+	state_record -= 3u;
+	OBJECT(object)->action = BEHAVIOUR_ACTION(state_record + (int8_t)choice);
 	OBJECT(object)->action_step = 0u;
 	action = (((uint32_t)OBJECT(object)->action << 8u) | OBJECT(object)->action_step);
 	action_handlers = enemy_think_actions_ADDRESS;
@@ -458,7 +459,6 @@ void enemy_think(uint16_t object, uint16_t *p_object_2, uint32_t *p_left_caller)
    (action_banks and the handlers after them) and checks the floor. */
 void enemy_attack(uint16_t object, uint16_t *p_attack_handlers, uint32_t *p_left_caller)
 {
-	uint32_t carry = 0;
 	uint8_t attack = 0, step = 0;
 	uint16_t attack_handlers = 0, target = 0;
 	uint8_t stack = 0;
@@ -467,7 +467,7 @@ void enemy_attack(uint16_t object, uint16_t *p_attack_handlers, uint32_t *p_left
 	z = OBJECT(object)->z;
 	floor_z = OBJECT(object)->floor_z;
 	if (z != floor_z)
-		carry = land_if_falling(object);
+		land_if_falling(object);
 	target_2 = OBJECT(object)->target;
 	target = target_2;
 	enemy_look_at_target(object, target);

@@ -3,7 +3,7 @@
  *    Description: the story steps
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -388,8 +388,8 @@ void step_story_3(void)
 {
 	uint8_t discarded_read = 0;
 
-	discarded_read = io_read8(0x1C80u);
-	io_write8(0x1C80u, 0u);
+	discarded_read = io_read8(tile_chip_scroll_control);
+	io_write8(tile_chip_scroll_control, 0u);
 	gauges_shown = 0u;
 	set_step_scene();
 	game_step++;

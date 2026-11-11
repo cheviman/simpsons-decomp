@@ -3,7 +3,7 @@
  *    Description: prototypes of the game's functions
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -2157,12 +2157,12 @@ void krusty_balloon_shot(uint16_t *p_object, uint16_t *p_state_handlers);
 uint16_t krusty_balloon_beaten(uint16_t object);
 void krusty_balloon_deflate(uint16_t object);
 void krusty_balloon_beaten_wait(uint16_t object);
-void krusty_balloon_wait_for_184e(uint16_t object);
+void krusty_balloon_wait_for_players(uint16_t object);
 void krusty_balloon_fall_and_land(uint16_t object);
 uint16_t krusty_balloon_knocked_up(uint16_t object);
 void krusty_balloon_fly_up(uint16_t object);
 void krusty_balloon_knocked_up_stomp(uint16_t object, uint16_t object_2);
-uint16_t krusty_balloon_flinch(uint16_t object);
+uint16_t krusty_balloon_flinch(uint16_t balloon);
 uint16_t krusty_balloon_come_in(uint16_t object);
 void krusty_balloon_appear(uint16_t object, uint16_t palette_job);
 void krusty_balloon_rise(uint16_t object);
@@ -2195,7 +2195,7 @@ void krusty_balloon_throw(uint16_t side, uint16_t *p_balloon, uint32_t *p_carry)
 void krusty_balloon_throw_right(uint16_t object, uint32_t carry);
 void krusty_balloon_throw_left(uint16_t object, uint32_t carry);
 void krusty_balloon_throw_spread(uint16_t object, uint32_t carry);
-void krusty_balloon_wobble(uint16_t *p_object, uint32_t *p_carry);
+void krusty_balloon_wobble(uint16_t *p_balloon, uint32_t *p_carry);
 void krusty_balloon_wobble_widen(uint16_t object);
 void krusty_balloon_wobble_narrow(uint16_t object);
 void krusty_balloon_wobble_stretch(uint16_t object);
@@ -2915,9 +2915,9 @@ void player_second_sprite_fly(uint16_t object);
 void player_second_sprite_land(uint16_t object);
 void player_second_sprite_fall(uint16_t object);
 void player_second_sprite_wait_animation(uint16_t object);
-void player_second_sprite_start_prompt(uint16_t object);
-void player_second_sprite_prompt(uint16_t object);
-void player_second_sprite_blink(uint16_t object);
+void player_second_sprite_start_prompt(uint16_t player);
+void player_second_sprite_prompt(uint16_t player);
+void player_second_sprite_blink(uint16_t player);
 void player_second_sprite_start_balloon(uint16_t player);
 void player_second_sprite_balloon(uint16_t player);
 void player_second_sprite_off(uint16_t object);

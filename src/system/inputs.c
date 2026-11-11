@@ -3,7 +3,7 @@
  *    Description: the coin slots, the credits and the players' controls, read at each IRQ
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -34,7 +34,7 @@ void coin_inserted(uint16_t *p_coin_bit, uint32_t *p_carry)
 	{
 		b = 2u;
 		command = 0x4002u;
-		carry = queue_sound_always(command);
+		queue_sound_always(command);
 		coins_inserted++;
 		carry = 1u;
 		coin_bit = ((uint32_t)stack << 8) | b;

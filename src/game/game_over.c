@@ -3,7 +3,7 @@
  *    Description: GAME OVER and the high score check
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -217,9 +217,9 @@ void game_over_start(void)
 	} while (delay != 4u);
 	job = 1u;
 	queue_job(job);
-	clear_from = 0x3C00u;
+	clear_from = palette_jobs;
 	clear_to = 0x3C01u;
-	io_write8(0x3C00u, 0u);
+	io_write8(palette_jobs, 0u);
 	count = 0x1FFu;
 	while (count != 0u)
 	{
@@ -269,8 +269,8 @@ void game_finish(void)
 	uint16_t score = 0, score_address = 0;
 	uint8_t old_scroll_control = 0, scores_left = 0;
 
-	old_scroll_control = io_read8(0x1C80u);
-	io_write8(0x1C80u, 0u);
+	old_scroll_control = io_read8(tile_chip_scroll_control);
+	io_write8(tile_chip_scroll_control, 0u);
 	clear_sprites();
 	clear_tile_layers();
 	score_address = marge_score_ADDRESS;

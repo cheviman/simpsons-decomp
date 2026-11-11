@@ -3,7 +3,7 @@
  *    Description: the fat goons' attacks: the enemy actions bank 15 handles
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -60,7 +60,6 @@ void fat_goon_bump_wind_up(uint16_t object)
 /* At the animation's mark, backs the fat goon into its target with the bump's hit box and sound 7600. */
 void fat_goon_bump_move(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t animation_flags = 0, attributes = 0, action_step = 0, attributes_2 = 0;
 	uint16_t x_speed = 0;
@@ -81,7 +80,7 @@ void fat_goon_bump_move(uint16_t object)
 	attributes_2 = OBJECT(object)->attributes;
 	OBJECT(object)->attributes = attributes_2 ^ 0x40u;
 	command = 0x7600u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	leftover_y = fat_goon_bump_move_box_ADDRESS;
 	vector_set_hit_box(object);
 }
@@ -438,7 +437,6 @@ void fat_goon_heavy_strike_swing(uint16_t object)
 /* At the swing's mark, puts out the heavy strike's hit box with sound 2000. */
 void fat_goon_heavy_strike_hit(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t animation_flags = 0, action_step = 0;
 
@@ -450,7 +448,7 @@ void fat_goon_heavy_strike_hit(uint16_t object)
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step + 1u;
 	command = 0x2000u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 }
 
 /* Heads for its target to grab it, unless the target is gone or already held. */
@@ -710,7 +708,6 @@ uint16_t fat_goon_grab(uint16_t object)
    life, or is beaten. */
 uint16_t fat_goon_squeeze(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint8_t vitality = 0;
 	uint16_t command = 0, target = 0;
 	uint8_t timer = 0, timer_2 = 0, hold_presses = 0, vitality_2 = 0, vitality_3 = 0, squeeze_step = 0, squeeze_step_2 = 0;
@@ -722,7 +719,7 @@ uint16_t fat_goon_squeeze(uint16_t object)
 	if ((timer_2 & 0xFu) == 0u)
 	{
 		command = 0x2000u;
-		carry = vector_queue_sound(command);
+		vector_queue_sound(command);
 	}
 	OBJECT(object)->attack = 0u;
 	target_2 = OBJECT(object)->target;

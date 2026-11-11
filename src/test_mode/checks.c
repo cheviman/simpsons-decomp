@@ -3,7 +3,7 @@
  *    Description: ROM, screen, colour and I/O checks
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -30,7 +30,7 @@ void test_rom_check_page(uint16_t d)
 		test_menu_update(&ignored16, &carry);
 		return;
 	case test_rom_check_page_steps_ADDRESS:
-		carry = test_rom_check_open(page_steps);
+		test_rom_check_open(page_steps);
 		return;
 	case 0x60A3u:
 		test_rom_check_run(&ignored16, &carry);
@@ -48,7 +48,7 @@ void test_rom_check_page(uint16_t d)
 		test_io_check_run(&ignored16, &carry);
 		return;
 	case test_music_page_steps_ADDRESS:
-		carry = test_music_open(page_steps);
+		test_music_open(page_steps);
 		return;
 	case 0x621Du:
 		test_music_first_choice(&ignored16, &carry);
@@ -60,7 +60,7 @@ void test_rom_check_page(uint16_t d)
 		test_music_replay(&ignored16, &carry);
 		return;
 	case test_sound_page_steps_ADDRESS:
-		carry = test_sound_open(page_steps);
+		test_sound_open(page_steps);
 		return;
 	case 0x6279u:
 		test_sound_first_choice(&ignored16, &carry);
@@ -142,7 +142,7 @@ void test_screen_check_page(uint16_t d)
 		test_menu_update(&ignored16, &carry);
 		return;
 	case test_rom_check_page_steps_ADDRESS:
-		carry = test_rom_check_open(page_steps);
+		test_rom_check_open(page_steps);
 		return;
 	case 0x60A3u:
 		test_rom_check_run(&ignored16, &carry);
@@ -160,7 +160,7 @@ void test_screen_check_page(uint16_t d)
 		test_io_check_run(&ignored16, &carry);
 		return;
 	case test_music_page_steps_ADDRESS:
-		carry = test_music_open(page_steps);
+		test_music_open(page_steps);
 		return;
 	case 0x621Du:
 		test_music_first_choice(&ignored16, &carry);
@@ -172,7 +172,7 @@ void test_screen_check_page(uint16_t d)
 		test_music_replay(&ignored16, &carry);
 		return;
 	case test_sound_page_steps_ADDRESS:
-		carry = test_sound_open(page_steps);
+		test_sound_open(page_steps);
 		return;
 	case 0x6279u:
 		test_sound_first_choice(&ignored16, &carry);
@@ -257,7 +257,7 @@ void test_color_check_page(uint16_t d)
 		test_menu_update(&ignored16, &carry);
 		return;
 	case test_rom_check_page_steps_ADDRESS:
-		carry = test_rom_check_open(page_steps);
+		test_rom_check_open(page_steps);
 		return;
 	case 0x60A3u:
 		test_rom_check_run(&ignored16, &carry);
@@ -275,7 +275,7 @@ void test_color_check_page(uint16_t d)
 		test_io_check_run(&ignored16, &carry);
 		return;
 	case test_music_page_steps_ADDRESS:
-		carry = test_music_open(page_steps);
+		test_music_open(page_steps);
 		return;
 	case 0x621Du:
 		test_music_first_choice(&ignored16, &carry);
@@ -287,7 +287,7 @@ void test_color_check_page(uint16_t d)
 		test_music_replay(&ignored16, &carry);
 		return;
 	case test_sound_page_steps_ADDRESS:
-		carry = test_sound_open(page_steps);
+		test_sound_open(page_steps);
 		return;
 	case 0x6279u:
 		test_sound_first_choice(&ignored16, &carry);
@@ -429,7 +429,7 @@ void test_io_check_page(uint16_t d)
 		test_menu_update(&ignored16, &carry);
 		return;
 	case test_rom_check_page_steps_ADDRESS:
-		carry = test_rom_check_open(page_steps);
+		test_rom_check_open(page_steps);
 		return;
 	case 0x60A3u:
 		test_rom_check_run(&ignored16, &carry);
@@ -447,7 +447,7 @@ void test_io_check_page(uint16_t d)
 		test_io_check_run(&ignored16, &carry);
 		return;
 	case test_music_page_steps_ADDRESS:
-		carry = test_music_open(page_steps);
+		test_music_open(page_steps);
 		return;
 	case 0x621Du:
 		test_music_first_choice(&ignored16, &carry);
@@ -459,7 +459,7 @@ void test_io_check_page(uint16_t d)
 		test_music_replay(&ignored16, &carry);
 		return;
 	case test_sound_page_steps_ADDRESS:
-		carry = test_sound_open(page_steps);
+		test_sound_open(page_steps);
 		return;
 	case 0x6279u:
 		test_sound_first_choice(&ignored16, &carry);
@@ -532,7 +532,7 @@ void test_io_check_run(uint16_t *p_d, uint32_t *p_carry)
 	uint8_t bits_before_shift = 0, bits_to_go = 0, coin_bits_before_shift = 0, ports_to_go = 0;
 	uint16_t port_place = 0;
 
-	port = 0x1F90u;
+	port = player_1_input_port;
 	tiles = 0x22CCu;
 	ports_left = 4u;
 	test_coin_bits = coin_inputs;

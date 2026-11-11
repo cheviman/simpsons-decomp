@@ -3,7 +3,7 @@
  *    Description: bonus 2: wake up (the step after stage 6), yelling to fill a level
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -14,14 +14,13 @@
 /* Bonus 2's introduction: starts its music (sound 8700). */
 void bonus_2_start_music(void)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t state_number = 0;
 
 	command = 0x8700u;
-	carry = vector_queue_sound(command);
-	state_number = io_read8(0x1840u);
-	io_write8(0x1840u, state_number + 1u);
+	vector_queue_sound(command);
+	state_number = io_read8(bonus_2_state);
+	io_write8(bonus_2_state, state_number + 1u);
 }
 
 /* Bonus 2's introduction: the title and the camera's pan, then the first player in the game is put in
@@ -45,8 +44,8 @@ void bonus_2_intro_set_up(void)
 	player_number = (uint8_t)(first_player >> 8);
 	if (negative)
 	{
-		state_number = io_read8(0x1840u);
-		io_write8(0x1840u, state_number + 1u);
+		state_number = io_read8(bonus_2_state);
+		io_write8(bonus_2_state, state_number + 1u);
 		return;
 	}
 	bonus_2_player_number = player_number;
@@ -64,8 +63,8 @@ void bonus_2_intro_set_up(void)
 	field_offset = 0x16u;
 	bonus_2_move_player(amount, object, field_offset);
 	OBJECT(object)->attributes = 0x30u;
-	state_number = io_read8(0x1840u);
-	io_write8(0x1840u, state_number + 1u);
+	state_number = io_read8(bonus_2_state);
+	io_write8(bonus_2_state, state_number + 1u);
 }
 
 /* Bonus 2: adds an amount to a field of a player's object and of its two partners. */
@@ -118,7 +117,7 @@ void bonus_2_set_up(void)
 	bart_entry_status = 0u;
 	lisa_entry_status = 0u;
 	bonus_2_all_players(&ignored16, &carry);
-	io_write16(0x1840u, 0x464u);
+	io_write16(bonus_2_state, 0x464u);
 	bonus_show_ready();
 	bonus_seconds = 0x10u;
 	bonus_draw_x = 0xE0u;
@@ -159,7 +158,7 @@ void bonus_2_put_player(uint16_t player)
 	if ((player_bits_before & 1u) == 0u)
 		sign_animation = 0xC5u;
 	OBJECT(player + 0x840u)->animation = sign_animation;
-	OBJECT(player + 0x840u)->unk_43 = sign_animation;
+	OBJECT(player + 0x840u)->bonus_2.sign_kept_animation = sign_animation;
 }
 
 /* Bonus 2's contest: waits 100 frames with the players reacting, then starts the music (8A00) and the
@@ -171,16 +170,16 @@ void bonus_2_countdown(void)
 	uint8_t bonus_2_frames_left = 0;
 
 	bonus_2_all_players(&ignored16, &carry);
-	bonus_2_frames_left = io_read8(0x1841u);
-	io_write8(0x1841u, bonus_2_frames_left - 1u);
+	bonus_2_frames_left = io_read8(bonus_2_timer);
+	io_write8(bonus_2_timer, bonus_2_frames_left - 1u);
 	if (bonus_2_frames_left != 1u)
 	{
 		bonus_2_show_portraits();
 		return;
 	}
 	command = 0x8A00u;
-	carry = vector_queue_sound(command);
-	io_write8(0x1840u, 5u);
+	vector_queue_sound(command);
+	io_write8(bonus_2_state, 5u);
 	bonus_2_show_portraits();
 }
 
@@ -196,8 +195,8 @@ void bonus_2_yell(void)
 	if (carry)
 	{
 		command = 0x8800u;
-		carry = vector_queue_sound(command);
-		io_write16(0x1840u, 0x628u);
+		vector_queue_sound(command);
+		io_write16(bonus_2_state, 0x628u);
 		bonus_2_show_portraits();
 		return;
 	}
@@ -205,8 +204,8 @@ void bonus_2_yell(void)
 	if (carry)
 	{
 		command = 0x8800u;
-		carry = vector_queue_sound(command);
-		io_write16(0x1840u, 0x628u);
+		vector_queue_sound(command);
+		io_write16(bonus_2_state, 0x628u);
 		bonus_2_show_portraits();
 		return;
 	}
@@ -223,18 +222,18 @@ void bonus_2_results(void)
 	uint16_t ignored16 = 0, ignored16_2 = 0;
 	uint8_t bonus_2_frames_left = 0, frames_before = 0, tested_frames = 0;
 
-	bonus_2_frames_left = io_read8(0x1841u);
+	bonus_2_frames_left = io_read8(bonus_2_timer);
 	if (bonus_2_frames_left != 0u)
 	{
-		frames_before = io_read8(0x1841u);
-		io_write8(0x1841u, frames_before - 1u);
+		frames_before = io_read8(bonus_2_timer);
+		io_write8(bonus_2_timer, frames_before - 1u);
 	}
 	bonus_2_all_players(&ignored16, &carry);
 	bonus_results(&ignored16_2, &ignored16, &carry);
 	if (carry)
 	{
-		tested_frames = io_read8(0x1841u);
-		io_write16(0x1840u, 0x70Au);
+		tested_frames = io_read8(bonus_2_timer);
+		io_write16(bonus_2_state, 0x70Au);
 		OBJECT(OBJECT_ADDRESS(0))->parameter = 6u;
 		OBJECT(OBJECT_ADDRESS(2))->parameter = 6u;
 		OBJECT(OBJECT_ADDRESS(4))->parameter = 6u;
@@ -251,8 +250,8 @@ void bonus_2_end(void)
 	uint8_t bonus_2_frames_left = 0;
 
 	bonus_2_all_players(&d, &carry);
-	bonus_2_frames_left = io_read8(0x1841u);
-	io_write8(0x1841u, bonus_2_frames_left - 1u);
+	bonus_2_frames_left = io_read8(bonus_2_timer);
+	io_write8(bonus_2_timer, bonus_2_frames_left - 1u);
 	if (bonus_2_frames_left != 1u)
 	{
 		bonus_2_show_portraits();
@@ -347,7 +346,7 @@ void bonus_2_player(uint16_t player_vars, uint16_t player, uint16_t *p_controls_
 	if ((animation_flags & 2u) != 0u)
 	{
 		controls_and_bit = 0x4900u;
-		carry = vector_queue_sound(controls_and_bit);
+		vector_queue_sound(controls_and_bit);
 	}
 	reaction = OBJECT(player)->bonus_2.reaction;
 	switch ((int8_t)(uint8_t)((uint32_t)reaction << 1))
@@ -394,7 +393,7 @@ void bonus_2_wait_start(uint16_t player, uint16_t *p_d, uint32_t *p_carry)
 	uint16_t d = 0;
 	uint8_t bonus_state = 0;
 
-	bonus_state = io_read8(0x1840u);
+	bonus_state = io_read8(bonus_2_state);
 	if (bonus_state == 5u)
 		OBJECT(player)->bonus_2.reaction = 1u;
 	carry = 0u;
@@ -413,13 +412,13 @@ void bonus_2_end_pose(uint16_t player, uint16_t *p_d, uint32_t *p_carry)
 	reaction = OBJECT(player)->bonus_2.reaction;
 	OBJECT(player)->bonus_2.reaction = reaction + 1u;
 	OBJECT(player)->bonus_2.level = (OBJECT(player)->bonus_2.level & 0xFFu) | 0x5C00u;
-	box_place = OBJECT(player + 0x540u)->unk_45;
+	box_place = OBJECT(player + 0x540u)->bonus_2.result_place;
 	if (box_place != 1u)
 		bonus_2_level(player, &d, &carry);
 	else
 	{
 		OBJECT(player)->animation = 0x8Au;
-		sign_animation = OBJECT(player + 0x840u)->unk_43;
+		sign_animation = OBJECT(player + 0x840u)->bonus_2.sign_kept_animation;
 		OBJECT(player + 0x840u)->animation = sign_animation + 2u;
 		bonus_2_level(player, &d, &carry);
 	}
@@ -460,7 +459,7 @@ void bonus_2_shake(uint16_t player, uint16_t *p_d, uint32_t *p_carry)
 		OBJECT(player)->bonus_2.reaction = 1u;
 		portrait_x = bonus_2_portrait_x();
 		OBJECT(player)->x = portrait_x;
-		sign_animation = OBJECT(player + 0x840u)->unk_43;
+		sign_animation = OBJECT(player + 0x840u)->bonus_2.sign_kept_animation;
 		OBJECT(player + 0x840u)->animation = sign_animation;
 		bonus_2_level(player, &d, &carry);
 	}
@@ -493,7 +492,7 @@ void bonus_2_squash(uint16_t player, uint16_t *p_d, uint32_t *p_carry)
 		OBJECT(player)->bonus_2.reaction = 1u;
 		portrait_x = bonus_2_portrait_x();
 		OBJECT(player)->x = portrait_x;
-		sign_animation = OBJECT(player + 0x840u)->unk_43;
+		sign_animation = OBJECT(player + 0x840u)->bonus_2.sign_kept_animation;
 		OBJECT(player + 0x840u)->animation = sign_animation;
 		bonus_2_level(player, &d, &carry);
 	}
@@ -538,7 +537,7 @@ void bonus_2_meter_jumps(uint16_t player, uint16_t *p_d, uint32_t *p_carry)
 		OBJECT(player)->bonus_2.reaction = 1u;
 		portrait_x = bonus_2_portrait_x();
 		OBJECT(player)->x = portrait_x;
-		sign_animation = OBJECT(player + 0x840u)->unk_43;
+		sign_animation = OBJECT(player + 0x840u)->bonus_2.sign_kept_animation;
 		OBJECT(player + 0x840u)->animation = sign_animation;
 		bonus_2_level(player, &d, &carry);
 	}
@@ -579,7 +578,7 @@ void bonus_2_bounce(uint16_t player, uint16_t *p_d, uint32_t *p_carry)
 		OBJECT(player)->bonus_2.reaction = 1u;
 		portrait_x = bonus_2_portrait_x();
 		OBJECT(player)->x = portrait_x;
-		sign_animation = OBJECT(player + 0x840u)->unk_43;
+		sign_animation = OBJECT(player + 0x840u)->bonus_2.sign_kept_animation;
 		OBJECT(player + 0x840u)->animation = sign_animation;
 		bonus_2_level(player, &d, &carry);
 	}
@@ -619,7 +618,7 @@ void bonus_2_level(uint16_t player, uint16_t *p_d, uint32_t *p_carry)
 	OBJECT(player + 0x60u)->animation = ((a >> 1) >> 1) - 0x6Fu;
 	if (b <= 0x14u)
 	{
-		bonus_state = io_read8(0x1840u);
+		bonus_state = io_read8(bonus_2_state);
 		a = bonus_state;
 		if (a == 2u || a == 5u)
 		{
@@ -688,7 +687,7 @@ void bonus_2_level(uint16_t player, uint16_t *p_d, uint32_t *p_carry)
 						OBJECT(player)->bonus_2.reaction = (uint8_t)(reaction_halfword >> 8u);
 						OBJECT(player)->bonus_2.reaction_time = (uint8_t)reaction_halfword;
 						OBJECT(player)->animation = 0x88u;
-						sign_animation = OBJECT(player + 0x840u)->unk_43;
+						sign_animation = OBJECT(player + 0x840u)->bonus_2.sign_kept_animation;
 						OBJECT(player + 0x840u)->animation = sign_animation + 1u;
 						OBJECT(player)->y = 0xC0u;
 					}
@@ -739,7 +738,7 @@ uint16_t bonus_2_portrait_x(void)
 	uint8_t bonus_state = 0;
 	uint16_t table_x = 0;
 
-	bonus_state = io_read8(0x1840u);
+	bonus_state = io_read8(bonus_2_state);
 	if (bonus_state != 2u)
 	{
 		table_x = bonus_2_player_x[(int8_t)((uint8_t)((uint32_t)bonus_2_player_number << 1)) / 2];

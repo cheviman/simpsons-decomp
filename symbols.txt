@@ -179,9 +179,7 @@ field demo_input 01 frames u8
 # ======== bank 15's object that puts in others (tools/data_walk.py: spawn lists) ========
 # by its kind (field 30: 02AD8F-02ADB4): a time (02AD8F "LDY #$79F1", into field 3D), its list of objects to put in
 # (02AD9A "LDY #$79FE"), and 4 next kinds by the players' number (02ADA3 "LDY #$7A18", "LDA A,Y" by direct page 57)
-02B9F1  table  object_15_times[13]  u8
 # (with its type, in the section of the program's data by name below: object_15_spawn_lists)
-02BA18  table  object_15_next_kinds[52]  u8
 
 # ======== the test mode (bank 2F) ========
 # its palettes (05E05B-05E066: 8 times "LDX ,Y++" and BMOVE of 32 bytes from Y, from 05E05D "LDY #$7B6C")
@@ -319,10 +317,6 @@ field stage_slot 02 unk_02 u8
 # a hit box no object setup points to, after bank 18's 7 (7EA0-7ED7, which 07D1B7 reads into an object's fields 1C,
 # 1F, 21 and 23): no code names 7ED8 and no scenario reads it
 struct hit_box 08 rom
-field hit_box 00 field_1c u16
-field hit_box 02 field_1f u16
-field hit_box 04 field_21 u16
-field hit_box 06 field_23 u16
 031ED8  table  unused_hit_box_031ED8[1]  hit_box
 # bank 1D's object's parts, by number (03B530 "LDY #$7D21", 8 bytes a record, 03B535-03B553): a speed, its y and z
 # from the object, its kind, its animation; kref --rom-reads: 03BD21-03BD96, 15 records
@@ -379,8 +373,6 @@ field part_offset 02 dz s8
 035754  table  object_1a_levels[20]  u8
 # after the spawn list nothing leads to, a record more like its (0356DD), places in the tile RAM (0356E5) and two texts
 # in the fixed printer's form (0356FE: spaces over two lines; 035744: T F V O), which nothing prints
-0356DD  table  unused_spawn_0356DD[1]  spawn
-0356E5  table  unused_tile_places[25]  u8
 0356FE  table  unused_text_0356FE[70]  u8
 035744  table  unused_text_035744[16]  u8
 
@@ -1068,7 +1060,7 @@ field fat_goon_drop_route 03 unused u8
 # #$7995", 02AB23 "LDA #$5B,U; LSRA x4", 02AB2A "LDA A,Y; ORA #$80; STA #$05,X"): 34-37
 02B995  table  fat_goon_hold_animations[4]  u8
 
-# bank 15's object that puts in others: kept as symbols.txt has them (object_15_times, object_15_next_kinds), but the
+# bank 15's object that puts in others (its tables, enemy_waves_end_enemies and enemy_waves_next_wave_enemies), but the
 # lists object_15_spawn_lists points at are not records of the stages' `spawn` (assets/data/spawns.txt writes them
 # so): 02ADB8-02AE1E reads byte 0 against the object's clock (02ADC9 "LDA #$0000,Y; CMPA #$28,X", FF ends), byte 1
 # x8 the x (02ADF9 "LDB #$0001,Y; ASLDI #$03; STD #$0C,U"), byte 2 x8 plus <$B2 the y (02AE03-02AE0C), byte 3 the z
@@ -1922,7 +1914,6 @@ elements second_object_facing u8
 # by the move, into field 3C when its attack starts: 0386E1 "LDA #$35,U; LDX #$7DD5; LDA A,X; STA #$3C,U" (then
 # 0386EF "LDY #$0C13; STY #$1C,U": its hit box); the move's routines test it (03851C, 03863C, 038690 "TST #$3C,U;
 # BNE"); nothing in bank 1C counts it down, so taken as the attack's length by what it holds (32, 32, 35, 38)
-039DD5  table  team_move_attack_lengths[4]  u8
 # an animation by the move and the character, added to a base (<$F2: E4 at 0391BD, EC at 0391E9; FF none): 0391EE "LDY
 # #$7E3D; LDA #$35,U; ASLA; ASLA; TFR A,B; ADDA #$04,U; LDA A,Y; BMI; ADDA <$F2; STA #$05,U". The index reaches 15
 # (kref --rom-reads: 0391FB reads 039E4B, move 3 Bart's), past these 8: the next table's first 8 bytes (FF FF 02 02
@@ -2269,7 +2260,6 @@ field gauge_step 01 bottom u8
 # Replacement field lines:
 field gauge_player 00 bit u8
 field gauge_player 01 number u8
-field gauge_player 02 counters u16
 field gauge_player 04 unused_04 u16
 field gauge_player 06 lives u16
 field gauge_player 08 lives_tiles u16
@@ -2419,7 +2409,6 @@ field player 06 bit u8
 # its continue countdown: BCD seconds then frames (07B82D "LDA #$20; STA [#$07,X]"; 07B86E "LDY #$07,X; INC #$01,Y;
 # CMPA #$3C" a second, "LDA #$99; ADDA ,Y; DAA" down by one), and the game-over wait's frames (07B89D "INC [#$07,X];
 # LDA [#$07,X]; CMPA #$C0")
-field player 07 countdown u16
 # its score, a BCD word (49D4 + 8n): the score jobs 03-06 add to it (079828 "LDX #$49D4; LBRA $96FD" ... 07983A "LDX
 # #$49EC"), 07B7B6 "LDD [#$09,X]" checks it against the high scores (079718: the 10 records at 4983) when it leaves
 field player 09 score u16
@@ -2925,10 +2914,9 @@ field object 40 parent u16 object
 # the hit box record the setup gave it (07D141 "STY #$48,X"), which the reactions put back when it gets up (07DDE9,
 # 07E252, 07E2C5 "LDY #$48,X; LBSR $85B4"): a hit_box record's address in its bank
 field object 48 hit_box u16
-# where its sprites are in the sprite RAM: 8 of 10 bytes from 2000 + 80 x its number (07955F "LDU #$2000", 079572
+# where its sprites are in the sprite RAM: 8 entries of 0x10 bytes from 2000 + 80 x its number (07955F "LDU #$2000", 079572
 # "STU #$-07,X" past the object, 079575 "LEAU #$0080,U"), kept when the slot is cleared (07CA64 "LDD #$59,U", 07CA78 "STD
 # #$59,U"); the sprite engine writes them (07988E "LDU #$59,X", 079A91 "LDU #$59,X")
-field object 59 sprites u16
 # bits 0-3 the shadow sprite drawn under it (079E10 "LDA #$5B,X; ANDA #$0F", shadow_sprites), bits 4-6 the player it
 # belongs to (the players and what they throw: 03812D-038134 "ASLB" x4, "ORB #$5B,U; STB #$5B,U", 039216-03921A
 # "ASLA" x4, "STA #$5B,U"), which a hit passes to the victim's points (07CFC2/07D044 "LDA #$5B,U; ANDA #$70")
@@ -4017,7 +4005,7 @@ comment attract_high_scores The attract's high score step, by mode_phase
 07A212  func  high_scores_start
 comment high_scores_start Starts the high score screen: queues the tile layers' clear, sets the background colour, the scroll and the palettes
 # 07A240 "LDA <$5D; BNE" (the clear not done yet), 07A245 "LDA #$02; STA <$75; CLR <$76; LBSR $C931" (map scene 02's
-# tile banks), 07A252-07A27B the K053251's priorities (1FB9/1FBA 3F 36, then 13 2C) around 07A263/07A26A "LBSR $C4A3"
+# tile banks), 07A252-07A27B the K053251's colour bases (1FB9/1FBA, its registers 9 and 10: 3F 36, then 13 2C) around 07A263/07A26A "LBSR $C4A3"
 # (both layers drawn, 26 columns), 07A282 "LDD #$7A53" (background colour)
 07A240  func  high_scores_draw_background
 comment high_scores_draw_background Once the layers are clear, draws map scene 02 on both tile layers as the high score screen's background
@@ -5796,21 +5784,6 @@ scoped object enemy 3D way_round u8
 # turns (07D064 "DEC $187B"); 1880 last frame's enemies (07CB52); 1883 the enemies with field 57 clear (07CB92); 1885
 # the enemy limit (07CB1E "STA $1885"); 1886 the enemies' speed (07C990 "STD $1886"); 189C hold both scrolls (07CAEF);
 # 189E the enemies' random number (07D356 "STA $189E")
-#1870  io  least_attacked_player  u16
-#1872  io  nearest_player  u16
-#1874  io  players_in_game  u8
-#1876  io  enemies_in_play  u8
-#1877  io  attackers_per_player_limit  u8
-#1878  io  walk_delay_turn  u8
-#1879  io  list_1_objects_in_play  u8
-#187A  io  child_objects_in_play  u8
-#187B  io  knockdown_turn  u8
-#1880  io  last_enemies_in_play  u8
-#1883  io  enemies_not_out  u8
-#1885  io  enemy_limit  u8
-#1886  io  enemy_speed  u16
-#189C  io  hold_scrolls  u8
-#189E  io  enemy_random_number  u8
 
 # ======== names, batch 1: banks_10_12 (build/naming_guide.md; merged by the lead) ========
 # Names for banks 10, 11, 12 (places 020000-025FFF): the two bonus stages and their results, stage 1's boss (the
@@ -7294,8 +7267,8 @@ comment krusty_balloon_deflate Beaten, step 0: shrinks a step a frame (its zoom,
 026554  func  krusty_balloon_beaten_wait
 comment krusty_balloon_beaten_wait Beaten, step 1: after its wait sets 184B and goes on.
 # 026563 "LDA $184E; BEQ", 026569 "LDA <$50; STA <$85"
-026563  func  krusty_balloon_wait_for_184e
-comment krusty_balloon_wait_for_184e Beaten, step 2: waits for 184E, then keeps the players present (direct page 50) in direct page 85 and goes on.
+026563  func  krusty_balloon_wait_for_players
+comment krusty_balloon_wait_for_players Beaten, step 2: waits until every player stands idle, then keeps the players present (direct page 50) in direct page 85 and goes on.
 # 026573 "LBSR $85B1; BCC", 026580 "LDD #$0000; LBSR $8680" (the music stops), 026586 "LDD #$6C00", 02658C "STA <$97",
 # 026594 "STX $1852", 02659C "STA <$7D", 02659F "INC <$04"
 026573  func  krusty_balloon_fall_and_land
@@ -9541,7 +9514,7 @@ comment scroll_lock_start Starts holding the scroll.
 # "if (t2 < t1) { unk_48A7--; return; } @flags = 0u" (field 30 against the enemy count 1876)
 02AD74  func  scroll_lock
 comment scroll_lock Holds the scroll while there are more enemies than its count, then goes away.
-# "@unk_3D = object_15_times[a]; @unk_2A = TABLE16(object_15_spawn_lists, ...); @unk_30 = TABLE8(object_15_next_kinds,
+# "@unk_3D = enemy_waves_end_enemies[a]; @unk_2A = TABLE16(object_15_spawn_lists, ...); @unk_30 = TABLE8(enemy_waves_next_wave_enemies,
 # ... + ((unk_4857 - 1u) & 3u))"
 02AD8F  func  enemy_waves_start
 comment enemy_waves_start Takes its spawn list and its counts by its spawn's state: the enemies left for the next wave (by the players) and for its end.
@@ -11414,8 +11387,8 @@ scoped object carried_obstacle 3D carried u8
 scoped object scroll_lock 30 enemies_left u8
 # the wave it is at (02ADB8 "if (mem_read8(y) != t2)" with "t2 = @unk_28"; 02AE21 "@unk_28 = t3 + 1u"), its place in its
 # list (02AD8F "@unk_2A = TABLE16(object_15_spawn_lists, ...)", 02ADB8 "@unk_2A = y"), the enemies left that bring the next
-# wave (02AD8F "@unk_30 = TABLE8(object_15_next_kinds, ...)", 02AE21 "if (t1 <= t2)"), and those that end it (02AD8F
-# "@unk_3D = object_15_times[a]", 02AE31)
+# wave (02AD8F "@unk_30 = TABLE8(enemy_waves_next_wave_enemies, ...)", 02AE21 "if (t1 <= t2)"), and those that end it (02AD8F
+# "@unk_3D = enemy_waves_end_enemies[a]", 02AE31)
 scoped object enemy_waves 28 wave u8
 scoped object enemy_waves 2A spawns u16 timed_spawn
 scoped object enemy_waves 30 next_wave_enemies u8
@@ -11534,7 +11507,6 @@ local kind_a0_wait_launch 02F657 u scenery object.shaking_scenery
 local kind_a0_launch_fly 02F6BA u scenery object.shaking_scenery
 local kind_a0_sit_on_scenery 02F71A u scenery object.shaking_scenery
 local unused_homer_object_wait_near 02F7D2 u target object
-local unused_homer_object_wait_hit 02F7F8 u hitter object
 
 # the stage's difficulty (07CB09 "LDA <$6B" by enemy_limits_by_difficulty; 07C9E3 "CMPA <$6B" against a spawn's level):
 # 02AD21 "if (unk_486B < 3u)", 02E793 "if (unk_486B >= 3u)"
@@ -14421,7 +14393,6 @@ param player_grabbed u player object.player
 038E90  func  player_struggle
 comment player_struggle While held: escapes (state 3B) at the stage's end, when its holder is thrown, or after enough presses; with no life left falls (state 15).
 param player_struggle u player object.player
-param player_struggle x holder
 # state 3A: 038ED5 "LDX #$4B,U; LDB #$06,X; LSRB" (the holder's animation ended), "LDA #$C0; STA #$00,U; LDA #$1C"
 038ED5  func  player_grabbed_and_hit
 comment player_grabbed_and_hit Held and hit: waits for its holder's animation to end, then is held again.
@@ -14849,7 +14820,6 @@ scoped object player 44 pose_animation u8
 # 039C1F "LDY #$49,U; LDD #$0C,Y" (see 2A)
 scoped object player 49 object_hit u16 object
 # 0395AD "LDX #$4B,U; STA #$58,X", 038E45 "LDX #$4B,U" (the enemy holding it)
-scoped object player 4B holder u16 object
 # 0388D1 "LDB #$4D,U; ... INCB; STB #$4D,U" (object_1c_move_steps)
 scoped object player 4D combo_step u8
 # 03886F "STA #$4E,U", 038B60 "TST #$4E,U", 038BA3 "CLR #$4E,U"
@@ -16393,7 +16363,6 @@ scoped object stage_3_boss 34 chase_target u16 object
 scoped object stage_3_boss 36 walk_time u8
 scoped object stage_3_boss 3A apart_time u8
 scoped object stage_3_boss 40 join_wait u8
-scoped object stage_3_boss 41 partner u16 object
 scoped object stage_3_boss 43 together u8
 # 03C018 "LBRA $71B3": "CLRW #$1C,X; LDA #$2E,X; ASLA; LDY #$7EDC; JMP [A,Y]"
 03C018  func  stage_3_boss
@@ -18559,7 +18528,7 @@ local draw_tile_picture 07C51C u places tile_picture_entry
 02599C  data  dream_wave_fade_out_steps
 # 026514 "LDU #$7C64", 02651B "JSR [A,U]" (index LDA #$02,X): krusty_balloon_come_in krusty_balloon_chase krusty_balloon_attack krusty_balloon_volley krusty_balloon_stomping krusty_balloon_wait_for_target; the scenarios jump to 5 of its 6; and to entries before it (a negative index): krusty_balloon_beaten (-3), krusty_balloon_knocked_up (-2), krusty_balloon_flinch (-1); no length: the analysis reads it both ways, as the scenarios do (was loaded_table_027C64)
 027C64  data  krusty_balloon_states
-# 026532 "LDU #$7C70", 026539 "JSR [A,U]" (index LDA #$28,X): krusty_balloon_deflate krusty_balloon_beaten_wait krusty_balloon_wait_for_184e krusty_balloon_fall_and_land; the scenarios jump to 4 of its 4; without its length the analysis reads 5 before it (its neighbours' entries) (was loaded_table_027C70)
+# 026532 "LDU #$7C70", 026539 "JSR [A,U]" (index LDA #$28,X): krusty_balloon_deflate krusty_balloon_beaten_wait krusty_balloon_wait_for_players krusty_balloon_fall_and_land; the scenarios jump to 4 of its 4; without its length the analysis reads 5 before it (its neighbours' entries) (was loaded_table_027C70)
 027C70  data  krusty_balloon_beaten_actions
 # 0265BE "LDU #$7C78", 0265C5 "JMP [A,U]" (index LDA #$28,X): krusty_balloon_fly_up krusty_balloon_knocked_up_stomp; the scenarios jump to 2 of its 2; without its length the analysis reads 3 before it (its neighbours' entries) (was loaded_table_027C78)
 027C78  data  krusty_balloon_knocked_up_actions
@@ -20318,17 +20287,14 @@ comment unused_enemy_hit_sound Unused: queues sound command 6300.
 49E6  var  bart_grab_hints  u8
 49EE  var  lisa_grab_hints  u8
 # the 5 bytes after each player's continue countdown (the player records' countdown: 4A00 + 7 x player, 2 bytes),
-# cleared at a game's start (0796CA "STD $4A02; STD $4A04; CLR $4A06" ... "CLR $4A1B"); nothing reads them
-4A02  var  unused_marge_word_1  u16
+# cleared at a game's start (0796CA "STD $4A02; STD $4A04; CLR $4A06" ... "CLR $4A1B"); 02 and 03 of each player's
+# are its health gauge's step and delay (040A0D, 040A20: batch 4), 04-06 nothing reads
 4A04  var  unused_marge_word_2  u16
 4A06  var  unused_marge_byte  u8
-4A09  var  unused_homer_word_1  u16
 4A0B  var  unused_homer_word_2  u16
 4A0D  var  unused_homer_byte  u8
-4A10  var  unused_bart_word_1  u16
 4A12  var  unused_bart_word_2  u16
 4A14  var  unused_bart_byte  u8
-4A17  var  unused_lisa_word_1  u16
 4A19  var  unused_lisa_word_2  u16
 4A1B  var  unused_lisa_byte  u8
 # the first of the test mode's variables, which its start clears (079193 "LDX #$5900; LEAY ,X; CLR ,X+; LDU #$00EF;
@@ -20807,7 +20773,6 @@ scoped global game_start_run_portraits 48F0 portrait_player_bit u8
 # the players who join: with free play, each player's bit (05EDC3 "LDB #$01; STB <$F0", 05EDD1 "ORB <$F0", 05EDDA "ASL
 # <$F0"); else the 4 coin slots (05EDE4 "LDA #$04; STA <$F0", 05EE02 "DEC <$F0") and each slot's player's bit (05EDE9
 # "LDB #$01; STB <$F1", 05EDF6 "ORA <$F1", 05EDFF "ASL <$F1")
-scoped global game_start_join_players 48F0 join_player_bit u8
 scoped global game_start_join_players 48F1 join_slot_bit u8
 # each portrait's colours: the portrait (05EE46 "CLR <$F0", 05EE4C "LDA <$F0; ASLA; ASLA", 05EE8D "INC <$F0"), its 14
 # rows (05EE55 "LDA #$14; STA <$F2", 05EE88 "DEC <$F2") of 9 tiles (05EE5A "LDA #$09; STA <$F1", 05EE74 "DEC <$F1")
@@ -20874,7 +20839,6 @@ scoped global stage_8_end_reunion 48F0 reunion_player u8
 scoped global stage_8_end_reunion 48F1 reunion_player_bits u8
 scoped global stage_8_end_reunion 48F8 reunion_standing_x u16
 scoped global stage_8_end_reunion 48FA reunion_walker_x u16
-scoped global stage_8_end_reunion 48FC reunion_walker_wait u16
 # the stories: the players left in a loop over the four (story_first_player 03E7F5 "STA <$F0" 4, story_next_player
 # 03E800 "DEC <$F0"; story_actor_line_up_players 03E3D7 "LDB #$04; SUBB <$F0": the player's number; story_actor_put_in
 # 03E320 "LDA #$04; SUBA <$F0"), which also counts the partners (03E33C "LDA #$04; STA <$F0", 03E373 "DEC <$F0") and the
@@ -21588,7 +21552,6 @@ local bonus_results_place_next 0210E5,021162 u box object.bonus_results
 # == the story actors (5640) ==
 # its 11 child actors' places (story_actor_put_in 03E398 "LEAX #$43,X; LDD ,X; BNE; STU ,X", 03E3A6 "DEC <$F0" from
 # 0B), read back by the stories (stage_2_events C "t1 = 47-48", "t4 = 43-44", "t5 = 45-46")
-scoped object story_actor 43 child_actors u16[B]
 # the actor itself where a story reaches it (stage_2_events 03E81F "LDX #$5640", 03E827 "LBSR $605A"; story_stage_8_end
 # 03E9E4 "LDX #$5640", 03EA3C "PULLS X"; story_burns_robot_entrance 03FDC7, 03FE19): its accelerations (STD #$31,X,
 # STD #$33,X: C "blocked/unk_32", "hit_from_behind/unk_34") and children
@@ -23530,7 +23493,6 @@ local obstacle_throw 02CD6C y box
 # 02CDC7 "LDY #$7AA0; LBSR $85B4": its hit box record put back out
 local obstacle_rebound_rise 02CDC7 y box
 # nothing reaches these four: their object in X ("CLR #$3D,X", "INC #$02,X", "STA #$05,X", "LDA #$06,X")
-param unused_obstacle_fall x object object
 param unused_obstacle_keep_falling x object object
 param unused_obstacle_show_animation_80 x object object
 param unused_obstacle_vanish_at_animation_end x object object
@@ -23867,7 +23829,6 @@ local stage_3_boss_strike 03D44A y damage
 # 03D4E0 "LDY #$143C; STY #$2E,X": its next state and wait
 local stage_3_boss_down 03D4E0 y state_wait
 # 03D576 "LDX #$41,X; LDB #$80; STB #$00,X", 03D5C5 "LDX #$41,X; STU #$0C,X": its partner (field 41), set going too
-local stage_3_boss_update 03D576,03D5C5 x partner object
 # 03D615 "LDU #$41,X; LDD #$0C,X; SUBD #$000A; CMPD #$0C,U": its partner
 local stage_3_boss_reach_partner 03D615 u partner object
 # 03D618-03D63C: its x less 10 (and plus 10) and its y less 10 (and plus 10), the box the partner has to be in
@@ -23883,11 +23844,9 @@ local stage_3_boss_head_to_partner 03D642 d direction
 # 03D64D "LDY #$0F,X; BPL; ORA #$40": its x speed, facing left when negative
 local stage_3_boss_head_to_partner 03D64D y speed_x
 # 03D682 "LDU #$41,X; LDY #$0D00; STY #$2E,U": its partner, made the carried one
-local stage_3_boss_join 03D682 u partner object
 # 03D6A6 "LDY #$7F2E; LBSR $62E5": the shared hit box record
 local stage_3_boss_join 03D6A6 y boxes
 # 03D6AF "LDU #$41,X; LDA #$01,U; CMPA #$3E": its partner
-local stage_3_boss_partner_ready 03D6AF u partner object
 # 03D6C9 stage_3_boss_set_hit_box: "LEAY #$04,Y" past the first record for the first boss (and again carrying)
 param stage_3_boss_set_hit_box y boxes
 # 03D6DC "TST #$30,X; BEQ" then "LDY #$7F52" / "LDY #$7F42; LBRA $6329" (stage_boss_walk_by_rank: A the direction)
@@ -24358,10 +24317,8 @@ local dreamland_boss_chain_setup 03510C,035111 a piece_type
 local dreamland_boss_chain_setup 03510C,035111 b piece_state
 # U: the piece taken (find_free_slot, find_free_object_from_4d40, 035109 "LDU <$F2"), then 035160 "LDU #$798E" the
 # links' parameters read with "LDA ,U+"
-local dreamland_boss_chain_setup 0350EC,035101,035109,035160,03516B u piece object
 # Y: the piece the new one is tied to (0350F8 "LEAY ,X", 035158 "LEAY ,U"), then the walk down the chain (035170
 # "LDY #$2C,Y": each piece's next)
-local dreamland_boss_chain_setup 0350F8,035158,035163,035170 y previous_piece object
 # 035190 "LDD #$3E,X; STA #$35,U; LDA #$37,X; LBSR chain_link_offset": a direction (A) and a distance (B), the
 # offset of the next piece
 local dreamland_boss_chain_lead 035190,035196 d direction_and_distance
@@ -24516,7 +24473,6 @@ param enemy_line_up_and_pace d step
 local enemy_line_up_and_pace 07DD77 u step_handlers
 local enemy_line_up_and_pace 07DD7A b step_offset
 # unused_enemy_move_aside: X is an enemy (07D7E3 "LDA #$36,X": its target direction, 07D7FA "STD #$14,X")
-param unused_enemy_move_aside x object object
 local unused_enemy_move_aside 07D7E3,07D7EB,07D7EF a angle
 # 07D8C4 "LDB #$50; ... NEGB": 80 pixels to the target's side, the side it faces; then direction_to_beside /
 # direction_to hand the direction in D (A the angle) to set_walk_speeds_from_direction
@@ -25303,8 +25259,8 @@ local player_entry_crash 039102 y state_and_time
 # 038E4F "LDA #$1E,U": the touch's kind (field 1E, hit)
 local player_grabbed 038E4F a hit_kind
 # 038E45 / 038ED5 "LDX #$4B,U": the object holding the player (field 4B)
-local player_grabbed 038E45,038E68 x grabber object
-local player_grabbed_and_hit 038ED5 x grabber object
+local player_grabbed 038E45,038E68 x grabber object.grabber
+local player_grabbed_and_hit 038ED5 x grabber object.grabber
 # 039164 "LBSR $7B5C" (player_face_heavy_object): the first of its two facing animations
 local player_work_heavy_object 039164 d first_animation
 # player_set_animation: Y the carrying offsets (0392C0 "LEAY A,Y; LDB ,Y+", A 8 x the held kind less 3 plus 2 x the player's kind: the
@@ -25710,7 +25666,6 @@ local story_actor_place_players 03E583 x object object
 local story_actor_start_absent_players 03E5AE,03E5BC x player object
 local story_actor_start_absent_players 03E5C1 x object object
 local story_actor_put_in 03E30A,03E32B x player object
-local story_actor_remove 03E754,03E79A x player object
 # story_random_player (03E7C5 "MUL; ADDD #$4A40; PUSHS D; PULLS X"): a player's object
 local story_actor_random_player_faces 03E4A3 x player object
 local story_actor_random_player_faces 03E4C1 x object object
@@ -25737,7 +25692,6 @@ local story_actor_remove 03E71C,03E724 y child_slot
 # 03E777 "PUSHS X; LEAX #$1C,X; LDU #$003D; CLRA; BSET A,X,U; PULLS X": the actor's fields from 1C cleared
 local story_actor_remove 03E779,03E780 x fields
 local story_actor_remove 03E77C,03E780 u count
-local story_actor_remove 03E781 x object object
 # 03E7A3 "TFR U,X; LDA #$0B; LEAX #$43,X; LDU ,X++; ... CLR #$00,U; BSR $67A3" (each child removed, and its own)
 param story_actor_remove_children u parent object
 local story_actor_remove_children 03E7A9,03E7AC x child_slot
@@ -25787,19 +25741,16 @@ local stage_6_wake_wave 024600,024603 x delay
 # 024047 "LDB #$02; LBSR $867D": a free object of list 2, the police car (02404C "STA #$00,U")
 local stage_1_end_put_police_car 024049,024079 u car object
 # what scene_put_placement hands back: the object it put
-local stage_2_end_set_up 0241C5 y object object
 local stage_5_end_set_up 024487 y object object
 local stage_end_show_players 024501 y object object
 # 0241FF "LDA <$F1; LBSR $7388" (a player's jumper, by the player), 024205 "STA #$32,Y" (its player), 024216 "LDA
 # <$F2; STA #$30,Y" (the jumpers counted so far: the wait and speed of stage_end_exit_waits, stage_end_exit_speeds)
-local stage_end_put_jumpers 024202 y jumper object
 local stage_end_put_jumpers 024216 a jumper_number
 # 024251 "LDX #$4D40" (the jumpers' list), 024256 "LDU #$771E; ... JSR [A,U]" (their steps by type), 024266
 # "LEAX #$60,X"
 local stage_end_run_jumpers 024251,024264,024266 x object object
 local stage_end_run_jumpers 024258 u steps
 # 02427E "LDA #$31,X" (its wait: blocked), 024287 "LDB #$32,X; CMPB #$04; ADDD #$3F28; LBSR $8680" (its player's yell)
-local stage_end_jumper_wait 02427E a blocked
 local stage_end_jumper_wait 024287 b player
 # 0242D0 "LDA #$0A,X; ADDA #$02; STA #$0A,X; STA #$0B,X": the jumper's zoom
 local stage_end_jumper_fly 0242D3 a zoom
@@ -25940,7 +25891,7 @@ local play_scene_music 07BAA4,07BAB4 x scene_music
 local play_scene_music 07BAA9,07BAB1 a part_offset
 # 02AD2A/02AD3C "LBSR $862C" (spawn_child: the new child in U), 02AD41 "STX #$2A,U" (this object its parent)
 local cleared_wave_start 02AD2A,02AD3C u child object
-# 02AD8F "LDY #$79F1; LDA #$30,X; LDB A,Y" (object_15_times by the next wave), 02AD9D "ASLA; LDY A,Y" (its spawns)
+# 02AD8F "LDY #$79F1; LDA #$30,X; LDB A,Y" (enemy_waves_end_enemies by the next wave), 02AD9D "ASLA; LDY A,Y" (its spawns)
 local enemy_waves_start 02AD92 a wave
 local enemy_waves_start 02AD9D a wave_offset
 # 02ADE4 "LDB #$0005,Y; LBSR $86AA" (find_free_slot_by_flags): the enemy the wave spawns
@@ -30205,7 +30156,7 @@ local kind_a0_sit_on_scenery 02F72B t5 scenery_x
 # 0265B2 "LDD #$0C,X; CMPD #$00D0; BLE": right of 208 it flies off to the left
 local krusty_balloon_beaten 0265B2 t5 screen_x
 # 026563 "LDA $184E; BEQ": set by player_run_all when all four stand idle at a stage's end (038088 "STA $184E")
-local krusty_balloon_wait_for_184e 026563 t1 players_idle
+local krusty_balloon_wait_for_players 026563 t1 players_idle
 # 0265E8 "LDD #$0C,X; CMPD #$0040; BLT ... CMPD #$017F; BGT", 0265F6 "LDD #$0F,X; NEGD; STD #$0F,X": turned back at the
 # screen's edges
 local krusty_balloon_fly_up 0265E8 t5 screen_x
@@ -31332,7 +31283,6 @@ local enemy_think 07D5B2 t3 floor_distance
 # 07D5C0 "LDU #$2A,X; LEAU #$28,U": its behaviour's attack ranges; 07D5C6 "LBSR $D3D7" (enemy_find_attack_range: the
 # range found, with its chance in A: 07D406 "LDA #$03,U"); 07D5D9 "LEAU #$07,U" (its chances), 07D5E5 "LEAU
 # #$-04,U" (its actions, 07D5E8 "LDA B,U; STA #$28,X")
-local enemy_think 07D5C3,07D5C6,07D5D9,07D5E5 u range
 local enemy_think 07D5C6 a attack_chance
 # 07D5CD / 07D5D4 / 07D60F "LBSR $D34F" (enemy_random), 07D5DC / 07D617 "SUBA B,U" each choice's chance off it until
 # it goes below 0 (C "t17 = a; a = t17 - t16; if (t17 < t16)"); 07D5E0 / 07D61B "DECB; BNE" the choices left
@@ -31345,7 +31295,6 @@ local enemy_think 07D617 t3 remaining_roll
 local enemy_think 07D61B t1 choices_left
 # 07D604 "LDU #$2A,X", 07D607 "LDA #$30,X; ASLA x3", 07D60D "LEAU A,U": its behaviour's record for its state (8
 # bytes: chances from 4, actions from 1), 07D614 "LEAU #$03,U"
-local enemy_think 07D60D,07D614 u state_record
 # 07D62C "LDD #$28,X", 07D62F "LDU #$F586" (enemy_think_actions), "ASLA; JSR [A,U]": the action's handlers
 local enemy_think 07D62F u action_handlers
 local enemy_think 07D632 a action_offset
@@ -32158,7 +32107,7 @@ local player_take_heavy_blow 03956B t3 x_low
 local player_bounce_away 039583,039596 a speed_high
 local player_bounce_away 039583,039590 b speed_low
 # 0395AD "LDX #$4B,U", 0395B2 "STA #$58,X": its holder (C "mem_write8(holder + 0x58u, 1u)")
-local player_get_grabbed 0395AD x holder object
+local player_get_grabbed 0395AD x holder object.grabber
 # 0395B5 "LDY $1848", 0395B9 "LDA #$06,Y; CMPA #$05" (the grab hints shown), 0395C0 "INC #$06,Y"
 local player_get_grabbed 0395B5 y player_vars player_values
 local player_get_grabbed 0395B5 t3 player_vars
@@ -32231,19 +32180,11 @@ local player_team_ready 03916D,039205 x teammate object.player
 local player_team_together 039205 x teammate object.player
 # 0391C1 "LDX #$32,U", 0391CA "STY #$28,X": the partner's action word too (C "mem_write16(partner + 0x28u, 0x1E0u)")
 local player_team_start 0391C1 x teammate object.player
-# the end the team states share: 0386E7 "LDX #$7DD5", 0386EA "LDA A,X" (team_move_attack_lengths, into field 3C),
+# the end the team states share: 0386E7 "LDX #$7DD5", 0386EA "LDA A,X" (team_move_attack_states, into field 3C),
 # 038703 "LDB #$F8" / 03870A "LDB #$FC" (the animation base on the floor or in the air, then 0391EB "STB <$F2"),
 # 0391EE "LDY #$7E3D" (team_move_animation_offsets), 0391FB "LDA A,Y" (the animation's offset by the move and the
 # character, negative none), 03920B "LDA #$04,X" / 039213 "LDA #$04,U" (the kind whose player number goes into
 # field 5B: 039216 "ASLA" x4, 03921A "STA #$5B,U")
-local player_team_move 0386EA a attack_length
-local player_walk 0386EA a attack_length
-local player_team_jump 0386EA a attack_length
-local player_team_start_fall 0386EA a attack_length
-local player_team_fall 0386EA a attack_length
-local player_attack_end 0386EA a attack_length
-local player_team_ready 0386EA a attack_length
-local player_team_together 0386EA a attack_length
 local player_team_move 038703,03870A b animation_base
 local player_walk 038703,03870A b animation_base
 local player_team_jump 038703,03870A b animation_base
@@ -32467,7 +32408,7 @@ local player_grabbed 038E88 t1 life_before
 # player_struggle: 038E96 "TST $184B"; 038ECC "LDX #$4B,U" (its holder), 038ECF "CLR #$58,X" (C "mem_write8(holder_2 +
 # 0x58u, 0u)")
 local player_struggle 038E96 t1 stage_is_over
-local player_struggle 038ECC x holder_object object
+local player_struggle 038ECC x holder_object object.grabber
 # player_knocked_up: 038F02 "SUBD #$0060" (gravity), 038F34 "LDB #$0F,U" (its x speed's high byte), 038F3A "LDA
 # #$30,U" (its state), 038F41 "LDX #$0C,U" (its x, inside 70-140), 038F4E "LDA #$0D,U" (the x's low byte), 038F6B "LDB
 # #$D3" (the animation)
@@ -34023,3 +33964,785 @@ local title_card_put_picture 0271B1 t1 kind_at
 local title_card_put_picture 0271B8 t1 x_at
 local title_card_put_picture 0271B8 t4 placement_x
 # done: stages/title_cards.c
+
+# ======== names, batch 4: the board's memory the program uses as variables, by name (build/names4/board.txt; merged by the lead) ========
+# ======== the board's addresses the 053248's C reads and writes as numbers, by name (build/names4/brief_board.md) ========
+# io lines (ADDRESS io NAME TYPE): the C then reads io_read8(NAME), and a constant the code puts in X, Y or U that equals
+# the address is printed by the name too (stage_7_scene_lift's "clear_from = scene_state"), so each name below was also
+# checked against the constants of its value in src/ (noted where they are not that thing).
+#
+# The K052109 only decodes 180C-1833 (layer A's y scroll), 1A00-1BFF (layer A's x scroll), 1C00, 1C80, 1D00, 1D80,
+# 1E00, 1E80, 1F00 and the same of layer B at 380C/3A00 (MAME konami/k052109.cpp, k052109_device::write); the rest of
+# 1800-1FFF and 3800-3FFF is RAM the program keeps variables in. Boot clears 1840-19FF and 3840-39FF (0787A9 "LDX #$1840;
+# ... LDU #$01BF; BMOVE", 0787B9 "LDX #$3840"), reset_sprites_and_objects 18E0-18FF, 1860-18DF and 1840-185F (079652,
+# 07965D, 079668). One name per address: where scenes reuse a byte for their own ends, the name is that of most uses
+# and the comment says what else keeps it there.
+
+# ============================================================================================ 1840-185F: the stage's
+# ---- the bonuses' bytes (1840-1846; outside the bonuses the step's start copies the scene's camera lines there: 03ED31
+# "LDY #$7EDC; LEAY A,Y; LDX #$1840; LDU #$0008; BMOVE Y,X,U", story_scene_settings, and player_request_scroll reads
+# them as four words: 03993B "CMPX $1840", 03997C "CMPX $1842", 039983 "LDX $1844", 039942 "LDX $1846") ----
+# bonus 2's state: 020A32 "LDA $1840; ASLA; LDX #$7D18; JMP [A,X]" (bonus_2_contest by it), 020A42/020A8B "INC $1840"
+# (bonus_2_start_music, bonus_2_intro_set_up), 020B13 "LDY #$0464; STY $1840" (state 4 and 64 frames), 020BAF "STA
+# $1840" (5), 020BDD/020BFC "STD $1840" (628, 70A), 020CD1/020DEE/020E66 read it; 17 of its 20 uses. Also the first
+# camera line (player_request_scroll's word), and the start of the cleared block (boot.c, reset.c, scene_load_story_
+# settings's "copy_to", ram_rom_check's "start": those constants read bonus_2_state too)
+1840  io  bonus_2_state  u8
+# bonus 2's frames: 020B9E "DEC $1841" (bonus_2_countdown: at 1 the music 8A00 and state 5), 020BE3 "TST $1841",
+# 020BE9 "DEC $1841" (bonus_2_results), 020C17 "DEC $1841" (bonus_2_end); set with the state by 020B16 "STY $1840"
+1841  io  bonus_2_timer  u8
+# the bonuses' results' state: 020F39 "LDA $1842; ASLA; LDX #$7D8D; JMP [A,X]" (bonus_results by it,
+# bonus_results_states), 020F45 "STA $1842" (1), 020FC6/020FD5/02109F/021180 "STD $1842" (state and frames),
+# 0211E6 "TST $1842" (bonus_show_player_portraits); 7 of its 8 uses (the eighth: the second camera line). u16: the state
+# is a byte, but 5 of the 8 uses are words (state and frames written together, and the camera line)
+1842  io  bonus_results_state  u16
+# the results' frames: 020F87 "DEC $1843; BNE; INC $1843" (bonus_results_second, _third, _fourth), 020FBD/020FCC/021017
+# "DEC $1843", 02101F "STA $1843" (4: bonus_results_count_points)
+1843  io  bonus_results_timer  u8
+# the result last placed: 020F4B "STA $1844" (FF at the start), 0210B8 "CMPB $1844" (each round takes the best result
+# below it), 0210D9 "STB $1844", 0210F5 "CMPA $1844" (the boxes of that result placed); 4 of 5 uses (the fifth: the
+# third camera line)
+1844  io  results_last_result  u8
+# the result boxes placed so far: 020F7B "CLR $1845", 02115E "INC $1845" (each box placed), 02116F "LDA $1845" (all four
+# placed: the results go on to state 5)
+1845  io  results_boxes_placed  u8
+# the place being given (1st, 2nd...): 020F77 "STA $1846" (1), 021131 "LDA $1846" (into the box: its place), 021184
+# "INC $1846" (after each result); 4 of 5 uses (the fifth: the fourth camera line)
+1846  io  results_place  u8
+# ---- the players' run ----
+# the running player's values (player_values, 49D0 + 8 x player): 03801E/038038/038052/03806C "STX $1848" (player_run_all,
+# 49D0 49D8 49E0 49E8 before each player_run), 038FD9 "LDD [$1848]; CMPD #$0001" (its last life), 03905E "DECW
+# [$1848]" (a life less), 039305/0395B5/039865 "LDX $1848"/"LDY $1848" (player_take_touches, player_get_grabbed,
+# player_keep_life)
+1848  io  running_player_values  u16
+# a count or phase the objects of one set share: the football player's line pieces (03C8A6 "LDA $184A", 03C8AF "INC
+# $184A": up to 8, each piece by it; 03C393/03C733 "CLR $184A"; football_player_wait_cue waits for it), the bear's
+# phase for its parts (03C91D "CLR", 03C998 "STA" 1, 03CA11 "STB" 2: the parts fly; 03CE65 "LDA $184A"), kind 10's
+# droppers down (02C374 "INC $184A": the first rewrites the floor)
+184A  io  object_group_count  u8
+# the players stop for a scene: 07B666 "LDA #$01; STA $184B" (stage_over), 07A9B7 (stage_3_forest_cleared), 07B32C
+# (stage_8_first_part_exit), 02655B (krusty_balloon_beaten_wait), 03E497 (story_actor_wait_for_players), 03E511 (the
+# height story_actor_wait_for_height waits for); the players' code tests it, 03807A/0380BB/038B1A/038E96/039170 "TST
+# $184B" (no controls, a team-up broken up, stand still); cleared by 03E736 (story_actor_remove) and 03ED43 (each step's
+# start)
+184B  io  players_stop_request  u8
+# the players standing or absent this frame: 038003 "CLR $184C" (player_run_all), 0380B0 "INC $184C" (a player not in
+# the game, or all idle already), 038471 "INC $184C" (player_stand); 038080 "LDA $184C; CMPA #$04" (all four)
+184C  io  players_idle_count  u8
+# the players done working a heavy object (three attacks each): 038007 "CLR $184D", 03914B "INC $184D"
+# (player_work_heavy_object), 03EA5E "LDA $184D; CMPA #$02; BLT" (two of them: they lift it, state 2D)
+184D  io  heavy_object_workers  u8
+# all four players idle after a stop: 038076 "CLR $184E", 038088 "STA $184E" (4, when 184B is set and 184C is 4); read
+# by 07B693 "LDA $184E; BEQ" (stage_players_exit), 026563 (krusty_balloon_wait_for_players), 03E1A6/03E48B/03E6AC
+# (the story actor waiting for the players); cleared by 03E73A and 03ED47
+184E  io  players_all_idle  u8
+# (1850: only ever cleared, 03C78E "CLR $1850" in football_player_defeated and 03ED4B at each step's start; nothing sets
+# or reads it: left unnamed)
+# the object the stage keeps for its scene and its other objects: 027805/0278A8 "STX $1852" (the boss's door keeps
+# itself; 03D230/03D24D/03D500 "LDY $1852" the stage 3 boss opens and closes it), 026594 (the beaten Krusty balloon),
+# 03B981 (Mr. Burns beaten), 03C39D "STU $1852" (the football player's marker), 03E812/03E888 "STX $1852" (the story
+# actor, the noted actor), 03E943/03E9D5/03EA24 read it (story_stage_4_end, stage_8_events, story_stage_8_end); also
+# stage 8's boss keeps its bombs' random word there (03A2C4 "LDD <$58; STD $1852", 03A7EF/03A80D/03A8B3 "LDA $1852",
+# 03A863 "LDY #$1852": stage_8_boss.c's "seed = 0x1852u" will read stage_kept_object)
+1852  io  stage_kept_object  u16
+# a second object kept for the stories: 03AD44 "STX $1854" (burns_robot_place: the robot), 030570 "LDU $1854; STU
+# #$40,X" (the rising zombies drift toward it), 03E895/03E93A/03E961 "STX $1854" (the noted actor); stage_8_events
+# reads its byte as a wait (03E9CE "LDA $1854", 03E9DD "CLR $1854"); 03E743 "STD $1854" (cleared)
+1854  io  stage_kept_object_2  u16
+# (1856: only 03E747 "STD $1856" with D = 0 in story_actor_remove, read nowhere: left unnamed)
+# the x a player dropping in tries first: 038168 "STD $1858" (player_run: 00D0 + 20 x kind, stepped back 10 at a time
+# until the floor is under it), 038193 "LDX $1858" (back to it when no place had floor); 03E74B cleared
+1858  io  player_drop_x  u16
+# no speech balloons over the players: 034BD0 "LDA #$01; STA $185A" (dreamland_boss_put_out_chain), 03EC60 "TST $185A;
+# LBNE" (player_second_sprite_start_balloon: the second sprite off), 03ED4F "CLR $185A" (each step's start)
+185A  io  player_balloons_off  u8
+
+# ============================================================================================ 1860-18DF: the objects'
+# (1860: the start of the block reset_sprites_and_objects clears, 07965D "LDX #$1860"; nothing else: left unnamed)
+# the player the fewest enemies attack: 07CC4E "STU $1870" (find_least_attacked_player), 07D4C6 "LDU $1870" (enemy_think
+# turns to it when its target has too many)
+1870  io  least_attacked_player  u16
+# the nearest player found: 07D338 "STU $1872" (enemy_target_nearest_player, the nearest so far), 07D347 "LDU $1872"
+# (its target), 07D2E8/07D2F7 the same, 07C957 "STU $1872" (start_stage_objects: player 1's object)
+1872  io  nearest_player_found  u16
+# the players in the game, as the stage's spawns count them: 07C994 "LDA <$57; STA $1874" (spawn_stage_objects:
+# player_count), 07CC33 (unused_note_player_count); read by the spawns and doors (02ADDD/0361CB/036399 "CMPA $1874"),
+# kind A5, the police car's doors, goon_keep_distance_start, share_out_attackers, enemy_target_nearest_player
+1874  io  stage_player_count  u8
+# the enemies in play: 07CB56 "CLR $1876", 07CB89 "INC $1876" (run_enemies: each object of list 0 with field 2E's
+# class not negative), 07CB2C/07CB37 "CMPA $1876" (the enemy limit), 02AD47/02AD74/02AE21/02AE31 (the waves wait for
+# them), 0260F1, 02AF7F, 02E901, 02E95D, 07CC5A/07CC69 (share_out_attackers)
+1876  io  enemies_present  u8
+# how many enemies may attack one player: 07CC64/07CC76/07CC87 "STA $1877" (share_out_attackers: 4, by
+# attackers_per_player, or the enemies), 07D4BD "CMPA $1877" (enemy_think: past it, to the least attacked player)
+1877  io  attackers_per_player_limit  u8
+# the walk delays the enemies take in turn this frame: 07CB5E "CLR $1878" (run_enemies), 07D99A "INC $1878; LDA
+# $1878" (enemy_walk_start_in_turn: its timer)
+1878  io  walk_delay_turn  u8
+# list 1's objects (4F80) run this frame: 07CB9F "CLR $1879", 07CBC5 "INC $1879" (run_list_1_objects)
+1879  io  list_1_objects_in_play  u8
+# the child objects run this frame: 07CBD2 "CLR $187A", 07CBF8 "INC $187A" (run_child_objects)
+187A  io  child_objects_in_play  u8
+# knocked down or sent flying by turns: 07D064 "DEC $187B; LDA $187B" (enemy_react_to_hit: bit 0 picks)
+187B  io  knockdown_turn  u8
+# the kind A5 characters that dropped their food: 02E3B1 "CLR $187C" (kind_a5_start), 02E40E "INC $187C"
+# (kind_a5_drop_food), 02E3FC "LDA $187C" (kind_a5_walk_in stops at once when one has)
+187C  io  kind_a5_drop_count  u8
+# the kind A5 characters walking off: 02E3B5 "CLR $187D", 02E454 "INC $187D; LDA $187D" (kind_a5_walk_off: the first
+# and its partner go opposite ways)
+187D  io  kind_a5_leave_count  u8
+# the ninjas called off: 022FDA "INC $187E" (stage 7's boss beaten: stage_7_boss_fall), 0322BC "LDA $187E" (each ninja
+# then leaves, state 6: ninja_update)
+187E  io  ninjas_dismissed  u8
+# the rising scenery's cue: 02D742 "CLR $187F" (rising_scenery_start), 02D7A2 "STA $187F" (rising_scenery_rise with 20
+# frames left), 03150D "LDA $187F" (kind_8e_watcher_wait_signal: the figures become hittable)
+187F  io  rising_scenery_cue  u8
+# last frame's enemies in play: 07CB4E "LDA $1876; STA $1880" (run_enemies), 022F6E "LDB $1880"
+# (stage_7_boss_order_throws)
+1880  io  enemies_present_last_frame  u8
+# (1881: only 02E8E3 "CLR $1881" in kind_88_ride_start, read nowhere: left unnamed)
+# the enemies that have entered (field 57, entrance_pending, clear): 07CB5A "CLR $1883", 07CB92 "INC $1883"
+# (run_enemies), 040CE9 "LDA $1883" (hurry_up_timer: no hurry-up while any)
+1883  io  enemies_entered  u8
+# the police car stopped: 02B489 "STA $1884" (police_car_drive_in, C0), 02C442 "LDA $1884" (its doors open),
+# 02E673 (bystander_wait_car: startled), 02E945 (kind_88_ride_wait_signal)
+1884  io  police_car_stop_signal  u8
+# how many enemies the scroll waits for: 07CB06-07CB0E "LDU #$F000; LDA <$6B; LDA A,U; STA $1885"
+# (enemy_limits_by_difficulty), 07CB1A "ADDA $1885", 07CB1E "STA $1885" (plus extra_enemies_by_scene; in the cemetery
+# 07CAFC "LDU #$F014; LDA <$57; LDA A,U": cemetery_enemy_limits_by_players), then 07CB29 "JMP [B,U]" by the scene to
+# hold_scroll_over_enemy_limit / compare_enemy_limit
+1885  io  enemies_allowed  u8
+# the enemies' walking speed: 07C985-07C990 "LDU #$EFD4; LDB <$61; LDB B,U; ASLDI #$01; STD $1886" (by the rank,
+# doubled), 07DA35/07DA49/07DA87 "LDD $1886" (enemy_line_up_in_depth, enemy_line_up_in_x)
+1886  io  enemy_walk_speed  u16
+# the x offset of the Dreamland boss's chain from its holder: 0351E4 "LDD $1888" and 035200/035213 "STD $1888"
+# (dreamland_boss_chain_shift_offset, -10 to 0F by the holder's facing), 035220 "ADDD $1888" (the chain's base)
+1888  io  dreamland_chain_x_offset  u16
+# how high the obstacle raises the floor: 02CC4A "STA $188B", 02CCA6 "ADDA $188B" (each floor cell, obstacle_raise_floor)
+188B  io  floor_raise_height  u8
+# the Dreamland boss's vitality for its next phase: 0340A9 "STA $188C" (dreamland_boss_hit, by object_1a_level_rows and
+# the players), 03402F "LDA $188C" (unused_show_debug_values prints it)
+188C  io  dreamland_boss_phase_vitality  u8
+# hold both scrolls (nothing writes it, but the clear of 1860-18DF): 07CAEF "LDA $189C; BEQ", 07CAF5 "LDD #$0101; STD
+# <$A7" (check_enemy_limit: camera_x_held and camera_y_held)
+189C  io  hold_both_scrolls  u8
+# the enemies' random number: 07D34F "LDA $189E; ADDA <$58; STA $189E" (enemy_random: the frame's random number added)
+189E  io  enemy_random_number  u8
+
+# ============================================================================================ 18E0-18FF: the scenes'
+# (18E0 scene_state and 18E1 scene_substate are named; the scripted scenes keep their own bytes after them, each its own
+# way: the names below are those of most uses, the comments say what else)
+# the scene's wait, a word counted down: 0228EA/0228FC (ending_fade), 024234/02424B (stage_end_run_jumpers), 024395/
+# 02439E (stage 2's end), 024529/024532/024557 (stage 5's), 02459A/0245A3 (stage 6's), 0245EB/0245F7 (stage_6_wake),
+# 0246BA-024723 (after bonus 2), 0247A1/0247AA (stage 7's lift), 024A02-024ADE (stage 7's end), 024C7C-024D08 (stage 8's
+# start), 024E62-025359 (stage 8's end): "STD $18E2" then "DECW $18E2"; bonus 1 a byte (020136 "LDA #$60; STA $18E2",
+# 020160 "DEC $18E2"), stage 6's end once (024573/02457C). Story 1 keeps a byte there instead, its part done (0272C5-
+# 0275A6 "INC $18E2", 027237 "LDA $18E2; CLR $18E2": the next part). u16: 61 word uses, 23 byte uses
+18E2  io  scene_wait  u16
+# a byte wait: story 1's (0272C1 "STA $18E3" B0, 0272D1 "DEC $18E3" ... 02759A: 25 of 27 uses, each part's frames);
+# stage 1's end keeps a part of the police car there (02407C "STU $18E3", 0240F9 "LDX $18E3")
+18E3  io  scene_short_wait  u8
+# a palette effect the scene runs: 024438 "STU $18E4" (stage_5_end_set_up), 0244A2 (stage_end_show_players), 02458D
+# (stage_6_end_effect), 02448F/024538/0245A9 "CLR [$18E4]" (stopped); the ending's staff roll keeps its wait there
+# (022940 "LDA $18E4", 022946 "DEC", 02298A "STA" A0); bonus 1 each player's flight wait from it (020212 "LDY #$18E4",
+# 0202E4 "LDU #$18E4": balloon.c's "wait_place" will read scene_palette_effect)
+18E4  io  scene_palette_effect  u16
+# layer A's scroll speed in story 1: 0273FD "LDD #$FA00; STD $18E5", 02741E/02744E "LDD $18E5; ADDD #$000A" (slowing
+# down), 027463 "ADDD $18E5" (story_1_scroll_layer_a); stage 1's end keeps the police car's third part there
+# (0240AC "STU $18E5", 024100 "LDX $18E5")
+18E5  io  scene_layer_a_speed  u16
+# the staff roll's line: 0227EB "CLR $18E6" (ending_set_up), 02294B/022959 "LDA $18E6" (the name and title erased),
+# 022967 "INC $18E6", 02296B/02297A "LDA $18E6" (the next printed: staff_roll_names, staff_roll_titles); stage 5's end
+# keeps its second palette effect there (024447 "STU $18E6", 024493/02453C "CLR [$18E6]"): 8 of 12 uses
+18E6  io  staff_roll_line  u8
+# a second wait, a word: stage 1's end (024031 "STD $18E7" 80, 02403A/0240E3/024113/02413E "DECW $18E7": the police
+# car's), the ending's family (02299E "CMPD $18E7", 0229BB "INCW $18E7", 0229B2 "STD $18E7": frames since the last
+# animation); story 1 keeps a palette effect there (02733D "STU $18E7", 027376 "CLR [$18E7]")
+18E7  io  scene_second_wait  u16
+# bonus 1's presses, a byte a player from here (Marge's): 020116 "CLR $18E8" ... 020122 "CLR $18EB" (the contest's
+# start), read by the players' bonus records ("LDA [,U]": field bonus_player 00 presses)
+18E8  io  bonus_1_presses  u8
+# the ending's family step: 022992 "LDA $18E9" (ending_family_waits by it), 0229B6 "INC $18E9"; also Homer's presses in
+# bonus 1 (02011A "CLR $18E9")
+18E9  io  ending_family_step  u8
+# the dream's wave line: 0254C3 "CLR $18EA", 0254CA "LDA $18EA" (its sine), 0254E3 "DEC $18EA" (256 lines) in
+# dream_wave_draw_lines and dream_wave_draw (025533-025551); the ending's scroll wait (02291E "LDA $18EA" up to 68,
+# 022926 "CLR", 022938 "INC"); Bart's presses in bonus 1 (02011E): 10 of 19 uses
+18EA  io  dream_wave_line  u8
+# layer B's scroll speed: stage 7's lift (0247B0 "LDD $18EB; ADDD #$0002; STD $18EB", 0247BE "ADDD $18EB": layer B's
+# y and the four items' z speed), stage 8's start (024C27 "STD $18EB" 0400, 024C33-024C49 slowing by 9, 024C95/024D58:
+# the riders' z speed); the dream's wave keeps its phase there as a byte (025437/025476 "CLR $18EB", 0254CE "ADDA
+# $18EB", 0254E9 "LDA $18EB; SUBA #$02; STA $18EB"), Lisa's presses in bonus 1 (020122): the speed is 11 of the 21
+# uses (10 of them words), but u8 since 11 of the 21 are bytes (the wave, the presses and stage 7's speed's high byte)
+18EB  io  scene_layer_b_speed  u8
+# the dream's wave step: 025441/02545F/02548C/02549E/0254BA "INC $18EC", 02546F "LDA $18EC" (dream_wave_fade_out by
+# it), 025416; bonus 1 counts the balloons gone there (0202DD "CLR $18EC", 0205BB/020628 "INC $18EC", 020308)
+18EC  io  dream_wave_step  u8
+# the dream's wave size: 025433 "CLR $18ED", 02544D-025453 "ADDA #$08; STA $18ED" (growing to C0), 02547C "STA $18ED"
+# (C0), 0254AA-0254B0 (shrinking by 2), 025446/025464/025491/0254A3 "LDB $18ED" (drawn at it); bonus 1's frames since a
+# press sound (0208AB-0208DE), stage 7's links moved (0248B4 "INC $18ED"): 12 of 21 uses
+18ED  io  dream_wave_size  u8
+# the player bonus 1's introduction shows: 02005B "STA $18EE" (bonus_1_intro_set_up), 0200B7/0200DE "LDA $18EE"
+# (bonus_1_intro_show_how); stage 7's chain spacing (02483C "STD $18EE" 0808, 0248AB "SUBD $18EE"), the dream's wave
+# line size (0254BF "STB", 0254D3 "LDB")
+18EE  io  bonus_1_intro_player  u8
+# the bonus title's frames: 0209CD "STD $18EF" (C0, bonus_title_wait), 0209D6 "DECW $18EF" (bonus_title_show);
+# 02542F "CLRW $18EF" (dream_wave_start)
+18EF  io  bonus_title_frames  u16
+# stage 7's chain's lead link: 024843 "STU $18F0" (the first, stage_7_scene_put_chain), 02487A "LDD $18F0" (the last
+# link's next), 02489E/0248D4 "LDX $18F0" (the link moving), 0248C3 "STX $18F0" (the next one moves)
+18F0  io  chain_lead_link  u16
+# the bonus title's step: 0209C3 "LDB $18F1" (bonus_title by it), 0209D1/0209F2 "INC $18F1"; 02542B "CLRW $18F1"
+18F1  io  bonus_title_step  u8
+# stage 7's chain's end link: 024847 "STU $18F2" (stage_7_scene_put_chain), 02488C "LDX $18F2" (in place when its x
+# reaches 09E8 from the camera)
+18F2  io  chain_end_link  u16
+# the dream's wave held at full size: 025488 "STA $18F3" (40 frames, dream_wave_start_full), 025498 "DEC $18F3"
+# (dream_wave_hold)
+18F3  io  dream_wave_hold_frames  u8
+# where Mr. Burns stood when he lost Maggie, and the camera then: 03B9BB "STD $18F4", 03B9C2 "STD $18F6", 03B9C9 "STD
+# $18F8", 03B9D0 "STD $18FA" (mr_burns_see_maggie); stage 8's end puts the family round the spot (024FFD-025195 "LDD
+# $18F4" / "LDD $18F6", 025222/025263 "SUBD $18F4": the walkers arrive) and the camera back (024F2F "LDD $18F8",
+# 024F39 "LDD $18FA")
+18F4  io  reunion_spot_x  u16
+18F6  io  reunion_spot_y  u16
+18F8  io  reunion_camera_x  u16
+18FA  io  reunion_camera_y  u16
+# the player who takes Maggie back: 03B937 "CLR $18FC", 03B953 "STA $18FC" (mr_burns_wait_for_blow: the last blow's
+# player, from the hitter's field 41), 024F8F "LDA $18FC" (stage_8_end_reunion: as a bit, or the first player present,
+# 024FB1/024FC0), 024FE9 "LDA $18FC; LSRA" each player, 02506B "CLR", 0250A8 "LSR $18FC"
+18FC  io  maggie_rescuer  u8
+
+# ============================================================================================ the K052109's registers
+# layer A's y scroll: 0790C9 "STB $180C" (irq_handler: layer_a_scroll_y less 10), 0788B9 (boot: 0)
+180C  io  tile_chip_layer_a_y  u8
+# layer A's x scroll, a line's from here when line scroll is on: 0790C0 "STD $1A00" (irq_handler: layer_a_scroll_x less
+# 5A, its high bit in the second byte), 0788B1 (boot); the line scrolls drawn from it (022569, 025423, 0254C7, 025537
+# "LDX #$1A00": the high score table's wave, the dream's wave)
+1A00  io  tile_chip_layer_a_x  u16
+# the K052109's scroll control (line scroll of layer A: 3, off: 0): 07AE70 "LDA #$03; STA $1C80" (stage_6_begin),
+# 02543D/025482 (the dream's wave), 022551/0225F5 (the high scores' wave); "CLR $1C80" at 0786FA (boot), 07A367,
+# 07A3D1, 07ADC4, 07AE03, 07AF07, 07AF2C, 07B4C4, 0225D6, 0254B6
+1C80  io  tile_chip_scroll_control  u8
+# the K052109's interrupt control (bit 2 the IRQ: cleared to acknowledge or keep it off): 078F49 "LDA #$FB; STA $1D00",
+# 078F55 "LDA #$FF; STA $1D00" (irq_handler), 0786DA/0789B6 (boot), 05E01E/05E034 (test_run_page), 05EBED/05EC54,
+# 05EC76/05ECE5 (the ROM sums)
+1D00  io  tile_chip_irq_control  u8
+# the K052109's tile ROM banks 0 and 1: 07C949 "STA $1D80" (set_area_tile_banks, layer_modes' tile_banks_01), 0786F2
+# (boot, 10), 05EAE6/05EAF9/05EB35 (the ROM check: 10, 54, 10)
+1D80  io  tile_chip_banks_0_1  u8
+# (1E00, the K052109's ROM page for reading the tiles back, 05EC0D "STA $1E00" once: left unnamed, since two Y
+# constants of the players' code equal it, 0394A7/0394C6 "LDY #$1E00" (reactions.c's "state_and_time = 0x1E00u"),
+# which the name would take)
+# the K052109's flip (bit 0 the screen flipped): 078A6B/078A9A "STA $1E80" (apply_settings by flip_screen), 05E41B
+# "STB $1E80" (test_screen_flip_page), 078707/078898 "CLR $1E80", 0788A0 (boot)
+1E80  io  tile_chip_flip  u8
+# the K052109's tile ROM banks 2 and 3: 07C94F "STA $1F00" (set_area_tile_banks), 0786F6 (boot, 32), 05EAEC/05EAFF/
+# 05EB3B (the ROM check: 32, 76, 32)
+1F00  io  tile_chip_banks_2_3  u8
+# layer B's y scroll: 0790F0 "STB $380C" (irq_handler: layer_b_scroll_y less 10), 0788BD (boot: 0)
+380C  io  tile_chip_layer_b_y  u8
+# layer B's x scroll: 0790E7 "STD $3A00" (irq_handler: layer_b_scroll_x less 5A, its high bit in the second byte),
+# 0788B5 (boot)
+3A00  io  tile_chip_layer_b_x  u16
+
+# ============================================================================================ the board's ports
+# the coins (inverted): 078F6F "LDA $1F80; COMA; STA <$3D" (irq_handler: coin_inputs)
+1F80  io  coin_switch_port  u8
+# the test switch (bit 0, 0 pressed) and the EEPROM (bit 4 its data, bit 5 ready): 079037 "LDA $1F81" (irq_handler: the
+# test mode), 078819/07887C (boot: the test switch held resets the EEPROM), 05E998 "LDA $1F81; ANDA #$20"
+# (eeprom_wait_ready), 05E9C6 (eeprom_receive_data)
+1F81  io  test_eeprom_port  u8
+# the players' controls: 079092/07909B/0790A4/0790AD "LDU #$1F90" ... "#$1F93" (irq_handler: read_controls for each of
+# the four), 05E50C "LDA $1F90" (test_menu_update), 05E1A5 "LDY #$1F90" (the I/O check). 1F91-1F93 only as those
+# constants (interrupts.c's "port = 0x1F91u"), named with the first
+1F90  io  player_1_input_port  u8
+1F91  io  player_2_input_port  u8
+1F92  io  player_3_input_port  u8
+1F93  io  player_4_input_port  u8
+# the board's outputs (bits 0-1 the coin counters, bit 3 the tile ROM read through the K052109, bit 5 cleared while
+# the sprite ROM is read), a copy in board_output (4810): 078F96/078FB0/078FD9/078FF3 "STA $1FC0" (irq_handler: the
+# coin counters' pulses), 0786EB (boot, 30), 07896E (boot), 05EC25/05EC42 and 05EC96/05ECDB (the ROM sums)
+1FC0  io  board_output_register  u8
+# the board's control (bit 0 the palette RAM at 0000, bit 1 the sprite RAM at 2000, bit 2 the FIRQ, bits 3/4/7 the
+# EEPROM's CS/CLK/DI), a copy in board_control (480F): 0787FF "STA <$0F" with each "STA $1FC2" (86 of them: irq_handler
+# 07907E-07915E, the floor and tile writers 02B2CC-02D265, the EEPROM 05E90F-05E9E7, boot 0786DF-07899A ...)
+1FC2  io  board_control_register  u8
+# reading it interrupts the Z80: "TST $1FC4" after each command written to 1FC6, 079064 (irq_handler: the sound queue),
+# 078703 (boot), 078EB7 (ask_sound_cpu_check), 078F18, 078F2B (reset_sound), 078F34 (send_sound_command_and_wait),
+# start_sample_rom_check
+1FC4  io  sound_irq_port  u8
+# the K053260's ports to and from the Z80, a word: written the command, 079060 "STD $1FC6" (irq_handler: the sound
+# queue's next), 0786FF (boot, 0000), 078EB3 (F181), 078F27 (FF00), 078F30 (send_sound_command_and_wait), FE88; read
+# the Z80's answer, 078EC9 / 078F3E "LDD $1FC6"
+1FC6  io  sound_command_port  u16
+# the second port read alone, the Z80's echo of the command's low byte once it has taken it: 078EC3 / 078F1F / 078F38
+# "CMPB $1FC7" (ask_sound_cpu_check, send_sound_command_and_wait), sample_rom_check_answered (88)
+1FC7  io  sound_echo_port  u8
+# the watchdog, kicked by reading it: "TST $1FCA" in irq_handler, boot's loops (07876D-078972), ram_rom_check,
+# test_ram_words, test_ram_bytes, 05E9F2 (eeprom_delay), 05EC29 / 05ECCA (the ROM sums)
+1FCA  io  watchdog_port  u8
+
+# ============================================================================================ the K053246's registers
+# the sprites' x and y scroll (registers 0-1, 2-3): 026215 "STD $1FA0" (screen_shake_advance), 0279D7/0279DE
+# (dreamland_scroll), 078A83/078A8D and 078AB4/078ABE (apply_settings: 0255/0071 or 0015/0261, the screen flipped or
+# not), 079622-079642 (reset_sprites_and_objects), 07870F/078713 (boot, 0)
+1FA0  io  sprite_chip_scroll_x  u16
+1FA2  io  sprite_chip_scroll_y  u16
+# the K053246's control (register 5: bit 4 the sprite DMA and its FIRQ), a copy in sprite_chip_control (4855):
+# 07916E "STA $1FA5" (irq_handler), 0791CE (firq_handler), 07880B/0788A9/0789AA (boot), 078A77/078AA6
+# (apply_settings), 05EB52/05EB8D (the ROM check)
+1FA5  io  sprite_chip_control_register  u8
+# the address of the sprite ROM read back (registers 6, 7 and 4: MAME's k053246_r, (6 << 17) | (7 << 9) | (4 << 1)):
+# 05EC9D "STA $1FA6", 05ECA4 "STA $1FA7", 05ECAB "STA $1FA4" (test_sum_sprite_rom, from sprite_rom_address_high,
+# _middle, _bottom); 0786E5 "STA $1FA4" (boot, 24)
+1FA6  io  sprite_chip_rom_high  u8
+1FA7  io  sprite_chip_rom_middle  u8
+1FA4  io  sprite_chip_rom_bottom  u8
+# the sprite ROM's two bytes there: 05ECAF "LDB $1FC8", 05ECB4 "LDB $1FC9" (test_sum_sprite_rom: each added to the sum)
+1FC8  io  sprite_chip_rom_first_byte  u8
+1FC9  io  sprite_chip_rom_second_byte  u8
+
+# ============================================================================================ the K053251's registers
+# (the priority encoder: MAME konami/k053251.cpp's notes, and runtime/src/video.c's draw: registers 2-4 the priorities
+# of CI2-CI4, the fixed layer, A and B; 9 and 10 the colour bases)
+# register 0, CI0's priority (the background colour): 07871F "LDA #$3F; STA $1FB0" (boot)
+1FB0  io  background_priority  u8
+# registers 2-4, the fixed layer's, layer A's and layer B's priorities: 078725 "STA $1FB2" (04), 07872B "STA $1FB3"
+# (28), 078731 "STA $1FB4" (18) (boot)
+1FB2  io  fixed_layer_priority  u8
+1FB3  io  layer_a_priority  u8
+1FB4  io  layer_b_priority  u8
+# (1FB6, 1FB7, 1FB8, 1FBB, 1FBC: registers 6, 7, 8, 11 and 12, written once at boot with 17, 27, 37, 00, 05 (078737-
+# 07875B); MAME does not know what they do: left unnamed)
+# register 9, the colour bases of the background (bits 0-1), the sprites (2-3) and the fixed layer (4-5): 13 in play
+# (078747 "LDA #$13; STA $1FB9", boot), 3F while a screen is redrawn, then 13 again ("LDA #$3F; STA $1FB9" ... "LDA
+# #$13; STA $1FB9": 07A252-07A27B, 026EE6, 07BE97, 0227FD/022825, 024197/0241B7 ..., the attract's and the scenes'
+# drawing: 83 writes)
+1FB9  io  colour_bases_back_sprites_fixed  u8
+# register 10, the colour bases of layers A (bits 0-2) and B (3-5): 2C in play (07874D "LDA #$2C; STA $1FBA", boot), 36
+# while a screen is redrawn ("LDA #$36; STA $1FBA" ... "LDA #$2C; STA $1FBA" beside each 1FB9: 83 writes)
+1FBA  io  colour_bases_layers_a_b  u8
+
+# ============================================================================================ 2000-3FFF as RAM
+# the name entry's state: 02200F "LDX #$7510", 022022 "LDA $3840; JMP [A,X]" (name_entry by it), 02220D / 0222AA "INC
+# $3840" (name_entry_set_up, name_entry_type_initials); cleared with 3840-386F by boot and reset_for_play (0796AE "LDX
+# #$3840")
+3840  io  name_entry_state  u8
+# each player's entry, 4 bytes from here (its place, bit 7 when done; its sprites): 02203A "LDU #$3842", 022073/
+# 022255/022267 "LDX #$3842; ... LEAX #$04,X" (high_scores.c's "entry = 0x3842u")
+3842  io  name_entry_records  u8
+# the name entry's frames: 022209 "STD $385E" (0000, name_entry_set_up), 022212 "LDD $385E; ADDD #$0001; STD $385E;
+# CMPD #$0700" (time up; 06C0 the sound stopped), 0222A6 (0000 again), 0222B0/0222B7 (name_entry_linger, up to 0100)
+385E  io  name_entry_time  u16
+# the players ranked best first, 2 bytes each (the player, its place): 02231D-022336 name_entry_rank_players "CLR $3860;
+# LDA #$01; STA $3862 ..." then sorted (022309 "LDU #$3860"), 022037/0222CD "LDX #$3860" (each in turn). 3862, 3864 and
+# 3866 are its next entries (one write each there: left unnamed, an io line has no array)
+3860  io  name_entry_ranking  u8
+# the 64 palette jobs, 8 bytes each (palette_job): 07BF39 "LDU #$3C00" (find_free_palette_job), 07BC8B "LDU #$3C00"
+# (run_palette_jobs), cleared from here by 024DE3/07B47C/0787C4/079676 "LDX #$3C00; ... CLR ,X+; BMOVE" (the census's
+# four io_write8(0x3C00u, 0u) are those clears' first bytes)
+3C00  io  palette_jobs  u8
+
+# ============================================================================================ left unnamed
+# The original's mistakes, an extended address where the object's field was meant (symbols.txt notes each): 002F
+# (03CD05 "DEC $002F", bear_change: the field 2F), 0031 (038A69/038A86 "TST $0031", player_throw_carried_4/5: the
+# field 31), 003C (03C433 "STA $003C", football_player_start_rest: the field 3C), 00A0 (0212B9 "SUBD $00A0",
+# bonus_results_draw_box), 00C0 (03C9D2 "ANDB $00C0", bear_break_out: the immediate C0). An io line names every
+# constant of its value the C does not take for a number (X, Y and U loads, an address added to), and these values are
+# everyday numbers there: the listing has 63 "#$00C0" (LEAX #$00C0,X: the players' stride), 14 "#$00A0", 4 "#$003C",
+# 2 "#$002F"; a name such as meant_object_field_2f would replace them. So are 0C00 (palette_job_background_colour's
+# "STD $0C00", the background's colour in the palette RAM: 9 "#$0C00", counts of the RAM test, Y loads in bank 1E) and
+# 2000 (boot's clear of the sprite RAM: 27 "#$2000", the tile layers' "- 0x2000u").
+# 24E2 and 26DD: places in the fixed layer's tiles the test mode writes once (05E193 "LDX #$24E2": the I/O check's
+# blanked cells; 05E0B3 "LDX #$26DD": the ROM check's row), not variables.
+
+
+
+# ======== names, batch 4: the last object fields, and corrections (build/names4/fields.txt; merged by the lead) ========
+# ======== names, batch 4: the 053248's last object fields still named after their offset, and the corrections the
+# batches reported (build/names4/brief_fields.md; merged by the lead) ========
+# Evidence: build/listing/simpsons.s (quoted as PLACE "INSTRUCTION"), the C of src/ and build/names4/fields_census.txt.
+# How the names reach the C here (read in tools/core): a function's own object (X) reads its family's fields only while
+# the emitter knows X is still that object (decompiler/emit.py own_object: lost after a PULLS X or a call that may write
+# X); otherwise the family comes from the pointer analysis, whose entry kinds carry no family in Konami
+# (konami_cpu/decompile.py builds pointers.Program without families), so a "param FUNC x NAME object.FAMILY" line or a
+# typed "local" at the instruction that writes the register gives it; a family's moved pointer (player + 0x60u) keeps
+# the base's family (pointers.access, RUNS); an access by a constant address takes a family only through the profile's
+# INSTANCE_FAMILIES_BY_FUNCTION (the "# instance" lines below); and Konami has no array fields (konami_cpu/emit.py:
+# FIELD_ARRAYS and SCOPED_ARRAYS empty), so a structure's array is named one field per element.
+# A line that changes an existing one has "# replaces: OLD LINE" right above it; where one old line becomes several new
+# ones the replacement's other lines follow it, marked "(with the line above)".
+
+# ==== section 1: the fields still unk_XX ====
+
+# ---- 3D: carried, common ----
+# What the engine does with byte 3D of every object: it clears it at every birth, with blocked (spawn_stage_objects
+# 07CA41 "CLR #$3D,U" next to 07CA44 "CLR #$31,U"; place_child_object 07CAE5 "CLR #$3D,U"), and the players set it on
+# whatever they pick up, of any kind (player_stand 038790 "LDA #$01; STA #$3D,X" on the object that touched it,
+# player_eat_food 03942C "STB #$3D,Y" with B = 1): "carried" for the eight families that read it (throwable,
+# bouncing_throwable, carried_obstacle, obstacle, running_animal, robot_scrap, bird_item, timed_throwable: their own
+# lines say carried). The families that use the byte otherwise keep their own names (enemy way_round, player
+# hold_presses, ...). Census: spawn_stage_objects and place_child_object "OBJECT(...)->unk_3D = 0u" (a new object is not
+# carried); fat_goon_thrower_pick_up and unused_obstacle_fall too (both carried, see below)
+field object 3D carried u8
+
+# ---- 3D, 3E: the player's second sprite (the partner object at +60) ----
+# player_second_sprite_start_prompt / _prompt / _blink get the player in U and work on its second sprite through
+# U + 60 (03EBF0-03EC5D: "#$0090,U", "#$009D,U", "#$009E,U", "#$60,U": the partner's 30, 3D, 3E, 00). As the player
+# family's view (the moved pointer keeps it) 3E already reads blink_frames, as the player code reads the same byte
+# (player_team_ready 0391A4 "CLR #$009E,U" before "LDA #$03; LDY #$B180; LBSR $7C2F": state 3, the blinking picture);
+# 3D is not hold_presses there but the prompt's frames: 03EC02 "LDA #$01; STA #$009D,U" (state 5 starts it at 1),
+# 03EC0B "DEC #$009D,U; BEQ" (at 0: "LDA #$3C; STA #$009D,U", 60 frames, and picture B180), 03EC11 "LDA #$009D,U; CMPA
+# #$1E" (at 30: picture B181): the two prompts (Hit Buttons!, Wiggle Joystick!) alternate every 30 frames. A family of
+# its own, player_second_sprite, whose view takes the player's fields (NESTED_FAMILIES) but this one. The functions
+# player_second_sprite_* then belong to it (their X is never an object: 03EAB3 "LDX #$7E5B; JMP [A,X]", and
+# player_second_sprite_fall's X is a place), and nothing in them reads the player's own 3D
+scoped object player_second_sprite 3D prompt_frames u8
+param player_second_sprite_start_prompt u player object.player_second_sprite
+param player_second_sprite_prompt u player object.player_second_sprite
+param player_second_sprite_blink u player object.player_second_sprite
+
+# ---- 3D: an enemy's way round, an obstacle carried, a held player's presses ----
+# unused_enemy_move_aside 07D7E6 "LDB #$3D,X; BNE" (ADDA #$60 the other way, SUBA #$20): the enemy's way round, as
+# enemy_get_around reads it (07DC74 "LDB #$3D,X; BNE", 07DC64 / 07DC6B sets it); it sits among the enemies' shared
+# moves (07D7E3, after enemy_climb's 07D7D1), its X an enemy
+# replaces: param unused_enemy_move_aside x object object
+param unused_enemy_move_aside x object object.enemy
+# unused_obstacle_fall 02CE07 "CLR #$3D,X; LBSR $85B1": an obstacle's step after obstacle_rebound_fall (02CDD4), clearing
+# its carried byte as obstacle_throw does (02CD72 "CLR #$3D,X")
+# replaces: param unused_obstacle_fall x object object
+param unused_obstacle_fall x object object.obstacle
+# fat_goon_thrower_pick_up 02A518 "LBSR $862C" (vector_spawn_child, the child in U), 02A51E "STU #$40,X" (the thrower's
+# carried_object), 02A527 "LDA #$01; STA #$3D,U": the obstacle on its head, carried; the same object the carry and
+# the throw get (fat_goon_thrower_carry 02A535 "LDU #$40,X" typed object.carried_obstacle)
+local fat_goon_thrower_pick_up 02A518 u carried object.carried_obstacle
+# unused_homer_object_wait_hit 02F7F8 "LDU #$25,X; CMPU #$4F80; BCC" (the player that hit it), 02F808 "LDD #$1006;
+# STA #$31,U; STB #$3D,U": the player's state timer and its presses to break free (player.hold_presses, as goon_grab_try
+# 028E8B "LDA #$0C; STA #$3D,U"); symbols.txt's "param unused_homer_object_wait_hit u hitter object.player" is
+# overridden by this local's plain object
+# replaces: local unused_homer_object_wait_hit 02F7F8 u hitter object
+local unused_homer_object_wait_hit 02F7F8 u hitter object.player
+
+# ---- 32, 35, 37, 3C, 3E, 3F, 50-53: the dreamland boss's chain pieces ----
+# dreamland_boss_chain_setup gives each piece it puts in (U: 0350EC "LBSR $867D" find_free_slot, 035101 "LBSR $7442"
+# find_free_object_from_4d40, 035109 "LDU <$F2" the head) the chain's fields: 03512F "LDD #$0002; STD #$3E,U"
+# (next_direction 0, next_distance 2), 035132 "STD #$35,U" (queued_direction 0), 035135 "STA #$37,U" (direction 0),
+# 03513A "STA #$3C,U" (10), 035143 "STX #$2A,U" (chain_base), 035146 "STY #$2E,U" (previous_link), 035149 "STU #$2C,Y"
+# (next_link of the one before), 03514C "CLRW #$50,U; CLRW #$52,U" (next_dx, next_dz), 035155 "STA #$32,U" (link_index):
+# every piece is a link (type FF) or the head (type FE, dreamland_boss_chain_head, whose view takes the chain's). U then
+# holds dreamland_boss_chain_link_parameters (035160 "LDU #$798E", 03516B "LDA ,U+"): those two sites keep their old
+# type (the C reads that ROM byte as OBJECT(parameter_address)->flags, a pointer into the window read as an object; a
+# separate name and no type there would be cleaner but changes how the byte is read)
+# replaces: local dreamland_boss_chain_setup 0350EC,035101,035109,035160,03516B u piece object
+local dreamland_boss_chain_setup 0350EC,035101,035109 u piece object.dreamland_boss_chain
+# (with the line above)
+local dreamland_boss_chain_setup 035160,03516B u piece object
+# Y: the base (0350F8 / 035163 "LEAY ,X"), each new piece (035158 "LEAY ,U"), then the walk down the chain (035170 "LDY
+# #$2C,Y": next_link); 035149 "STU #$2C,Y" (next_link), 035168 "STD #$40,Y" (chain_head), 03516D "STA #$30,Y"
+# replaces: local dreamland_boss_chain_setup 0350F8,035158,035163,035170 y previous_piece object
+local dreamland_boss_chain_setup 0350F8,035158,035163,035170 y previous_piece object.dreamland_boss_chain
+# 3C of a chain piece: the setup gives the base and every piece 10 (0350DC "LDA #$10; STA #$3C,X", 03513A "STA
+# #$3C,U"), the head's own setup 4 (dreamland_boss_chain_head_setup 035340 "LDA #$04; STA #$3C,X"); only the head reads
+# it: dreamland_boss_chain_head_follow_path 035355 "LDA #$36,U; BNE" (its holder's target_direction), 03535A "DEC
+# #$3C,X; BNE $73A1" (no step yet), 03535F "LDA #$01; STA #$3C,X" then the next step of its path: the frames before
+# its next path step (4 at first, then 1: a step each frame). Without this line the chain's view takes dreamland_boss's
+# legs_left (NESTED_FAMILIES), which the base's setup and the head's path now read
+scoped object dreamland_boss_chain 3C path_wait u8
+
+# ---- 50-53: the bear's cage parts ----
+# bear_put_parts 03C93C "STD #$0C,U; STD #$50,U" (the part's x, kept), 03C948 "STD #$11,U; STD #$52,U" (its y), 03C954
+# "STD #$16,U; STD #$54,U" (its z, rest_height): its place at rest. bear_part reads only the height back (03CE76 "LDY
+# #$54,X" for the shake); nothing reads 50 or 52 (no "#$50,X", "#$52,X" in bank 1E or the fixed program)
+scoped object bear_part 50 rest_x u16
+scoped object bear_part 52 rest_y u16
+
+# ---- 32, 31, 33: the stages' closing jumpers ----
+# what scene_put_placement hands back in Y (025388; 0241C5 "LDA #$0D; LBSR $7388"): stage 2's kind-9C character, a
+# jumper like the players' (0241D0 "LDA #$04; STA #$30,Y; STA #$32,Y", 0241D8 "LDA #$01; STA #$31,Y": jumper_player 4,
+# which stage_end_jumper_wait 02428A "CMPB #$04; BEQ" keeps silent and stage_end_jumper_fly 0242E5 "CMPB #$04; BNE; LDA
+# #$8E" gives its own animation); run by stage_end_run_jumpers (024251 "LDX #$4D40", 024264 "JSR [A,U]" by type)
+# replaces: local stage_2_end_set_up 0241C5 y object object
+local stage_2_end_set_up 0241C5 y jumper object.stage_end_jumper
+# stage_end_put_jumpers 024202 "LBSR $7388", 024208 "LDA <$F1; STA #$32,Y" (jumper_player)
+# replaces: local stage_end_put_jumpers 024202 y jumper object
+local stage_end_put_jumpers 024202 y jumper object.stage_end_jumper
+# a jumper's wait before it jumps: stage_end_put_jumpers 02421C "LDA A,X; STA #$31,Y" (from stage_end_exit_waits by its
+# order), stage_2_end_set_up 0241D8 "LDA #$01; STA #$31,Y"; stage_end_jumper_wait 02427E "LDA #$31,X; BEQ", 024283 "DEC
+# #$31,X" (the common blocked is the walk check's, which a jumper does not run)
+scoped object stage_end_jumper 31 jump_wait u8
+# the legs it has flown: stage_end_jumper_fly 0242F6 "INC #$33,X" each time it has shrunk to nothing and shows again;
+# stage_end_jumper_last_leg 0242AC "LDB #$33,X; BEQ" (stage 5's second leg; the common hit_from_behind is the hit
+# check's)
+scoped object stage_end_jumper 33 legs_flown u8
+# 02427E "LDA #$31,X; BEQ $6287" (the wait left; at 0 it is the shout command's high byte: 02428E "ADDD #$3F28")
+# replaces: local stage_end_jumper_wait 02427E a blocked
+local stage_end_jumper_wait 02427E a wait_left
+
+# ---- 34: the players after the story ----
+# story_actor_remove (the actor at 5640, 03E733 on): 03E754 "LBSR $67F3" (story_first_player: X = 4A40), 03E79A "LBSR
+# $67FC" (story_next_player), 03E777 "PUSHS X; LEAX #$1C,X; LDU #$003D; CLRA; BSET A,X,U; PULLS X" (the player's
+# fields 1C-58 cleared: X is the player, not the actor), 03E783 "LDA #$34,X; ORA #$02; STA #$34,X" (player.status bit 1,
+# rejoining: 0380FE-038116 "BITB #$02"), 03E75C "CLR #$30,X" (player_state), 03E75F "CLR #$0090,X" (its second
+# sprite's state)
+# replaces: local story_actor_remove 03E754,03E79A x player object
+local story_actor_remove 03E754,03E79A x player object.player
+# replaces: local story_actor_remove 03E781 x object object
+local story_actor_remove 03E781 x player object.player
+
+# ---- 35: Krusty's balloon's squash steps ----
+# krusty_balloon_wobble 026A79 "LDA #$35,X; ASLA; JSR [A,U]" (squash_step, named while X is its own object), 026A7F
+# "LDA #$35,X; CMPA #$04", 026A86 "CLR #$35,X": after the call X is what the step hands back (the steps' table has no
+# length, so the switch holds handlers that hand back X: krusty_balloon_volley_throw, krusty_balloon_stomp_bounce); the
+# balloon itself, at the call and on the way in
+param krusty_balloon_wobble x balloon object.krusty_balloon
+local krusty_balloon_wobble 026A7D x balloon object.krusty_balloon
+# krusty_balloon_flinch (state -1): the balloon it wobbles, 026601 "LBSR $6A74" (krusty_balloon_wobble, which hands X back)
+# (its callers name it object and balloon, so the name by use stopped at the register)
+param krusty_balloon_flinch x balloon object.krusty_balloon
+
+# ---- 43: stage 3's bosses ----
+# 41 holds the other boss (03D1CB "STU #$41,X; STX #$41,U"): both are stage_3_boss (list 0 type 3E, run by stage_3_boss)
+# replaces: scoped object stage_3_boss 41 partner u16 object
+scoped object stage_3_boss 41 partner u16 object.stage_3_boss
+# stage_3_boss_update: after 03D574 "PUSHS X; LDX #$41,X ... PULLS X" the emitter no longer takes X for the function's
+# own object, and the way that does not go through it carries no family (pointers.merge), so from 03D58B on the C
+# reads the common fields: 03D58B "LDA #$3A,X" (apart_time, C "retarget_time"), 03D59E "LDA #$10; STA #$40,X"
+# (join_wait, C "parent"), 03D5A3 "TST #$43,X" (together, C "unk_43"), 03D5C5 "LDX #$41,X" (partner, C "parent &
+# 0xFF << 8 | enemy_class"): the boss, its family on the way in
+param stage_3_boss_update x boss object.stage_3_boss
+# 03D576 / 03D5C5 "LDX #$41,X": the partner; 03D5ED "CLR #$43,X" (its together)
+# replaces: local stage_3_boss_update 03D576,03D5C5 x partner object
+local stage_3_boss_update 03D576,03D5C5 x partner object.stage_3_boss
+# stage_3_boss_join 03D682 "LDU #$41,X", 03D685 "LDY #$0D00; STY #$2E,U" (phase 0D, wait 0: C "target_dy = 0xD00u"),
+# 03D6A3 "STA #$43,U" (its together)
+# replaces: local stage_3_boss_join 03D682 u partner object
+local stage_3_boss_join 03D682 u partner object.stage_3_boss
+# stage_3_boss_partner_ready 03D6AF "LDU #$41,X", 03D6BE "LDA #$2E,U; CMPA #$13" (its phase: C "target_dy >> 8u")
+# replaces: local stage_3_boss_partner_ready 03D6AF u partner object
+local stage_3_boss_partner_ready 03D6AF u partner object.stage_3_boss
+
+# ---- 43, 45: bonus 2's signs and result boxes, through the player's object ----
+# Bonus 2 reaches each player's sign (+840: 5280 + C0 n) and result box (+540: 4F80 + C0 n) by offsets from the player's
+# object, its U (typed object.bonus_2 in every bonus_2_* function), so the C reads them through the bonus_2 view (a moved
+# pointer keeps its base's family). The sign's animation kept in its 43, to come back to after a reaction:
+# bonus_2_put_player 020B92 "STA #$0845,U; STA #$0883,U" (88 a player in the game, C5 one out), bonus_2_end_pose 020CF6
+# "LDA #$0883,U; ADDA #$02; STA #$0845,U", bonus_2_shake/_squash/_meter_jumps/_bounce 020DC3 "LDA #$0883,U; STA
+# #$0845,U", bonus_2_level 020E38. No bonus_2 code reads 43 or 45 of the player's own object
+scoped object bonus_2 43 sign_kept_animation u8
+# the result box's place (bonus_results.place, 1 the winner): bonus_2_end_pose 020CE8 "LDA #$0585,U; CMPA #$01"
+scoped object bonus_2 45 result_place u8
+
+# ---- 43-58: the story actor's child slots, one field each ----
+# Konami has no array fields (a structure laid out backwards: konami_cpu/emit.py), so "child_actors u16[B]" names only
+# its first word. The 11 slots (story_actor_put_in 03E398 "LEAX #$43,X; LDD ,X; BNE; STU ,X", 03E3A6 "DEC <$F0" from
+# 0B; story_actor_finish_frame 03E68D, story_actor_remove 03E71C, story_actor_remove_children 03E7A9 walk them by
+# pointer) are read by place in stage_2_events (03E842 "LDY #$43,X", 03E84B "LDY #$45,X", 03E82A "LDY #$47,X": C
+# "child_actors", "unk_45 << 8 | floor_cell", "next_floor_cell << 8 | hit_box >> 8") and written in story_stage_4_end
+# (03E943 "LDY $1852; STY #$45,X": the noted actor as the actor's second child; C "unk_45", "floor_cell"); the start
+# of an actor clears 28-57 by a block and the last slot's low byte apart (story_actor_run 03E084 "LEAX #$28,X; LDU
+# #$0018; BSETW D,X,U", 03E093 "CLR #$58,X": C "unk_58")
+# replaces: scoped object story_actor 43 child_actors u16[B]
+scoped object story_actor 43 child_actor_1 u16 object
+# (with the line above)
+scoped object story_actor 45 child_actor_2 u16 object
+scoped object story_actor 47 child_actor_3 u16 object
+scoped object story_actor 49 child_actor_4 u16 object
+scoped object story_actor 4B child_actor_5 u16 object
+scoped object story_actor 4D child_actor_6 u16 object
+scoped object story_actor 4F child_actor_7 u16 object
+scoped object story_actor 51 child_actor_8 u16 object
+scoped object story_actor 53 child_actor_9 u16 object
+scoped object story_actor 55 child_actor_10 u16 object
+scoped object story_actor 57 child_actor_11 u16 object
+
+# ---- 58: the enemy holding a player ----
+# The player's holder (player 4B: goon_grab_try 028E88, fat_goon_grab 02AAD3, zombie_grab_reach 030760 "STX #$4B,U")
+# is a goon, a fat goon or a grabbing zombie, each with its squeeze_step at 58 (1 holding, 2 a squeeze asked, 3
+# squeezing: goon_grab_hold, fat_goon_squeeze, zombie_grab_hold). The player sets it: player_get_grabbed 0395AD "LDX
+# #$4B,U ... STA #$58,X" (1), player_grabbed 038E5A "LDA #$02; STA #$58,X" (hit while held: the holder squeezes),
+# player_struggle 038EB4 / 038ECF "CLR #$58,X" (free). A view for the three, through the pointer only (no function is
+# named grabber_*, and no family name starts with "grabber_")
+scoped object grabber 58 squeeze_step u8
+# replaces: scoped object player 4B holder u16 object
+scoped object player 4B holder u16 object.grabber
+# player_struggle's X: the holder (player_grabbed 038E45 "LDX #$4B,U" and player_grabbed_and_hit 038ED5 "LDX #$4B,U"
+# fall into it at 038E90); 038EB4 "CLR #$58,X"
+# replaces: param player_struggle x holder
+param player_struggle x holder object.grabber
+
+# ---- 3F, 44, 45: objects at a fixed address (profile INSTANCE_FAMILIES_BY_FUNCTION) ----
+# story_actor_drop_players_held 03E53C "CLRD; STD $4A7F; STD $4B3F; STD $4BFF; STD $4CBF": the four players' held
+# (player 3F, u16 object: 038766 "STD #$3F,U", 03876B "STX #$3F,U")
+# instance 0x4A40 story_actor_drop_players_held player
+# instance 0x4B00 story_actor_drop_players_held player
+# instance 0x4BC0 story_actor_drop_players_held player
+# instance 0x4C80 story_actor_drop_players_held player
+# gorge_rock_start 02D04E "LDA #$97; STA $4A84; STA $4B44; STA $4C04; STA $4CC4" (the first rock, field 30 = 0) and
+# kind_8e_watcher_wait_signal 031513 "LDA #$9F; STA $4A84 ..." (when 187F is set): the four players' pose_animation
+# (player 44: player_take_pose_blow 03933E "LDB #$44,U; LBEQ; STB #$05,U; CMPB #$97")
+# instance 0x4A40 gorge_rock_start player
+# instance 0x4B00 gorge_rock_start player
+# instance 0x4BC0 gorge_rock_start player
+# instance 0x4C80 gorge_rock_start player
+# instance 0x4A40 kind_8e_watcher_wait_signal player
+# instance 0x4B00 kind_8e_watcher_wait_signal player
+# instance 0x4BC0 kind_8e_watcher_wait_signal player
+# instance 0x4C80 kind_8e_watcher_wait_signal player
+# bonus_results_read_places 021081 "LDA $4FC5; STA <$F0", 021088 "LDA $5085", 02108F "LDA $5145", 021096 "LDA $5205":
+# the four result boxes' place (4F80 + C0 n, bonus_results 45: bonus_results_place_next 021154 "STA #$45,U")
+# instance 0x4F80 bonus_results_read_places bonus_results
+# instance 0x5040 bonus_results_read_places bonus_results
+# instance 0x5100 bonus_results_read_places bonus_results
+# instance 0x51C0 bonus_results_read_places bonus_results
+
+# ---- 07: an attack range's chances and actions, counted from 1 (not an object field) ----
+# enemy_think 07D5D9 "LEAU #$07,U" (U one before the range's action_chances), 07D5DC "SUBA B,U" with B 4 down to 1
+# (action_chances[B - 1]); 07D5E5 "LEAU #$-04,U" (one before its actions), 07D5E8 "LDA B,U; STA #$28,X" (actions[B -
+# 1]). The C reads them as ATTACK_RANGE(range + choice - 7)->unk_07 and ATTACK_RANGE(range + choice - 3)->chance (the
+# range's own chance, wrong): a record pointer moved inside the record has no array to land in (no array fields in
+# Konami). The same in the state's choice: 07D614 "LEAU #$03,U", 07D617 "SUBA B,U" (the state record's chances 4-7),
+# 07D621 "LEAU #$-03,U", 07D624 "LDA B,U" (its actions 1-4), C "mem_read8(state_record + choice)", "mem_read8(state_record
+# - 3u + choice)". As values a pointer walks (elements, read through data_record as the records are) the C reads
+# BEHAVIOUR_CHANCE(range_chances + choice) and BEHAVIOUR_ACTION(range_actions + choice)
+elements behaviour_chance u8
+elements behaviour_action u8
+# replaces: local enemy_think 07D5C3,07D5C6,07D5D9,07D5E5 u range
+local enemy_think 07D5C3,07D5C6 u range
+# (with the line above)
+local enemy_think 07D5D9 u range_chances behaviour_chance
+local enemy_think 07D5E5 u range_actions behaviour_action
+# replaces: local enemy_think 07D60D,07D614 u state_record
+local enemy_think 07D60D u state_record
+# (with the line above)
+local enemy_think 07D614 u state_chances behaviour_chance
+local enemy_think 07D621 u state_actions behaviour_action
+
+# ==== section 2: the corrections the batches reported ====
+
+# ---- hit_box: the object's attack and box words ----
+# set_hit_box 07D1B7 "LDD ,Y; STD #$1C,X" (damage, attack), 07D1BC "LDD #$02,Y; STD #$1F,X" (box_width, box_depth),
+# 07D1C2 "LDD #$04,Y; STD #$21,X" (box_height, box_dx), 07D1C8 "LDD #$06,Y; STD #$23,X" (box_dy, box_dz); burns_robot
+# 03B305 "LDD ,U++; STA #$1C,X; STB #$1D,X", 03B30D / 03B312 / 03B317 "LDD ,U++; STD #$1F,X / #$21,X / #$23,X"
+# replaces: field hit_box 00 field_1c u16
+field hit_box 00 damage_attack u16
+# replaces: field hit_box 02 field_1f u16
+field hit_box 02 width_depth u16
+# replaces: field hit_box 04 field_21 u16
+field hit_box 04 height_dx u16
+# replaces: field hit_box 06 field_23 u16
+field hit_box 06 dy_dz u16
+
+# ---- object 59: 8 sprite entries of 16 bytes ----
+# 07955F "LDU #$2000", 079575 "LEAU #$0080,U": 80 (128) bytes an object, 8 sprite_entry of 10 (16) bytes (struct
+# sprite_entry 10; write_object_sprites 079C02 walks them by 10, borrowed_object at 0E of the eighth). The comment above
+# the old line says "8 of 10 bytes": it should say "8 of 16 (0x10) bytes"
+# replaces: field object 59 sprites u16
+field object 59 sprites u16 sprite_entry
+
+# ---- 4A02-4A1B: bytes 02 and 03 of each player's counters are the health gauge's ----
+# player_counters (4A00 + 7 n) 02 gauge_step and 03 gauge_delay: gauge_draw_health 040A0D "CMPB #$02,U", 040A1D "LDA
+# #$02,U; TST #$03,U", 040A34 "STA #$02,U", 040A39 "LDB #$02; STB #$03,U"; gauges_count_delays 0408EE "LDA #$03,Y; BEQ;
+# DECA; STA #$03,Y". The game's start clears them as a word (0796CA "STD $4A02", 0796D6 "STD $4A09", 0796E2 "STD $4A10",
+# 0796EE "STD $4A17"): two bytes each (the C writes both, as continue_seconds/continue_player). 04-06 stay unused (only
+# that start clears them: 0796CE "STD $4A04", 0796D2 "CLR $4A06"). The comment above the old lines says "nothing reads
+# them": the gauge reads 02 and 03 through the player's counters
+# replaces: 4A02  var  unused_marge_word_1  u16
+4A02  var  marge_gauge_step  u8
+# (with the line above)
+4A03  var  marge_gauge_delay  u8
+# replaces: 4A09  var  unused_homer_word_1  u16
+4A09  var  homer_gauge_step  u8
+# (with the line above)
+4A0A  var  homer_gauge_delay  u8
+# replaces: 4A10  var  unused_bart_word_1  u16
+4A10  var  bart_gauge_step  u8
+# (with the line above)
+4A11  var  bart_gauge_delay  u8
+# replaces: 4A17  var  unused_lisa_word_1  u16
+4A17  var  lisa_gauge_step  u8
+# (with the line above)
+4A18  var  lisa_gauge_delay  u8
+
+# ---- goon_grab_try 028E78: already done ----
+# symbols.txt has it corrected already ("Was local goon_grab_try 028E78 b step (it is no step)": 028E78 a floor_high, b
+# floor_low, the player's floor height): nothing to change
+
+# ---- bank 15's enemy waves: counts of enemies, not times and kinds ----
+# enemy_waves_start 02AD8F "LDY #$79F1; LDA #$30,X; LDB A,Y; STB #$3D,X" (by the wave set, field 30, into end_enemies),
+# enemy_waves_end 02AE31 "LDA $1876; CMPA #$3D,X; BHI; CLR #$00,X": the enemies left (1876, the stage's count) at or
+# below which the waves are over (values 0-3)
+# replaces: 02B9F1  table  object_15_times[13]  u8
+02B9F1  table  enemy_waves_end_enemies[13]  u8
+# 02ADA3 "LDY #$7A18; ASLA; LEAY A,Y" (4 a set: A is the set x 4), 02ADA9 "LDA <$57; DECA; ANDA #$03; LDA A,Y; STA
+# #$30,X" (by the players, into next_wave_enemies), 02AE21 "LDA $1876; CMPA #$30,X; BHI; INC #$28,X": the enemies left
+# at or below which the next wave comes (values 1-3)
+# replaces: 02BA18  table  object_15_next_kinds[52]  u8
+02BA18  table  enemy_waves_next_wave_enemies[52]  u8
+
+# ---- team_move_attack_states: the team attacks' player states ----
+# 0386E4 "LDA #$35,U; LDX #$7DD5; LDA A,X; STA #$3C,U" and then, A unchanged, 03870F "STA #$30,U": the player_state the
+# team move's attack takes (32, 32, 35, 38: state 38 is Homer's team attack, player_team_attack_homer 038B1A), which
+# attack_started (3C) also keeps; nothing counts 3C down (C "OBJECT(player)->player.player_state = attack_length")
+# replaces: 039DD5  table  team_move_attack_lengths[4]  u8
+039DD5  table  team_move_attack_states[4]  u8
+# replaces: local player_team_move 0386EA a attack_length
+local player_team_move 0386EA a attack_state
+# replaces: local player_walk 0386EA a attack_length
+local player_walk 0386EA a attack_state
+# replaces: local player_team_jump 0386EA a attack_length
+local player_team_jump 0386EA a attack_state
+# replaces: local player_team_start_fall 0386EA a attack_length
+local player_team_start_fall 0386EA a attack_state
+# replaces: local player_team_fall 0386EA a attack_length
+local player_team_fall 0386EA a attack_state
+# replaces: local player_attack_end 0386EA a attack_length
+local player_attack_end 0386EA a attack_state
+# replaces: local player_team_ready 0386EA a attack_length
+local player_team_ready 0386EA a attack_state
+# replaces: local player_team_together 0386EA a attack_length
+local player_team_together 0386EA a attack_state
+
+# ---- stage 8's reunion: where each walker stops ----
+# stage_8_end_reunion 024FDC "STD <$FC" (FFE0), 025052-025058 / 0250CF, 025144 (20 more each) into the walker's 2B
+# (stage_8_end.stop_offset: C "OBJECT(object)->stage_8_end.stop_offset = ..."), which its _arrive step reads as the
+# distance past the reunion's spot it stops at (02521C / 02525D "LDD #$0C,X; ADDD #$2B,X; SUBD $18F4"): no wait
+# replaces: scoped global stage_8_end_reunion 48FC reunion_walker_wait u16
+scoped global stage_8_end_reunion 48FC reunion_walker_stop_offset u16
+
+# ---- game_start_join_players' 48F0: a bit or a count ----
+# with shared credits each player's bit (05EDC3 "LDB #$01; STB <$F0", 05EDD1 "ORB <$F0", 05EDDA "ASL <$F0"); with
+# separate coin slots the slots left (05EDE4 "LDA #$04; STA <$F0", 05EE02 "DEC <$F0"), the bit being 48F1
+# replaces: scoped global game_start_join_players 48F0 join_player_bit u8
+scoped global game_start_join_players 48F0 join_bit_or_slots u8
+
+# ---- enemy_behaviour.ranges: not attack_range[4] ----
+# Left as it is: a field's type is a value (u8 ... s32, or one of them [N]) or a pointer to a structure; Konami has no
+# structure inside a structure (konami_cpu/emit.py: pointers.NESTED = {}) and no array fields. The ranges are read through
+# the pointer enemy_think makes (07D5C3 "LEAU #$28,U"), typed attack_range by enemy_find_attack_range's parameter.
+
+# ---- the players' counters through the player records ----
+# gauge_player 02 (4A00 + 7 n): gauge_draw_health 0409F2 "LDU #$02,X; ... CMPB #$02,U; ... TST #$03,U",
+# gauges_count_delays 0408EB "LDY #$02,X; LDA #$03,Y", gauge_draw_player 04099E "LDA [#$02,X]" (the continue's seconds):
+# a pointer to the player's player_counters (C "counters = GAUGE_PLAYER(...)->counters; ... mem_read8(counters)")
+# replaces: field gauge_player 02 counters u16
+field gauge_player 02 counters u16 player_counters
+# player 07: 07B82D "LDA #$20; STA [#$07,X]" (seconds), 07B86E "LDY #$07,X; INC #$01,Y" (frames), 07B89D "INC [#$07,X]"
+# (game over's frames), 07B7AC / 07B828 / 07B8A9 "STD [#$07,X]" with D 0 (C "mem_write16(countdown, 0u)",
+# "mem_write8(countdown_2, 0x20u)")
+# replaces: field player 07 countdown u16
+field player 07 countdown u16 player_counters
+
+# ---- 0356DD-0356FD: the debug display's tile places ----
+# unused_show_debug_values reads tile places (X for print_hex_byte through 0785A8) as words: 034028 "LDX $76E0", 034034
+# "LDX $76E2", 034048 "LDX $76EC", 034053 "LDX $76EE", 034064 "LDX $76F0", 03406F "LDX $76F2" (bank 1A: 0356E0, E2, EC,
+# EE, F0, F2). From 0356E0 to the texts at 0356FE the bytes are 15 such words (2510 2590 2514 2594 2590 2610 2690 2692
+# 2710 2712 272B 271F 2721 2713 2719; the texts after them print at 2710-2728); the C reads them now as
+# "unused_spawn_0356DD[0].depth << 8 | .flags" and "AT16(unused_tile_places[7], -1)"
+# replaces: 0356E5  table  unused_tile_places[25]  u8
+0356E0  table  unused_debug_tile_places[15]  u16
+# the 3 bytes before them, 05 40 30: the start of a 68th record of unused_spawn_list_0354C5 (67 records of 8 from
+# 0354C5 end at 0356DD; x 0540, y +30, as its last records' x 0500-0540), cut short where the places start
+# replaces: 0356DD  table  unused_spawn_0356DD[1]  spawn
+0356DD  table  unused_spawn_tail[3]  u8
+

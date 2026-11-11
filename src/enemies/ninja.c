@@ -3,7 +3,7 @@
  *    Description: stage 7's ninjas (types 32, 33, 3D), their way in, their actions and their star
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -293,7 +293,6 @@ void ninja_run_in_end(uint16_t object)
 /* Shows the ninja appearing in a puff of smoke, with its sound. */
 void ninja_appear(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t action_step = 0;
 
@@ -302,7 +301,7 @@ void ninja_appear(uint16_t object)
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step + 1u;
 	command = 0x6C00u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 }
 
 /* When the smoke ends, makes the ninja hittable and lets it fight. */
@@ -549,12 +548,11 @@ void ninja_split(uint16_t object)
 /* Moves the ninja right for 64 frames with a sound. */
 void ninja_split_move(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t action_step = 0;
 
 	command = 0x2800u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	OBJECT(object)->timer = 0x40u;
 	OBJECT(object)->x_speed = 0x100;
 	action_step = OBJECT(object)->action_step;
@@ -1149,7 +1147,6 @@ void ninja_vanish_start(uint16_t object)
 /* On the marked frame, makes the ninja unhittable with the smoke's sound. */
 void ninja_vanish_puff(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t animation_flags = 0, action_step = 0;
 
@@ -1160,7 +1157,7 @@ void ninja_vanish_puff(uint16_t object)
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step + 1u;
 	command = 0x6C00u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 }
 
 /* When the smoke ends, hides the ninja and moves it toward its player for 64 frames. */
@@ -1188,7 +1185,6 @@ void ninja_vanish_move(uint16_t object)
 /* Counts the move down, then shows the ninja appearing in smoke, with its sound. */
 void ninja_vanish_reappear(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t timer = 0, action_step = 0;
 
@@ -1202,7 +1198,7 @@ void ninja_vanish_reappear(uint16_t object)
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step + 1u;
 	command = 0x6C00u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 }
 
 /* On the marked frame, makes the ninja hittable again. */

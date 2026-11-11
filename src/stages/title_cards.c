@@ -3,7 +3,7 @@
  *    Description: the stages' title cards
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -302,55 +302,50 @@ void stage_1_title_card(uint16_t *p_x, uint16_t *p_u)
 /* Stage 1's card, step 0: queues sound 5400 and readies the screen. */
 void stage_1_title_sound(void)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 
 	command = 0x5400u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	title_card_ready_screen();
 }
 
 /* Stage 8's card, step 0: queues sound 5800 and readies the screen. */
 void stage_8_title_sound(void)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 
 	command = 0x5800u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	title_card_ready_screen();
 }
 
 /* Stage 7's card, step 0: queues sound 5700 and readies the screen. */
 void stage_7_title_sound(void)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 
 	command = 0x5700u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	title_card_ready_screen();
 }
 
 /* Queues sound 5600 (stage 5's card) and readies the screen. */
 void stage_5_title_sound(void)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 
 	command = 0x5600u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	title_card_ready_screen();
 }
 
 /* Stage 6's card, step 0: queues sound 3003 and readies the screen. */
 void stage_6_title_sound(void)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 
 	command = 0x3003u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	title_card_ready_screen();
 }
 
@@ -400,13 +395,12 @@ void stage_1_title_show(uint16_t *p_x, uint16_t *p_text)
    frames (title_card_count_frames). */
 uint16_t stage_3_title_picture_sound(void)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 
 	if ((OBJECT(OBJECT_ADDRESS(8))->animation_flags & 2u) == 0u)
 		return title_card_count_frames();
 	command = 0x5500u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	return title_card_count_frames();
 }
 
@@ -414,13 +408,12 @@ uint16_t stage_3_title_picture_sound(void)
    frames (title_card_count_frames). */
 uint16_t stage_4_title_picture_sound(void)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 
 	if ((OBJECT(OBJECT_ADDRESS(8))->animation_flags & 2u) == 0u)
 		return title_card_count_frames();
 	command = 0x2C02u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	return title_card_count_frames();
 }
 
@@ -428,13 +421,12 @@ uint16_t stage_4_title_picture_sound(void)
    frames (title_card_count_frames). */
 uint16_t stage_2_title_picture_sound(void)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 
 	if ((OBJECT(OBJECT_ADDRESS(8))->animation_flags & 2u) == 0u)
 		return title_card_count_frames();
 	command = 0xF00u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	return title_card_count_frames();
 }
 
@@ -442,13 +434,12 @@ uint16_t stage_2_title_picture_sound(void)
    in its field 28: past 40 sets its field 06 bit 6, at A0 queues sound 0700. */
 uint16_t title_card_count_frames(void)
 {
-	uint32_t carry = 0;
 	uint8_t action = 0;
 	uint16_t command = 0, object = 0;
 	uint8_t action_2 = 0, action_3 = 0, action_4 = 0, animation_flags = 0;
 
-	io_write8(0x1FB9u, 0x13u);
-	io_write8(0x1FBAu, 0x2Cu);
+	io_write8(colour_bases_back_sprites_fixed, 0x13u);
+	io_write8(colour_bases_layers_a_b, 0x2Cu);
 	object = OBJECT_ADDRESS(9);
 	action = OBJECT(OBJECT_ADDRESS(9))->action;
 	if (action <= 0x40u)
@@ -462,7 +453,7 @@ uint16_t title_card_count_frames(void)
 		action_3 = OBJECT(object)->action;
 		OBJECT(object)->action = action_3 + 1u;
 		command = 0x700u;
-		carry = vector_queue_sound(command);
+		vector_queue_sound(command);
 		return object;
 	}
 	if (action >= 0xA0u)
@@ -1518,8 +1509,8 @@ uint16_t stage_7_title_second_picture(void)
 	uint16_t picture_x = 0, z = 0;
 
 	OBJECT(OBJECT_ADDRESS(9))->animation_flags |= 0x40u;
-	io_write8(0x1FB9u, 0x13u);
-	io_write8(0x1FBAu, 0x2Cu);
+	io_write8(colour_bases_back_sprites_fixed, 0x13u);
+	io_write8(colour_bases_layers_a_b, 0x2Cu);
 	object = OBJECT_ADDRESS(8);
 	picture_x = OBJECT(OBJECT_ADDRESS(8))->x;
 	if (picture_x == 0xE0u)
@@ -1713,11 +1704,10 @@ void stage_8_title_show(uint16_t *p_x, uint16_t *p_text)
 void title_card_end(uint16_t *p_x, uint16_t *p_u)
 {
 	uint16_t u = (uint16_t)*p_u;
-	uint32_t carry = 0;
 	uint16_t command = 0, ignored16 = 0, ignored16_2 = 0, request = 0, u_2 = 0, x = 0;
 
 	command = 0u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	palette_request_kind = 1u;
 	request = 0x880u;
 	vector_palette_request(u, request);
@@ -1778,8 +1768,8 @@ void title_card_set_up_screen(void)
 	map_scene = 2u;
 	map_area = 0u;
 	vector_set_layer_modes();
-	io_write8(0x1FB9u, 0x3Fu);
-	io_write8(0x1FBAu, 0x36u);
+	io_write8(colour_bases_back_sprites_fixed, 0x3Fu);
+	io_write8(colour_bases_layers_a_b, 0x36u);
 	layer_and_columns = 0x12Cu;
 	vector_draw_layer_strips(layer_and_columns, &ignored16, &ignored16_3);
 }

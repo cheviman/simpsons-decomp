@@ -3,7 +3,7 @@
  *    Description: an object's setup and hit box, gravity and landing, the screen's edges
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -132,21 +132,21 @@ uint32_t land_if_falling(uint16_t object)
 /* Copies a hit box record into the object: its power and kind of hit, its half sizes and its offsets. */
 void set_hit_box(uint16_t object, uint16_t box)
 {
-	uint16_t field_1f = 0, field = 0, field_23 = 0;
+	uint16_t width_depth = 0, height_dx = 0, dy_dz = 0;
 	uint32_t damage_halfword = 0;
 
-	damage_halfword = HIT_BOX(box)->field_1c;
+	damage_halfword = HIT_BOX(box)->damage_attack;
 	OBJECT(object)->damage = (uint8_t)(damage_halfword >> 8u);
 	OBJECT(object)->attack = (uint8_t)damage_halfword;
-	field_1f = HIT_BOX(box)->field_1f;
-	OBJECT(object)->box_width = (uint8_t)(field_1f >> 8u);
-	OBJECT(object)->box_depth = (uint8_t)field_1f;
-	field = HIT_BOX(box)->field_21;
-	OBJECT(object)->box_height = (uint8_t)(field >> 8u);
-	OBJECT(object)->box_dx = (uint8_t)field;
-	field_23 = HIT_BOX(box)->field_23;
-	OBJECT(object)->box_dy = (uint8_t)(field_23 >> 8u);
-	OBJECT(object)->box_dz = (uint8_t)field_23;
+	width_depth = HIT_BOX(box)->width_depth;
+	OBJECT(object)->box_width = (uint8_t)(width_depth >> 8u);
+	OBJECT(object)->box_depth = (uint8_t)width_depth;
+	height_dx = HIT_BOX(box)->height_dx;
+	OBJECT(object)->box_height = (uint8_t)(height_dx >> 8u);
+	OBJECT(object)->box_dx = (uint8_t)height_dx;
+	dy_dz = HIT_BOX(box)->dy_dz;
+	OBJECT(object)->box_dy = (uint8_t)(dy_dz >> 8u);
+	OBJECT(object)->box_dz = (uint8_t)dy_dz;
 }
 
 /* Stops the object's x speed when it is more than 48 pixels off either side of the screen (objects' x

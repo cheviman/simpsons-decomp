@@ -3,7 +3,7 @@
  *    Description: a player's blinking, hit sparks, balloons and voices: the second sprite at +60 and the sounds by character
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -217,12 +217,11 @@ uint16_t player_show_hit_spark(uint16_t spark_height, uint16_t player)
 /* Shows speech balloon A above the player. */
 void player_show_balloon(uint16_t kind, uint16_t player, uint16_t balloon_value)
 {
-	uint32_t carry = 0;
 	uint16_t effect_state = 0;
 
 	OBJECT(player + 0x60u)->player.held = (OBJECT(player + 0x60u)->player.held & 0xFF00u) | (balloon_value >> 8 & 0xFFu);
 	effect_state = (balloon_value & 0xFFu) | 0x200u;
-	carry = player_start_effect(kind, player, effect_state);
+	player_start_effect(kind, player, effect_state);
 }
 
 /* Starts the player's second sprite as effect A (its state in bank 1F) with kind and animation Y, unless
@@ -255,21 +254,19 @@ uint32_t player_start_effect(uint16_t kind, uint16_t player, uint16_t effect_sta
 /* Plays the sound in D for the player's character (its number added to B). */
 void player_play_voice(uint16_t player, uint16_t command)
 {
-	uint32_t carry = 0;
 	uint8_t kind = 0;
 
 	kind = OBJECT(player)->kind;
 	command = (command & ~0xFFu) | (uint8_t)(command + kind);
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 }
 
 /* Unused: queues a sound command plus the player's character. */
 void unused_player_play_character_sound(uint16_t object, uint16_t command)
 {
-	uint32_t carry = 0;
 	uint8_t kind = 0;
 
 	kind = OBJECT(object)->kind;
 	command = (command & 0xFFu) | ((uint32_t)(uint8_t)((command >> 8) + kind) << 8);
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 }

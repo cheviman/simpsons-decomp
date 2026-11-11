@@ -3,7 +3,7 @@
  *    Description: the krusty balloon (stage 2's boss) and what it throws
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -54,7 +54,7 @@ uint16_t krusty_balloon(uint16_t object)
 		krusty_balloon_beaten_wait(object);
 		break;
 	case 16:
-		krusty_balloon_wait_for_184e(object);
+		krusty_balloon_wait_for_players(object);
 		break;
 	case 18:
 		krusty_balloon_fall_and_land(object);
@@ -314,7 +314,7 @@ uint16_t krusty_balloon_beaten(uint16_t object)
 		krusty_balloon_beaten_wait(object);
 		break;
 	case 4:
-		krusty_balloon_wait_for_184e(object);
+		krusty_balloon_wait_for_players(object);
 		break;
 	case 6:
 		krusty_balloon_fall_and_land(object);
@@ -466,19 +466,19 @@ void krusty_balloon_beaten_wait(uint16_t object)
 	OBJECT(object)->krusty_balloon.balloon_timer = balloon_timer - 1u;
 	if (balloon_timer == 1u)
 	{
-		io_write8(0x184Bu, 1u);
+		io_write8(players_stop_request, 1u);
 		step = OBJECT(object)->krusty_balloon.step;
 		OBJECT(object)->krusty_balloon.step = step + 1u;
 	}
 }
 
-/* Beaten, step 2: waits for 184E, then keeps the players present (direct page 50) in direct page 85 and
-   goes on. */
-void krusty_balloon_wait_for_184e(uint16_t object)
+/* Beaten, step 2: waits until every player stands idle, then keeps the players present (direct page 50)
+   in direct page 85 and goes on. */
+void krusty_balloon_wait_for_players(uint16_t object)
 {
 	uint8_t players_idle = 0, step = 0;
 
-	players_idle = io_read8(0x184Eu);
+	players_idle = io_read8(players_all_idle);
 	if (players_idle != 0u)
 	{
 		players_present = players_playing;
@@ -501,12 +501,12 @@ void krusty_balloon_fall_and_land(uint16_t object)
 	points = OBJECT(object)->points;
 	OBJECT(object)->points = points | 0x81u;
 	command = 0u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	command = 0x6C00u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	screen_shake_on = 1u;
 	screen_shake_kind = 0u;
-	io_write16(0x1852u, object);
+	io_write16(stage_kept_object, object);
 	boss_beaten = 1u;
 	step_phase++;
 	step_subphase = 1u;
@@ -633,7 +633,7 @@ uint16_t krusty_balloon_knocked_up(uint16_t object)
 			krusty_balloon_beaten_wait(object);
 			return object;
 		case -4:
-			krusty_balloon_wait_for_184e(object);
+			krusty_balloon_wait_for_players(object);
 			return object;
 		case -2:
 			krusty_balloon_fall_and_land(object);
@@ -706,17 +706,17 @@ void krusty_balloon_knocked_up_stomp(uint16_t object, uint16_t object_2)
 }
 
 /* Flinching (state -1): wobbles through its four squash steps, then goes back to chasing. */
-uint16_t krusty_balloon_flinch(uint16_t object)
+uint16_t krusty_balloon_flinch(uint16_t balloon)
 {
 	uint32_t carry = 0;
 
-	krusty_balloon_wobble(&object, &carry);
+	krusty_balloon_wobble(&balloon, &carry);
 	if (carry)
 	{
-		krusty_balloon_start_chase(object);
-		return object;
+		krusty_balloon_start_chase(balloon);
+		return balloon;
 	}
-	return object;
+	return balloon;
 }
 
 /* Coming in (state 0): runs its step (field 28). */
@@ -833,7 +833,7 @@ uint16_t krusty_balloon_come_in(uint16_t object)
 			krusty_balloon_beaten_wait(object);
 			return object;
 		case -8:
-			krusty_balloon_wait_for_184e(object);
+			krusty_balloon_wait_for_players(object);
 			return object;
 		case -6:
 			krusty_balloon_fall_and_land(object);
@@ -899,7 +899,6 @@ void krusty_balloon_appear(uint16_t object, uint16_t palette_job)
    for C0 frames. */
 void krusty_balloon_rise(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t balloon_timer = 0, step = 0;
 
@@ -908,7 +907,7 @@ void krusty_balloon_rise(uint16_t object)
 	if (balloon_timer != 1u)
 		return;
 	command = 0x7900u;
-	carry = vector_queue_sound_unless_attract(command);
+	vector_queue_sound_unless_attract(command);
 	OBJECT(object)->y_speed = -0x80;
 	OBJECT(object)->krusty_balloon.balloon_timer = 0xC0u;
 	OBJECT(object)->attributes = 0u;
@@ -981,7 +980,7 @@ void krusty_balloon_land(uint16_t object)
 	if (carry == 0u)
 		return;
 	command = 0x6500u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	screen_shake_on = 1u;
 	OBJECT(object)->flags |= 0x48u;
 	box_number = 0x100u;
@@ -1039,7 +1038,7 @@ uint16_t krusty_balloon_bounce_up(uint16_t object)
 			krusty_balloon_beaten_wait(object);
 			return object;
 		case -54:
-			krusty_balloon_wait_for_184e(object);
+			krusty_balloon_wait_for_players(object);
 			return object;
 		case -52:
 			krusty_balloon_fall_and_land(object);
@@ -1245,7 +1244,7 @@ uint16_t krusty_balloon_attack(uint16_t object)
 			krusty_balloon_beaten_wait(object);
 			return object;
 		case -20:
-			krusty_balloon_wait_for_184e(object);
+			krusty_balloon_wait_for_players(object);
 			return object;
 		case -18:
 			krusty_balloon_fall_and_land(object);
@@ -1442,7 +1441,7 @@ uint16_t krusty_balloon_volley(uint16_t object)
 			krusty_balloon_beaten_wait(object);
 			return object;
 		case -26:
-			krusty_balloon_wait_for_184e(object);
+			krusty_balloon_wait_for_players(object);
 			return object;
 		case -24:
 			krusty_balloon_fall_and_land(object);
@@ -1490,7 +1489,6 @@ uint16_t krusty_balloon_volley(uint16_t object)
    sound 7900 and readies its throws. */
 void krusty_balloon_volley_take_position(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint8_t zoom = 0;
 	uint16_t command = 0;
 	uint8_t zoom_x = 0, zoom_x_2 = 0, step = 0;
@@ -1531,7 +1529,7 @@ void krusty_balloon_volley_take_position(uint16_t object)
 				if (zoom_x_2 > 0x60u)
 				{
 					command = 0x7900u;
-					carry = vector_queue_sound(command);
+					vector_queue_sound(command);
 					OBJECT(object)->flags &= ~8u;
 					OBJECT(object)->krusty_balloon.throws = 0u;
 					OBJECT(object)->krusty_balloon.balloon_timer = 4u;
@@ -1720,7 +1718,7 @@ uint16_t krusty_balloon_stomping(uint16_t object)
 			krusty_balloon_beaten_wait(object);
 			return object;
 		case -36:
-			krusty_balloon_wait_for_184e(object);
+			krusty_balloon_wait_for_players(object);
 			return object;
 		case -34:
 			krusty_balloon_fall_and_land(object);
@@ -1796,7 +1794,7 @@ void krusty_balloon_stomp_land(uint16_t object)
 		return;
 	}
 	command = 0x6500u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	OBJECT(object)->x_speed = 0;
 	OBJECT(object)->y_speed = 0;
 	screen_shake_on = 1u;
@@ -1858,7 +1856,7 @@ uint16_t krusty_balloon_stomp_bounce(uint16_t object)
 			krusty_balloon_beaten_wait(object);
 			return object;
 		case -54:
-			krusty_balloon_wait_for_184e(object);
+			krusty_balloon_wait_for_players(object);
 			return object;
 		case -52:
 			krusty_balloon_fall_and_land(object);
@@ -2106,23 +2104,23 @@ void krusty_balloon_set_animation(uint16_t object, uint16_t animation_number)
 /* Gives X's object hit box A of krusty_balloon_hit_boxes. */
 void krusty_balloon_set_hit_box(uint16_t object, uint16_t box_number)
 {
-	uint16_t box_record = 0, field_1c = 0, box_cursor = 0, field_1f = 0, box_cursor_2 = 0, field = 0, field_23 = 0;
+	uint16_t box_record = 0, damage_attack = 0, box_cursor = 0, width_depth = 0, box_cursor_2 = 0, height_dx = 0, dy_dz = 0;
 
 	box_record = krusty_balloon_hit_boxes_ADDRESS + (uint8_t)((((uint32_t)(box_number >> 8) << 1) << 1) << 1);
-	field_1c = HIT_BOX(box_record)->field_1c;
-	OBJECT(object)->damage = (uint8_t)(field_1c >> 8u);
-	OBJECT(object)->attack = (uint8_t)field_1c;
+	damage_attack = HIT_BOX(box_record)->damage_attack;
+	OBJECT(object)->damage = (uint8_t)(damage_attack >> 8u);
+	OBJECT(object)->attack = (uint8_t)damage_attack;
 	box_cursor = box_record + 2u;
-	field_1f = HIT_BOX(box_cursor - 0x2u)->field_1f;
-	OBJECT(object)->box_width = (uint8_t)(field_1f >> 8u);
-	OBJECT(object)->box_depth = (uint8_t)field_1f;
+	width_depth = HIT_BOX(box_cursor - 0x2u)->width_depth;
+	OBJECT(object)->box_width = (uint8_t)(width_depth >> 8u);
+	OBJECT(object)->box_depth = (uint8_t)width_depth;
 	box_cursor_2 = box_cursor + 2u;
-	field = HIT_BOX(box_cursor_2 - 0x4u)->field_21;
-	OBJECT(object)->box_height = (uint8_t)(field >> 8u);
-	OBJECT(object)->box_dx = (uint8_t)field;
-	field_23 = HIT_BOX(box_cursor_2 - 0x4u)->field_23;
-	OBJECT(object)->box_dy = (uint8_t)(field_23 >> 8u);
-	OBJECT(object)->box_dz = (uint8_t)field_23;
+	height_dx = HIT_BOX(box_cursor_2 - 0x4u)->height_dx;
+	OBJECT(object)->box_height = (uint8_t)(height_dx >> 8u);
+	OBJECT(object)->box_dx = (uint8_t)height_dx;
+	dy_dz = HIT_BOX(box_cursor_2 - 0x4u)->dy_dz;
+	OBJECT(object)->box_dy = (uint8_t)(dy_dz >> 8u);
+	OBJECT(object)->box_dz = (uint8_t)dy_dz;
 }
 
 /* Takes the direction toward its target into fields 2D and 2E. */
@@ -2159,7 +2157,7 @@ void krusty_balloon_keep_target(uint16_t object, uint16_t target)
 	find_nearest_player(object, &target, &ignored16, &carry);
 	if (carry == 0u)
 	{
-		carry = krusty_balloon_lose_target(object);
+		krusty_balloon_lose_target(object);
 		return;
 	}
 	target_2 = OBJECT(object)->krusty_balloon.target;
@@ -2302,7 +2300,7 @@ void krusty_balloon_throw(uint16_t side, uint16_t *p_balloon, uint32_t *p_carry)
 		krusty_balloon_beaten_wait(balloon);
 		break;
 	case -40:
-		krusty_balloon_wait_for_184e(balloon);
+		krusty_balloon_wait_for_players(balloon);
 		break;
 	case -38:
 		krusty_balloon_fall_and_land(balloon);
@@ -2363,7 +2361,7 @@ void krusty_balloon_throw(uint16_t side, uint16_t *p_balloon, uint32_t *p_carry)
 		break;
 	}
 	command = 0x2600u;
-	carry = vector_queue_sound_unless_attract(command);
+	vector_queue_sound_unless_attract(command);
 	carry = 0u;
 	*p_balloon = balloon;
 	*p_carry = carry;
@@ -2399,130 +2397,130 @@ void krusty_balloon_throw_spread(uint16_t object, uint32_t carry)
 }
 
 /* Runs its squash step (field 35); carry set once the four steps are done. */
-void krusty_balloon_wobble(uint16_t *p_object, uint32_t *p_carry)
+void krusty_balloon_wobble(uint16_t *p_balloon, uint32_t *p_carry)
 {
-	uint16_t object = (uint16_t)*p_object;
+	uint16_t balloon = (uint16_t)*p_balloon;
 	uint32_t carry = *p_carry;
 	uint8_t squash_index = 0;
 	uint16_t squash_handlers = 0;
 	uint8_t squash_step = 0, wobble_step = 0;
 
 	squash_handlers = krusty_balloon_wobble_steps_ADDRESS;
-	squash_step = OBJECT(object)->krusty_balloon.squash_step;
+	squash_step = OBJECT(balloon)->krusty_balloon.squash_step;
 	squash_index = squash_step;
 	carry = (int8_t)squash_index < 0;
 	switch ((int8_t)(uint8_t)((uint32_t)squash_index << 1))
 	{
 	case 0:
-		krusty_balloon_wobble_widen(object);
+		krusty_balloon_wobble_widen(balloon);
 		break;
 	case 2:
-		krusty_balloon_wobble_narrow(object);
+		krusty_balloon_wobble_narrow(balloon);
 		break;
 	case 4:
-		krusty_balloon_wobble_stretch(object);
+		krusty_balloon_wobble_stretch(balloon);
 		break;
 	case 6:
-		krusty_balloon_wobble_restore(object);
+		krusty_balloon_wobble_restore(balloon);
 		break;
 	case 8:
-		krusty_balloon_rebound(object);
+		krusty_balloon_rebound(balloon);
 		break;
 	case 10:
-		krusty_balloon_rebound_end(object, squash_handlers);
+		krusty_balloon_rebound_end(balloon, squash_handlers);
 		break;
 	case -68:
-		object = krusty_balloon_beaten(object);
+		balloon = krusty_balloon_beaten(balloon);
 		break;
 	case -66:
-		object = krusty_balloon_knocked_up(object);
+		balloon = krusty_balloon_knocked_up(balloon);
 		break;
 	case -64:
-		object = krusty_balloon_flinch(object);
+		balloon = krusty_balloon_flinch(balloon);
 		break;
 	case -62:
-		object = krusty_balloon_come_in(object);
+		balloon = krusty_balloon_come_in(balloon);
 		break;
 	case -60:
-		krusty_balloon_chase(object);
+		krusty_balloon_chase(balloon);
 		break;
 	case -58:
-		object = krusty_balloon_attack(object);
+		balloon = krusty_balloon_attack(balloon);
 		break;
 	case -56:
-		object = krusty_balloon_volley(object);
+		balloon = krusty_balloon_volley(balloon);
 		break;
 	case -54:
-		object = krusty_balloon_stomping(object);
+		balloon = krusty_balloon_stomping(balloon);
 		break;
 	case -52:
-		krusty_balloon_wait_for_target(object);
+		krusty_balloon_wait_for_target(balloon);
 		break;
 	case -50:
-		krusty_balloon_deflate(object);
+		krusty_balloon_deflate(balloon);
 		break;
 	case -48:
-		krusty_balloon_beaten_wait(object);
+		krusty_balloon_beaten_wait(balloon);
 		break;
 	case -46:
-		krusty_balloon_wait_for_184e(object);
+		krusty_balloon_wait_for_players(balloon);
 		break;
 	case -44:
-		krusty_balloon_fall_and_land(object);
+		krusty_balloon_fall_and_land(balloon);
 		break;
 	case -42:
-		krusty_balloon_fly_up(object);
+		krusty_balloon_fly_up(balloon);
 		break;
 	case -40:
-		krusty_balloon_knocked_up_stomp(object, squash_handlers);
+		krusty_balloon_knocked_up_stomp(balloon, squash_handlers);
 		break;
 	case -38:
-		krusty_balloon_appear(object, squash_handlers);
+		krusty_balloon_appear(balloon, squash_handlers);
 		break;
 	case -36:
-		krusty_balloon_rise(object);
+		krusty_balloon_rise(balloon);
 		break;
 	case -34:
-		krusty_balloon_drift_away(object);
+		krusty_balloon_drift_away(balloon);
 		break;
 	case -32:
-		krusty_balloon_drift_back(object);
+		krusty_balloon_drift_back(balloon);
 		break;
 	case -30:
-		krusty_balloon_land(object);
+		krusty_balloon_land(balloon);
 		break;
 	case -28:
-		object = krusty_balloon_bounce_up(object);
+		balloon = krusty_balloon_bounce_up(balloon);
 		break;
 	case -26:
-		krusty_balloon_attack_start(object);
+		krusty_balloon_attack_start(balloon);
 		break;
 	case -24:
-		krusty_balloon_attack_hit(object);
+		krusty_balloon_attack_hit(balloon);
 		break;
 	case -22:
-		krusty_balloon_attack_end(object, squash_handlers);
+		krusty_balloon_attack_end(balloon, squash_handlers);
 		break;
 	case -20:
-		krusty_balloon_volley_take_position(object);
+		krusty_balloon_volley_take_position(balloon);
 		break;
 	case -18:
-		object = krusty_balloon_volley_throw(object);
+		balloon = krusty_balloon_volley_throw(balloon);
 		break;
 	case -16:
-		krusty_balloon_volley_pause(object);
+		krusty_balloon_volley_pause(balloon);
 		break;
 	case -14:
-		krusty_balloon_volley_wait(object);
+		krusty_balloon_volley_wait(balloon);
 		break;
 	case -12:
-		krusty_balloon_volley_shrink(object, squash_handlers);
+		krusty_balloon_volley_shrink(balloon, squash_handlers);
 		break;
 	case -10:
-		krusty_balloon_stomp_land(object);
+		krusty_balloon_stomp_land(balloon);
 		break;
 	case -8:
-		object = krusty_balloon_stomp_bounce(object);
+		balloon = krusty_balloon_stomp_bounce(balloon);
 		break;
 	case -6:
 		krusty_balloon_throw_right(squash_handlers, carry);
@@ -2534,15 +2532,15 @@ void krusty_balloon_wobble(uint16_t *p_object, uint32_t *p_carry)
 		krusty_balloon_throw_left(squash_handlers, carry);
 		break;
 	}
-	wobble_step = OBJECT(object)->unk_35;
+	wobble_step = OBJECT(balloon)->krusty_balloon.squash_step;
 	if (wobble_step != 4u)
 		carry = 0u;
 	else
 	{
-		OBJECT(object)->unk_35 = 0u;
+		OBJECT(balloon)->krusty_balloon.squash_step = 0u;
 		carry = 1u;
 	}
-	*p_object = object;
+	*p_balloon = balloon;
 	*p_carry = carry;
 }
 
@@ -2667,7 +2665,6 @@ void krusty_balloon_start_chase(uint16_t object)
    krusty_balloon_fly_off_chances_by_rank) or is knocked up. */
 void krusty_balloon_hit(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0, look_numbers = 0, object_2 = 0, palette_effect_number = 0, palette_job = 0;
 	uint8_t vitality = 0, hit = 0, hits = 0, hits_2 = 0;
 	uint16_t hit_by = 0, hit_by_2 = 0, own_x = 0, hitter_x = 0, screen_x = 0, x_speed = 0;
@@ -2677,7 +2674,7 @@ void krusty_balloon_hit(uint16_t object)
 	OBJECT(object_2)->behaviour = (OBJECT(object_2)->behaviour & 0xFFu) | 0x100u;
 	AT16(OBJECT(object_2)->hit_box, -1) = object;
 	command = 0x6501u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	OBJECT(object)->flags &= 0xBBu;
 	look_numbers = 0x701u;
 	krusty_balloon_set_animation(object, look_numbers);
@@ -2866,13 +2863,12 @@ void krusty_balloon_keep_in_arena_y(uint16_t object)
    once it has fallen), state -1. */
 void krusty_balloon_shot_burst(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint8_t burst_animation = 0;
 	uint16_t animation_number = 0, command = 0;
 	uint8_t state = 0;
 
 	command = 0x6F00u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	burst_animation = 0xBu;
 	state = OBJECT(object)->state;
 	if (state >= 3u)

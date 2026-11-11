@@ -3,7 +3,7 @@
  *    Description: (the unused floor blocker of list 1 type 07)
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -137,7 +137,7 @@ uint16_t floor_blocker_write_cells(uint16_t object)
 
 	control = board_control | 2u;
 	board_control = control;
-	io_write8(0x1FC2u, control);
+	io_write8(board_control_register, control);
 	floor_start = OBJECT(object)->floor_blocker.floor_start;
 	part = OBJECT(object)->floor_blocker.part;
 	stack = floor_start + (int8_t)(((uint32_t)part << 1) << 1);
@@ -162,7 +162,7 @@ uint16_t floor_blocker_write_cells(uint16_t object)
 	} while (columns_left != 1u);
 	control = board_control & ~3u;
 	board_control = control;
-	io_write8(0x1FC2u, control);
+	io_write8(board_control_register, control);
 	return place;
 }
 
@@ -265,7 +265,7 @@ uint16_t platform_scenery_write_cells(uint16_t object)
 
 	control = board_control | 2u;
 	board_control = control;
-	io_write8(0x1FC2u, control);
+	io_write8(board_control_register, control);
 	floor_start = OBJECT(object)->platform_scenery.floor_start;
 	part = OBJECT(object)->platform_scenery.part;
 	stack = floor_start + (int8_t)(((uint32_t)part << 1) << 1);
@@ -290,7 +290,7 @@ uint16_t platform_scenery_write_cells(uint16_t object)
 	} while (columns_left != 1u);
 	control = board_control & ~3u;
 	board_control = control;
-	io_write8(0x1FC2u, control);
+	io_write8(board_control_register, control);
 	return place;
 }
 
@@ -431,7 +431,7 @@ void platform_scenery_press(uint16_t object)
 	uint8_t players_counted = 0, action = 0;
 	uint16_t z = 0, pressed_z = 0;
 
-	players_counted = io_read8(0x1874u);
+	players_counted = io_read8(stage_player_count);
 	z = OBJECT(object)->z;
 	pressed_z = (uint8_t)((uint32_t)players_counted << 1) + z;
 	OBJECT(object)->z = pressed_z;
@@ -469,7 +469,7 @@ uint16_t platform_scenery_crash(uint16_t object, uint16_t piece)
 		return piece;
 	}
 	command = 0x6E00u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	OBJECT(object)->animation = 0x81u;
 	OBJECT(object)->timer = 4u;
 	record = platform_scenery_crash_debris_1_ADDRESS;
@@ -814,8 +814,8 @@ uint16_t rising_scenery_start(uint16_t object)
 	parameter = OBJECT(object)->parameter;
 	if (parameter != 0u)
 	{
-		old_rise_cue = io_read8(0x187Fu);
-		io_write8(0x187Fu, 0u);
+		old_rise_cue = io_read8(rising_scenery_cue);
+		io_write8(rising_scenery_cue, 0u);
 		OBJECT(object)->kind = 0x10u;
 		OBJECT(object)->animation = 7u;
 		scenery_x = OBJECT(object)->x;
@@ -837,7 +837,6 @@ uint16_t rising_scenery_start(uint16_t object)
 /* Waits for the camera, then starts rising (sound 4600 for the first). */
 void rising_scenery_wait_camera(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t parameter = 0, state = 0;
 	uint16_t camera_x_now = 0, trigger_x = 0;
@@ -850,7 +849,7 @@ void rising_scenery_wait_camera(uint16_t object)
 	if (parameter == 0u)
 	{
 		command = 0x4600u;
-		carry = vector_queue_sound(command);
+		vector_queue_sound(command);
 	}
 	OBJECT(object)->z_speed = 0x200;
 	OBJECT(object)->timer = 0x40u;
@@ -872,7 +871,7 @@ void rising_scenery_rise(uint16_t object)
 	timer_2 = OBJECT(object)->timer;
 	timer_left = timer_2;
 	if (timer_left == 0x20u)
-		io_write8(0x187Fu, timer_left);
+		io_write8(rising_scenery_cue, timer_left);
 }
 
 /* Sets the scenery up at x 01A0 with the speed, animation and attributes its spawn's state picks. */

@@ -3,7 +3,7 @@
  *    Description: the sprite engine: the objects' animations, their moves, the depth sort and their sprites
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -22,13 +22,13 @@ void update_sprites(void)
 	set_step_sprite_priority();
 	control = board_control | 2u;
 	board_control = control;
-	io_write8(0x1FC2u, control);
+	io_write8(board_control_register, control);
 	animate_objects();
 	move_objects();
 	sort_objects_by_depth();
 	control = board_control & ~3u;
 	board_control = control;
-	io_write8(0x1FC2u, control);
+	io_write8(board_control_register, control);
 }
 
 /* Runs the animation of each object that is on and clears the sprites of those that are off. */

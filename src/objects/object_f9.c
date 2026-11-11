@@ -3,7 +3,7 @@
  *    Description: stage 6's objects of type F9 (kind B9)
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -135,7 +135,7 @@ void object_f9_wait_for_player(uint16_t object)
 /* Moves about, then with a sound starts its appearance */
 void object_f9_wander(uint16_t object)
 {
-	uint32_t negative = 0, carry = 0;
+	uint32_t negative = 0;
 	uint8_t floor_value = 0, new_phase = 0;
 	uint16_t command = 0, floor_cell = 0;
 	uint8_t wait = 0;
@@ -160,7 +160,7 @@ void object_f9_wander(uint16_t object)
 		return;
 	OBJECT(object)->flags = 0x80u;
 	command = 0xE00u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	OBJECT(object)->object_f9.actions = 0u;
 	OBJECT(object)->x_speed = 0;
 	OBJECT(object)->y_speed = 0;
@@ -188,7 +188,6 @@ void object_f9_appear(uint16_t object)
 /* Waits for its turn (by its x and the frame count), then acts with a sound */
 void object_f9_idle(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint8_t new_phase = 0;
 	uint16_t command = 0;
 	uint8_t stack = 0;
@@ -206,7 +205,7 @@ void object_f9_idle(uint16_t object)
 	new_phase = 0xAu;
 	object_f9_set_state(object, new_phase);
 	command = 0x2A01u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	actions = OBJECT(object)->object_f9.actions;
 	OBJECT(object)->object_f9.actions = actions + 1u;
 	object_f9_check_hit(object);
@@ -295,7 +294,6 @@ void object_f9_start_idle(uint16_t object)
 /* Winds up its attack at the nearest player */
 void object_f9_windup(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint8_t new_phase = 0;
 	uint16_t box = 0, command = 0;
 	uint8_t wait = 0, actions = 0;
@@ -308,7 +306,7 @@ void object_f9_windup(uint16_t object)
 		return;
 	}
 	command = 0x1C00u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	stage_boss_shield(object);
 	new_phase = 8u;
 	object_f9_set_state(object, new_phase);
@@ -364,7 +362,7 @@ void object_f9_check_leave(uint16_t object)
 		return;
 	}
 	command = 0x1900u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	new_phase = 0xBu;
 	object_f9_set_state(object, new_phase);
 	stage_boss_shield(object);
@@ -374,7 +372,7 @@ void object_f9_check_leave(uint16_t object)
 /* Its hits: a flinch, or beaten */
 void object_f9_check_hit(uint16_t object)
 {
-	uint32_t zero = 0, negative = 0, carry = 0;
+	uint32_t zero = 0, negative = 0;
 	uint8_t new_phase = 0;
 	uint16_t command = 0, health_limits = 0, ignored16 = 0;
 
@@ -390,7 +388,7 @@ void object_f9_check_hit(uint16_t object)
 		return;
 	}
 	command = 0x1000u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	new_phase = 0xDu;
 	object_f9_set_state(object, new_phase);
 }

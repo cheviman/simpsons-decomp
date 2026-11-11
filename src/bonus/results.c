@@ -3,7 +3,7 @@
  *    Description: the bonuses' READY and GO signs, the ranking of the results and the portraits row
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -14,7 +14,6 @@
 /* The bonuses: shows the READY sign for 160 frames, with its voice (3F32). */
 void bonus_show_ready(void)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0, object = 0;
 
 	object = OBJECT_ADDRESS(30);
@@ -28,14 +27,13 @@ void bonus_show_ready(void)
 		OBJECT(object)->kind = 0xEu;
 		OBJECT(object)->animation = 0x86u;
 		command = 0x3F32u;
-		carry = vector_queue_sound(command);
+		vector_queue_sound(command);
 	}
 }
 
 /* The bonuses: when READY's time runs out, shows GO with its voice (3F33); carry once it is gone. */
 void bonus_show_go(void)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0, go_frames = 0, object = 0;
 	uint16_t type = 0, type_2 = 0;
 	uint32_t type_halfword = 0;
@@ -48,7 +46,7 @@ void bonus_show_go(void)
 	if (go_frames == 0xA0u)
 	{
 		command = 0x3F33u;
-		carry = vector_queue_sound(command);
+		vector_queue_sound(command);
 	}
 	type_2 = (((uint32_t)(uint8_t)OBJECT(object)->type << 8u) | OBJECT(object)->state);
 	type_halfword = type_2 - 1u;
@@ -76,7 +74,7 @@ void bonus_results(uint16_t *p_state_table, uint16_t *p_d, uint32_t *p_carry)
 	uint16_t state_table = 0;
 	uint8_t state_number = 0;
 
-	state_number = io_read8(0x1842u);
+	state_number = io_read8(bonus_results_state);
 	state_table = bonus_results_states_ADDRESS;
 	switch ((int8_t)(uint8_t)((uint32_t)state_number << 1))
 	{
@@ -117,8 +115,8 @@ void bonus_results_start(uint16_t *p_x, uint16_t *p_d, uint32_t *p_carry)
 	uint16_t d = 0, object = 0, parent = 0, x = 0;
 	uint8_t boxes_left_before = 0, old_boxes_placed = 0;
 
-	io_write8(0x1842u, 1u);
-	io_write8(0x1844u, 0xFFu);
+	io_write8(bonus_results_state, 1u);
+	io_write8(results_last_result, 0xFFu);
 	results_boxes_left = 4u;
 	object = OBJECT_ADDRESS(14);
 	parent = 0x2310u;
@@ -134,9 +132,9 @@ void bonus_results_start(uint16_t *p_x, uint16_t *p_d, uint32_t *p_carry)
 		boxes_left_before = results_boxes_left;
 		results_boxes_left = boxes_left_before - 1u;
 	} while (boxes_left_before != 1u);
-	io_write8(0x1846u, 1u);
-	old_boxes_placed = io_read8(0x1845u);
-	io_write8(0x1845u, 0u);
+	io_write8(results_place, 1u);
+	old_boxes_placed = io_read8(results_boxes_placed);
+	io_write8(results_boxes_placed, 0u);
 	*p_x = x;
 	*p_d = d;
 	bonus_results_first(p_x, p_d, &carry);
@@ -165,14 +163,14 @@ void bonus_results_second(uint16_t *p_sign_kind, uint16_t *p_d, uint32_t *p_carr
 	uint32_t carry = *p_carry;
 	uint8_t results_frames_left = 0, expired_frames = 0;
 
-	results_frames_left = io_read8(0x1843u);
-	io_write8(0x1843u, results_frames_left - 1u);
+	results_frames_left = io_read8(bonus_results_timer);
+	io_write8(bonus_results_timer, results_frames_left - 1u);
 	if (results_frames_left != 1u)
 		bonus_results_animate(&sign_kind, &d, &carry);
 	else
 	{
-		expired_frames = io_read8(0x1843u);
-		io_write8(0x1843u, expired_frames + 1u);
+		expired_frames = io_read8(bonus_results_timer);
+		io_write8(bonus_results_timer, expired_frames + 1u);
 		sign_kind = 0xE8Cu;
 		bonus_results_place_next(&sign_kind, &d);
 		bonus_results_animate(&sign_kind, &d, &carry);
@@ -190,14 +188,14 @@ void bonus_results_third(uint16_t *p_sign_kind, uint16_t *p_d, uint32_t *p_carry
 	uint32_t carry = *p_carry;
 	uint8_t results_frames_left = 0, expired_frames = 0;
 
-	results_frames_left = io_read8(0x1843u);
-	io_write8(0x1843u, results_frames_left - 1u);
+	results_frames_left = io_read8(bonus_results_timer);
+	io_write8(bonus_results_timer, results_frames_left - 1u);
 	if (results_frames_left != 1u)
 		bonus_results_animate(&sign_kind, &d, &carry);
 	else
 	{
-		expired_frames = io_read8(0x1843u);
-		io_write8(0x1843u, expired_frames + 1u);
+		expired_frames = io_read8(bonus_results_timer);
+		io_write8(bonus_results_timer, expired_frames + 1u);
 		sign_kind = 0xE8Du;
 		bonus_results_place_next(&sign_kind, &d);
 		bonus_results_animate(&sign_kind, &d, &carry);
@@ -215,14 +213,14 @@ void bonus_results_fourth(uint16_t *p_sign_kind, uint16_t *p_d, uint32_t *p_carr
 	uint32_t carry = *p_carry;
 	uint8_t results_frames_left = 0, expired_frames = 0;
 
-	results_frames_left = io_read8(0x1843u);
-	io_write8(0x1843u, results_frames_left - 1u);
+	results_frames_left = io_read8(bonus_results_timer);
+	io_write8(bonus_results_timer, results_frames_left - 1u);
 	if (results_frames_left != 1u)
 		bonus_results_animate(&sign_kind, &d, &carry);
 	else
 	{
-		expired_frames = io_read8(0x1843u);
-		io_write8(0x1843u, expired_frames + 1u);
+		expired_frames = io_read8(bonus_results_timer);
+		io_write8(bonus_results_timer, expired_frames + 1u);
 		sign_kind = 0xE8Eu;
 		bonus_results_place_next(&sign_kind, &d);
 		bonus_results_animate(&sign_kind, &d, &carry);
@@ -240,14 +238,14 @@ void bonus_results_wait(uint16_t *p_hop_speed_table, uint16_t *p_state_and_frame
 	uint32_t carry = *p_carry;
 	uint8_t results_frames_left = 0;
 
-	results_frames_left = io_read8(0x1843u);
-	io_write8(0x1843u, results_frames_left - 1u);
+	results_frames_left = io_read8(bonus_results_timer);
+	io_write8(bonus_results_timer, results_frames_left - 1u);
 	if (results_frames_left != 1u)
 		bonus_results_animate(&hop_speed_table, &state_and_frames, &carry);
 	else
 	{
 		state_and_frames = 0x63Cu;
-		io_write16(0x1842u, 0x63Cu);
+		io_write16(bonus_results_state, 0x63Cu);
 		bonus_results_animate(&hop_speed_table, &state_and_frames, &carry);
 	}
 	*p_hop_speed_table = hop_speed_table;
@@ -263,14 +261,14 @@ void bonus_results_wait_count(uint16_t *p_hop_speed_table, uint16_t *p_state_and
 	uint32_t carry = *p_carry;
 	uint8_t results_frames_left = 0;
 
-	results_frames_left = io_read8(0x1843u);
-	io_write8(0x1843u, results_frames_left - 1u);
+	results_frames_left = io_read8(bonus_results_timer);
+	io_write8(bonus_results_timer, results_frames_left - 1u);
 	if (results_frames_left != 1u)
 		bonus_results_animate(&hop_speed_table, &state_and_frames, &carry);
 	else
 	{
 		state_and_frames = 0x704u;
-		io_write16(0x1842u, 0x704u);
+		io_write16(bonus_results_state, 0x704u);
 		bonus_results_animate(&hop_speed_table, &state_and_frames, &carry);
 	}
 	*p_hop_speed_table = hop_speed_table;
@@ -337,8 +335,8 @@ void bonus_results_count_points(uint16_t *p_next_print_place, uint16_t *p_d, uin
 	uint8_t results_frames_left = 0, points_shown_2 = 0, target_dy = 0, target_dy_2 = 0, look = 0, boxes_left_before = 0;
 
 	players_done = (uint8_t)d;
-	results_frames_left = io_read8(0x1843u);
-	io_write8(0x1843u, results_frames_left - 1u);
+	results_frames_left = io_read8(bonus_results_timer);
+	io_write8(bonus_results_timer, results_frames_left - 1u);
 	if (results_frames_left != 1u)
 	{
 		carry = 0u;
@@ -346,7 +344,7 @@ void bonus_results_count_points(uint16_t *p_next_print_place, uint16_t *p_d, uin
 	}
 	else
 	{
-		io_write8(0x1843u, 4u);
+		io_write8(bonus_results_timer, 4u);
 		results_boxes_left = 4u;
 		box = OBJECT_ADDRESS(14);
 		results_print_place = 0x2411u;
@@ -363,7 +361,7 @@ void bonus_results_count_points(uint16_t *p_next_print_place, uint16_t *p_d, uin
 				{
 					players_done = 1u;
 					command = 0xA01u;
-					carry = vector_queue_sound(command);
+					vector_queue_sound(command);
 					target_dy_2 = (uint8_t)(OBJECT(box)->target_dy >> 8u);
 					OBJECT(box)->target_dy = (OBJECT(box)->target_dy & 0xFFu) | ((target_dy_2 + 1u & 0xFFu) << 8u);
 				}
@@ -383,12 +381,12 @@ void bonus_results_count_points(uint16_t *p_next_print_place, uint16_t *p_d, uin
 			results_boxes_left = boxes_left_before - 1u;
 		} while (boxes_left_before != 1u);
 		command = 0x801u;
-		carry = vector_queue_sound(command);
+		vector_queue_sound(command);
 		players_done = results_counts_done;
 		bonus_results_read_places();
 		if (players_done == 4u)
 		{
-			io_write16(0x1842u, 0u);
+			io_write16(bonus_results_state, 0u);
 			carry = 1u;
 			d_2 = 0xFF00u;
 		}
@@ -406,10 +404,10 @@ void bonus_results_count_points(uint16_t *p_next_print_place, uint16_t *p_d, uin
 /* The bonuses' results: keeps the four players' places (for bonus 1's flight waits). */
 void bonus_results_read_places(void)
 {
-	results_marge_place = OBJECT(OBJECT_ADDRESS(14))->unk_45;
-	results_homer_place = OBJECT(OBJECT_ADDRESS(16))->unk_45;
-	results_bart_place = OBJECT(OBJECT_ADDRESS(18))->unk_45;
-	results_lisa_place = OBJECT(OBJECT_ADDRESS(20))->unk_45;
+	results_marge_place = OBJECT(OBJECT_ADDRESS(14))->bonus_results.place;
+	results_homer_place = OBJECT(OBJECT_ADDRESS(16))->bonus_results.place;
+	results_bart_place = OBJECT(OBJECT_ADDRESS(18))->bonus_results.place;
+	results_lisa_place = OBJECT(OBJECT_ADDRESS(20))->bonus_results.place;
 }
 
 /* The bonuses' results: finds the best result not placed yet and puts every player who has it in that
@@ -431,7 +429,7 @@ void bonus_results_place_next(uint16_t *p_sign_kind, uint16_t *p_d)
 	{
 		type = OBJECT(object)->type;
 		result = type;
-		placed_before = io_read8(0x1844u);
+		placed_before = io_read8(results_last_result);
 		if (result < placed_before && placed_result <= result)
 		{
 			placed_count++;
@@ -443,7 +441,7 @@ void bonus_results_place_next(uint16_t *p_sign_kind, uint16_t *p_d)
 	} while (players_left_before != 1u);
 	if (placed_count != 0u)
 	{
-		io_write8(0x1844u, placed_result);
+		io_write8(results_last_result, placed_result);
 		placed_count = 0u;
 		placed_result = 4u;
 		box = OBJECT_ADDRESS(14);
@@ -453,7 +451,7 @@ void bonus_results_place_next(uint16_t *p_sign_kind, uint16_t *p_d)
 			look_3 = OBJECT(box)->bonus_results.look;
 			look = look_3;
 			placed_count++;
-			result_to_place = io_read8(0x1844u);
+			result_to_place = io_read8(results_last_result);
 			if ((uint8_t)OBJECT(box - 0x540u)->type == result_to_place)
 			{
 				OBJECT(box)->flags = 0x80u;
@@ -472,7 +470,7 @@ void bonus_results_place_next(uint16_t *p_sign_kind, uint16_t *p_d)
 				OBJECT(box + 0x60u)->animation = (uint8_t)kind_halfword;
 				OBJECT(box)->bonus_results.hop = 0x1Fu;
 				OBJECT(box)->blocked = 0xAu;
-				current_place = io_read8(0x1846u);
+				current_place = io_read8(results_place);
 				place = current_place;
 				if (look == 3u)
 				{
@@ -491,23 +489,23 @@ void bonus_results_place_next(uint16_t *p_sign_kind, uint16_t *p_d)
 				look_2 = look;
 				sign_kind = bonus_results_draw_box(sign_kind, box_text, box, look_2);
 				OBJECT(box - 0x540u)->type++;
-				old_boxes_placed = io_read8(0x1845u);
-				io_write8(0x1845u, old_boxes_placed + 1u);
+				old_boxes_placed = io_read8(results_boxes_placed);
+				io_write8(results_boxes_placed, old_boxes_placed + 1u);
 			}
 			box += 0xC0u;
 			sign_kind += 0x48u;
 			boxes_left_before = placed_result;
 			placed_result = boxes_left_before - 1u;
 		} while (boxes_left_before != 1u);
-		boxes_placed = io_read8(0x1845u);
+		boxes_placed = io_read8(results_boxes_placed);
 		placed = boxes_placed;
 		if (placed == placed_count)
 			placed = 5u;
 		else
 			placed++;
-		io_write16(0x1842u, ((uint32_t)placed << 8) | 0xEu);
-		old_place = io_read8(0x1846u);
-		io_write8(0x1846u, old_place + 1u);
+		io_write16(bonus_results_state, ((uint32_t)placed << 8) | 0xEu);
+		old_place = io_read8(results_place);
+		io_write8(results_place, old_place + 1u);
 		d = ((uint32_t)placed << 8) | 0xEu;
 	}
 	else
@@ -553,7 +551,7 @@ void bonus_show_player_portraits(void)
 				}
 				else
 				{
-					results_state = io_read8(0x1842u);
+					results_state = io_read8(bonus_results_state);
 					if (results_state == 0u && (player_bits & 1u) != 0u)
 					{
 						kind = 0xEC2u;

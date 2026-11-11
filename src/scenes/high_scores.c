@@ -3,7 +3,7 @@
  *    Description: the bank's jump table, then the name entry and the attract's high score table
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -20,8 +20,8 @@ uint32_t name_entry(void)
 
 	control = board_control & ~3u;
 	board_control = control;
-	io_write8(0x1FC2u, control);
-	entry_phase = io_read8(0x3840u);
+	io_write8(board_control_register, control);
+	entry_phase = io_read8(name_entry_state);
 	switch ((int8_t)(uint8_t)((uint32_t)entry_phase << 1))
 	{
 	case 0:
@@ -250,14 +250,14 @@ uint32_t name_entry_set_up(void)
 	reserve_objects_for_sprites(object, object_count);
 	name_entry_rank_players();
 	players_ranked = 0u;
-	ranked = 0x3860u;
+	ranked = name_entry_ranking;
 	do
 	{
 		ranking_at = ranked;
 		ranked = ranking_at + 1u;
 		player_offset = (uint32_t)mem_read8(ranking_at) << 1;
 		name_entry_player = TABLE16(name_entry_player_records, (int8_t)player_offset);
-		entry_2 = 0x3842u + (int8_t)((uint32_t)player_offset << 1);
+		entry_2 = name_entry_records + (int8_t)((uint32_t)player_offset << 1);
 		score = NAME_ENTRY_PLAYER(name_entry_player)->score;
 		player_score = mem_read16(score);
 		high_score_place = player_score;
@@ -286,7 +286,7 @@ uint32_t name_entry_set_up(void)
 		}
 		players_ranked++;
 	} while (players_ranked != 4u);
-	entry = 0x3842u;
+	entry = name_entry_records;
 	entry_player = 0u;
 	do
 	{
@@ -425,9 +425,9 @@ uint32_t name_entry_set_up(void)
 		entry_player = maggies_left - 1u;
 	} while (maggies_left != 1u);
 	carry = 0u;
-	io_write16(0x385Eu, 0u);
-	old_entry_phase = io_read8(0x3840u);
-	io_write8(0x3840u, old_entry_phase + 1u);
+	io_write16(name_entry_time, 0u);
+	old_entry_phase = io_read8(name_entry_state);
+	io_write8(name_entry_state, old_entry_phase + 1u);
 	return carry;
 }
 
@@ -442,11 +442,11 @@ uint32_t name_entry_type_initials(void)
 	uint8_t maggies_left = 0, entries_left = 0, old_entry_phase = 0;
 	uint16_t entry_time = 0, new_entry_time = 0, maggie_x = 0, player_text_x = 0, next_player_text_x = 0;
 
-	entry_time = io_read16(0x385Eu);
+	entry_time = io_read16(name_entry_time);
 	new_entry_time = entry_time + 1u;
 	timer_high = (uint8_t)(new_entry_time >> 8);
 	timer_low = (uint8_t)new_entry_time;
-	io_write16(0x385Eu, ((uint32_t)timer_high << 8) | timer_low);
+	io_write16(name_entry_time, ((uint32_t)timer_high << 8) | timer_low);
 	if ((uint16_t)(((uint32_t)timer_high << 8) | timer_low) == 0x700u)
 		return name_entry_save();
 	if ((uint16_t)(((uint32_t)timer_high << 8) | timer_low) == 0x6C0u)
@@ -472,7 +472,7 @@ uint32_t name_entry_type_initials(void)
 			entry_player = maggies_left - 1u;
 		} while (maggies_left != 1u);
 	}
-	entry = 0x3842u;
+	entry = name_entry_records;
 	all_done = 0x80u;
 	count = 4u;
 	do
@@ -484,13 +484,13 @@ uint32_t name_entry_type_initials(void)
 	} while (entries_left != 1u);
 	if ((int8_t)all_done < 0)
 	{
-		io_write16(0x385Eu, 0u);
-		old_entry_phase = io_read8(0x3840u);
-		io_write8(0x3840u, old_entry_phase + 1u);
+		io_write16(name_entry_time, 0u);
+		old_entry_phase = io_read8(name_entry_state);
+		io_write8(name_entry_state, old_entry_phase + 1u);
 		carry = 0u;
 		return carry;
 	}
-	entry = 0x3842u;
+	entry = name_entry_records;
 	entry_player = 0u;
 	sprite_text_x = 0x60u;
 	sprite_text_y = 0xD8u;
@@ -518,9 +518,9 @@ uint32_t name_entry_linger(void)
 	uint16_t command = 0, timer = 0;
 	uint16_t entry_time = 0;
 
-	entry_time = io_read16(0x385Eu);
+	entry_time = io_read16(name_entry_time);
 	timer = entry_time + 1u;
-	io_write16(0x385Eu, timer);
+	io_write16(name_entry_time, timer);
 	if (timer == 0x100u)
 		return name_entry_save();
 	if (timer == 0xC0u)
@@ -542,7 +542,7 @@ uint32_t name_entry_save(void)
 	uint8_t ranked_place = 0, insert_place = 0, players_left = 0;
 	uint16_t initials = 0, initials_at = 0, first_initials = 0, score = 0, player_score = 0;
 
-	ranked = 0x3860u;
+	ranked = name_entry_ranking;
 	stack = 4u;
 	do
 	{
@@ -581,8 +581,8 @@ void name_entry_rank_players(void)
 	uint16_t other = 0, ranked = 0, score_addresses = 0;
 	uint16_t other_score = 0, ranked_player_score = 0;
 
-	ranked = 0x3860u;
-	io_write8(0x3860u, 0u);
+	ranked = name_entry_ranking;
+	io_write8(name_entry_ranking, 0u);
 	io_write8(0x3862u, 1u);
 	io_write8(0x3864u, 2u);
 	io_write8(0x3866u, 3u);
@@ -727,14 +727,14 @@ uint16_t name_entry_edit_initials(uint16_t entry, uint16_t name_entry_player)
 		{
 			control = board_control | 2u;
 			board_control = control;
-			io_write8(0x1FC2u, control);
+			io_write8(board_control_register, control);
 			stack_2 = entry >> 8;
 			stack = (uint8_t)entry;
 			mem_write8(sprite - 7u, name_entry_cursor_zooms[((uint8_t)frame_count & 0x1Fu) >> 1]);
 			entry = ((uint32_t)stack_2 << 8) | stack;
 			control = board_control & ~3u;
 			board_control = control;
-			io_write8(0x1FC2u, control);
+			io_write8(board_control_register, control);
 		}
 		letter_x = sprite_text_x;
 		next_letter_x = letter_x + 0x10u;
@@ -753,11 +753,11 @@ uint16_t name_entry_print_tall_letter(uint16_t sprite, uint16_t letter_and_colou
 	sprite = print_sprite_letter(sprite, letter_and_colour);
 	control = board_control | 2u;
 	board_control = control;
-	io_write8(0x1FC2u, control);
+	io_write8(board_control_register, control);
 	mem_write16(sprite - 8u, 0x30u);
 	control = board_control & ~3u;
 	board_control = control;
-	io_write8(0x1FC2u, control);
+	io_write8(board_control_register, control);
 	return sprite;
 }
 
@@ -846,7 +846,6 @@ void high_scores_clear_sprites(void)
    its sound (0700). */
 void high_scores_show_first(void)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0, entry = 0, first_place = 0;
 	uint8_t wait_left = 0;
 
@@ -858,10 +857,10 @@ void high_scores_show_first(void)
 	scene_timer = (scene_timer & 0xFFu) | ((wait_left - 1u & 0xFFu) << 8u);
 	if (wait_left != 1u)
 		return;
-	io_write8(0x1C80u, 3u);
+	io_write8(tile_chip_scroll_control, 3u);
 	scene_timer = (scene_timer & 0xFFu) | 0x8000u;
 	command = 0x700u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	game_step++;
 }
 
@@ -869,7 +868,6 @@ void high_scores_show_first(void)
    clears them. */
 void high_scores_wave_out(void)
 {
-	uint32_t carry = 0;
 	uint8_t control = 0, height = 0, wave = 0;
 	uint16_t command = 0, line_scroll = 0, sprite = 0;
 	uint8_t wait_left = 0, discarded_read = 0, rows_left = 0;
@@ -880,14 +878,14 @@ void high_scores_wave_out(void)
 	if (wait_left == 1u)
 	{
 		command = 0u;
-		carry = vector_queue_sound(command);
-		discarded_read = io_read8(0x1C80u);
-		io_write8(0x1C80u, 0u);
+		vector_queue_sound(command);
+		discarded_read = io_read8(tile_chip_scroll_control);
+		io_write8(tile_chip_scroll_control, 0u);
 		vector_clear_sprites();
 		game_step++;
 		return;
 	}
-	line_scroll = 0x1A00u;
+	line_scroll = tile_chip_layer_a_x;
 	wave_lines_left = 0u;
 	table_wave_offset = 0xDu * (uint8_t)frame_count;
 	do
@@ -905,7 +903,7 @@ void high_scores_wave_out(void)
 	table_wave_offset = 0xDu * (uint8_t)frame_count;
 	control = board_control | 2u;
 	board_control = control;
-	io_write8(0x1FC2u, control);
+	io_write8(board_control_register, control);
 	sprite = 0x2000u;
 	while (mem_read8(sprite) != 0u)
 	{
@@ -917,13 +915,12 @@ void high_scores_wave_out(void)
 	}
 	control = board_control & ~3u;
 	board_control = control;
-	io_write8(0x1FC2u, control);
+	io_write8(board_control_register, control);
 }
 
 /* The attract's high score table: shows places 6 to 10; when its time is up, starts the wavy exit. */
 void high_scores_show_second(void)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0, entry = 0, first_place = 0;
 	uint8_t wait_left = 0;
 
@@ -935,10 +932,10 @@ void high_scores_show_second(void)
 	scene_timer = (scene_timer & 0xFFu) | ((wait_left - 1u & 0xFFu) << 8u);
 	if (wait_left != 1u)
 		return;
-	io_write8(0x1C80u, 3u);
+	io_write8(tile_chip_scroll_control, 3u);
 	scene_timer = (scene_timer & 0xFFu) | 0x8000u;
 	command = 0x700u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	game_step++;
 }
 
@@ -1109,7 +1106,7 @@ uint16_t put_sprite(uint16_t sprite, uint16_t colour)
 	stack = colour >> 8;
 	control = board_control | 2u;
 	board_control = control;
-	io_write8(0x1FC2u, control);
+	io_write8(board_control_register, control);
 	io_write8(sprite, stack | 0x80u);
 	mem_write16(sprite + 0xCu, colour | 0x20u);
 	sprite_code = sprite_text_code;
@@ -1123,6 +1120,6 @@ uint16_t put_sprite(uint16_t sprite, uint16_t colour)
 	sprite += 0x10u;
 	control = board_control & ~3u;
 	board_control = control;
-	io_write8(0x1FC2u, control);
+	io_write8(board_control_register, control);
 	return sprite;
 }

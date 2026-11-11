@@ -3,7 +3,7 @@
  *    Description: bank 15's scenery: Krustyland's doors and booths, props, the cemetery's pieces
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -260,14 +260,14 @@ uint16_t krustyland_door_open(uint16_t object, uint16_t released_child)
 	OBJECT(object)->timer = timer_2 - 1u;
 	if (timer_2 != 1u)
 		return released_child;
-	enemies = io_read8(0x1876u);
+	enemies = io_read8(enemies_present);
 	if (enemies > 4u)
 	{
 		OBJECT(object)->timer = 1u;
 		return released_child;
 	}
 	command = 0x1400u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	OBJECT(object)->animation = 0xA3u;
 	release_2 = OBJECT(object)->krustyland_door.release;
 	release = release_2;
@@ -374,7 +374,6 @@ void kind_b2_leaper_idle(void)
 /* When its bear starts off, leaps away with sound 5C00. */
 uint16_t kind_b2_leaper_jump(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0, object_2 = 0;
 	uint8_t state = 0, state_2 = 0;
 	uint16_t parent = 0;
@@ -385,7 +384,7 @@ uint16_t kind_b2_leaper_jump(uint16_t object)
 	if (state != 3u)
 		return object_2;
 	command = 0x5C00u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	OBJECT(object)->floor_z = 0u;
 	OBJECT(object)->x_speed = 0x80;
 	OBJECT(object)->y_speed = -0x100;
@@ -413,7 +412,7 @@ void kind_b2_leaper_fall(uint16_t object)
 		return;
 	}
 	command = 0x5D00u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	OBJECT(object)->x_speed = 0;
 	OBJECT(object)->y_speed = 0;
 	OBJECT(object)->flags = 0xC0u;
@@ -651,7 +650,6 @@ uint16_t kind_d1_fling_start(uint16_t object)
 /* Shrinks the piece as it flies; after 64 frames it vanishes with sound 2000. */
 void kind_d1_fling_shrink(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0, zoom_x = 0;
 	uint8_t timer = 0;
 	uint16_t zoom_x_2 = 0;
@@ -669,7 +667,7 @@ void kind_d1_fling_shrink(uint16_t object)
 	if (timer != 1u)
 		return;
 	command = 0x2000u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	OBJECT(object)->flags = 0u;
 }
 

@@ -3,7 +3,7 @@
  *    Description: the bank's jump table, then bonus 1: blow up the balloon (the step after stage 1)
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -105,7 +105,7 @@ void bonus_1_contest(void)
 		return;
 	case 48:
 	case 52:
-		carry = bonus_hide_hints();
+		bonus_hide_hints();
 		return;
 	case 50:
 		bonus_show_hints_1(state_table, &ignored16_2, &carry);
@@ -142,12 +142,12 @@ void bonus_2_contest(void)
 	uint8_t state_number = 0;
 	uint8_t read_state = 0;
 
-	read_state = io_read8(0x1840u);
+	read_state = io_read8(bonus_2_state);
 	state_number = read_state;
 	if ((int8_t)state_number < 3)
 	{
 		state_number = 3u;
-		io_write8(0x1840u, 3u);
+		io_write8(bonus_2_state, 3u);
 	}
 	switch ((int8_t)(uint8_t)((uint32_t)state_number << 1))
 	{
@@ -409,7 +409,7 @@ void bonus_1_intro(void)
 		return;
 	case 54:
 	case 58:
-		carry = bonus_hide_hints();
+		bonus_hide_hints();
 		return;
 	case 56:
 		bonus_show_hints_1(state_table, &ignored16_2, &carry);
@@ -436,7 +436,7 @@ void bonus_2_intro(void)
 {
 	uint8_t state_number = 0;
 
-	state_number = io_read8(0x1840u);
+	state_number = io_read8(bonus_2_state);
 	switch ((int8_t)(uint8_t)((uint32_t)state_number << 1))
 	{
 	case 0:
@@ -534,7 +534,7 @@ void bonus_1_intro_set_up(uint16_t *p_balloon, uint16_t *p_d, uint32_t *p_carry)
 		else
 		{
 			OBJECT(balloon)->attributes = 0x30u;
-			io_write8(0x18EEu, intro_player_number);
+			io_write8(bonus_1_intro_player, intro_player_number);
 			intro_player_shown++;
 			OBJECT(balloon)->x = 0x9Cu;
 			OBJECT(balloon)->y = 0xE8u;
@@ -577,7 +577,7 @@ void bonus_1_intro_show_how(uint16_t *p_player_balloon, uint16_t *p_d, uint32_t 
 	uint16_t object = 0;
 
 	bonus_blink_hints();
-	shown_player_number = io_read8(0x18EEu);
+	shown_player_number = io_read8(bonus_1_intro_player);
 	bonus_player = bonus_1_player_records[(int8_t)((uint8_t)((uint32_t)shown_player_number << 1)) / 2];
 	object = BONUS_PLAYER(bonus_player)->object;
 	player_balloon = object;
@@ -590,7 +590,7 @@ void bonus_1_intro_show_how(uint16_t *p_player_balloon, uint16_t *p_d, uint32_t 
 	bonus_1_press_sound(&ignored16, &ignored16_2, &carry);
 	player_balloon = stack_4;
 	record = stack;
-	player_number = io_read8(0x18EEu);
+	player_number = io_read8(bonus_1_intro_player);
 	d = (uint32_t)player_number << 8;
 	*p_player_balloon = player_balloon;
 	*p_d = d;
@@ -738,19 +738,19 @@ void bonus_1_contest_set_up(uint16_t *p_player_object, uint16_t *p_d, uint32_t *
 	uint16_t d = 0, player_object = 0;
 	uint8_t old_marge_presses = 0, old_homer_presses = 0, old_bart_presses = 0, old_lisa_presses = 0, step_number = 0;
 
-	old_marge_presses = io_read8(0x18E8u);
-	io_write8(0x18E8u, 0u);
-	old_homer_presses = io_read8(0x18E9u);
-	io_write8(0x18E9u, 0u);
-	old_bart_presses = io_read8(0x18EAu);
-	io_write8(0x18EAu, 0u);
-	old_lisa_presses = io_read8(0x18EBu);
-	io_write8(0x18EBu, 0u);
+	old_marge_presses = io_read8(bonus_1_presses);
+	io_write8(bonus_1_presses, 0u);
+	old_homer_presses = io_read8(ending_family_step);
+	io_write8(ending_family_step, 0u);
+	old_bart_presses = io_read8(dream_wave_line);
+	io_write8(dream_wave_line, 0u);
+	old_lisa_presses = io_read8(scene_layer_b_speed);
+	io_write8(scene_layer_b_speed, 0u);
 	bonus_seconds = 0x10u;
 	bonus_mark_players_in_game();
 	bonus_1_set_absent_rates();
 	bonus_1_put_players(&player_object, &d, &carry);
-	io_write8(0x18E2u, 0x60u);
+	io_write8(scene_wait, 0x60u);
 	step_number = io_read8(scene_substate);
 	io_write8(scene_substate, step_number + 1u);
 	d = (d & 0xFFu) | 0x6000u;
@@ -776,8 +776,8 @@ void bonus_1_contest_ready(uint16_t *p_player_object, uint16_t *p_timer_x, uint3
 	timer_x += 0x28u;
 	bonus_draw_x = timer_x;
 	bonus_draw_timer();
-	ready_frames = io_read8(0x18E2u);
-	io_write8(0x18E2u, ready_frames - 1u);
+	ready_frames = io_read8(scene_wait);
+	io_write8(scene_wait, ready_frames - 1u);
 	if (ready_frames == 1u)
 	{
 		state_number = io_read8(scene_state);
@@ -1302,7 +1302,7 @@ void bonus_1_results(uint16_t *p_balloon, uint16_t *p_d, uint32_t *p_carry)
 	{
 		balloon = OBJECT_ADDRESS(0);
 		places = results_places_ADDRESS;
-		wait_place = 0x18E4u;
+		wait_place = scene_palette_effect;
 		stack = 0u;
 		do
 		{
@@ -1400,7 +1400,7 @@ void bonus_1_top_up_balloons(uint16_t *p_player_records_place, uint16_t *p_d, ui
 	if (balloons_growing == 0u)
 	{
 		command = 0xAD00u;
-		carry = vector_queue_sound(command);
+		vector_queue_sound(command);
 		step_number = io_read8(scene_substate);
 		io_write8(scene_substate, step_number + 1u);
 	}
@@ -1423,10 +1423,10 @@ void bonus_1_fly_away(uint16_t *p_player_object, uint16_t *p_d, uint32_t *p_carr
 	uint16_t stack_3 = 0;
 	uint8_t old_flown = 0, flown_count = 0, step_number = 0;
 
-	old_flown = io_read8(0x18ECu);
-	io_write8(0x18ECu, 0u);
+	old_flown = io_read8(dream_wave_step);
+	io_write8(dream_wave_step, 0u);
 	player_object = OBJECT_ADDRESS(0);
-	wait_place = 0x18E4u;
+	wait_place = scene_palette_effect;
 	stack = 0u;
 	do
 	{
@@ -1442,7 +1442,7 @@ void bonus_1_fly_away(uint16_t *p_player_object, uint16_t *p_d, uint32_t *p_carr
 		wait_place++;
 		stack = stack + 1u;
 	} while (stack != 4u);
-	flown_count = io_read8(0x18ECu);
+	flown_count = io_read8(dream_wave_step);
 	flown = flown_count;
 	carry = flown < 4u;
 	if (flown == 4u)
@@ -1588,19 +1588,19 @@ void bonus_1_blow(uint16_t record, uint16_t *p_balloon, uint16_t *p_player_numbe
 			{
 				carry = bonus_1_stretch_height(balloon);
 				if (carry)
-					carry = bonus_1_stretch_width(balloon);
+					bonus_1_stretch_width(balloon);
 			}
 			else if ((random_number & 3u) != 0u)
 			{
 				carry = bonus_1_stretch_height(balloon);
 				if (carry)
-					carry = bonus_1_stretch_width(balloon);
+					bonus_1_stretch_width(balloon);
 			}
 			else
 			{
 				carry = bonus_1_stretch_width(balloon);
 				if (carry)
-					carry = bonus_1_stretch_height(balloon);
+					bonus_1_stretch_height(balloon);
 			}
 		}
 		else
@@ -1612,13 +1612,13 @@ void bonus_1_blow(uint16_t record, uint16_t *p_balloon, uint16_t *p_player_numbe
 			{
 				carry = bonus_1_stretch_height(balloon);
 				if (carry)
-					carry = bonus_1_stretch_width(balloon);
+					bonus_1_stretch_width(balloon);
 			}
 			else
 			{
 				carry = bonus_1_stretch_width(balloon);
 				if (carry)
-					carry = bonus_1_stretch_height(balloon);
+					bonus_1_stretch_height(balloon);
 			}
 		}
 		zoom_width = (uint8_t)(OBJECT(balloon)->bonus_1.width_zoom >> 8u);
@@ -1805,7 +1805,7 @@ void bonus_1_flight(uint16_t *p_object, uint16_t *p_d)
 	case 24:
 	case 28:
 		d = (d & 0xFFu) | ((uint32_t)flight_offset << 8);
-		carry = bonus_hide_hints();
+		bonus_hide_hints();
 		break;
 	case 26:
 		bonus_show_hints_1(object, &d, &carry);
@@ -2120,8 +2120,8 @@ void bonus_1_rise(uint16_t object, uint16_t *p_height, uint32_t *p_carry)
 		flyer_3 = OBJECT(object)->bonus_1.flyer;
 		carry = 0u;
 		mem_write8(flyer_3, 0u);
-		flown_count = io_read8(0x18ECu);
-		io_write8(0x18ECu, flown_count + 1u);
+		flown_count = io_read8(dream_wave_step);
+		io_write8(dream_wave_step, flown_count + 1u);
 	}
 	leftover_y = flyer;
 	*p_height = height;
@@ -2269,7 +2269,7 @@ void bonus_1_pop(uint16_t object, uint16_t *p_d, uint32_t *p_carry)
 	uint16_t flyer_2 = 0;
 
 	command = 0x6C00u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	OBJECT(object)->kind = 0x90u;
 	OBJECT(object)->animation = 0x93u;
 	carry = 0u;
@@ -2337,8 +2337,8 @@ void bonus_1_fall_done(void)
 {
 	uint8_t flown_count = 0;
 
-	flown_count = io_read8(0x18ECu);
-	io_write8(0x18ECu, flown_count + 1u);
+	flown_count = io_read8(dream_wave_step);
+	io_write8(dream_wave_step, flown_count + 1u);
 }
 
 /* Bonus 1: whether a player's balloon has grown past its limit (carry). */
@@ -2750,11 +2750,11 @@ void bonus_1_press_sound(uint16_t *p_player_records_place, uint16_t *p_d, uint32
 	uint8_t stack = 0;
 	uint8_t frames_since_sound = 0, counted_frames = 0, slot_in_game = 0, pressed_bits = 0, waited_frames = 0, old_waited_frames = 0;
 
-	frames_since_sound = io_read8(0x18EDu);
+	frames_since_sound = io_read8(dream_wave_size);
 	if ((int8_t)frames_since_sound >= 0)
 	{
-		counted_frames = io_read8(0x18EDu);
-		io_write8(0x18EDu, counted_frames + 1u);
+		counted_frames = io_read8(dream_wave_size);
+		io_write8(dream_wave_size, counted_frames + 1u);
 	}
 	presses = 0u;
 	stack = 0u;
@@ -2774,13 +2774,13 @@ void bonus_1_press_sound(uint16_t *p_player_records_place, uint16_t *p_d, uint32
 	presses = pressed_bits;
 	if (pressed_bits != 0u)
 	{
-		waited_frames = io_read8(0x18EDu);
+		waited_frames = io_read8(dream_wave_size);
 		presses = waited_frames;
 		carry = presses < 0x20u;
 		if (presses > 0x20u)
 		{
-			old_waited_frames = io_read8(0x18EDu);
-			io_write8(0x18EDu, 0u);
+			old_waited_frames = io_read8(dream_wave_size);
+			io_write8(dream_wave_size, 0u);
 			presses = 0x29u;
 			player_number = 0u;
 			command = 0x2900u;
@@ -3033,7 +3033,7 @@ void bonus_blink_hints(void)
 	{
 	case 0:
 	case 4:
-		carry = bonus_hide_hints();
+		bonus_hide_hints();
 		return;
 	case 2:
 		bonus_show_hints_1(step_table, &ignored16_2, &carry);
@@ -3214,7 +3214,7 @@ uint16_t bonus_title(uint16_t d)
 	uint8_t title_step = 0;
 
 	step_table = bonus_title_steps_ADDRESS;
-	title_step = io_read8(0x18F1u);
+	title_step = io_read8(bonus_title_step);
 	step_offset = (uint32_t)title_step << 1;
 	switch ((int8_t)step_offset)
 	{
@@ -3320,7 +3320,7 @@ uint16_t bonus_title(uint16_t d)
 	case -8:
 	case -4:
 		d |= step_offset;
-		carry = bonus_hide_hints();
+		bonus_hide_hints();
 		return d;
 	case -6:
 		bonus_show_hints_1(step_table, &d_2, &carry);
@@ -3339,9 +3339,9 @@ uint16_t bonus_title_wait(void)
 	uint8_t title_step = 0;
 
 	title_frames = 0xC0u;
-	io_write16(0x18EFu, 0xC0u);
-	title_step = io_read8(0x18F1u);
-	io_write8(0x18F1u, title_step + 1u);
+	io_write16(bonus_title_frames, 0xC0u);
+	title_step = io_read8(bonus_title_step);
+	io_write8(bonus_title_step, title_step + 1u);
 	return title_frames;
 }
 
@@ -3358,9 +3358,9 @@ void bonus_title_show(uint16_t *p_x, uint16_t *p_d, uint32_t *p_carry)
 	uint16_t title_frames_left = 0, intro_sound = 0;
 
 	a = (uint8_t)(d >> 8);
-	title_frames_left = io_read16(0x18EFu);
+	title_frames_left = io_read16(bonus_title_frames);
 	carry = title_frames_left == 0u;
-	io_write16(0x18EFu, title_frames_left - 1u);
+	io_write16(bonus_title_frames, title_frames_left - 1u);
 	if (title_frames_left == 1u)
 	{
 		stack = a;
@@ -3373,8 +3373,8 @@ void bonus_title_show(uint16_t *p_x, uint16_t *p_d, uint32_t *p_carry)
 		d = intro_sound;
 		a = (uint8_t)(intro_sound >> 8);
 		carry = vector_queue_sound(d);
-		title_step = io_read8(0x18F1u);
-		io_write8(0x18F1u, title_step + 1u);
+		title_step = io_read8(bonus_title_step);
+		io_write8(bonus_title_step, title_step + 1u);
 	}
 	d_2 = (d & 0xFFu) | ((uint32_t)a << 8);
 	*p_x = x;

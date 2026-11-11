@@ -3,7 +3,7 @@
  *    Description: story 1: the opening
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -169,11 +169,11 @@ void story_1(uint16_t u)
 		story_1_dropped_object_gone(scene_steps);
 		break;
 	}
-	part_done = io_read8(0x18E2u);
+	part_done = io_read8(scene_wait);
 	if (part_done == 0u)
 		return;
-	discarded_read = io_read8(0x18E2u);
-	io_write8(0x18E2u, 0u);
+	discarded_read = io_read8(scene_wait);
+	io_write8(scene_wait, 0u);
 	old_scene_state = io_read8(scene_state);
 	io_write8(scene_state, old_scene_state + 1u);
 	discarded_read_2 = io_read8(scene_substate);
@@ -184,7 +184,6 @@ void story_1(uint16_t u)
    objects (kind 04 animation 08, kind 0F animation 16); B0 frames. */
 uint16_t story_1_set_up_street(uint16_t palette_job)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0, ignored16 = 0, ignored16_2 = 0, layer_and_columns = 0, record = 0, request = 0, scroll_x = 0, scroll_y = 0, street_object = 0;
 	uint8_t old_part_done = 0;
 
@@ -199,11 +198,11 @@ uint16_t story_1_set_up_street(uint16_t palette_job)
 	request = 0x805u;
 	vector_palette_request(palette_job, request);
 	command = 0x9100u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	command = 0x4600u;
-	carry = vector_queue_sound(command);
-	io_write8(0x1FB9u, 0x3Fu);
-	io_write8(0x1FBAu, 0x36u);
+	vector_queue_sound(command);
+	io_write8(colour_bases_back_sprites_fixed, 0x3Fu);
+	io_write8(colour_bases_layers_a_b, 0x36u);
 	map_scene = 0x82u;
 	map_area = 0u;
 	vector_set_layer_modes();
@@ -211,15 +210,15 @@ uint16_t story_1_set_up_street(uint16_t palette_job)
 	vector_draw_layer_strips(layer_and_columns, &ignored16, &ignored16_2);
 	layer_and_columns = 0x12Cu;
 	vector_draw_layer_strips(layer_and_columns, &ignored16, &ignored16_2);
-	io_write8(0x1FB9u, 0x13u);
-	io_write8(0x1FBAu, 0x2Cu);
+	io_write8(colour_bases_back_sprites_fixed, 0x13u);
+	io_write8(colour_bases_layers_a_b, 0x2Cu);
 	record = story_1_street_object_start_1_ADDRESS;
 	story_put_object(record);
 	record = story_1_street_object_start_2_ADDRESS;
 	street_object = story_put_object(record);
-	io_write8(0x18E3u, 0xB0u);
-	old_part_done = io_read8(0x18E2u);
-	io_write8(0x18E2u, old_part_done + 1u);
+	io_write8(scene_short_wait, 0xB0u);
+	old_part_done = io_read8(scene_wait);
+	io_write8(scene_wait, old_part_done + 1u);
 	return street_object;
 }
 
@@ -238,8 +237,8 @@ uint16_t story_1_street(uint16_t palette_job)
 	vector_check_skip(wait, &ignored16, &carry);
 	if (carry == 0u)
 	{
-		street_wait = io_read8(0x18E3u);
-		io_write8(0x18E3u, street_wait - 1u);
+		street_wait = io_read8(scene_short_wait);
+		io_write8(scene_short_wait, street_wait - 1u);
 		if (street_wait != 1u)
 		{
 			story_1_family();
@@ -252,8 +251,8 @@ uint16_t story_1_street(uint16_t palette_job)
 	palette_request_kind = 1u;
 	request = 0xF05u;
 	vector_palette_request(palette_job, request);
-	io_write8(0x1FB9u, 0x3Fu);
-	io_write8(0x1FBAu, 0x36u);
+	io_write8(colour_bases_back_sprites_fixed, 0x3Fu);
+	io_write8(colour_bases_layers_a_b, 0x36u);
 	layer_a_scroll_x = 0xFFF0u;
 	layer_a_scroll_y = 0u;
 	map_scene = 0x81u;
@@ -262,24 +261,24 @@ uint16_t story_1_street(uint16_t palette_job)
 	layer_and_columns = 0x2Cu;
 	vector_draw_layer_strips(layer_and_columns, &ignored16, &effect_job);
 	vector_clear_layer_b();
-	io_write8(0x1FB9u, 0x13u);
-	io_write8(0x1FBAu, 0x2Cu);
+	io_write8(colour_bases_back_sprites_fixed, 0x13u);
+	io_write8(colour_bases_layers_a_b, 0x2Cu);
 	skip_wait = 0u;
 	palette_request_kind = 2u;
 	request = 3u;
 	effect_job = vector_palette_request(effect_job, request);
-	io_write16(0x18E7u, effect_job);
+	io_write16(scene_second_wait, effect_job);
 	command = 0x3F25u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	vector_clear_objects(&ignored16, &ignored16_2);
 	record = story_1_street_text_start_ADDRESS;
 	object = story_put_object(record);
 	OBJECT(object)->y_speed = 0x180;
 	screen_shake_on = 1u;
 	screen_shake_kind = 1u;
-	io_write8(0x18E3u, 0x50u);
-	old_part_done = io_read8(0x18E2u);
-	io_write8(0x18E2u, old_part_done + 1u);
+	io_write8(scene_short_wait, 0x50u);
+	old_part_done = io_read8(scene_wait);
+	io_write8(scene_wait, old_part_done + 1u);
 	return object;
 }
 
@@ -297,18 +296,18 @@ uint16_t story_1_redraw(uint16_t x)
 	vector_check_skip(wait, &x, &carry);
 	if (carry == 0u)
 	{
-		street_wait = io_read8(0x18E3u);
-		io_write8(0x18E3u, street_wait - 1u);
+		street_wait = io_read8(scene_short_wait);
+		io_write8(scene_short_wait, street_wait - 1u);
 		if (street_wait != 1u)
 			return x;
 	}
-	effect_job = io_read16(0x18E7u);
+	effect_job = io_read16(scene_second_wait);
 	mem_write8(effect_job, 0u);
 	layer_b_scroll_x = 0xFFF0u;
 	layer_b_scroll_y = 0u;
 	map_area = 0u;
-	io_write8(0x1FB9u, 0x3Fu);
-	io_write8(0x1FBAu, 0x36u);
+	io_write8(colour_bases_back_sprites_fixed, 0x3Fu);
+	io_write8(colour_bases_layers_a_b, 0x36u);
 	layer_and_columns = 0x124u;
 	vector_draw_layer_strips(layer_and_columns, &ignored16, &ignored16_2);
 	layer_b_scroll_x = 0xF0u;
@@ -317,13 +316,13 @@ uint16_t story_1_redraw(uint16_t x)
 	map_area = 1u;
 	layer_and_columns = 0x2Cu;
 	vector_draw_layer_strips(layer_and_columns, &ignored16, &ignored16_2);
-	io_write8(0x1FB9u, 0x13u);
-	io_write8(0x1FBAu, 0x2Cu);
+	io_write8(colour_bases_back_sprites_fixed, 0x13u);
+	io_write8(colour_bases_layers_a_b, 0x2Cu);
 	vector_clear_objects(&ignored16, &ignored16_2);
 	record = story_1_redraw_text_start_ADDRESS;
 	x = story_put_object(record);
-	old_part_done = io_read8(0x18E2u);
-	io_write8(0x18E2u, old_part_done + 1u);
+	old_part_done = io_read8(scene_wait);
+	io_write8(scene_wait, old_part_done + 1u);
 	return x;
 }
 
@@ -480,17 +479,16 @@ uint16_t story_1_rise(uint16_t u)
 /* Its step 0: layer A's y offset 0, a scroll speed of FA00, queues sound 0101. */
 void story_1_rise_start(void)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t old_scene_substate = 0;
 
 	layer_a_offset_y = 0u;
-	io_write16(0x18E5u, 0xFA00u);
+	io_write16(scene_layer_a_speed, 0xFA00u);
 	layer_a_edges_on = 1u;
 	layer_rows_on = 1u;
 	draw_all_layer_edges = 1u;
 	command = 0x101u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	old_scene_substate = io_read8(scene_substate);
 	io_write8(scene_substate, old_scene_substate + 1u);
 }
@@ -505,10 +503,10 @@ void story_1_rise_slow_down(uint16_t palette_job)
 	uint16_t rise_speed = 0, new_rise_speed = 0;
 
 	OBJECT(OBJECT_ADDRESS(14))->z_speed = 0x70;
-	rise_speed = io_read16(0x18E5u);
+	rise_speed = io_read16(scene_layer_a_speed);
 	new_rise_speed = rise_speed + 0xAu;
 	speed_high = (uint8_t)(new_rise_speed >> 8);
-	io_write16(0x18E5u, ((uint32_t)speed_high << 8) | (new_rise_speed & 0xFFu));
+	io_write16(scene_layer_a_speed, ((uint32_t)speed_high << 8) | (new_rise_speed & 0xFFu));
 	if (speed_high != 0u)
 	{
 		story_1_scroll_layer_a();
@@ -517,7 +515,7 @@ void story_1_rise_slow_down(uint16_t palette_job)
 	palette_request_kind = 2u;
 	request = 4u;
 	vector_palette_request(palette_job, request);
-	io_write8(0x18E3u, 0x98u);
+	io_write8(scene_short_wait, 0x98u);
 	layer_a_offset_y = 0xE0u;
 	old_scene_substate = io_read8(scene_substate);
 	io_write8(scene_substate, old_scene_substate + 1u);
@@ -529,12 +527,12 @@ void story_1_rise_coast(void)
 	uint8_t coast_wait = 0, old_part_done = 0;
 	uint16_t rise_speed = 0;
 
-	coast_wait = io_read8(0x18E3u);
-	io_write8(0x18E3u, coast_wait - 1u);
+	coast_wait = io_read8(scene_short_wait);
+	io_write8(scene_short_wait, coast_wait - 1u);
 	if (coast_wait != 1u)
 	{
-		rise_speed = io_read16(0x18E5u);
-		io_write16(0x18E5u, rise_speed + 0xAu);
+		rise_speed = io_read16(scene_layer_a_speed);
+		io_write16(scene_layer_a_speed, rise_speed + 0xAu);
 		OBJECT(OBJECT_ADDRESS(14))->z_speed = -0x60;
 		story_1_scroll_layer_a();
 		return;
@@ -542,9 +540,9 @@ void story_1_rise_coast(void)
 	layer_a_edges_on = 0u;
 	layer_rows_on = 0u;
 	draw_all_layer_edges = 0u;
-	io_write8(0x18E3u, 0x18u);
-	old_part_done = io_read8(0x18E2u);
-	io_write8(0x18E2u, old_part_done + 1u);
+	io_write8(scene_short_wait, 0x18u);
+	old_part_done = io_read8(scene_wait);
+	io_write8(scene_wait, old_part_done + 1u);
 }
 
 /* Moves layer A's y scroll by the story's scroll speed (18E5). */
@@ -555,12 +553,12 @@ void story_1_scroll_layer_a(void)
 	uint16_t layer_a_y_low = 0, rise_speed = 0, old_layer_a_y_low = 0, new_layer_a_y_low = 0;
 
 	layer_a_y_low = AT16(layer_a_scroll_y, -1);
-	rise_speed = io_read16(0x18E5u);
+	rise_speed = io_read16(scene_layer_a_speed);
 	old_layer_a_y_low = layer_a_y_low;
 	new_layer_a_y_low = old_layer_a_y_low + rise_speed;
 	carry = (uint16_t)(old_layer_a_y_low + rise_speed) < old_layer_a_y_low;
 	AT16(layer_a_scroll_y, -1) = new_layer_a_y_low;
-	rise_speed_high = io_read8(0x18E5u);
+	rise_speed_high = io_read8(scene_layer_a_speed);
 	layer_a_scroll_y = (layer_a_scroll_y & 0xFFu) | ((((uint16_t)(int8_t)rise_speed_high >> 8) + (uint8_t)(layer_a_scroll_y >> 8u) + carry & 0xFFu) << 8u);
 }
 
@@ -714,16 +712,16 @@ uint16_t story_1_pan_right(uint16_t x)
 	uint8_t pan_wait = 0, old_scene_substate = 0;
 	uint16_t layer_b_x_low = 0, old_layer_b_x_low = 0;
 
-	pan_wait = io_read8(0x18E3u);
-	io_write8(0x18E3u, pan_wait - 1u);
+	pan_wait = io_read8(scene_short_wait);
+	io_write8(scene_short_wait, pan_wait - 1u);
 	if (pan_wait == 1u)
 	{
 		record = story_1_pan_text_start_ADDRESS;
 		object = story_put_object(record);
 		OBJECT(object)->z_speed = 0;
 		command = 0x4400u;
-		carry = vector_queue_sound(command);
-		io_write8(0x18E3u, 0x40u);
+		vector_queue_sound(command);
+		io_write8(scene_short_wait, 0x40u);
 		old_scene_substate = io_read8(scene_substate);
 		io_write8(scene_substate, old_scene_substate + 1u);
 		return object;
@@ -741,8 +739,8 @@ uint16_t story_1_pan_wait(uint16_t x)
 {
 	uint8_t pan_wait = 0;
 
-	pan_wait = io_read8(0x18E3u);
-	io_write8(0x18E3u, pan_wait - 1u);
+	pan_wait = io_read8(scene_short_wait);
+	io_write8(scene_short_wait, pan_wait - 1u);
 	if (pan_wait == 1u)
 		return story_1_last_view();
 	return x;
@@ -758,20 +756,20 @@ uint16_t story_1_last_view(void)
 	layer_a_scroll_y = 0u;
 	layer_b_scroll_x = 0x110u;
 	layer_b_scroll_y = 0u;
-	io_write8(0x1FB9u, 0x3Fu);
-	io_write8(0x1FBAu, 0x36u);
+	io_write8(colour_bases_back_sprites_fixed, 0x3Fu);
+	io_write8(colour_bases_layers_a_b, 0x36u);
 	map_area = 0u;
 	layer_and_columns = 0x2Cu;
 	vector_draw_layer_strips(layer_and_columns, &ignored16, &ignored16_2);
 	layer_and_columns = 0x12Cu;
 	vector_draw_layer_strips(layer_and_columns, &ignored16, &ignored16_2);
-	io_write8(0x1FB9u, 0x13u);
-	io_write8(0x1FBAu, 0x2Cu);
+	io_write8(colour_bases_back_sprites_fixed, 0x13u);
+	io_write8(colour_bases_layers_a_b, 0x2Cu);
 	vector_clear_objects(&ignored16, &ignored16_2);
 	record = story_1_last_view_text_start_ADDRESS;
 	text_object = story_put_object(record);
-	old_part_done = io_read8(0x18E2u);
-	io_write8(0x18E2u, old_part_done + 1u);
+	old_part_done = io_read8(scene_wait);
+	io_write8(scene_wait, old_part_done + 1u);
 	return text_object;
 }
 
@@ -919,8 +917,8 @@ uint16_t story_1_end(uint16_t u)
 	}
 	scene_running = 0u;
 	vector_clear_objects(&x, &ignored16);
-	old_part_done = io_read8(0x18E2u);
-	io_write8(0x18E2u, old_part_done + 1u);
+	old_part_done = io_read8(scene_wait);
+	io_write8(scene_wait, old_part_done + 1u);
 	return x;
 }
 
@@ -929,7 +927,7 @@ void story_1_end_start(void)
 {
 	uint8_t old_scene_substate = 0;
 
-	io_write8(0x18E3u, 0x20u);
+	io_write8(scene_short_wait, 0x20u);
 	old_scene_substate = io_read8(scene_substate);
 	io_write8(scene_substate, old_scene_substate + 1u);
 }
@@ -937,17 +935,16 @@ void story_1_end_start(void)
 /* Its second step: queues sounds 3F09-3F0B and waits 38 frames. */
 void story_1_end_sounds(void)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t old_scene_substate = 0;
 
-	io_write8(0x18E3u, 0x38u);
+	io_write8(scene_short_wait, 0x38u);
 	command = 0x3F09u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	command = 0x3F0Au;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	command = 0x3F0Bu;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	old_scene_substate = io_read8(scene_substate);
 	io_write8(scene_substate, old_scene_substate + 1u);
 }
@@ -957,12 +954,12 @@ void story_1_hide_text(void)
 {
 	uint8_t caption_wait = 0, old_scene_substate = 0;
 
-	caption_wait = io_read8(0x18E3u);
-	io_write8(0x18E3u, caption_wait - 1u);
+	caption_wait = io_read8(scene_short_wait);
+	io_write8(scene_short_wait, caption_wait - 1u);
 	if (caption_wait == 1u)
 	{
 		OBJECT(OBJECT_ADDRESS(14))->flags = 4u;
-		io_write8(0x18E3u, 8u);
+		io_write8(scene_short_wait, 8u);
 		old_scene_substate = io_read8(scene_substate);
 		io_write8(scene_substate, old_scene_substate + 1u);
 	}
@@ -972,23 +969,22 @@ void story_1_hide_text(void)
    four times. */
 void story_1_show_text(void)
 {
-	uint32_t carry = 0;
 	uint8_t next_wait = 0;
 	uint16_t command = 0;
 	uint8_t caption_wait = 0, substate_now = 0, old_scene_substate = 0;
 
-	caption_wait = io_read8(0x18E3u);
-	io_write8(0x18E3u, caption_wait - 1u);
+	caption_wait = io_read8(scene_short_wait);
+	io_write8(scene_short_wait, caption_wait - 1u);
 	if (caption_wait != 1u)
 		return;
 	command = 0x4A00u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	OBJECT(OBJECT_ADDRESS(14))->flags = 0x80u;
 	next_wait = 8u;
 	substate_now = io_read8(scene_substate);
 	if (substate_now == 9u)
 		next_wait = 0x80u;
-	io_write8(0x18E3u, next_wait);
+	io_write8(scene_short_wait, next_wait);
 	old_scene_substate = io_read8(scene_substate);
 	io_write8(scene_substate, old_scene_substate + 1u);
 }
@@ -999,14 +995,14 @@ uint16_t story_1_finish(uint16_t x)
 	uint16_t ignored16 = 0;
 	uint8_t finish_wait = 0, old_part_done = 0;
 
-	finish_wait = io_read8(0x18E3u);
-	io_write8(0x18E3u, finish_wait - 1u);
+	finish_wait = io_read8(scene_short_wait);
+	io_write8(scene_short_wait, finish_wait - 1u);
 	if (finish_wait != 1u)
 		return x;
 	scene_running = 0u;
 	vector_clear_objects(&x, &ignored16);
-	old_part_done = io_read8(0x18E2u);
-	io_write8(0x18E2u, old_part_done + 1u);
+	old_part_done = io_read8(scene_wait);
+	io_write8(scene_wait, old_part_done + 1u);
 	return x;
 }
 
@@ -2754,7 +2750,6 @@ uint16_t story_1_text_appears(void)
 /* Sets its field 06 bit 6; after 20 frames queues sound 5900. */
 void story_1_text_sound(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t animation_flags = 0, action = 0, type = 0;
 
@@ -2765,7 +2760,7 @@ void story_1_text_sound(uint16_t object)
 	if (action != 1u)
 		return;
 	command = 0x5900u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	type = OBJECT(object)->type;
 	OBJECT(object)->type = type + 1u;
 }
@@ -2940,7 +2935,7 @@ void story_1_dropped_object_fall(uint16_t object)
 	if (carry == 0u)
 		return;
 	command = 0x6F00u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	OBJECT(object)->animation = 0x8Au;
 	type = OBJECT(object)->type;
 	OBJECT(object)->type = type + 1u;

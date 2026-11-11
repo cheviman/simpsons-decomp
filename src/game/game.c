@@ -3,7 +3,7 @@
  *    Description: the game mode's frame and its first phase
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -470,20 +470,19 @@ uint32_t game_start_phase(uint16_t u)
 /* Clears the sprites, the scores and the sound and queues the tile layers' clear as a game starts */
 void game_start_clear(void)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0, job = 0;
 	uint8_t old_scroll_control = 0;
 
 	if (layer_clear_pending != 0u)
 		return;
-	old_scroll_control = io_read8(0x1C80u);
-	io_write8(0x1C80u, 0u);
+	old_scroll_control = io_read8(tile_chip_scroll_control);
+	io_write8(tile_chip_scroll_control, 0u);
 	job = 0u;
 	queue_job(job);
 	clear_sprites();
 	reset_for_game();
 	command = 0u;
-	carry = queue_sound_always(command);
+	queue_sound_always(command);
 	game_step++;
 }
 

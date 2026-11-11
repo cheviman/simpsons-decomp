@@ -3,7 +3,7 @@
  *    Description: stage 6's flying kind B8 thrower (type FC) and its shots (5280 type F3)
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -42,7 +42,6 @@ void kind_b8_flyer_face_player(uint16_t object)
    the kind_b8 tables and 1200 frames to stay. */
 void kind_b8_flyer_setup(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint8_t variant = 0;
 	uint16_t command = 0, setup = 0;
 	uint8_t parameter = 0, parameter_2 = 0, state = 0;
@@ -67,7 +66,7 @@ void kind_b8_flyer_setup(uint16_t object)
 	OBJECT(object)->attributes = 0x20u;
 	OBJECT(object)->x = 0xE0u;
 	command = 0x301u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	OBJECT(object)->x_speed = 0x300;
 	OBJECT(object)->y_speed = -0x80;
 	OBJECT(object)->z_speed = 0x200;
@@ -282,7 +281,7 @@ void kind_b8_flyer_volley(uint16_t object)
 	if (shots_left == 4u)
 	{
 		command = 0xF00u;
-		carry = vector_queue_sound(command);
+		vector_queue_sound(command);
 	}
 	shots_left_2 = OBJECT(object)->kind_b8_flyer.shots_left;
 	OBJECT(object)->kind_b8_flyer.shots_left = shots_left_2 - 1u;
@@ -368,7 +367,6 @@ void kind_b8_flyer_hurt(uint16_t object)
 /* Stops the hit flyer, keeps its height and plays its hurt animation for 30 frames with its sound. */
 void kind_b8_flyer_hurt_start(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t action_step = 0;
 	uint16_t z = 0;
@@ -381,7 +379,7 @@ void kind_b8_flyer_hurt_start(uint16_t object)
 	OBJECT(object)->kind_b8_flyer.kept_height = z;
 	OBJECT(object)->timer = 0x1Eu;
 	command = 0x5300u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	OBJECT(object)->animation = 0x89u;
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step + 1u;
@@ -451,12 +449,11 @@ void kind_b8_flyer_die(uint16_t object)
 /* Stops the beaten flyer with its sound and its falling animation. */
 void kind_b8_flyer_die_start(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t action_step = 0;
 
 	command = 0x5300u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	OBJECT(object)->x_speed = 0;
 	OBJECT(object)->y_speed = 0;
 	OBJECT(object)->flags = 0x88u;
@@ -479,7 +476,7 @@ void kind_b8_flyer_die_fall(uint16_t object)
 		return;
 	}
 	command = 0x7700u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step + 1u;
 	kind_b8_flyer_die_end(object);

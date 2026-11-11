@@ -3,7 +3,7 @@
  *    Description: bank 1C: the four players run each frame with their controls, and how a player joins the stage
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -21,17 +21,17 @@ void player_run_all(void)
 	uint8_t last_idle_players = 0, last_heavy_workers = 0, last_all_idle = 0, stage_is_over = 0, t1 = 0, held_high = 0, players_before = 0;
 	uint16_t held = 0;
 
-	last_idle_players = io_read8(0x184Cu);
-	io_write8(0x184Cu, 0u);
-	last_heavy_workers = io_read8(0x184Du);
-	io_write8(0x184Du, 0u);
+	last_idle_players = io_read8(players_idle_count);
+	io_write8(players_idle_count, 0u);
+	last_heavy_workers = io_read8(heavy_object_workers);
+	io_write8(heavy_object_workers, 0u);
 	players_push_y = 0;
 	stack = player_controls(0);
 	stack_10002 = player_controls(2);
 	controls = ((uint32_t)stack << 8) | stack_10002;
 	player = OBJECT_ADDRESS(0);
 	record = player_variables_ADDRESS;
-	io_write16(0x1848u, player_variables_ADDRESS);
+	io_write16(running_player_values, player_variables_ADDRESS);
 	bit_and_number = 0x100u;
 	player_run(record, controls, player, bit_and_number);
 	stack = player_controls(4);
@@ -39,7 +39,7 @@ void player_run_all(void)
 	controls = ((uint32_t)stack << 8) | stack_10002;
 	player = OBJECT_ADDRESS(2);
 	record = homer_lives_ADDRESS;
-	io_write16(0x1848u, homer_lives_ADDRESS);
+	io_write16(running_player_values, homer_lives_ADDRESS);
 	bit_and_number = 0x201u;
 	player_run(record, controls, player, bit_and_number);
 	stack = player_controls(8);
@@ -47,7 +47,7 @@ void player_run_all(void)
 	controls = ((uint32_t)stack << 8) | stack_10002;
 	player = OBJECT_ADDRESS(4);
 	record = bart_lives_ADDRESS;
-	io_write16(0x1848u, bart_lives_ADDRESS);
+	io_write16(running_player_values, bart_lives_ADDRESS);
 	bit_and_number = 0x402u;
 	player_run(record, controls, player, bit_and_number);
 	stack = player_controls(12);
@@ -55,19 +55,19 @@ void player_run_all(void)
 	controls = ((uint32_t)stack << 8) | stack_10002;
 	player = OBJECT_ADDRESS(6);
 	record = lisa_lives_ADDRESS;
-	io_write16(0x1848u, lisa_lives_ADDRESS);
+	io_write16(running_player_values, lisa_lives_ADDRESS);
 	bit_and_number = 0x803u;
 	player_run(record, controls, player, bit_and_number);
-	last_all_idle = io_read8(0x184Eu);
-	io_write8(0x184Eu, 0u);
-	stage_is_over = io_read8(0x184Bu);
+	last_all_idle = io_read8(players_all_idle);
+	io_write8(players_all_idle, 0u);
+	stage_is_over = io_read8(players_stop_request);
 	if (stage_is_over != 0u)
 	{
-		t1 = io_read8(0x184Cu);
+		t1 = io_read8(players_idle_count);
 		idle_players = t1;
 		if (idle_players != 4u)
 			return;
-		io_write8(0x184Eu, idle_players);
+		io_write8(players_all_idle, idle_players);
 		player_2 = OBJECT_ADDRESS(0);
 		players_left = 4u;
 		do
@@ -108,18 +108,18 @@ void player_run(uint16_t record, uint16_t controls, uint16_t player, uint16_t bi
 	player_number = (uint8_t)bit_and_number;
 	if (((bit_and_number >> 8) & players_playing) == 0u)
 	{
-		idle_players = io_read8(0x184Cu);
-		io_write8(0x184Cu, idle_players + 1u);
+		idle_players = io_read8(players_idle_count);
+		io_write8(players_idle_count, idle_players + 1u);
 		return;
 	}
 	entry_status = PLAYER_VALUES(record)->entry_status;
 	if (entry_status == 0u)
 	{
-		all_idle = io_read8(0x184Eu);
+		all_idle = io_read8(players_all_idle);
 		if (all_idle != 0u)
 		{
-			idle_players = io_read8(0x184Cu);
-			io_write8(0x184Cu, idle_players + 1u);
+			idle_players = io_read8(players_idle_count);
+			io_write8(players_idle_count, idle_players + 1u);
 			return;
 		}
 		stack = record;
@@ -204,7 +204,7 @@ void player_run(uint16_t record, uint16_t controls, uint16_t player, uint16_t bi
 								OBJECT(player)->player.player_state = 0x26u;
 								OBJECT(player)->animation = 0xBAu;
 								command = 0x1601u;
-								carry = vector_queue_sound(command);
+								vector_queue_sound(command);
 								break;
 							}
 							t1 = OBJECT(player)->y;
@@ -236,7 +236,7 @@ void player_run(uint16_t record, uint16_t controls, uint16_t player, uint16_t bi
 					OBJECT(player)->player.player_state = 0x26u;
 					OBJECT(player)->animation = 0xBAu;
 					command = 0x1601u;
-					carry = vector_queue_sound(command);
+					vector_queue_sound(command);
 					break;
 				}
 			}
@@ -248,7 +248,7 @@ void player_run(uint16_t record, uint16_t controls, uint16_t player, uint16_t bi
 				drop_x_high = (uint8_t)(drop_x >> 8);
 				drop_x_low = (uint8_t)drop_x;
 				OBJECT(player)->x = ((uint32_t)drop_x_high << 8) | drop_x_low;
-				io_write16(0x1858u, ((uint32_t)drop_x_high << 8) | drop_x_low);
+				io_write16(player_drop_x, ((uint32_t)drop_x_high << 8) | drop_x_low);
 				OBJECT(player)->y = 0xC0u;
 				OBJECT(player)->z = 0xD0u;
 				entry_tries_left = 8u;
@@ -277,7 +277,7 @@ void player_run(uint16_t record, uint16_t controls, uint16_t player, uint16_t bi
 						floor_value = (uint8_t)(floor_cell >> 8);
 						continue;
 					}
-					first_drop_x = io_read16(0x1858u);
+					first_drop_x = io_read16(player_drop_x);
 					OBJECT(player)->x = first_drop_x;
 					do
 					{
@@ -295,7 +295,7 @@ void player_run(uint16_t record, uint16_t controls, uint16_t player, uint16_t bi
 					break;
 				}
 				command = 0x1601u;
-				carry = vector_queue_sound(command);
+				vector_queue_sound(command);
 			}
 			OBJECT(player)->flags = 0xC4u;
 			status_4 = OBJECT(player)->player.status;
@@ -311,7 +311,7 @@ void player_run(uint16_t record, uint16_t controls, uint16_t player, uint16_t bi
 	}
 	else
 	{
-		stage_is_over = io_read8(0x184Bu);
+		stage_is_over = io_read8(players_stop_request);
 		if (stage_is_over == 0u)
 			OBJECT(player)->target_dy = controls;
 		else
@@ -746,7 +746,8 @@ uint16_t player_join(uint16_t player, uint16_t slot, uint8_t d)
 	mem_write8(object_life, 0x28u);
 	b = 0u;
 	countdown = PLAYER(player)->countdown;
-	mem_write16(countdown, 0u);
+	PLAYER_COUNTERS(countdown)->seconds = 0u;
+	PLAYER_COUNTERS(countdown)->frames = 0u;
 	state_2 = PLAYER(player)->state;
 	if (mem_read8(state_2) == 5u)
 	{
@@ -819,9 +820,10 @@ uint16_t player_playing(uint16_t player, uint16_t slot, uint8_t d)
 		number = PLAYER(player)->number;
 		continue_player = number;
 		countdown = PLAYER(player)->countdown;
-		mem_write16(countdown, 0u);
+		PLAYER_COUNTERS(countdown)->seconds = 0u;
+		PLAYER_COUNTERS(countdown)->frames = 0u;
 		countdown_2 = PLAYER(player)->countdown;
-		mem_write8(countdown_2, 0x20u);
+		PLAYER_COUNTERS(countdown_2)->seconds = 0x20u;
 		continue_seconds = 0x20u;
 		continue_frames = 0u;
 		play_status_2 = PLAYER(player)->play_status;
@@ -955,13 +957,14 @@ uint16_t player_game_over(uint16_t player, uint16_t slot)
 	mem_write8(play_status, 0u);
 	COIN_SLOT(slot)->credit_given = 0u;
 	countdown = PLAYER(player)->countdown;
-	mem_write8(countdown, mem_read8(countdown) + 1u);
+	PLAYER_COUNTERS(countdown)->seconds++;
 	countdown_2 = PLAYER(player)->countdown;
-	if (mem_read8(countdown_2) < 0xC0u)
+	if (PLAYER_COUNTERS(countdown_2)->seconds < 0xC0u)
 		return player_out(player, slot);
 	d = 0u;
 	countdown_3 = PLAYER(player)->countdown;
-	mem_write16(countdown_3, 0u);
+	PLAYER_COUNTERS(countdown_3)->seconds = 0u;
+	PLAYER_COUNTERS(countdown_3)->frames = 0u;
 	state = PLAYER(player)->state;
 	mem_write8(state, 0u);
 	return d;

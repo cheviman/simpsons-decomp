@@ -3,7 +3,7 @@
  *    Description: the players' states: standing, walking, jumping, attacks, weapons, carrying, team moves, hit reactions, losing a life
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -17,8 +17,7 @@
 void player_team_move(uint16_t player)
 {
 	bool L_038311 = false, L_038314 = false, L_038365 = false, L_03836A = false, L_0384D1 = false, L_0386E1 = false, L_0391EB = false, L_039205 = false, L_039216 = false;
-	uint32_t carry = 0;
-	uint8_t animation_base = 0, animation_offset = 0, attack_length = 0, joystick_bits = 0, move_number = 0, owner_kind = 0, pressed_either = 0, voice_high = 0, voice_low = 0, walk_controls = 0, z_low = 0;
+	uint8_t animation_base = 0, animation_offset = 0, attack_state = 0, joystick_bits = 0, move_number = 0, owner_kind = 0, pressed_either = 0, voice_high = 0, voice_low = 0, walk_controls = 0, z_low = 0;
 	uint16_t floor_z = 0, joystick = 0, spark_height = 0, teammate = 0, voice_command = 0, walk_velocities = 0;
 	uint16_t stack = 0;
 	uint8_t controls_pressed = 0, partner_pressed = 0, team_move_number = 0, kind = 0, t1 = 0, kind_2 = 0, team_move_number_2 = 0, team_move_number_3 = 0, kind_3 = 0, team_move_number_4 = 0, controls = 0, partner_joystick = 0, controls_2 = 0, own_joystick = 0, team_move_number_5 = 0, animation_flags = 0, team_move_number_6 = 0, voice_timer = 0, controls_pressed_2 = 0, controls_pressed_3 = 0, blow_landed = 0, team_direction = 0, controls_pressed_4 = 0, controls_pressed_5 = 0, controls_3 = 0, team_direction_2 = 0, t2 = 0, controls_4 = 0, controls_5 = 0, controls_6 = 0;
@@ -107,8 +106,8 @@ void player_team_move(uint16_t player)
 											{
 												L_0386E1 = false;
 												team_move_number_3 = OBJECT(player)->player.team_move_number;
-												attack_length = team_move_attack_lengths[(int8_t)team_move_number_3];
-												OBJECT(player)->player.attack_started = attack_length;
+												attack_state = team_move_attack_states[(int8_t)team_move_number_3];
+												OBJECT(player)->player.attack_started = attack_state;
 												OBJECT(player)->damage = 0xCu;
 												OBJECT(player)->attack = 0x13u;
 												z_2 = OBJECT(player)->z;
@@ -125,7 +124,7 @@ void player_team_move(uint16_t player)
 													OBJECT(player)->y_speed = 0;
 													animation_base = 0xF8u;
 												}
-												OBJECT(player)->player.player_state = attack_length;
+												OBJECT(player)->player.player_state = attack_state;
 												L_0391EB = true;
 											}
 											if (!L_0391EB)
@@ -244,7 +243,7 @@ void player_team_move(uint16_t player)
 											{
 												L_038311 = false;
 												voice_command = ((uint32_t)voice_high << 8) | voice_low;
-												carry = vector_queue_sound(voice_command);
+												vector_queue_sound(voice_command);
 											}
 										}
 									}
@@ -499,10 +498,10 @@ void player_stand(uint16_t y, uint16_t player)
 		{
 			OBJECT(player)->player.held = held;
 			command = 0x1800u;
-			carry = vector_queue_sound(command);
+			vector_queue_sound(command);
 			OBJECT(player + 0x60u)->player.held = (OBJECT(player + 0x60u)->player.held & 0xFFu) | 0x1400u;
 			OBJECT(player)->y_speed = 0;
-			OBJECT(picked_up)->throwable.carried = 1u;
+			OBJECT(picked_up)->carried = 1u;
 			OBJECT(picked_up)->parent = player;
 			kind_3 = OBJECT(player)->kind;
 			OBJECT(picked_up)->throwable.carrier_kind = kind_3 + 1u;
@@ -519,10 +518,10 @@ void player_stand(uint16_t y, uint16_t player)
 		shadow_player_2 = OBJECT(picked_up)->shadow_player;
 		OBJECT(picked_up)->shadow_player = (shadow_player_2 & 0xCFu) | stack;
 		command = 0x1800u;
-		carry = vector_queue_sound(command);
+		vector_queue_sound(command);
 		OBJECT(player + 0x60u)->player.held = (OBJECT(player + 0x60u)->player.held & 0xFFu) | 0x1400u;
 		OBJECT(player)->y_speed = 0;
-		OBJECT(picked_up)->throwable.carried = 1u;
+		OBJECT(picked_up)->carried = 1u;
 		OBJECT(picked_up)->parent = player;
 		kind_3 = OBJECT(player)->kind;
 		OBJECT(picked_up)->throwable.carrier_kind = kind_3 + 1u;
@@ -557,8 +556,8 @@ void player_stand(uint16_t y, uint16_t player)
 		player_walk(velocities, player, joystick);
 		return;
 	}
-	idle_players = io_read8(0x184Cu);
-	io_write8(0x184Cu, idle_players + 1u);
+	idle_players = io_read8(players_idle_count);
+	io_write8(players_idle_count, idle_players + 1u);
 	state_frames_2 = OBJECT(player)->player.state_frames;
 	state_frames = state_frames_2;
 	if (state_frames_2 != 0u)
@@ -613,7 +612,7 @@ void player_stand(uint16_t y, uint16_t player)
    its partner's), the scroll request, and the walking animation, or the team's when teamed up. */
 void player_walk(uint16_t velocities, uint16_t player, uint16_t joystick)
 {
-	uint8_t animation_base = 0, animation_offset = 0, attack_length = 0, base_animation = 0, owner_kind = 0, team_way = 0, walk_animation = 0, x_speed_high = 0;
+	uint8_t animation_base = 0, animation_offset = 0, attack_state = 0, base_animation = 0, owner_kind = 0, team_way = 0, walk_animation = 0, x_speed_high = 0;
 	uint16_t carry_offsets = 0, floor_z = 0, teammate = 0, velocity = 0;
 	uint8_t attributes = 0, teamed = 0, attributes_2 = 0, state_frames = 0, teamed_2 = 0, controls = 0, team_direction = 0, controls_2 = 0, teamed_3 = 0, controls_3 = 0, kind = 0, kind_2 = 0, team_move_number = 0, team_move_number_2 = 0, team_move_number_3 = 0, kind_3 = 0, t1 = 0;
 	uint16_t velocity_record = 0, x_speed = 0, walk_x_speed = 0, partner = 0, partner_2 = 0, partner_3 = 0, action = 0, z = 0, floor_z_2 = 0;
@@ -732,8 +731,8 @@ void player_walk(uint16_t velocities, uint16_t player, uint16_t joystick)
 		if (team_move_number != 2u)
 			break;
 		team_move_number_2 = OBJECT(player)->player.team_move_number;
-		attack_length = team_move_attack_lengths[(int8_t)team_move_number_2];
-		OBJECT(player)->player.attack_started = attack_length;
+		attack_state = team_move_attack_states[(int8_t)team_move_number_2];
+		OBJECT(player)->player.attack_started = attack_state;
 		OBJECT(player)->damage = 0xCu;
 		OBJECT(player)->attack = 0x13u;
 		z = OBJECT(player)->z;
@@ -750,7 +749,7 @@ void player_walk(uint16_t velocities, uint16_t player, uint16_t joystick)
 			OBJECT(player)->y_speed = 0;
 			animation_base = 0xF8u;
 		}
-		OBJECT(player)->player.player_state = attack_length;
+		OBJECT(player)->player.player_state = attack_state;
 		team_animation_base = animation_base;
 		velocity = team_move_animation_offsets_ADDRESS;
 		team_move_number_3 = OBJECT(player)->player.team_move_number;
@@ -775,7 +774,7 @@ void player_walk(uint16_t velocities, uint16_t player, uint16_t joystick)
 void player_team_jump(uint16_t player)
 {
 	bool L_038533 = false;
-	uint8_t animation_base = 0, animation_offset = 0, attack_length = 0, owner_kind = 0;
+	uint8_t animation_base = 0, animation_offset = 0, attack_state = 0, owner_kind = 0;
 	uint16_t floor_z = 0, joystick = 0, teammate = 0, velocity = 0;
 	uint8_t controls = 0, controls_2 = 0, attack_started = 0, team_move_number = 0, controls_pressed = 0, partner_pressed = 0, state_timer = 0, controls_3 = 0, controls_4 = 0, state_timer_2 = 0, kind = 0, kind_2 = 0, team_move_number_2 = 0, team_move_number_3 = 0, team_move_number_4 = 0, kind_3 = 0, t2 = 0;
 	uint16_t partner = 0, z_speed = 0, new_z_speed = 0, t1 = 0, partner_2 = 0, action = 0, z = 0, floor_z_2 = 0;
@@ -860,8 +859,8 @@ void player_team_jump(uint16_t player)
 	do
 	{
 		team_move_number_3 = OBJECT(player)->player.team_move_number;
-		attack_length = team_move_attack_lengths[(int8_t)team_move_number_3];
-		OBJECT(player)->player.attack_started = attack_length;
+		attack_state = team_move_attack_states[(int8_t)team_move_number_3];
+		OBJECT(player)->player.attack_started = attack_state;
 		OBJECT(player)->damage = 0xCu;
 		OBJECT(player)->attack = 0x13u;
 		z = OBJECT(player)->z;
@@ -878,7 +877,7 @@ void player_team_jump(uint16_t player)
 			OBJECT(player)->y_speed = 0;
 			animation_base = 0xF8u;
 		}
-		OBJECT(player)->player.player_state = attack_length;
+		OBJECT(player)->player.player_state = attack_state;
 		team_animation_base = animation_base;
 		velocity = team_move_animation_offsets_ADDRESS;
 		team_move_number_4 = OBJECT(player)->player.team_move_number;
@@ -921,7 +920,7 @@ void player_team_jump(uint16_t player)
 /* Starts the team's fall (state 34) with its falling animation. */
 void player_team_start_fall(uint16_t player)
 {
-	uint8_t animation_base = 0, animation_offset = 0, attack_length = 0, owner_kind = 0;
+	uint8_t animation_base = 0, animation_offset = 0, attack_state = 0, owner_kind = 0;
 	uint16_t animation_offsets = 0, floor_z = 0, teammate = 0;
 	uint8_t team_move_number = 0, kind = 0, t1 = 0, kind_2 = 0, kind_3 = 0, team_move_number_2 = 0, team_move_number_3 = 0;
 	uint16_t partner = 0, action = 0, z = 0, floor_z_2 = 0;
@@ -963,8 +962,8 @@ void player_team_start_fall(uint16_t player)
 		if (team_move_number_2 != 2u)
 			break;
 		team_move_number_3 = OBJECT(player)->player.team_move_number;
-		attack_length = team_move_attack_lengths[(int8_t)team_move_number_3];
-		OBJECT(player)->player.attack_started = attack_length;
+		attack_state = team_move_attack_states[(int8_t)team_move_number_3];
+		OBJECT(player)->player.attack_started = attack_state;
 		OBJECT(player)->damage = 0xCu;
 		OBJECT(player)->attack = 0x13u;
 		z = OBJECT(player)->z;
@@ -981,7 +980,7 @@ void player_team_start_fall(uint16_t player)
 			OBJECT(player)->y_speed = 0;
 			animation_base = 0xF8u;
 		}
-		OBJECT(player)->player.player_state = attack_length;
+		OBJECT(player)->player.player_state = attack_state;
 	}
 	player_team_split(teammate, player);
 	OBJECT(teammate)->flags = 0xC0u;
@@ -997,7 +996,7 @@ void player_team_fall(uint16_t player)
 {
 	bool L_038583 = false;
 	uint32_t zero = 0, negative = 0, overflow = 0;
-	uint8_t animation_base = 0, animation_offset = 0, attack_length = 0, owner_kind = 0, z_speed_high = 0, z_speed_low = 0;
+	uint8_t animation_base = 0, animation_offset = 0, attack_state = 0, owner_kind = 0, z_speed_high = 0, z_speed_low = 0;
 	uint16_t floor_z = 0, joystick = 0, teammate = 0, velocity = 0, z = 0;
 	uint8_t controls = 0, controls_2 = 0, attack_started = 0, team_move_number = 0, controls_pressed = 0, partner_pressed = 0, kind = 0, kind_2 = 0, kind_3 = 0, team_move_number_2 = 0, team_move_number_3 = 0, team_move_number_4 = 0, kind_4 = 0, t1 = 0;
 	uint16_t partner = 0, floor_z_2 = 0, z_speed = 0, bounce_z_speed = 0, bounce_up_speed = 0, z_speed_2 = 0, new_z_speed = 0, faster_z_speed = 0, partner_2 = 0, action = 0, z_2 = 0, floor_z_3 = 0;
@@ -1107,8 +1106,8 @@ void player_team_fall(uint16_t player)
 	do
 	{
 		team_move_number_3 = OBJECT(player)->player.team_move_number;
-		attack_length = team_move_attack_lengths[(int8_t)team_move_number_3];
-		OBJECT(player)->player.attack_started = attack_length;
+		attack_state = team_move_attack_states[(int8_t)team_move_number_3];
+		OBJECT(player)->player.attack_started = attack_state;
 		OBJECT(player)->damage = 0xCu;
 		OBJECT(player)->attack = 0x13u;
 		z_2 = OBJECT(player)->z;
@@ -1125,7 +1124,7 @@ void player_team_fall(uint16_t player)
 			OBJECT(player)->y_speed = 0;
 			animation_base = 0xF8u;
 		}
-		OBJECT(player)->player.player_state = attack_length;
+		OBJECT(player)->player.player_state = attack_state;
 		team_animation_base = animation_base;
 		velocity = team_move_animation_offsets_ADDRESS;
 		team_move_number_4 = OBJECT(player)->player.team_move_number;
@@ -1169,7 +1168,6 @@ void player_team_fall(uint16_t player)
    when the animation ends. */
 void player_throw_weapon_away(uint16_t kind, uint16_t player)
 {
-	uint32_t carry = 0;
 	uint8_t frame_flags = 0;
 	uint16_t command = 0;
 	uint8_t animation_flags = 0;
@@ -1187,7 +1185,7 @@ void player_throw_weapon_away(uint16_t kind, uint16_t player)
 		return;
 	}
 	command = 0x1900u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	player_take_touches(kind, player);
 }
 
@@ -1453,14 +1451,13 @@ void player_start_throw(uint16_t y, uint16_t player, uint16_t d)
 /* Starts swinging weapon 6, with its sound (6A). */
 void player_start_swing_6(uint16_t player, uint8_t use_index_2)
 {
-	uint32_t carry = 0;
 	uint8_t use_index = 0;
 	uint16_t command = 0;
 	uint8_t stack = 0;
 
 	stack = use_index_2;
 	command = 0x6A00u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	use_index = stack;
 	player_start_swing(player, use_index);
 }
@@ -1912,13 +1909,12 @@ void player_throw_carried_5(uint16_t animation_offsets, uint16_t player)
    player faces; the player holds nothing. */
 void player_release_throw(uint16_t held, uint16_t offsets, uint16_t player)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0, throw_speed = 0;
 	uint8_t attributes = 0;
 	uint16_t player_y = 0;
 
 	command = 0x1900u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	player_place_carried(held, offsets, player);
 	player_y = OBJECT(player)->y;
 	OBJECT(held)->y = player_y;
@@ -1939,7 +1935,6 @@ void player_release_throw(uint16_t held, uint16_t offsets, uint16_t player)
    one use less, and none left drops it. */
 void player_throw_weapon_8(uint16_t animation_offsets, uint16_t player)
 {
-	uint32_t carry = 0;
 	uint8_t frame_flags = 0;
 	uint16_t command = 0, effect = 0, effect_state = 0;
 	uint8_t animation_flags = 0, weapon_uses = 0;
@@ -1949,10 +1944,10 @@ void player_throw_weapon_8(uint16_t animation_offsets, uint16_t player)
 	if ((frame_flags & 2u) != 0u)
 	{
 		command = 0x1900u;
-		carry = vector_queue_sound(command);
+		vector_queue_sound(command);
 		effect = 0x882u;
 		effect_state = 0x800u;
-		carry = player_start_effect(effect, player, effect_state);
+		player_start_effect(effect, player, effect_state);
 		player_attack_fall(effect, player);
 		return;
 	}
@@ -1982,7 +1977,6 @@ void player_swing_6(uint16_t player)
 /* Swinging weapon 7, with sound 1E at its hit frame. */
 void player_swing_7(uint16_t player)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0, spark_height = 0;
 	uint8_t animation_flags = 0;
 
@@ -1990,7 +1984,7 @@ void player_swing_7(uint16_t player)
 	if ((animation_flags & 2u) != 0u)
 	{
 		command = 0x1E00u;
-		carry = vector_queue_sound(command);
+		vector_queue_sound(command);
 	}
 	spark_height = hit_spark_height_ADDRESS;
 	player_attack_move(spark_height, player);
@@ -2002,7 +1996,7 @@ void player_team_attack_homer(uint16_t teammate, uint16_t y, uint16_t player)
 	uint16_t spark_height = 0;
 	uint8_t stage_is_over = 0;
 
-	stage_is_over = io_read8(0x184Bu);
+	stage_is_over = io_read8(players_stop_request);
 	if (stage_is_over == 0u)
 	{
 		spark_height = hit_spark_height_ADDRESS;
@@ -2254,7 +2248,7 @@ void player_attack_land(uint16_t animation_offsets, uint16_t player)
 /* Ends an attack move when its animation does, a team's its own way. */
 void player_attack_end(uint16_t animation_offsets, uint16_t player)
 {
-	uint8_t animation_base = 0, animation_offset = 0, attack_length = 0, facing_left = 0, floor_high = 0, floor_low = 0, owner_kind = 0;
+	uint8_t animation_base = 0, animation_offset = 0, attack_state = 0, facing_left = 0, floor_high = 0, floor_low = 0, owner_kind = 0;
 	uint16_t floor_z = 0, teammate = 0, x_speed = 0;
 	uint8_t stack = 0;
 	uint8_t teamed = 0, animation_flags = 0, kind = 0, kind_2 = 0, team_move_number = 0, team_move_number_2 = 0, team_move_number_3 = 0, kind_3 = 0, t1 = 0, player_state = 0, attributes = 0, t2 = 0, attributes_2 = 0;
@@ -2296,8 +2290,8 @@ void player_attack_end(uint16_t animation_offsets, uint16_t player)
 			if (team_move_number != 2u)
 				break;
 			team_move_number_2 = OBJECT(player)->player.team_move_number;
-			attack_length = team_move_attack_lengths[(int8_t)team_move_number_2];
-			OBJECT(player)->player.attack_started = attack_length;
+			attack_state = team_move_attack_states[(int8_t)team_move_number_2];
+			OBJECT(player)->player.attack_started = attack_state;
 			OBJECT(player)->damage = 0xCu;
 			OBJECT(player)->attack = 0x13u;
 			z = OBJECT(player)->z;
@@ -2314,7 +2308,7 @@ void player_attack_end(uint16_t animation_offsets, uint16_t player)
 				OBJECT(player)->y_speed = 0;
 				animation_base = 0xF8u;
 			}
-			OBJECT(player)->player.player_state = attack_length;
+			OBJECT(player)->player.player_state = attack_state;
 			team_animation_base = animation_base;
 			animation_offsets = team_move_animation_offsets_ADDRESS;
 			team_move_number_3 = OBJECT(player)->player.team_move_number;
@@ -2469,7 +2463,7 @@ void player_flung_back(uint16_t player)
 	command = 0x3F00u;
 	player_play_voice(player, command);
 	command = 0x1B00u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	player_stop(player);
 	OBJECT(player)->y = 0x98u;
 	OBJECT(player)->player.player_state = 0x3Cu;
@@ -2761,7 +2755,7 @@ void player_grabbed(uint16_t y, uint16_t player)
 		hit_kind = hit;
 		if (hit != 0u && hit_kind < 0x10u)
 		{
-			OBJECT(grabber)->unk_58 = 2u;
+			OBJECT(grabber)->grabber.squeeze_step = 2u;
 			command = 0x3F24u;
 			player_play_voice(player, command);
 			flags = OBJECT(player + 0x60u)->flags;
@@ -2794,7 +2788,6 @@ void player_grabbed(uint16_t y, uint16_t player)
    with no life left falls (state 15). */
 void player_struggle(uint16_t holder, uint16_t kind, uint16_t player)
 {
-	uint32_t carry = 0;
 	uint16_t effect_state = 0, holder_object = 0;
 	uint8_t vitality = 0, stage_is_over = 0, state = 0, controls_pressed = 0, hold_presses = 0;
 	uint16_t holder_2 = 0;
@@ -2803,19 +2796,19 @@ void player_struggle(uint16_t holder, uint16_t kind, uint16_t player)
 	if (vitality == 0u)
 	{
 		effect_state = 0xD00u;
-		carry = player_start_effect(kind, player, effect_state);
+		player_start_effect(kind, player, effect_state);
 		holder_2 = OBJECT(player)->player.holder;
 		holder_object = holder_2;
-		OBJECT(holder_object)->unk_58 = 0u;
+		OBJECT(holder_object)->grabber.squeeze_step = 0u;
 		player_fall_down(player);
 		return;
 	}
-	stage_is_over = io_read8(0x184Bu);
+	stage_is_over = io_read8(players_stop_request);
 	if (stage_is_over != 0u)
 	{
 		effect_state = 0xD00u;
-		carry = player_start_effect(kind, player, effect_state);
-		OBJECT(holder)->unk_58 = 0u;
+		player_start_effect(kind, player, effect_state);
+		OBJECT(holder)->grabber.squeeze_step = 0u;
 		OBJECT(player)->player.hold_presses = 0u;
 		OBJECT(player)->flags = 0x80u;
 		OBJECT(player)->player.player_state = 0x3Bu;
@@ -2826,8 +2819,8 @@ void player_struggle(uint16_t holder, uint16_t kind, uint16_t player)
 	if (state == 4u)
 	{
 		effect_state = 0xD00u;
-		carry = player_start_effect(kind, player, effect_state);
-		OBJECT(holder)->unk_58 = 0u;
+		player_start_effect(kind, player, effect_state);
+		OBJECT(holder)->grabber.squeeze_step = 0u;
 		OBJECT(player)->player.hold_presses = 0u;
 		OBJECT(player)->flags = 0x80u;
 		OBJECT(player)->player.player_state = 0x3Bu;
@@ -2842,8 +2835,8 @@ void player_struggle(uint16_t holder, uint16_t kind, uint16_t player)
 		if (hold_presses == 1u)
 		{
 			effect_state = 0xD00u;
-			carry = player_start_effect(kind, player, effect_state);
-			OBJECT(holder)->unk_58 = 0u;
+			player_start_effect(kind, player, effect_state);
+			OBJECT(holder)->grabber.squeeze_step = 0u;
 			OBJECT(player)->player.hold_presses = 0u;
 			OBJECT(player)->flags = 0x80u;
 			OBJECT(player)->player.player_state = 0x3Bu;
@@ -2959,11 +2952,10 @@ void player_knocked_up(uint16_t kind, uint16_t player)
 /* Crashes into the screen's edge: sound 1B, state 17 (animation D6). */
 void player_crash_into_edge(uint16_t player)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 
 	command = 0x1B00u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	OBJECT(player)->animation = 0xD6u;
 	OBJECT(player)->player.player_state = 0x17u;
 	OBJECT(player)->player.state_timer = 0x20u;
@@ -3026,7 +3018,6 @@ void player_lie_down(uint16_t player)
    (state 1F), or on its last life starts the game-over sprite rising above it (state 20). */
 void player_die(uint16_t player)
 {
-	uint32_t carry = 0;
 	uint8_t lives_low = 0;
 	uint16_t command = 0, effect_state = 0, held_object = 0, kind = 0, player_vars = 0, raised_y = 0, z = 0;
 	uint8_t held_high = 0, held_attack = 0;
@@ -3051,9 +3042,9 @@ void player_die(uint16_t player)
 	}
 	player_stop(player);
 	command = 0x1A00u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	rank_time_step = 0u;
-	t1 = io_read16(0x1848u);
+	t1 = io_read16(running_player_values);
 	lives_word = mem_read16(t1);
 	lives_low = (uint8_t)lives_word;
 	if ((uint16_t)(((uint32_t)(lives_word >> 8) << 8) | (lives_low & 0xFFu)) != 1u)
@@ -3064,13 +3055,13 @@ void player_die(uint16_t player)
 		player_keep_life(player);
 		return;
 	}
-	t2 = io_read16(0x1848u);
+	t2 = io_read16(running_player_values);
 	player_vars = t2;
 	PLAYER_VALUES(player_vars)->grab_hints = 0u;
 	OBJECT(player)->animation = 0xCEu;
 	kind = 0x2E0u;
 	effect_state = (lives_low & 0xFFu) | 0xB00u;
-	carry = player_start_effect(kind, player, effect_state);
+	player_start_effect(kind, player, effect_state);
 	player_x = OBJECT(player)->x;
 	OBJECT(player + 0x60u)->x = player_x;
 	player_y = OBJECT(player)->y;
@@ -3101,11 +3092,11 @@ void player_lose_life(uint16_t player)
 	{
 		camera_wait_frames = 0u;
 		rank_frames = 0u;
-		t1 = io_read16(0x1848u);
+		t1 = io_read16(running_player_values);
 		player_vars = t1;
 		PLAYER_VALUES(player_vars)->entry_status = 0u;
 		OBJECT(player)->player.status = 0u;
-		t2 = io_read16(0x1848u);
+		t2 = io_read16(running_player_values);
 		mem_write16(t2, mem_read16(t2) - 1u);
 		player_keep_life(player);
 		return;
@@ -3178,18 +3169,18 @@ void player_game_over_end(uint16_t player)
 		player_keep_life(player);
 		return;
 	}
-	t1 = io_read16(0x1848u);
+	t1 = io_read16(running_player_values);
 	player_vars = t1;
 	PLAYER_VALUES(player_vars)->entry_status = 0u;
 	OBJECT(player + 0x60u)->flags = 0u;
 	OBJECT(player)->flags = 0u;
 	camera_wait_frames = 0u;
 	rank_frames = 0u;
-	t2 = io_read16(0x1848u);
+	t2 = io_read16(running_player_values);
 	player_vars = t2;
 	PLAYER_VALUES(player_vars)->entry_status = 0u;
 	OBJECT(player)->player.status = 0u;
-	t3 = io_read16(0x1848u);
+	t3 = io_read16(running_player_values);
 	mem_write16(t3, mem_read16(t3) - 1u);
 	player_keep_life(player);
 }
@@ -3271,7 +3262,7 @@ void player_entry_crash(uint16_t player)
 	OBJECT(player)->damage = 0u;
 	OBJECT(player)->attack = 0u;
 	command = 0x1B00u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	state_and_time = 0x2820u;
 	animation = 0xD6u;
 	player_set_state(state_and_time, player, animation);
@@ -3337,8 +3328,8 @@ void player_work_heavy_object(uint16_t kind, uint16_t player)
 	heavy_object_presses = OBJECT(player)->player.heavy_object_presses;
 	if ((int8_t)heavy_object_presses >= 3)
 	{
-		heavy_workers = io_read8(0x184Du);
-		io_write8(0x184Du, heavy_workers + 1u);
+		heavy_workers = io_read8(heavy_object_workers);
+		io_write8(heavy_object_workers, heavy_workers + 1u);
 		player_take_touches(kind, player);
 		return;
 	}
@@ -3362,8 +3353,7 @@ void player_work_heavy_object(uint16_t kind, uint16_t player)
    jump or a stage's end undoes it. */
 void player_team_ready(uint16_t animation_offsets, uint16_t player)
 {
-	uint32_t carry = 0;
-	uint8_t animation_base = 0, animation_offset = 0, attack_length = 0, owner_kind = 0, pressed_either = 0;
+	uint8_t animation_base = 0, animation_offset = 0, attack_state = 0, owner_kind = 0, pressed_either = 0;
 	uint16_t effect_state = 0, floor_z = 0, kind = 0, teammate = 0;
 	uint8_t stage_is_over = 0, controls_pressed = 0, partner_pressed = 0, team_move_number = 0, team_move_number_2 = 0, kind_2 = 0, t1 = 0, kind_3 = 0, kind_4 = 0, team_move_number_3 = 0, team_move_number_4 = 0;
 	uint16_t partner = 0, z = 0, floor_z_2 = 0, partner_2 = 0, action = 0, z_2 = 0, floor_z_3 = 0;
@@ -3371,7 +3361,7 @@ void player_team_ready(uint16_t animation_offsets, uint16_t player)
 
 	partner = OBJECT(player)->player.partner;
 	teammate = partner;
-	stage_is_over = io_read8(0x184Bu);
+	stage_is_over = io_read8(players_stop_request);
 	if (stage_is_over != 0u)
 	{
 		player_team_split(teammate, player);
@@ -3409,7 +3399,7 @@ void player_team_ready(uint16_t animation_offsets, uint16_t player)
 		OBJECT(player + 0x60u)->player.blink_frames = 0u;
 		kind = 0xB180u;
 		effect_state = 0x300u;
-		carry = player_start_effect(kind, player, effect_state);
+		player_start_effect(kind, player, effect_state);
 	}
 	OBJECT(player)->player.voice_timer = 3u;
 	OBJECT(player)->player.player_state = 0x31u;
@@ -3448,8 +3438,8 @@ void player_team_ready(uint16_t animation_offsets, uint16_t player)
 		if (team_move_number_3 != 2u)
 			break;
 		team_move_number_4 = OBJECT(player)->player.team_move_number;
-		attack_length = team_move_attack_lengths[(int8_t)team_move_number_4];
-		OBJECT(player)->player.attack_started = attack_length;
+		attack_state = team_move_attack_states[(int8_t)team_move_number_4];
+		OBJECT(player)->player.attack_started = attack_state;
 		OBJECT(player)->damage = 0xCu;
 		OBJECT(player)->attack = 0x13u;
 		z_2 = OBJECT(player)->z;
@@ -3466,7 +3456,7 @@ void player_team_ready(uint16_t animation_offsets, uint16_t player)
 			OBJECT(player)->y_speed = 0;
 			animation_base = 0xF8u;
 		}
-		OBJECT(player)->player.player_state = attack_length;
+		OBJECT(player)->player.player_state = attack_state;
 	}
 	player_team_split(teammate, player);
 	OBJECT(teammate)->flags = 0xC0u;
@@ -3502,7 +3492,7 @@ void player_team_resume(uint16_t player)
    splits (a Marge-and-kid pair attacks first). */
 void player_team_together(uint16_t player)
 {
-	uint8_t animation_base = 0, animation_offset = 0, attack_length = 0, owner_kind = 0;
+	uint8_t animation_base = 0, animation_offset = 0, attack_state = 0, owner_kind = 0;
 	uint16_t animation_offsets = 0, floor_z = 0, teammate = 0;
 	uint8_t team_move_number = 0, team_move_number_2 = 0, kind = 0, t1 = 0, kind_2 = 0, kind_3 = 0, team_move_number_3 = 0, team_move_number_4 = 0;
 	uint16_t floor_z_2 = 0, partner = 0, action = 0, z = 0, floor_z_3 = 0;
@@ -3555,8 +3545,8 @@ void player_team_together(uint16_t player)
 		if (team_move_number_3 != 2u)
 			break;
 		team_move_number_4 = OBJECT(player)->player.team_move_number;
-		attack_length = team_move_attack_lengths[(int8_t)team_move_number_4];
-		OBJECT(player)->player.attack_started = attack_length;
+		attack_state = team_move_attack_states[(int8_t)team_move_number_4];
+		OBJECT(player)->player.attack_started = attack_state;
 		OBJECT(player)->damage = 0xCu;
 		OBJECT(player)->attack = 0x13u;
 		z = OBJECT(player)->z;
@@ -3573,7 +3563,7 @@ void player_team_together(uint16_t player)
 			OBJECT(player)->y_speed = 0;
 			animation_base = 0xF8u;
 		}
-		OBJECT(player)->player.player_state = attack_length;
+		OBJECT(player)->player.player_state = attack_state;
 		team_animation_base = animation_base;
 		animation_offsets = team_move_animation_offsets_ADDRESS;
 		team_move_number_2 = OBJECT(player)->player.team_move_number;
@@ -3618,7 +3608,7 @@ void player_set_animation(uint16_t carry_offsets, uint16_t player, uint8_t base_
 		weapon_kind = (uint8_t)OBJECT(player)->player.held;
 		stack = (((weapon_kind - 3u) << 1) << 1) << 1;
 		OBJECT(player)->animation = animation + stack;
-		stage_is_over = io_read8(0x184Bu);
+		stage_is_over = io_read8(players_stop_request);
 		if (stage_is_over != 0u)
 		{
 			player_drop_held(held_object, player);
@@ -3638,7 +3628,7 @@ void player_set_animation(uint16_t carry_offsets, uint16_t player, uint8_t base_
 		{
 			OBJECT(player)->animation = animation + 0x61u;
 			player_team_follow(held_object, player);
-			t1 = io_read8(0x184Bu);
+			t1 = io_read8(players_stop_request);
 			if (t1 != 0u)
 			{
 				player_drop_held(held_object, player);
@@ -3652,7 +3642,7 @@ void player_set_animation(uint16_t carry_offsets, uint16_t player, uint8_t base_
 	animation_offset = (((kind_3 - 3u) << 1) << 1) << 1;
 	stack = animation_offset;
 	OBJECT(player)->animation = animation + stack;
-	t2 = io_read8(0x184Bu);
+	t2 = io_read8(players_stop_request);
 	if (t2 != 0u)
 	{
 		held_2 = OBJECT(player)->player.held;

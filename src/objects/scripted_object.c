@@ -3,7 +3,7 @@
  *    Description: the object that runs a script of commands (types E8, E9, 2A)
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -693,7 +693,6 @@ void scripted_object_wait_landing(uint16_t object, uint16_t script_cursor)
 /* Command 0B: queues a sound command, unless its field 30 is negative */
 uint16_t scripted_object_play_sound(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint8_t sound = 0, sound_argument = 0;
 	uint16_t command = 0, command_handlers = 0, script_cursor = 0;
 	uint16_t stack = 0;
@@ -711,7 +710,7 @@ uint16_t scripted_object_play_sound(uint16_t object)
 		{
 			stack = script_cursor;
 			command = (sound_argument & 0xFFu) | ((uint32_t)sound << 8);
-			carry = vector_queue_sound(command);
+			vector_queue_sound(command);
 			script_cursor = stack;
 		}
 		command_place = script_cursor;

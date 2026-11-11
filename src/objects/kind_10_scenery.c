@@ -3,7 +3,7 @@
  *    Description: stage 4's kind 10 scenery: what rises at the end and what comes down
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -42,7 +42,6 @@ uint16_t kind_10_riser_start(uint16_t object)
 /* Waits until the stage's boss is beaten, then starts rising (sound 1500 for the second one). */
 void kind_10_riser_wait_boss(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t parameter = 0, state = 0;
 
@@ -52,7 +51,7 @@ void kind_10_riser_wait_boss(uint16_t object)
 	if (parameter != 0u)
 	{
 		command = 0x1500u;
-		carry = vector_queue_sound(command);
+		vector_queue_sound(command);
 	}
 	OBJECT(object)->z_speed = 0x40;
 	OBJECT(object)->timer = 4u;
@@ -178,7 +177,6 @@ void kind_10_dropper_wait(uint16_t object)
 /* Starts coming down for 64 frames (sound 1300 for the first). */
 void kind_10_dropper_come_down(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t timer = 0, parameter = 0, state = 0;
 
@@ -190,7 +188,7 @@ void kind_10_dropper_come_down(uint16_t object)
 	if (parameter == 0u)
 	{
 		command = 0x1300u;
-		carry = vector_queue_sound(command);
+		vector_queue_sound(command);
 	}
 	OBJECT(object)->timer = 0x40u;
 	OBJECT(object)->z_speed = -0x80;
@@ -216,8 +214,8 @@ uint16_t kind_10_dropper_land(uint16_t object, uint16_t states)
 	{
 		animation_flags = OBJECT(object)->animation_flags;
 		OBJECT(object)->animation_flags = animation_flags | 0x80u;
-		droppers_down = io_read8(0x184Au);
-		io_write8(0x184Au, droppers_down + 1u);
+		droppers_down = io_read8(object_group_count);
+		io_write8(object_group_count, droppers_down + 1u);
 		states = kind_10_dropper_write_floor(object);
 	}
 	state = OBJECT(object)->state;
@@ -242,7 +240,7 @@ uint16_t kind_10_dropper_write_floor(uint16_t object)
 
 	control = board_control | 2u;
 	board_control = control;
-	io_write8(0x1FC2u, control);
+	io_write8(board_control_register, control);
 	floor_columns_left = 0x20u;
 	floor_start = OBJECT(object)->kind_10_dropper.floor_start;
 	stack = floor_start;
@@ -275,7 +273,7 @@ uint16_t kind_10_dropper_write_floor(uint16_t object)
 	} while (columns_to_write != 1u);
 	control = board_control & ~3u;
 	board_control = control;
-	io_write8(0x1FC2u, control);
+	io_write8(board_control_register, control);
 	leftover_y = column;
 	return floor_place;
 }

@@ -3,7 +3,7 @@
  *    Description: stage 1's kind 90 enemy that throws, and what it throws
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -193,7 +193,7 @@ uint16_t kind_90_throw(uint16_t object, uint16_t u)
 		action_step = OBJECT(object)->action_step;
 		OBJECT(object)->action_step = action_step + 1u;
 		command = 0x6100u;
-		carry = vector_queue_sound(command);
+		vector_queue_sound(command);
 		return u;
 	}
 	throws_left = OBJECT(object)->kind_90.throws_left;
@@ -213,7 +213,7 @@ uint16_t kind_90_throw(uint16_t object, uint16_t u)
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step + 1u;
 	command = 0x6100u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	return u;
 }
 

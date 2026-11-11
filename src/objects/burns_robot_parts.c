@@ -3,7 +3,7 @@
  *    Description: the robot's objects: the wall it breaks out of, the part it tosses, its debris, shots, bombs and held part, Mr. Burns and Maggie at the end
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -988,7 +988,6 @@ uint16_t burns_breakout_wait(uint16_t shape, uint16_t piece)
 /* At the piece's frame knocks a hole in the wall's tiles (16 rows of 32), hides the shape, sound 4F. */
 uint16_t burns_breakout_break_wall(uint16_t shape)
 {
-	uint32_t carry = 0;
 	uint8_t fill = 0;
 	uint16_t command = 0, piece = 0;
 	uint16_t stack = 0;
@@ -1025,7 +1024,7 @@ uint16_t burns_breakout_break_wall(uint16_t shape)
 	} while (rows_left != 1u);
 	OBJECT(shape)->flags = 4u;
 	command = 0x4F00u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	state = OBJECT(shape)->state;
 	OBJECT(shape)->state = state + 1u;
 	return piece;
@@ -1204,7 +1203,7 @@ uint16_t rescued_maggie_fall(uint16_t maggie, uint16_t mr_burns)
 	uint8_t landed_count = 0, bounce_high = 0, state = 0;
 	uint16_t z = 0, burns = 0, z_speed = 0;
 
-	carry = burns_part_fall(maggie);
+	burns_part_fall(maggie);
 	z = OBJECT(maggie)->z;
 	if ((int16_t)z <= 0x10)
 	{
@@ -1258,7 +1257,6 @@ void rescued_maggie_sound_then_stop(uint16_t maggie)
 /* Stops as Maggie (kind 11, animation 88) with sound 48, for 32 frames. */
 void rescued_maggie_stop(uint16_t maggie)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t wait_frames = 0, wait_frames_2 = 0, state = 0;
 
@@ -1270,7 +1268,7 @@ void rescued_maggie_stop(uint16_t maggie)
 		return;
 	}
 	command = 0x4800u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	OBJECT(maggie)->x_speed = 0;
 	OBJECT(maggie)->y_speed = 0;
 	OBJECT(maggie)->z_speed = 0;
@@ -1375,7 +1373,6 @@ void rescued_maggie_finish(uint16_t maggie, uint16_t d)
 /* Sound 45 every 16 frames. */
 uint16_t rescued_maggie_sound(uint16_t d)
 {
-	uint32_t carry = 0;
 	uint8_t phase_then_sound = 0;
 	uint16_t d_2 = 0;
 	uint8_t frame_phase = 0;
@@ -1386,7 +1383,7 @@ uint16_t rescued_maggie_sound(uint16_t d)
 	{
 		d = 0x4500u;
 		phase_then_sound = 0x45u;
-		carry = vector_queue_sound(d);
+		vector_queue_sound(d);
 	}
 	d_2 = (d & 0xFFu) | ((uint32_t)phase_then_sound << 8);
 	return d_2;
@@ -1403,7 +1400,7 @@ void burns_bomb_fall(uint16_t bomb)
 	if (carry == 0u)
 		return;
 	command = 0x5200u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	OBJECT(bomb)->animation = 0x87u;
 	OBJECT(bomb)->burns_bomb.fuse = 0x20u;
 	state = OBJECT(bomb)->state;
@@ -1414,7 +1411,6 @@ void burns_bomb_fall(uint16_t bomb)
    (animation 89). */
 uint16_t burns_bomb_fuse(uint16_t bomb, uint16_t palette_job)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0, request = 0;
 	uint8_t state = 0, fuse = 0;
 
@@ -1423,7 +1419,7 @@ uint16_t burns_bomb_fuse(uint16_t bomb, uint16_t palette_job)
 		screen_shake_on = 1u;
 		screen_shake_kind = 0u;
 		command = 0x4C00u;
-		carry = vector_queue_sound(command);
+		vector_queue_sound(command);
 		palette_request_kind = 6u;
 		request = 0xE20u;
 		palette_job = vector_palette_request(palette_job, request);
@@ -1442,7 +1438,7 @@ uint16_t burns_bomb_fuse(uint16_t bomb, uint16_t palette_job)
 			screen_shake_on = 1u;
 			screen_shake_kind = 0u;
 			command = 0x4C00u;
-			carry = vector_queue_sound(command);
+			vector_queue_sound(command);
 			palette_request_kind = 6u;
 			request = 0xE20u;
 			palette_job = vector_palette_request(palette_job, request);
@@ -1540,21 +1536,20 @@ uint16_t mr_burns_appear(uint16_t burns)
    his voice (3F39), turned left (animation 81). */
 uint16_t mr_burns_wait_for_blow(uint16_t burns, uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t old_blow_player = 0, wait_frames = 0, state = 0, hit = 0, shadow_player = 0;
 	uint16_t hit_by = 0;
 
-	old_blow_player = io_read8(0x18FCu);
-	io_write8(0x18FCu, 0u);
+	old_blow_player = io_read8(maggie_rescuer);
+	io_write8(maggie_rescuer, 0u);
 	wait_frames = OBJECT(burns)->mr_burns.wait_frames;
 	OBJECT(burns)->mr_burns.wait_frames = wait_frames - 1u;
 	if (wait_frames == 1u)
 	{
 		command = 0x9800u;
-		carry = vector_queue_sound(command);
+		vector_queue_sound(command);
 		command = 0x3F39u;
-		carry = vector_queue_sound(command);
+		vector_queue_sound(command);
 		OBJECT(burns)->attributes = 0x40u;
 		OBJECT(burns)->animation = 0x81u;
 		OBJECT(burns)->mr_burns.wait_frames = 0x20u;
@@ -1570,13 +1565,13 @@ uint16_t mr_burns_wait_for_blow(uint16_t burns, uint16_t object)
 	hit_by = OBJECT(burns)->hit_by;
 	object = hit_by;
 	shadow_player = OBJECT(object)->shadow_player;
-	io_write8(0x18FCu, shadow_player & ~0xFu);
+	io_write8(maggie_rescuer, shadow_player & ~0xFu);
 	command = 0x6300u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	command = 0x9800u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	command = 0x3F39u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	OBJECT(burns)->attributes = 0x40u;
 	OBJECT(burns)->animation = 0x81u;
 	OBJECT(burns)->mr_burns.wait_frames = 0x20u;
@@ -1595,7 +1590,7 @@ void mr_burns_beaten(uint16_t burns, uint8_t d)
 	OBJECT(burns)->mr_burns.wait_frames = wait_frames - 1u;
 	if (wait_frames == 1u)
 	{
-		io_write16(0x1852u, burns);
+		io_write16(stage_kept_object, burns);
 		boss_beaten = 1u;
 		step_phase++;
 		step_subphase_halfword = 0x100u | (d & 0xFFu);
@@ -1628,7 +1623,6 @@ uint16_t mr_burns_release_maggie(uint16_t burns, uint16_t rescued)
 /* When Maggie lands: his voice (3F2C), his place and the scroll kept in 18F4-18FA, animation 82. */
 void mr_burns_see_maggie(uint16_t burns)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t maggie_landed = 0, state = 0;
 	uint16_t burns_x = 0, burns_y = 0;
@@ -1637,13 +1631,13 @@ void mr_burns_see_maggie(uint16_t burns)
 	if (maggie_landed == 0u)
 		return;
 	command = 0x3F2Cu;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	burns_x = OBJECT(burns)->x;
-	io_write16(0x18F4u, burns_x);
+	io_write16(reunion_spot_x, burns_x);
 	burns_y = OBJECT(burns)->y;
-	io_write16(0x18F6u, burns_y);
-	io_write16(0x18F8u, camera_x);
-	io_write16(0x18FAu, camera_y);
+	io_write16(reunion_spot_y, burns_y);
+	io_write16(reunion_camera_x, camera_x);
+	io_write16(reunion_camera_y, camera_y);
 	OBJECT(burns)->animation = 0x82u;
 	OBJECT(burns)->mr_burns.wait_frames = 0x40u;
 	state = OBJECT(burns)->state;

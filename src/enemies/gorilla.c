@@ -3,7 +3,7 @@
  *    Description: stage 5's gorilla (type 31) and its actions 26, 2C, 35
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by

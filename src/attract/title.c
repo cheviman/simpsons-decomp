@@ -3,7 +3,7 @@
  *    Description: the attract's title screen (its end) and the title shown after a coin
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -183,17 +183,16 @@ void coin_title_start(void)
    two halves apart */
 void coin_title_draw(void)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0, ignored16 = 0, u = 0;
 	uint8_t discarded_read = 0;
 
 	if (layer_clear_pending != 0u)
 		return;
 	reset_for_game();
-	discarded_read = io_read8(0x1C80u);
-	io_write8(0x1C80u, 0u);
+	discarded_read = io_read8(tile_chip_scroll_control);
+	io_write8(tile_chip_scroll_control, 0u);
 	command = 0u;
-	carry = queue_sound(command);
+	queue_sound(command);
 	clear_objects(&ignored16, &u);
 	attract_title_draw(u);
 	layer_a_scroll_x = 0xFF80u;

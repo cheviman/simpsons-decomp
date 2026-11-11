@@ -3,7 +3,7 @@
  *    Description: bank 18's jump table: its object types' and enemy actions' handlers
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -50,7 +50,7 @@ void kind_8c_bystander_update(uint16_t object, uint8_t state)
 		break;
 	}
 	object_take_special_hit(object, 0u);
-	carry = remove_off_screen(object, carry);
+	remove_off_screen(object, carry);
 }
 
 /* Action 19 of the enemies: does nothing. */
@@ -432,7 +432,7 @@ uint16_t walking_kind_87_update(uint16_t object, uint8_t state)
 		walking_kind_87_running();
 		break;
 	}
-	carry = remove_off_screen(object, carry);
+	remove_off_screen(object, carry);
 	return states;
 }
 
@@ -461,7 +461,7 @@ uint16_t kind_8e_watcher_update(uint16_t object, uint8_t state)
 		kind_8e_watcher_wait_hit(object);
 		break;
 	}
-	carry = remove_off_screen(object, carry);
+	remove_off_screen(object, carry);
 	return states;
 }
 
@@ -509,7 +509,7 @@ uint16_t kind_9e_update(uint16_t object, uint8_t state)
 		kind_9e_remove_at_edge(object);
 		break;
 	}
-	carry = remove_off_screen(object, carry);
+	remove_off_screen(object, carry);
 	return states;
 }
 
@@ -697,7 +697,7 @@ void kind_8e_thrower_update(uint16_t object, uint8_t state)
 		break;
 	}
 	kind_8e_thrower_check_hit(object);
-	carry = remove_off_screen(object, carry);
+	remove_off_screen(object, carry);
 }
 
 /* Runs the shot a kind 8E figure throws by its step: it flies left; when it hits something it bursts and
@@ -734,7 +734,7 @@ uint16_t spark_shot_update(uint16_t object, uint8_t state)
 		OBJECT(object)->flags = 0x80u;
 		OBJECT(object)->state = 0xFFu;
 	}
-	carry = remove_off_screen(object, carry);
+	remove_off_screen(object, carry);
 	return states;
 }
 
@@ -1097,7 +1097,6 @@ uint16_t gorilla_back_off_action(uint16_t object, uint8_t step)
    first form; beaten in its first form (field 44 set) it falls instead of dying. */
 uint32_t knight_update(uint16_t object, uint8_t state, uint32_t left_caller)
 {
-	uint32_t carry = 0;
 	uint8_t state_2 = 0;
 	uint16_t command = 0, ignored16 = 0;
 	uint32_t left_caller_2 = 0;
@@ -1154,7 +1153,7 @@ uint32_t knight_update(uint16_t object, uint8_t state, uint32_t left_caller)
 		leftover_y = knight_body_box_ADDRESS;
 		vector_set_hit_box(object);
 		command = 0x6300u;
-		carry = vector_queue_sound(command);
+		vector_queue_sound(command);
 		OBJECT(object)->flags = 0x80u;
 		OBJECT(object)->state = 0xFFu;
 		OBJECT(object)->action_step = 0u;

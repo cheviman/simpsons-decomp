@@ -3,7 +3,7 @@
  *    Description: the test mode's page runner
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -17,7 +17,7 @@ void test_run_page(uint8_t d)
 	uint16_t pages = 0;
 
 	disable_irq();
-	io_write8(0x1D00u, 0xFBu);
+	io_write8(tile_chip_irq_control, 0xFBu);
 	pages = test_pages_ADDRESS;
 	switch ((int8_t)(uint8_t)((uint32_t)test_page << 1))
 	{
@@ -91,7 +91,7 @@ void test_run_page(uint8_t d)
 	}
 	enable_irq();
 	take_interrupts();
-	io_write8(0x1D00u, 0xFFu);
+	io_write8(tile_chip_irq_control, 0xFFu);
 }
 
 /* The MANUAL TEST MENU page, by its step */
@@ -113,7 +113,7 @@ void test_menu_page(uint16_t d)
 		test_menu_update(&ignored16, &carry);
 		return;
 	case test_rom_check_page_steps_ADDRESS:
-		carry = test_rom_check_open(page_steps);
+		test_rom_check_open(page_steps);
 		return;
 	case 0x60A3u:
 		test_rom_check_run(&ignored16, &carry);
@@ -131,7 +131,7 @@ void test_menu_page(uint16_t d)
 		test_io_check_run(&ignored16, &carry);
 		return;
 	case test_music_page_steps_ADDRESS:
-		carry = test_music_open(page_steps);
+		test_music_open(page_steps);
 		return;
 	case 0x621Du:
 		test_music_first_choice(&ignored16, &carry);
@@ -143,7 +143,7 @@ void test_menu_page(uint16_t d)
 		test_music_replay(&ignored16, &carry);
 		return;
 	case test_sound_page_steps_ADDRESS:
-		carry = test_sound_open(page_steps);
+		test_sound_open(page_steps);
 		return;
 	case 0x6279u:
 		test_sound_first_choice(&ignored16, &carry);
@@ -186,7 +186,7 @@ void test_menu_open(uint16_t *p_d, uint32_t *p_carry)
 
 	control = board_control | 1u;
 	board_control = control;
-	io_write8(0x1FC2u, control);
+	io_write8(board_control_register, control);
 	palettes_left = 8u;
 	palette_data = test_mode_palettes_ADDRESS;
 	do
@@ -207,12 +207,12 @@ void test_menu_open(uint16_t *p_d, uint32_t *p_carry)
 	} while (palettes_to_go != 1u);
 	control = board_control & ~3u;
 	board_control = control;
-	io_write8(0x1FC2u, control);
+	io_write8(board_control_register, control);
 	test_silence();
 	vector_clear_text_layer(&x, &ignored16);
 	menu_text_number = 0u;
 	text_number = 0u;
-	carry = test_open_page(x, text_number);
+	test_open_page(x, text_number);
 	setting = 0x5A60u;
 	start_buttons_word = (uint32_t)menu_text_number << 8;
 	test_read_setting(&ignored16_2, &setting, &start_buttons_word, &zero);
@@ -245,7 +245,7 @@ void test_menu_update(uint16_t *p_d, uint32_t *p_carry)
 	b = (uint8_t)d;
 	cursor_variable = test_menu_cursor_variable_ADDRESS;
 	menu_lines = test_menu_lines_ADDRESS;
-	player_1_port = io_read8(0x1F90u);
+	player_1_port = io_read8(player_1_input_port);
 	up_down_bits = player_1_port & 0xCu;
 	joystick = up_down_bits;
 	if (up_down_bits == 0u)
@@ -663,10 +663,9 @@ void test_print_hex(uint16_t *p_tiles, uint16_t *p_value)
 /* Queues sound command 0000 (all sounds off) */
 uint16_t test_silence(void)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 
 	command = 0u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	return command;
 }

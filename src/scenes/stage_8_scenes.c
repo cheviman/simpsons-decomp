@@ -3,7 +3,7 @@
  *    Description: stage 8's opening and the scene after its last boss
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -47,14 +47,13 @@ void stage_8_start_show(uint16_t *p_default_object, uint16_t *p_u)
 {
 	uint16_t default_object = (uint16_t)*p_default_object;
 	uint16_t u = (uint16_t)*p_u;
-	uint32_t carry = 0;
 	uint16_t command = 0, ignored16 = 0, ignored16_2 = 0, layer_and_columns = 0, object = 0, record_number = 0, rider_record = 0, u_2 = 0;
 	uint8_t riders_left = 0, old_scene_state = 0;
 
 	if (layer_clear_pending != 0u)
 		return;
-	io_write8(0x1FB9u, 0x3Fu);
-	io_write8(0x1FBAu, 0x36u);
+	io_write8(colour_bases_back_sprites_fixed, 0x3Fu);
+	io_write8(colour_bases_layers_a_b, 0x36u);
 	map_scene = 0x8Du;
 	map_area = 0u;
 	vector_set_layer_modes();
@@ -62,8 +61,8 @@ void stage_8_start_show(uint16_t *p_default_object, uint16_t *p_u)
 	vector_draw_layer_strips(layer_and_columns, &ignored16, &ignored16_2);
 	layer_and_columns = 0x126u;
 	vector_draw_layer_strips(layer_and_columns, &default_object, &u_2);
-	io_write8(0x1FB9u, 0x13u);
-	io_write8(0x1FBAu, 0x2Cu);
+	io_write8(colour_bases_back_sprites_fixed, 0x13u);
+	io_write8(colour_bases_layers_a_b, 0x2Cu);
 	record_number = 0x2E26u;
 	scene_put_placement(default_object, record_number);
 	record_number = 0x2F26u;
@@ -97,8 +96,8 @@ void stage_8_start_show(uint16_t *p_default_object, uint16_t *p_u)
 		scene_riders_left = riders_left - 1u;
 	} while (riders_left != 1u);
 	command = 0x9600u;
-	carry = vector_queue_sound(command);
-	io_write16(0x18EBu, 0x400u);
+	vector_queue_sound(command);
+	io_write16(scene_layer_b_speed, 0x400u);
 	old_scene_state = io_read8(scene_state);
 	io_write8(scene_state, old_scene_state + 1u);
 	*p_default_object = default_object;
@@ -117,13 +116,13 @@ void stage_8_start_descend(uint16_t *p_object, uint16_t *p_player_states)
 	uint32_t layer_b_scroll_y_halfword = 0;
 
 	stage_8_start_run_players(&ignored16, &player_states);
-	old_descent_speed = io_read16(0x18EBu);
+	old_descent_speed = io_read16(scene_layer_b_speed);
 	descent_speed = old_descent_speed - 9u;
 	if ((int16_t)descent_speed <= 9)
 		descent_speed = 9u;
-	io_write16(0x18EBu, descent_speed);
+	io_write16(scene_layer_b_speed, descent_speed);
 	scroll_y_low = (((uint32_t)(layer_b_scroll_y & 0xFFu) << 8u) | layer_b_scroll_y_fraction);
-	descent_step = io_read16(0x18EBu);
+	descent_step = io_read16(scene_layer_b_speed);
 	carry = scroll_y_low < descent_step;
 	layer_b_scroll_y_halfword = scroll_y_low - descent_step;
 	layer_b_scroll_y = (layer_b_scroll_y & 0xFF00u) | ((layer_b_scroll_y_halfword >> 8u) & 0xFFu);
@@ -135,7 +134,7 @@ void stage_8_start_descend(uint16_t *p_object, uint16_t *p_player_states)
 		OBJECT(OBJECT_ADDRESS(26))->animation = 0x83u;
 		OBJECT(OBJECT_ADDRESS(26))->x_speed = 0x300;
 		OBJECT(OBJECT_ADDRESS(26))->z_speed = 0x200;
-		io_write16(0x18E2u, 0x80u);
+		io_write16(scene_wait, 0x80u);
 		layer_b_scroll_y = 0x20u;
 		layer_b_scroll_y_fraction = 0u;
 		old_scene_state = io_read8(scene_state);
@@ -145,7 +144,7 @@ void stage_8_start_descend(uint16_t *p_object, uint16_t *p_player_states)
 	scene_objects_left = 4u;
 	do
 	{
-		object_speed = io_read16(0x18EBu);
+		object_speed = io_read16(scene_layer_b_speed);
 		OBJECT(object)->z_speed = 0u - object_speed;
 		object += 0x60u;
 		objects_left = scene_objects_left;
@@ -197,7 +196,7 @@ uint16_t stage_8_start_landing(void)
 	OBJECT(object)->animation = 0x81u;
 	OBJECT(object)->z_speed = 0;
 	command = 0x6000u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	OBJECT(OBJECT_ADDRESS(30))->flags = 0u;
 	OBJECT(object)->animation = 0x81u;
 	old_scene_state = io_read8(scene_state);
@@ -216,7 +215,7 @@ void stage_8_start_run_off(uint16_t *p_object, uint16_t *p_player_states)
 	object = OBJECT_ADDRESS(26);
 	if ((int16_t)OBJECT(OBJECT_ADDRESS(26))->x >= 0x150)
 	{
-		io_write16(0x18E2u, 0x80u);
+		io_write16(scene_wait, 0x80u);
 		OBJECT(object)->flags = 0u;
 		old_scene_state = io_read8(scene_state);
 		io_write8(scene_state, old_scene_state + 1u);
@@ -233,8 +232,8 @@ void stage_8_start_wait_end(uint16_t *p_x, uint16_t *p_player_states)
 	uint16_t x = 0;
 	uint16_t end_wait = 0;
 
-	end_wait = io_read16(0x18E2u);
-	io_write16(0x18E2u, end_wait - 1u);
+	end_wait = io_read16(scene_wait);
+	io_write16(scene_wait, end_wait - 1u);
 	if (end_wait != 1u)
 		stage_8_start_run_players(&x, &player_states);
 	else
@@ -246,7 +245,6 @@ void stage_8_start_wait_end(uint16_t *p_x, uint16_t *p_player_states)
 /* Stage 8's opening is over: the scene's variables, the sound and the objects cleared. */
 void stage_8_start_finish(uint16_t *p_x, uint16_t *p_u)
 {
-	uint32_t carry = 0;
 	uint16_t clear_from = 0, clear_to = 0, command = 0, count = 0, u = 0, x = 0;
 
 	clear_from = scene_state;
@@ -261,7 +259,7 @@ void stage_8_start_finish(uint16_t *p_x, uint16_t *p_u)
 		count--;
 	}
 	command = 0u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	vector_clear_objects(&x, &u);
 	scene_running = 0u;
 	leftover_y = clear_from;
@@ -569,7 +567,7 @@ void stage_8_start_player_ride(uint16_t object)
 	z = OBJECT(object)->z;
 	if ((int16_t)z > 0xBF)
 	{
-		descent_speed = io_read16(0x18EBu);
+		descent_speed = io_read16(scene_layer_b_speed);
 		OBJECT(object)->z_speed = 0u - descent_speed;
 		return;
 	}
@@ -596,7 +594,7 @@ void stage_8_start_player_drop(uint16_t object)
 	kind = OBJECT(object)->kind;
 	landing_shout = kind + 0x3F24u;
 	command = landing_shout;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
 }
@@ -668,9 +666,9 @@ void stage_8_end_set_up(uint16_t *p_x, uint16_t *p_u)
 	vector_queue_job(job);
 	command = 0u;
 	vector_queue_sound_always(command);
-	clear_from = 0x3C00u;
+	clear_from = palette_jobs;
 	clear_to = 0x3C01u;
-	io_write8(0x3C00u, 0u);
+	io_write8(palette_jobs, 0u);
 	count = 0x1FFu;
 	while (count != 0u)
 	{
@@ -700,14 +698,13 @@ void stage_8_end_show(uint16_t *p_default_object, uint16_t *p_u)
 {
 	uint16_t default_object = (uint16_t)*p_default_object;
 	uint16_t u = (uint16_t)*p_u;
-	uint32_t carry = 0;
 	uint16_t command = 0, ignored16 = 0, ignored16_2 = 0, layer_and_columns = 0, object = 0, record_number = 0, u_2 = 0;
 	uint8_t old_scene_state = 0;
 
 	if (layer_clear_pending != 0u)
 		return;
-	io_write8(0x1FB9u, 0x3Fu);
-	io_write8(0x1FBAu, 0x36u);
+	io_write8(colour_bases_back_sprites_fixed, 0x3Fu);
+	io_write8(colour_bases_layers_a_b, 0x36u);
 	map_scene = 0x8Du;
 	map_area = 2u;
 	vector_set_layer_modes();
@@ -719,11 +716,11 @@ void stage_8_end_show(uint16_t *p_default_object, uint16_t *p_u)
 	object = scene_put_placement(default_object, record_number);
 	leftover_y = object;
 	OBJECT(leftover_y)->attributes = 0x10u;
-	io_write8(0x1FB9u, 0x13u);
-	io_write8(0x1FBAu, 0x2Cu);
+	io_write8(colour_bases_back_sprites_fixed, 0x13u);
+	io_write8(colour_bases_layers_a_b, 0x2Cu);
 	command = 0x9600u;
-	carry = vector_queue_sound(command);
-	io_write16(0x18E2u, 0x30u);
+	vector_queue_sound(command);
+	io_write16(scene_wait, 0x30u);
 	old_scene_state = io_read8(scene_state);
 	io_write8(scene_state, old_scene_state + 1u);
 	*p_default_object = default_object;
@@ -737,11 +734,11 @@ void stage_8_end_hold(void)
 	uint16_t hold_wait = 0;
 
 	OBJECT(OBJECT_ADDRESS(8))->animation_flags |= 0x40u;
-	hold_wait = io_read16(0x18E2u);
-	io_write16(0x18E2u, hold_wait - 1u);
+	hold_wait = io_read16(scene_wait);
+	io_write16(scene_wait, hold_wait - 1u);
 	if (hold_wait == 1u)
 	{
-		io_write16(0x18E2u, 0x60u);
+		io_write16(scene_wait, 0x60u);
 		old_scene_state = io_read8(scene_state);
 		io_write8(scene_state, old_scene_state + 1u);
 	}
@@ -753,15 +750,15 @@ void stage_8_end_switch_view(uint16_t *p_x, uint16_t *p_u)
 	uint16_t ignored16 = 0, ignored16_2 = 0, layer_and_columns = 0, u = 0, x = 0;
 	uint8_t old_scene_state = 0;
 
-	io_write8(0x1FB9u, 0x3Fu);
-	io_write8(0x1FBAu, 0x36u);
+	io_write8(colour_bases_back_sprites_fixed, 0x3Fu);
+	io_write8(colour_bases_layers_a_b, 0x36u);
 	layer_b_scroll_x = 0x120u;
 	layer_b_last_scroll_x = 0x120u;
 	layer_b_offset_x = 0u;
 	layer_and_columns = 0x126u;
 	vector_draw_layer_strips(layer_and_columns, &ignored16, &ignored16_2);
 	vector_clear_objects(&ignored16, &u);
-	io_write16(0x18E2u, 0x60u);
+	io_write16(scene_wait, 0x60u);
 	x = clear_child_objects();
 	old_scene_state = io_read8(scene_state);
 	io_write8(scene_state, old_scene_state + 1u);
@@ -778,14 +775,14 @@ void stage_8_end_show_kind_13(uint16_t *p_default_object, uint16_t *p_u)
 	uint8_t old_scene_state = 0;
 	uint16_t view_wait = 0;
 
-	io_write8(0x1FB9u, 0x13u);
-	io_write8(0x1FBAu, 0x2Cu);
-	view_wait = io_read16(0x18E2u);
-	io_write16(0x18E2u, view_wait - 1u);
+	io_write8(colour_bases_back_sprites_fixed, 0x13u);
+	io_write8(colour_bases_layers_a_b, 0x2Cu);
+	view_wait = io_read16(scene_wait);
+	io_write16(scene_wait, view_wait - 1u);
 	if (view_wait != 1u)
 		return;
-	io_write8(0x1FB9u, 0x3Fu);
-	io_write8(0x1FBAu, 0x36u);
+	io_write8(colour_bases_back_sprites_fixed, 0x3Fu);
+	io_write8(colour_bases_layers_a_b, 0x36u);
 	layer_b_scroll_x = 0xFFF0u;
 	layer_b_last_scroll_x = 0xFFF0u;
 	layer_b_offset_x = 0u;
@@ -799,7 +796,7 @@ void stage_8_end_show_kind_13(uint16_t *p_default_object, uint16_t *p_u)
 	record_number = 0x2626u;
 	object = scene_put_placement(default_object, record_number);
 	leftover_y = object;
-	io_write16(0x18E2u, 0x100u);
+	io_write16(scene_wait, 0x100u);
 	old_scene_state = io_read8(scene_state);
 	io_write8(scene_state, old_scene_state + 1u);
 	*p_default_object = default_object;
@@ -812,17 +809,16 @@ void stage_8_end_reunion(uint16_t *p_object, uint16_t *p_u)
 {
 	uint16_t object = (uint16_t)*p_object;
 	uint16_t u = (uint16_t)*p_u;
-	uint32_t carry = 0;
 	uint8_t bit = 0, blink_flags = 0, count = 0, present = 0, scroll_x_high = 0, scroll_x_low = 0, scroll_y_high = 0, scroll_y_low = 0, shifts = 0, stop_offset_high = 0, stop_offset_low = 0;
 	uint16_t command = 0, ignored16 = 0, layer_and_columns = 0, request = 0, u_2 = 0;
 	uint8_t picked = 0, picked_number = 0, players_left = 0, picked_bit = 0, discarded_read = 0, old_picked_bits = 0, extras_left = 0, old_scene_state = 0;
 	uint16_t reunion_wait = 0, saved_scroll_x = 0, saved_scroll_y = 0, walker_spot_x = 0, walker_x = 0, walker_spot_y = 0, walker_y = 0, old_walker_x = 0, next_walker_x = 0, old_stop_offset = 0, walker_stop_offset = 0, taker_spot_x = 0, taker_x = 0, taker_spot_y = 0, taker_y = 0, stander_spot_x = 0, stander_x = 0, stander_spot_y = 0, stander_y = 0, old_stander_x = 0, next_stander_x = 0, extra_spot_x = 0, extra_x = 0, extra_spot_y = 0, extra_y = 0, old_extra_x = 0, next_extra_x = 0, old_extra_offset = 0, extra_stop_offset = 0, slow_spot_x = 0, slow_extra_x = 0, slow_spot_y = 0, slow_extra_y = 0, old_slow_offset = 0, slow_stop_offset = 0, maggie_spot_x = 0, maggie_x = 0, maggie_spot_y = 0, maggie_y = 0, spot_x = 0, spot_y = 0;
 	uint32_t kind_halfword = 0, kind_halfword_2 = 0, kind_halfword_3 = 0, kind_halfword_4 = 0;
 
-	io_write8(0x1FB9u, 0x13u);
-	io_write8(0x1FBAu, 0x2Cu);
-	reunion_wait = io_read16(0x18E2u);
-	io_write16(0x18E2u, reunion_wait - 1u);
+	io_write8(colour_bases_back_sprites_fixed, 0x13u);
+	io_write8(colour_bases_layers_a_b, 0x2Cu);
+	reunion_wait = io_read16(scene_wait);
+	io_write16(scene_wait, reunion_wait - 1u);
 	if (reunion_wait != 1u)
 	{
 		blink_flags = 0u;
@@ -833,16 +829,16 @@ void stage_8_end_reunion(uint16_t *p_object, uint16_t *p_u)
 		if ((frame_count & 0x1Fu) != 0u)
 			return;
 		command = 0x4500u;
-		carry = vector_queue_sound(command);
+		vector_queue_sound(command);
 		return;
 	}
 	clear_child_objects();
-	saved_scroll_x = io_read16(0x18F8u);
+	saved_scroll_x = io_read16(reunion_camera_x);
 	scroll_x_high = (uint8_t)(saved_scroll_x >> 8);
 	scroll_x_low = (uint8_t)saved_scroll_x;
 	layer_a_scroll_x = ((uint32_t)scroll_x_high << 8) | scroll_x_low;
 	layer_b_scroll_x = ((uint32_t)scroll_x_high << 8) | scroll_x_low;
-	saved_scroll_y = io_read16(0x18FAu);
+	saved_scroll_y = io_read16(reunion_camera_y);
 	scroll_y_high = (uint8_t)(saved_scroll_y >> 8);
 	scroll_y_low = (uint8_t)saved_scroll_y;
 	layer_a_scroll_y = ((uint32_t)scroll_y_high << 8) | scroll_y_low;
@@ -853,17 +849,17 @@ void stage_8_end_reunion(uint16_t *p_object, uint16_t *p_u)
 	palette_request_kind = 1u;
 	request = 0xF8Eu;
 	vector_palette_request(u, request);
-	io_write8(0x1FB9u, 0x3Fu);
-	io_write8(0x1FBAu, 0x36u);
+	io_write8(colour_bases_back_sprites_fixed, 0x3Fu);
+	io_write8(colour_bases_layers_a_b, 0x36u);
 	map_scene = 0x8Du;
 	map_area = 1u;
 	vector_set_layer_modes();
 	layer_and_columns = 0x2Cu;
 	vector_draw_layer_strips(layer_and_columns, &ignored16, &u_2);
 	vector_clear_layer_b();
-	io_write8(0x1FB9u, 0x13u);
-	io_write8(0x1FBAu, 0x2Cu);
-	picked = io_read8(0x18FCu);
+	io_write8(colour_bases_back_sprites_fixed, 0x13u);
+	io_write8(colour_bases_layers_a_b, 0x2Cu);
+	picked = io_read8(maggie_rescuer);
 	picked_number = (((picked >> 1) >> 1) >> 1) >> 1;
 	shifts = picked_number;
 	if (picked_number != 0u)
@@ -874,7 +870,7 @@ void stage_8_end_reunion(uint16_t *p_object, uint16_t *p_u)
 			bit = (uint32_t)bit << 1;
 			shifts--;
 		}
-		io_write8(0x18FCu, bit);
+		io_write8(maggie_rescuer, bit);
 	}
 	else
 	{
@@ -889,13 +885,13 @@ void stage_8_end_reunion(uint16_t *p_object, uint16_t *p_u)
 			players_left = count;
 			count = players_left - 1u;
 		} while (players_left != 1u);
-		io_write8(0x18FCu, present & reunion_player);
+		io_write8(maggie_rescuer, present & reunion_player);
 	}
 	reunion_player = 0u;
 	reunion_player_bits = players_present;
 	reunion_standing_x = 0x60u;
 	reunion_walker_x = 0xFE80u;
-	reunion_walker_wait = 0xFFE0u;
+	reunion_walker_stop_offset = 0xFFE0u;
 	object = OBJECT_ADDRESS(22);
 	do
 	{
@@ -905,39 +901,39 @@ void stage_8_end_reunion(uint16_t *p_object, uint16_t *p_u)
 			kind_halfword = ((uint32_t)reunion_player << 8) | 0x80u;
 			OBJECT(object)->kind = (uint8_t)(kind_halfword >> 8u);
 			OBJECT(object)->animation = (uint8_t)kind_halfword;
-			walker_spot_x = io_read16(0x18F4u);
+			walker_spot_x = io_read16(reunion_spot_x);
 			walker_x = walker_spot_x + reunion_walker_x;
 			OBJECT(object)->x = walker_x;
-			walker_spot_y = io_read16(0x18F6u);
+			walker_spot_y = io_read16(reunion_spot_y);
 			walker_y = walker_spot_y - 0x10u;
 			OBJECT(object)->y = walker_y;
 			old_walker_x = reunion_walker_x;
 			next_walker_x = old_walker_x - 0x20u;
 			reunion_walker_x = next_walker_x;
-			old_stop_offset = reunion_walker_wait;
+			old_stop_offset = reunion_walker_stop_offset;
 			walker_stop_offset = old_stop_offset + 0x20u;
 			stop_offset_high = (uint8_t)(walker_stop_offset >> 8);
 			stop_offset_low = (uint8_t)walker_stop_offset;
-			reunion_walker_wait = ((uint32_t)stop_offset_high << 8) | stop_offset_low;
+			reunion_walker_stop_offset = ((uint32_t)stop_offset_high << 8) | stop_offset_low;
 			OBJECT(object)->stage_8_end.stop_offset = ((uint32_t)stop_offset_high << 8) | stop_offset_low;
 			OBJECT(object)->type = -0xC;
 			OBJECT(object)->state = 1u;
 		}
 		else
 		{
-			picked_bit = io_read8(0x18FCu);
+			picked_bit = io_read8(maggie_rescuer);
 			if ((picked_bit & 1u) != 0u)
 			{
-				discarded_read = io_read8(0x18FCu);
-				io_write8(0x18FCu, 0u);
+				discarded_read = io_read8(maggie_rescuer);
+				io_write8(maggie_rescuer, 0u);
 				OBJECT(object)->flags = 0x80u;
 				kind_halfword_2 = ((uint32_t)reunion_player << 8) | 0x80u;
 				OBJECT(object)->kind = (uint8_t)(kind_halfword_2 >> 8u);
 				OBJECT(object)->animation = (uint8_t)kind_halfword_2;
-				taker_spot_x = io_read16(0x18F4u);
+				taker_spot_x = io_read16(reunion_spot_x);
 				taker_x = taker_spot_x + 0x70u;
 				OBJECT(object)->x = taker_x;
-				taker_spot_y = io_read16(0x18F6u);
+				taker_spot_y = io_read16(reunion_spot_y);
 				taker_y = taker_spot_y - 0xEu;
 				OBJECT(object)->y = taker_y;
 				OBJECT(object)->attributes = 0x40u;
@@ -950,10 +946,10 @@ void stage_8_end_reunion(uint16_t *p_object, uint16_t *p_u)
 				kind_halfword_3 = ((uint32_t)reunion_player << 8) | 0x9Eu;
 				OBJECT(object)->kind = (uint8_t)(kind_halfword_3 >> 8u);
 				OBJECT(object)->animation = (uint8_t)kind_halfword_3;
-				stander_spot_x = io_read16(0x18F4u);
+				stander_spot_x = io_read16(reunion_spot_x);
 				stander_x = stander_spot_x + reunion_standing_x;
 				OBJECT(object)->x = stander_x;
-				stander_spot_y = io_read16(0x18F6u);
+				stander_spot_y = io_read16(reunion_spot_y);
 				stander_y = stander_spot_y + 0x10u;
 				OBJECT(object)->y = stander_y;
 				old_stander_x = reunion_standing_x;
@@ -966,8 +962,8 @@ void stage_8_end_reunion(uint16_t *p_object, uint16_t *p_u)
 		}
 		OBJECT(object)->stage_8_end.actor_player = reunion_player;
 		object += 0x60u;
-		old_picked_bits = io_read8(0x18FCu);
-		io_write8(0x18FCu, old_picked_bits >> 1);
+		old_picked_bits = io_read8(maggie_rescuer);
+		io_write8(maggie_rescuer, old_picked_bits >> 1);
 		reunion_player_bits = reunion_player_bits >> 1;
 		reunion_player++;
 	} while (reunion_player != 4u);
@@ -975,7 +971,7 @@ void stage_8_end_reunion(uint16_t *p_object, uint16_t *p_u)
 	{
 		reunion_player = 0x81u;
 		reunion_player_bits = 2u;
-		reunion_walker_wait = 0u;
+		reunion_walker_stop_offset = 0u;
 		reunion_walker_x = 0xFE80u;
 		do
 		{
@@ -985,20 +981,20 @@ void stage_8_end_reunion(uint16_t *p_object, uint16_t *p_u)
 			OBJECT(object)->animation = (uint8_t)kind_halfword_4;
 			reunion_player++;
 			reunion_player++;
-			extra_spot_x = io_read16(0x18F4u);
+			extra_spot_x = io_read16(reunion_spot_x);
 			extra_x = extra_spot_x + reunion_walker_x;
 			OBJECT(object)->x = extra_x;
-			extra_spot_y = io_read16(0x18F6u);
+			extra_spot_y = io_read16(reunion_spot_y);
 			extra_y = extra_spot_y + 0x10u;
 			OBJECT(object)->y = extra_y;
 			old_extra_x = reunion_walker_x;
 			next_extra_x = old_extra_x - 0x20u;
 			reunion_walker_x = next_extra_x;
-			old_extra_offset = reunion_walker_wait;
+			old_extra_offset = reunion_walker_stop_offset;
 			extra_stop_offset = old_extra_offset + 0x20u;
 			stop_offset_high = (uint8_t)(extra_stop_offset >> 8);
 			stop_offset_low = (uint8_t)extra_stop_offset;
-			reunion_walker_wait = ((uint32_t)stop_offset_high << 8) | stop_offset_low;
+			reunion_walker_stop_offset = ((uint32_t)stop_offset_high << 8) | stop_offset_low;
 			OBJECT(object)->stage_8_end.stop_offset = ((uint32_t)stop_offset_high << 8) | stop_offset_low;
 			OBJECT(object)->type = -0xC;
 			OBJECT(object)->state = 3u;
@@ -1009,13 +1005,13 @@ void stage_8_end_reunion(uint16_t *p_object, uint16_t *p_u)
 		OBJECT(object)->flags = 0x80u;
 		OBJECT(object)->kind = 0xCAu;
 		OBJECT(object)->animation = 0x81u;
-		slow_spot_x = io_read16(0x18F4u);
+		slow_spot_x = io_read16(reunion_spot_x);
 		slow_extra_x = slow_spot_x - 0x180u;
 		OBJECT(object)->x = slow_extra_x;
-		slow_spot_y = io_read16(0x18F6u);
+		slow_spot_y = io_read16(reunion_spot_y);
 		slow_extra_y = slow_spot_y + 0x10u;
 		OBJECT(object)->y = slow_extra_y;
-		old_slow_offset = reunion_walker_wait;
+		old_slow_offset = reunion_walker_stop_offset;
 		slow_stop_offset = old_slow_offset + 0x20u;
 		OBJECT(object)->stage_8_end.stop_offset = slow_stop_offset;
 		OBJECT(object)->type = -0xC;
@@ -1025,10 +1021,10 @@ void stage_8_end_reunion(uint16_t *p_object, uint16_t *p_u)
 	OBJECT(OBJECT_ADDRESS(29))->kind = 0x11u;
 	OBJECT(OBJECT_ADDRESS(29))->animation = 0x86u;
 	OBJECT(OBJECT_ADDRESS(29))->attributes = 0x40u;
-	maggie_spot_x = io_read16(0x18F4u);
+	maggie_spot_x = io_read16(reunion_spot_x);
 	maggie_x = maggie_spot_x + 0x60u;
 	OBJECT(OBJECT_ADDRESS(29))->x = maggie_x;
-	maggie_spot_y = io_read16(0x18F6u);
+	maggie_spot_y = io_read16(reunion_spot_y);
 	maggie_y = maggie_spot_y - 0x10u;
 	OBJECT(OBJECT_ADDRESS(29))->y = maggie_y;
 	OBJECT(OBJECT_ADDRESS(29))->type = -0xC;
@@ -1037,12 +1033,12 @@ void stage_8_end_reunion(uint16_t *p_object, uint16_t *p_u)
 	OBJECT(OBJECT_ADDRESS(30))->kind = 0xD3u;
 	OBJECT(OBJECT_ADDRESS(30))->animation = 0x83u;
 	OBJECT(OBJECT_ADDRESS(30))->attributes = 0x40u;
-	spot_x = io_read16(0x18F4u);
+	spot_x = io_read16(reunion_spot_x);
 	OBJECT(OBJECT_ADDRESS(30))->x = spot_x;
-	spot_y = io_read16(0x18F6u);
+	spot_y = io_read16(reunion_spot_y);
 	OBJECT(OBJECT_ADDRESS(30))->y = spot_y;
 	OBJECT(OBJECT_ADDRESS(30))->type = -0xC;
-	io_write16(0x18E2u, 0x1C0u);
+	io_write16(scene_wait, 0x1C0u);
 	old_scene_state = io_read8(scene_state);
 	io_write8(scene_state, old_scene_state + 1u);
 	*p_object = object;
@@ -1054,17 +1050,16 @@ void stage_8_end_reunion(uint16_t *p_object, uint16_t *p_u)
 void stage_8_end_run_family(uint16_t *p_object, uint16_t *p_steps)
 {
 	uint16_t steps = (uint16_t)*p_steps;
-	uint32_t carry = 0;
 	uint16_t command = 0, ignored16 = 0, ignored16_2 = 0, layer_and_columns = 0, object = 0, record_number = 0, request = 0, scroll_x = 0, scroll_y = 0, y = 0;
 	uint8_t stack = 0;
 	uint8_t old_scene_state = 0, state = 0, actors_left = 0;
 	uint16_t family_wait = 0;
 
-	family_wait = io_read16(0x18E2u);
-	io_write16(0x18E2u, family_wait - 1u);
+	family_wait = io_read16(scene_wait);
+	io_write16(scene_wait, family_wait - 1u);
 	if (family_wait == 1u)
 	{
-		io_write16(0x18E2u, 0xC0u);
+		io_write16(scene_wait, 0xC0u);
 		vector_clear_list_1_objects();
 		scroll_x = 0xFFF0u;
 		vector_set_scroll_x(scroll_x);
@@ -1076,8 +1071,8 @@ void stage_8_end_run_family(uint16_t *p_object, uint16_t *p_steps)
 		map_scene = 0x8Du;
 		map_area = 3u;
 		vector_set_layer_modes();
-		io_write8(0x1FB9u, 0x3Fu);
-		io_write8(0x1FBAu, 0x36u);
+		io_write8(colour_bases_back_sprites_fixed, 0x3Fu);
+		io_write8(colour_bases_layers_a_b, 0x36u);
 		layer_and_columns = 0x26u;
 		vector_draw_layer_strips(layer_and_columns, &ignored16, &ignored16_2);
 		layer_and_columns = 0x126u;
@@ -1086,13 +1081,13 @@ void stage_8_end_run_family(uint16_t *p_object, uint16_t *p_steps)
 		record_number = 0x2726u;
 		y = scene_put_placement(object, record_number);
 		leftover_y = y;
-		io_write16(0x18E2u, 0x140u);
+		io_write16(scene_wait, 0x140u);
 		palette_request_kind = 2u;
 		request = 0x39u;
 		steps = vector_palette_request(steps, request);
 		command = 0x8B00u;
-		carry = vector_queue_sound(command);
-		io_write16(0x18E2u, 0x140u);
+		vector_queue_sound(command);
+		io_write16(scene_wait, 0x140u);
 		old_scene_state = io_read8(scene_state);
 		io_write8(scene_state, old_scene_state + 1u);
 	}
@@ -1642,21 +1637,20 @@ void stage_8_end_walker_go(uint16_t object)
 /* The scene after stage 8's last boss: the player stops by Maggie with a shout. */
 void stage_8_end_walker_arrive(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0, distance = 0;
 	uint8_t walker_player = 0, action = 0;
 	uint16_t walker_x = 0, walker_offset = 0, spot_x = 0, past_spot = 0;
 
 	walker_x = OBJECT(object)->x;
 	walker_offset = OBJECT(object)->stage_8_end.stop_offset;
-	spot_x = io_read16(0x18F4u);
+	spot_x = io_read16(reunion_spot_x);
 	past_spot = walker_x + walker_offset - spot_x;
 	distance = past_spot;
 	if ((int16_t)past_spot < 0 || (int16_t)distance < 0x20)
 		return;
 	walker_player = OBJECT(object)->stage_8_end.actor_player;
 	command = walker_player + 0x3F08u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	OBJECT(object)->x_speed = 0;
 	OBJECT(object)->animation = 0x9Eu;
 	action = OBJECT(object)->action;
@@ -1929,7 +1923,7 @@ void stage_8_end_extra_arrive(uint16_t object)
 
 	extra_x = OBJECT(object)->x;
 	extra_offset = OBJECT(object)->stage_8_end.stop_offset;
-	spot_x = io_read16(0x18F4u);
+	spot_x = io_read16(reunion_spot_x);
 	past_spot = extra_x + extra_offset - spot_x;
 	distance = past_spot;
 	if ((int16_t)past_spot >= 0 && (int16_t)distance >= 0x20)
@@ -2408,7 +2402,6 @@ void stage_8_end_taker_wait(uint16_t object)
 /* The scene after stage 8's last boss: the picked player takes Maggie. */
 void stage_8_end_take_maggie(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t actor_wait = 0, action = 0;
 
@@ -2423,7 +2416,7 @@ void stage_8_end_take_maggie(uint16_t object)
 	if ((frame_count & 0x1Fu) == 0u)
 	{
 		command = 0x4500u;
-		carry = vector_queue_sound(command);
+		vector_queue_sound(command);
 	}
 }
 
@@ -2431,7 +2424,6 @@ void stage_8_end_take_maggie(uint16_t object)
    played). */
 void stage_8_end_holding_maggie(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t animation_flags = 0, action = 0;
 
@@ -2441,9 +2433,9 @@ void stage_8_end_holding_maggie(uint16_t object)
 	if (players_present == 0xFu)
 	{
 		command = 0x3F09u;
-		carry = vector_queue_sound(command);
+		vector_queue_sound(command);
 		command = 0x3F0Au;
-		carry = vector_queue_sound(command);
+		vector_queue_sound(command);
 	}
 	OBJECT(OBJECT_ADDRESS(29))->flags = 0u;
 	action = OBJECT(object)->action;
@@ -2460,14 +2452,13 @@ void stage_8_end_finish(uint16_t *p_x, uint16_t *p_u)
 {
 	uint16_t x = (uint16_t)*p_x;
 	uint16_t u = (uint16_t)*p_u;
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint16_t finish_wait = 0;
 
-	io_write8(0x1FB9u, 0x13u);
-	io_write8(0x1FBAu, 0x2Cu);
-	finish_wait = io_read16(0x18E2u);
-	io_write16(0x18E2u, finish_wait - 1u);
+	io_write8(colour_bases_back_sprites_fixed, 0x13u);
+	io_write8(colour_bases_layers_a_b, 0x2Cu);
+	finish_wait = io_read16(scene_wait);
+	io_write16(scene_wait, finish_wait - 1u);
 	if (finish_wait == 1u)
 	{
 		vector_clear_objects(&x, &u);
@@ -2476,7 +2467,7 @@ void stage_8_end_finish(uint16_t *p_x, uint16_t *p_u)
 	else if ((frame_count & 0x1Fu) == 0u)
 	{
 		command = 0x4500u;
-		carry = vector_queue_sound(command);
+		vector_queue_sound(command);
 	}
 	*p_x = x;
 	*p_u = u;
@@ -2485,7 +2476,6 @@ void stage_8_end_finish(uint16_t *p_x, uint16_t *p_u)
 /* Unused: would blink an object by the frame and play a sound (4500) every 32 frames. */
 void unused_stage_8_end_blink(void)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 
 	OBJECT(OBJECT_ADDRESS(9))->flags = ((((uint8_t)frame_count & 0x10u) << 1) << 1) << 1;
@@ -2493,6 +2483,6 @@ void unused_stage_8_end_blink(void)
 	if ((frame_count & 0x1Fu) == 0u)
 	{
 		command = 0x4500u;
-		carry = vector_queue_sound(command);
+		vector_queue_sound(command);
 	}
 }

@@ -3,7 +3,7 @@
  *    Description: the stage's spawns by the scroll, the free-slot search, child objects, the enemy limit
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -18,9 +18,9 @@ uint32_t start_stage_objects(uint32_t left_caller)
 	uint16_t ignored16 = 0;
 	uint8_t old_enemy_count = 0;
 
-	io_write16(0x1872u, OBJECT_ADDRESS(0));
-	old_enemy_count = io_read8(0x1876u);
-	io_write8(0x1876u, 0u);
+	io_write16(nearest_player_found, OBJECT_ADDRESS(0));
+	old_enemy_count = io_read8(enemies_present);
+	io_write8(enemies_present, 0u);
 	window_bank = 0x1Bu;
 	set_lines(window_bank);
 	spawn_next = mem_read16(spawn_list_places[(int8_t)((uint8_t)((uint32_t)scene << 1)) / 2]);
@@ -47,8 +47,8 @@ void spawn_stage_objects(void)
 	enemy_speed = enemy_speeds_by_rank[(int8_t)rank];
 	enemies_speed = (uint32_t)enemy_speed << 1;
 	carry = 0u;
-	io_write16(0x1886u, enemies_speed);
-	io_write8(0x1874u, player_count);
+	io_write16(enemy_walk_speed, enemies_speed);
+	io_write8(stage_player_count, player_count);
 	if (in_cemetery != 0u)
 	{
 		window_bank = 0x1Bu;
@@ -137,7 +137,7 @@ void spawn_stage_objects(void)
 		OBJECT(spawned)->z = spawn_height;
 		OBJECT(spawned)->z_fraction = 0u;
 		OBJECT(spawned)->floor_z = spawn_height;
-		OBJECT(spawned)->unk_3D = 0u;
+		OBJECT(spawned)->carried = 0u;
 		OBJECT(spawned)->blocked = 0u;
 		spawn_next = spawn + 8u;
 	}
@@ -273,7 +273,7 @@ void place_child_object(uint16_t object, uint16_t record, uint16_t child, uint16
 	child_z_high = (uint8_t)(child_z >> 8);
 	child_z_low = (uint8_t)child_z;
 	OBJECT(child)->z = ((uint32_t)child_z_high << 8) | child_z_low;
-	OBJECT(child)->unk_3D = 0u;
+	OBJECT(child)->carried = 0u;
 	carry = 1u;
 	d = ((uint32_t)(uint8_t)~child_z_high << 8) | child_z_low;
 	*p_d = d;
@@ -292,7 +292,7 @@ uint32_t check_enemy_limit(uint32_t carry)
 	if (in_cemetery != 0u)
 	{
 		limit = cemetery_enemy_limits_by_players[(int8_t)player_count];
-		io_write8(0x1885u, limit);
+		io_write8(enemies_allowed, limit);
 		switch ((int8_t)(uint8_t)((uint32_t)scene << 1))
 		{
 		case 0:
@@ -313,17 +313,17 @@ uint32_t check_enemy_limit(uint32_t carry)
 			return compare_enemy_limit(enemy_limit);
 		}
 	}
-	hold_scrolls = io_read8(0x189Cu);
+	hold_scrolls = io_read8(hold_both_scrolls);
 	if (hold_scrolls != 0u)
 	{
 		camera_x_held = 1u;
 		camera_y_held = 1u;
 		return carry;
 	}
-	io_write8(0x1885u, enemy_limits_by_difficulty[(int8_t)difficulty]);
-	difficulty_limit = io_read8(0x1885u);
+	io_write8(enemies_allowed, enemy_limits_by_difficulty[(int8_t)difficulty]);
+	difficulty_limit = io_read8(enemies_allowed);
 	limit = extra_enemies_by_scene[(int8_t)scene] + difficulty_limit;
-	io_write8(0x1885u, limit);
+	io_write8(enemies_allowed, limit);
 	switch ((int8_t)(uint8_t)((uint32_t)scene << 1))
 	{
 	case 0:
@@ -355,7 +355,7 @@ uint32_t hold_scroll_over_enemy_limit(uint16_t enemy_limit)
 	uint8_t enemies = 0, limit_value = 0;
 
 	held = 0u;
-	enemies = io_read8(0x1876u);
+	enemies = io_read8(enemies_present);
 	limit_value = enemy_limit >> 8;
 	carry = limit_value < enemies;
 	if (limit_value < enemies)
@@ -370,7 +370,7 @@ uint32_t compare_enemy_limit(uint16_t enemy_limit)
 	uint32_t carry = 0;
 	uint8_t enemies = 0;
 
-	enemies = io_read8(0x1876u);
+	enemies = io_read8(enemies_present);
 	carry = enemy_limit >> 8 < enemies;
 	return carry;
 }

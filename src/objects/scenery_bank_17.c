@@ -3,7 +3,7 @@
  *    Description: bank 17's scenery: the posing figure and the unused Homer object
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -141,8 +141,8 @@ uint16_t unused_homer_object_wait_hit(uint16_t object, uint16_t hitter)
 	}
 	OBJECT(object)->target = hitter;
 	OBJECT(object)->animation = 0xB8u;
-	OBJECT(hitter)->blocked = 0x10u;
-	OBJECT(hitter)->unk_3D = 6u;
+	OBJECT(hitter)->player.state_timer = 0x10u;
+	OBJECT(hitter)->player.hold_presses = 6u;
 	OBJECT(object)->state = 5u;
 	return hitter;
 }

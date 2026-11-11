@@ -3,7 +3,7 @@
  *    Description: the tile layers' maps: the edges drawn as they scroll, whole layers, the floor map, tile pictures, the tile banks
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -651,7 +651,7 @@ void fill_floor_map_column(uint8_t block_column)
 
 	control = board_control | 2u;
 	board_control = control;
-	io_write8(0x1FC2u, control);
+	io_write8(board_control_register, control);
 	block_tile_column = block_column;
 	map_column_blocks_left = 8u;
 	do
@@ -679,7 +679,7 @@ void fill_floor_map_column(uint8_t block_column)
 	} while (blocks_left_before != 1u);
 	control = board_control & ~3u;
 	board_control = control;
-	io_write8(0x1FC2u, control);
+	io_write8(board_control_register, control);
 }
 
 /* Draws a row of 12 map blocks of tiles across the tile RAM from the map's cells, wrapping at its right
@@ -739,7 +739,7 @@ void fill_floor_map_row(uint16_t map_cell, uint8_t block_row)
 
 	control = board_control | 2u;
 	board_control = control;
-	io_write8(0x1FC2u, control);
+	io_write8(board_control_register, control);
 	block_tile_row = block_row;
 	map_row_blocks_left = 0xBu;
 	do
@@ -776,7 +776,7 @@ void fill_floor_map_row(uint16_t map_cell, uint8_t block_row)
 	} while (blocks_left_before != 1u);
 	control = board_control & ~3u;
 	board_control = control;
-	io_write8(0x1FC2u, control);
+	io_write8(board_control_register, control);
 }
 
 /* The address of a map block by its number, in the block array of the layer the map is being drawn for
@@ -893,7 +893,7 @@ void set_area_tile_banks(void)
 		scene_number &= 0x7Fu;
 	}
 	area_mode = LAYER_MODE_LIST(mode_lists + (int8_t)((uint32_t)scene_number << 1)) + (int8_t)((uint32_t)map_area << 1);
-	io_write8(0x1D80u, LAYER_MODE(area_mode)->tile_banks_01);
+	io_write8(tile_chip_banks_0_1, LAYER_MODE(area_mode)->tile_banks_01);
 	tile_banks = LAYER_MODE(area_mode)->tile_banks_23;
-	io_write8(0x1F00u, tile_banks);
+	io_write8(tile_chip_banks_2_3, tile_banks);
 }

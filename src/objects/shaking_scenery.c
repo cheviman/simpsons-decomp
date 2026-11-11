@@ -3,7 +3,7 @@
  *    Description: the scenery that shakes when hit, and what falls off it
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -247,7 +247,7 @@ uint16_t scenery_block_floor(uint16_t object)
 	stack = old_cell;
 	control = board_control | 2u;
 	board_control = control;
-	io_write8(0x1FC2u, control);
+	io_write8(board_control_register, control);
 	OBJECT(object)->scenery.floor_cell = stack;
 	OBJECT(object)->scenery.floor_start = floor_start;
 	stack_2 = floor_start >> 8;
@@ -271,7 +271,7 @@ uint16_t scenery_block_floor(uint16_t object)
 	} while (columns_to_block != 1u);
 	control = board_control & ~3u;
 	board_control = control;
-	io_write8(0x1FC2u, control);
+	io_write8(board_control_register, control);
 	return floor_place;
 }
 
@@ -313,12 +313,11 @@ uint16_t shaking_scenery_shake_steps(uint16_t object)
 /* Plays sound 4800 and the shake's first animation. */
 void shaking_scenery_shake(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t shake_animation = 0, action_step = 0;
 
 	command = 0x4800u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	shake_animation = OBJECT(object)->shaking_scenery.shake_animation_1;
 	OBJECT(object)->animation = shake_animation;
 	action_step = OBJECT(object)->action_step;
@@ -328,7 +327,6 @@ void shaking_scenery_shake(uint16_t object)
 /* After the first animation, the second; at its mark, sound 0C01. */
 void shaking_scenery_shake_second(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t animation_flags = 0, shake_animation = 0, action_step = 0, animation_flags_2 = 0;
 
@@ -345,7 +343,7 @@ void shaking_scenery_shake_second(uint16_t object)
 	if ((animation_flags_2 & 2u) == 0u)
 		return;
 	command = 0xC01u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 }
 
 /* After the second animation, the third. */
@@ -486,7 +484,7 @@ uint16_t shaking_scenery_drop_food(uint16_t object)
 	if (carry == 0u)
 	{
 		command = 0x1C00u;
-		carry = vector_queue_sound(command);
+		vector_queue_sound(command);
 		standing_animation = OBJECT(object)->shaking_scenery.standing_animation;
 		OBJECT(object)->animation = standing_animation + 1u;
 		OBJECT(object)->timer = 0x20u;
@@ -515,7 +513,7 @@ uint16_t shaking_scenery_drop_food(uint16_t object)
 	hit_by = OBJECT(object)->hit_by;
 	OBJECT(food)->behaviour = hit_by;
 	command = 0x1C00u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	standing_animation = OBJECT(object)->shaking_scenery.standing_animation;
 	OBJECT(object)->animation = standing_animation + 1u;
 	OBJECT(object)->timer = 0x20u;

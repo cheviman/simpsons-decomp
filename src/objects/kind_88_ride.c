@@ -3,7 +3,7 @@
  *    Description: Krustyland's ride: its hub, its arms, the kind 88 enemies riding it
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -43,7 +43,7 @@ uint16_t kind_88_ride_put_in_arms(uint16_t object, uint16_t states)
 	uint8_t enemies = 0, state = 0, arms = 0, arms_to_put = 0;
 
 	camera_x_held--;
-	enemies = io_read8(0x1876u);
+	enemies = io_read8(enemies_present);
 	if (enemies >= 2u)
 		return states;
 	state = OBJECT(object)->state;
@@ -77,7 +77,7 @@ void kind_88_ride_wait_signal(uint16_t object)
 {
 	uint8_t stop_signal = 0, state = 0;
 
-	stop_signal = io_read8(0x1884u);
+	stop_signal = io_read8(police_car_stop_signal);
 	if (stop_signal != 0u)
 	{
 		OBJECT(object)->timer = 0x40u;
@@ -105,7 +105,7 @@ void kind_88_ride_wait_enemies(uint16_t object)
 {
 	uint8_t enemies = 0, state = 0;
 
-	enemies = io_read8(0x1876u);
+	enemies = io_read8(enemies_present);
 	if (enemies < 2u)
 	{
 		state = OBJECT(object)->state;
@@ -392,7 +392,7 @@ void kind_88_beaten(uint16_t object)
 	uint16_t hub_2 = 0;
 
 	command = 0x6C00u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	hub_2 = OBJECT(object)->kind_88.hub;
 	hub = hub_2;
 	riders_out = OBJECT(hub)->kind_88_ride.riders_out;
@@ -449,7 +449,6 @@ void kind_88_colour_by_health(uint16_t object)
 /* Knocked back: flies up and away with sound 6300. */
 void kind_88_knocked(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t attributes = 0, blocked = 0, action_step = 0;
 	uint16_t screen_x = 0, x_speed = 0, x_speed_2 = 0;
@@ -479,7 +478,7 @@ void kind_88_knocked(uint16_t object)
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step + 1u;
 	command = 0x6300u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 }
 
 /* Falls back (blinking at the end) and lands with sound 6B00. */
@@ -512,7 +511,7 @@ void kind_88_knocked_fall(uint16_t object)
 		return;
 	}
 	command = 0x6B00u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	OBJECT(object)->animation = 0x83u;
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step + 1u;
@@ -732,7 +731,7 @@ void kind_88_leap_land(uint16_t object)
 	if (carry == 0u)
 		return;
 	command = 0x6B00u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	parent = OBJECT(object)->parent;
 	arm = parent;
 	riders = OBJECT(arm)->kind_88_ride_arm.riders;
@@ -1045,7 +1044,7 @@ void kind_88_hop_land(uint16_t object)
 	}
 	kind_88_colour_by_health(object);
 	command = 0x6B00u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	OBJECT(object)->timer = 0x40u;
 	OBJECT(object)->flags = 0xC0u;
 	state = OBJECT(object)->state;

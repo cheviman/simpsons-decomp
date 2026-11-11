@@ -3,7 +3,7 @@
  *    Description: objects nothing puts in
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -48,7 +48,7 @@ void unused_kind_b7_bounce(uint16_t object)
 	OBJECT(object)->flags = 0xC8u;
 	OBJECT(object)->z_speed = 0x600;
 	command = 0x2000u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
 }
@@ -67,7 +67,7 @@ void unused_kind_b7_land(uint16_t object)
 	if (carry == 0u)
 		return;
 	command = 0x2000u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
 	unused_kind_b7_speed_up(object);
@@ -140,13 +140,12 @@ void unused_obstacle_break_steps(uint16_t object)
 /* Unused: breaks the obstacle with sound 6C00. */
 void unused_obstacle_break(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0;
 	uint8_t action_step = 0;
 
 	OBJECT(object)->animation = 0x80u;
 	command = 0x6C00u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	action_step = OBJECT(object)->action_step;
 	OBJECT(object)->action_step = action_step + 1u;
 }
@@ -164,7 +163,6 @@ void unused_obstacle_break_end(uint16_t object)
 /* Unused: sets up an obstacle at x 0200 with sound 6700. */
 void unused_obstacle_start(uint16_t object)
 {
-	uint32_t carry = 0;
 	uint16_t command = 0, setup = 0;
 	uint8_t state = 0;
 
@@ -173,7 +171,7 @@ void unused_obstacle_start(uint16_t object)
 	OBJECT(object)->x = 0x200u;
 	OBJECT(object)->attributes = 0x10u;
 	command = 0x6700u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	state = OBJECT(object)->state;
 	OBJECT(object)->state = state + 1u;
 }

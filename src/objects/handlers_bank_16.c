@@ -3,7 +3,7 @@
  *    Description: bank 16's object handlers by type, as the object lists' dispatchers reach them
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -74,7 +74,7 @@ uint16_t police_car_door_update(uint16_t object, uint8_t state)
 		police_car_door_idle();
 		break;
 	}
-	carry = remove_off_screen(object, carry);
+	remove_off_screen(object, carry);
 	return states;
 }
 
@@ -228,7 +228,7 @@ uint16_t scenery_debris_update(uint16_t object, uint8_t state)
 		scenery_debris_idle();
 		break;
 	}
-	carry = remove_off_screen(object, carry);
+	remove_off_screen(object, carry);
 	return states;
 }
 
@@ -513,7 +513,7 @@ uint16_t shaking_scenery_update(uint16_t object, uint8_t state)
 	}
 	states = object_take_special_hit(object, states);
 	states = shaking_scenery_check_hit_from_above(object, states);
-	carry = remove_off_screen(object, carry);
+	remove_off_screen(object, carry);
 	return states;
 }
 
@@ -608,7 +608,7 @@ void heavy_obstacle_update(uint16_t object, uint32_t carry, uint16_t *p_states, 
 			if (state_now == 0xFFu && (frame_count & 0x1Fu) == 0u)
 			{
 				command = 0x6500u;
-				carry = vector_queue_sound(command);
+				vector_queue_sound(command);
 			}
 			points = OBJECT(object)->points;
 			points_player_bits = points & 0x30u;
@@ -714,7 +714,7 @@ uint16_t kind_95_update(uint16_t object, uint8_t state)
 		break;
 	}
 	states = object_take_special_hit(object, states);
-	carry = remove_off_screen(object, carry);
+	remove_off_screen(object, carry);
 	return states;
 }
 
@@ -754,7 +754,7 @@ uint16_t kind_87_device_update(uint16_t object, uint8_t state)
 		kind_87_device_rest(object);
 		break;
 	}
-	carry = remove_off_screen(object, carry);
+	remove_off_screen(object, carry);
 	return states;
 }
 
@@ -927,7 +927,7 @@ uint16_t bird_item_update(uint16_t object, uint8_t state)
 		bird_item_land(object);
 		break;
 	}
-	carry = remove_off_screen(object, carry);
+	remove_off_screen(object, carry);
 	return states;
 }
 
@@ -952,7 +952,7 @@ uint16_t rising_scenery_update(uint16_t object, uint8_t state)
 		rising_scenery_rise(object);
 		break;
 	}
-	carry = remove_off_screen(object, carry);
+	remove_off_screen(object, carry);
 	return states;
 }
 
@@ -1010,7 +1010,7 @@ uint16_t tossed_obstacle_update(uint16_t object, uint8_t state)
 	}
 	states = object_take_special_hit(object, states);
 	carried_obstacle_check_floor(object);
-	carry = remove_off_screen(object, carry);
+	remove_off_screen(object, carry);
 	return states;
 }
 
@@ -1178,12 +1178,12 @@ uint16_t running_animal_update(uint16_t object, uint8_t state)
 	state_3 = OBJECT(object)->state;
 	if ((int8_t)state_3 < 0)
 	{
-		carry = remove_off_screen(object, carry);
+		remove_off_screen(object, carry);
 		return states;
 	}
 	face_movement(object);
 	states = throwable_follow_floor(object, states);
-	carry = remove_off_screen(object, carry);
+	remove_off_screen(object, carry);
 	return states;
 }
 
@@ -1208,7 +1208,7 @@ uint16_t gorge_rock_update(uint16_t object, uint8_t state)
 		gorge_rock_break_end(object);
 		break;
 	}
-	carry = remove_off_screen(object, carry);
+	remove_off_screen(object, carry);
 	return states;
 }
 
@@ -1239,7 +1239,7 @@ uint16_t boulder_update(uint16_t object, uint8_t state)
 		boulder_fall_in_front(object);
 		break;
 	}
-	carry = remove_off_screen(object, carry);
+	remove_off_screen(object, carry);
 	return states;
 }
 
@@ -1282,7 +1282,7 @@ uint16_t bouncing_throwable_update(uint16_t object, uint8_t state)
 		break;
 	}
 	states = throwable_follow_floor(object, states);
-	carry = remove_off_screen(object, carry);
+	remove_off_screen(object, carry);
 	return states;
 }
 
@@ -1310,7 +1310,7 @@ uint16_t shaken_object_update(uint16_t object, uint8_t state)
 		states = shaken_object_land(object, states);
 		break;
 	}
-	carry = remove_off_screen(object, carry);
+	remove_off_screen(object, carry);
 	return states;
 }
 

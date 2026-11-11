@@ -3,7 +3,7 @@
  *    Description: what touches a player each frame: pickups, weapons, blows by their strength, another player's team-up
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -16,7 +16,6 @@
    by their characters), and moves it. */
 void player_take_touches(uint16_t kind, uint16_t player)
 {
-	uint32_t carry = 0;
 	uint8_t box_width = 0, hit_kind = 0, move = 0;
 	uint16_t balloon_value = 0, effect_state = 0, facing = 0, other = 0, partner = 0, player_vars = 0, team_member = 0, team_move = 0, team_sound = 0;
 	uint16_t stack = 0;
@@ -31,11 +30,11 @@ void player_take_touches(uint16_t kind, uint16_t player)
 		if (blink_frames_2 == 1u)
 		{
 			OBJECT(player)->flags = 0xC0u;
-			t1 = io_read16(0x1848u);
+			t1 = io_read16(running_player_values);
 			player_vars = t1;
 			PLAYER_VALUES(player_vars)->entry_status = 2u;
 			effect_state = 0xD00u;
-			carry = player_start_effect(kind, player, effect_state);
+			player_start_effect(kind, player, effect_state);
 			player_check_motion(player);
 			return;
 		}
@@ -117,7 +116,7 @@ void player_take_touches(uint16_t kind, uint16_t player)
 		OBJECT(other)->player.hold_presses = 0xFFu;
 		sound = TEAM_MOVE(team_move - 0x1u)->sound;
 		team_sound = sound;
-		carry = vector_queue_sound(team_sound);
+		vector_queue_sound(team_sound);
 		first_object_address = team_move;
 		first_object_offset = (uint32_t)TEAM_MOVE(first_object_address - 0x1u)->first_object << 2;
 		team_member = OBJECT_ADDRESS(0) + first_object_offset;
@@ -295,7 +294,7 @@ void player_pick_up_item(uint16_t player)
 					OBJECT(player)->animation = 0xBEu;
 				}
 				OBJECT(picked_up)->state = 2u;
-				OBJECT(picked_up)->throwable.carried = 1u;
+				OBJECT(picked_up)->carried = 1u;
 				OBJECT(picked_up)->flags &= 0xBFu;
 				player_stop(player);
 				player = stack;
@@ -358,7 +357,7 @@ void player_pick_up_weapon(uint16_t player)
 					OBJECT(player)->animation = 0xBEu;
 				}
 				OBJECT(picked_up)->state = 2u;
-				OBJECT(picked_up)->throwable.carried = 1u;
+				OBJECT(picked_up)->carried = 1u;
 				OBJECT(picked_up)->flags &= 0xBFu;
 				player_stop(player);
 				player = stack;
@@ -440,7 +439,7 @@ void player_eat_food(uint16_t player)
 		OBJECT(player)->animation = 0xBEu;
 	}
 	OBJECT(picked_up)->state = 2u;
-	OBJECT(picked_up)->throwable.carried = 1u;
+	OBJECT(picked_up)->carried = 1u;
 	OBJECT(picked_up)->flags &= 0xBFu;
 	player_stop(player);
 	player = stack;
@@ -726,7 +725,6 @@ void player_bounce_away(uint16_t player)
    times in its record. */
 void player_get_grabbed(uint16_t player)
 {
-	uint32_t carry = 0;
 	uint8_t animation = 0, grab_animation = 0;
 	uint16_t effect_state = 0, holder = 0, player_vars = 0, state_and_time = 0;
 	uint8_t hints_shown = 0, hints_before = 0, vitality = 0;
@@ -734,8 +732,8 @@ void player_get_grabbed(uint16_t player)
 
 	holder_2 = OBJECT(player)->player.holder;
 	holder = holder_2;
-	OBJECT(holder)->unk_58 = 1u;
-	t1 = io_read16(0x1848u);
+	OBJECT(holder)->grabber.squeeze_step = 1u;
+	t1 = io_read16(running_player_values);
 	player_vars = t1;
 	hints_shown = PLAYER_VALUES(player_vars)->grab_hints;
 	if ((int8_t)hints_shown < 5)
@@ -743,7 +741,7 @@ void player_get_grabbed(uint16_t player)
 		hints_before = PLAYER_VALUES(player_vars)->grab_hints;
 		PLAYER_VALUES(player_vars)->grab_hints = hints_before + 1u;
 		effect_state = 0x500u;
-		carry = player_start_effect(player_vars, player, effect_state);
+		player_start_effect(player_vars, player, effect_state);
 	}
 	grab_animation = 0xBFu;
 	state_and_time = 0x1C01u;
@@ -762,12 +760,11 @@ void player_get_grabbed(uint16_t player)
 /* A blow of strength 03: sound 5E, its voice, stunned for 60 frames (state 1B, animation D9). */
 void player_take_stun_blow(uint16_t player)
 {
-	uint32_t carry = 0;
 	uint8_t animation = 0;
 	uint16_t command = 0, state_and_time = 0;
 
 	command = 0x5E00u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	command = 0x3F28u;
 	player_play_voice(player, command);
 	state_and_time = 0x1B3Cu;
@@ -778,12 +775,11 @@ void player_take_stun_blow(uint16_t player)
 /* A blow of strength 04: sound 5E, balloon 0, its voice, stunned for 60 frames (state 1A, animation D8). */
 void player_take_stun_blow_2(uint16_t kind, uint16_t player)
 {
-	uint32_t carry = 0;
 	uint8_t animation = 0;
 	uint16_t balloon_value = 0, command = 0, state_and_time = 0;
 
 	command = 0x5E00u;
-	carry = vector_queue_sound(command);
+	vector_queue_sound(command);
 	balloon_value = 0u;
 	player_show_balloon(kind, player, balloon_value);
 	command = 0x3F04u;

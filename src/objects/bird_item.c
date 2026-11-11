@@ -3,7 +3,7 @@
  *    Description: the bird that rises, flutters and turns into an object to pick up
  *    Version:     0.1.0
  *    Created:     06-11-2026
- *    Modified:    10-11-2026
+ *    Modified:    11-11-2026
  *    Author:      Sebastian Toyos
  *
  *    The Simpsons (arcade, Konami 1991): the game's 053248 program decompiled into C by
@@ -85,6 +85,6 @@ void bird_item_land(uint16_t object)
 		OBJECT(object)->type = 1;
 		OBJECT(object)->state = 2u;
 		OBJECT(object)->blocked = 1u;
-		OBJECT(object)->bird_item.carried = 0u;
+		OBJECT(object)->carried = 0u;
 	}
 }
