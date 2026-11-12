@@ -3404,3 +3404,11 @@ local sound_command 049C t1 f8_fd_command_aside
 local sound_command 049E t1 f8_fd_failures_back
 local sound_command 007B t1 sound_aside
 local sound_command 007D t1 sound_failures_back
+
+# ======== the last stack slots ========
+# sound_command and start_sound: the channel found moved from one register to another through the stack
+# (0254/0313 "push ix" ... "pop hl", 025B/031A "push hl" ... "pop ix"; 019F/01A6, 02B3/02BA the same)
+local sound_command 0254,025B,0313,031A s2 channel_copy
+local start_sound 019F,01A6,02B3,02BA s2 channel_copy
+# music_tick: the flags kept while the note is set up (42FA "push af"), their legato bit read after
+local music_tick 42FA s2 saved_flags

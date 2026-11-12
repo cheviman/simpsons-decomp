@@ -36144,3 +36144,11 @@ scoped object stage_boss 2F wait u8
 # burns_robot_aim_at_target: X is the target (03B2B9 "TFR U,X"), then the robot again (03B2C6 "PULLS B,X"), whose
 # aim (2D) and heading (2E) it sets
 local burns_robot_aim_at_target 03B2B9,03B2C6 x object object.burns_robot
+
+# ======== the board's ROM sum's temporaries ========
+# add_rom_bytes (the board's own takes its place, the original kept for reading): 078E68 "LDD <$FA" the sum so far,
+# 078E6B "ADDB ,X+" the byte's place and the ROM byte added, 078E7A "TST $1FCA" the watchdog's read
+local add_rom_bytes 078E68 t4 sum_before
+local add_rom_bytes 078E6B t1 byte_place
+local add_rom_bytes 078E6B t2 rom_byte
+local add_rom_bytes 078E7A t1 watchdog_read

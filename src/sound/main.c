@@ -71,7 +71,7 @@ void sound_command(void)
 	uint8_t command = 0, failure_bits = 0, failures = 0, priority = 0, sound_2 = 0, volume = 0;
 	uint16_t bytes_left = 0, channel = 0, count = 0, handler = 0, program_sum = 0, sample_1_sum = 0, sample_2_sum = 0, sound = 0, stride = 0, sum = 0;
 	uint8_t saved_sound_2 = 0;
-	uint16_t stack = 0, saved_sound = 0;
+	uint16_t channel_copy = 0, saved_sound = 0;
 	uint8_t f8_fd_command_aside = 0, f8_fd_failures_back = 0, sound_aside = 0, sound_failures_back = 0;
 	uint16_t f2_command_aside = 0, f2_program_sum_back = 0, f3_command_aside = 0, f3_program_sum_back = 0, f4_command_aside = 0, f4_program_sum_back = 0, f5_command_aside = 0, f5_program_sum_back = 0, f6_command_aside = 0, f6_program_sum_back = 0, f7_command_aside = 0, f7_program_sum_back = 0, sample_1_sum_for_low_byte = 0, sample_2_sum_aside = 0, final_sample_1_sum = 0, sample_2_sum_back = 0, sample_2_sum_low_byte = 0, final_sample_2_sum = 0, new_sample_2_sum = 0;
 
@@ -625,8 +625,8 @@ void sound_command(void)
 			{
 				z80_block(44);
 				priority = CHANNEL(channel)->priority;
-				stack = channel;
-				sum = stack;
+				channel_copy = channel;
+				sum = channel_copy;
 			}
 			z80_block(23);
 			channel += stride;
@@ -636,8 +636,8 @@ void sound_command(void)
 			z80_cycles(5);
 		}
 		z80_block(25);
-		stack = sum;
-		channel = stack;
+		channel_copy = sum;
+		channel = channel_copy;
 		z80_block(63);
 		priority = effect_priorities_2[(uint8_t)sound];
 		if (priority < CHANNEL(channel)->priority)
@@ -698,8 +698,8 @@ void sound_command(void)
 			{
 				z80_block(44);
 				priority = CHANNEL(channel)->priority;
-				stack = channel;
-				sum = stack;
+				channel_copy = channel;
+				sum = channel_copy;
 			}
 			z80_block(23);
 			channel += stride;
@@ -709,8 +709,8 @@ void sound_command(void)
 			z80_cycles(5);
 		}
 		z80_block(88);
-		stack = sum;
-		channel = stack;
+		channel_copy = sum;
+		channel = channel_copy;
 		priority = effect_priorities_40_by_sound[(uint8_t)sound];
 		if (priority < CHANNEL(channel)->priority)
 		{
@@ -768,7 +768,7 @@ void start_sound(uint8_t sound)
 	uint32_t no_song = 0;
 	uint8_t count = 0, next_song = 0, priority = 0, sensitivity = 0, song = 0, sound_2 = 0, volume = 0;
 	uint16_t channel = 0, handler = 0, lowest = 0, stride = 0;
-	uint16_t stack = 0;
+	uint16_t channel_copy = 0;
 
 	z80_block(17);
 	if (sound >= 0xC0u)
@@ -923,8 +923,8 @@ void start_sound(uint8_t sound)
 			{
 				z80_block(44);
 				priority = CHANNEL(channel)->priority;
-				stack = channel;
-				lowest = stack;
+				channel_copy = channel;
+				lowest = channel_copy;
 			}
 			z80_block(23);
 			channel += stride;
@@ -934,8 +934,8 @@ void start_sound(uint8_t sound)
 			z80_cycles(5);
 		}
 		z80_block(88);
-		stack = lowest;
-		channel = stack;
+		channel_copy = lowest;
+		channel = channel_copy;
 		priority = effect_priorities_40_by_sound[sound_2];
 		if (priority < CHANNEL(channel)->priority)
 		{
@@ -1036,8 +1036,8 @@ void start_sound(uint8_t sound)
 			{
 				z80_block(44);
 				priority = CHANNEL(channel)->priority;
-				stack = channel;
-				lowest = stack;
+				channel_copy = channel;
+				lowest = channel_copy;
 			}
 			z80_block(23);
 			channel += stride;
@@ -1047,8 +1047,8 @@ void start_sound(uint8_t sound)
 			z80_cycles(5);
 		}
 		z80_block(88);
-		stack = lowest;
-		channel = stack;
+		channel_copy = lowest;
+		channel = channel_copy;
 		priority = effect_priorities[(uint16_t)(sound_2 - 1u)];
 		if (priority < CHANNEL(channel)->priority)
 		{

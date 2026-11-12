@@ -102,7 +102,7 @@ uint16_t music_tick(uint16_t channel)
 	uint32_t legato = 0, negative = 0, overflow = 0, next_step_due = 0;
 	uint8_t byte = 0, detune = 0, drum_kit = 0, envelope_count = 0, envelope_count_2 = 0, envelope_count_3 = 0, envelope_count_4 = 0, envelope_period = 0, envelope_step = 0, envelope_step_2 = 0, envelope_step_3 = 0, envelope_step_4 = 0, gate = 0, index_high = 0, jump_count = 0, lfo_ramp = 0, loop_2_count = 0, loop_count = 0, music_pan = 0, music_volume = 0, part_count = 0, sensitivity = 0, step = 0, step_2 = 0, tempo_2 = 0;
 	uint16_t command_entry = 0, drum_routines = 0, element = 0, handler = 0, kit_routines = 0, part_return = 0, patch = 0, patch_entry = 0, pitch = 0, pitch_entry = 0, routine_entry = 0, tempo = 0, time = 0, track = 0, transposition = 0;
-	uint8_t stack = 0, saved_step = 0;
+	uint8_t saved_flags = 0, saved_step = 0;
 	uint8_t previous_gate_bits = 0, loop_count_2 = 0, loop_2_count_2 = 0, part_count_2 = 0;
 	uint32_t jump_target = 0;
 
@@ -331,7 +331,7 @@ uint16_t music_tick(uint16_t channel)
 			legato = previous_gate_bits == 0u;
 			overflow = parity8(previous_gate_bits);
 			next_step_due = 0u;
-			stack = (negative << 7) | (legato << 6) | (overflow << 2) | (next_step_due << 0);
+			saved_flags = (negative << 7) | (legato << 6) | (overflow << 2) | (next_step_due << 0);
 			set_note_gate(channel);
 			z80_block(46);
 			pitch_entry = fm_pitches_by_note_ADDRESS;
@@ -347,7 +347,7 @@ uint16_t music_tick(uint16_t channel)
 			CHANNEL(channel)->note_pitch = pitch;
 			set_pitch(pitch, channel);
 			z80_block(20);
-			if ((stack >> 6) & 1u)
+			if ((saved_flags >> 6) & 1u)
 			{
 				z80_block(96);
 				CHANNEL(channel)->sound = CHANNEL(channel)->song;

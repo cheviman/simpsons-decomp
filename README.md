@@ -91,6 +91,19 @@ As of 11-11-2026:
       `rom_reads` 0); an address a program keeps in its state (a pointer into its data) is found among the pieces by
       the place it names
 
+Ready for its ports, which go on alongside the rest of the decompilation:
+
+- [ ] Every function clean in the faithful measure (`python tools/noise_report.py`, `faithful`): today 3,794 of the
+      4,362 functions (87.0 %) and 99.3 % of the lines of code; what the others still keep is listed under "Reading
+      the C"
+- [ ] The game's state as C: the work RAM (4000-5FFF) as one structure whose fields the code reaches by name, in
+      place of 715 variables over fixed addresses, and the objects and records as C pointers in place of the 16-bit
+      addresses the code keeps (`OBJECT(object)->flags` in some 16,000 places), laid out as the board's work RAM so
+      that every frame still compares byte for byte with the original's
+- [ ] C that does not lean on the 053248: the work RAM kept the other way round for its big-endian values, D as A and
+      B, the signed byte index, the carry as a routine's answer
+- [ ] Ports to other platforms, from `ports/sdl2/`
+
 ## Getting started
 
 Requirements: Python 3.10 or newer (the tools use its standard library only), CMake 3.20 or newer, a C11 and C++20
@@ -552,8 +565,8 @@ What the C keeps of the original's machine code, and why (`python tools/noise_re
   with its reason), the printers and the map drawers, the scripts, and the players' records whose variables'
   addresses the data gives; and 1,294 reads and writes of the board's devices through the bus (`io_write8`), the
   K052109's RAM the program keeps variables in among them.
-- 4 values the decompiler works out once, named by a number (`t1`, in the board's own ROM test), 3 stack slots
-  named after their place, and 7,927 casts.
+- 7,927 casts; no value the decompiler works out once nor stack slot is left named by a number or its place
+  (`temp_names`, `stack_names`: 0).
 - 136 `unreachable()` after a switch whose every case returns; one jump through a table that holds no code
   (`invalid_jump`, in `unused_enemy_run_action_jump`, which nothing runs); 2 functions nothing reaches that keep a
   stack the C has not (`lost_stack`: `story_1_bart_steps_overrun` and `palette_effects_overrun`, where an entry past

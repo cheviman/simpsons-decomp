@@ -6,8 +6,8 @@ unk_names 0
 rom_names 0
 unk_fields 0
 register_names 187
-temp_names 4
-stack_names 3
+temp_names 0
+stack_names 0
 flag_variables 164
 flag_helpers 1
 lost_stack 2

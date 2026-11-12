@@ -999,21 +999,21 @@ void BOARD_ORIGINAL(add_rom_bytes)(uint16_t start, uint16_t count)
 {
 	uint32_t carry = 0;
 	uint8_t b = 0;
-	uint8_t t3 = 0, t4 = 0;
-	uint16_t t1 = 0, t2 = 0;
+	uint8_t rom_byte = 0, watchdog_read = 0;
+	uint16_t sum_before = 0, byte_place = 0;
 
 	do
 	{
-		t1 = rom_sum;
-		b = (uint8_t)t1;
-		t2 = start;
-		start = t2 + 1u;
-		t3 = mem_read8(t2);
-		carry = (uint8_t)(b + t3) < b;
-		rom_sum = ((uint32_t)(uint8_t)((t1 >> 8) + carry) << 8) | (uint8_t)(b + t3);
+		sum_before = rom_sum;
+		b = (uint8_t)sum_before;
+		byte_place = start;
+		start = byte_place + 1u;
+		rom_byte = mem_read8(byte_place);
+		carry = (uint8_t)(b + rom_byte) < b;
+		rom_sum = ((uint32_t)(uint8_t)((sum_before >> 8) + carry) << 8) | (uint8_t)(b + rom_byte);
 		count--;
 	} while (count != 0u);
-	t4 = io_read8(watchdog_port);
+	watchdog_read = io_read8(watchdog_port);
 }
 
 /* Prints OK, or BAD in red when B is not 0 (and marks the check as failed), at the tile RAM's U. */
