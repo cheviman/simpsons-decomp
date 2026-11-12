@@ -362,7 +362,7 @@ void gauge_print_count(uint16_t gauge_player, uint16_t tiles, uint16_t count)
 
 	bcd_count = count >> 8;
 	number = GAUGE_PLAYER(gauge_player)->number;
-	player_colour = GAUGE_COLUMN(gauge_player_columns_ADDRESS + (int8_t)(((uint32_t)number << 1) + 1u))->column;
+	player_colour = gauge_player_columns[(int8_t)((uint32_t)number << 1) / 2].colour;
 	digits = big_digits_ADDRESS;
 	tens_nibble = bcd_count & ~0xFu;
 	tens_index = tens_nibble;
@@ -505,7 +505,7 @@ void gauge_draw_picture(uint16_t quarter_and_picture)
 	quarter_and_blank = quarter_byte;
 	quarter_number = quarter_byte & 0x7Fu;
 	picture_number = (uint8_t)quarter_and_picture;
-	column = (((uint32_t)GAUGE_COLUMN(gauge_player_columns_ADDRESS + (int8_t)((uint32_t)quarter_number << 1))->column << 8u) | GAUGE_COLUMN(gauge_player_columns_ADDRESS + (int8_t)((uint32_t)quarter_number << 1))->colour);
+	column = (((uint32_t)gauge_player_columns[(int8_t)((uint32_t)quarter_number << 1) / 2].column << 8u) | gauge_player_columns[(int8_t)((uint32_t)quarter_number << 1) / 2].colour);
 	quarter_column = column >> 8;
 	quarter_colour = column;
 	cursor = gauge_pictures[(int8_t)((uint8_t)((uint32_t)picture_number << 1)) / 2];

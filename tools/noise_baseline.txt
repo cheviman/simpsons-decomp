@@ -15,7 +15,7 @@ code_switches 4
 context_registers 0
 var_fields 0
 mem_access 763
-wide_access 74
+wide_access 73
 copy_backs 132
 invalid_jump 1
 unknown_code 0
@@ -28,8 +28,8 @@ address_names 0
 passed_registers 625
 passed_flags 254
 functions 4362
-lines 150462
-casts 7924
+lines 150472
+casts 7927
 partial_writes 35
 mixed_partial_writes 30
 board_registers 1294

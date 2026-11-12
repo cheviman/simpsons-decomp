@@ -759,7 +759,7 @@ uint16_t bonus_2_place_meter(uint16_t player)
 	uint16_t dx = 0, player_x_place = 0, player_y_place = 0, z = 0;
 
 	kind = OBJECT(player)->kind;
-	dx = (((uint32_t)(uint8_t)XZ_OFFSET(bonus_2_level_object_offsets_ADDRESS + (int8_t)((uint32_t)kind << 1))->dx << 8u) | (uint8_t)XZ_OFFSET(bonus_2_level_object_offsets_ADDRESS + (int8_t)((uint32_t)kind << 1))->dz);
+	dx = (((uint32_t)(uint8_t)bonus_2_level_object_offsets[(int8_t)((uint32_t)kind << 1) / 2].dx << 8u) | (uint8_t)bonus_2_level_object_offsets[(int8_t)((uint32_t)kind << 1) / 2].dz);
 	player_x_place = OBJECT(player)->x;
 	meter_x = player_x_place + (int8_t)(dx >> 8) + bonus_2_meter_offset;
 	OBJECT(player + 0x60u)->x = meter_x;

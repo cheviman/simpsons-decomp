@@ -45,6 +45,7 @@ const void *bonus_2_shake_x_offsets_data;
 const void *bonus_2_squash_zooms_x_data;
 const void *bonus_2_squash_zooms_y_data;
 const void *bonus_2_level_object_x_moves_data;
+const void *bonus_2_level_object_offsets_data;
 const void *bonus_2_player_x_data;
 const void *bonus_results_hop_speeds_data;
 const void *wrestler_beaten_health_by_players_data;
@@ -58,6 +59,7 @@ const void *wrestler_speeds_by_rank_data;
 const void *name_entry_player_records_data;
 const void *name_entry_cursor_zooms_data;
 const void *name_entry_pictures_data;
+const void *name_entry_columns_data;
 const void *sprite_font_code_high_data;
 const void *sprite_font_codes_data;
 const void *ending_family_waits_data;
@@ -112,6 +114,7 @@ const void *shovel_goon_far_strike_waits_by_players_data;
 const void *goon_jump_in_xs_data;
 const void *goon_from_below_xs_data;
 const void *cemetery_umbrella_goon_xs_data;
+const void *fat_goon_entrances_data;
 const void *fat_goon_from_back_xs_data;
 const void *fat_goon_strike_waits_by_players_data;
 const void *fat_goon_hold_animations_data;
@@ -127,6 +130,7 @@ const void *police_car_door_lists_data;
 const void *player_objects_data;
 const void *obstacle_heights_data;
 const void *object_16_flags_data;
+const void *running_animal_timings_data;
 const void *rising_scenery_camera_xs_data;
 const void *item_setups_data;
 const void *food_hit_kinds_data;
@@ -261,6 +265,7 @@ const void *player_state_classes_data;
 const void *profile_moves_data;
 const void *profile_texts_data;
 const void *gauge_player_records_data;
+const void *gauge_player_columns_data;
 const void *gauge_pictures_data;
 const void *continue_digit_pictures_data;
 const void *rank_by_players_data;
@@ -335,6 +340,7 @@ const game_table game_tables[] =
 	{ "bonus_2_squash_zooms_x", 0x021D4Du, &bonus_2_squash_zooms_x_data, 1 },
 	{ "bonus_2_squash_zooms_y", 0x021D55u, &bonus_2_squash_zooms_y_data, 1 },
 	{ "bonus_2_level_object_x_moves", 0x021D5Du, &bonus_2_level_object_x_moves_data, 1 },
+	{ "bonus_2_level_object_offsets", 0x021D71u, &bonus_2_level_object_offsets_data, 2 },
 	{ "bonus_2_player_x", 0x021D7Du, &bonus_2_player_x_data, 2 },
 	{ "bonus_results_hop_speeds", 0x021D9Cu, &bonus_results_hop_speeds_data, 1 },
 	{ "wrestler_beaten_health_by_players", 0x021E71u, &wrestler_beaten_health_by_players_data, 1 },
@@ -348,6 +354,7 @@ const game_table game_tables[] =
 	{ "name_entry_player_records", 0x023532u, &name_entry_player_records_data, 2 },
 	{ "name_entry_cursor_zooms", 0x02359Eu, &name_entry_cursor_zooms_data, 1 },
 	{ "name_entry_pictures", 0x0235AEu, &name_entry_pictures_data, 2 },
+	{ "name_entry_columns", 0x02367Bu, &name_entry_columns_data, 2 },
 	{ "sprite_font_code_high", 0x023694u, &sprite_font_code_high_data, 1 },
 	{ "sprite_font_codes", 0x023695u, &sprite_font_codes_data, 1 },
 	{ "ending_family_waits", 0x0236F8u, &ending_family_waits_data, 2 },
@@ -402,6 +409,7 @@ const game_table game_tables[] =
 	{ "goon_jump_in_xs", 0x029F9Bu, &goon_jump_in_xs_data, 2 },
 	{ "goon_from_below_xs", 0x029FAFu, &goon_from_below_xs_data, 2 },
 	{ "cemetery_umbrella_goon_xs", 0x029FC3u, &cemetery_umbrella_goon_xs_data, 2 },
+	{ "fat_goon_entrances", 0x02B84Au, &fat_goon_entrances_data, 2 },
 	{ "fat_goon_from_back_xs", 0x02B890u, &fat_goon_from_back_xs_data, 2 },
 	{ "fat_goon_strike_waits_by_players", 0x02B974u, &fat_goon_strike_waits_by_players_data, 1 },
 	{ "fat_goon_hold_animations", 0x02B995u, &fat_goon_hold_animations_data, 1 },
@@ -417,6 +425,7 @@ const game_table game_tables[] =
 	{ "player_objects", 0x02DD83u, &player_objects_data, 2 },
 	{ "obstacle_heights", 0x02DDB1u, &obstacle_heights_data, 1 },
 	{ "object_16_flags", 0x02DE39u, &object_16_flags_data, 1 },
+	{ "running_animal_timings", 0x02DF05u, &running_animal_timings_data, 2 },
 	{ "rising_scenery_camera_xs", 0x02DFA1u, &rising_scenery_camera_xs_data, 2 },
 	{ "item_setups", 0x02FA70u, &item_setups_data, 2 },
 	{ "food_hit_kinds", 0x02FACEu, &food_hit_kinds_data, 1 },
@@ -551,6 +560,7 @@ const game_table game_tables[] =
 	{ "profile_moves", 0x0410E3u, &profile_moves_data, 2 },
 	{ "profile_texts", 0x041106u, &profile_texts_data, 2 },
 	{ "gauge_player_records", 0x041294u, &gauge_player_records_data, 2 },
+	{ "gauge_player_columns", 0x04130Eu, &gauge_player_columns_data, 2 },
 	{ "gauge_pictures", 0x041316u, &gauge_pictures_data, 2 },
 	{ "continue_digit_pictures", 0x0413F1u, &continue_digit_pictures_data, 2 },
 	{ "rank_by_players", 0x041786u, &rank_by_players_data, 1 },
@@ -614,4 +624,4 @@ const game_table game_tables[] =
 	{ "reset_vector", 0x07FFFEu, &reset_vector_data, 2 },
 };
 
-const size_t game_table_count = 285;
+const size_t game_table_count = 290;

@@ -574,7 +574,7 @@ void name_entry_draw_picture(uint16_t column_and_picture)
 	column_and_blank = column;
 	column_number = column & 0x7Fu;
 	picture_number = (uint8_t)column_and_picture;
-	column_2 = (((uint32_t)NAME_ENTRY_COLUMN(name_entry_columns_ADDRESS + (int8_t)((uint32_t)column_number << 1))->column << 8u) | NAME_ENTRY_COLUMN(name_entry_columns_ADDRESS + (int8_t)((uint32_t)column_number << 1))->palette);
+	column_2 = (((uint32_t)name_entry_columns[(int8_t)((uint32_t)column_number << 1) / 2].column << 8u) | name_entry_columns[(int8_t)((uint32_t)column_number << 1) / 2].palette);
 	column_tiles = column_2 >> 8;
 	column_palette = column_2;
 	picture = name_entry_pictures[(int8_t)((uint8_t)((uint32_t)picture_number << 1)) / 2];

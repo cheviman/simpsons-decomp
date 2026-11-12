@@ -196,7 +196,7 @@ void knight_choose_entrance(uint16_t object)
 	uint16_t step = 0;
 
 	parameter = OBJECT(object)->parameter;
-	step = (((uint32_t)KNIGHT_ENTRANCE_STYLE(knight_entrance_styles_ADDRESS + (int8_t)((uint32_t)parameter << 1))->step << 8u) | KNIGHT_ENTRANCE_STYLE(knight_entrance_styles_ADDRESS + (int8_t)((uint32_t)parameter << 1))->slowdown);
+	step = (((uint32_t)knight_entrance_styles[(int8_t)((uint32_t)parameter << 1) / 2].step << 8u) | knight_entrance_styles[(int8_t)((uint32_t)parameter << 1) / 2].slowdown);
 	OBJECT(object)->action_step = step >> 8;
 	OBJECT(object)->knight.entrance_slowdown = step & 0xFFu;
 	OBJECT(object)->parameter = 0u;

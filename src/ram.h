@@ -12714,11 +12714,7 @@ struct behaviour_choice
 
 struct gauge_player
 {
-	union
-	{
-		uint16_t status;
-		uint8_t unk_17;
-	};
+	uint16_t status;
 	uint16_t score_tiles;
 	uint16_t score;
 	uint8_t unused_11;
@@ -12759,14 +12755,14 @@ struct placement
 
 struct player_kind
 {
-	uint8_t unk_03;
+	uint8_t filler;
 	uint16_t kind;
 	uint8_t bit;
 };
 
 struct stage_slot
 {
-	uint8_t unk_02;
+	uint8_t filler;
 	uint16_t record;
 };
 
@@ -13458,40 +13454,40 @@ struct object
 			uint16_t floor_z;
 			uint8_t shadow_player;
 			uint16_t sprites;
-			uint8_t unk_58;
+			uint8_t per_kind_58;
 			uint8_t entrance_pending;
-			uint8_t unk_56;
-			uint16_t unk_54;
-			uint8_t unk_53;
-			uint8_t unk_52;
-			uint8_t unk_51;
-			uint8_t unk_50;
-			uint8_t unk_4F;
-			uint8_t unk_4E;
-			uint8_t unk_4D;
-			uint16_t unk_4B;
+			uint8_t per_kind_56;
+			uint16_t per_kind_54;
+			uint8_t per_kind_53;
+			uint8_t per_kind_52;
+			uint8_t per_kind_51;
+			uint8_t per_kind_50;
+			uint8_t per_kind_4F;
+			uint8_t per_kind_4E;
+			uint8_t per_kind_4D;
+			uint16_t per_kind_4B;
 			uint8_t pad_15[0x1];
 			uint16_t hit_box;
 			uint8_t next_floor_cell;
 			uint8_t floor_cell;
-			uint8_t unk_45;
-			uint8_t unk_44;
-			uint8_t unk_43;
+			uint8_t per_kind_45;
+			uint8_t per_kind_44;
+			uint8_t per_kind_43;
 			int8_t enemy_class;
 			uint16_t parent;
-			uint8_t unk_3F;
-			uint8_t unk_3E;
+			uint8_t per_kind_3F;
+			uint8_t per_kind_3E;
 			uint8_t carried;
-			uint8_t unk_3C;
+			uint8_t per_kind_3C;
 			uint8_t timer;
 			uint8_t retarget_time;
 			uint16_t target;
-			uint8_t unk_37;
+			uint8_t per_kind_37;
 			uint8_t target_direction;
-			uint8_t unk_35;
-			uint8_t unk_34;
+			uint8_t per_kind_35;
+			uint8_t per_kind_34;
 			uint8_t hit_from_behind;
-			uint8_t unk_32;
+			uint8_t per_kind_32;
 			uint8_t blocked;
 			uint8_t parameter;
 			uint16_t target_dy;
@@ -15012,11 +15008,11 @@ struct palette_job
 	{
 		struct
 		{
-			uint8_t unk_07;
-			uint16_t unk_05;
-			uint8_t unk_04;
-			uint16_t unk_02;
-			uint8_t unk_01;
+			uint8_t per_kind_07;
+			uint16_t per_kind_05;
+			uint8_t per_kind_04;
+			uint16_t per_kind_02;
+			uint8_t per_kind_01;
 		};
 		struct
 		{

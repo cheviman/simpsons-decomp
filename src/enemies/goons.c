@@ -4610,7 +4610,7 @@ void shovel_goon_step_out_set_up(uint16_t object)
 	enemy_class = OBJECT(object)->enemy_class;
 	OBJECT(object)->enemy_class = enemy_class + 1u;
 	parameter = OBJECT(object)->parameter;
-	wait = (((uint32_t)GOON_ENTRANCE(goon_entrances_ADDRESS + (int8_t)((uint32_t)parameter << 1))->wait << 8u) | GOON_ENTRANCE(goon_entrances_ADDRESS + (int8_t)((uint32_t)parameter << 1))->attributes);
+	wait = (((uint32_t)goon_entrances[(int8_t)((uint32_t)parameter << 1) / 2].wait << 8u) | goon_entrances[(int8_t)((uint32_t)parameter << 1) / 2].attributes);
 	OBJECT(object)->shovel_goon.entrance_wait = wait >> 8;
 	OBJECT(object)->attributes = wait;
 	OBJECT(object)->timer = 8u;
@@ -4817,7 +4817,7 @@ void goon_take_entrance_pose(uint16_t object)
 	OBJECT(object)->flags = 0x80u;
 	OBJECT(object)->animation = 0x91u;
 	parameter = OBJECT(object)->parameter;
-	wait = (((uint32_t)GOON_ENTRANCE(goon_entrances_ADDRESS + (int8_t)((uint32_t)parameter << 1))->wait << 8u) | GOON_ENTRANCE(goon_entrances_ADDRESS + (int8_t)((uint32_t)parameter << 1))->attributes);
+	wait = (((uint32_t)goon_entrances[(int8_t)((uint32_t)parameter << 1) / 2].wait << 8u) | goon_entrances[(int8_t)((uint32_t)parameter << 1) / 2].attributes);
 	OBJECT(object)->goon.entrance_wait = wait >> 8;
 	OBJECT(object)->attributes = wait;
 	OBJECT(object)->timer = 8u;

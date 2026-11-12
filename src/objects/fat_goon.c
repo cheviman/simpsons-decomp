@@ -588,7 +588,7 @@ void fat_goon_entrance_start(uint16_t object)
 	OBJECT(object)->flags = 0x80u;
 	OBJECT(object)->animation = 0x91u;
 	parameter = OBJECT(object)->parameter;
-	wait = (((uint32_t)GOON_ENTRANCE(fat_goon_entrances_ADDRESS + (int8_t)((uint32_t)parameter << 1))->wait << 8u) | GOON_ENTRANCE(fat_goon_entrances_ADDRESS + (int8_t)((uint32_t)parameter << 1))->attributes);
+	wait = (((uint32_t)fat_goon_entrances[(int8_t)((uint32_t)parameter << 1) / 2].wait << 8u) | fat_goon_entrances[(int8_t)((uint32_t)parameter << 1) / 2].attributes);
 	OBJECT(object)->fat_goon_entrance.entrance_wait = wait >> 8;
 	OBJECT(object)->attributes = wait;
 	OBJECT(object)->timer = 8u;

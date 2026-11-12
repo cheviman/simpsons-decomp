@@ -82,7 +82,7 @@ void donut_choose_entrance(uint16_t object)
 	uint16_t wait = 0;
 
 	parameter = OBJECT(object)->parameter;
-	wait = (((uint32_t)TIMED_STEP(kind_b7_entrances_ADDRESS + (int8_t)((uint32_t)parameter << 1))->wait << 8u) | TIMED_STEP(kind_b7_entrances_ADDRESS + (int8_t)((uint32_t)parameter << 1))->step);
+	wait = (((uint32_t)kind_b7_entrances[(int8_t)((uint32_t)parameter << 1) / 2].wait << 8u) | kind_b7_entrances[(int8_t)((uint32_t)parameter << 1) / 2].step);
 	OBJECT(object)->timer = wait >> 8;
 	OBJECT(object)->action_step = wait;
 	OBJECT(object)->parameter = 0u;

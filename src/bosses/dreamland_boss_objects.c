@@ -690,7 +690,7 @@ void dreamland_boss_chain_link_setup(uint16_t object)
 	attributes = OBJECT(object)->attributes;
 	OBJECT(object)->attributes = (attributes & 0xCFu) | 0x10u;
 	parameter = OBJECT(object)->parameter;
-	animation = (((uint32_t)CHAIN_LINK(object_1a_chain_links_ADDRESS + (int8_t)((uint32_t)parameter << 1))->animation << 8u) | (uint8_t)CHAIN_LINK(object_1a_chain_links_ADDRESS + (int8_t)((uint32_t)parameter << 1))->box_y_offset);
+	animation = (((uint32_t)object_1a_chain_links[(int8_t)((uint32_t)parameter << 1) / 2].animation << 8u) | (uint8_t)object_1a_chain_links[(int8_t)((uint32_t)parameter << 1) / 2].box_y_offset);
 	OBJECT(object)->animation = animation >> 8;
 	OBJECT(object)->box_dy = animation;
 	state = OBJECT(object)->state;
@@ -782,7 +782,7 @@ void dreamland_boss_chain_head_setup(uint16_t object)
 	OBJECT(object)->dreamland_boss_chain_head.path_loops = 2u;
 	OBJECT(object)->dreamland_boss_chain_head.path = 0x79F3u;
 	parameter = OBJECT(object)->parameter;
-	box_y_offset = CHAIN_LINK(object_1a_chain_links_ADDRESS + (int8_t)((uint32_t)parameter << 1))->box_y_offset;
+	box_y_offset = object_1a_chain_links[(int8_t)((uint32_t)parameter << 1) / 2].box_y_offset;
 	OBJECT(object)->box_dy = box_y_offset;
 	OBJECT(object)->dreamland_boss_chain_head.path_wait = 4u;
 	target = OBJECT(object)->target;

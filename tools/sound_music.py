@@ -153,13 +153,14 @@ ADDRESS_AT = {0xF0: 1, 0xF1: 2, 0xF6: 2}
 
 # what the game plays each song for, its file's name: the scenarios of tests/controls played in kref, with the
 # 053248's sound queue (4900-493F: the commands 8680 queues, 9054 sends) and the step (4803) read every 10 frames,
-# and the picture when a song starts; a song no scenario plays is song_XX. C0-EF fade the music out first, then
-# play 80-AF (0458, 0BB5)
+# and the picture when a song starts (90 by the routine that queues it); a song nothing starts is song_XX. C0-EF fade
+# the music out first, then play 80-AF (0458, 0BB5)
 SONGS = {
     0x80: ("attract", "the attract: as it starts (frame 620 of every scenario), and when it comes back after a game"),
     0x91: ("game_start", "a game's start: as the first story starts (step 1), and the second round's"),
     0x81: ("stage_1", "stage 1 (step 2), from its start and after a continue"),
     0x8F: ("stage_1_boss", "stage 1's boss (command CF)"),
+    0x90: ("name_entry", "the high score's name entry: name_entry_start queues 9000 (no scenario gets a high score)"),
     0x98: ("boss_defeated", "a boss falls: after the bosses of stages 1 and 3 to 8"),
     0x96: ("area_clear", "the family walks on: after 98 at a stage's end, and as steps 7 and 15 start"),
     0x95: ("after_stages_1_and_5", "after stages 1 and 5 (after 96): a scene with a speech balloon"),

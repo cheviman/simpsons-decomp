@@ -371,8 +371,9 @@ sounds/      the K053260's 163 samples by the sound driver's sample table (sampl
              sample plays (unused_XXXXXX.wav), and samples.txt: where each goes
 sound_data/  the Z80 program's data as text: patches.txt (the YM2151's and the K053260's), tables.txt (the
              driver's), other.txt (fill), layout.txt; music/ a Standard MIDI File a song (attract.mid,
-             stage_1.mid ... stage_8_boss_1.mid, bonus_1.mid, ending.mid...; song_XX where nothing the scenarios
-             play starts it), and music.txt: the song commands each file plays for, and what the game plays it for
+             stage_1.mid ... stage_8_boss_1.mid, bonus_1.mid, name_entry.mid, ending.mid...; song_XX for the seven
+             songs nothing in the program starts, two of them empty), and music.txt: the song commands each file
+             plays for, and what the game plays it for
 data/        the 053248 program's data as text, a file a subject (animations, sprite_lists, maps, tile_blocks,
              palettes, palette_effects, texts, screens, spawns, stories, objects, demos, tables, fill), a section
              a piece, every piece named; code_read.txt, the fixed program's code the map engines read as tiles or
@@ -544,7 +545,7 @@ What the C keeps of the original's machine code, and why (`python tools/noise_re
   and then a pointer), and the carries of sums and shifts the original does a byte at a time, which are carries.
 - 35 partial writes of a variable, `x = (x & ~0xFFu) | y`: a byte written into a value whose other byte is read
   afterwards (the 053248's A and B are the halves of D); 30 of them put a part of one value into another.
-- 74 places that read or write several fields at once or a table at another width (`AS16`, `AT16`, `TABLE8`,
+- 73 places that read or write several fields at once or a table at another width (`AS16`, `AT16`, `TABLE8`,
   `TABLE16`): the original does (the random number, a word, read a byte at a time).
 - 763 places that reach memory through an address the code works out (`mem_read8`, `mem_write16`): the routines
   that clear, copy or test memory wherever they are told (`tools/game_profile.py`'s `MEMORY_ROUTINES` lists each
@@ -552,7 +553,7 @@ What the C keeps of the original's machine code, and why (`python tools/noise_re
   addresses the data gives; and 1,294 reads and writes of the board's devices through the bus (`io_write8`), the
   K052109's RAM the program keeps variables in among them.
 - 4 values the decompiler works out once, named by a number (`t1`, in the board's own ROM test), 3 stack slots
-  named after their place, and 7,924 casts.
+  named after their place, and 7,927 casts.
 - 136 `unreachable()` after a switch whose every case returns; one jump through a table that holds no code
   (`invalid_jump`, in `unused_enemy_run_action_jump`, which nothing runs); 2 functions nothing reaches that keep a
   stack the C has not (`lost_stack`: `story_1_bart_steps_overrun` and `palette_effects_overrun`, where an entry past

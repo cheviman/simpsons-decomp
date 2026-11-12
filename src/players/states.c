@@ -2201,7 +2201,7 @@ void player_ground_attack(uint16_t y, uint16_t player)
 		return;
 	}
 	kind = OBJECT(player)->kind;
-	width = AT16(ATTACK_BOX(player_attack_boxes_ADDRESS + (int8_t)(((((state_value - 6u) << 1) << 1) + kind) << 1))->width, -1);
+	width = (((uint32_t)player_attack_boxes[(int8_t)(((((state_value - 6u) << 1) << 1) + kind) << 1) / 2].width << 8u) | (uint8_t)player_attack_boxes[(int8_t)(((((state_value - 6u) << 1) << 1) + kind) << 1) / 2].x_offset);
 	OBJECT(player)->box_width = width >> 8;
 	OBJECT(player)->box_dx = width;
 	flags = OBJECT(player)->flags | 2u;

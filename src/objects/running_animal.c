@@ -192,7 +192,7 @@ uint16_t running_animal_start(uint16_t object)
 	OBJECT(object)->running_animal.quiet = attributes;
 	timing_table = running_animal_timings_ADDRESS;
 	parameter_2 = OBJECT(object)->parameter;
-	wait = (((uint32_t)RUNNING_ANIMAL_TIMING(running_animal_timings_ADDRESS + (int8_t)((uint32_t)parameter_2 << 1))->wait << 8u) | RUNNING_ANIMAL_TIMING(running_animal_timings_ADDRESS + (int8_t)((uint32_t)parameter_2 << 1))->fast);
+	wait = (((uint32_t)running_animal_timings[(int8_t)((uint32_t)parameter_2 << 1) / 2].wait << 8u) | running_animal_timings[(int8_t)((uint32_t)parameter_2 << 1) / 2].fast);
 	OBJECT(object)->running_animal.stop_frames = (uint8_t)(wait >> 8u);
 	OBJECT(object)->running_animal.fast = (uint8_t)wait;
 	OBJECT(object)->flags = 0x80u;

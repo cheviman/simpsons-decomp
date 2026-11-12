@@ -249,8 +249,6 @@ field behaviour_choice 02 behaviour u16 enemy_behaviour
 # a player's record for the gauges (040909 "LDX #$7294; ASLA; LDX A,X", by the player): the addresses of its
 # variables, read through ([#$12,X], [#$16,X], [#$02,X]), and places in the tile RAM
 struct gauge_player 18 rom
-# (with its type, in the section of the program's data by name below: gauge_player.unk_00, gauge_player.variables)
-field gauge_player 17 unk_17 u8
 041294  table  gauge_player_records[4]  u16 gauge_player
 04129C  table  gauge_players[4]  gauge_player
 # the two tiles, one above the other, of a gauge's step 1-8 (040A4C "LDY #$72FC; ASLA; LEAY A,Y": 0 draws 8D)
@@ -301,14 +299,16 @@ field placement 06 z u16
 struct player_kind 04 rom
 field player_kind 00 bit u8
 field player_kind 01 kind u16
-field player_kind 03 unk_03 u8
+# 03: a 00 in every record (a record is four bytes)
+field player_kind 03 filler u8
 025952  table  unused_player_kind_list[4]  player_kind
 # bank 13's stage records, a slot each after the bank's jumps (6000-600B), 3 bytes like them: the record (into direct
 # page A4) and a 00. Each step's start in the fixed program reads its own (07A555 "LDX $600C", 07A794 "LDX $600F",
 # 07A8DF $6015... 07B08F $6021); the third, 6012, the second's 7AA9 again, none reads
 struct stage_slot 03 rom
 field stage_slot 00 record u16
-field stage_slot 02 unk_02 u8
+# 02: the 00 after the record, the third byte a slot has like the bank's jumps
+field stage_slot 02 filler u8
 02600C  table  stage_slots[10]  stage_slot
 # bank 1A: 4 words after the object setup at 792E (0000, 0100, 0200, 0400) that nothing reads (no code names 7934, no
 # table holds it, no scenario reads it); shaped like 7926's just before, 4 entries of 2 bytes by direct page 58's low
@@ -3920,7 +3920,7 @@ local enemy_hurt_start 07E1FB u animations hit_animation
 #   E707, E717, E721, E731, E743, E751, E761, E773, E785, E791, E7A3, E7C1 (in that order)
 # - the map scenes each stage sets (direct page 75): 82 stage 1, 83 bonus 1, 84 stage 2, 86 forest, 87 cemetery, 88
 #   stage 4, 89 stage 5, 8A stage 6, 8B bonus 2, 8C stage 7, 8D stage 8, 03 the name entry, 02 the high scores
-# - songs (assets/sound_data/music/music.txt): 87 bonus_start, 90 song_90, 92 game_over, 94 stage_3_part_1_end,
+# - songs (assets/sound_data/music/music.txt): 87 bonus_start, 90 name_entry, 92 game_over, 94 stage_3_part_1_end,
 #   A1 continue; command 00 stops the sound
 # Sound commands go through 0797ED (always), 0797E3 (not in the attract) or 0797D3 (in the attract only with its demo
 # sounds); 0797B7 queues a job of the main loop (A = 0: job 0, the tile layers' clear, which layer_clear_pending

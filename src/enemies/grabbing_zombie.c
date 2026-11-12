@@ -66,7 +66,7 @@ void grabbing_zombie_place(uint16_t object)
 
 	OBJECT(object)->flags = 0x80u;
 	parameter = OBJECT(object)->parameter;
-	wait = (((uint32_t)TIMED_SPOT(kind_97_entrances_ADDRESS + (int8_t)((uint32_t)parameter << 1))->wait << 8u) | TIMED_SPOT(kind_97_entrances_ADDRESS + (int8_t)((uint32_t)parameter << 1))->x);
+	wait = (((uint32_t)kind_97_entrances[(int8_t)((uint32_t)parameter << 1) / 2].wait << 8u) | kind_97_entrances[(int8_t)((uint32_t)parameter << 1) / 2].x);
 	OBJECT(object)->timer = wait >> 8;
 	start_x = (wait & 0xFFu) << 4;
 	OBJECT(object)->x = start_x;
